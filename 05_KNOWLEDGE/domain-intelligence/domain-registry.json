@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T21:40:06.689Z",
-  "total_records": 2454,
+  "last_updated": "2026-11-23T21:48:47.883Z",
+  "total_records": 2457,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 939,
+      "total": 942,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1007,7 +1007,10 @@
         "DOM-D-5695D6C2",
         "DOM-D-9A12E1C8",
         "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants",
+        "DOM-D-7E47FE9B",
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar"
       ]
     },
     "E": {
@@ -9820,8 +9823,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "3be8f85fd05695df28a81a235399206010510772230af2e31b1282fd394835d0",
-      "created_at": "2026-11-23T17:46:26.017Z"
+      "content_hash": "a43aa07304257ea6670709150f0ab6c2f06be9430a1bf22c4240014990020dfe",
+      "created_at": "2026-11-23T21:48:18.360Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9898,8 +9901,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "5d5de4be5ef0c6edc1bc197e963af9311cc0b78dbf5058909426eb3a9795b8c7",
-      "created_at": "2026-11-23T13:25:07.504Z"
+      "content_hash": "32f720e3c759d4c6b40d8851c7c7534f9efb4d2d66fac16367da8b6afa562133",
+      "created_at": "2026-11-23T21:48:47.883Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -19095,8 +19098,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-research-knowledge-intelligence-openbmb-minicpm-v-4-.md",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "content_hash": "ffa5149a65fb11ca0943fa076c1432ae24d2f5944c161d43469a9ce617565cd4",
-      "created_at": "2026-11-19T15:21:28.617Z"
+      "content_hash": "4638b3e64c0bb1b6ca0e51fa97bc64d73f8b38db2c1198cc98c0464e352c3fa1",
+      "created_at": "2026-11-23T21:48:04.579Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
@@ -19173,8 +19176,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-learnings-research-knowledge-intelligence-hf-openbmb.md",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
-      "content_hash": "70b217cc87c665b1e971a942473454396f3151453d79344e9770a61b2e724b18",
-      "created_at": "2026-11-19T15:21:31.681Z"
+      "content_hash": "719225c6c72341a030c2d53116c866db01c19919c6c4cc9db8d5a402f57acc99",
+      "created_at": "2026-11-23T21:48:47.268Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -41149,6 +41152,66 @@
       "repository": "zenbu-labs-terminal-browser-learnings",
       "content_hash": "2ac9200059b31532242dcc8d90e802007c465e5573b8cee39ba084abb82a9b84",
       "created_at": "2026-11-23T21:23:17.018Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inclusionAI/Ling-3.2-air Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-research-knowledge-intelligence-inclusionai-ling-3-2.md",
+      "repository": "inclusionAI/Ling-3.2-air",
+      "content_hash": "34624688816c3d69ec6615a39f2f60e2d25d7d264c933d0cda27dfc9646eefd8",
+      "created_at": "2026-11-23T21:48:01.987Z"
+    },
+    "DOM-D-7E47FE9B": {
+      "record_id": "DOM-D-7E47FE9B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/Ling-3.2-air",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inclusionAI/Ling-3.2-air](https://huggingface.co/inclusionAI/Ling-3.2-air))  \n> **Source Version**: `hf-inclusion`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "5d1dd606d790dfb5c1f6cf6bc830c60684d4c4906f1ad5a2f2bba69c04dd82f2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-inclusionai-ling-3.2-air/hf-inclusionai-ling-3.2-air-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T21:48:21.430Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-ling-3.2-air)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inclusionai-ling-3.2-air"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T21:48:46.564Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-ling-3.2-air-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-learnings-research-knowledge-intelligence-hf-inclusi.md",
+      "repository": "hf-inclusionai-ling-3.2-air-learnings",
+      "content_hash": "1aea67dd65dcc7c9f066b34d6888518364137e74cd5ae2607f83e32e52769a4f",
+      "created_at": "2026-11-23T21:48:46.859Z"
     }
   }
 }

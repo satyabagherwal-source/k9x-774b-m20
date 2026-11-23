@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T21:40:06.865Z",
-  "total_verified_learnings": 9086,
+  "last_updated": "2026-11-23T21:48:48.202Z",
+  "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24216,
+  "total_items": 24224,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "5d881b7e",
-      "content_hash": "3be8f85fd05695df28a81a235399206010510772230af2e31b1282fd394835d0",
+      "source_version": "d0b2003d",
+      "content_hash": "a43aa07304257ea6670709150f0ab6c2f06be9430a1bf22c4240014990020dfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:46:26.017Z"
+      "persisted_at": "2026-11-23T21:48:18.360Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "5d881b7e",
-      "content_hash": "6af94f45c377c902fda9325fb0235ef802b6f74b32df1a23e8ea060cd672188b",
+      "source_version": "d0b2003d",
+      "content_hash": "9221ccf56a4a746c8653b8e673712f19428a604d6a9c788f1afb8424a072438f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:26.193Z"
+      "persisted_at": "2026-11-23T21:48:18.652Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d5de4be5ef0c6edc1bc197e963af9311cc0b78dbf5058909426eb3a9795b8c7",
+      "content_hash": "32f720e3c759d4c6b40d8851c7c7534f9efb4d2d66fac16367da8b6afa562133",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:25:07.504Z"
+      "persisted_at": "2026-11-23T21:48:47.883Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "4614bc54683ef6e195fd85f8e63d028a018303f4d5ef80d1ef965120c586ac66",
+      "content_hash": "dbc3da8ee0264ae94660a23c63ead8c58ca38274a0bae01e79dc85f2e38d79fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:25:07.758Z"
+      "persisted_at": "2026-11-23T21:48:48.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220596,8 +220596,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "5d881b7e",
-      "content_hash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
+      "source_version": "d0b2003d",
+      "content_hash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220720,6 +220720,11 @@
           "number": 10086,
           "title": "a failed secret read no longer reaches delegates as 'not found'",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10130,
+          "title": "bound per-joiner native setups; decide UDP when there is no room",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220727,7 +220732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:46:25.389Z",
+      "verified_at": "2026-11-23T21:48:17.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241241,7 +241246,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
+      "content_hash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [],
@@ -241250,7 +241255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:21:28.138Z",
+      "verified_at": "2026-11-23T21:48:04.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241267,9 +241272,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "ffa5149a65fb11ca0943fa076c1432ae24d2f5944c161d43469a9ce617565cd4",
+      "content_hash": "4638b3e64c0bb1b6ca0e51fa97bc64d73f8b38db2c1198cc98c0464e352c3fa1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T15:21:28.617Z"
+      "persisted_at": "2026-11-23T21:48:04.579Z"
     },
     "learn-github-cachix-devenv": {
       "learning_id": "learn-github-cachix-devenv",
@@ -241597,9 +241602,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
       "source_version": "HEAD",
-      "content_hash": "70b217cc87c665b1e971a942473454396f3151453d79344e9770a61b2e724b18",
+      "content_hash": "719225c6c72341a030c2d53116c866db01c19919c6c4cc9db8d5a402f57acc99",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T15:21:31.681Z"
+      "persisted_at": "2026-11-23T21:48:47.268Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "item_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -330136,6 +330141,119 @@
       "content_hash": "80a254b9d127a50476929c7a2e7ddb61755f477fb053f4327a44c631197e0025",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T21:40:05.744Z"
+    },
+    "learn-huggingface-inclusionai-ling-3-2-air": {
+      "learning_id": "learn-huggingface-inclusionai-ling-3-2-air",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inclusionAI/Ling-3.2-air",
+      "repository": "inclusionAI/Ling-3.2-air",
+      "slug": "hf-inclusionai-ling-3.2-air",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/Ling-3.2-air",
+      "source_version": "hf-inclusionai-ling-3.2-air",
+      "content_hash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T21:48:01.563Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-research-knowledge-intelligence-inclusionai-ling-3-2.md",
+      "title": "Research & Knowledge Intelligence: inclusionAI/Ling-3.2-air Core Invariants",
+      "repository": "inclusionAI/Ling-3.2-air",
+      "source_version": "hf-inclusionai-ling-3.2-air",
+      "content_hash": "34624688816c3d69ec6615a39f2f60e2d25d7d264c933d0cda27dfc9646eefd8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T21:48:01.987Z"
+    },
+    "rule-10130": {
+      "learning_id": "rule-10130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10130,
+      "title": "bound per-joiner native setups; decide UDP when there is no room",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "d0b2003d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:48:17.772Z"
+    },
+    "candidate_directive-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room": {
+      "item_id": "candidate_directive-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RYXH-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room.md",
+      "title": "bound per-joiner native setups; decide UDP when there is no room",
+      "repository": "freenet/freenet-core",
+      "source_version": "d0b2003d",
+      "content_hash": "93e0ee55b48c60f55cda8c9447d020f5b2d25c2589c83e3eac9afea537d21c9d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:48:18.201Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-freenet-freenet-core": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-freenet-freenet-core",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-freenet-freenet-core-adr-subsystem-boundary-modular-decoupling-in-freenet-freene.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet/freenet-core",
+      "repository": "freenet/freenet-core",
+      "source_version": "d0b2003d",
+      "content_hash": "914a3b75aaaa799b72515c1b9a57975ebb5878507c96a0aa7cdf0a34c17c259a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:48:18.521Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-learnings-research-knowledge-intelligence-hf-inclusi.md",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-ling-3.2-air-learnings Core Invariants",
+      "repository": "hf-inclusionai-ling-3.2-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1aea67dd65dcc7c9f066b34d6888518364137e74cd5ae2607f83e32e52769a4f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T21:48:46.859Z"
+    },
+    "candidate_directive-connect-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room": {
+      "item_id": "candidate_directive-connect-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SLP4-connect-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room.md",
+      "title": "connect): bound per-joiner native setups; decide UDP when there is no room",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e8aceb7561df77dbf74d8f22db8afa7e414cfd863b500ff77577bb44e41fc35",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:48:47.710Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-freenet-freenet-core-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-freenet-freenet-core-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-freenet-freenet-core-learnings-adr-subsystem-boundary-modular-decoupling-in-free.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet-freenet-core-learnings",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad3de8d32a3d15ed8562b1c74596aa37c5d6a19929182838c39256b65148c891",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:48:48.061Z"
     }
   },
   "ai-builder-brain": {

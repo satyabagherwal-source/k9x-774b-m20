@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
-    "lastHarvestedAt": "2026-11-19T15:21:28.402Z",
+    "contentHash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
+    "lastHarvestedAt": "2026-11-23T21:48:04.375Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "5d881b7e",
+    "sourceVersion": "d0b2003d",
     "license": "NOASSERTION",
-    "contentHash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
-    "lastHarvestedAt": "2026-11-23T17:46:25.606Z",
+    "contentHash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
+    "lastHarvestedAt": "2026-11-23T21:48:17.970Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -13278,5 +13278,15 @@
     "contentHash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
     "lastHarvestedAt": "2026-11-23T15:12:31.438Z",
     "learningId": "learn-huggingface-tenstrip-10eros-max"
+  },
+  "hf-inclusionai-ling-3.2-air": {
+    "repository": "inclusionAI/Ling-3.2-air",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/inclusionAI/Ling-3.2-air",
+    "sourceVersion": "hf-inclusionai-ling-3.2-air",
+    "license": "Open-Source",
+    "contentHash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
+    "lastHarvestedAt": "2026-11-23T21:48:01.786Z",
+    "learningId": "learn-huggingface-inclusionai-ling-3-2-air"
   }
 }

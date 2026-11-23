@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:40:01.639Z",
-  "total_cycles_completed": 11868,
-  "total_learnings_persisted": 11868,
-  "total_rules_promoted": 10972,
+  "last_updated": "2026-11-23T21:48:17.975Z",
+  "total_cycles_completed": 11871,
+  "total_learnings_persisted": 11871,
+  "total_rules_promoted": 10973,
   "history": [
-    {
-      "timestamp": "2026-11-23T05:35:21.946Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T05:35:35.027Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T05:51:37.901Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T05:51:40.223Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T21:40:01.639Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:48:01.792Z",
+      "repository": "inclusionAI/Ling-3.2-air",
+      "learningId": "learn-huggingface-inclusionai-ling-3-2-air",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:48:04.380Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:48:17.975Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

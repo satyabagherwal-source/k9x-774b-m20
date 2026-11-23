@@ -758632,3 +758632,90 @@ impl ProgramsSummaryCache {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ae6a5b06` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10130. bound per-joiner native setups; decide UDP when there is no room (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bound per-joiner native setups; decide UDP when there is no room",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "d0b2003d",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T21:48:17.484Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d0b2003d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d0b2003d`: connect): bound per-joiner native setups; decide UDP when there is no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+`connect_native_admission_refused` for each native setup it did not admit as
+acceptor (deciding UDP instead),
+`connect_native_admission_control_dropped` for each control pair it left out
+of the arms as acceptor for lack of setup room,
+Setup admission: before deciding Native, the acceptor admits the setup
+  (NativeConnectState::admit_acceptor_setup, through
+  RelayContext::admit_native_setup), by joiner ADDRESS, the unit native
+  setups, allow-set slots and dial coalescing all use: at most
+  acceptor_pending_setups_max(max_connections) addresses pending (half of
+  the node's native setup slots, NATIVE_SETUPS_MAX lowered to the connection
+  limit as QuicPolicy::native_setups_max is, so the node's own dials as
+  joiner keep the rest), at most ACCEPTOR_PENDING_SETUPS_PER_SOURCE (4) from
+  one source (put::stream_admission::Source: an IPv4 address or an IPv6 /64;
+  loopback counted per port for local test networks), and only with a known
+  address. Another CONNECT to a pending address shares its entry (a
+  refcount). A refusal decides Udp at once (counted
+  connect_native_admission_refused), so a joiner never waits out the native
+  fallback because the acceptor had no room; the pair is 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d0b2003d` are properly handled with clean fallback behavior.

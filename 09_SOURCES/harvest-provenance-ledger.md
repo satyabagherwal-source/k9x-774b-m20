@@ -12513,3 +12513,7 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `401721aa` | Multi-dimensional audit evidence | 2026-11-23T21:31:35.846Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-23T21:39:47.916Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ae6a5b06` | Multi-dimensional audit evidence | 2026-11-23T21:40:01.634Z |
+| `learn-huggingface-inclusionai-ling-3-2-air` | `https://huggingface.co/inclusionAI/Ling-3.2-air` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-23T21:48:01.786Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-23T21:48:04.375Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d0b2003d` | Multi-dimensional audit evidence | 2026-11-23T21:48:17.970Z |
+| `learn-dom-d-7e47fe9b` | `project://hf-inclusionai-ling-3.2-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | 2026-11-23T21:48:46.597Z |

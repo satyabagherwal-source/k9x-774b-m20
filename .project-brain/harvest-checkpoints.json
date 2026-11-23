@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:40:01.642Z",
+  "last_updated": "2026-11-23T21:48:17.979Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
-      "verified_at": "2026-11-19T15:21:28.410Z",
+      "content_hash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
+      "verified_at": "2026-11-23T21:48:04.382Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:21:28.410Z"
+      "last_updated": "2026-11-23T21:48:04.382Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
-      "verified_at": "2026-11-23T17:46:25.614Z",
+      "content_hash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
+      "verified_at": "2026-11-23T21:48:17.978Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:46:25.614Z"
+      "last_updated": "2026-11-23T21:48:17.978Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -20039,6 +20039,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-23T15:12:31.446Z"
+    },
+    "inclusionAI/Ling-3.2-air": {
+      "repository": "inclusionAI/Ling-3.2-air",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-inclusionai-ling-3-2-air",
+      "content_hash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
+      "verified_at": "2026-11-23T21:48:01.794Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T21:48:01.794Z"
     }
   },
   "repos": {

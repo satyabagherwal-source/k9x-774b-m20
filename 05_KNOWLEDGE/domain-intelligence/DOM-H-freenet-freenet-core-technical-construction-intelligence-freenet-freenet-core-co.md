@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "5d881b7e",
+  "source_version": "d0b2003d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T17:46:25.839Z",
+  "timestamp": "2026-11-23T21:48:18.198Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `5d881b7e`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T17:46:25.839Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d0b2003d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T21:48:18.198Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:46:24.519Z  
+> **Harvest Timestamp**: 2026-11-23T21:48:16.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1752,11 +1752,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6342** (2026-11-23): **chore(ci): build the NAT Validation binary with auto-update off**
-  *Symptoms*: ## Problem  NAT Validation fails on any PR branch older than the latest release: the Docker test nodes run without a supervisor, see the newer release, and exit 42, so the network never connects (evidence in #6341).  ## Approach  Set `FREENET_GIT_IS_DIRTY: "1"` at job level in `test_nat_validation`, the same switch the macOS job already uses. `build.rs` reads it at build time and disables auto-update in the binary. `--disable-auto-update` has no env binding by design (#4690), and the Docker harness is an external crate, so the build-time override is the available switch. Job-wide, so the Build and test steps agree and nothing rebuilds on a changed env.  ## Testing  CI-only change. The YAML parses. The proof is this PR's NAT Validation run, which must not depend on the release version; I cannot make the failure occur here because this branch is at the latest release. The failure was reproduced from run 45139192143 logs (nodes exiting 42 on a newer release).  Closes #6341  [AI-assisted - Claude] 
+- **Issue #6352** (2026-11-23): **test: give each joiners-behind-one-address test its own network name**
+  *Symptoms*: ## Problem  `joiners_behind_one_address_get_past_transient_eviction` and its `_seed_1/2/3` variants (#6337) all pass the same network name, `"transient-evict-one-address"`, to `SimNetwork`. The name keys each node's config and data directories. Under plain `cargo test` the four tests share one process, so they collide on those directories and all four fail at `NodeConfig` build. CI runs `cargo nextest`, which isolates each test in its own process, so CI is green and cannot see this (`.claude/rules/testing.md`, "Cross-test interference is invisible to CI").  On `main` at 8198b32c8, `cargo test -p freenet --features simulation_tests,testing --lib -- joiners_behind_one_address_get_past_transient_eviction`:  ``` test ...::joiners_behind_one_address_get_past_transient_eviction_seed_3 ... FAILED test ...::joiners_behind_one_address_get_past_transient_eviction_seed_1 ... FAILED test ...::joiners_behind_one_address_get_past_transient_eviction ... FAILED test ...::joiners_behind_one_address_get_past_transient_eviction_seed_2 ... FAILED called `Result::unwrap()` on an `Err` value: File exists (os error 17) called `Result::unwrap()` on an `Err` value: File exists (os error 17) called `Result::unwrap()` on an `Err` value: File exists (os error 17) test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 9327 filtered out; finished in 0.48s ```  Each test passes when run alone.  ## Approach  The test macro now passes the test's own name (`stringify!($test)`) as the network name. Ea
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 1  The only change is in the test-generating macro `joiners_behind_one_address_test!` in `connection_lifecycle/tests.rs`. It replaces the shared literal network name `"transient-evict-one-address"` with `stringify!($test)`.  - `stringify!($test)` expands to a `&'static str`. That matches the `name: &'static str` parameter of `join_behind_one_address`, so it compiles. - Each of the four generated tests now gets a unique name, which fixes the "File exists" collision on shared config and data directories. - The change adds no banned time or randomness APIs, no `.unwrap()` in production code, and no GC or cleanup logic. - The commit subject follows conventional commits and is under 72 characters. - The macro's comment explains why the change is needed. - This is a test-only change. It isn't a `fix:` PR, so the regression-test rule doesn't apply. - 
+  > Closing as a duplicate: #6348 (merged 42b9438bd) gives each joiners_behind_one_address variant its own network name, which is the same fix.
 
-- **Issue #6341** (2026-11-23): **ci: NAT Validation fails on PR branches older than the latest release (test nodes auto-update and exit 42)**
-  *Symptoms*: ## Problem  NAT Validation fails on any PR whose branch version is older than the latest published release.  Evidence, PR #6324 (head `aab1f5f83`, crate version 0.2.162), run 45139192143, started 2026-11-23 08:32Z. v0.2.163 was published at 06:38Z. Every Docker test node logged, and then exited:  ``` WARNING: update 0.2.163 detected but no service supervisor was found. Exiting with code 42 WITHOUT applying the update. ```  (gw0 at 08:43:46Z, peer1 and peer3 at 08:44:35Z, peer2 at 08:45:02Z.) The test then failed with `ConnectivityFailed("Network did not reach 100% connectivity within 120s")` on all 3 tries.  ## Cause  The NAT Validation job (`.github/workflows/ci.yml`) builds `freenet` without `FREENET_GIT_IS_DIRTY=1`, so auto-update is active in the test nodes. The Docker harness (`freenet-test-network`) passes no `--disable-auto-update`. A release newer than the branch makes every node exit 42. The macOS job in the same file already sets `FREENET_GIT_IS_DIRTY: "1"` for this reason.  It affects every open PR below the latest release until it merges main, and every re-run after a release.  ## Proposed fix  Build the job's binary with `FREENET_GIT_IS_DIRTY=1` (job-level `env`), as the macOS job does. `--disable-auto-update` has no env binding by design (#4690), so the build-time override is the available switch without changing the external harness.  [AI-assisted - Claude] 
+- **Issue #6350** (2026-11-23): **fix(test): simulation test binaries keep node data dirs under a per-process temp root**
+  *Symptoms*: ## Problem  `test_quic_native_blocked_pairs_connect_over_udp_behind_nats` fails intermittently on nova ("UDP fallbacks between peers that did not connect (1 of N)") and passes in CI, on a fixed seed with the direct runner, which should be deterministic.  The cause is not wall-clock time. The simulation integration tests link the library without `cfg(test)`, so `ConfigPathsArgs::default_dirs` puts every node's data dir at the shared `/tmp/freenet-{id}`, and the ids are fixed per test. Two concurrent runs of one simulation test share those dirs. That happens with another worktree, another agent, or two parallel batches on one machine. One run can then delete the other's live dirs (`build Config: No such file or directory`). Or a node can load the peer cache the other process just persisted, which changes its bootstrap, so the fixed-seed run takes a different path.  Evidence: - **Sequential runs are identical.** Six sequential runs of the test produce byte-identical logs up to teardown, once per-run ports and absolute instants are normalized. - **CPU contention alone does not change anything.** Six runs pinned to one core against three busy loops are also identical up to teardown, so this is not a dependence on host load as such. - **The failing run diverges at a cache load.** The failing run's log diverges from an unloaded run at `Loaded peer cache count=9`. - **Concurrency reproduces it.** Starting a second run 5 s and 5.5 s after a first makes the second load peer caches (1 a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1773,866 +1776,1617 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72808dff` (2026-11-23)
-**Commit Message**: fix(secrets): a failed secret read no longer reaches delegates as 'not found' (#6319)
+### Incident Patch 1: `d0b2003d` (2026-11-23)
+**Commit Message**: fix(connect): bound per-joiner native setups; decide UDP when there is no room (#6345)
 
-**File**: `crates/core/src/wasm_runtime/delegate/execution.rs` (modified, +20/-0)
+**File**: `.claude/rules/transport.md` (modified, +39/-0)
 ```diff
-@@ -380,6 +380,26 @@ impl Runtime {
-         // rather than on a per-field exception.
-         let outbound = result?;
- 
-+        // #5857: a secret read that failed for a reason other than the secret
-+        // being absent poisoned this call. The guest may have taken it for
-+        // absence (every stdlib guest to date does), so its answer cannot be
-+        // trusted. Fail the whole call: a frozen delegate then becomes loud
-+        // with no change to its code, and the caller can retry. Checked here,
-+        // after the guest has finished, so the env is read by one thread only.
-+        if let Some(failure) = DELEGATE_ENV
-+            .get(&instance_id)
-+            .and_then(|env| env.secret_read_failure())
-+        {
-+            return Err(
-+                DelegateExecError::from(freenet_stdlib::prelude::DelegateError::Other(format!(
-+                    "delegate secret storage read failed (not a missing secret); \
-+                     the call was aborted so it cannot be mistaken for an empty \
-+                     store, retry it: {failure}"
-+                )))
-+                .into(),
-+            );
-+        }
-+
-         // Reached only on success, which means `execute_wasm_blocking` received
-         // the guest's result. The job sends that result only after the guest
-         // closure has returned and dropped its captures, so the guest has
+@@ -527,6 +527,10 @@ dropped unanswered past the per-CONNECT cap on refused acceptors,
+ turned its own native connects off,
+ `connect_native_acceptor_demotions` for each time it stopped deciding native
+ as acceptor,
++`connect_native_admission_refused` for each native setup it did not admit as
++acceptor (deciding UDP instead),
++`connect_native_admission_control_dropped` for each control pair it left out
++of the arms as acceptor for lack of setup room,
+ `connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial that
+ connected after a native setup that failed ON THE PATH (timed out,
+ handshake failed, Hello lost: `counts_toward_demotion`; R5: a connection a
+@@ -2539,6 +2543,41 @@ Demotion: one principle for both roles: a STRIKE needs evidence that native
+   counts (joiner_in_control, not read for rates) still include pairs whose
+   acceptor is demoted and every UDP-answered pair of a demoted joiner.
+   Either streak's effect is a 6 h downgrade to UDP, never a failed join.
++Setup admission: before deciding Native, the acceptor admits the setup
++  (NativeConnectState::admit_acceptor_setup, through
++  RelayContext::admit_native_setup), by joiner ADDRESS, the unit native
++  setups, allow-set slots and dial coalescing all use: at most
++  acceptor_pending_setups_max(max_connections) addresses pending (half of
++  the node's native setup slots, NATIVE_SETUPS_MAX lowered to the connection
++  limit as QuicPolicy::native_setups_max is, so the node's own dials as
++  joiner keep the rest), at most ACCEPTOR_PENDING_SETUPS_PER_SOURCE (4) from
++  one source (put::stream_admission::Source: an IPv4 address or an IPv6 /64;
++  loopback counted per port for local test networks), and only with a known
++  address. Another CONNECT to a pending address shares its entry (a
++  refcount). A refusal decides Udp at once (counted
++  connect_native_admission_refused), so a joiner never waits out the native
++  fallback because the acceptor had no room; the pair is in neither arm, and
++  a control pair at an acceptor with no room (acceptor_setup_room) leaves
++  the control arm too. The admission is a SetupTicket carried in the
++  AcceptOutcome into dispatch_expect_connection_from and dropped at the
++  acceptor's native dial deadline (NATIVE_CONNECT_WITHIN after the dispatch,
++  which ends every window the setup can run in, however late it starts), not
++  at the dial's answer, which can come before the setup ends (a UDP
++  connection beside it or from the joiner, a transient-budget refusal) or
++  never (a native request queued behind a stalled UDP dial); an
++  accept never dispatched (the retry branches drop one when they forward)
++  or a failed dispatch drops it and releases it. The source is the address
++  the CONNECT carries, which the joiner or a relay on its path chooses, so
++  the per-source cap bounds honest crowding (one host, one CGNAT line), not
++  a sender that forges addresses; what holds either way is the node cap,
++  and that a refused pair dials UDP at once. A control pair dropped for lack
++  of room is counted (connect_native_admission_control_dropped), so step 1
++  sees how much of the control arm load removed, beside the treated
++  refusals (connect_native_admission_refused). Residuals: the cap bounds
++  distinct pending addresses, not decisions; the node's own native dials as
++  joiner take setup slots uncapped; loopback is counted per port only in
++  test builds; and after phase D a refusal cannot "decide UDP", so it will
++  need another answer (a Rejected).
+ Existing transport: a native dial does not drop a connection the node
+   already has to that peer; the joiner may have connected another way since
+   the acceptor decided.
 ```
 
-**File**: `crates/core/src/wasm_runtime/delegate/test.rs` (modified, +254/-3)
+**File**: `crates/core/src/operations/connect.rs` (modified, +195/-9)
 ```diff
-@@ -43,11 +43,24 @@ mod delegate2_messages {
-         IncrementCounter,
-         HasSecret(Vec<u8>),
-         GetNonExistentSecret(Vec<u8>),
--        StoreSecret { key: Vec<u8>, value: Vec<u8> },
-+        StoreSecret {
-+            key: Vec<u8>,
-+            value: Vec<u8>,
-+        },
-         RemoveSecret(Vec<u8>),
-         WriteLargeContext(usize),
--        StoreLargeSecret { key: Vec<u8>, size: usize },
--        ReadWriteRead { key: Vec<u8>, value: Vec<u8> },
-+        StoreLargeSecret {
-+            key: Vec<u8>,
-+            size: usize,
-+        },
-+        ReadWriteRead {
-+            key: Vec<u8>,
-+            value: Vec<u8>,
-+        },
-+        ReadThenRemove {
-+            read_key: Vec<u8>,
-+            remove_key: Vec<u8>,
-+        },
-     }
- 
-     #[derive(Debug, Serialize, Deserialize)]
-@@ -2432,6 +2445,244 @@ async fn a_write_invalidates_the_secret_memo_within_one_process_call()
-     Ok(())
+@@ -445,6 +445,22 @@ pub(crate) trait RelayContext {
+     /// address, read when it decides as acceptor. An existing transport is
+     /// reused, so the decision is then `Udp`.
+     fn holds_transport_to(&self, joiner: &PeerKeyLocation) -> bool;
++
++    /// Admits a native setup with the joiner before this node, as acceptor,
++    /// decides `Native` (`NativeConnectState::admit_acceptor_setup`); a
++    /// refusal makes the decision `Udp`. The ticket rides in the
++    /// `AcceptOutcome` and is dropped at the acceptor's native dial deadline.
++    fn admit_native_setup(
++        &self,
++        joiner: &PeerKeyLocation,
++    ) -> Result<native::SetupTicket, native::SetupAdmissionRefusal>;
++
++    /// Whether a native setup with the joiner would be admitted now, without
++    /// taking one (`NativeConnectState::acceptor_setup_room`).
++    fn native_setup_room(
++        &self,
++        joiner: &PeerKeyLocation,
++    ) -> Result<(), native::SetupAdmissionRefusal>;
  }
  
-+/// #5857: a secret read that FAILS (as opposed to finding nothing) must not
-+/// reach the guest as absence, because every stdlib guest to date maps any
-+/// negative return of `get_secret` to `None` and a delegate acting on `None`
-+/// can initialise over real data.
-+///
-+/// The failure is injected by replacing the secret's blob with a symlink to a
-+/// directory, so `fs::read` fails with `EISDIR` (not `NotFound`)
-+/// deterministically, including when the suite runs as root, where a
-+/// `chmod 000` would not fail. Unix only (symlink creation).
-+///
-+/// Checked through a real guest, in three parts: the whole call fails (so a
-+/// frozen delegate is loud), the write the guest tries after the failed read is
-+/// refused (the planted directory survives), and a genuinely absent secret
-+/// still reads as absent.
-+#[cfg(unix)]
-+#[tokio::test(flavor = "multi_thread")]
-+async fn a_failed_secret_read_fails_the_call_and_blocks_writes_not_reads_as_absent()
-+-> Result<(), Box<dyn std::error::Error>> {
-+    use delegate2_messages::{InboundAppMessage, OutboundAppMessage};
-+
-+    let (delegate, mut runtime, temp_dir) = setup_runtime(TEST_DELEGATE_2).await?;
-+    let key = b"unreadable".to_vec();
-+
-+    let send = |runtime: &mut Runtime, msg: &InboundAppMessage| {
-+        let payload = bincode::serialize(msg).expect("serialize");
-+        runtime.inbound_app_message(
-+            delegate.key(),
-+            &vec![].into(),
-+            None,
-+            None,
-+            vec![InboundDelegateMsg::ApplicationMessage(
-+                ApplicationMessage::new(payload),
-+            )],
-+        )
-+    };
-+
-+    // Control: a secret that was never written is genuinely absent.
-+    let absent = send(
-+        &mut runtime,
-+        &InboundAppMessage::HasSecret(b"never-written".to_vec()),
-+    )?;
-+    let payloads = app_payloads(&absent);
-+    assert!(
-+        matches!(
-+            bincode::deserialize::<OutboundAppMessage>(&payloads[0])?,
-+            OutboundAppMessage::SecretExists(false)
-+        ),
-+        "a never-written secret must still read as absent"
-+    );
-+
-+    // Seed it, then make its blob unreadable (but present).
-+    send(
-+        &mut runtime,
-+        &InboundAppMessage::StoreSecret {
-+            key: key.clone(),
-+            value: b"real data".to_vec(),
-+        },
-+    )?;
-+    let blob = temp_dir
-+        .path()
-+        .join("secrets")
-+        .join(delegate.key().encode())
-+        .join(freenet_stdlib::prelude::SecretsId::new(key.clone()).encode());
-+    assert!(blob.is_file(), "seeded blob must exist at {blob:?}");
-+    // A symlink to a directory: `fs::read` follows it and fails with EISDIR,
-+    // but a write would REPLACE the symlink (rename over a plain directory
-+    // fails by itself, which would make the write-refusal assertion below
-+    // vacuous).
-+    let unreadable_target = temp_dir.path().join("unreadable-target");
-+    std::fs::create_dir(&unreadable_target)?;
-+    std::fs::remove_file(&blob)?;
-+    std::os::unix::fs::symlink(&unreadable_target, &blob)?;
-+
-+    // Read-then-write in one call: the read fails, so the call fails...
-+    let res = send(
-+        &mut runtime,
-+        &InboundAppMessage::ReadWriteRead {
-+            key: key.clone(),
-+            value: b"overwrite".to_vec(),
-+        },
-+    );
-+    let err = res.expect_err("a failed secret read must fail the whole delegate call");
-+    assert!(
-+        format!("{err}").contains("secret storage read failed"),
-+        "error must say the storage read failed, got: {err}"
-+    );
-+    // ...and the write the guest attempted afterwards was refused.
-+    assert!(
-+        blob.symlink_metadata()?.file_type().is_symlink(),
-+        "the write after a failed read must be refused, not replace the blob"
-+    );
-+
-+    // has_secret must not answer "no" for a read that failed.
-+    let res = send(&mut runtime, &InboundAppMessage::HasSecret(key.clone()));
-+    let err = res.expect_err("has_secret on an unreadable secret must fail the call");
-+    assert!(
-+        format!("{err}").contains("secret st
-```
-
-**File**: `crates/core/src/wasm_runtime/native_api.rs` (modified, +318/-18)
-```diff
-@@ -1072,6 +1072,27 @@ pub(super) struct DelegateCallEnv {
-     /// after an unrelated release-profile change.
-     ///
-     secret_read_memo: std::cell::RefCell<SecretReadMemo>,
-+    /// Set the first time a secret READ fails with an I/O error rather than the
-+    /// secret being absent. #5857. (A blob that reads but fails to
-+    /// authenticate keeps its old answer, see #6323.)
-+    ///
-+    /// A delegate cannot be trusted to tell that apart from "no such secret":
-+    /// every stdlib guest to date maps ANY negative return of `get_secret` /
-+    /// `get_secret_len` to `None`, so a new error code would be read as absence
-+    /// by every delegate already deployed, and those are the ones that matter
-+    /// (frozen predecessor generations are never rebuilt). Acting on "absent"
-+    /// by initialising or overwriting the secret is the data-loss shape.
-+    ///
-+    /// So the call is POISONED: the read returns `ERR_STORAGE_FAILED`, secret
-+    /// writes, removals and delegate creation are refused for the rest of the
-+    /// call, and `exec_inbound_with_env` fails the whole call once `process()`
-+    /// returns, so no guest can handle the code and carry on. Effects made
-+    /// BEFORE the failed read (an earlier `set_secret`) are not rolled back, so
-+    /// a retried call must be safe to repeat.
-+    ///
-+    /// Holds the first failure's text. Behind a `RefCell` like `context`, for
-+    /// the same reason: nothing needs a `&mut DelegateCallEnv`.
-+    secret_read_failure: std::cell::RefCell<Option<String>>,
+ /// Bundle of the two side-effects a relay must emit atomically when it
+@@ -467,6 +483,10 @@ pub(crate) struct AcceptOutcome {
+     /// The comparison arm of the decision in `response`
+     /// ([`native::acceptor_arm`]), kept for the dial's outcome.
+     pub native_arm: Option<crate::transport::ConnectArm>,
++    /// The native setup admission a `Native` decision holds until the
++    /// acceptor's native dial deadline; dropped with an accept that is never
++    /// dispatched, which releases it.
++    pub native_admission: Option<native::SetupTicket>,
  }
  
- // SAFETY: `DELEGATE_ENV` is a `static`, so its `DashMap` must be `Sync`, which
-@@ -1301,6 +1322,7 @@ impl DelegateCallEnv {
-             created_delegates_count,
-             inherited_origins,
-             secret_read_memo: std::cell::RefCell::new(None),
-+            secret_read_failure: std::cell::RefCell::new(None),
-         }
-     }
- 
-@@ -1387,6 +1409,56 @@ impl DelegateCallEnv {
-         Ok(out)
-     }
- 
-+    /// Classify a failed secret read (#5857). Returns the host error code to
-+    /// hand the guest: `ERR_STORAGE_FAILED` for an I/O failure, in which case
-+    /// the call is poisoned (see the `secret_read_failure` field docs), and
-+    /// `ERR_SECRET_NOT_FOUND` for everything else, including a blob that fails
-+    /// to authenticate (#6323).
-+    fn classify_secret_read_error(&self, secret_id: &SecretsId, e: &SecretStoreError) -> i32 {
-+        // Scope: I/O failures, which are transient and retryable. A blob that
-+        // reads but does not authenticate is deterministic corruption or a key
-+        // mismatch; retrying cannot help and failing the call would leave the
-+        // delegate unable to run at all, so it keeps its historical answer.
-+        if !matches!(e, SecretStoreError::IO(_)) {
-+            return error_codes::ERR_SECRET_NOT_FOUND;
-+        }
-+        tracing::error!(
-+            delegate = %self.delegate_key,
-+            secret_id = ?secret_id,
-+            error = %e,
-+            "secret read I/O failure (not an absent secret); poisoning this delegate call"
-+        );
-+        self.secret_read_failure
-+            .borrow_mut()
-+            .get_or_insert_with(|| e.to_string());
-+        error_codes::ERR_STORAGE_FAILED
-+    }
-+
-+    /// Record a failed secret-key enumeration (an I/O error reading the key
-+    /// registry) as a read failure of this call (#5857) and return the host
-+    /// error code for the guest.
-+    fn record_secret_enumeration_failure(&self, e: &std::io::Error) -> i32 {
-+        tracing::error!(
-+            delegate = %self.delegate_key,
-+            error = %e,
-+            "secret enumeration I/O failure (not an empty set); poisoning this delegate call"
-+        );
-+        self.secret_read_failure
-+            .borrow_mut()
-+            .get_or_insert_with(|| format!("key registry read failed: {e}"));
-+        error_codes::ERR_STORAGE_FAILED
-+    }
-+
-+    /// The first non-absence secret read failure of this call, if any.
-+    pub(super) fn secret_read_failure(&self) -> Option<String> {
-+        self.secret_read_failure.borrow().clone()
-+    }
-+
-+    /// Whether a secret read has failed during this call (it is poisoned).
-+    fn secret_reads_poisoned(&self) -> bool {
-+        self.secret_read_failure.borrow().is_some()
-+    }
-+
-     /// Drop the read memo.
-     ///
-     /// Called by every host function that can change what a read of ANY secret
-@@ -1453,6 +1525,15 @@ impl DelegateCallEnv {
-             Delegate, DelegateCode, DelegateContainer, DelegateWasmAPIVersion, Parameters,
+ /// Why a relay at terminus could not accept and rejected the request.
+@@ -645,15 +665,38 @@ impl RelayState {
+     ) -> (
+         Option<native::NativeDecision>,
+         Option<crate::transport::ConnectArm>,
++        Option<native::SetupTicket>,
+     ) {
+         let Some(offer) = self.request.native_offer else {
+-            return (None, None);
++            return (None, None, None);
          };
- 
-+        // A failed secret read poisons the call (#5857): the guest may be
-+        // acting on a belief that something is absent, and a created delegate
-+        // is durable, while the call is about to fail and be retried.
-+        if self.secret_reads_poisoned() {
-+            return Err(DelegateCreateError::StoreFailed(
-+                "an earlier secret read failed in this call".to_string(),
-+            ));
+         let bucket = native::native_bucket(own_key, self.request.joiner.pub_key());
+         let readiness = ctx.native_readiness();
+         let holds = ctx.holds_transport_to(&self.request.joiner);
+-        let decision = native::decide_native(Some(offer), readiness, bucket, holds);
+-        let arm = native::acceptor_arm(Some(offer), readiness, bucket, holds);
++        let mut decision = native::decide_native(Some(offer), readiness, bucket, holds);
++        let mut arm = native::acceptor_arm(Some(offer), readiness, bucket, holds);
++        // A `Native` decision holds a native setup slot and an allow-set slot
++        // here for up to the server's window. Admit it first; with no room
++        // (or too many pending from the joiner's source) decide `Udp`, so the
++        // joiner dials UDP at once instead of waiting out the fallback. The
++        // pair is then in neither arm: it left the treated arm for a reason
++        // other than the slice, and a control pair at an acceptor with no room
++        // leaves the control arm the same way.
++        let mut admission = None;
++        if decision == native::NativeDecision::Native {
++            match ctx.admit_native_setup(&self.request.joiner) {
++                Ok(ticket) => admission = Some(ticket),
++                Err(_) => {
++                    decision = native::NativeDecision::Udp;
++                    arm = None;
++                }
++            }
++        } else if arm == Some(crate::transport::ConnectArm::Control)
++            && ctx.native_setup_room(&self.request.joiner).is_err()
++        {
++            arm = None;
++            crate::transport::metrics::TRANSPORT_METRICS.record_connect_native_control_dropped();
 +        }
-+
-
-```
-
-**File**: `crates/core/src/wasm_runtime/secrets_store/store.rs` (modified, +310/-60)
-```diff
-@@ -500,7 +500,11 @@ impl SecretsStore {
-     ///   or the `.snapshots` directory, because those are siblings of
-     ///   `users/`, and a `SecretsId::encode()` (bs58 of a 32-byte hash) is
-     ///   never the ASCII string "users".
--    fn scope_dir(&self, delegate: &DelegateKey, scope: &SecretScope<'_>) -> PathBuf {
-+    pub(in crate::wasm_runtime) fn scope_dir(
-+        &self,
-+        delegate: &DelegateKey,
-+        scope: &SecretScope<'_>,
-+    ) -> PathBuf {
-         let delegate_dir = self.base_path.join(delegate.encode());
-         match scope {
-             SecretScope::Local => delegate_dir,
-@@ -1210,8 +1214,15 @@ impl SecretsStore {
-         scope: SecretScope<'_>,
-     ) -> Result<Zeroizing<Vec<u8>>, SecretStoreError> {
-         let secret_path = self.scope_dir(delegate, &scope).join(key.encode());
--        let blob =
--            fs::read(secret_path).map_err(|_| SecretStoreError::MissingSecret(key.clone()))?;
-+        // Only a file that does not exist is a missing secret. Any other read
-+        // failure (EIO, EACCES, EMFILE) must not look like absence: a delegate
-+        // that acts on "missing" can overwrite real data after a transient
-+        // error (#5857).
-+        #[allow(clippy::wildcard_enum_match_arm)] // io::ErrorKind is #[non_exhaustive]
-+        let blob = fs::read(secret_path).map_err(|e| match e.kind() {
-+            std::io::ErrorKind::NotFound => SecretStoreError::MissingSecret(key.clone()),
-+            _ => SecretStoreError::IO(e),
-+        })?;
- 
-         match &scope {
-             SecretScope::Local => {
-@@ -1259,7 +1270,11 @@ impl SecretsStore {
-     }
- 
-     /// Path of the encrypted key registry for `(delegate, scope)`.
--    fn key_registry_path(&self, delegate: &DelegateKey, scope: &SecretScope<'_>) -> PathBuf {
-+    pub(in crate::wasm_runtime) fn key_registry_path(
-+        &self,
-+        delegate: &DelegateKey,
-+        scope: &SecretScope<'_>,
-+    ) -> PathBuf {
-         self.scope_dir(delegate, scope).join(KEY_REGISTRY_FILE)
-     }
- 
-@@ -1520,6 +1535,9 @@ impl SecretsStore {
-     /// bytes the delegate originally supplied to `store_secret`, deduplicated
-     /// and capped at [`MAX_REGISTERED_KEYS_PER_SCOPE`] by construction.
-     ///
-+    /// # Errors
-+    /// An I/O error reading the registry (anything but absent or corrupt).
-+    ///
-     /// This is the host-side backing for the `__frnt__delegate__list_secrets`
-     /// hostcall (#4355): it lets a delegate rediscover an open-ended key family
-     /// (e.g. `room:<owner_vk>`) that it would otherwise have to track itself.
-@@ -1528,14 +1546,24 @@ impl SecretsStore {
-         delegate: &DelegateKey,
-         scope: SecretScope<'_>,
-         prefix: &[u8],
--    ) -> Vec<Vec<u8>> {
--        // Enumeration is best-effort: an unreadable registry (transient IO
--        // error, malformed header, or decrypt failure) yields an empty list
--        // for this call rather than an error, since the value read/write paths
--        // are independent of the registry. `read_key_registry` already logged
--        // the cause loudly and, critically, did NOT overwrite the on-disk blob
--        // — so a later call can still recover the full set once it is readable.
--        let mut keys = self.read_key_registry(delegate, &scope).unwrap_or_default();
-+    ) -> std::io::Result<Vec<Vec<u8>>> {
-+        // A registry that is present but corrupt (malformed header or AEAD
-+        // failure, reported as `InvalidData`) enumerates as empty: that is
-+        // deterministic, retrying cannot help, and the value read/write paths
-+        // are independent of the registry (policy for corrupt blobs: #6323).
-+        // `read_key_registry` already logged the cause loudly and did NOT
-+        // overwrite the on-disk blob.
-+        //
-+        // Any OTHER failure is an I/O error (EIO, EACCES, EMFILE, ...). That
-+        // must not read as "this delegate has no secrets": a delegate that
-+        // rediscovers its rooms through this call would conclude it holds
-+        // none and could seal a migration as empty (#5857). It is returned
-+        // so the host function can fail the call.
-+        let mut keys = match self.read_key_registry(delegate, &scope) {
-+            Ok(keys) => keys,
-+            Err(e) if e.kind() == std::io::ErrorKind::InvalidData => Vec::new(),
-+            Err(e) => return Err(e),
-+        };
-         // Defense-in-depth (#4117 L2): never surface the reserved
-         // `\0freenet-migrate/` coordination namespace to a delegate. These are
-         // node/app copy-forward markers, not user keys — a consumer must never
-@@ -1544,7 +1572,7 @@ impl SecretsStore {
-         if !prefix.is_empty() {
-             keys.retain(|k| k.starts_with(prefix));
+         crate::transport::metrics::TRANSPORT_METRICS.record_connect_native_decided(decision);
+         #[cfg(any(test, feature = "testing"))]
+         if let Some(own) = ctx.self_location().socket_addr() {
+@@ -666,7 +709,7 @@ impl RelayState {
+                 },
+             );
          }
--        keys
-+        Ok(keys)
+-        (Some(decision), arm)
++        (Some(decision), arm, admission)
      }
  
-     /// Enumerate the snapshot history for a given `(delegate, secret_id)`
-@@ -2197,14 +2225,16 @@ impl SecretsStore {
-             .with_alphabet(bs58::Alphabet::BITCOIN)
-             .into_string();
-         le
+     /// Helper to prepare and execute forwarding to a peer.
+@@ -820,7 +863,7 @@ impl RelayState {
+                                     let acceptor = PeerKeyLocation::with_unknown_addr(
+                                         self_loc.pub_key().clone(),
+                                     );
+-                                    let (native_decision, native_arm) =
++                                    let (native_decision, native_arm, native_admission) =
+                                         self.native_decision(ctx, self_loc.pub_key());
+                                     actions.accept = Some(AcceptOutcome {
+                                         response: ConnectResponse {
+@@ -829,6 +872,7 @@ impl RelayState {
+                                         },
+                                         joiner: self.request.joiner.clone(),
+                                         native_arm,
++                                        native_admis
 ```
 
-**File**: `docs/secrets-at-rest.md` (modified, +9/-5)
+**File**: `crates/core/src/operations/connect/native.rs` (modified, +375/-2)
 ```diff
-@@ -372,11 +372,15 @@ describes:
- - Bounded at 4096 keys per scope to cap amplification; over-cap keys are
-   still stored and readable as values but are not enumerable.
+@@ -121,6 +121,20 @@ pub(crate) const STRIKE_WINDOW: Duration = DEMOTION_COOLDOWN;
+ /// How long a demoted node offers (or decides) nothing native.
+ pub(crate) const DEMOTION_COOLDOWN: Duration = Duration::from_secs(6 * 3600);
  
--The registry is **best-effort and independent of the value path**: it is
--written strictly AFTER the durable value+index commit, and a failed or
--unreadable registry only degrades future enumeration — it never blocks
--or loses a secret VALUE. A transient read error or a corrupt/undecryptable
--`.keys` blob is FAIL-SAFE: the on-disk registry is left untouched rather
-+The registry is **independent of the value path**: it is written
-+strictly AFTER the durable value+index commit, and a failed or unreadable
-+registry never blocks or loses a secret VALUE. A corrupt or undecryptable
-+`.keys` blob is best-effort: it enumerates as empty (policy tracked in
-+#6323). A transient I/O error reading the registry (EIO, EACCES, EMFILE)
-+is NOT reported as an empty list: `list_secrets` returns
-+`ERR_STORAGE_FAILED` and fails that delegate call, so a delegate cannot
-+mistake an unreadable registry for "no secrets" (#5857). Either way the
-+registry is FAIL-SAFE: the on-disk registry is left untouched rather
- than overwritten from empty, so a momentary IO hiccup cannot permanently
- shrink the enumerable key set (it recovers on the next readable write).
- 
-```
-
-**File**: `tests/test-delegate-2/src/lib.rs` (modified, +19/-0)
-```diff
-@@ -48,6 +48,9 @@ pub enum InboundAppMessage {
-     /// `DelegateCallEnv` per inbound message, so two messages get two memos
-     /// and cannot observe a stale one. It has to happen in a single call.
-     ReadWriteRead { key: Vec<u8>, value: Vec<u8> },
-+    /// Read `read_key`, then remove `remove_key`, in ONE `process()` call.
-+    /// If the read fails the host must refuse the removal (#5857).
-+    ReadThenRemove { read_key: Vec<u8>, remove_key: Vec<u8> },
- }
- 
- #[derive(Debug, Serialize, Deserialize)]
-@@ -237,6 +240,22 @@ impl DelegateInterface for Delegate {
-                         Ok(vec![OutboundDelegateMsg::ApplicationMessage(response)])
-                     }
- 
-+                    InboundAppMessage::ReadThenRemove {
-+                        read_key,
-+                        remove_key,
-+                    } => {
-+                        let _first = ctx.get_secret(&read_key);
-+                        let removed = ctx.remove_secret(&remove_key);
-+                        let payload = bincode::serialize(&if removed {
-+                            OutboundAppMessage::SecretRemoved
-+                        } else {
-+                            OutboundAppMessage::SecretStoreFailed
-+                        })
-+                        .map_err(|err| DelegateError::Other(format!("{err}")))?;
-+                        let response = ApplicationMessage::new(payload).processed(true);
-+                        Ok(vec![OutboundDelegateMsg::ApplicationMessage(response)])
-+                    }
-+
-                     InboundAppMessage::RemoveSecret(key) => {
-                         ctx.remove_secret(&key);
- 
-```
-
----
-
-### Incident Patch 2: `5d881b7e` (2026-11-23)
-**Commit Message**: chore(ci): build the NAT Validation binary with auto-update off (#6342)
-
-**File**: `.github/workflows/ci-cache-warm.yml` (modified, +1/-0)
-```diff
-@@ -193,6 +193,7 @@ jobs:
-     env:
-       RUST_LOG: error
-       RUST_MIN_STACK: 268435456
-+      FREENET_GIT_IS_DIRTY: "1"
- 
-     steps:
-       - uses: actions/checkout@v7
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +5/-0)
-```diff
-@@ -1672,6 +1672,11 @@ jobs:
-     env:
-       RUST_LOG: error
-       RUST_MIN_STACK: 268435456
-+      # Auto-update off in the Docker test nodes (#6341). They run the built
-+      # binary with no supervisor, so a release newer than the branch makes
-+      # every node exit 42 and the network never connects. `build.rs` reads
-+      # this at build time; set job-wide so no step rebuilds on a changed env.
-+      FREENET_GIT_IS_DIRTY: "1"
- 
-     steps:
-       # Skip every real step on non-release merge_group entries. PR-level CI
-```
-
----
-
-### Incident Patch 3: `a331beba` (2026-11-23)
-**Commit Message**: build(deps): use the freenet-quinn fork carrying quinn#2987 (#6290)
-
-**File**: `.claude/rules/transport.md` (modified, +91/-29)
-```diff
-@@ -158,11 +158,11 @@ pass took the datagram of a newer admission and cleared that admission as
- its own (2 to 37 of 3200 takes lost in
- an_admitted_take_is_not_lost_to_another_thread). A QUIC take is named too:
- QuicPoller::poll_ready hands its admission number to QuicSocket::try_send
--through a thread-local (quic/socket.rs HANDED_ADMISSION), relying on quinn
--0.11.12 calling poll_writable then try_send back to back on one thread
--(connection.rs:1048-1057; a quinn bump must re-check it,
-+through a thread-local (quic/socket.rs HANDED_ADMISSION), relying on
-+freenet-quinn 0.11.13 calling poll_writable then try_send back to back on one
-+thread (connection.rs:1138-1145; a quinn bump must re-check it,
- a_poller_hands_its_admission_to_the_transmit_that_follows). quinn's
--endpoint respond (endpoint.rs:584) sends with no poll, finds no handoff and
-+endpoint respond (endpoint.rs:606) sends with no poll, finds no handoff and
- leaves every admission alone. No take ever uses an admission it does not
- name. The queue holds a waker
- and a place, never bytes. So connections share the cap by their number of
-@@ -2615,7 +2615,7 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-     the connection's shared flow control and send window (quinn-proto
-     write_limit).
-   → The division uses this node's MAX_UNI_STREAMS, not the limit the peer
--    advertised (quinn 0.11.12 does not expose it). A data path's peer starts
-+    advertised (freenet-quinn 0.11.13 does not expose it). A data path's peer starts
-     at DATA_START_UNI_STREAMS (16) and raises toward 64 only once its streams
-     are all busy, so the sender keeps its 48 permits: capping it below the
-     peer's limit would stop the raise. Until the peer has raised, the reserve
-@@ -2775,14 +2775,18 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   Each locally reset stream leaves one Arc<Notify> in quinn's per-
-   connection `stopped` map until the connection closes (quinn 0.11.12:
-   stopped() registers it, and a local reset produces neither the Finished
--  nor the Stopped event that removes it). Bounded by the sends aborted on
-+  nor the Stopped event that removes it; freenet-quinn 0.11.13 also removes
-+  it when the stopped() future is dropped, so a reset stream whose waiter
-+  was cancelled leaves none, measured 0 B, and only a waiter still alive
-+  across the reset, such as an ack-wait task, keeps one). Bounded by the sends aborted on
-   the connection: the path counts its own resets (a stop the peer sent,
-   surfaced through a write or through stopped(), is not one; nor is a reset
-   on a closed connection) and closes the connection past
-   recycle::SEND_ABORT_LIMIT (4096) with close code SEND_ABORT_LIMIT (M6).
-   The fixed charge per connection (config::QUIC_CONNECTION_CHARGE_BYTES,
-   930 KiB) takes the map at that worst case, 4096 x QUIC_STOPPED_ENTRY_BYTES
--  (104 B, measured 88 B). Polling stopped() only after finish() would not
-+  (104 B, an upper bound: 88 B with quinn 0.11.12, 0 B with
-+  freenet-quinn). Polling stopped() only after finish() would not
-   avoid the entries: a writer blocked on connection credit must still race
-   stopped() (below), so the poll stays on every wait and the common resets
-   register anyway.
-@@ -2995,7 +2999,7 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
-   one of this connection's (or held one since the previous sample;
-   socket::CapHolds, one record per connection since #6128, handed to the
-   poller quinn creates inside connect_with / accept_with by
--  socket::with_poller_holds, which relies on quinn 0.11.12 building that
-+  socket::with_poller_holds, which relies on freenet-quinn 0.11.13 building that
-   poller synchronously on the calling thread; a poller built elsewhere is
-   counted per endpoint, CapHolds::fallback_pollers, and the path tests
-   assert 0) no window runs on that path (pinned per connection by
-@@ -3729,7 +3733,7 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     CONNECTION_CLOSE reaches any peer, and peers find out from their own
-     idle timeout. Sending one would not work anyway: EndpointDriver::drop
-     drops each connection's event channel, and a connection driver that
--    sees that ends with INTERNAL_ERROR before it transmits (quinn 0.11.12
-+    sees that ends with INTERNAL_ERROR before it transmits (freenet-quinn 0.11.13
-     ConnectionDriver::poll). Pinned by
-     an_adapter_panic_ends_every_connection_and_counts_once.
-   → On EVERY Down (a returned driver too) each connection's watcher closes
-@@ -3754,8 +3758,19 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     respond() path (stateless reset, version negotiation, Retry, a close
-     for a refused attempt), which calls try_send with no poll_writable
-     (pinned by the_adapter_refuses_sends_after_a_panic_without_running).
--  → These claims depend on quinn 0.11.12 internals, so quinn is pinned
--    "=0.11.12" in crates/core/Carg
-```
-
-**File**: `Cargo.lock` (modified, +44/-2)
-```diff
-@@ -2114,6 +2114,8 @@ dependencies = [
-  "flatbuffers 25.12.19",
-  "flate2",
-  "freenet-macros 0.1.0",
-+ "freenet-quinn",
-+ "freenet-quinn-proto",
-  "freenet-stdlib 0.12.1",
-  "freenet-test-network",
-  "futures 0.3.34",
-@@ -2140,8 +2142,6 @@ dependencies = [
-  "pav_regression",
-  "pin-project",
-  "proptest",
-- "quinn",
-- "quinn-proto",
-  "rand 0.10.1",
-  "rand 0.9.4",
-  "rand_core 0.10.1",
-@@ -2280,6 +2280,48 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "freenet-quinn"
-+version = "0.11.13"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "5ed6545c75f519ecb4373f0d51735c7df25fbc16f7e66166ac081395fd5b0a56"
-+dependencies = [
-+ "bytes 1.12.1",
-+ "cfg_aliases",
-+ "freenet-quinn-proto",
-+ "pin-project-lite",
-+ "quinn-udp",
-+ "rustc-hash",
-+ "rustls",
-+ "socket2",
-+ "thiserror 2.0.21",
-+ "tokio",
-+ "tracing",
-+ "web-time",
-+]
-+
-+[[package]]
-+name = "freenet-quinn-proto"
-+version = "0.11.13"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "79fa5599b86e86471dd891860aa9a0b50b6c56f1363f31e5a0908aee68431c92"
-+dependencies = [
-+ "bytes 1.12.1",
-+ "getrandom 0.4.2",
-+ "lru-slab",
-+ "rand 0.10.1",
-+ "rand_pcg",
-+ "ring",
-+ "rustc-hash",
-+ "rustls",
-+ "rustls-pki-types",
-+ "slab",
-+ "thiserror 2.0.21",
-+ "tinyvec",
-+ "tracing",
-+ "web-time",
-+]
-+
- [[package]]
- name = "freenet-release-agent"
- version = "0.1.0"
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +21/-11)
-```diff
-@@ -124,20 +124,30 @@ rustls = { version = "0.23", default-features = false, features = ["std"] }
- # crate's own Runtime over TimeSource, so simulation drives it), no
- # platform-verifier (peers are authenticated by raw public keys, never by a CA
- # root store), and no aws-lc-rs (deny.toml bans it).
-+# TEMPORARY FORK: `freenet-quinn` / `freenet-quinn-proto` (freenet/quinn, branch
-+# `freenet-0.11.13`) are quinn's `0.11.x` branch head plus nothing else, published
-+# only because upstream has not released quinn-rs/quinn#2987 ("Avoid poisoned-lock
-+# panics during cleanup": a panic in an endpoint or connection driver no longer
-+# aborts the process, #6184). `package = ` keeps the imports as `quinn` and
-+# `quinn_proto`. Switch back to upstream `quinn` as soon as it releases that fix.
- # Pinned exactly: the panic containment in transport/quic relies on quinn
--# 0.11.12 internals (driver poll order, which destructors lock, respond()
--# sending without poll_writable). See .claude/rules/transport.md (PANICS)
--# and re-check those before bumping. This freezes quinn only: quinn-proto and
--# quinn-udp still float, which is intended, as the internals relied on live
--# in quinn itself. It also stops `cargo update` (and automated bumps) from
--# taking quinn patch releases, security fixes included, so taking one is a
--# deliberate step: bump this pin and re-check the transport.md items.
--quinn = { version = "=0.11.12", default-features = false, features = ["rustls-ring"] }
--# quinn's protocol crate, already in the graph under quinn. Named directly only
-+# 0.11.x internals (driver poll order, which destructors lock, respond()
-+# sending without poll_writable), re-checked against this fork head (0.11.x at
-+# a9ae122f, 52+ commits past quinn 0.11.12). See .claude/rules/transport.md
-+# (PANICS) and re-check those before bumping. The exact pin also stops
-+# `cargo update` (and automated bumps) from taking a different build, so
-+# taking one is a deliberate step: bump this pin and re-check the transport.md
-+# items. The fork's own `quinn-udp` dependency is upstream's, from crates.io.
-+quinn = { package = "freenet-quinn", version = "=0.11.13", default-features = false, features = ["rustls-ring"] }
-+# quinn's protocol crate (the fork's, in the graph under quinn). Named directly only
- # for `InvalidCid`, which quinn does not re-export and a connection-ID
- # generator's `validate` must return (transport/quic/cid.rs). No features of
--# its own: quinn's `rustls-ring` decides them.
--quinn-proto = { version = "0.11.18", default-features = false }
-+# its own: quinn's `rustls-ring` decides them. Must be the same package quinn
-+# uses: a differently named proto package would link beside it, but its
-+# `InvalidCid` would be a different type from the one quinn's
-+# `ConnectionIdGenerator::validate` returns, so the generator would not
-+# type-check.
-+quinn-proto = { package = "freenet-quinn-proto", version = "=0.11.13", default-features = false }
- # Already in the graph via rustls's ring provider. Used directly for the QUIC
- # endpoint's stateless-reset HMAC key and handshake-token HKDF key, which
- # quinn-proto implements its key traits for. Renamed because the crate has its
-```
-
-**File**: `crates/core/src/bin/commands/rollback.rs` (modified, +11/-0)
-```diff
-@@ -2020,6 +2020,17 @@ pub(crate) mod tests {
-         live
-     }
- 
-+    #[test]
-+    fn a_quic_restart_exit_is_not_a_crash() {
-+        // #5940 / #6184: a gateway's restart for QUIC, including the exit a
-+        // quinn driver panic takes (the endpoint death, or a monitored task the
-+        // panic killed, `liveness::driver_death_restart`), must never count
-+        // toward a post-update rollback: several early quinn panics would roll
-+        // a good release back. The crash breaker bounds those restarts instead.
-+        let code = freenet::QUIC_RESTART_EXIT_CODE.to_string();
-+        assert_eq!(classify_stop(&code), StopClass::NotCrash, "exit {code}");
-+    }
-+
-     #[test]
-     fn classify_stop_crash_vs_not() {
-         // Clean / voluntary-update / already-running: never a crash.
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -26,6 +26,8 @@ mod message;
- 
- /// Node configuration, implementations and execution (entry points for the binaries).
- mod node;
-+#[doc(hidden)]
-+pub use node::QUIC_RESTART_EXIT_CODE;
- pub use node::{
-     EventLoopExitReason, Node, ShutdownHandle, enable_abort_on_fatal_listener_exit,
-     enable_abort_on_redb_poison, enable_fast_crash_exit_code, listener_exit_is_graceful,
-```
-
-**File**: `crates/core/src/node.rs` (modified, +2/-0)
-```diff
-@@ -116,6 +116,8 @@ mod request_router;
- pub(crate) mod resource_metrics;
- pub(crate) mod testing_impl;
- 
-+#[doc(hidden)]
-+pub use p2p_impl::QUIC_RESTART_EXIT_CODE;
- pub(crate) use p2p_impl::abort_process_on_redb_poison;
- pub use p2p_impl::{
-     enable_abort_on_fatal_listener_exit, enable_abort_on_redb_poison, enable_fast_crash_exit_code,
-```
-
-**File**: `crates/core/src/node/p2p_impl.rs` (modified, +70/-21)
-```diff
-@@ -47,6 +47,12 @@ use super::{OpManager, background_task_monitor::BackgroundTaskMonitor};
- /// backoff. Production gateways are Linux, so this only slows restart on macOS.
- const FATAL_LISTENER_EXIT_CODE: i32 = 42;
- 
-+/// The exit code a gateway's planned restart for QUIC takes, an endpoint
-+/// death included ([`listener_exit_code`]): exported so the binary's
-+/// post-update rollback can pin that it never counts it as a crash.
-+#[doc(hidden)]
-+pub const QUIC_RESTART_EXIT_CODE: i32 = FATAL_LISTENER_EXIT_CODE;
-+
- /// Exit code for a fatal listener exit that happened too soon after start
- /// (uptime < [`MIN_HEALTHY_UPTIME_FOR_UPDATE_EXIT`]) to be a healthy node hitting
- /// an update / transient fault — i.e. a fast crash or boot-wedge (#4551).
-@@ -131,6 +137,32 @@ fn listener_exit_code(error: &anyhow::Error, uptime: Duration, fast_crash_enable
-     }
- }
- 
-+/// Exit the process with `exit_code` if `e` is a gateway's planned restart to
-+/// restore QUIC ([`crate::transport::GatewayQuicRestart`]), logging it as the
-+/// planned restart it is; return otherwise.
-+fn exit_for_gateway_quic_restart(e: &anyhow::Error, exit_code: i32, uptime: Duration) {
-+    let Some(restart) = e.downcast_ref::<crate::transport::GatewayQuicRestart>() else {
-+        return;
-+    };
-+    tracing::warn!(
-+        reason = restart.reason,
-+        exit_code,
-+        uptime_secs = uptime.as_secs(),
-+        "Gateway exiting for its service supervisor to restart it with QUIC on: {}",
-+        restart.reason
-+    );
-+    eprintln!(
-+        "Gateway exiting with code {exit_code} for its service supervisor to restart it with \
-+         QUIC on: {}",
-+        restart.reason
-+    );
-+    // The file log is written by a background worker that `process::exit`
-+    // does not wait for; give it a moment so the line above reaches the log.
-+    // Blocking this worker thread is harmless: the process exits next.
-+    std::thread::sleep(std::time::Duration::from_millis(500));
-+    std::process::exit(exit_code);
++/// Native setups this node may have decided as acceptor and not yet seen end,
++/// at a connection limit of `max_connections`: half of the node's native
++/// setup slots (`QuicPolicy::native_setups_max`, which is
++/// [`crate::transport::NATIVE_SETUPS_MAX`] lowered to the connection limit),
++/// so its own dials as joiner keep the other half; at least 1.
++pub(crate) fn acceptor_pending_setups_max(max_connections: usize) -> usize {
++    (crate::transport::NATIVE_SETUPS_MAX.min(max_connections) / 2).max(1)
 +}
 +
- /// When `true`, a sub-[`MIN_HEALTHY_UPTIME_FOR_UPDATE_EXIT`] fatal listener exit
- /// uses the distinct [`FAST_CRASH_EXIT_CODE`] (45) instead of the default
- /// [`FATAL_LISTENER_EXIT_CODE`] (42). Off by default; the binary opts in (via
-@@ -713,27 +745,7 @@ impl NodeP2P {
-                    // #5940: a supervised gateway restarting to restore QUIC
-                    // takes this same exit, but it is planned, so it is not
-                    // logged as a failure.
--                   if let Some(restart) = e.downcast_ref::<crate::transport::GatewayQuicRestart>() {
--                       tracing::warn!(
--                           reason = restart.reason,
--                           exit_code,
--                           uptime_secs = uptime.as_secs(),
--                           "Gateway exiting for its service supervisor to restart it with QUIC \
--                            on: {}",
--                           restart.reason
--                       );
--                       eprintln!(
--                           "Gateway exiting with code {exit_code} for its service supervisor to \
--                            restart it with QUIC on: {}",
--                           restart.reason
--                       );
--                       // The file log is written by a background worker that
--                       // `process::exit` does not wait for; give it a moment
--                       // so the line above reaches the log. Blocking this
--                       // worker thread is harmless: the process exits next.
--                       std::thread::sleep(std::time::Duration::from_millis(500));
--                       std::process::exit(exit_code);
--                   }
-+                   exit_for_gateway_quic_restart(&e, exit_code, uptime);
-                    eprintln!("CRITICAL: Network event listener exited (fatal): {e}");
-                    tracing::error!(
-                        error = %e,
-@@ -769,6 +781,25 @@ impl NodeP2P {
-             e = background_monitor => {
-                 eprintln!("CRITICAL: Background task exited: {e}");
-                 tracing::error!("Background task exited: {:?}", e);
-+                // #6184 backstop: a task killed by a quinn driver panic (the
-+                // accept loop polled on another worker in the moment before
-+                // Down) exits as the endpoint death does, 42, recorded once in
-+                // the breaker marker, not as a crash the rollback counts.
-+                if ABORT_ON_FATAL_LISTENER_EXIT.load(std::sync::atomic::Ordering::Relaxed)
-+                    && crate::transport::quic::liveness::driver_death_restart(
-+                        crate::transport::quic::breaker::note_endpoint_down_exit_once,
-+                    )
-+                    .await
-+                {
-+                    let restart = anyhow::Error::new(crate::transport::GatewayQuicRestart {
-+                        reason: "its QUIC endpoint died",
-+                    });
-+       
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +8/-2)
-```diff
-@@ -733,6 +733,12 @@ pub(crate) fn udp_transport_handle<S: Socket>(
-     listen_task: tokio::task::JoinHandle<TransportError>,
-     restart: Option<GatewayQuicRestartWatch>,
- ) -> super::TransportHandle {
-+    if restart
-+        .as_ref()
-+        .is_some_and(|watch| watch.endpoint.is_some())
-+    {
-+        super::quic::liveness::exit_for_endpoint_death();
-+    }
-     super::TransportHandle {
-         quic_endpoint: outbound.quic_availability().get()
-             != super::quic::liveness::QuicAvailability::Disabled,
-@@ -743,7 +749,7 @@ pub(crate) fn udp_transport_handle<S: Socket>(
-         listener: Box::pin(listener_liveness(
-             listen_task,
-             restart,
--            super::quic::breaker::note_endpoint_down_exit,
-+            super::quic::breaker::note_endpoint_down_exit_once,
-         )),
++/// Of the acceptor's pending setups, how many may be for joiner addresses
++/// in one source: an IPv4 address, or an IPv6 /64 (what one host or one
++/// customer line usually gets). Provisional.
++pub(crate) const ACCEPTOR_PENDING_SETUPS_PER_SOURCE: usize = 4;
++
+ const SLICE_DOMAIN: &[u8] = b"freenet-quic-native-slice-v1";
+ 
+ /// What a joiner offers in its `ConnectRequest`.
+@@ -336,8 +350,11 @@ impl DialTransport {
+ 
+ /// How long a native dial may wait when its caller has no deadline of its
+ /// own. The setup's own window is shorter and ends it first (8 s for the
+-/// client, 12 s for the server), so this only bounds a setup that never
+-/// reports.
++/// client, 12 s for the server), so for the setup this only bounds one that
++/// never reports. It ALSO sets how long an acceptor holds a native setup
++/// admission ([`SetupTicket`]): from the dispatch of its native dial to this
++/// long after it. Changing it changes the acceptor's admission throughput
++/// (pending cap / this duration).
+ pub(crate) const NATIVE_CONNECT_WITHIN: std::time::Duration = std::time::Duration::from_secs(20);
+ 
+ /// This node's readiness for native connections in one role: as joiner
+@@ -530,6 +547,168 @@ pub(crate) fn joiner_response_action(
      }
  }
-@@ -755,7 +761,7 @@ pub(crate) fn udp_transport_handle<S: Socket>(
- /// first. A death ends it only once `record` noted it in the crash-loop
- /// breaker's marker (`breaker::note_endpoint_down_exit`), so the next start
- /// can count it; a death that cannot be noted leaves the node running.
--async fn listener_liveness(
-+pub(in crate::transport) async fn listener_liveness(
-     mut listen_task: tokio::task::JoinHandle<TransportError>,
-     restart: Option<GatewayQuicRestartWatch>,
-     record: fn(std::time::SystemTime) -> bool,
+ 
++/// Where a joiner's native setup is counted for
++/// [`ACCEPTOR_PENDING_SETUPS_PER_SOURCE`]: the crate's per-host source unit
++/// (`put::stream_admission::Source`: an IPv4 address or an IPv6 /64). In test
++/// builds only, a loopback or unspecified address is counted per port, since
++/// local test networks run every node on one such address; a release build
++/// counts it as one host.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum SetupSource {
++    Host(crate::operations::put::stream_admission::Source),
++    #[cfg(any(test, feature = "testing"))]
++    Exact(std::net::SocketAddr),
++}
++
++impl SetupSource {
++    fn of(addr: std::net::SocketAddr) -> Self {
++        #[cfg(any(test, feature = "testing"))]
++        {
++            let ip = addr.ip().to_canonical();
++            if ip.is_loopback() || ip.is_unspecified() {
++                return Self::Exact(addr);
++            }
++        }
++        Self::Host(crate::operations::put::stream_admission::Source::of(addr))
++    }
++}
++
++/// Why the acceptor decided `Udp` for a pair it would otherwise have decided
++/// `Native`.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum SetupAdmissionRefusal {
++    /// The acceptor's pending setups are at its cap
++    /// ([`acceptor_pending_setups_max`]).
++    Full,
++    /// [`ACCEPTOR_PENDING_SETUPS_PER_SOURCE`] joiner addresses are pending
++    /// from the joiner's source.
++    SourceFull,
++    /// The joiner's address is not known, so there is nothing to count it by
++    /// (or to dial).
++    NoAddress,
++}
++
++/// The native setups this node decided as acceptor and has not yet seen end
++/// ([`NativeConnectState::admit_acceptor_setup`]), by joiner address: the
++/// unit the node's native setups, allow-set slots and dial coalescing all
++/// use. A `Native` decision holds a native setup slot and an allow-set slot
++/// for up to the server's window, so the acceptor admits a setup before
++/// deciding `Native` rather than finding the slots taken when its setup
++/// starts. A joiner that was refused is decided `Udp` at once: it never waits
++/// out the native fallback because the acceptor had no room.
++#[derive(Debug)]
++pub(crate) struct NativeSetupAdmission {
++    /// By joiner address: its source and how many tickets hold it (CONNECTs
++    /// to one address share its one setup, since dials to one address
++    /// coalesce).
++    pending: std::collections::HashMap<std::net::SocketAddr, (SetupSource, usize)>,
++    cap: usize,
++}
++
++impl NativeSetupAdmission {
++    fn new(cap: usize) -> Self {
++        Self {
++            pending: std::collections::HashMap::new(),
++            cap: cap.max(1),
++        }
++    }
++
++    /// Whether a ticket for `addr` would be admitted now, without taking one.
++    fn check(&self, addr: Option<std::net::SocketAddr>) -> Result<(), SetupAdmissionRefusal> {
++        let Some(addr) = addr else {
++            return Err(SetupAdmissionRefusal::NoAddress);
++        };
++        if self.pending.contains_key(&addr) {
++         
+```
+
+**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +198/-7)
+```diff
+@@ -1611,7 +1611,7 @@ async fn drive_relay_connect(
+     // across the decision (handle_request + initial outbound emits) so
+     // the slot count tracks "concurrent admissions" not "in-flight
+     // relay drivers" — the receive loop below runs without the guard.
+-    let initial_actions = {
++    let mut initial_actions = {
+         let _admission = match op_manager.ring.connection_manager.try_admit_connect() {
+             Some(g) => g,
+             None => {
+@@ -1685,13 +1685,14 @@ async fn drive_relay_connect(
+ 
+     // Local accept (promote joiner BEFORE sending Response upstream;
+     // legacy connect.rs:1636).
+-    if let Some(ref accept) = initial_actions.accept {
++    if let Some(accept) = initial_actions.accept.as_mut() {
+         dispatch_expect_connection_from(
+             op_manager,
+             incoming_tx,
+             accept.joiner.clone(),
+             accept.response.native_decision,
+             accept.native_arm,
++            accept.native_admission.take(),
+         )
+         .await?;
+     }
+@@ -1942,6 +1943,7 @@ async fn drive_relay_connect(
+                         accept.joiner,
+                         accept.response.native_decision,
+                         accept.native_arm,
++                        accept.native_admission,
+                     )
+                     .await?;
+                     trace_accept(upstream_addr, &accept.response, joiner_addr, true);
+@@ -2122,6 +2124,7 @@ async fn drive_relay_connect(
+                         accept.joiner,
+                         accept.response.native_decision,
+                         accept.native_arm,
++                        accept.native_admission,
+                     )
+                     .await?;
+                     trace_accept(upstream_addr, &accept.response, joiner_addr, true);
+@@ -2539,9 +2542,9 @@ mod tests {
+         // 3. The happy-path accept branch must dispatch too, so the pin is
+         //    not satisfied solely by the retry branches.
+         let happy_pos = prod
+-            .find("if let Some(ref accept) = initial_actions.accept {")
++            .find("if let Some(accept) = initial_actions.accept.as_mut() {")
+             .expect(
+-                "happy-path accept branch `if let Some(ref accept) = initial_actions.accept` \
++                "happy-path accept branch `if let Some(accept) = initial_actions.accept.as_mut()` \
+                  not found — renamed or removed; update this pin and verify it still \
+                  promotes the joiner.",
+             );
+@@ -2567,7 +2570,27 @@ mod tests {
+                 "a `dispatch_expect_connection_from` call does not pass \
+                  `accept.response.native_decision`: {call}"
+             );
++            // 5. ... and the decision's native setup admission (#6345). A
++            //    site passing `None` leaves the ticket in the accept, which
++            //    drops when the response block ends: the admission would be
++            //    held for milliseconds, not to the dial deadline, and the
++            //    acceptor's cap would bound nothing.
++            let flat: String = call.split_whitespace().collect();
++            assert!(
++                flat.contains(",accept.native_admission") && !flat.contains(",None,)"),
++                "a `dispatch_expect_connection_from` call does not hand over \
++                 `accept.native_admission`: {call}"
++            );
+         }
++        // The happy path borrows the accept (it is read after the dispatch),
++        // so it must take the ticket out of it.
++        let happy_call = &happy_window[happy_dispatch.expect("checked above")..];
++        let happy_call = &happy_call[..happy_call.find(".await").expect("awaited")];
++        let happy_flat: String = happy_call.split_whitespace().collect();
++        assert!(
++            happy_flat.contains(",accept.native_admission.take(),"),
++            "the happy-path dispatch must pass `accept.native_admission.take()`: {happy_call}"
++        );
+     }
+ 
+     /// Pins the wiring of the lattice-probe miss report (#5814), which the
+@@ -3671,9 +3694,16 @@ mod driver_timing_tests {
+         let (op_manager, mut events) = op_manager_with_events("acceptor-origin").await;
+         let joiner = peer(24880);
+         let tx = Transaction::new::<ConnectMsg>();
+-        super::super::dispatch_expect_connection_from(&op_manager, tx, joiner.clone(), None, None)
+-            .await
+-            .expect("dispatch");
++        super::super::dispatch_expect_connection_from(
++            &op_manager,
++            tx,
++            joiner.clone(),
++            None,
++            None,
++            None,
++        )
++        .await
++        .expect("dispatch");
+         loop {
+             let event = tokio::time::timeout(Duration::from_secs(5), events.recv())
+                 .await
+@@ -3714,6 +3744,7 @@ mod driver_timing_tests {
+             joiner.clone(),
+             Some(NativeDecision::Native),
+             None,
++            None,
+         )
+         .await
+         .e
+```
+
+**File**: `crates/core/src/ring/connection_manager.rs` (modified, +2/-1)
+```diff
+@@ -782,7 +782,8 @@ impl ConnectionManager {
+             config.native_connect_override,
+         )
+         .with_gateway_join_override(config.native_gateway_join_override)
+-        .with_joiner_off(config.native_joiner_off);
++        .with_joiner_off(config.native_joiner_off)
++        .with_acceptor_setup_limit(cm.max_connections);
+         native_connect.set_native_gateways(
+             config
+                 .gateways
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +8/-0)
+```diff
+@@ -3108,6 +3108,14 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "connect_native_acceptor_demotions".into(),
+                 serde_json::json!(snapshot.connect_native_acceptor_demotions),
+             );
++            m.insert(
++                "connect_native_admission_refused".into(),
++                serde_json::json!(snapshot.connect_native_admission_refused),
++            );
++            m.insert(
++                "connect_native_admission_control_dropped".into(),
++                serde_json::json!(snapshot.connect_native_admission_control_dropped),
++            );
+             m.insert(
+                 "connect_native_rescued_by_udp_joiner".into(),
+                 serde_json::json!(snapshot.connect_native_rescued_by_udp_joiner),
+```
+
+**File**: `crates/core/src/transport.rs` (modified, +1/-1)
+```diff
+@@ -357,7 +357,7 @@ pub(crate) use self::boundary::NativeConnectFuture;
+ pub(crate) use self::boundary::TransportHandle;
+ pub(crate) use self::metrics::{ConnectArm, NativeConnectSide, NativeSetupOutcome};
+ pub(crate) use self::quic::native::setup::{
+-    MIN_WINDOW_LEFT as NATIVE_MIN_WINDOW_LEFT, NATIVE_FALLBACK_AFTER,
++    MIN_WINDOW_LEFT as NATIVE_MIN_WINDOW_LEFT, NATIVE_FALLBACK_AFTER, NATIVE_SETUPS_MAX,
+     window_of as native_setup_window,
+ };
+ pub(crate) use self::quic::upgrade::driver::NativeDial;
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +76/-0)
+```diff
+@@ -1167,6 +1167,13 @@ pub struct TransportMetrics {
+     /// Times this node stopped deciding QUIC-native as acceptor after its
+     /// native setups failed with distinct joiners (reset each snapshot).
+     connect_native_acceptor_demotions: AtomicU64,
++    /// Native setups this node did not admit as acceptor, deciding UDP
++    /// instead (`connect::native::NativeSetupAdmission`) (reset each
++    /// snapshot).
++    connect_native_admission_refused: AtomicU64,
++    /// Control pairs this node left out of the connect arms as acceptor
++    /// because it had no room for a native setup (reset each snapshot).
++    connect_native_admission_control_dropped: AtomicU64,
+     /// A UDP dial that followed a failed native setup connected, by the side
+     /// this node had in the CONNECT (reset each snapshot).
+     connect_native_rescued_by_udp_joiner: AtomicU64,
+@@ -1599,6 +1606,14 @@ thread_local! {
+     pub(crate) static CONNECT_ARM_ON_THIS_THREAD: std::cell::Cell<[u64; ConnectArmCounter::COUNT]> =
+         const { std::cell::Cell::new([0; ConnectArmCounter::COUNT]) };
+ 
++    /// Test-only: control pairs dropped for lack of setup room on this thread.
++    pub(crate) static NATIVE_CONTROL_DROPPED_ON_THIS_THREAD: std::cell::Cell<u64> =
++        const { std::cell::Cell::new(0) };
++
++    /// Test-only: native setups not admitted as acceptor on this thread.
++    pub(crate) static NATIVE_ADMISSIONS_REFUSED_ON_THIS_THREAD: std::cell::Cell<u64> =
++        const { std::cell::Cell::new(0) };
++
+     /// Test-only: acceptor-role demotions recorded on this thread, so a test
+     /// can see its own increment of the process-wide counter.
+     pub(crate) static ACCEPTOR_DEMOTIONS_ON_THIS_THREAD: std::cell::Cell<u64> =
+@@ -1727,6 +1742,8 @@ impl TransportMetrics {
+             connect_native_decision_over_cap: AtomicU64::new(0),
+             connect_native_demotions: AtomicU64::new(0),
+             connect_native_acceptor_demotions: AtomicU64::new(0),
++            connect_native_admission_refused: AtomicU64::new(0),
++            connect_native_admission_control_dropped: AtomicU64::new(0),
+             connect_native_rescued_by_udp_joiner: AtomicU64::new(0),
+             connect_native_rescued_by_udp_acceptor: AtomicU64::new(0),
+             connect_native_fallback_connected_joiner: AtomicU64::new(0),
+@@ -2373,6 +2390,24 @@ impl TransportMetrics {
+             .fetch_add(1, Ordering::Relaxed);
+     }
+ 
++    /// This node, as acceptor, left a control pair out of the connect arms:
++    /// it had no room for a native setup, as a treated pair would have been
++    /// refused.
++    pub(crate) fn record_connect_native_control_dropped(&self) {
++        self.connect_native_admission_control_dropped
++            .fetch_add(1, Ordering::Relaxed);
++        #[cfg(test)]
++        NATIVE_CONTROL_DROPPED_ON_THIS_THREAD.with(|count| count.set(count.get() + 1));
++    }
++
++    /// This node did not admit a native setup as acceptor and decided UDP.
++    pub(crate) fn record_connect_native_admission_refused(&self) {
++        self.connect_native_admission_refused
++            .fetch_add(1, Ordering::Relaxed);
++        #[cfg(test)]
++        NATIVE_ADMISSIONS_REFUSED_ON_THIS_THREAD.with(|count| count.set(count.get() + 1));
++    }
++
+     /// This node stopped deciding QUIC-native as acceptor.
+     pub(crate) fn record_connect_native_acceptor_demotion(&self) {
+         self.connect_native_acceptor_demotions
+@@ -3409,6 +3444,10 @@ impl TransportMetrics {
+             connect_native_decision_over_cap: get64(&self.connect_native_decision_over_cap),
+             connect_native_demotions: get64(&self.connect_native_demotions),
+             connect_native_acceptor_demotions: get64(&self.connect_native_acceptor_demotions),
++            connect_native_admission_refused: get64(&self.connect_native_admission_refused),
++            connect_native_admission_control_dropped: get64(
++                &self.connect_native_admission_control_dropped,
++            ),
+             connect_native_rescued_by_udp_joiner: get64(&self.connect_native_rescued_by_udp_joiner),
+             connect_native_rescued_by_udp_acceptor: get64(
+                 &self.connect_native_rescued_by_udp_acceptor,
+@@ -4144,6 +4183,10 @@ pub struct TransportSnapshot {
+     pub connect_native_demotions: u64,
+     /// Times the node stopped deciding native as acceptor after failures.
+     pub connect_native_acceptor_demotions: u64,
++    /// Native setups not admitted as acceptor (decided UDP instead).
++    pub connect_native_admission_refused: u64,
++    /// Control pairs left out of the arms for lack of setup room.
++    pub connect_native_admission_control_dropped: u64,
+     /// UDP dials that connected after a native setup that failed on the
+     /// path, as joiner and as acceptor (R5's rescue).
+     pub connect_native_rescued_by_udp_joiner: u64,
+@@ -4610,6 +4653,8 @@ impl TransportSnapshot {
+             connect_native_decision_over_cap,
+             connect_native_demotions,
+             connect
+```
+
+---
+
+### Incident Patch 2: `0837f3f7` (2026-11-23)
+**Commit Message**: feat(transport): rebuild a dead QUIC endpoint in process on unsupervised nodes (dark) (#6324)
+
+**File**: `.claude/rules/transport.md` (modified, +21/-5)
+```diff
+@@ -514,7 +514,7 @@ off in this process (`quic_breaker_suppressed`, a state that is never reset and
+ is not activity by itself) and the endpoint's state (`quic_endpoint`: `up`, or
+ `off_config`, `off_platform`, `off_abort`, `off_bind`, `off_breaker`, or `died`;
+ `unknown` before the node reaches the bind; set at startup after the breaker
+-gate, at the bind, and at the endpoint's death, which is final for the process;
++gate, at the bind, and at the endpoint's death, which is final for the process unless the node rebuilds its endpoint (see "QUIC endpoint rebuild", dark by default);
+ a state that is never reset and is not activity by itself) and QUIC connections this node closed, by close code
+ (`quic_close_sent_<label>`, one per `QuicCloseCode`), the QUIC-native connect
+ offer and decision (`connect_native_offered_{zero,nonzero}` built as joiner,
+@@ -3956,11 +3956,27 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
+   → QuicAvailabilityWatch (QuicEndpoint::availability, and
+     OutboundConnectionHandler::quic_availability, which is Disabled with
+     no endpoint): get() any time, not_up() to wait. Disabled, Down and
+-    Released are final, and not_up() returns them at once every time.
+-    Availability is per endpoint, one per node (so per process in
+-    production, per node in simulation).
++    Released are final for an endpoint, and not_up() returns them at once
++    every time. A node that rebuilds its endpoint (quic/rebuild.rs, off
++    unless ENDPOINT_REBUILD or a test turns it on) holds one watch of its
++    own (QuicAvailabilityWatch::settable) that follows the current endpoint
++    and goes from Down back to Up after a rebuild; each dead endpoint's own
++    watch keeps its final Down. Availability is per endpoint, one per
++    node (so per process in production, per node in simulation).
++  → QUIC endpoint rebuild (quic/rebuild.rs, #6272; dark: ENDPOINT_REBUILD is
++    false, so no production node rebuilds, and a supervised node exits for a
++    restart instead): a node with no supervisor whose endpoint died waits
++    1 s doubling to 5 min, +-20% jitter, then builds the endpoint again on
++    the node's one socket (QuicEndpoint::rebuild), starts its accept loop,
++    upgrades and attempt router (spawn_accept_loop_with and
++    spawn_attempt_router_with, which hand their JoinHandles to the rebuild
++    loop instead of the monitor), and swaps them in for the dead endpoint's.
++    The rebuild loop owns these tasks as the task quic_endpoint_rebuild;
++    a task that ends while the endpoint stays up still ends the node. The
++    backoff resets only after a rebuilt endpoint stays up for REBUILD_STABLE.
+   → QuicEndpoint::spawn_accept_loop registers the accept loop through a
+-    LateRegistrar as quic_accept_loop. The node starts it when it opens the
++    LateRegistrar as quic_accept_loop (a node that rebuilds its endpoint uses
++    spawn_accept_loop_with instead, and the rebuild loop owns the task). The node starts it when it opens the
+     transport with an endpoint (UdpTransportConfig::task_registrar; tools
+     and tests that pass none start no loop). It holds an EndpointCore
+     (no owner share), so it does not keep the endpoint alive: when the
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +435/-66)
+```diff
+@@ -471,15 +471,27 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+     // with it off the only additions are an idle queue and its poll, one
+     // atomic load per datagram from a source not on the allow-set, and
+     // counters that stay 0.
+-    if let Some(endpoint) = &quic_endpoint {
+-        if super::quic::admission::enabled_at(is_gateway, bind_addr) {
+-            let enabled = match quic_virtual_time {
+-                Some(time) => endpoint.enable_gateway_admission(time),
+-                None => endpoint.enable_gateway_admission(RealTime::new()),
+-            };
+-            tracing::info!(enabled, "QUIC gateway admission of native joins");
+-        }
+-    }
++    admit_native_joins_if_on(
++        quic_endpoint.as_ref(),
++        is_gateway,
++        bind_addr,
++        quic_virtual_time.clone(),
++    );
++    // What a node that rebuilds its endpoint when it dies (`quic::rebuild`)
++    // builds in place of the dead one: the same build, on this socket.
++    let rebuild_endpoint = quic_endpoint
++        .as_ref()
++        .and(quic_settings.clone())
++        .map(|settings| {
++            endpoint_rebuilder(
++                socket.clone(),
++                bind_addr,
++                keypair.clone(),
++                is_gateway,
++                settings,
++                quic_virtual_time.clone(),
++            )
++        });
+ 
+     // Test builds only: kill the endpoint after the delay this variable
+     // names, through a caught socket adapter panic, so a real-process test can
+@@ -512,6 +524,7 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+         (listen_host, listen_port).into(),
+         config,
+         quic_endpoint,
++        rebuild_endpoint,
+     )?;
+     Ok((
+         och,
+@@ -522,21 +535,289 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+     ))
+ }
+ 
++/// Admit native joins from sources nobody named on `endpoint`, on the
++/// endpoint's clock, when this gateway does (`quic::admission`).
++fn admit_native_joins_if_on(
++    endpoint: Option<&super::quic::QuicEndpoint>,
++    is_gateway: bool,
++    bind_addr: SocketAddr,
++    quic_virtual_time: Option<VirtualTime>,
++) {
++    if let Some(endpoint) = endpoint {
++        if super::quic::admission::enabled_at(is_gateway, bind_addr) {
++            let enabled = match quic_virtual_time {
++                Some(time) => endpoint.enable_gateway_admission(time),
++                None => endpoint.enable_gateway_admission(RealTime::new()),
++            };
++            tracing::info!(enabled, "QUIC gateway admission of native joins");
++        }
++    }
++}
++
++/// How a node that rebuilds its endpoint (`quic::rebuild`) builds one in
++/// place of a dead one: as `bind_udp_listener` built the first, on the same
++/// socket, clock (and `GlobalRng` side stream, in a simulation), settings and
++/// key, with the same admission, replacing the socket's QUIC ingress
++/// (`QuicEndpoint::rebuild`). The test-only faults of the first build (the
++/// endpoint-down variable, the trace's `fail_endpoint_at`) are not set again.
++fn endpoint_rebuilder<S: Socket>(
++    socket: Arc<DemuxSocket<S>>,
++    bind_addr: SocketAddr,
++    keypair: TransportKeypair,
++    is_gateway: bool,
++    settings: super::quic::QuicSettings,
++    quic_virtual_time: Option<VirtualTime>,
++) -> super::quic::rebuild::EndpointFactory {
++    use super::quic::QuicEndpoint;
++    Box::new(move || {
++        let built = match quic_virtual_time.clone() {
++            Some(time) => GlobalRng::with_side_stream(side_stream_of(bind_addr), || {
++                QuicEndpoint::rebuild(socket.clone(), bind_addr, time, &settings, &keypair)
++            }),
++            None => QuicEndpoint::rebuild(
++                socket.clone(),
++                bind_addr,
++                RealTime::new(),
++                &settings,
++                &keypair,
++            ),
++        };
++        let endpoint = match built {
++            Ok(endpoint) => endpoint,
++            Err(error) => {
++                tracing::warn!(%error, %bind_addr, "Could not rebuild the QUIC endpoint");
++                return None;
++            }
++        };
++        admit_native_joins_if_on(
++            Some(&endpoint),
++            is_gateway,
++            bind_addr,
++            quic_virtual_time.clone(),
++        );
++        Some(endpoint)
++    })
++}
++
++/// What runs on one QUIC endpoint besides quinn's own drivers, held by the
++/// listener for as long as it reads the socket that feeds the endpoint. The
++/// node replaces all of it when it rebuilds its endpoint (`quic::rebuild`).
++pub(super) struct QuicStack {
++    /// The endpoint, with its allow-set empty until an upgrade allows a peer
++    /// (#5940). Read only by tests; held for its owner share.
++    #[cfg_attr(not(test), allow(dead_code))]
++    endpoint: super::quic::QuicEndpoint,
++    /// The connection attempts the endpoint's accept loop hands on, when it
++    /// runs (`UdpTransportConfig::task_registrar` was set) and the node has no
++    /// upgrades to route them
+```
+
+**File**: `crates/core/src/transport/connection_handler/legacy_responder.rs` (modified, +1/-0)
+```diff
+@@ -320,6 +320,7 @@ mod tests {
+                 ..UdpTransportConfig::default()
+             },
+             None,
++            None,
+         )
+         .expect("gateway setup");
+ 
+```
+
+**File**: `crates/core/src/transport/connection_handler/tests/outbound_connector.rs` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ fn handler() -> (OutboundConnectionHandler<MockSocket>, Queue) {
+         quic_availability: crate::transport::quic::QuicAvailabilityWatch::disabled(),
+         upgrade_site: Default::default(),
+         quic_endpoint: None,
++        quic_stack: std::sync::Weak::new(),
+     };
+     (handler, queue)
+ }
+```
+
+**File**: `crates/core/src/transport/connection_handler/tests/transport_handle.rs` (modified, +3/-0)
+```diff
+@@ -49,6 +49,7 @@ async fn udp_handle_shares_one_expected_ip_set_and_reports_the_listener() {
+         quic_availability: crate::transport::quic::QuicAvailabilityWatch::disabled(),
+         upgrade_site: Default::default(),
+         quic_endpoint: None,
++        quic_stack: std::sync::Weak::new(),
+     };
+     let (inbound_tx, inbound_rx) = mpsc::channel(1);
+     let inbound = InboundConnectionHandler {
+@@ -112,6 +113,7 @@ async fn listener_outlives_a_dropped_connector_while_a_clone_remains() {
+         addr,
+         UdpTransportConfig::default(),
+         None,
++        None,
+     )
+     .map(|(o, rx, task)| {
+         (
+@@ -177,6 +179,7 @@ async fn udp_transport_config_reaches_the_listener_by_name() {
+             task_registrar: None,
+         },
+         None,
++        None,
+     );
+     assert_eq!(listener.bandwidth_limit, Some(1_111));
+     assert_eq!(listener.ledbat_min_ssthresh, Some(2_222));
+```
+
+**File**: `crates/core/src/transport/demux.rs` (modified, +156/-22)
+```diff
+@@ -13,10 +13,10 @@
+ 
+ use std::io;
+ use std::net::SocketAddr;
++use std::sync::Arc;
+ #[cfg(test)]
+ use std::sync::atomic::AtomicU64;
+ use std::sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering};
+-use std::sync::{Arc, OnceLock};
+ use std::task::{Context, Poll};
+ 
+ use dashmap::DashMap;
+@@ -377,7 +377,10 @@ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
+ pub struct DemuxSocket<S> {
+     inner: S,
+     egress: Option<EgressCap>,
+-    quic: OnceLock<QuicIngress>,
++    /// The QUIC ingress, once enabled. Replaced only when the node rebuilds
++    /// its QUIC endpoint (`quic::rebuild`, [`Self::with_replaced_quic_ingress`]);
++    /// read once per QUIC-class datagram.
++    quic: parking_lot::RwLock<Option<Arc<QuicIngress>>>,
+     /// Datagrams consumed here since the last legacy one, for the yield in
+     /// `recv_classified`. Only the listener reads, so relaxed is enough.
+     diverted_in_a_row: AtomicU32,
+@@ -390,7 +393,7 @@ impl<S> DemuxSocket<S> {
+         Self {
+             inner,
+             egress,
+-            quic: OnceLock::new(),
++            quic: parking_lot::RwLock::new(None),
+             diverted_in_a_row: AtomicU32::new(0),
+             #[cfg(test)]
+             quic_outcomes: Default::default(),
+@@ -418,13 +421,17 @@ impl<S> DemuxSocket<S> {
+         let (unknown, unknown_receiver) =
+             mpsc::channel(super::quic::admission::UNKNOWN_SOURCE_QUEUE_DATAGRAMS);
+         let shared = Arc::new(IngressShared::default());
+-        self.quic
+-            .set(QuicIngress {
++        {
++            let mut slot = self.quic.write();
++            if slot.is_some() {
++                return None;
++            }
++            *slot = Some(Arc::new(QuicIngress {
+                 queue,
+                 unknown,
+                 shared: shared.clone(),
+-            })
+-            .ok()?;
++            }));
++        }
+         Some(QuicIngressReceiver {
+             queue: receiver,
+             unknown: unknown_receiver,
+@@ -437,7 +444,7 @@ impl<S> DemuxSocket<S> {
+     /// dropping it (`quic::admission`, a gateway admitting native joins).
+     /// Whether an ingress was there to take it.
+     pub(crate) fn enable_unknown_source_lane(&self) -> bool {
+-        match self.live_quic_ingress() {
++        match self.live_quic_ingress().as_deref() {
+             Some(ingress) => {
+                 ingress.shared.unknown_lane.store(true, Ordering::Release);
+                 true
+@@ -463,23 +470,66 @@ impl<S> DemuxSocket<S> {
+         Some(built)
+     }
+ 
++    /// [`Self::with_quic_ingress`] for an endpoint built to replace one that
++    /// died (`quic::rebuild`): the ingress the dead endpoint read is disabled
++    /// (its allow-set emptied, its permits releasing nothing) and dropped, so
++    /// the dead endpoint's receiver ends, and a new one, with an empty
++    /// allow-set and empty queues, takes its place. If `build` fails the new
++    /// ingress is disabled too, leaving the socket as with QUIC off. `None`,
++    /// with nothing changed, if no ingress was ever enabled: a rebuild only
++    /// replaces an endpoint the node had.
++    pub(crate) fn with_replaced_quic_ingress<R, E>(
++        &self,
++        build: impl FnOnce(QuicIngressReceiver) -> Result<R, E>,
++    ) -> Option<Result<R, E>> {
++        let receiver = {
++            let mut slot = self.quic.write();
++            let old = slot.take()?;
++            disable(&old.shared);
++            let (queue, receiver) = mpsc::channel(QUIC_INGRESS_QUEUE_DATAGRAMS);
++            let (unknown, unknown_receiver) =
++                mpsc::channel(super::quic::admission::UNKNOWN_SOURCE_QUEUE_DATAGRAMS);
++            let shared = Arc::new(IngressShared::default());
++            *slot = Some(Arc::new(QuicIngress {
++                queue,
++                unknown,
++                shared: shared.clone(),
++            }));
++            QuicIngressReceiver {
++                queue: receiver,
++                unknown: unknown_receiver,
++                shared,
++            }
++        };
++        let built = build(receiver);
++        if built.is_err() {
++            self.disable_quic_ingress();
++        }
++        Some(built)
++    }
++
+     /// Stop the QUIC ingress for good: refuse new permits, empty the
+     /// allow-set, and count every QUIC-class datagram as `no_ingress`.
+     /// Permits still held release nothing (their entries are gone).
+     fn disable_quic_ingress(&self) {
+-        if let Some(ingress) = self.quic.get() {
+-            let shared = &ingress.shared;
+-            shared.disabled.store(true, Ordering::Release);
+-            shared.allowed.clear();
+-            shared.allowed_count.store(0, Ordering::Release);
++        if let Some(ingress) = self.quic.read().as_deref() {
++            disable(&ingress.shared);
+         }
+     }
+ 
+     /// The enabled ingress, unless it was disabled.
+-    fn live_quic_ingress(&self) -> Option<&QuicIngress> {
++    fn live_quic_ingress(&self) -> Option<Arc<QuicIngress>> {
+         self.quic
+-      
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +29/-3)
+```diff
+@@ -2243,8 +2243,8 @@ impl TransportMetrics {
+     }
+ 
+     /// Record the QUIC endpoint's state. [`QuicEndpointState::Died`] is final
+-    /// for the process: an endpoint that died is never rebuilt, so nothing
+-    /// set after it replaces it.
++    /// for the process: nothing set after it replaces it, except a rebuilt
++    /// endpoint ([`Self::record_quic_endpoint_rebuilt`]).
+     pub(crate) fn set_quic_endpoint_state(&self, state: QuicEndpointState) {
+         let died = QuicEndpointState::Died as u8;
+         // An `Err` is a death already recorded, which stays.
+@@ -2255,6 +2255,17 @@ impl TransportMetrics {
+             .ok();
+     }
+ 
++    /// The node built a new QUIC endpoint in place of one that died
++    /// (`quic::rebuild`): the state is `Up` again, replacing `Died`, unless
++    /// the new endpoint already died (`still_up` false): its death is then
++    /// the state.
++    pub(crate) fn record_quic_endpoint_rebuilt(&self, still_up: bool) {
++        if still_up {
++            self.quic_endpoint_state
++                .store(QuicEndpointState::Up as u8, Ordering::Relaxed);
++        }
++    }
++
+     /// The QUIC endpoint's state as last recorded.
+     pub(crate) fn quic_endpoint_state(&self) -> QuicEndpointState {
+         QuicEndpointState::from_u8(self.quic_endpoint_state.load(Ordering::Relaxed))
+@@ -3927,7 +3938,9 @@ pub(crate) enum QuicEndpointState {
+     /// The crash-loop breaker keeps QUIC off for this run.
+     OffBreaker = 6,
+     /// The endpoint died while the node held it: its driver ended, or its
+-    /// socket adapter caught a panic (`quic::liveness`). Final.
++    /// socket adapter caught a panic (`quic::liveness`). Final, unless the
++    /// node rebuilds its endpoint (`quic::rebuild`, dark until the UDP
++    /// removal), which records `Up` again.
+     Died = 7,
+ }
+ 
+@@ -6543,6 +6556,19 @@ mod tests {
+         assert_eq!(snap.quic_endpoint, "died", "the state is not reset");
+     }
+ 
++    /// A rebuilt endpoint makes the state `Up` again, except one that
++    /// already died: its death stays the state.
++    #[test]
++    fn a_rebuilt_endpoint_replaces_died_only_while_it_is_up() {
++        let metrics = TransportMetrics::new();
++        metrics.record_quic_endpoint_down("127.0.0.1:1".parse().unwrap());
++        assert_eq!(metrics.quic_endpoint_state(), QuicEndpointState::Died);
++        metrics.record_quic_endpoint_rebuilt(false);
++        assert_eq!(metrics.quic_endpoint_state(), QuicEndpointState::Died);
++        metrics.record_quic_endpoint_rebuilt(true);
++        assert_eq!(metrics.quic_endpoint_state(), QuicEndpointState::Up);
++    }
++
+     /// Every endpoint state has its own label and survives the round trip
+     /// through the atomic.
+     #[test]
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +114/-28)
+```diff
+@@ -50,6 +50,7 @@ pub(crate) mod native;
+ #[cfg(any(test, feature = "quic-panic-injection"))]
+ pub(crate) mod panic_injection;
+ pub(crate) mod path;
++pub(crate) mod rebuild;
+ pub(crate) mod recycle;
+ pub(crate) mod runtime;
+ pub(crate) mod socket;
+@@ -486,6 +487,15 @@ fn require_unwinding(unwinds: bool) -> io::Result<()> {
+ /// ([`require_unwinding`]).
+ pub(crate) const UNWINDS: bool = cfg!(panic = "unwind");
+ 
++/// What building an endpoint does to its socket's QUIC ingress.
++#[derive(Clone, Copy)]
++enum Ingress {
++    /// Enable it; the build fails if it was already enabled.
++    Enable,
++    /// Replace the one a dead endpoint read ([`QuicEndpoint::rebuild`]).
++    Replace,
++}
++
+ impl EndpointCore {
+     /// The node's buffer budget, which sets each data path's windows.
+     pub(crate) fn buffer_budget(&self) -> &Arc<budget::QuicBudget> {
+@@ -503,6 +513,13 @@ impl EndpointCore {
+ }
+ 
+ impl QuicEndpoint {
++    /// Whether `other` is a handle on this same endpoint, not one built in
++    /// place of it (`rebuild`).
++    #[cfg(test)]
++    pub(crate) fn same_endpoint(&self, other: &Self) -> bool {
++        Arc::ptr_eq(&self.owner, &other.owner)
++    }
++
+     /// Build an endpoint over `socket`, which must be the socket the
+     /// listener reads (it fills the QUIC ingress queue), bound at
+     /// `local_addr`, authenticating as the holder of `keypair`.
+@@ -551,6 +568,31 @@ impl QuicEndpoint {
+         )
+     }
+ 
++    /// Build an endpoint as [`Self::bind`] does, to replace one on the same
++    /// socket that died (`rebuild`): the socket's QUIC ingress is replaced
++    /// rather than enabled (`DemuxSocket::with_replaced_quic_ingress`), so
++    /// the new endpoint starts with an empty allow-set and nothing the dead
++    /// one queued. Fails, leaving the socket's QUIC ingress disabled, as
++    /// [`Self::bind`] fails; also if the socket never had an ingress.
++    pub(crate) fn rebuild<S: Socket, T: TimeSource>(
++        socket: Arc<DemuxSocket<S>>,
++        local_addr: SocketAddr,
++        time: T,
++        settings: &QuicSettings,
++        keypair: &TransportKeypair,
++    ) -> io::Result<Self> {
++        require_unwinding(UNWINDS)?;
++        Self::bind_on(
++            Ingress::Replace,
++            socket,
++            local_addr,
++            time,
++            settings,
++            keypair,
++            config::endpoint_config()?,
++        )
++    }
++
+     /// Build the endpoint as [`Self::bind`] describes, for this build
+     /// ([`UNWINDS`], through [`Self::bind_checked`]), or `None` with a WARN
+     /// when it fails, so a node with QUIC on still starts, with QUIC off.
+@@ -598,6 +640,28 @@ impl QuicEndpoint {
+         settings: &QuicSettings,
+         keypair: &TransportKeypair,
+         endpoint_config: quinn::EndpointConfig,
++    ) -> io::Result<Self> {
++        Self::bind_on(
++            Ingress::Enable,
++            socket,
++            local_addr,
++            time,
++            settings,
++            keypair,
++            endpoint_config,
++        )
++    }
++
++    /// [`Self::bind_with`], enabling the socket's QUIC ingress or replacing
++    /// it ([`Self::rebuild`]).
++    fn bind_on<S: Socket, T: TimeSource>(
++        ingress_mode: Ingress,
++        socket: Arc<DemuxSocket<S>>,
++        local_addr: SocketAddr,
++        time: T,
++        settings: &QuicSettings,
++        keypair: &TransportKeypair,
++        endpoint_config: quinn::EndpointConfig,
+     ) -> io::Result<Self> {
+         let invalid = |error: &dyn std::fmt::Display| {
+             io::Error::new(io::ErrorKind::InvalidInput, error.to_string())
+@@ -619,37 +683,44 @@ impl QuicEndpoint {
+         let mut cap_holds = None;
+         // If quinn refuses the socket after the ingress is enabled, the
+         // ingress is disabled again, so the node is left as with QUIC off.
+-        let endpoint = socket
+-            .with_quic_ingress(|ingress| {
+-                let quic_socket = Arc::new(socket::QuicSocket::new(
+-                    socket.clone(),
+-                    ingress,
+-                    local_addr,
+-                    health.clone(),
+-                ));
+-                cap_holds = Some(quic_socket.cap_holds());
+-                #[cfg(any(test, feature = "testing"))]
+-                {
+-                    faults = Some(quic_socket.faults());
+-                }
+-                let runtime = Arc::new(runtime::QuicRuntime::new(time, health.clone()));
+-                // The server configuration is set so quinn hands every
+-                // Initial from an allowed source to `accept` (without one it
+-                // answers with a stateless reset); its TLS refuses every
+-                // client, and `accept` replaces it per attempt.
+-                quinn::Endpoint::new_with_abstract_socket(
+-                    endpoint_config,
+-                    Some((*server).clone()),
+-                    quic_socket,
+-                    runtime,
+-                )
+-            })
+-            .ok_or_else(|| {
++        let b
+```
+
+---
+
+### Incident Patch 3: `603e2db9` (2026-11-23)
+**Commit Message**: fix(get): bound the memory held by outbound GET responses (#6344)
+
+**File**: `.claude/rules/operations.md` (modified, +10/-0)
+```diff
+@@ -229,6 +229,16 @@ tier remote peers feed) from indefinitely starving Background. Both are
+ backstops only: tag each send site with the class it belongs to.
+ ```
+ 
++**Outbound GET response budget.** A streamed GET response is charged to
++`node::outbound_budget::OutboundPayloadBudget` (node-wide G, per-source P = G/4,
++a reserve for idle sources, one oversize slot) BEFORE its `ResponseStreaming`
++header is sent, so a refusal returns `Err` and the driver answers NotFound with
++no header outstanding. The charge is owned by the bytes handed to `send_stream`
++and released when the transport drops them, so the memory bound holds whatever
++the peer does. How long one response is held is bounded on QUIC paths only
++(`QuicPath::stream_deadlines`). A response at or below the streaming threshold, and every other
++outbound send, is not budgeted.
++
+ **Admission lanes in front of the fair queue (ANT-2026-K0YQ8CG4).** Events
+ reach `contract_handling` over four channels, chosen by `handler::Lane::of`:
+ control (`ClientDisconnect`, `EvictContract`, by event type and whatever
+```
+
+**File**: `crates/core/src/contract/executor.rs` (modified, +39/-0)
+```diff
+@@ -2840,6 +2840,45 @@ mod tests {
+                 "per-record length cap on a native app grant's display name, in a table \
+                  bounded at MAX_NATIVE_GRANTS (64) rows; not a cache budget",
+             ),
++            // Outbound GET responses in flight (`node::outbound_budget`). A
++            // node-wide bound on transfer memory, released as each stream
++            // ends, NOT a cache. A recorded exception, not summed here and
++            // not in `declared_caches_plus_hosting_budget_leave_room_for_the_runtime`
++            // either: it is transient send memory held only while a response
++            // is being sent, so the budget caps a worst case rather than
++            // adding to a committed total, and its floor, which keeps a
++            // multi-megabyte web app servable, does not fit the headroom of
++            // the smallest hosts those two tests cover. Same kind of
++            // exception as inbound reassembly (`MAX_STREAM_TOTAL_BYTES`
++            // below). The hosting budget is its own share of the memory limit
++            // and is not derived from this sum, so leaving this out does not
++            // enlarge it. The oversize slot sits outside the budget by design
++            // (`OVERSIZE_RESPONSE_MAX_BYTES`).
++            (
++                "outbound_payload_budget_for",
++                "node-wide bound on outbound GET responses in flight; transfer memory \
++                 released as streams end, not a cache (see comment)",
++            ),
++            (
++                "for_memory_limit",
++                "OutboundPayloadBudget constructor: outbound_payload_budget_for, see above",
++            ),
++            (
++                "OVERSIZE_RESPONSE_MAX_BYTES",
++                "size limit of the one oversize slot beside outbound_payload_budget_for, see above",
++            ),
++            (
++                "OUTBOUND_PAYLOAD_BUDGET_MIN_BYTES",
++                "clamp inside outbound_payload_budget_for",
++            ),
++            (
++                "OUTBOUND_PAYLOAD_BUDGET_MAX_BYTES",
++                "clamp inside outbound_payload_budget_for",
++            ),
++            (
++                "OUTBOUND_PAYLOAD_FALLBACK_TOTAL_RAM_BYTES",
++                "RAM fallback for outbound_payload_budget_for",
++            ),
+             // Functions.
+             ("disk_budget_for", "DISK, not resident memory"),
+             (
+```
+
+**File**: `crates/core/src/node.rs` (modified, +1/-0)
+```diff
+@@ -111,6 +111,7 @@ pub(crate) mod neighbor_hosting;
+ pub(crate) mod network_status;
+ pub use network_status::set_auto_update_state;
+ mod op_state_manager;
++pub(crate) mod outbound_budget;
+ mod p2p_impl;
+ mod request_router;
+ pub(crate) mod resource_metrics;
+```
+
+**File**: `crates/core/src/node/op_state_manager.rs` (modified, +12/-0)
+```diff
+@@ -329,6 +329,11 @@ pub(crate) struct OpManager {
+     /// amplification observed in workflow run 24600634908 (6.8M spawns
+     /// in 100s, 63GB RSS).
+     pub(crate) active_relay_get_txs: Arc<DashSet<Transaction>>,
++    /// Bytes of GET responses this node has serialized and not yet finished
++    /// sending, per recipient source and node-wide. The relay dedup above
++    /// does not bound how many responses one peer can have queued; this does.
++    /// See `node::outbound_budget`.
++    pub(crate) outbound_payload_budget: Arc<super::outbound_budget::OutboundPayloadBudget>,
+     /// Same role as `active_relay_get_txs` but for UPDATE relay.
+     /// UPDATE relay has no retry loop and no upstream reply, so the
+     /// amplification risk is structurally lower than GET — the gate
+@@ -440,6 +445,7 @@ impl Clone for OpManager {
+             // one node look like two to the delegate-interest hold map.
+             node_identity: self.node_identity,
+             active_relay_get_txs: self.active_relay_get_txs.clone(),
++            outbound_payload_budget: self.outbound_payload_budget.clone(),
+             active_relay_update_txs: self.active_relay_update_txs.clone(),
+             recent_relay_update_requests: self.recent_relay_update_requests.clone(),
+             relay_put_stream_admission: self.relay_put_stream_admission.clone(),
+@@ -900,6 +906,12 @@ impl OpManager {
+             pending_contract_fetches,
+             node_identity,
+             active_relay_get_txs,
++            outbound_payload_budget:
++                super::outbound_budget::OutboundPayloadBudget::for_memory_limit(
++                    crate::wasm_runtime::read_total_ram_bytes().unwrap_or(
++                        super::outbound_budget::OUTBOUND_PAYLOAD_FALLBACK_TOTAL_RAM_BYTES,
++                    ),
++                ),
+             active_relay_update_txs,
+             recent_relay_update_requests: Arc::new(
+                 crate::operations::update::recent_requests::RecentRelayedRequests::new(),
+```
+
+**File**: `crates/core/src/node/outbound_budget.rs` (added, +581/-0)
+```diff
+@@ -0,0 +1,581 @@
++//! Bound on the memory held by GET responses this node is sending.
++//!
++//! A node answers a GET for a contract it holds by serializing the state (and
++//! code) and queueing the bytes on the requester's connection, where they stay
++//! until the transport has sent them at that connection's rate. The relay
++//! dedup gate (`OpManager::active_relay_get_txs`) limits requests, not the
++//! bytes of the responses queued for them.
++//!
++//! [`OutboundPayloadBudget`] charges each streamed response before anything is
++//! sent:
++//!
++//! - **Node-wide**, at most `G` bytes held, where `G` is
++//!   [`outbound_payload_budget_for`] the node's memory limit.
++//! - **Per source**, at most `P = G / 4` bytes queued toward a source that
++//!   already holds something. A source is the recipient's IPv4 address or
++//!   IPv6 /64 ([`crate::operations::put::stream_admission::Source`]), so
++//!   several peers behind one IPv4 address share one `P`.
++//! - **Reserve**: the last `G / 4` of the node budget can be drawn only by a
++//!   source with nothing outstanding, so sources that already hold responses
++//!   cannot take the whole budget from a source that holds none.
++//! - **Idle source**: a source holding nothing is not checked against `P`; it
++//!   may be sent one response of any size that fits in the node budget it can
++//!   draw on.
++//! - **Oversize slot**: a response that does not fit the node budget is still
++//!   admitted when its source holds nothing, no other oversize response is
++//!   in flight, and it is at most [`OVERSIZE_RESPONSE_MAX_BYTES`]. This keeps
++//!   a maximum-size contract servable on a host whose `G` is small. The node
++//!   can then hold up to `G + OVERSIZE_RESPONSE_MAX_BYTES`, with one such
++//!   response at a time. Other streams do not join an oversize copy, so a
++//!   host whose `G` is small serves one oversize requester at a time.
++//!
++//! Streamed responses share one serialized copy per (contract, state hash,
++//! includes-contract) while any stream holds it
++//! ([`OutboundPayloadBudget::try_reserve_shared`]). The node budget counts
++//! each distinct copy once; each source is still charged the full length per
++//! stream.
++//!
++//! A charge is owned by the bytes handed to the transport
++//! (`bytes::Bytes::from_owner`), so it is returned when the last reference to
++//! them is dropped: the stream finished, was abandoned, or the send was
++//! dropped on the way. The memory bound therefore holds whatever the peer
++//! does. How long a response is held is bounded on QUIC paths only
++//! (`QuicPath::stream_deadlines`).
++//!
++//! A refused response is not sent. The caller returns an error, which the GET
++//! driver answers upstream with `NotFound`, and the requester tries another
++//! peer. A requester cannot tell a refusal from a missing contract. No wire
++//! change. Refusals are counted (`freenet.get.outbound_budget_refusals`).
++//!
++//! Scope: only streamed GET responses (above the streaming threshold) are
++//! charged here. A GET response at or below the threshold, and every other
++//! outbound message or stream (PUT, UPDATE, broadcast, forwarded streams), is
++//! not budgeted. Limits are per source.
++//!
++//! Not counted: the state and code a driver loaded before asking (dropped at
++//! once on a refusal), and the packets the transport keeps for
++//! retransmission.
++
++use std::collections::HashMap;
++use std::net::SocketAddr;
++use std::sync::atomic::{AtomicU64, Ordering};
++use std::sync::{Arc, Weak};
++
++use freenet_stdlib::prelude::ContractKey;
++
++use crate::operations::put::stream_admission::Source;
++
++/// The node budget as a share of the node's memory limit: one sixteenth,
++/// the same share as the QUIC buffer budget
++/// (`transport::quic::config::quic_buffer_budget_for`).
++const OUTBOUND_PAYLOAD_BUDGET_DIVISOR: usize = 16;
++
++/// Smallest node budget. Large enough that `P` (a quarter of it) holds a few
++/// multi-megabyte responses to one source. A response larger than the room
++/// this leaves is served through the oversize slot.
++pub(crate) const OUTBOUND_PAYLOAD_BUDGET_MIN_BYTES: usize = 64 * 1024 * 1024;
++
++/// The largest single response the oversize slot admits: a maximum-size state
++/// (`MAX_STATE_SIZE`, 50 MiB) plus stored code and parameters.
++pub(crate) const OVERSIZE_RESPONSE_MAX_BYTES: u64 = 128 * 1024 * 1024;
++
++/// Largest node budget, reached at 8 GiB of memory.
++pub(crate) const OUTBOUND_PAYLOAD_BUDGET_MAX_BYTES: usize = 512 * 1024 * 1024;
++
++/// The node-wide budget `G` for responses being sent:
++/// `memory_limit / 16`, clamped to 64..=512 MiB.
++pub(crate) fn outbound_payload_budget_for(memory_limit: usize) -> usize {
++    (memory_limit / OUTBOUND_PAYLOAD_BUDGET_DIVISOR).clamp(
++        OUTBOUND_PAYLOAD_BUDGET_MIN_BYTES,
++        OUTBOUND_PAYLOAD_BUDGET_MAX_BYTES,
++    )
++}
++
++/// Memory assumed when the node's cannot be read (1 GiB), as the QUIC
++/// settings assume (`config::QUIC_FALLBACK_TOTAL_RAM`).
++pub(crate) const OUTBOUND_PAYLOA
+```
+
+**File**: `crates/core/src/node/outbound_budget/tests.rs` (added, +567/-0)
+```diff
+@@ -0,0 +1,567 @@
++use super::*;
++use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
++
++const MIB: usize = 1024 * 1024;
++const GIB: usize = 1024 * MIB;
++
++fn v4(last: u8, port: u16) -> SocketAddr {
++    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 0, 0, last)), port)
++}
++
++/// G = 400, P = 100, reserve = 100: sources holding something share 300.
++/// The oversize slot is off, so the ordinary rules are what is tested.
++fn small() -> Arc<OutboundPayloadBudget> {
++    let b = OutboundPayloadBudget::with_caps(400, 100);
++    b.set_oversize_max_for_test(0);
++    b
++}
++
++fn key(n: u8) -> SharedPayloadKey {
++    SharedPayloadKey::for_test(n)
++}
++
++/// A charge for a response no other stream shares: every call uses a key
++/// no earlier call used, so the node is charged the full length.
++trait ReserveUnshared {
++    fn try_reserve(&self, to: SocketAddr, len: u64) -> Result<bytes::Bytes, Refusal>;
++}
++
++impl ReserveUnshared for Arc<OutboundPayloadBudget> {
++    fn try_reserve(&self, to: SocketAddr, len: u64) -> Result<bytes::Bytes, Refusal> {
++        use std::sync::atomic::AtomicU64;
++        static NEXT: AtomicU64 = AtomicU64::new(0);
++        let n = NEXT.fetch_add(1, Ordering::Relaxed);
++        let mut k = key(0);
++        k.state_hash[..8].copy_from_slice(&n.to_le_bytes());
++        shared(self, to, k, len as usize)
++    }
++}
++
++fn shared(
++    budget: &Arc<OutboundPayloadBudget>,
++    to: SocketAddr,
++    k: SharedPayloadKey,
++    len: usize,
++) -> Result<bytes::Bytes, Refusal> {
++    budget
++        .try_reserve_shared(to, k, len as u64, || {
++            Ok::<_, std::convert::Infallible>(vec![7; len])
++        })
++        .map_err(|e| match e {
++            SharedReserveError::Refused(r) => r,
++            SharedReserveError::Serialize(never) => match never {},
++            SharedReserveError::LengthMismatch { .. } => panic!("length mismatch"),
++        })
++}
++
++#[test]
++fn budget_is_a_sixteenth_of_memory_clamped() {
++    assert_eq!(outbound_payload_budget_for(256 * MIB), 64 * MIB, "floor");
++    assert_eq!(outbound_payload_budget_for(GIB), 64 * MIB);
++    assert_eq!(outbound_payload_budget_for(2 * GIB), 128 * MIB);
++    assert_eq!(outbound_payload_budget_for(4 * GIB), 256 * MIB);
++    assert_eq!(outbound_payload_budget_for(7_600 * MIB), 475 * MIB);
++    assert_eq!(outbound_payload_budget_for(64 * GIB), 512 * MIB, "ceiling");
++    let b = OutboundPayloadBudget::for_memory_limit(4 * GIB);
++    assert_eq!(b.per_source_cap(), 64 * MIB as u64);
++}
++
++/// Repeated requests from one source: whatever their number and whichever
++/// port they come from, the source holds at most P.
++#[test]
++fn one_source_cannot_hold_more_than_its_cap() {
++    let b = small();
++    let held: Vec<_> = (0..20)
++        .filter_map(|i| b.try_reserve(v4(1, 1000 + i), 30).ok())
++        .collect();
++    assert_eq!(held.len(), 3, "3 x 30 fits P = 100, a fourth does not");
++    assert_eq!(b.charged_to(v4(1, 1)), 90);
++    assert_eq!(b.try_reserve(v4(1, 9), 30).err(), Some(Refusal::SourceCap));
++    // Another source is unaffected.
++    assert!(b.try_reserve(v4(2, 1), 30).is_ok());
++}
++
++/// IPv6 addresses in one /64 are one source.
++#[test]
++fn an_ipv6_slash_64_is_one_source() {
++    let b = small();
++    let a = SocketAddr::new(
++        IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 1, 0, 0, 0, 1)),
++        1,
++    );
++    let c = SocketAddr::new(
++        IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 1, 9, 9, 9, 9)),
++        2,
++    );
++    let _first = b.try_reserve(a, 80).unwrap();
++    assert_eq!(b.try_reserve(c, 30).err(), Some(Refusal::SourceCap));
++}
++
++/// Sources that already hold responses share G - reserve; the reserve stays
++/// available to a source holding nothing.
++#[test]
++fn busy_sources_cannot_take_the_reserve() {
++    let b = small();
++    // Each source takes a first response (idle sources may use all of G),
++    // then a second one, which must fit within G - reserve = 300.
++    let mut held = Vec::new();
++    for s in 1..=3 {
++        held.push(b.try_reserve(v4(s, 1), 50).unwrap());
++    }
++    assert_eq!(b.node_total(), 150);
++    for s in 1..=3 {
++        held.push(b.try_reserve(v4(s, 1), 50).unwrap());
++    }
++    assert_eq!(b.node_total(), 300);
++    // Sources 1-3 hold their whole P. Source 4 takes a first response from
++    // the reserve (idle), and its second is refused by G - reserve, not by
++    // its own cap.
++    held.push(b.try_reserve(v4(4, 1), 10).unwrap());
++    assert_eq!(b.try_reserve(v4(4, 1), 10).err(), Some(Refusal::NodeCap));
++    // An idle source still gets in from the reserve.
++    assert!(b.try_reserve(v4(5, 1), 80).is_ok());
++}
++
++/// A response larger than P is admitted only when its source holds nothing.
++#[test]
++fn oversize_only_when_the_source_is_idle() {
++    let b = small();
++    let big = b
++        .try_reserve(v4(1, 1), 250)
++        .expect("idle source, room in G");
++    assert_eq!(b.try_reserve(v4(1, 1), 1).err(), Some(Refusal::SourceCap));
++    drop(big);
++    let _small = b.try_reserve
+```
+
+**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +316/-11)
+```diff
+@@ -3923,17 +3923,95 @@ where
+             contract,
+         },
+     };
+-    let payload_bytes = match bincode::serialize(&payload) {
+-        Ok(b) => b,
++    // The length, without allocating, so a response the budget refuses is
++    // never serialized.
++    let payload_len = match bincode::serialized_size(&payload) {
++        Ok(len) => len,
+         Err(e) => {
+             return Err(OpError::NotificationChannelError(format!(
+-                "Failed to serialize GET relay forward payload: {e}"
++                "Failed to size GET relay forward payload: {e}"
+             )));
+         }
+     };
+ 
+-    if crate::operations::should_use_streaming(op_manager.streaming_threshold, payload_bytes.len())
++    if crate::operations::should_use_streaming(op_manager.streaming_threshold, payload_len as usize)
+     {
++        // The relay dedup gate bounds requests, not queued response bytes.
++        // Charge this response to the recipient's source and to the node
++        // BEFORE the header goes out; concurrent streams of the same response
++        // share one serialized copy. The charge lives as long as the transport
++        // holds the bytes. A refusal is an `Err`, which `drive_relay_get` answers
++        // upstream with NotFound, so the requester moves on to its next peer.
++        // A response the budget has no room for is refused on its length
++        // alone, before the state is hashed.
++        if let Err(refusal) = op_manager.outbound_payload_budget.precheck(
++            upstream_addr,
++            key,
++            includes_contract,
++            payload_len,
++        ) {
++            tracing::debug!(
++                tx = %tx,
++                contract = %key,
++                target = %upstream_addr,
++                total_size = payload_len,
++                reason = %refusal,
++                "GET relay: response refused by the outbound payload budget"
++            );
++            return Err(OpError::NotificationChannelError(format!(
++                "GET response of {payload_len} bytes for {key} to {upstream_addr} \
++                 refused: {refusal}"
++            )));
++        }
++        // The state's hash names the serialized copy that concurrent streams
++        // of this response share. Only an admitted streamed response needs it.
++        let state_hash: [u8; 32] = payload
++            .value
++            .state
++            .as_ref()
++            .map(|state| blake3::hash(state.as_ref()).into())
++            .unwrap_or([0; 32]);
++        let shared_key = crate::node::outbound_budget::SharedPayloadKey {
++            contract: key,
++            state_hash,
++            includes_contract,
++        };
++        let payload_bytes = match op_manager.outbound_payload_budget.try_reserve_shared(
++            upstream_addr,
++            shared_key,
++            payload_len,
++            || bincode::serialize(&payload),
++        ) {
++            Ok(bytes) => bytes,
++            Err(crate::node::outbound_budget::SharedReserveError::Refused(refusal)) => {
++                // Debug: the driver logs the returned error at warn already.
++                tracing::debug!(
++                    tx = %tx,
++                    contract = %key,
++                    target = %upstream_addr,
++                    total_size = payload_len,
++                    reason = %refusal,
++                    "GET relay: response refused by the outbound payload budget"
++                );
++                return Err(OpError::NotificationChannelError(format!(
++                    "GET response of {payload_len} bytes for {key} to {upstream_addr} \
++                     refused: {refusal}"
++                )));
++            }
++            Err(crate::node::outbound_budget::SharedReserveError::Serialize(e)) => {
++                return Err(OpError::NotificationChannelError(format!(
++                    "Failed to serialize GET relay forward payload: {e}"
++                )));
++            }
++            Err(crate::node::outbound_budget::SharedReserveError::LengthMismatch {
++                charged,
++                produced,
++            }) => {
++                return Err(OpError::NotificationChannelError(format!(
++                    "GET relay payload serialized to {produced} bytes, charged {charged}"
++                )));
++            }
++        };
+         let sid = StreamId::next();
+         tracing::info!(
+             tx = %tx,
+@@ -3981,12 +4059,7 @@ where
+             .await
+             .map_err(|_| OpError::NotificationError)?;
+         conn_manager
+-            .send_stream(
+-                upstream_addr,
+-                sid,
+-                bytes::Bytes::from(payload_bytes),
+-                embedded,
+-            )
++            .send_stream(upstream_addr, sid, payload_bytes, embedded)
+             .await
+             .map_err(|e| {
+                 OpError::NotificationChannelError(format!("get relay send_stream failed: {e}"))
+@@ -8083,10 +8156,38 @@ mod tests {
+              metadata header on the stream
+```
+
+**File**: `crates/core/src/tracing/otel.rs` (modified, +13/-0)
+```diff
+@@ -1352,6 +1352,18 @@ neither: a complete stream its consumer still holds past the age limit",
+             }
+         })
+         .build();
++
++    let _outbound_budget = meter
++        .u64_observable_counter("freenet.get.outbound_budget_refusals")
++        .with_description(
++            "GET responses not sent because the outbound payload budget had no room, by reason",
++        )
++        .with_callback(|observer| {
++            let (source, node) = crate::node::outbound_budget::refused_totals_process();
++            observer.observe(source, &[KeyValue::new("reason", "source_cap")]);
++            observer.observe(node, &[KeyValue::new("reason", "node_cap")]);
++        })
++        .build();
+ }
+ 
+ /// Ring / topology state, mirroring the dashboard's connection-status tiles.
+@@ -3054,6 +3066,7 @@ mod tests {
+             "freenet.transport.transfers",
+             "freenet.transport.nat_traversal",
+             "freenet.transport.inbound_stream_limits",
++            "freenet.get.outbound_budget_refusals",
+             "freenet.contract.queue.depth",
+             "freenet.contract.queue.depth.high_water",
+             "freenet.contract.queue.rejected",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6352** (closed): test: give each joiners-behind-one-address test its own network name (@sanity)
+- **PR #6350** (2026-11-23): fix(test): simulation test binaries keep node data dirs under a per-process temp root (@sanity)
+- **PR #6348** (2026-11-23): test: give each joiners_behind_one_address variant its own network name (@sanity)
+- **PR #6345** (2026-11-23): fix(connect): bound per-joiner native setups; decide UDP when there is no room (@sanity)
+- **PR #6344** (2026-11-23): fix(get): bound the memory held by outbound GET responses (@sanity)
 - **PR #6342** (2026-11-23): chore(ci): build the NAT Validation binary with auto-update off (@sanity)
-- **PR #6339** (2026-11-23): fix: restart the companion gateway 10 min after the primary, not with it (@sanity)
-- **PR #6337** (2026-11-23): test: joiners-behind-one-address no longer depends on CI's backoff variable or one seed (@sanity)
-- **PR #6335** (2026-11-23): feat(delegates): let background delegate runs message other delegates (@sanity)
-- **PR #6331** (2026-11-23): fix(transport): stop the ring/transport desync error firing for a joiner's gateway connection (@sanity)
-- **PR #6329** (2026-11-23): build: release 0.2.163 (@sanity)
 
 ---
 
@@ -2652,40 +3406,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. secrets): a failed secret read no longer reaches delegates as 'not found'
+## X. connect): bound per-joiner native setups; decide UDP when there is no room
 
 **RULE**:
-When implementing operations in `crates/core/src/wasm_runtime/delegate/execution.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72808dff`: secrets): a failed secret read no longer reaches delegates as 'not found'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0b2003d`: connect): bound per-joiner native setups; decide UDP when there is no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/wasm_runtime/delegate/execution.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // #5857: a secret read that failed for a reason other than the secret
-        // being absent poisoned this call. The guest may have taken it for
-        // absence (every stdlib guest to date does), so its answer cannot be
-        // trusted. Fail the whole call: a frozen delegate then becomes loud
-        // with no change to its code, and the caller can retry. Checked here,
-        // after the guest has finished, so the env is read by one thread only.
-        if let Some(failure) = DELEGATE_ENV
-            .get(&instance_id)
-            .and_then(|env| env.secret_read_failure())
-        {
-            return Err(
-                DelegateExecError::from(freenet_stdlib::prelude::DelegateError::Other(format!(
-                    "delegate secret storage read failed (not a missing secret); \
-                     the call was aborted so it cannot be mistaken for an empty \
-                     store, retry it: {failure}"
-                )))
-                .into(),
-            );
-        }
-
+`connect_native_admission_refused` for each native setup it did not admit as
+acceptor (deciding UDP instead),
+`connect_native_admission_control_dropped` for each control pair it left out
+of the arms as acceptor for lack of setup room,
+Setup admission: before deciding Native, the acceptor admits the setup
+  (NativeConnectState::admit_acceptor_setup, through
+  RelayContext::admit_native_setup), by joiner ADDRESS, the unit native
+  setups, allow-set slots and dial coalescing all use: at most
+  acceptor_pending_setups_max(max_connections) addresses pending (half of
+  the node's native setup slots, NATIVE_SETUPS_MAX lowered to the connection
+  limit as QuicPolicy::native_setups_max is, so the node's own dials as
+  joiner keep the rest), at most ACCEPTOR_PENDING_SETUPS_PER_SOURCE (4) from
+  one source (put::stream_admission::Source: an IPv4 address or an IPv6 /64;
+  loopback counted per port for local test networks), and only with a known
+  address. Another CONNECT to a pending address shares its entry (a
+  refcount). A refusal decides Udp at once (counted
+  connect_native_admission_refused), so a joiner never waits out the native
+  fallback because the acceptor had no room; the pair is 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2695,7 +3447,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72808dff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0b2003d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

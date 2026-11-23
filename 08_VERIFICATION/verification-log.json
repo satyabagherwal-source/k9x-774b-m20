@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-HLM4",
-    "timestamp": "2026-11-22T00:24:51.628Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-RKB0",
-    "timestamp": "2026-11-22T00:32:36.492Z",
-    "repository": "pyannote/speaker-diarization-3.1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-    "contentHash": "5ecbc2f1ce49d7673d007f5ea6c2aff3a8ffec128b2ed20392a39484fe31443f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-RM6Q",
-    "timestamp": "2026-11-22T00:32:38.930Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "4009d31aa87203b57167a657ebbac220a66311c752d83c80db45b2c78f3bda93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-IR5B",
     "timestamp": "2026-11-22T00:53:45.071Z",
     "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RM9I",
+    "timestamp": "2026-11-23T21:48:01.782Z",
+    "repository": "inclusionAI/Ling-3.2-air",
+    "learningId": "learn-huggingface-inclusionai-ling-3-2-air",
+    "contentHash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RO9F",
+    "timestamp": "2026-11-23T21:48:04.371Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RYR3",
+    "timestamp": "2026-11-23T21:48:17.967Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

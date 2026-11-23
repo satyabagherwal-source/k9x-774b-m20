@@ -12480,3 +12480,7 @@
 | `CYCLE-20261123-6HIA` | `2026-11-23T21:31:35.842Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`ef0408cc...`) |
 | `CYCLE-20261123-H16V` | `2026-11-23T21:39:47.911Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`999b6417...`) |
 | `CYCLE-20261123-HBRX` | `2026-11-23T21:40:01.629Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10129` | Yes (`e4cf9518...`) |
+| `CYCLE-20261123-RM9I` | `2026-11-23T21:48:01.782Z` | `inclusionAI/Ling-3.2-air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | Yes (`1f337715...`) |
+| `CYCLE-20261123-RO9F` | `2026-11-23T21:48:04.371Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`917c50f9...`) |
+| `CYCLE-20261123-RYR3` | `2026-11-23T21:48:17.967Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10130` | Yes (`4f126908...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T21:48:46.597Z` | `hf-inclusionai-ling-3.2-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7E47FE9B` [Domain D] | Yes (`5d1dd606...`) |

@@ -5340,3 +5340,7 @@ https://github.com/Fei-Craft/DS-Bot
 # --- Automatically Discovered by AI Scout Engine [2026-11-23T15:12:24.950Z] ---
 # [HUGGINGFACE-AI-MODELS] TenStrip/10Eros-Max (11100 score) - Verified Hugging Face Model: TenStrip/10Eros-Max (1110 likes, 0 downloads)
 https://huggingface.co/TenStrip/10Eros-Max
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-23T21:47:55.284Z] ---
+# [HUGGINGFACE-AI-MODELS] inclusionAI/Ling-3.2-air (870 score) - Verified Hugging Face Model: inclusionAI/Ling-3.2-air (87 likes, 0 downloads)
+https://huggingface.co/inclusionAI/Ling-3.2-air

@@ -22057,5 +22057,17 @@
     "downloads": 0,
     "qualityScore": 11100,
     "discoveredAt": "2026-11-23T15:10:16.996Z"
+  },
+  {
+    "name": "inclusionAI/Ling-3.2-air",
+    "fullName": "inclusionAI/Ling-3.2-air",
+    "url": "https://huggingface.co/inclusionAI/Ling-3.2-air",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: inclusionAI/Ling-3.2-air (87 likes, 0 downloads)",
+    "likes": 87,
+    "downloads": 0,
+    "qualityScore": 870,
+    "discoveredAt": "2026-11-23T21:45:47.038Z"
   }
 ]
