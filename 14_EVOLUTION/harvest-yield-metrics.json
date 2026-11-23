@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:56:21.071Z",
-  "total_cycles_completed": 11888,
-  "total_learnings_persisted": 11888,
-  "total_rules_promoted": 10983,
+  "last_updated": "2026-11-23T23:10:01.876Z",
+  "total_cycles_completed": 11892,
+  "total_learnings_persisted": 11892,
+  "total_rules_promoted": 10986,
   "history": [
-    {
-      "timestamp": "2026-11-23T07:18:26.505Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:18:36.381Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:28:37.588Z",
-      "repository": "AhmadHassan-BTed/Jantt",
-      "learningId": "learn-github-ahmadhassan-bted-jantt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:28:40.031Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T07:28:47.285Z",
       "repository": "SimonSchubert/Kai",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T22:56:21.071Z",
       "repository": "KeyboardKit/KeyboardKit",
       "learningId": "learn-github-keyboardkit-keyboardkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:09:50.438Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:09:51.807Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:09:58.313Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:10:01.876Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

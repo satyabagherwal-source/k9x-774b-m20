@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-J98K",
-    "timestamp": "2026-11-22T02:18:07.364Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-JAH0",
-    "timestamp": "2026-11-22T02:18:08.964Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XMER",
-    "timestamp": "2026-11-22T02:29:17.619Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-    "contentHash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XW1F",
-    "timestamp": "2026-11-22T02:29:30.099Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XXSO",
     "timestamp": "2026-11-22T02:29:32.376Z",
     "repository": "infiniflow/infinity",
@@ -7490,6 +7430,66 @@
     "repository": "KeyboardKit/KeyboardKit",
     "learningId": "learn-github-keyboardkit-keyboardkit",
     "contentHash": "52f037a8af0022ba0ce7aff23ee34f8ed26dc4f864b3a720d498fc62ea05fb90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-OTST",
+    "timestamp": "2026-11-23T23:09:50.429Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "7cb37523bf94afd7029a10dbe59bd8631b1e6257b7465157a6267007a567175f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-OUUV",
+    "timestamp": "2026-11-23T23:09:51.799Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-OZVK",
+    "timestamp": "2026-11-23T23:09:58.304Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P2MJ",
+    "timestamp": "2026-11-23T23:10:01.867Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

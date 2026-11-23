@@ -12534,3 +12534,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-23T22:56:12.354Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `d965df8d` | Multi-dimensional audit evidence | 2026-11-23T22:56:18.905Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `0517bb21` | Multi-dimensional audit evidence | 2026-11-23T22:56:21.064Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-23T23:09:50.433Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `4a6f9c61` | Multi-dimensional audit evidence | 2026-11-23T23:09:51.803Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `39fe0cb3` | Multi-dimensional audit evidence | 2026-11-23T23:09:58.308Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `69961019` | Multi-dimensional audit evidence | 2026-11-23T23:10:01.871Z |

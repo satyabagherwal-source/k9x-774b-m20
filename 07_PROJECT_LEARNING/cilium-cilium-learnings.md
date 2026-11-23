@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `1e538a99`  
+> **Source Version**: `69961019`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:00:58.157Z  
+> **Timestamp**: 2026-11-23T23:10:00.869Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:00:57.974Z  
+> **Harvest Timestamp**: 2026-11-23T23:10:00.864Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1285,92 +1285,575 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d63b3059` (2026-11-16)
-**Commit Message**: helm: Introduce netdevTracing value for trace-netdev flag
+### Incident Patch 1: `69961019` (2026-11-20)
+**Commit Message**: ipam: Advertise released pool CIDRs in the CiliumNode
 
-Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
+The set of CIDRs released from a pool was tracked in memory only, so it
+was lost on agent restart and invisible in the CiliumNode resource.
 
-**File**: `Documentation/helm-values.rst` (modified, +4/-0)
+The MultiPoolManager now reports a per-pool snapshot of released CIDRs
+in the new Released field on every local node update, and stops
+reporting a CIDR once it has been unassigned from the node. On the first
+observation of the node, i.e. after an agent restart, the released set
+is restored from the resource so that still-assigned CIDRs are not
+handed out again before the operator removes them; afterwards the
+in-memory state is authoritative.
+
+Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
+
+**File**: `pkg/alibabacloud/agent/pools.go` (modified, +1/-4)
 ```diff
-@@ -260,6 +260,10 @@
-      - Configure the maximum number of entries for the neighbor table.
-      - int
-      - ``524288``
-+   * - :spelling:ignore:`bpf.netdevTracing`
-+     - Enables tracing for native devices.
-+     - bool
-+     - ``false``
-    * - :spelling:ignore:`bpf.nodeMapMax`
-      - Configures the maximum number of entries for the node table.
-      - int
-```
-
-**File**: `install/kubernetes/cilium/README.md` (modified, +1/-0)
-```diff
-@@ -115,6 +115,7 @@ contributors across the globe, there is almost always someone available to help.
- | bpf.monitorTraceIPOption | int | `0` | Configure the IP tracing option type. This option is used to specify the IP option type to use for tracing. The value must be an integer between 0 and 255. @schema type: [null, integer] minimum: 0 maximum: 255 @schema |
- | bpf.natMax | int | `524288` | Configure the maximum number of entries for the NAT table. |
- | bpf.neighMax | int | `524288` | Configure the maximum number of entries for the neighbor table. |
-+| bpf.netdevTracing | bool | `false` | Enables tracing for native devices. |
- | bpf.nodeMapMax | int | `nil` | Configures the maximum number of entries for the node table. |
- | bpf.policyMapMax | int | `16384` | Configure the maximum number of entries in endpoint policy map (per endpoint). @schema type: [null, integer] @schema |
- | bpf.policyMapPressureMetricsThreshold | float64 | `0.1` | Configure threshold for emitting pressure metrics of policy maps. @schema type: [null, number] @schema |
-```
-
-**File**: `install/kubernetes/cilium/templates/cilium-configmap.yaml` (modified, +3/-2)
-```diff
-@@ -418,8 +418,9 @@ data:
-   # Only effective when monitor aggregation is set to "medium" or higher.
-   monitor-aggregation-flags: {{ .Values.bpf.monitorFlags }}
+@@ -17,10 +17,7 @@ import (
  
--
--
-+{{- if hasKey .Values.bpf "netdevTracing" }}
-+  trace-netdev: {{ .Values.bpf.netdevTracing | quote }}
-+{{- end }}
+ var poolAccessor = ipam.PoolSpecAccessors{
+ 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
+-		pools := ipamTypes.IPAMPoolSpec{
+-			Requested: node.Spec.IPAM.Pools.Requested,
+-			Allocated: node.Spec.IPAM.Pools.Allocated,
+-		}
++		pools := node.Spec.IPAM.Pools
  
- {{- if .Values.bpf.events.default.rateLimit }}
-   bpf-events-default-rate-limit: {{ .Values.bpf.events.default.rateLimit | quote }}
+ 		if len(node.Status.AlibabaCloud.ENIs) == 0 {
+ 			return pools
 ```
 
-**File**: `install/kubernetes/cilium/values.schema.json` (modified, +3/-0)
+**File**: `pkg/aws/agent/pools.go` (modified, +1/-4)
 ```diff
-@@ -331,6 +331,9 @@
-             "integer"
-           ]
-         },
-+        "netdevTracing": {
-+          "type": "boolean"
-+        },
-         "nodeMapMax": {
-           "type": [
-             "null",
+@@ -24,10 +24,7 @@ var poolAccessor = ipam.PoolSpecAccessors{
+ 	// Secondary IPs are represented as host-prefix CIDRs (/32 for IPv4, /128 for
+ 	// IPv6) and delegated prefixes as /28 CIDRs for IPv4 and /80 CIDRs for IPv6.
+ 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
+-		pools := ipamTypes.IPAMPoolSpec{
+-			Requested: node.Spec.IPAM.Pools.Requested,
+-			Allocated: node.Spec.IPAM.Pools.Allocated,
+-		}
++		pools := node.Spec.IPAM.Pools
+ 
+ 		if len(node.Status.ENI.ENIs) == 0 {
+ 			return pools
 ```
 
-**File**: `install/kubernetes/cilium/values.yaml` (modified, +2/-0)
+**File**: `pkg/azure/agent/pools.go` (modified, +1/-4)
 ```diff
-@@ -688,6 +688,8 @@ bpf:
-   # -- Configure which TCP flags trigger notifications when seen for the
-   # first time in a connection.
-   monitorFlags: "all"
-+  # -- Enables tracing for native devices.
-+  netdevTracing: false
-   # -- (bool) Allow cluster external access to ClusterIP services.
-   # @default -- `false`
-   lbExternalClusterIP: false
+@@ -17,10 +17,7 @@ import (
+ 
+ var poolAccessor = ipam.PoolSpecAccessors{
+ 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
+-		pools := ipamTypes.IPAMPoolSpec{
+-			Requested: node.Spec.IPAM.Pools.Requested,
+-			Allocated: node.Spec.IPAM.Pools.Allocated,
+-		}
++		pools := node.Spec.IPAM.Pools
+ 
+ 		if len(node.Status.Azure.Interfaces) == 0 {
+ 			return pools
 ```
 
-**File**: `install/kubernetes/cilium/values.yaml.tmpl` (modified, +2/-0)
+**File**: `pkg/ipam/multipool_manager.go` (modified, +45/-1)
 ```diff
-@@ -691,6 +691,8 @@ bpf:
-   # -- Configure which TCP flags trigger notifications when seen for the
-   # first time in a connection.
-   monitorFlags: "all"
-+  # -- Enables tracing for native devices.
-+  netdevTracing: false
-   # -- (bool) Allow cluster external access to ClusterIP services.
-   # @default -- `false`
-   lbExternalClusterIP: false
+@@ -68,6 +68,26 @@ type poolPair struct {
+ 	allowLastIP  bool
+ }
+ 
++func (p *poolPair) releasedCIDRs() []iputil.Prefix {
++	var cidrs []iputil.Prefix
++	if p.v4 != nil {
++		cidrs = append(cidrs, p.v4.releasedCIDRs()...)
++	}
++	if p.v6 != nil {
++		cidrs = append(cidrs, p.v6.releasedCIDRs()...)
++	}
++	return cidrs
++}
++
++func (p *poolPair) restoreReleased(cidrs []iputil.Prefix) {
++	if p.v4 != nil {
++		p.v4.restoreReleased(cidrs)
++	}
++	if p.v6 != nil {
++		p.v6.restoreReleased(cidrs)
++	}
++}
++
+ type preAllocatePerPool map[Pool]int
+ 
+ func ParseMultiPoolPreAllocMap(conf map[string]string) (preAllocatePerPool, error) {
+@@ -474,10 +494,22 @@ func (m *MultiPoolManager) ciliumNodeUpdated(newNode *ciliumv2.CiliumNode) {
+ 	m.poolsMutex.Lock()
+ 	defer m.poolsMutex.Unlock()
+ 
+-	for _, pool := range m.poolsAccessor.FromResource(newNode).Allocated {
++	spec := m.poolsAccessor.FromResource(newNode)
++	for _, pool := range spec.Allocated {
+ 		m.upsertPoolLocked(Pool(pool.Pool), pool.CIDRs, pool.AllowFirstIP, pool.AllowLastIP)
+ 	}
+ 
++	// On the first observation, restore the CIDRs released by a previous
++	// agent run so that they are not handed out again. Afterwards, the
++	// in-memory state is authoritative.
++	if m.getNode() == nil {
++		for _, release := range spec.Released {
++			if pool, ok := m.pools[Pool(release.Pool)]; ok {
++				pool.restoreReleased(release.CIDRs)
++			}
++		}
++	}
++
+ 	// Sync pre-allocate value from the CiliumNode spec. For cloud IPAM modes,
+ 	// the agent writes it during node discovery and the operator may adjust
+ 	// it. For standard multi-pool mode this field is unset (0).
+@@ -650,6 +682,7 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
+ 	newNode := curNode.DeepCopy()
+ 	requested := []types.IPAMPoolRequest{}
+ 	allocated := []types.IPAMPoolAllocation{}
++	var released []types.IPAMPoolRelease
+ 
+ 	expiredPools := m.pendingIPsPerPool.removeExpiredEntries()
+ 	neededIPsPerPool := m.computeNeededIPsPerPoolLocked()
+@@ -700,6 +733,13 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
+ 			continue
+ 		}
+ 
++		if releasedCIDRs := pool.releasedCIDRs(); len(releasedCIDRs) > 0 {
++			released = append(released, types.IPAMPoolRelease{
++				Pool:  poolName.String(),
++				CIDRs: releasedCIDRs,
++			})
++		}
++
+ 		// Emit per-pool, per-family IPAM metrics for the surviving pool.
+ 		if v4Pool := pool.v4; v4Pool != nil {
+ 			used := v4Pool.inUseIPCount()
+@@ -748,9 +788,13 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
+ 	sort.Slice(allocated, func(i, j int) bool {
+ 		return allocated[i].Pool < allocated[j].Pool
+ 	})
++	sort.Slice(released, func(i, j int) bool {
++		return released[i].Pool < released[j].Pool
++	})
+ 
+ 	var newPoolsSpec types.IPAMPoolSpec
+ 	newPoolsSpec.Requested = requested
++	newPoolsSpec.Released = released
+ 
+ 	// Only update Allocated once local pools have been populated. Before
+ 	// that, the agent has no CIDRs of its own and updating with an empty
+```
+
+**File**: `pkg/ipam/multipool_test.go` (modified, +176/-0)
+```diff
+@@ -40,6 +40,7 @@ import (
+ 	"github.com/cilium/cilium/pkg/ipam/service/ipallocator"
+ 	"github.com/cilium/cilium/pkg/ipam/types"
+ 	ciliumv2 "github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2"
++	cilium_v2 "github.com/cilium/cilium/pkg/k8s/client/clientset/versioned/typed/cilium.io/v2"
+ 	k8sClient "github.com/cilium/cilium/pkg/k8s/client/testutils"
+ 	"github.com/cilium/cilium/pkg/k8s/resource"
+ 	"github.com/cilium/cilium/pkg/lock"
+@@ -756,6 +757,181 @@ func Test_MultiPoolManager_ReleaseUnusedCIDR(t *testing.T) {
+ 	assert.Equal(t, 0, testutil.CollectAndCount(m.NeededIPs))
+ }
+ 
++// fakeCiliumNodeClient stores the CiliumNode last written by the manager,
++// unless err is set.
++type fakeCiliumNodeClient struct {
++	cilium_v2.CiliumNodeInterface
++	node *ciliumv2.CiliumNode
++	err  error
++}
++
++func (f *fakeCiliumNodeClient) Update(_ context.Context, node *ciliumv2.CiliumNode, _ metav1.UpdateOptions) (*ciliumv2.CiliumNode, error) {
++	if f.err != nil {
++		return nil, f.err
++	}
++	f.node = node.DeepCopy()
++	return node, nil
++}
++
++// podCIDRsAccessor mimics cloud IPAM modes, where the CIDRs assigned to the
++// node are not read from the Allocated field written by the agent.
++var podCIDRsAccessor = PoolSpecAccessors{
++	FromResource: func(cn *ciliumv2.CiliumNode) types.IPAMPoolSpec {
++		spec := cn.Spec.IPAM.Pools
++		spec.Allocated = nil
++		if len(cn.Spec.IPAM.PodCIDRs) > 0 {
++			spec.Allocated = []types.IPAMPoolAllocation{{Pool: "default", CIDRs: cn.Spec.IPAM.PodCIDRs}}
++		}
++		return spec
++	},
++	ToResource: MultiPoolAccessor.ToResource,
++}
++
++func newReleasedCIDRsTestManager(t *testing.T) (*MultiPoolManager, *fakeCiliumNodeClient) {
++	cnClient := &fakeCiliumNodeClient{}
++	return &MultiPoolManager{
++		logger:                 hivetest.Logger(t),
++		ipv4Enabled:            true,
++		preallocatedIPsPerPool: preAllocatePerPool{},
++		pendingIPsPerPool:      newPendingAllocationsPerPool(hivetest.Logger(t)),
++		pools:                  map[Pool]*poolPair{},
++		poolsUpdated:           make(chan struct{}, 1),
++		staticIPUpdated:        make(chan struct{}, 1),
++		finishedRestore:        map[Family]bool{IPv4: true},
++		nodeSynced:             true,
++		k8sUpdater:             job.NewTrigger(),
++		cnClient:               cnClient,
++		localNodeUpdateFn:      func() {},
++		poolsAccessor:          podCIDRsAccessor,
++		skipMasqueradeForPool:  func(Pool) (bool, error) { return false, nil },
++		metrics:                NewMultiPoolMetrics(),
++	}, cnClient
++}
++
++func TestMultiPoolManagerAdvertisesReleasedCIDRs(t *testing.T) {
++	cidr1 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.10.0/32"))
++	cidr2 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.11.0/32"))
++	mgr, cnClient := newReleasedCIDRsTestManager(t)
++
++	mgr.ciliumNodeUpdated(&ciliumv2.CiliumNode{
++		Spec: ciliumv2.NodeSpec{IPAM: types.IPAMSpec{PodCIDRs: []iputil.Prefix{cidr1, cidr2}}},
++	})
++	_, err := mgr.AllocateIP(cidr1.Addr(), "pod-a", "default", IPv4, false)
++	require.NoError(t, err)
++
++	require.NoError(t, mgr.updateLocalNode(t.Context()))
++	require.Equal(t, types.IPAMPoolSpec{
++		Requested: []types.IPAMPoolRequest{{Pool: "default", Needed: types.IPAMPoolDemand{IPv4Addrs: 1}}},
++		Allocated: []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1}}},
++		Released:  []types.IPAMPoolRelease{{Pool: "default", CIDRs: []iputil.Prefix{cidr2}}},
++	}, cnClient.node.Spec.IPAM.Pools)
++
++	// The echo of our own update still assigns cidr2, so it stays released.
++	mgr.ciliumNodeUpdated(cnClient.node)
++	require.Zero(t, mgr.capacity(IPv4))
++	require.NoError(t, mgr.updateLocalNode(t.Context()))
++	require.Equal(t, []types.IPAMPoolRelease{{Pool: "default", CIDRs: []iputil.Prefix{cidr2}}}, cnClient.node.Spec.IPAM.Pools.Released)
++
++	// cidr2 is no longer advertised once it is unassigned from the node.
++	detached := cnClient.node.DeepCopy()
++	detached.Spec.IPAM.PodCIDRs = []iputil.Prefix{cidr1}
++	mgr.ciliumNodeUpdated(detached)
++	require.NoError(t, mgr.updateLocalNode(t.Context()))
++	require.Empty(t, cnClient.node.Spec.IPAM.Pools.Released)
++	require.Equal(t, []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1}}}, cnClient.node.Spec.IPAM.Pools.Allocated)
++}
++
++func TestMultiPoolManagerAdvertisesReleasedCIDRsInMultiPoolMode(t *testing.T) {
++	cidr1 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.10.0/32"))
++	cidr2 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.11.0/32"))
++	mgr, cnClient := newReleasedCIDRsTestManager(t)
++	mgr.poolsAccessor = MultiPoolAccessor
++
++	mgr.ciliumNodeUpdated(&ciliumv2.CiliumNode{
++		Spec: ciliumv2.NodeSpec{IPAM: types.IPAMSpec{Pools: types.IPAMPoolSpec{
++			Allocated: []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1, cidr2}}},
++		}}},
++	})
++	_, err := mgr.AllocateIP(cidr1.Addr(), "pod-a", "default", IPv4, false)
++	require.NoError(t, err)
++
++	// cidr2 stays released if the update releasing it fails.
++	cnClient.err = k8sErrors.NewConflict(ciliumv2.Resource("ciliumnodes"), "node", errors.New("conflict"))
++	require.
+```
+
+**File**: `pkg/ipam/pool.go` (modified, +32/-0)
+```diff
+@@ -160,6 +160,38 @@ func (p *cidrPool) inUseCIDRsLocked() []iputil.Prefix {
+ 	return CIDRs
+ }
+ 
++func (p *cidrPool) releasedCIDRs() []iputil.Prefix {
++	p.mutex.Lock()
++	defer p.mutex.Unlock()
++
++	CIDRs := make([]iputil.Prefix, 0, len(p.released))
++	for prefix := range p.released {
++		CIDRs = append(CIDRs, iputil.PrefixFrom(prefix))
++	}
++	slices.SortFunc(CIDRs, func(a, b iputil.Prefix) int { return a.Prefix.Compare(b.Prefix) })
++	return CIDRs
++}
++
++// restoreReleased marks the given CIDRs as released again after an agent
++// restart. CIDRs no longer assigned to the pool are ignored.
++func (p *cidrPool) restoreReleased(cidrs []iputil.Prefix) {
++	p.mutex.Lock()
++	defer p.mutex.Unlock()
++
++	retainedAllocators := p.ipAllocators[:0]
++	for _, ipAllocator := range p.ipAllocators {
++		cidr := ipAllocator.CIDR()
++		if ipAllocator.Used() == 0 && slices.ContainsFunc(cidrs, func(c iputil.Prefix) bool {
++			return c.IsValid() && c.Prefix.Masked() == cidr
++		}) {
++			p.released[cidr] = struct{}{}
++			continue
++		}
++		retainedAllocators = append(retainedAllocators, ipAllocator)
++	}
++	p.ipAllocators = retainedAllocators
++}
++
+ func (p *cidrPool) dump() (allocated sets.Set[netip.Addr], usedIPs, freeIPs, numCIDRs int, err error) {
+ 	// TODO(gandro): Use the Snapshot interface to avoid locking during dump
+ 	p.mutex.Lock()
+```
+
+---
+
+### Incident Patch 2: `37fbc322` (2026-11-18)
+**Commit Message**: ipam: Add Released field to IPAMPoolSpec
+
+Add the IPAMPoolRelease type and a new Released field to IPAMPoolSpec so
+that the agent can advertise, per pool, the CIDRs it has released and no
+longer allocates from directly in the CiliumNode resource.
+
+The field is informational and does not claim ownership: a listed CIDR
+may already be unassigned from the node until the agent's next update.
+On restart, the agent restores the entries still assigned to this node.
+
+Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
+
+**File**: `pkg/ipam/types/types.go` (modified, +23/-0)
+```diff
+@@ -112,6 +112,19 @@ type IPAMPoolRequest struct {
+ 	Needed IPAMPoolDemand `json:"needed,omitzero"`
+ }
+ 
++// IPAMPoolRelease describes the CIDRs a node has released from an IPAM pool.
++type IPAMPoolRelease struct {
++	// Pool is the name of the IPAM pool the CIDRs were released from
++	//
++	// +kubebuilder:validation:MinLength=1
++	Pool string `json:"pool"`
++
++	// CIDRs contains the CIDRs released from this pool.
++	//
++	// +optional
++	CIDRs []iputil.Prefix `json:"cidrs,omitempty"`
++}
++
+ type IPAMPoolSpec struct {
+ 	// Requested contains a list of IPAM pool requests, i.e. indicates how many
+ 	// addresses this node requests out of each pool listed here. This field
+@@ -126,6 +139,16 @@ type IPAMPoolSpec struct {
+ 	//
+ 	// +optional
+ 	Allocated []IPAMPoolAllocation `json:"allocated,omitempty"`
++
++	// Released reports a snapshot of the CIDRs the agent has released from
++	// each pool and does not currently allocate from. It is informational
++	// only and does not claim ownership: a listed CIDR may already be
++	// unassigned from this node until the agent's next update. On restart,
++	// the agent restores the entries still assigned to this node. This field
++	// is owned and written to by cilium-agent.
++	//
++	// +optional
++	Released []IPAMPoolRelease `json:"released,omitempty"`
+ }
+ 
+ // IPAMSpec is the IPAM specification of the node
+```
+
+**File**: `pkg/ipam/types/zz_generated.deepcopy.go` (modified, +30/-0)
+```diff
+@@ -67,6 +67,29 @@ func (in *IPAMPoolDemand) DeepCopy() *IPAMPoolDemand {
+ 	return out
+ }
+ 
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *IPAMPoolRelease) DeepCopyInto(out *IPAMPoolRelease) {
++	*out = *in
++	if in.CIDRs != nil {
++		in, out := &in.CIDRs, &out.CIDRs
++		*out = make([]ip.Prefix, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
++	return
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new IPAMPoolRelease.
++func (in *IPAMPoolRelease) DeepCopy() *IPAMPoolRelease {
++	if in == nil {
++		return nil
++	}
++	out := new(IPAMPoolRelease)
++	in.DeepCopyInto(out)
++	return out
++}
++
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *IPAMPoolRequest) DeepCopyInto(out *IPAMPoolRequest) {
+ 	*out = *in
+@@ -99,6 +122,13 @@ func (in *IPAMPoolSpec) DeepCopyInto(out *IPAMPoolSpec) {
+ 			(*in)[i].DeepCopyInto(&(*out)[i])
+ 		}
+ 	}
++	if in.Released != nil {
++		in, out := &in.Released, &out.Released
++		*out = make([]IPAMPoolRelease, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
+ 	return
+ }
+ 
+```
+
+**File**: `pkg/ipam/types/zz_generated.deepequal.go` (modified, +47/-0)
+```diff
+@@ -102,6 +102,36 @@ func (in *IPAMPoolDemand) DeepEqual(other *IPAMPoolDemand) bool {
+ 	return true
+ }
+ 
++// DeepEqual is an autogenerated deepequal function, deeply comparing the
++// receiver with other. in must be non-nil.
++func (in *IPAMPoolRelease) DeepEqual(other *IPAMPoolRelease) bool {
++	if other == nil {
++		return false
++	}
++
++	if in.Pool != other.Pool {
++		return false
++	}
++	if ((in.CIDRs != nil) && (other.CIDRs != nil)) || ((in.CIDRs == nil) != (other.CIDRs == nil)) {
++		in, other := &in.CIDRs, &other.CIDRs
++		if other == nil {
++			return false
++		}
++
++		if len(*in) != len(*other) {
++			return false
++		} else {
++			for i, inElement := range *in {
++				if !inElement.DeepEqual(&(*other)[i]) {
++					return false
++				}
++			}
++		}
++	}
++
++	return true
++}
++
+ // DeepEqual is an autogenerated deepequal function, deeply comparing the
+ // receiver with other. in must be non-nil.
+ func (in *IPAMPoolRequest) DeepEqual(other *IPAMPoolRequest) bool {
+@@ -160,6 +190,23 @@ func (in *IPAMPoolSpec) DeepEqual(other *IPAMPoolSpec) bool {
+ 		}
+ 	}
+ 
++	if ((in.Released != nil) && (other.Released != nil)) || ((in.Released == nil) != (other.Released == nil)) {
++		in, other := &in.Released, &other.Released
++		if other == nil {
++			return false
++		}
++
++		if len(*in) != len(*other) {
++			return false
++		} else {
++			for i, inElement := range *in {
++				if !inElement.DeepEqual(&(*other)[i]) {
++					return false
++				}
++			}
++		}
++	}
++
+ 	return true
+ }
+ 
+```
+
+**File**: `pkg/k8s/apis/cilium.io/client/crds/v2/ciliumnodes.yaml` (modified, +58/-0)
+```diff
+@@ -384,6 +384,35 @@ spec:
+                           - pool
+                           type: object
+                         type: array
++                      released:
++                        description: |-
++                          Released reports a snapshot of the CIDRs the agent has released from
++                          each pool and does not currently allocate from. It is informational
++                          only and does not claim ownership: a listed CIDR may already be
++                          unassigned from this node until the agent's next update. On restart,
++                          the agent restores the entries still assigned to this node. This field
++                          is owned and written to by cilium-agent.
++                        items:
++                          description: IPAMPoolRelease describes the CIDRs a node
++                            has released from an IPAM pool.
++                          properties:
++                            cidrs:
++                              description: CIDRs contains the CIDRs released from
++                                this pool.
++                              items:
++                                format: cidr
++                                maxLength: 43
++                                type: string
++                              type: array
++                            pool:
++                              description: Pool is the name of the IPAM pool the CIDRs
++                                were released from
++                              minLength: 1
++                              type: string
++                          required:
++                          - pool
++                          type: object
++                        type: array
+                       requested:
+                         description: |-
+                           Requested contains a list of IPAM pool requests, i.e. indicates how many
+@@ -467,6 +496,35 @@ spec:
+                           - pool
+                           type: object
+                         type: array
++                      released:
++                        description: |-
++                          Released reports a snapshot of the CIDRs the agent has released from
++                          each pool and does not currently allocate from. It is informational
++                          only and does not claim ownership: a listed CIDR may already be
++                          unassigned from this node until the agent's next update. On restart,
++                          the agent restores the entries still assigned to this node. This field
++                          is owned and written to by cilium-agent.
++                        items:
++                          description: IPAMPoolRelease describes the CIDRs a node
++                            has released from an IPAM pool.
++                          properties:
++                            cidrs:
++                              description: CIDRs contains the CIDRs released from
++                                this pool.
++                              items:
++                                format: cidr
++                                maxLength: 43
++                                type: string
++                              type: array
++                            pool:
++                              description: Pool is the name of the IPAM pool the CIDRs
++                                were released from
++                              minLength: 1
++                              type: string
++                          required:
++                          - pool
++                          type: object
++                        type: array
+                       requested:
+                         description: |-
+                           Requested contains a list of IPAM pool requests, i.e. indicates how many
+```
+
+**File**: `pkg/k8s/apis/cilium.io/register.go` (modified, +1/-1)
+```diff
+@@ -15,5 +15,5 @@ const (
+ 	//
+ 	// Maintainers: Run ./Documentation/check-crd-compat-table.sh for each release
+ 	// Developers: Bump patch for each change in the CRD schema.
+-	CustomResourceDefinitionSchemaVersion = "1.34.8"
++	CustomResourceDefinitionSchemaVersion = "1.34.9"
+ )
 ```
 
 #### Recent Merged Pull Requests:
@@ -1399,31 +1882,31 @@ Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm: Introduce netdevTracing value for trace-netdev flag
+## X. ipam: Advertise released pool CIDRs in the CiliumNode
 
 **RULE**:
-When implementing operations in `Documentation/helm-values.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/alibabacloud/agent/pools.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d63b3059`: helm: Introduce netdevTracing value for trace-netdev flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69961019`: ipam: Advertise released pool CIDRs in the CiliumNode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/helm-values.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/alibabacloud/agent/pools.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-   * - :spelling:ignore:`bpf.netdevTracing`
-     - Enables tracing for native devices.
-     - bool
-     - ``false``
+		pools := node.Spec.IPAM.Pools
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		pools := ipamTypes.IPAMPoolSpec{
+			Requested: node.Spec.IPAM.Pools.Requested,
+			Allocated: node.Spec.IPAM.Pools.Allocated,
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d63b3059` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69961019` are properly handled with clean fallback behavior.

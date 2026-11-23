@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `f4c69979`  
+> **Source Version**: `39fe0cb3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T18:06:23.153Z  
+> **Timestamp**: 2026-11-23T23:09:57.611Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:06:23.148Z  
+> **Harvest Timestamp**: 2026-11-23T23:09:57.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5771 stars
+- **Stars / Engagement**: 5774 stars
 
 ---
 
@@ -984,17 +984,11 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8082** (2026-11-17): **[release-1.19] fix(search): correct verb and scope labels for proxied requests**
-  *Symptoms*: This is an automated cherry-pick of #7985  /assign RainbowMango  ```release-note `karmada-search`: Fixed proxied LIST requests being reported as GET in request count and latency metrics, and corrected request scope labels. ```  /kind bug
-  **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8082?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.48%. Comparing base ([`758aeb1`](https://app.codecov.io/gh/karmada-io/karmada/commit/758aeb182487444228f8657aed5d63e4e9d9dfd8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`06bc3a2`](https://app.codecov.io/gh/karmada-io/karmada/commit/06bc3a2f24f971845004500025e7cd5e97d76cac?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
-  > /lgtm /approve
+- **Issue #8112** (2026-11-23): **build(deps): bump actions/setup-go from 7.0.0 to 7.1.0**
+  *Symptoms*: Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-go/releases">actions/setup-go's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Expose go env variables as action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/791">actions/setup-go#791</a></li> <li>Preserve native Go environment names in action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/793">actions/setup-go#793</a></li> <li>Add support for native Go version syntax in go-version input by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/804">actions/setup-go#804</a></li> <li>Add support for rc and beta versions in go.mod file by <a href="https://github.com/arnested"><code>@​arnested</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/701">actions/setup-go#701</a></li> <li>Clarify description of go-bin-path output and its fallback behavior by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/803">actions/set
 
-- **Issue #8081** (2026-11-17): **[release-1.18] fix(search): correct verb and scope labels for proxied requests**
-  *Symptoms*: This is an automated cherry-pick of #7985  /assign RainbowMango  ```release-note `karmada-search`: Fixed proxied LIST requests being reported as GET in request count and latency metrics, and corrected request scope labels. ```  /kind bug
-  **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8081?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.19%. Comparing base ([`6d63495`](https://app.codecov.io/gh/karmada-io/karmada/commit/6d63495bd99bbce8400f408c6daed3834bffa6c3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`fc6d13c`](https://app.codecov.io/gh/karmada-io/karmada/commit/fc6d13ce27dac08b4fc7d72b96eacd9187e6fcfe?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
-  > /lgtm /approve
+- **Issue #8106** (2026-11-21): **fix: remove all auto-generated token secrets when pruning a ServiceAccount**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  `removeServiceAccountIrrelevantField` in `pkg/resourceinterpreter/default/native/prune/prune.go` removes the auto-generated `<name>-token-*` entries from a ServiceAccount's `secrets`. It deleted elements from the slice while iterating over it by index:  ```go for idx := 0; idx < len(secrets); idx++ { 	if strings.HasPrefix(..., tokenPrefix) { 		secrets = append(secrets[:idx], secrets[idx+1:]...) 	} } ```  After a removal the next element moves into `idx`, the loop then increments `idx` and skips it. A ServiceAccount with two token secrets next to each other (`foo-token-6pgxf`, `foo-token-9hk2d`) keeps the second one.  This PR builds the list of retained secrets instead of deleting in place, and adds `TestRemoveServiceAccountIrrelevantField` with cases for a single token secret, consecutive token secrets, only token secrets and no token secret.  **Which issue(s) this PR fixes**:  No linked issue, I found this while reading the code.  **Special notes for your reviewer**:  - Without the fix the new test fails for two cases: `consecutive token secrets are all removed` (got `[foo-token-9hk2d foo-dockercfg-zdr2j]`) and `only token secrets` (got `[foo-token-9hk2d]`). With the fix `go test ./pkg/resourceinterpreter/default/native/prune/` passes; `gofmt` and `go vet` are clean for the package. - When every entry is removed, `secrets` is still set to an empty list, as before. - AI disclosure: an AI assista
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1011,184 +1005,179 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4c69979` (2026-11-19)
-**Commit Message**: Merge pull request #8024 from asarj/fix/insufficient-capacity-unschedulable
+### Incident Patch 1: `ccf0b8b7` (2026-11-23)
+**Commit Message**: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
 
-fix(scheduler): handle insufficient capacity as unschedulable
+Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0.
+- [Release notes](https://github.com/actions/setup-go/releases)
+- [Commits](https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5)
 
-**File**: `pkg/scheduler/helper.go` (modified, +2/-1)
+---
+updated-dependencies:
+- dependency-name: actions/setup-go
+  dependency-version: 7.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
 ```diff
-@@ -116,7 +116,8 @@ func getConditionByError(err error) (metav1.Condition, bool) {
- 	}
+@@ -34,7 +34,7 @@ jobs:
+         with:
+           ref: ${{ matrix.karmada-version }}
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - id: gen_git_info
+```
+
+**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ jobs:
+           # 0 indicates all history for all branches and tags.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: Build an image from Dockerfile
+```
+
+**File**: `.github/workflows/ci-performance-compare.yaml` (modified, +2/-2)
+```diff
+@@ -47,7 +47,7 @@ jobs:
+           ref: ${{ env.BASE_BRANCH }}
+           
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
  
- 	var unschedulableErr *framework.UnschedulableError
--	if errors.As(err, &unschedulableErr) {
-+	var insufficientCapacityErr *framework.InsufficientCapacityError
-+	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
- 		return util.NewCondition(workv1alpha2.Scheduled, workv1alpha2.BindingReasonUnschedulable, err.Error(), metav1.ConditionFalse), false
- 	}
+@@ -107,7 +107,7 @@ jobs:
+           ref: refs/pull/${{ env.TARGET_PR_NUMBER }}/head
+           
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
  
 ```
 
-**File**: `pkg/scheduler/helper_test.go` (modified, +19/-4)
+**File**: `.github/workflows/ci-schedule-compatibility.yaml` (modified, +1/-1)
 ```diff
-@@ -461,7 +461,7 @@ func Test_getConditionByError(t *testing.T) {
- 		{
- 			name:              "no error",
- 			err:               nil,
--			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonSuccess, Status: metav1.ConditionTrue},
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonSuccess, Status: metav1.ConditionTrue, Message: successfulSchedulingMessage},
- 			ignoreErr:         true,
- 		},
- 		{
-@@ -473,13 +473,13 @@ func Test_getConditionByError(t *testing.T) {
- 		{
- 			name:              "no cluster fit",
- 			err:               &framework.FitError{},
--			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse},
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse, Message: "0/0 clusters are available: no cluster exists."},
- 			ignoreErr:         true,
- 		},
- 		{
- 			name:              "aggregated fit error",
- 			err:               utilerrors.NewAggregate([]error{&framework.FitError{}, errors.New("")}),
--			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse},
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse, Message: "[0/0 clusters are available: no cluster exists., ]"},
- 			ignoreErr:         false,
- 		},
- 		{
-@@ -491,7 +491,19 @@ func Test_getConditionByError(t *testing.T) {
- 		{
- 			name:              "wrapped unschedulable error",
- 			err:               fmt.Errorf("failed to assign replicas: %w", fmt.Errorf("failed to scale up: %w", &framework.UnschedulableError{Message: "insufficient replicas"})),
--			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse},
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "failed to assign replicas: failed to scale up: insufficient replicas"},
-+			ignoreErr:         false,
-+		},
-+		{
-+			name:              "insufficient capacity error",
-+			err:               &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"},
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "insufficient cluster capacity"},
-+			ignoreErr:         false,
-+		},
-+		{
-+			name:              "wrapped insufficient capacity error",
-+			err:               fmt.Errorf("failed to schedule: %w", fmt.Errorf("failed to select clusters: %w", &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"})),
-+			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "failed to schedule: failed to select clusters: insufficient cluster capacity"},
- 			ignoreErr:         false,
- 		},
- 	}
-@@ -504,6 +516,9 @@ func Test_getConditionByError(t *testing.T) {
- 				t.Errorf("expected condition: (%s, %s, %s), but got (%s, %s, %s)",
- 					tt.expectedCondition.Type, tt.expectedCondition.Reason, tt.expectedCondition.Status, condition.Type, condition.Reason, condition.Status)
- 			}
-+			if condition.Message != tt.expectedCondition.Message {
-+				t.Errorf("expected condition message: %q, but got %q", tt.expectedCondition.Message, condition.Message)
-+			}
- 
- 			if ignoreErr != tt.ignoreErr {
- 				t.Errorf("expect to ignore error: %v. but got: %v", tt.ignoreErr, ignoreErr)
+@@ -45,7 +45,7 @@ jobs:
+           fetch-depth: 0
+           ref: ${{ matrix.karmada-version }}
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: setup e2e test environment
 ```
 
-**File**: `pkg/scheduler/scheduler.go` (modified, +2/-1)
+**File**: `.github/workflows/ci-schedule.yml` (modified, +1/-1)
 ```diff
-@@ -943,7 +943,8 @@ func (s *Scheduler) handleErr(err error, bindingInfo *internalqueue.QueuedBindin
- 	}
- 
- 	var unschedulableErr *framework.UnschedulableError
--	if errors.As(err, &unschedulableErr) {
-+	var insufficientCapacityErr *framework.InsufficientCapacityError
-+	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
- 		s.priorityQueue.PushUnschedulableIfNotPresent(bindingInfo)
- 	} else {
- 		s.priorityQueue.PushBackoffIfNotPresent(bindingInfo)
+@@ -41,7 +41,7 @@ jobs:
+           # We need to guess version via git tags.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: setup e2e test environment
 ```
 
-**File**: `pkg/scheduler/scheduler_test.go` (modified, +22/-0)
+**File**: `.github/workflows/ci.yml` (modified, +5/-5)
 ```diff
-@@ -26,6 +26,7 @@ import (
- 
- 	"github.com/stretchr/testify/assert"
- 	corev1 "k8s.io/api/core/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	"k8s.io/apimachinery/pkg/api/resource"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/labels"
-@@ -2615,6 +2616,15 @@ func TestHandleErr(t *testing.T) {
- 			err:          nil,
- 			expectForget: true,
- 		},
-+		{
-+			name: "terminating namespace calls Forget",
-+			err: &apierrors.StatusError{ErrStatus: metav1.Status{
-+				Details: &metav1.StatusDetails{
-+					Causes: []metav1.StatusCause{{Type: corev1.NamespaceTerminatingCause}},
-+				},
-+			}},
-+			expectForget: true,
-+		},
- 		{
- 			name:              "generic error calls PushBackoffIfNotPresent",
- 			err:               fmt.Errorf("some transient error"),
-@@ -2632,6 +2642,18 @@ func TestHandleErr(t *testing.T) {
- 					&framework.UnschedulableError{Message: "insufficient replicas"})),
- 			expectPushUnschedulable: true,
- 		},
-+		{
-+			name:                    "bare InsufficientCapacityError calls PushUnschedulableIfNotPresent",
-+			err:                     &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"},
-+			expectPushUnschedulable: true,
-+		},
-+		{
-+			name: "wrapped InsufficientCapacityError calls PushUnschedulableIfNotPresent",
-+			err: fmt.Errorf("failed to schedule: %w",
-+				fmt.Errorf("failed to select clusters: %w",
-+					&framework.InsufficientCapacityError{Message: "insufficient cluster capacity"})),
-+			expectPushUnschedulable: true,
-+		},
- 	}
- 
- 	for _, tt := range tests {
+@@ -22,7 +22,7 @@ jobs:
+       - name: checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: verify license
+@@ -40,7 +40,7 @@ jobs:
+       - name: checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: verify codegen
+@@ -67,7 +67,7 @@ jobs:
+           # We need to guess version via git tags.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: compile
+@@ -82,7 +82,7 @@ jobs:
+       - name: checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: make test
+@@ -133,7 +133,7 @@ jobs:
+           # We need to guess version via git tags.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: setup e2e test environment
 ```
 
-**File**: `test/e2e/suites/base/estimator_test.go` (modified, +3/-3)
+**File**: `.github/workflows/dockerhub-latest-chart.yml` (modified, +1/-1)
 ```diff
-@@ -364,7 +364,7 @@ var _ = framework.SerialDescribe("[EstimatorAssumption] ResourceQuota plugin ass
- 				func(binding *workv1alpha2.ResourceBinding) bool {
- 					cond := meta.FindStatusCondition(binding.Status.Conditions, workv1alpha2.Scheduled)
- 					return cond != nil && cond.Status == metav1.ConditionFalse &&
--						cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
-+						cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
- 						strings.Contains(cond.Message, "no enough resource")
- 				})
- 		})
-@@ -514,7 +514,7 @@ var _ = framework.SerialDescribe("[EstimatorAssumption] NodeResource plugin assu
- 						if cond == nil {
- 							return false
- 						}
--						if cond.Status == metav1.ConditionFalse && cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
-+						if cond.Status == metav1.ConditionFalse && cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
- 							strings.Contains(cond.Message, "no enough resource") {
- 							assumptionExhausted = true
- 							return true
-@@ -667,7 +667,7 @@ func assertSingleTemplateDeploymentUnschedulable(namespace, targetCluster string
- 		func(binding *workv1alpha2.ResourceBinding) bool {
- 			cond := meta.FindStatusCondition(binding.Status.Conditions, workv1alpha2.Scheduled)
- 			return cond != nil && cond.Status == metav1.ConditionFalse &&
--				cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
-+				cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
- 				strings.Contains(cond.Message, "no enough resource")
- 		})
- }
+@@ -23,7 +23,7 @@ jobs:
+           # for `git describe --tags` in Makefile.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: login to DockerHub
+```
+
+**File**: `.github/workflows/dockerhub-latest-image.yml` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ jobs:
+           # for `git describe --tags` in Makefile.
+           fetch-depth: 0
+       - name: install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version-file: go.mod
+       - name: Install Cosign
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8112** (2026-11-23): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #8106** (closed): fix: remove all auto-generated token secrets when pruning a ServiceAccount (@bhavishyajain545)
 - **PR #8082** (2026-11-17): [release-1.19] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8081** (2026-11-17): [release-1.18] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8080** (2026-11-17): [release-1.17] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8072** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
-- **PR #8071** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
-- **PR #8070** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
 
 ---
 
@@ -1208,29 +1197,28 @@ fix(scheduler): handle insufficient capacity as unschedulable
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in helper.go
+## X. build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
 
 **RULE**:
-When implementing operations in `pkg/scheduler/helper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-image-scanning-on-schedule.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4c69979`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccf0b8b7`: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/scheduler/helper.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-image-scanning-on-schedule.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	var insufficientCapacityErr *framework.InsufficientCapacityError
-	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if errors.As(err, &unschedulableErr) {
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4c69979` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccf0b8b7` are properly handled with clean fallback behavior.

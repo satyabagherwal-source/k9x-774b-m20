@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T22:56:21.075Z",
+  "last_updated": "2026-11-23T23:10:01.879Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2406,14 +2406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "9a97d00726b16f7b42159709fd8be7b7040ef7f16858059b1a0dd5d865d7965c",
-      "verified_at": "2026-11-19T16:40:53.958Z",
+      "content_hash": "7cb37523bf94afd7029a10dbe59bd8631b1e6257b7465157a6267007a567175f",
+      "verified_at": "2026-11-23T23:09:50.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:40:53.958Z"
+      "last_updated": "2026-11-23T23:09:50.441Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
-      "verified_at": "2026-11-19T18:06:24.103Z",
+      "content_hash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
+      "verified_at": "2026-11-23T23:09:58.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:06:24.103Z"
+      "last_updated": "2026-11-23T23:09:58.316Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
-      "verified_at": "2026-11-23T19:00:59.599Z",
+      "content_hash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
+      "verified_at": "2026-11-23T23:10:01.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:00:59.599Z"
+      "last_updated": "2026-11-23T23:10:01.879Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "92ad7b55934638591571f8fa54b669dab12fc21dda1cfdc81dc11d73df50d7c7",
-      "verified_at": "2026-11-22T14:56:19.553Z",
+      "content_hash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
+      "verified_at": "2026-11-23T23:09:51.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T14:56:19.553Z"
+      "last_updated": "2026-11-23T23:09:51.810Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

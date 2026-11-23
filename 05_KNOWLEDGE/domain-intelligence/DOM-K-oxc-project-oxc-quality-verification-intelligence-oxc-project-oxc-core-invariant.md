@@ -4,24 +4,24 @@
 {
   "source_repository": "oxc-project/oxc",
   "source_url": "https://github.com/oxc-project/oxc",
-  "source_version": "7c39be07",
+  "source_version": "4a6f9c61",
   "license": "MIT",
-  "timestamp": "2026-11-17T20:17:35.147Z",
+  "timestamp": "2026-11-23T23:09:52.019Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oxc-project-oxc",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `7c39be07`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T20:17:35.147Z`  
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `4a6f9c61`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T23:09:52.019Z`  
 > **Learning ID**: `learn-github-oxc-project-oxc`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from oxc-project/oxc:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:17:33.984Z  
+> **Harvest Timestamp**: 2026-11-23T23:09:50.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23484 stars
+- **Stars / Engagement**: 23577 stars
 
 ---
 
@@ -1062,14 +1062,11 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29769** (2026-11-17): **chore(deps): update rust crate oxc_index to v5.0.1**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [oxc_index](https://redirect.github.com/oxc-project/oxc-index-vec) | workspace.dependencies | patch | `5.0.0` → `5.0.1` |  ---  ### Release Notes  <details> <summary>oxc-project/oxc-index-vec (oxc_index)</summary>  ### [`v5.0.1`](https://redirect.github.com/oxc-project/oxc-index-vec/blob/HEAD/CHANGELOG.md#501---2026-11-17)  [Compare Source](https://redirect.github.com/oxc-project/oxc-index-vec/compare/v5.0.0...v5.0.1)  ##### Fixed  - include upstream license files ([#&#8203;192](https://redirect.github.com/oxc-project/oxc-index-vec/pull/192))  ##### Other  - hoist index bounds check out of enumerated iterators ([#&#8203;217](https://redirect.github.com/oxc-project/oxc-index-vec/pull/217)) - *(deps)* update dependency rust to v1.99.0 ([#&#8203;210](https://redirect.github.com/oxc-project/oxc-index-vec/pull/210)) - reduce Rust dev debug info ([#&#8203;202](https://redirect.github.com/oxc-project/oxc-index-vec/pull/202)) - *(deps)* update rust crate serde to v1.0.229 ([#&#8203;196](https://redirect.github.com/oxc-project/oxc-index-vec/pull/196)) - update sponsor section ([#&#8203;194](https://redirect.github.com/oxc-project/oxc-index-vec/pull/194)) - normalize README sponsor section ([#&#8203;187](https://redirect.github.com/oxc-project/oxc-index-vec/pull/187))  </details>  ---  ### Configuration  📅 **Schedule**: (in timezone Asia/Shanghai)  - Branch creation   - At any time (no sc
+- **Issue #30133** (2026-11-23): **fix(lexer): round hex, octal and binary literals above u64::MAX**
+  *Symptoms*: - Hex, octal and binary literals above u64::MAX wrapped around, so the numbers lane held 0 for 0x10000000000000000 where V8 and tsc give 2^64 - Literals longer than 16 hex, 21 octal or 64 binary bytes after the prefix now take a cold path that rounds to the nearest double, as oxc_parser does - Shorter literals keep the u64 loop, perf neutral  Closes #29854  ### Example  Input:  ```js x = [0x10000000000000000, 0o2000000000000000000000, 0x10000000000000801, 0xff]; ```  Before output (numbers lane):  ```text [0.0, 0.0, 2049.0, 255.0] ```  After output:  ```text [1.8446744073709552e19, 1.8446744073709552e19, 1.8446744073709556e19, 255.0] ```  V8 gives 18446744073709552000, 18446744073709552000, 18446744073709556000 and 255. No playground link, as the playground doesn't run oxc_lexer. 
 
-- **Issue #29768** (2026-11-17): **docs(minifier): clarify when variable declarations are merged**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-comment&prId=8870416881).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in this repository.  </sub>  <sub>  Please do not merge from GitHub as this will restart CI on PRs being processed by the merge queue.  </sub>
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"3572d4a9d75e87c2eac27ad76d3f58e88c2fcd09","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-17T15:59:04.597746Z">2026-11-17T15:59:04.597746Z</relative-time> | `3572d4a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+- **Issue #30132** (2026-11-23): **fix(lexer): evaluate legacy octal literals in base 8**
+  *Symptoms*: - Legacy octal literals like 070 had their digits read as decimal, so the numbers lane held 70 where V8 and tsc give 56 - A leading zero run with an 8 or 9 stays decimal (08, 0779, 08.5), and the strict mode error is still left to semantic - Only numbers starting with 0 and a digit take the new check, perf neutral  Closes #29853  ### Example  Input:  ```js x = [070, 0777, 08]; ```  Before output (numbers lane):  ```text [70.0, 777.0, 8.0] ```  After output:  ```text [56.0, 511.0, 8.0] ```  V8 and tsc both read 070 as 56 and 0777 as 511. No playground link, as the playground doesn't run oxc_lexer. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1086,948 +1083,1724 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f6a11f9` (2026-11-17)
-**Commit Message**: fix(semantic): keep catch parameters in the catch clause scope (#29635)
+### Incident Patch 1: `9bac1b48` (2026-11-23)
+**Commit Message**: fix(linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls (#30105)
 
-Closes https://github.com/oxc-project/oxc/issues/29739. Fixes part 1 of #29143 (parts 2 and 3 are separate) and the catch case of #24331. Supersedes the mangler workaround in #29144.
+Part of #29818.
 
-### Problem
+`unicorn/prefer-array-flat` ignored the legacy `_.flatten(array)`,
+`lodash.flatten(array)` and `underscore.flatten(array)` calls, even
+though upstream `eslint-plugin-unicorn` reports them by default. Code
+using these helpers produced no diagnostics.
 
-Semantic moved catch parameter bindings into the catch body's block scope, but references inside the parameter (default values, computed keys) stay in the catch clause scope. The mangler marks an outer name live only up to the referencing scope, so a catch binding could take the name of an outer binding that its own default or computed key reads:
+### Example
 
-```js
-function f(text) {
-  const defaultCode = () => "E_PARSE";
-  try { return JSON.parse(text) } catch ({ name, code = defaultCode() }) { return name + ":" + code }
-}
-console.log(f("{"));
-```
+Input:
 
 ```js
-// Before: ReferenceError: Cannot access 't' before initialization
-function f(e){let t=()=>`E_PARSE`;try{return JSON.parse(e)}catch({name:e,code:t=t()}){return e+`:`+t}}console.log(f(`{`));
-// After: SyntaxError:E_PARSE, same as the unminified input
-function f(e){let t=()=>`E_PARSE`;try{return JSON.parse(e)}catch({name:e,code:n=t()}){return e+`:`+n}}console.log(f(`{`));
+const a = _.flatten(array);
+const b = lodash.flatten(array);
+const c = underscore.flatten(array);
 ```
 
-([
+Command:
 
-**File**: `crates/oxc_linter/src/rules/unicorn/catch_error_name.rs` (modified, +11/-1)
-```diff
-@@ -251,9 +251,19 @@ impl CatchErrorName {
-     fn get_fixed_name(&self, ctx: &LintContext, symbol_id: SymbolId) -> CompactStr {
-         let scoping = ctx.scoping();
-         let scope_id = scoping.symbol_scope_id(symbol_id);
-+        // A catch parameter is bound in the catch clause scope, but must not clash with a lexical
-+        // declaration in the catch body either (`catch (error) { let error }` is a SyntaxError).
-+        // Lookups from the body scope also cover the catch clause scope and its ancestors.
-+        let binding_scope_id = if scoping.scope_flags(scope_id).is_catch_clause()
-+            && let AstKind::CatchClause(clause) = ctx.nodes().kind(scoping.get_node_id(scope_id))
-+        {
-+            clause.body.scope_id()
-+        } else {
-+            scope_id
-+        };
-         let mut name = self.name.clone().into_compact_string();
- 
--        while scoping.find_binding(scope_id, name.as_str().into()).is_some()
-+        while scoping.find_binding(binding_scope_id, name.as_str().into()).is_some()
-             || scoping.get_resolved_references(symbol_id).any(|reference| {
-                 scoping.find_binding(reference.scope_id(), name.as_str().into()).is_some()
-             })
+```sh
+oxlint -A all -D unicorn/prefer-array-flat --threads=1 example.js
 ```
 
-**File**: `crates/oxc_mangler/src/lib.rs` (modified, +20/-3)
-```diff
-@@ -11,7 +11,10 @@ use rustc_hash::{FxBuildHasher, FxHashMap, FxHashSet};
- 
- pub use base54::base54;
- use oxc_allocator::{Allocator, ArenaVec, BitSet};
--use oxc_ast::ast::{Declaration, Program, Statement};
-+use oxc_ast::{
-+    AstKind,
-+    ast::{Declaration, Program, Statement},
-+};
- use oxc_data_structures::inline_string::InlineString;
- use oxc_ecmascript::BoundNames;
- use oxc_semantic::{AstNodes, Reference, Scoping, Semantic, SemanticBuilder, Stats, SymbolId};
-@@ -688,6 +691,18 @@ impl<'a> SlotAssignment<'a> {
-                 ancestor_set.set_bit(ancestor_id.index());
-             }
- 
-+            // Catch parameters are bound in the catch clause scope, but a lexical declaration
-+            // directly in the catch body must not take a parameter's name
-+            // (`catch (e) { let e }` is a SyntaxError), even when the parameter is never
-+            // referenced in the body. Treat every parameter as live in the body scope.
-+            let catch_body_scope_id = if scoping.scope_flags(scope_id).is_catch_clause()
-+                && let AstKind::CatchClause(clause) = ast_nodes.kind(scoping.get_node_id(scope_id))
-+            {
-+                Some(clause.body.scope_id())
-+            } else {
-+                None
-+            };
-+
-             let scope_id_index = scope_id.index();
-             for (&symbol_id, &assigned_slot) in tmp_bindings.iter().zip(&reusable_slots) {
-                 debug_assert!(constraints.is_mangle_candidate(symbol_id, scoping));
-@@ -707,8 +722,10 @@ impl<'a> SlotAssignment<'a> {
-                 // The scopes this symbol is alive in: for each use, walk up to (but not including)
-                 // `scope_id`, marking the descendant scopes it passes through.
-                 let slot_liveness_bitset = &mut slot_liveness[assigned_slot as usize];
--                for used_scope_id in
--                    referenced_scope_ids.chain(redeclared_scope_ids).chain([declared_scope_id])
-+                for used_scope_id in referenced_scope_ids
-+                    .chain(redeclared_scope_ids)
-+                    .chain([declared_scope_id])
-+                    .chain(catch_body_scope_id)
-                 {
-                     for ancestor_id in scoping.scope_ancestors(used_scope_id) {
-                         let ancestor_index = ancestor_id.index();
+Before:
+
+```text
+Found 0 warnings and 0 errors.
 ```
 
-**File**: `crates/oxc_minifier/tests/mangler/mod.rs` (modified, +36/-0)
+After:
+
+```text
+  x unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+   ,-[example.js:1:11]
+ 1 | const a = _.flatten(array);
+   :           ^^^^^^^^^^^^^^^^
+ 2 | const b = lodash.flatten(array);
+   `----
+  help: Call `.flat()` on the array instead.
+
+  x unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+   ,-[example.js:2:11]
+ 1 | const a = _.flatten(array);
+ 2 | const b = lodash.flatten(array);
+   :           ^^^^^^^^^^^^^^^^^^^^^
+ 3 | const c = underscore.flatten(array);
+   `----
+  h
+
+**File**: `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs` (modified, +350/-16)
 ```diff
-@@ -439,6 +439,42 @@ fn annex_b_block_scoped_function() {
-     });
+@@ -1,23 +1,26 @@
+ use oxc_ast::{
+     AstKind,
+     ast::{
+-        Argument, ArrayExpressionElement, BindingPattern, CallExpression, Expression,
+-        IdentifierReference, MemberExpression,
++        Argument, ArrayExpressionElement, BindingPattern, CallExpression, ChainElement, Expression,
++        IdentifierReference, MemberExpression, NewExpression,
+     },
+ };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+-use oxc_span::Span;
++use oxc_semantic::IsGlobalReference;
++use oxc_span::{GetSpan, Span};
++use oxc_syntax::precedence::Precedence;
+ 
+ use crate::{
+     AstNode,
+-    ast_util::variable_declaration_kind,
+-    ast_util::{get_symbol_id_of_variable, is_method_call},
++    ast_util::{
++        could_be_asi_hazard, get_symbol_id_of_variable, is_method_call, variable_declaration_kind,
++    },
+     context::LintContext,
+     rule::Rule,
+     utils::{
+-        get_first_parameter_name, get_return_identifier_name, is_empty_array_expression,
+-        is_prototype_property,
++        get_first_parameter_name, get_precedence, get_return_identifier_name,
++        is_empty_array_expression, is_prototype_property, pad_fix_with_token_boundary,
+     },
+ };
+ 
+@@ -52,6 +55,7 @@ declare_oxc_lint!(
+     /// const foo = [].concat.apply([], array);
+     /// const foo = Array.prototype.concat.apply([], array);
+     /// const foo = Array.prototype.concat.call([], ...array);
++    /// const foo = _.flatten(array);
+     /// ```
+     ///
+     /// Examples of **correct** code for this rule:
+@@ -78,6 +82,7 @@ impl Rule for PreferArrayFlat {
+         check_array_reduce_case(call_expr, ctx);
+         check_array_concat_case(call_expr, ctx);
+         check_array_prototype_concat_case(call_expr, ctx);
++        check_lodash_flatten_case(node, call_expr, ctx);
+     }
  }
  
-+/// Catch parameters are bound in the catch clause scope.
-+/// <https://github.com/oxc-project/oxc/issues/29143>, <https://github.com/oxc-project/oxc/issues/24331>
-+#[test]
-+fn catch_parameter_scope() {
-+    let options = MangleOptions::default();
-+    // A catch binding must not take the name of an outer binding that its own default value or
-+    // computed key reads.
-+    test(
-+        "function f(text) { const defaultCode = () => 'E_PARSE'; try { return JSON.parse(text) } catch ({ name, code = defaultCode() }) { return name + ':' + code } }",
-+        "function f(e) { const t = () => 'E_PARSE'; try { return JSON.parse(e) } catch ({ name: e, code: n = t() }) { return e + ':' + n } }",
-+        &options,
-+    );
-+    test(
-+        "function _(a) { try { throw [] } catch ([x = a]) { return x } }",
-+        "function _(e) { try { throw [] } catch ([t = e]) { return t } }",
-+        &options,
-+    );
-+    test(
-+        "function _() { var a = 1; try { throw ['FAIL', 'PASS'] } catch ({ [a]: b }) { let a = 0; return b } }",
-+        "function _() { var e = 1; try { throw ['FAIL', 'PASS'] } catch ({ [e]: t }) { let e = 0; return t } }",
-+        &options,
-+    );
-+    // A declaration directly in the catch body must not take an unused parameter's name
-+    // (`catch (e) { let e }` is a SyntaxError), but a nested block may shadow it.
-+    test(
-+        "function _() { try { throw 0 } catch (e) { let x = 1; return x } }",
-+        "function _() { try { throw 0 } catch (e) { let t = 1; return t } }",
-+        &options,
-+    );
-+    test(
-+        "function _() { try { throw 0 } catch (e) { { let x = 1; use(x) } } }",
-+        "function _() { try { throw 0 } catch (e) { { let e = 1; use(e) } } }",
-+        &options,
-+    );
+@@ -177,7 +182,7 @@ fn is_definitely_array_expression(expr: &Expression) -> bool {
+     match expr {
+         Expression::ArrayExpression(_) => true,
+         Expression::NewExpression(new_expr) => {
+-            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name == "Array")
++            matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+         }
+         _ => false,
+     }
+@@ -195,9 +200,12 @@ fn is_definitely_non_array_expression(expr: &Expression) -> bool {
+         | Expression::TemplateLiteral(_)
+         | Expression::ArrowFunctionExpression(_)
+         | Expression::FunctionExpression(_)
+-        | Expression::ClassExpression(_) => true,
++        | Expression::ClassExpression(_)
++        | Expression::PrivateInExpression(_)
++        | Expression::JSXElement(_)
++        | Expression::JSXFragment(_) => true,
+         Expression::NewExpression(new_expr) => {
+-            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name != "Array")
++            !matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+         }
+         _ => false,
+     }
+@@ -397,6 +405,176 @@ fn check_array_prototype_concat_case<'a>(call_expr: &CallExpression<'a>, ctx: &L
+     }
+ }
+ 
++const TYPED_ARRAY_NAMES: &[&str] = &[
++    "Int8Array",
++    "Uint8Array",
++    "Uint8ClampedArray",
++    "Int16Array",
++    "Uint16Array",
++    "Int32Array",
++    "Uint32Array",
++    "Float16Array",
++    "Float32Array",
++    "Float64Array",
++    "BigInt64Array",
++    "BigUint64Array",
++];
++
++fn is_known_non_array(expr: &Expression, ctx: &LintContext) -> bool {
++    match expr.get_inner_expression() {
++        Expression::Identifier(ident) => {
++            (matches!(ident.name.as_str(), "arguments" | "undefined")
++                && ident.is_global_reference(ctx.scoping()))
++                || matches!(
++                    const_variable_initializer_kind(ident, ctx),
++                    Some(ConstInitKind::NonArray)
++                )
++        }
++        Expression::CallExpression(call_expr) => {
++            is_method_call(call_expr, Some(TYPED_ARRAY_NAMES), Some(&["from", "of"]), None, None)
++        }
++        Expression::UnaryExpression(_) => true,
++        expr => is_definitely_non_array_expression(expr),
++    }
 +}
 +
- fn assert_valid_labels(source_text: &str, source_type: SourceType) {
-     let allocator = Allocator::default();
-     let ret = Parser::new(&allocator, source_text, source_type).parse();
-```
-
-**File**: `crates/oxc_react_compiler/tests/snapshots/error.bug-invariant-local-or-context-references.snap` (modified, +5/-51)
-```diff
-@@ -2,54 +2,8 @@
- source: crates/oxc_react_compiler/tests/snapshot.rs
- input_file: crates/oxc_react_compiler/fixtures/error.bug-invariant-local-or-context-references.js
- ---
--import { c as _c } from "react/compiler-runtime";
--import { useState } from "react";
--const bar = () => {
--	const $ = _c(1);
--	let t0;
--	if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
--		t0 = { data: null };
--		$[0] = t0;
--	} else {
--		t0 = $[0];
--	}
--	return t0;
--};
--export const useFoot = () => {
--	const $ = _c(3);
--	const [, setState] = useState(null);
--	try {
--		let t1;
--		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
--			t1 = bar();
--			$[0] = t1;
--		} else {
--			t1 = $[0];
--		}
--		const { data } = t1;
--		let t2;
--		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
--			t2 = {
--				data,
--				error: null
--			};
--			$[1] = t2;
--		} else {
--			t2 = $[1];
--		}
--		setState(t2);
--	} catch (t0) {
--		const err = t0;
--		let t1;
--		if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
--			t1 = (_prevState) => ({
--				loading: false,
--				error: err
--			});
--			$[2] = t1;
--		} else {
--			t1 = $[2];
--		}
--		setState(t1);
--	}
--};
-+Diagnostics:
-+
-+OxcDiagnostic { inner: OxcDiagnosticInner { message: "Expected all references to a variable to be consistently local or context references", labels: [LabeledSpan { label: Some("this is local"), span: Span { start: 308, end: 311 }, primary: true }], help: Some("Identifier <unknown> err$7 is referenced as a context variable, but was previously referenced as a local variable"), note: Some("This is an internal React Compiler error; the component or hook was not optimized"), severity: Error, code: OxcCode { scope: Some("react-compiler"), number: Some("Invariant") }, url: Some("https://github.com/oxc-project/oxc/issues/new/choose") } }
-+
-+No changes.
-```
-
-**File**: `crates/oxc_semantic/src/builder.rs` (modified, +61/-27)
-```diff
-@@ -6,7 +6,6 @@ use std::{
- };
- 
- use rustc_hash::FxHashMap;
--use smallvec::SmallVec;
- 
- use oxc_allocator::{Address, ArenaVec};
- use oxc_ast::{AstKind, ast::*};
-@@ -30,12 +29,12 @@ use oxc_syntax::{
- use crate::{
-     Semantic,
-     binder::{Binder, ModuleInstanceState},
--    checker,
-+    checker::{self, is_function_decl_part_of_if_statement},
-     class::ClassTableBuilder,
-     diagnostics::redeclaration,
-     label::UnusedLabels,
-     node::{Ancestry, AstNodeStore, AstNodeStoreKind},
--    scoping::{Bindings, Scoping},
-+    scoping::Scoping,
-     stats::Stats,
-     unresolved_stack::{UnresolvedReference, UnresolvedReferences},
- };
-@@ -92,6 +91,11 @@ pub struct SemanticBuilder<'a> {
-     /// declarations in that scope can still detect redeclarations via `check_redeclaration`.
-     /// A single flat map avoids allocating a per-scope inner map for every hoisting scope.
-     pub(crate) hoisting_variables: FxHashMap<(ScopeId, Ident<'a>), SymbolId>,
-+    /// Scope of the innermost catch clause body being visited, if any. It stays set while
-+    /// visiting blocks and functions nested in that body; only declarations whose scope equals
-+    /// it (i.e. directly in the catch body) are checked against the catch parameters, which are
-+    /// bound in the parent catch clause scope. See `check_catch_parameter_redeclaration`.
-+    catch_body_scope_id: Option<ScopeId>,
- 
-     // builders
-     /// Node-id counter, current-node cursor/flags, and the node storage (full
-@@ -158,6 +162,7 @@ impl<'a> SemanticBuilder<'a> {
-             module_instance_state_cache: FxHashMap::default(),
-             node_store: AstNodeStore::default(),
-             hoisting_variables: FxHashMap::default(),
-+            catch_body_scope_id: None,
-             scoping,
-             unresolved_references: UnresolvedReferences::new(),
-             unused_labels: UnusedLabels::default(),
-@@ -552,9 +557,19 @@ impl<'a> SemanticBuilder<'a> {
-         includes: SymbolFlags,
-         excludes: SymbolFlags,
-     ) -> SymbolId {
-+        let is_catch_body = self.catch_body_scope_id == Some(scope_id);
-+        let errors_before = if is_catch_body { self.errors.borrow().len() } else { 0 };
-+        let redeclared_symbol_id = self.check_redeclaration(scope_id, span, name, excludes);
-+        // Report one error per declaration: skip the catch parameter check when this declaration
-+        // already clashed with something else, e.g. a `var` hoisted through the catch body
-+        // (`catch (e) { var e; let e }`).
-+        if is_catch_body && self.errors.borrow().len() == errors_before {
-+            self.check_catch_parameter_redeclaration(scope_id, span, name, includes);
-+        }
-+
-         // A `var` hoisted through this scope is bound in an outer scope. Interfaces and type aliases
-         // live in a separate declaration space, so they get their own symbol in this scope.
--        if let Some(symbol_id) = self.check_redeclaration(scope_id, span, name, excludes)
-+        if let Some(symbol_id) = redeclared_symbol_id
-             && (includes.intersects(SymbolFlags::Value)
-                 || self.scoping.scope_has_binding(scope_id, name))
-         {
-@@ -573,6 +588,42 @@ impl<'a> SemanticBuilder<'a> {
-         )
-     }
- 
-+    /// It is a Syntax Error if any element of the BoundNames of CatchParameter also occurs in the
-+    /// LexicallyDeclaredNames of Block. Annex B.3.4 relaxes this only for `var` declarations,
-+    /// which are never declared on the catch body scope.
-+    /// <https://tc39.es/ecma262/#sec-try-statement-static-semantics-early-errors>
-+    ///
-+    /// Catch parameters are bound in the catch clause scope, the parent of the catch body scope.
-+    fn check_catch_parameter_redeclaration(
-+        &self,
-+        catch_body_scope_id: ScopeId,
-+        span: Span,
-+        name: Ident<'a>,
-+        includes: SymbolFlags,
-+    ) {
-+        // Type-only declarations (`interface e {}`) do not conflict with the catch parameter.
-+        if !includes.intersects(SymbolFlags::Value) {
-+            return;
-+        }
-+        // Annex B.3.3: `if (x) function e() {}` behaves as if the function were in its own block,
-+        // so it is not one of the LexicallyDeclaredNames of the catch block. The function is the
-+        // current node while it is bound. Annex B is JavaScript-only, as in `Function::bind`.
-+        if !self.source_type.is_typescript()
-+            && let AstKind::Function(func) = self.ancestry().current_kind()
-+            && func.is_declaration()
-+            && is_function_decl_part_of_if_statement(func, self)
-+        {
-+            return;
-+        }
-+        let Some(catch_scope_id) = self.scoping.scope_parent_id(catch_body_scope_id) else {
-+            return;
-+        };
-+        if let Some(symbol_id) = self.scoping.get_binding(catch_scope_id, name) {
-+            let symbol_span = self.scoping.symbol_span(symbol_id);
-+            self.error(redeclaration(&name, symbol_span, span));
-+        }
++fn new_expression_has_parens(new_expr: &NewExpression) -> bool {
++    if !new_expr.arguments.is_empty() {
++        return true;
 +    }
++    let after_callee =
++        new_expr.type_arguments.as_ref().map_or(new_expr.callee.span().end, |ta| ta.span.end);
++    new_expr.span.end > after_callee
++}
 +
-     /// Declare 
++fn starts_with_declaration_like_prefix(mut expr: &Expression) -> bool {
++    loop {
++        match expr {
++            Expression::ComputedMemberExpression(member) => {
++                if matches!(&member.object, Expression::Identifier(ident) if ident.name == "let") {
++                    return true;
++                }
++                expr = &member.object;
++            }
++            Expression::StaticMemberExpression(member) => expr = &member.object,
++            Expression::PrivateFieldExpression(member) => expr = &member.object,
 ```
 
-**File**: `crates/oxc_semantic/tests/fixtures/oxc/arguments/enclosing-bindings.snap` (modified, +17/-17)
+**File**: `crates/oxc_linter/src/snapshots/unicorn_prefer_array_flat.snap` (modified, +228/-0)
 ```diff
-@@ -82,29 +82,29 @@ input_file: crates/oxc_semantic/tests/fixtures/oxc/arguments/enclosing-bindings.
-                 "flags": "ScopeFlags(0x0)",
-                 "id": 9,
-                 "node": "BlockStatement",
--                "symbols": [
-+                "symbols": []
-+              }
-+            ],
-+            "flags": "ScopeFlags(CatchClause)",
-+            "id": 8,
-+            "node": "CatchClause",
-+            "symbols": [
-+              {
-+                "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
-+                "id": 3,
-+                "name": "arguments",
-+                "node": "CatchParameter",
-+                "references": [
-                   {
--                    "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
-+                    "flags": "ReferenceFlags(Read)",
-                     "id": 3,
-                     "name": "arguments",
--                    "node": "CatchParameter",
--                    "references": [
--                      {
--                        "flags": "ReferenceFlags(Read)",
--                        "id": 3,
--                        "name": "arguments",
--                        "node_id": 42,
--                        "scope_id": 9
--                      }
--                    ]
-+                    "node_id": 42,
-+                    "scope_id": 9
-                   }
-                 ]
-               }
--            ],
--            "flags": "ScopeFlags(CatchClause)",
--            "id": 8,
--            "node": "CatchClause",
--            "symbols": []
-+            ]
-           }
-         ],
-         "flags": "ScopeFlags(Function)",
-```
-
-**File**: `crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/parameters.snap` (modified, +24/-23)
-```diff
-@@ -20,28 +20,6 @@ input_file: crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/parameters.js
-             "id": 3,
-             "node": "BlockStatement",
-             "symbols": [
--              {
--                "flags": "SymbolFlags(BlockScopedVariable | CatchVariable)",
--                "id": 2,
--                "name": "a",
--                "node": "CatchParameter",
--                "references": [
--                  {
--                    "flags": "ReferenceFlags(Read)",
--                    "id": 1,
--                    "name": "a",
--                    "node_id": 22,
--                    "scope_id": 2
--                  }
--                ]
--              },
--              {
--                "flags": "SymbolFlags(BlockScopedVariable | CatchVariable)",
--                "id": 3,
--                "name": "b",
--                "node": "CatchParameter",
--                "references": []
--              },
-               {
-                 "flags": "SymbolFlags(BlockScopedVariable)",
-                 "id": 4,
-@@ -55,7 +33,30 @@ input_file: crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/parameters.js
-         "flags": "ScopeFlags(CatchClause)",
-         "id": 2,
-         "node": "CatchClause",
--        "symbols": []
-+        "symbols": [
-+          {
-+            "flags": "SymbolFlags(BlockScopedVariable | CatchVariable)",
-+            "id": 2,
-+            "name": "a",
-+            "node": "CatchParameter",
-+            "references": [
-+              {
-+                "flags": "ReferenceFlags(Read)",
-+                "id": 1,
-+                "name": "a",
-+                "node_id": 22,
-+                "scope_id": 2
-+              }
-+            ]
-+          },
-+          {
-+            "flags": "SymbolFlags(BlockScopedVariable | CatchVariable)",
-+            "id": 3,
-+            "name": "b",
-+            "node": "CatchParameter",
-+            "references": []
-+          }
-+        ]
-       }
-     ],
-     "flags": "ScopeFlags(Top)",
-```
-
-**File**: `crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/var-bindings.snap` (modified, +104/-104)
-```diff
-@@ -21,30 +21,30 @@ input_file: crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/var-bindings.js
-                 "flags": "ScopeFlags(0x0)",
-                 "id": 4,
-                 "node": "BlockStatement",
--                "symbols": [
--                  {
--                    "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
--                    "id": 2,
--                    "name": "same",
--                    "node": "CatchParameter",
--                    "references": [
--                      {
--                        "flags": "ReferenceFlags(Read)",
--                        "id": 1,
--                        "name": "same",
--                        "node_id": 20,
--                        "scope_id": 4
--                      }
--                    ],
--                    "var_binding": 1
--                  }
--                ]
-+                "symbols": []
-               }
-             ],
-             "flags": "ScopeFlags(CatchClause)",
-             "id": 3,
-             "node": "CatchClause",
--            "symbols": []
-+            "symbols": [
-+              {
-+                "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
-+                "id": 2,
-+                "name": "same",
-+                "node": "CatchParameter",
-+                "references": [
-+                  {
-+                    "flags": "ReferenceFlags(Read)",
-+                    "id": 1,
-+                    "name": "same",
-+                    "node_id": 20,
-+                    "scope_id": 4
-+                  }
-+                ],
-+                "var_binding": 1
-+              }
-+            ]
-           },
-           {
-             "children": [],
-@@ -71,58 +71,58 @@ input_file: crates/oxc_semantic/tests/fixtures/oxc/js/try-catch/var-bindings.js
-                         "flags": "ScopeFlags(0x0)",
-                         "id": 10,
-                         "node": "BlockStatement",
--                        "symbols": [
--                          {
--                            "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
--                            "id": 4,
--                            "name": "nested",
--                            "node": "CatchParameter",
--                            "references": [
--                              {
--                                "flags": "ReferenceFlags(Read)",
--                                "id": 5,
--                                "name": "nested",
--                                "node_id": 44,
--                                "scope_id": 10
--                              }
--                            ],
--                            "var_binding": 5
--                          }
--                        ]
-+                        "symbols": []
-                       }
-                     ],
-                     "flags": "ScopeFlags(CatchClause)",
-                     "id": 9,
-                     "node": "CatchClause",
--                    "symbols": []
--                  }
--                ],
--                "flags": "ScopeFlags(0x0)",
--                "id": 7,
--                "node": "BlockStatement",
--                "symbols": [
--                  {
--                    "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
--                    "id": 3,
--                    "name": "nested",
--                    "node": "CatchParameter",
--                    "references": [
-+                    "symbols": [
-                       {
--                        "flags": "ReferenceFlags(Read)",
--                        "id": 7,
-+                        "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
-+                        "id": 4,
-                         "name": "nested",
--                        "node_id": 48,
--                        "scope_id": 7
-+                        "node": "CatchParameter",
-+                        "references": [
-+                          {
-+                            "flags": "ReferenceFlags(Read)",
-+                            "id": 5,
-+                            "name": "nested",
-+                            "node_id": 44,
-+                            "scope_id": 10
-+                          }
-+                        ],
-+                        "var_binding": 5
-                       }
-                     ]
-                   }
--                ]
-+                ],
-+                "flags": "ScopeFlags(0x0)",
-+                "id": 7,
-+                "node": "BlockStatement",
-+                "symbols": []
-               }
-             ],
-             "flags": "ScopeFlags(CatchClause)",
-             "id": 6,
-             "node": "CatchClause",
--            "symbols": []
-+            "symbols": [
-+              {
-+                "flags": "SymbolFlags(FunctionScopedVariable | CatchVariable)",
-+                "id": 3,
-+                "name": "nested",
-+                "node": "CatchParameter",
-+                "references": [
-+                  {
-+           
+@@ -347,6 +347,27 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Call `.flat()` on the array instead.
+ 
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(array)
++   · ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ lodash.flatten(array)
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ underscore.flatten(array)
++   · ─────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
+   ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+    ╭─[prefer_array_flat.tsx:2:13]
+  1 │ before()
+@@ -370,6 +391,27 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Call `.flat()` on the array instead.
+ 
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten((0, array))
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:29]
++ 1 │ async function a() { return _.flatten(await getArray()); }
++   ·                             ───────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:29]
++ 1 │ async function a() { return _.flatten((await getArray())); }
++   ·                             ─────────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
+   ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+    ╭─[prefer_array_flat.tsx:2:13]
+  1 │ before()
+@@ -408,3 +450,189 @@ source: crates/oxc_linter/src/tester.rs
+    ·                                ─────────────────────
+    ╰────
+   help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(array,)
++   · ─────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:28]
++ 1 │ const Items = new Array(); _.flatten(Items);
++   ·                            ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(new Array)
++   · ────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(new Array())
++   · ──────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(getArray())
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(Array.from(x))
++   · ────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:2:1]
++ 1 │ before()
++ 2 │ _.flatten(getArray())
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(foo?.bar)
++   · ───────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(getArrays<number>)
++   · ────────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:2:1]
++ 1 │ before()
++ 2 │ _.flatten([foo])
++   · ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:24]
++ 1 │ function foo() { return(_.flatten)(array); }
++   
 ```
 
 ---
 
-### Incident Patch 2: `a527e7b8` (2026-11-17)
-**Commit Message**: fix(linter): preserve code in Jest and Vitest padding fixes (#29496)
+### Incident Patch 2: `ea6d555b` (2026-11-23)
+**Commit Message**: fix(linter): align Jest and Vitest padding rules with upstream (#30029)
 
-The Jest and Vitest `padding-around-test-blocks` and
-`padding-around-after-all-blocks` fixers could delete guard code while
-inserting a blank line. Restrict padding checks to leading calls in
-expression statements that belong directly to the searched statement
-list, and measure the gap from the full statement start so awaited calls
-keep `await` and its comments.
+The shared Jest/Vitest padding helper did not match upstream
+`eslint-plugin-jest` or `@vitest/eslint-plugin`. It only checked the
+statement before a matching test or hook. As a result, it missed the
+statement after a matching block, statements in plain blocks and
+`switch` cases, labeled statements, and semicolon-less code.
 
-Leading calls in sequence and logical expressions remain eligible,
-matching eslint-plugin-jest. Regression cases cover guarded statements,
-awaited calls, and leading compound expressions for all four rules.
+This replaces it with a statement-list checker modeled on the upstream
+padding engine:
 
-Automated triagebot fix and follow-up review fixes (AI-assisted).
+- Statements match on their leading token, unwrapping `await` and
+labels.
+- The last matching config wins.
+- Padding-line detection and fix insertion follow upstream.
+- The diagnostic message matches upstream.
 
-Fixes #29479
+`jest`/`vitest` `padding-around-test-blocks` and
+`padding-around-after-all-blocks` now use it. The rest of the stack
+builds on this helper.
 
----------
+### Example
 
-Co-authored-by: oxc-captain[bot] <345090429+oxc-captain[bot]@users.noreply.github.com>
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
+Input ([playground for this
+example](https://playground.oxc.rs/?code=const+value+%3D+1%3B%0Atest%28%27first%27%2C+%28%29+%3D%3E+%7B%7D%29%3B%0Aexpect%28value%29.toBe%281%29%3B%0A%7B%0A++const+local+%3D+1%3B%0A++afterAll%28%28%29+%3D%3E+%7B%7D%29%3B%0A%7D%0A&lintRules=jest%2Fpadding-around-test-blocks%2Cjest%2Fpadding-around-after-all-blocks)):
 
-**File**: `crates/oxc_linter/src/rules/jest/padding_around_after_all_blocks.rs` (modified, +26/-0)
+`
+
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +24/-8)
 ```diff
-@@ -40,6 +40,12 @@ fn test() {
-         "const thing = 123;\n\nafterAll(() => {});",
-         "describe('foo', () => {\nafterAll(() => {});\n});",
-         "const thing = 123;\n\n/* one */\n/* two */\nafterAll(() => {});",
-+        "const cleanUp = false; cleanUp && afterAll(() => {});",
-+        "const cleanUp = false;\nif (cleanUp)\n  afterAll(() => {});",
-+        "const cleanUp = false; if (cleanUp) afterAll(() => {});",
-+        "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
-+        "const cleanUp = false; while (cleanUp) afterAll(() => {});",
-+        "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
+@@ -2412,14 +2412,22 @@ impl RuleRunner for crate::rules::jest::no_untyped_mock_factory::NoUntypedMockFa
+ impl RuleRunner
+     for crate::rules::jest::padding_around_after_all_blocks::PaddingAroundAfterAllBlocks
+ {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+ impl RuleRunner for crate::rules::jest::padding_around_test_blocks::PaddingAroundTestBlocks {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+@@ -4983,14 +4991,22 @@ impl RuleRunner
+ impl RuleRunner
+     for crate::rules::vitest::padding_around_after_all_blocks::PaddingAroundAfterAllBlocks
+ {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+ impl RuleRunner for crate::rules::vitest::padding_around_test_blocks::PaddingAroundTestBlocks {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/jest/padding_around_after_all_blocks.rs` (modified, +128/-2)
+```diff
+@@ -22,8 +22,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundAfterAllBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -46,11 +51,67 @@ fn test() {
+         "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
+         "const cleanUp = false; while (cleanUp) afterAll(() => {});",
+         "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
++        r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\n\nfoo();",
++        "label:\nafterAll(() => {});",
      ];
  
      let fail = vec![
-@@ -53,6 +59,26 @@ fn test() {
-             "const thing = 123;\n/* one */\n/* two */\nafterAll(() => {});",
-             "const thing = 123;\n\n/* one */\n/* two */\nafterAll(() => {});",
+         "const thing = 123;\nafterAll(() => {});",
+         "const thing = 123;\n/* one */\n/* two */\nafterAll(() => {});",
++        r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\nfoo();",
++        "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++        "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++        "const thing = 123\n;afterAll(() => {})",
++        "const thing = 123;\nlabel: afterAll(() => {});",
+     ];
+ 
+     let fix = vec![
+@@ -79,6 +140,71 @@ fn test() {
+             "const thing = 123; await /* hook */ afterAll(() => {});",
+             "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
          ),
 +        (
-+            "const thing = 123; afterAll(() => {}), foo();",
-+            "const thing = 123;\n\nafterAll(() => {}), foo();",
++            r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++            r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        ),
++        ("afterAll(() => {});\nfoo();", "afterAll(() => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++            "{\n  const thing = 123;\n\n  afterAll(() => {});\n}",
 +        ),
 +        (
-+            "const thing = 123; afterAll(() => {}) && foo();",
-+            "const thing = 123;\n\nafterAll(() => {}) && foo();",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n\n    foo();\n}",
 +        ),
++        ("const thing = 123\n;afterAll(() => {})", "const thing = 123\n\n;afterAll(() => {})"),
 +        (
-+            "const thing = 123; await afterAll(() => {});",
-+            "const thing = 123;\n\nawait afterAll(() => {});",
-+        ),
-+        (
-+            "const thing = 123;\nawait afterAll(() => {});",
-+            "const thing = 123;\n\nawait afterAll(() => {});",
-+        ),
-+        (
-+            "const thing = 123; await /* hook */ afterAll(() => {});",
-+            "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
++            "const thing = 123;\nlabel: afterAll(() => {});",
++            "const thing = 123;\n\nlabel: afterAll(() => {});",
 +        ),
      ];
  
      Tester::new(PaddingAroundAfterAllBlocks::NAME, PaddingAroundAfterAllBlocks::PLUGIN, pass, fail)
 ```
 
-**File**: `crates/oxc_linter/src/rules/jest/padding_around_test_blocks.rs` (modified, +26/-0)
+**File**: `crates/oxc_linter/src/rules/jest/padding_around_test_blocks.rs` (modified, +165/-2)
 ```diff
-@@ -44,6 +44,12 @@ fn test() {
-         "{ test('foo', () => {}); }",
-         "describe('foo', () => {\ntest('bar', () => {});\n});",
-         "const thing = 123;\n\n/* one */\n/* two */\ntest('foo', () => {});",
-+        "const slow = false; slow && test('slow', () => {});",
-+        "const slow = false;\nif (slow)\n  test('slow', () => {});",
-+        "const slow = false; if (slow) test('slow', () => {});",
-+        "const slow = false; if (slow)\n  test('slow', () => {});",
-+        "const slow = false; while (slow) test('slow', () => {});",
-+        "const slow = false; for (; slow;) test('slow', () => {});",
+@@ -24,8 +24,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundTestBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -50,6 +55,47 @@ fn test() {
+         "const slow = false; if (slow)\n  test('slow', () => {});",
+         "const slow = false; while (slow) test('slow', () => {});",
+         "const slow = false; for (; slow;) test('slow', () => {});",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\n\nfoo();",
++        "label:\ntest('foo', () => {});",
      ];
  
      let fail = vec![
-@@ -192,6 +198,26 @@ describe('other bar', function() {
+@@ -92,6 +138,38 @@ describe('other bar', function() {
+     });
  });
              ",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\nfoo();",
++        "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++        "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++        "const thing = 123\n;test('foo', () => {})",
++        "const thing = 123;\nlabel: test('foo', () => {});",
+     ];
+ 
+     let fix = vec![
+@@ -218,6 +296,91 @@ describe('other bar', function() {
+             "const thing = 123; await /* hook */ test('foo', () => {});",
+             "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
          ),
 +        (
-+            "const thing = 123; test('foo', () => {}), foo();",
-+            "const thing = 123;\n\ntest('foo', () => {}), foo();",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        ),
++        ("test('foo', () => {});\nfoo();", "test('foo', () => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++            "{\n  const thing = 123;\n\n  test('foo', () => {});\n}",
 +        ),
 +        (
-+            "const thing = 123; test('foo', () => {}) && foo();",
-+            "const thing = 123;\n\ntest('foo', () => {}) && foo();",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n\n    foo();\n}",
 +        ),
 +        (
-+            "const thing = 123; await test('foo', () => {});",
-+            "const thing = 123;\n\nawait test('foo', () => {});",
++            "const thing = 123\n;test('foo', () => {})",
++            "const thing = 123\n\n;test('foo', () => {})",
 +        ),
 +        (
-+            "const thing = 123;\nawait test('foo', () => {});",
-+            "const thing = 123;\n\nawait test('foo', () => {});",
-+        ),
-+        (
-+            "const thing = 123; await /* hook */ test('foo', () => {});",
-+            "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
++            "const thing = 123;\nlabel: test('foo', () => {});",
++            "const thing = 123;\n\nlabel: test('foo', () => {});",
 +        ),
      ];
      Tester::new(PaddingAroundTestBlocks::NAME, PaddingAroundTestBlocks::PLUGIN, pass, fail)
          .with_jest_plugin(true)
 ```
 
-**File**: `crates/oxc_linter/src/rules/vitest/padding_around_after_all_blocks.rs` (modified, +26/-0)
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/padding_around_after_all_blocks.rs` (modified, +12/-26)
 ```diff
-@@ -49,6 +49,12 @@ fn test() {
-         "const thing = 123;\n\n/**\n * JSDoc attached to afterAll\n */\nafterAll(() => {});",
-         "const thing = 123; /* trailing on prev */\n\nafterAll(() => {});",
-         "describe('foo', () => {\nafterAll(() => {});\n\nafterAll(() => {});\n});",
-+        "const cleanUp = false; cleanUp && afterAll(() => {});",
-+        "const cleanUp = false;\nif (cleanUp)\n  afterAll(() => {});",
-+        "const cleanUp = false; if (cleanUp) afterAll(() => {});",
-+        "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
-+        "const cleanUp = false; while (cleanUp) afterAll(() => {});",
-+        "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
+@@ -1,12 +1,8 @@
+-use oxc_ast::AstKind;
+ use oxc_semantic::AstNode;
+ 
+ use crate::{
+     context::LintContext,
+-    utils::{
+-        JestGeneralFnKind, ParsedGeneralJestFnCall, PossibleJestNode, parse_general_jest_fn_call,
+-        report_missing_padding_before_jest_block,
+-    },
++    utils::{PaddingConfig, PaddingStatement, check_padding},
+ };
+ 
+ pub const DOCUMENTATION: &str = r"### What it does
+@@ -27,36 +23,26 @@ Examples of **incorrect** code for this rule:
+ ```js
+ const thing = 123;
+ afterAll(() => {});
++describe('foo', () => {});
+ ```
+ 
+ Examples of **correct** code for this rule:
+ ```js
+ const thing = 123;
+ 
+ afterAll(() => {});
++
++describe('foo', () => {});
+ ```
+ ";
+ 
++const AFTER_ALL: PaddingStatement = PaddingStatement::Named(&["afterAll"]);
++
++pub const CONFIGS: &[PaddingConfig] = &[
++    PaddingConfig::always(PaddingStatement::Any, AFTER_ALL),
++    PaddingConfig::always(AFTER_ALL, PaddingStatement::Any),
++];
++
+ pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-    let AstKind::CallExpression(call_expr) = node.kind() else {
+-        return;
+-    };
+-    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
+-    else {
+-        return;
+-    };
+-    let Some(jest_fn_call) = parse_general_jest_fn_call(call_expr, &possible_jest_node, ctx) else {
+-        return;
+-    };
+-    let ParsedGeneralJestFnCall { kind, name, .. } = &jest_fn_call;
+-    let Some(kind) = kind.to_general() else {
+-        return;
+-    };
+-    if kind != JestGeneralFnKind::Hook {
+-        return;
+-    }
+-    if name != "afterAll" {
+-        return;
+-    }
+-    report_missing_padding_before_jest_block(node, ctx, name);
++    check_padding(node, ctx, &[CONFIGS]);
+ }
+```
+
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/padding_around_test_blocks.rs` (modified, +10/-22)
+```diff
+@@ -1,12 +1,8 @@
+-use oxc_ast::AstKind;
+ use oxc_semantic::AstNode;
+ 
+ use crate::{
+     context::LintContext,
+-    utils::{
+-        JestGeneralFnKind, ParsedGeneralJestFnCall, PossibleJestNode, parse_general_jest_fn_call,
+-        report_missing_padding_before_jest_block,
+-    },
++    utils::{PaddingConfig, PaddingStatement, check_padding},
+ };
+ 
+ pub const DOCUMENTATION: &str = r"### What it does
+@@ -54,22 +50,14 @@ it('bar', () => {});
+ ```
+ ";
+ 
++const TEST_BLOCKS: PaddingStatement =
++    PaddingStatement::Named(&["test", "it", "fit", "xit", "xtest"]);
++
++pub const CONFIGS: &[PaddingConfig] = &[
++    PaddingConfig::always(PaddingStatement::Any, TEST_BLOCKS),
++    PaddingConfig::always(TEST_BLOCKS, PaddingStatement::Any),
++];
++
+ pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-    let AstKind::CallExpression(call_expr) = node.kind() else {
+-        return;
+-    };
+-    let Some(jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx) else {
+-        return;
+-    };
+-    let Some(jest_fn_call) = parse_general_jest_fn_call(call_expr, &jest_node, ctx) else {
+-        return;
+-    };
+-    let ParsedGeneralJestFnCall { kind, name, .. } = &jest_fn_call;
+-    let Some(kind) = kind.to_general() else {
+-        return;
+-    };
+-    if kind != JestGeneralFnKind::Test {
+-        return;
+-    }
+-    report_missing_padding_before_jest_block(node, ctx, name);
++    check_padding(node, ctx, &[CONFIGS]);
+ }
+```
+
+**File**: `crates/oxc_linter/src/rules/vitest/padding_around_after_all_blocks.rs` (modified, +128/-2)
+```diff
+@@ -22,8 +22,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundAfterAllBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -55,6 +60,35 @@ fn test() {
+         "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
+         "const cleanUp = false; while (cleanUp) afterAll(() => {});",
+         "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
++        r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\n\nfoo();",
++        "label:\nafterAll(() => {});",
      ];
  
      let fail = vec![
-@@ -86,6 +92,26 @@ fn test() {
-             "describe('foo', () => {\nafterAll(() => {});\nafterAll(() => {});\n});",
-             "describe('foo', () => {\nafterAll(() => {});\n\nafterAll(() => {});\n});",
+@@ -67,6 +101,33 @@ fn test() {
+         "const thing = 123;\n/**\n * JSDoc comment\n */\nafterAll(() => {});",
+         "describe('foo', () => {\nafterAll(() => {});\nafterAll(() => {});\n});",
+         "import { afterAll } from 'vitest';\n/* setup notes */\nafterAll(() => {});",
++        r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\nfoo();",
++        "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++        "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++        "const thing = 123\n;afterAll(() => {})",
++        "const thing = 123;\nlabel: afterAll(() => {});",
+     ];
+ 
+     let fix = vec![
+@@ -112,6 +173,71 @@ fn test() {
+             "const thing = 123; await /* hook */ afterAll(() => {});",
+             "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
          ),
 +        (
-+            "const thing = 123; afterAll(() => {}), foo();",
-+            "const thing = 123;\n\nafterAll(() => {}), foo();",
++            r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++            r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        ),
++        ("afterAll(() => {});\nfoo();", "afterAll(() => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++            "{\n  const thing = 123;\n\n  afterAll(() => {});\n}",
 +        ),
 +        (
-+            "const thing = 123; afterAll(() => {}) && foo();",
-+            "const thing = 123;\n\nafterAll(() => {}) && foo();",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n\n    foo();\n}",
 +        ),
++        ("const thing = 123\n;afterAll(() => {})", "const thing = 123\n\n;afterAll(() => {})"),
 +        (
-+            "const thing = 123; await afterAll(() => {});",
-+            "const thing = 123;\n\nawait afterAll(() => {});",
-+        ),
-+        (
-+            "const thing = 123;\nawait afterAll(() => {});",
-+            "const thing = 123;\n\nawait afterAll(() => {});",
-+        ),
-+        (
-+            "const thing = 123; await /* hook */ afterAll(() => {});",
-+            "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
++            "const thing = 123;\nlabel: afterAll(() => {});",
++            "const thing = 123;\n\nlabel: afterAll(() => {});",
 +        ),
      ];
  
      Tester::new(PaddingAroundAfterAllBlocks::NAME, PaddingAroundAfterAllBlocks::PLUGIN, pass, fail)
 ```
 
-**File**: `crates/oxc_linter/src/rules/vitest/padding_around_test_blocks.rs` (modified, +26/-0)
+**File**: `crates/oxc_linter/src/rules/vitest/padding_around_test_blocks.rs` (modified, +165/-2)
 ```diff
-@@ -44,6 +44,12 @@ fn test() {
-         "{ test('foo', () => {}); }",
-         "describe('foo', () => {\ntest('bar', () => {});\n});",
-         "const thing = 123;\n\n/* one */\n/* two */\ntest('foo', () => {});",
-+        "const slow = false; slow && test('slow', () => {});",
-+        "const slow = false;\nif (slow)\n  test('slow', () => {});",
-+        "const slow = false; if (slow) test('slow', () => {});",
-+        "const slow = false; if (slow)\n  test('slow', () => {});",
-+        "const slow = false; while (slow) test('slow', () => {});",
-+        "const slow = false; for (; slow;) test('slow', () => {});",
+@@ -24,8 +24,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundTestBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -50,6 +55,47 @@ fn test() {
+         "const slow = false; if (slow)\n  test('slow', () => {});",
+         "const slow = false; while (slow) test('slow', () => {});",
+         "const slow = false; for (; slow;) test('slow', () => {});",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\n\nfoo();",
++        "label:\ntest('foo', () => {});",
      ];
  
      let fail = vec![
-@@ -171,6 +177,26 @@ describe('other bar', function() {
+@@ -87,6 +133,38 @@ describe('other bar', function() {
+     });
  });
              ",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\nfoo();",
++        "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++        "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++        "const thing = 123\n;test('foo', () => {})",
++        "const thing = 123;\nlabel: test('foo', () => {});",
+     ];
+ 
+     let fix = vec![
+@@ -197,6 +275,91 @@ describe('other bar', function() {
+             "const thing = 123; await /* hook */ test('foo', () => {});",
+             "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
          ),
 +        (
-+            "const thing = 123; test('foo', () => {}), foo();",
-+            "const thing = 123;\n\ntest('foo', () => {}), foo();",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        ),
++        ("test('foo', () => {});\nfoo();", "test('foo', () => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++            "{\n  const thing = 123;\n\n  test('foo', () => {});\n}",
 +        ),
 +        (
-+            "const thing = 123; test('foo', () => {}) && foo();",
-+            "const thing = 123;\n\ntest('foo', () => {}) && foo();",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n\n    foo();\n}",
 +        ),
 +        (
-+            "const thing = 123; await test('foo', () => {});",
-+            "const thing = 123;\n\nawait test('foo', () => {});",
++            "const thing = 123\n;test('foo', () => {})",
++            "const thing = 123\n\n;test('foo', () => {})",
 +        ),
 +        (
-+            "const thing = 123;\nawait test('foo', () => {});",
-+            "const thing = 123;\n\nawait test('foo', () => {});",
-+        ),
-+        (
-+            "const thing = 123; await /* hook */ test('foo', () => {});",
-+            "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
++            "const thing = 123;\nlabel: test('foo', () => {});",
++            "const thing = 123;\n\nlabel: test('foo', () => {});",
 +        ),
      ];
      Tester::new(PaddingAroundTestBlocks::NAME, PaddingAroundTestBlocks::PLUGIN, pass, fail)
          .with_vitest_plugin(true)
 ```
 
-**File**: `crates/oxc_linter/src/utils/jest/padding_around_block.rs` (modified, +32/-13)
+**File**: `crates/oxc_linter/src/snapshots/jest_padding_around_after_all_blocks.snap` (modified, +91/-4)
 ```diff
-@@ -1,4 +1,7 @@
--use oxc_ast::{AstKind, ast::Statement};
-+use oxc_ast::{
-+    AstKind,
-+    ast::{Expression, Statement},
-+};
- use oxc_diagnostics::OxcDiagnostic;
- use oxc_semantic::AstNode;
- use oxc_span::{GetSpan, Span};
-@@ -16,29 +19,50 @@ pub fn report_missing_padding_before_jest_block<'a>(
-     ctx: &LintContext<'a>,
-     name: &str,
- ) {
-+    let mut statement_node = ctx.nodes().parent_node(node.id());
-+    let statement = loop {
-+        match statement_node.kind() {
-+            AstKind::ExpressionStatement(statement) => break statement,
-+            AstKind::AwaitExpression(_) => {}
-+            _ if statement_node.span().start == node.span().start => {}
-+            _ => return,
-+        }
-+        statement_node = ctx.nodes().parent_node(statement_node.id());
-+    };
-+    let leading_expression = match &statement.expression {
-+        Expression::AwaitExpression(await_expr) => &await_expr.argument,
-+        expression => expression,
-+    };
-+    if leading_expression.span().start != node.span().start {
-+        return;
-+    }
+@@ -2,18 +2,105 @@
+ source: crates/oxc_linter/src/tester.rs
+ ---
+ 
+-  ⚠ jest(padding-around-after-all-blocks): Missing padding before afterAll block
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
+    ╭─[padding_around_after_all_blocks.tsx:2:1]
+  1 │ const thing = 123;
+  2 │ afterAll(() => {});
+    · ▲
+    ╰────
+-  help: Make sure there is an empty new line before the afterAll block
++  help: Insert a blank line before this statement
+ 
+-  ⚠ jest(padding-around-after-all-blocks): Missing padding before afterAll block
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
+    ╭─[padding_around_after_all_blocks.tsx:4:1]
+  3 │ /* two */
+  4 │ afterAll(() => {});
+    · ▲
+    ╰────
+-  help: Make sure there is an empty new line before the afterAll block
++  help: Insert a blank line before this statement
 +
-     let scope_node = ctx.nodes().get_node(ctx.scoping().get_node_id(node.scope_id()));
-     let prev_statement_span = match scope_node.kind() {
--        AstKind::Program(program) => get_statement_span_before_node(node, program.body.as_slice()),
-+        AstKind::Program(program) => {
-+            get_statement_span_before_node(statement_node, program.body.as_slice())
-+        }
-         AstKind::ArrowFunctionExpression(arrow_func_expr) => {
-             let Some(body) = arrow_func_expr.get_function_body() else { return };
--            get_statement_span_before_node(node, body.statements.as_slice())
-+            get_statement_span_before_node(statement_node, body.statements.as_slice())
-         }
-         AstKind::Function(function) => {
-             let Some(body) = &function.body else {
-                 return;
-             };
--            get_statement_span_before_node(node, body.statements.as_slice())
-+            get_statement_span_before_node(statement_node, body.statements.as_slice())
-         }
-         _ => None,
-     };
-     let Some(prev_statement_span) = prev_statement_span else {
-         return;
-     };
- 
--    let comments_range = ctx.comments_range(prev_statement_span.end..node.span().start);
-+    let statement_start = statement_node.span().start;
-+    let comments_range = ctx.comments_range(prev_statement_span.end..statement_start);
-     let mut span_between_start = prev_statement_span.end;
--    let mut span_between_end = node.span().start;
--    let mut next_attached_start = node.span().start;
-+    let mut span_between_end = statement_start;
-+    let mut next_attached_start = statement_start;
-     for comment in comments_range.rev() {
-         let comment_span = comment.span;
-         let space_after = ctx.source_range(Span::new(comment_span.end, next_attached_start));
-@@ -72,10 +96,5 @@ pub fn report_missing_padding_before_jest_block<'a>(
- }
- 
- fn get_statement_span_before_node(node: &AstNode, statements: &[Statement]) -> Option<Span> {
--    statements
--        .iter()
--        .filter_map(|statement| {
--            if statement.span().end <= node.span().start { Some(statement.span()) } else { None }
--        })
--        .next_back()
-+    statements.windows(2).find_map(|pair| (pair[1].span() == node.span()).then(|| pair[0].span()))
- }
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:3:1]
++ 2 │ const someText = 'abc';
++ 3 │ afterAll(() => {
++   · ▲
++ 4 │ });
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:5:1]
++ 4 │ });
++ 5 │ describe('someText', () => {
++   · ▲
++ 6 │   const something = 'abc';
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:8:3]
++ 7 │   // A comment
++ 8 │   afterAll(() => {
++   ·   ▲
++ 9 │     // stuff
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++    ╭─[padding_around_after_all_blocks.tsx:11:3]
++ 10 │   });
++ 11 │   afterAll(() => {
++    ·   ▲
++ 12 │     // other stuff
++    ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++    ╭─[padding_around_after_all_blocks.tsx:18:3]
++ 17 │   const something = 'abc';
++ 18 │   afterAll(() => {
++    ·   ▲
++ 19 │     // stuff
++    ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:1]
++ 1 │ afterAll(() => {});
++ 2 │ foo();
++   · ▲
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:3:3]
++ 2 │   const thing = 123;
++ 3 │   afterAll(() => {});
++   ·   ▲
++ 4 │ }
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:4:5]
++ 3 │     afterAll(() => {});
++ 4 │     foo();
++   ·     ▲
++ 5 │ }
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:2]
++ 1 │ const thing = 123
++ 2 │ ;afterAll(() => {})
++   ·  ▲
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:1]
++ 1 │ const thing = 123;
++ 2 │ label: afterAll(() => {});
++   · ▲
++   ╰────
++  help: Insert a blank line before this statement
 ```
 
 ---
 
-### Incident Patch 3: `60718a12` (2026-11-17)
-**Commit Message**: fix(minifier): keep unused classes with a static computed `prototype` key (#27966)
+### Incident Patch 3: `dc2e5313` (2026-11-23)
+**Commit Message**: fix(linter/unicorn/prefer-modern-dom-apis): report removing child nodes in a while loop (#30100)
 
-Closes #27965
+Part of #29818.
 
-`classify_class_removability`
-(`crates/oxc_minifier/src/peephole/remove_unused_expression.rs`) let an
-unused class be removed when a static member has the computed key
-`"prototype"`. It only checks static values (`:1133-1146`) and whether a
-computed key has side effects (`:1147-1153`). But defining that member
-throws a `TypeError` while the class is evaluated, because the
-constructor's own `prototype` is non-writable and non-configurable, so
-removing the class also removed the error:
+`unicorn/prefer-modern-dom-apis` did not report `while` loops that clear
+a node by repeatedly calling `.remove()` on its `firstChild` or
+`lastChild`. Upstream reports these loops and recommends a single
+`replaceChildren()` call.
+
+### Example
+
+Input (`example.js`):
 
 ```js
-try {
-  class A { static ["prototype"]() {} }
-  console.log("no throw");
-} catch (e) {
-  console.log(e.constructor.name);
+while (node.firstChild) {
+  node.firstChild.remove();
 }
-// before: try{console.log(`no throw`)}catch(e){console.log(e.constructor.name)}                                -> no throw
-// after:  try{class e{static["prototype"](){}}console.log(`no throw`)}catch(e){console.log(e.constructor.name)} -> TypeError
 ```
 
-The classifier now returns `Keep` for a static member whose computed key
-is the static name `"prototype"` (methods, getters, setters and fields),
-the same way it already keeps `extends (() => {})`. Non-static
-`["prototype"]` m
+Command:
 
-**File**: `crates/oxc_minifier/src/peephole/remove_unused_expression.rs` (modified, +8/-0)
+```sh
+oxlint -A all -D unicorn/prefer-modern-dom-apis --threads=1 example.js
+```
+
+Before:
+
+```text
+Found 0 warnings and 0 errors.
+```
+
+After:
+
+```text
+  x unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
+   ,-[example.js:1:1]
+ 1 | ,-> while (node.firstChild) {
+ 2 | |     node.firstChild.remove();
+ 3 | `-> }
+   `----
+  help: Replace the loop with `node.replaceChildren()`.
+
+Found 0 warnings and 1 error.
+```
+
+Applying the suggestion rewrites the loop to `node.replaceChildren();`.
+
+AI disclosure: assisted by Gemini (exact model version string is
+unavailable in this environment; reasoning effort: high / 1.0); all
+changes were reviewed and verified locally with unit tests,
+ox
+
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +1/-1)
 ```diff
-@@ -1137,6 +1137,14 @@ impl<'a> PeepholeOptimizations {
-                 }
-                 _ => {}
-             }
-+            // `static ["prototype"]` throws a `TypeError` when the class is evaluated:
-+            // the constructor's own `prototype` is non-writable and non-configurable.
-+            if e.r#static()
-+                && e.computed()
-+                && e.property_key().is_some_and(|key| key.is_specific_static_name("prototype"))
-+            {
-+                return ClassRemovability::Keep;
+@@ -3813,7 +3813,7 @@ impl RuleRunner for crate::rules::unicorn::prefer_math_trunc::PreferMathTrunc {
+ 
+ impl RuleRunner for crate::rules::unicorn::prefer_modern_dom_apis::PreferModernDomApis {
+     const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression, AstType::WhileStatement]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/unicorn/prefer_modern_dom_apis.rs` (modified, +778/-9)
+```diff
+@@ -1,12 +1,24 @@
++use std::borrow::Cow;
++
+ use oxc_ast::{
+     AstKind,
+-    ast::{Argument, Expression},
++    ast::{
++        Argument, CallExpression, Declaration, ExportDefaultDeclarationKind, Expression, Statement,
++        TSType, TSTypeName, WhileStatement,
++    },
+ };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+ use oxc_span::{GetSpan, Span};
++use oxc_syntax::precedence::Precedence;
+ 
+-use crate::{AstNode, ast_util::is_method_call, context::LintContext, rule::Rule};
++use crate::{
++    AstNode,
++    ast_util::is_method_call,
++    context::LintContext,
++    rule::Rule,
++    utils::{get_precedence, is_same_expression},
++};
+ 
+ fn prefer_modern_dom_apis_diagnostic(
+     good_method: &str,
+@@ -17,6 +29,50 @@ fn prefer_modern_dom_apis_diagnostic(
+         .with_label(span)
+ }
+ 
++fn prefer_replace_children_diagnostic(
++    parent_node: &str,
++    child_prop: &str,
++    span: Span,
++) -> OxcDiagnostic {
++    OxcDiagnostic::warn(format!(
++        "Prefer `{parent_node}.replaceChildren()` over directly removing `.{child_prop}` in a loop."
++    ))
++    .with_help(format!("Replace the loop with `{parent_node}.replaceChildren()`."))
++    .with_label(span)
++}
++
++const NON_PARENT_NODE_TYPE_NAMES: &[&str] = &[
++    "Attr",
++    "CDATASection",
++    "CharacterData",
++    "ChildNode",
++    "Comment",
++    "DocumentType",
++    "Node",
++    "Text",
++    "Window",
++    "WindowProxy",
++];
++
++const TARGET_PARENT_NODE_TYPE_NAMES: &[&str] = &[
++    "Document",
++    "DocumentFragment",
++    "Element",
++    "HTMLDocument",
++    "HTMLElement",
++    "ParentNode",
++    "SVGElement",
++    "ShadowRoot",
++];
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum ReceiverTypeKind {
++    Target,
++    NonTarget,
++    Nullish,
++    Unknown,
++}
++
+ #[derive(Debug, Default, Clone)]
+ pub struct PreferModernDomApis;
+ 
+@@ -56,40 +112,60 @@ declare_oxc_lint!(
+     /// - `referenceNode.before(newNode)` over `parentNode.insertBefore(newNode, referenceNode)`
+     /// - `referenceNode.before('text')` over `referenceNode.insertAdjacentText('beforebegin', 'text')`
+     /// - `referenceNode.before(newNode)` over `referenceNode.insertAdjacentElement('beforebegin', newNode)`
++    /// - `parentNode.replaceChildren()` over `while (parentNode.firstChild) { parentNode.firstChild.remove(); }`
+     ///
+     /// ### Why is this bad?
+     ///
+     /// There are some advantages of using the newer DOM APIs, like:
+     /// - Traversing to the parent node is not necessary.
+     /// - Appending multiple nodes at once.
+     /// - Both `DOMString` and DOM node objects can be manipulated.
++    /// - Clearing all children with `replaceChildren()` is clearer and avoids removing nodes in a loop.
+     ///
+     /// ### Examples
+     ///
+     /// Examples of **incorrect** code for this rule:
+     /// ```javascript
+-    /// oldChildNode.replaceWith(newChildNode);
++    /// parentNode.replaceChild(newChildNode, oldChildNode);
++    ///
++    /// while (node.firstChild) {
++    ///     node.firstChild.remove();
++    /// }
+     /// ```
+     ///
+     /// Examples of **correct** code for this rule:
+     /// ```javascript
+-    /// parentNode.replaceChild(newChildNode, oldChildNode);
++    /// oldChildNode.replaceWith(newChildNode);
++    ///
++    /// node.replaceChildren();
+     /// ```
+     PreferModernDomApis,
+     unicorn,
+     style,
+     recommended,
+-    suggestion,
++    conditional_suggestion,
+     version = "0.0.20",
+-    short_description = "Prefer modern DOM APIs like `replaceWith` and `before` over older methods like `replaceChild` and `insertBefore`.",
++    short_description = "Prefer modern DOM APIs like `replaceWith`, `before`, and `replaceChildren` over older methods.",
+ );
+ 
+ impl Rule for PreferModernDomApis {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(call_expr) = node.kind() else {
+-            return;
+-        };
++        match node.kind() {
++            AstKind::CallExpression(call_expr) => Self::check_call_expression(node, call_expr, ctx),
++            AstKind::WhileStatement(while_stmt) => {
++                Self::check_while_statement(node, while_stmt, ctx);
 +            }
-             if e.r#static() {
-                 let value = match e {
-                     ClassElement::PropertyDefinition(prop) => prop.value.as_ref(),
++            _ => {}
++        }
++    }
++}
+ 
++impl PreferModernDomApis {
++    fn check_call_expression<'a>(
++        node: &AstNode<'a>,
++        call_expr: &CallExpression<'a>,
++        ctx: &LintContext<'a>,
++    ) {
+         let Expression::StaticMemberExpression(member_expr) = &call_expr.callee else {
+             return;
+         };
+@@ -164,6 +240,456 @@ impl Rule for PreferModernDomApis {
+             }
+         }
+     }
++
++    fn check_while_statement<'a>(
++        node: &AstNode<'a>,
++        while_stmt: &WhileStatement<'a>,
++        ctx: &LintContext<'a>,
++    ) {
++        let test_expr = while_stmt.test.without_parentheses();
++        let Expression::StaticMemberExpression(child_member) = test_expr else {
++            return;
++        };
++        if child_member.optional {
++            return;
++        }
+
 ```
 
-**File**: `crates/oxc_minifier/tests/peephole/remove_unused_declaration.rs` (modified, +4/-0)
+**File**: `crates/oxc_linter/src/snapshots/unicorn_prefer_modern_dom_apis.snap` (modified, +236/-0)
 ```diff
-@@ -398,6 +398,10 @@ fn remove_unused_class_declaration() {
- 
-     // TypeError
-     test_same_options("class C extends (() => {}) {}", &options);
-+    // TypeError: a static member cannot redefine the constructor's `prototype`
-+    test_same_options("class C { static ['prototype']() {} }", &options);
-+    test_same_options("class C { static ['prototype'] = 1 }", &options);
-+    test_options("class C { ['prototype']() {} }", "", &options);
- }
- 
- #[test]
+@@ -249,3 +249,239 @@ source: crates/oxc_linter/src/tester.rs
+  1 │ const foo = { bar: referenceNode.insertAdjacentElement("beforebegin", newNode) }
+    ·                                  ─────────────────────
+    ╰────
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.firstChild) { node.firstChild.remove(); }
++   · ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.lastChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.lastChild) { node.lastChild.remove(); }
++   · ───────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.firstChild) node.firstChild.remove();
++   · ─────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.lastChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.lastChild) node.lastChild.remove();
++   · ───────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (this.firstChild) { this.firstChild.remove(); }
++   · ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo extends Element { method() { while (this.firstChild) { this.firstChild.remove(); } } }
++   ·                                        ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `super.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo extends Element { method() { while (super.firstChild) { super.firstChild.remove(); } } }
++   ·                                        ───────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `super.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.#node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo { #node: Element; method() { while (this.#node.firstChild) { this.#node.firstChild.remove(); } } }
++   ·                                        ─────────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.#node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `parent.node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (parent.node.firstChild) { parent.node.firstChild.remove(); }
++   · ───────────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `parent.node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `nodes[0].replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (nodes[0].firstChild) { nodes[0].firstChild.remove(); }
++   · ─────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `nodes[0].replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:31]
++ 1 │ function foo(node: Element) { while (node.firstChild) { node.firstChild.remove(); } }
++   ·                               ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:43]
++ 1 │ function foo(node: Element | undefined) { while (node.firstChild) { node.firstChild.remove(); } }
++   ·                                           ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_ap
 ```
 
-**File**: `crates/oxc_minifier/tests/peephole/remove_unused_expression.rs` (modified, +1/-0)
+**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +1/-1)
 ```diff
-@@ -886,6 +886,7 @@ fn remove_unused_class_expression() {
- 
-     // TypeError
-     test_same_options("(class extends (() => {}) {})", &options);
-+    test_same_options("(class { static ['prototype']() {} })", &options);
- }
- 
- #[test]
+@@ -611,7 +611,7 @@ unicorn/prefer-keyboard-event-key                       |  77225
+ unicorn/prefer-logical-operator-over-ternary            |   4722
+ unicorn/prefer-math-min-max                             |   4722
+ unicorn/prefer-math-trunc                               | 105321
+-unicorn/prefer-modern-dom-apis                          |  62606
++unicorn/prefer-modern-dom-apis                          |  62817
+ unicorn/prefer-modern-math-apis                         |  83210
+ unicorn/prefer-module                                   | 226148
+ unicorn/prefer-native-coercion-functions                |  16812
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29769** (2026-11-17): chore(deps): update rust crate oxc_index to v5.0.1 (@renovate[bot])
-- **PR #29768** (2026-11-17): docs(minifier): clarify when variable declarations are merged (@camc314)
-- **PR #29767** (2026-11-17): perf(minifier): avoid rebuilding variable declarations when keeping all declarators (@camc314)
-- **PR #29761** (2026-11-17): fix(parser): `parse_expression` produce correct error for overlong source (@overlookmotel)
-- **PR #29760** (2026-11-17): refactor(parser): remove nested module (@overlookmotel)
-- **PR #29759** (2026-11-17): refactor(parser): replace `UniquePromise` safety mechanism with branded lifetime (@overlookmotel)
+- **PR #30133** (2026-11-23): fix(lexer): round hex, octal and binary literals above u64::MAX (@ShanonJackson)
+- **PR #30132** (2026-11-23): fix(lexer): evaluate legacy octal literals in base 8 (@ShanonJackson)
+- **PR #30130** (closed): fix(linter): skip type-aware rules the backend does not support instead of failing the run (@oxc-captain[bot])
+- **PR #30128** (2026-11-23): chore(deps): update dependency oxlint to v1.95.0 (@renovate[bot])
+- **PR #30124** (2026-11-23): chore(deps): update dependency oxfmt to ^0.80.0 (@renovate[bot])
+- **PR #30122** (2026-11-23): fix(linter/eslint/preserve-caught-error): only report missing catch parameter when a new error is thrown (@oxc-captain[bot])
 
 ---
 
@@ -2047,41 +2820,64 @@ the same way it already keeps `extends (() => {})`. Non-static
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. semantic): keep catch parameters in the catch clause scope
+## X. linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/unicorn/catch_error_name.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f6a11f9`: semantic): keep catch parameters in the catch clause scope. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bac1b48`: linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/unicorn/catch_error_name.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A catch parameter is bound in the catch clause scope, but must not clash with a lexical
-        // declaration in the catch body either (`catch (error) { let error }` is a SyntaxError).
-        // Lookups from the body scope also cover the catch clause scope and its ancestors.
-        let binding_scope_id = if scoping.scope_flags(scope_id).is_catch_clause()
-            && let AstKind::CatchClause(clause) = ctx.nodes().kind(scoping.get_node_id(scope_id))
-        {
-            clause.body.scope_id()
-        } else {
-            scope_id
-        };
-        while scoping.find_binding(binding_scope_id, name.as_str().into()).is_some()
+        Argument, ArrayExpressionElement, BindingPattern, CallExpression, ChainElement, Expression,
+        IdentifierReference, MemberExpression, NewExpression,
+use oxc_semantic::IsGlobalReference;
+use oxc_span::{GetSpan, Span};
+use oxc_syntax::precedence::Precedence;
+    ast_util::{
+        could_be_asi_hazard, get_symbol_id_of_variable, is_method_call, variable_declaration_kind,
+    },
+        get_first_parameter_name, get_precedence, get_return_identifier_name,
+        is_empty_array_expression, is_prototype_property, pad_fix_with_token_boundary,
+    /// const foo = _.flatten(array);
+        check_lodash_flatten_case(node, call_expr, ctx);
+            matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+        | Expression::ClassExpression(_)
+        | Expression::PrivateInExpression(_)
+        | Expression::JSXElement(_)
+        | Expression::JSXFragment(_) => true,
+            !matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+const TYPED_ARRAY_NAMES: &[&str] = &[
+    "Int8Array",
+    "Uint8Array",
+    "Uint8ClampedArray",
+    "Int16Array",
+    "Uint16Array",
+    "Int32Ar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        while scoping.find_binding(scope_id, name.as_str().into()).is_some()
+        Argument, ArrayExpressionElement, BindingPattern, CallExpression, Expression,
+        IdentifierReference, MemberExpression,
+use oxc_span::Span;
+    ast_util::variable_declaration_kind,
+    ast_util::{get_symbol_id_of_variable, is_method_call},
+        get_first_parameter_name, get_return_identifier_name, is_empty_array_expression,
+        is_prototype_property,
+            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name == "Array")
+        | Expression::ClassExpression(_) => true,
+            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name != "Array")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f6a11f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bac1b48` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T22:56:26.898Z",
-  "total_records": 2463,
+  "last_updated": "2026-11-23T23:10:07.067Z",
+  "total_records": 2465,
   "domains": {
     "A": {
       "total": 20,
@@ -1567,7 +1567,7 @@
       ]
     },
     "H": {
-      "total": 582,
+      "total": 584,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2150,7 +2150,9 @@
         "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants",
         "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
-        "DOM-H-F2F7DD53"
+        "DOM-H-F2F7DD53",
+        "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8206,8 +8208,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "5eb4f4d02b70d4bd9b5b3e265aa7362d035000ed194d59636f5b386d4fec1198",
-      "created_at": "2026-11-23T19:01:00.105Z"
+      "content_hash": "943e757db426bb5d02fe8b26010395cc07dbb4636fd6d0cc9fc2a9bb11c5ca7b",
+      "created_at": "2026-11-23T23:10:02.258Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -19722,8 +19724,8 @@
       "title": "Research & Knowledge Intelligence: pyannote/speaker-diarization-community-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-research-knowledge-intelligence-pyan.md",
       "repository": "pyannote/speaker-diarization-community-1",
-      "content_hash": "b739e4336a4da916816eae6b0bcf91df56b592751078b59fc3d3538275a5a9ae",
-      "created_at": "2026-11-19T16:40:54.110Z"
+      "content_hash": "606fcadffc672ebfb60f5aeb4bc0294cd5aa186f62293dcbe61856c02956dcaf",
+      "created_at": "2026-11-23T23:09:50.641Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-core-invariants",
@@ -19791,8 +19793,8 @@
       "title": "Research & Knowledge Intelligence: hf-pyannote-speaker-diarization-community-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-learnings-research-knowledge-intelli.md",
       "repository": "hf-pyannote-speaker-diarization-community-1-learnings",
-      "content_hash": "98a224a91773705e6a8e5906cddc35085211c7152812325b56aadb9057357c5d",
-      "created_at": "2026-11-19T16:41:10.996Z"
+      "content_hash": "cfa6c121c6e04e71497a24b823d05e937058800f9a1513114f2624583998ef2c",
+      "created_at": "2026-11-23T23:10:06.190Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar",
@@ -29149,8 +29151,8 @@
       "title": "Quality & Verification Intelligence: oxc-project/oxc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oxc-project-oxc-quality-verification-intelligence-oxc-project-oxc-core-invariant.md",
       "repository": "oxc-project/oxc",
-      "content_hash": "4c09311586b62c838c6ce824afbf4b9ef35190d2b2626946c91fd535c69b38f1",
-      "created_at": "2026-11-17T20:17:35.307Z"
+      "content_hash": "bb22bd6523292ff772dc04e016b7450c8705496a3ae5a3396d7a584a11f73709",
+      "created_at": "2026-11-23T23:09:52.174Z"
     },
     "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -29158,8 +29160,8 @@
       "title": "Quality & Verification Intelligence: oxc-project-oxc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oxc-project-oxc-learnings-quality-verification-intelligence-oxc-project-oxc-lear.md",
       "repository": "oxc-project-oxc-learnings",
-      "content_hash": "af146a80516a8fe9413ab3d8348f87779f82af4c0ad00b6344ec7b8c666d08f6",
-      "created_at": "2026-11-17T20:17:51.727Z"
+      "content_hash": "fb35d44aae0133c601418e417401ec71bba15e643f60675e8ab7168071fb446f",
+      "created_at": "2026-11-23T23:10:05.688Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-convaiinnovations-laya-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-convaiinnovations-laya-learnings-core-invaria",
@@ -41272,6 +41274,24 @@
       "repository": "biomejs-biome-learnings",
       "content_hash": "70c54758a6e3cabd2e1858b05f231c0dec47ecaf7078abd425bb988b078bd374",
       "created_at": "2026-11-23T22:56:25.337Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: karmada-io/karmada Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karmada-io-karmada-technical-construction-intelligence-karmada-io-karmada-core-i.md",
+      "repository": "karmada-io/karmada",
+      "content_hash": "82d91bdc1e858d5c438b68e0e6f5a75570f7307f1045178d1428dc2fafc06aaf",
+      "created_at": "2026-11-23T23:09:58.685Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: karmada-io-karmada-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karmada-io-karmada-learnings-technical-construction-intelligence-karmada-io-karm.md",
+      "repository": "karmada-io-karmada-learnings",
+      "content_hash": "9b5b096c470a56265684659cf80b112ecbc4efc48681a954c5bbebed8732ff8e",
+      "created_at": "2026-11-23T23:10:07.067Z"
     }
   }
 }

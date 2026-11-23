@@ -4,22 +4,22 @@
 {
   "source_repository": "oxc-project/oxc",
   "source_url": "https://github.com/oxc-project/oxc",
-  "source_version": "f9e90dec",
+  "source_version": "4a6f9c61",
   "license": "MIT",
-  "timestamp": "2026-11-22T14:56:19.852Z",
+  "timestamp": "2026-11-23T23:09:52.022Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oxc-project-oxc",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `f9e90dec`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T14:56:19.852Z`  
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `4a6f9c61`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T23:09:52.022Z`  
 > **Learning ID**: `learn-github-oxc-project-oxc`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `oxc-project/oxc` (Commit: `f9e90dec`)
+- **Target Repository**: `oxc-project/oxc` (Commit: `4a6f9c61`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:56:17.916Z  
+> **Harvest Timestamp**: 2026-11-23T23:09:50.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23539 stars
+- **Stars / Engagement**: 23577 stars
 
 ---
 
@@ -1059,14 +1059,11 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29987** (2026-11-22): **perf(oxlint): convert diagnostic offsets to positions with a line index**
-  *Symptoms*: Oxlint language server builds positions for all diagnostics. The current behavior scans from the start of the file to the offset each time. This change adds an index for each new line and significantly reduces the amount of scanning needed.  Some performance numbers from Claude are below. Ran against the TypeScript checker.ts file which is pretty large, but shows how expensive this gets on bigger files.  **Setup** - **Binaries:** `oxlint --lsp` built in release mode from your commit `fc9c574978` (new) and its parent `209f078ba8` (old). Both builds had fat LTO turned off so they'd compile faster; that applies equally to both.  **Results** (median time per diagnostics request)  | `.oxlintrc.json` categories | Diagnostics returned | Old | New | Speedup | |---|---|---|---|---| | default | 61 | 628 ms | 31.5 ms | ~20× | | `suspicious` | 1,674 | 11.3 s | 51 ms | ~220× | | `suspicious` + `pedantic` | 5,462 | 45.3 s | 99 ms | ~460× |   Initial change by Claude, reviewed/edited by me.
+- **Issue #30133** (2026-11-23): **fix(lexer): round hex, octal and binary literals above u64::MAX**
+  *Symptoms*: - Hex, octal and binary literals above u64::MAX wrapped around, so the numbers lane held 0 for 0x10000000000000000 where V8 and tsc give 2^64 - Literals longer than 16 hex, 21 octal or 64 binary bytes after the prefix now take a cold path that rounds to the nearest double, as oxc_parser does - Shorter literals keep the u64 loop, perf neutral  Closes #29854  ### Example  Input:  ```js x = [0x10000000000000000, 0o2000000000000000000000, 0x10000000000000801, 0xff]; ```  Before output (numbers lane):  ```text [0.0, 0.0, 2049.0, 255.0] ```  After output:  ```text [1.8446744073709552e19, 1.8446744073709552e19, 1.8446744073709556e19, 255.0] ```  V8 gives 18446744073709552000, 18446744073709552000, 18446744073709556000 and 255. No playground link, as the playground doesn't run oxc_lexer. 
 
-- **Issue #29982** (2026-11-21): **feat(linter/typescript/no-unsafe-class-instance-assignment): add rule**
-  *Symptoms*: Expose `typescript/no-unsafe-class-instance-assignment` as an opt-in, type-aware rule in the `suspicious` category. The CLI fixture verifies that it reports a structurally compatible object literal and an unrelated class instance, while accepting instances of the expected class and its subclasses. [Upstream TSGolint rule](https://github.com/oxc-project/tsgolint/pull/1372)  AI assistance: Codex (GPT-6). The exact model build and reasoning effort were unavailable. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"ce4e5e102bf4c9a26d432f7f0b580949a41e6850","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T17:01:15.206540Z">2026-11-21T17:01:15.206540Z</relative-time> | `ce4e5e1` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Co
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 105` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>codex/no-unsafe-class-instance-assignment</code> (ce4e5e1) with <code>main</code> (27440dc)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/codex%2Fno-unsafe-class-instance-assignment?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 105 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here 
+- **Issue #30132** (2026-11-23): **fix(lexer): evaluate legacy octal literals in base 8**
+  *Symptoms*: - Legacy octal literals like 070 had their digits read as decimal, so the numbers lane held 70 where V8 and tsc give 56 - A leading zero run with an 8 or 9 stays decimal (08, 0779, 08.5), and the strict mode error is still left to semantic - Only numbers starting with 0 and a digit take the new check, perf neutral  Closes #29853  ### Example  Input:  ```js x = [070, 0777, 08]; ```  Before output (numbers lane):  ```text [70.0, 777.0, 8.0] ```  After output:  ```text [56.0, 511.0, 8.0] ```  V8 and tsc both read 070 as 56 and 0777 as 511. No playground link, as the playground doesn't run oxc_lexer. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1083,806 +1080,1724 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08023adc` (2026-11-21)
-**Commit Message**: fix(transformer): keep TypeScript assign semantics for preserved classes (#29930)
+### Incident Patch 1: `9bac1b48` (2026-11-23)
+**Commit Message**: fix(linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls (#30105)
 
-Since #29748, classes that keep decorators or `accessor` for a
-downstream transform skip TypeScript's `useDefineForClassFields: false`
-conversion entirely. Their other fields stay define-semantics fields
-instead of becoming assignments. Found while testing rolldown.
+Part of #29818.
+
+`unicorn/prefer-array-flat` ignored the legacy `_.flatten(array)`,
+`lodash.flatten(array)` and `underscore.flatten(array)` calls, even
+though upstream `eslint-plugin-unicorn` reports them by default. Code
+using these helpers produced no diagnostics.
+
+### Example
+
+Input:
+
+```js
+const a = _.flatten(array);
+const b = lodash.flatten(array);
+const c = underscore.flatten(array);
+```
+
+Command:
+
+```sh
+oxlint -A all -D unicorn/prefer-array-flat --threads=1 example.js
+```
+
+Before:
+
+```text
+Found 0 warnings and 0 errors.
+```
+
+After:
+
+```text
+  x unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+   ,-[example.js:1:11]
+ 1 | const a = _.flatten(array);
+   :           ^^^^^^^^^^^^^^^^
+ 2 | const b = lodash.flatten(array);
+   `----
+  help: Call `.flat()` on the array instead.
+
+  x unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+   ,-[example.js:2:11]
+ 1 | const a = _.flatten(array);
+ 2 | const b = lodash.flatten(array);
+   :           ^^^^^^^^^^^^^^^^^^^^^
+ 3 | const c = underscore.flatten(array);
+   `----
+  h
+
+**File**: `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs` (modified, +350/-16)
+```diff
+@@ -1,23 +1,26 @@
+ use oxc_ast::{
+     AstKind,
+     ast::{
+-        Argument, ArrayExpressionElement, BindingPattern, CallExpression, Expression,
+-        IdentifierReference, MemberExpression,
++        Argument, ArrayExpressionElement, BindingPattern, CallExpression, ChainElement, Expression,
++        IdentifierReference, MemberExpression, NewExpression,
+     },
+ };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+-use oxc_span::Span;
++use oxc_semantic::IsGlobalReference;
++use oxc_span::{GetSpan, Span};
++use oxc_syntax::precedence::Precedence;
+ 
+ use crate::{
+     AstNode,
+-    ast_util::variable_declaration_kind,
+-    ast_util::{get_symbol_id_of_variable, is_method_call},
++    ast_util::{
++        could_be_asi_hazard, get_symbol_id_of_variable, is_method_call, variable_declaration_kind,
++    },
+     context::LintContext,
+     rule::Rule,
+     utils::{
+-        get_first_parameter_name, get_return_identifier_name, is_empty_array_expression,
+-        is_prototype_property,
++        get_first_parameter_name, get_precedence, get_return_identifier_name,
++        is_empty_array_expression, is_prototype_property, pad_fix_with_token_boundary,
+     },
+ };
+ 
+@@ -52,6 +55,7 @@ declare_oxc_lint!(
+     /// const foo = [].concat.apply([], array);
+     /// const foo = Array.prototype.concat.apply([], array);
+     /// const foo = Array.prototype.concat.call([], ...array);
++    /// const foo = _.flatten(array);
+     /// ```
+     ///
+     /// Examples of **correct** code for this rule:
+@@ -78,6 +82,7 @@ impl Rule for PreferArrayFlat {
+         check_array_reduce_case(call_expr, ctx);
+         check_array_concat_case(call_expr, ctx);
+         check_array_prototype_concat_case(call_expr, ctx);
++        check_lodash_flatten_case(node, call_expr, ctx);
+     }
+ }
+ 
+@@ -177,7 +182,7 @@ fn is_definitely_array_expression(expr: &Expression) -> bool {
+     match expr {
+         Expression::ArrayExpression(_) => true,
+         Expression::NewExpression(new_expr) => {
+-            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name == "Array")
++            matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+         }
+         _ => false,
+     }
+@@ -195,9 +200,12 @@ fn is_definitely_non_array_expression(expr: &Expression) -> bool {
+         | Expression::TemplateLiteral(_)
+         | Expression::ArrowFunctionExpression(_)
+         | Expression::FunctionExpression(_)
+-        | Expression::ClassExpression(_) => true,
++        | Expression::ClassExpression(_)
++        | Expression::PrivateInExpression(_)
++        | Expression::JSXElement(_)
++        | Expression::JSXFragment(_) => true,
+         Expression::NewExpression(new_expr) => {
+-            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name != "Array")
++            !matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+         }
+         _ => false,
+     }
+@@ -397,6 +405,176 @@ fn check_array_prototype_concat_case<'a>(call_expr: &CallExpression<'a>, ctx: &L
+     }
+ }
+ 
++const TYPED_ARRAY_NAMES: &[&str] = &[
++    "Int8Array",
++    "Uint8Array",
++    "Uint8ClampedArray",
++    "Int16Array",
++    "Uint16Array",
++    "Int32Array",
++    "Uint32Array",
++    "Float16Array",
++    "Float32Array",
++    "Float64Array",
++    "BigInt64Array",
++    "BigUint64Array",
++];
++
++fn is_known_non_array(expr: &Expression, ctx: &LintContext) -> bool {
++    match expr.get_inner_expression() {
++        Expression::Identifier(ident) => {
++            (matches!(ident.name.as_str(), "arguments" | "undefined")
++                && ident.is_global_reference(ctx.scoping()))
++                || matches!(
++                    const_variable_initializer_kind(ident, ctx),
++                    Some(ConstInitKind::NonArray)
++                )
++        }
++        Expression::CallExpression(call_expr) => {
++            is_method_call(call_expr, Some(TYPED_ARRAY_NAMES), Some(&["from", "of"]), None, None)
++        }
++        Expression::UnaryExpression(_) => true,
++        expr => is_definitely_non_array_expression(expr),
++    }
++}
++
++fn new_expression_has_parens(new_expr: &NewExpression) -> bool {
++    if !new_expr.arguments.is_empty() {
++        return true;
++    }
++    let after_callee =
++        new_expr.type_arguments.as_ref().map_or(new_expr.callee.span().end, |ta| ta.span.end);
++    new_expr.span.end > after_callee
++}
++
++fn starts_with_declaration_like_prefix(mut expr: &Expression) -> bool {
++    loop {
++        match expr {
++            Expression::ComputedMemberExpression(member) => {
++                if matches!(&member.object, Expression::Identifier(ident) if ident.name == "let") {
++                    return true;
++                }
++                expr = &member.object;
++            }
++            Expression::StaticMemberExpression(member) => expr = &member.object,
++            Expression::PrivateFieldExpression(member) => expr = &member.object,
+```
+
+**File**: `crates/oxc_linter/src/snapshots/unicorn_prefer_array_flat.snap` (modified, +228/-0)
+```diff
+@@ -347,6 +347,27 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Call `.flat()` on the array instead.
+ 
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(array)
++   · ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ lodash.flatten(array)
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ underscore.flatten(array)
++   · ─────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
+   ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+    ╭─[prefer_array_flat.tsx:2:13]
+  1 │ before()
+@@ -370,6 +391,27 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Call `.flat()` on the array instead.
+ 
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten((0, array))
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:29]
++ 1 │ async function a() { return _.flatten(await getArray()); }
++   ·                             ───────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:29]
++ 1 │ async function a() { return _.flatten((await getArray())); }
++   ·                             ─────────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
+   ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
+    ╭─[prefer_array_flat.tsx:2:13]
+  1 │ before()
+@@ -408,3 +450,189 @@ source: crates/oxc_linter/src/tester.rs
+    ·                                ─────────────────────
+    ╰────
+   help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(array,)
++   · ─────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:28]
++ 1 │ const Items = new Array(); _.flatten(Items);
++   ·                            ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(new Array)
++   · ────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(new Array())
++   · ──────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(getArray())
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(Array.from(x))
++   · ────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:2:1]
++ 1 │ before()
++ 2 │ _.flatten(getArray())
++   · ─────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(foo?.bar)
++   · ───────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:1]
++ 1 │ _.flatten(getArrays<number>)
++   · ────────────────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:2:1]
++ 1 │ before()
++ 2 │ _.flatten([foo])
++   · ────────────────
++   ╰────
++  help: Call `.flat()` on the array instead.
++
++  ⚠ unicorn(prefer-array-flat): Prefer Array#flat() over legacy techniques to flatten arrays.
++   ╭─[prefer_array_flat.tsx:1:24]
++ 1 │ function foo() { return(_.flatten)(array); }
++   
+```
+
+---
+
+### Incident Patch 2: `ea6d555b` (2026-11-23)
+**Commit Message**: fix(linter): align Jest and Vitest padding rules with upstream (#30029)
+
+The shared Jest/Vitest padding helper did not match upstream
+`eslint-plugin-jest` or `@vitest/eslint-plugin`. It only checked the
+statement before a matching test or hook. As a result, it missed the
+statement after a matching block, statements in plain blocks and
+`switch` cases, labeled statements, and semicolon-less code.
+
+This replaces it with a statement-list checker modeled on the upstream
+padding engine:
+
+- Statements match on their leading token, unwrapping `await` and
+labels.
+- The last matching config wins.
+- Padding-line detection and fix insertion follow upstream.
+- The diagnostic message matches upstream.
+
+`jest`/`vitest` `padding-around-test-blocks` and
+`padding-around-after-all-blocks` now use it. The rest of the stack
+builds on this helper.
 
 ### Example
 
 Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Afalse%7D%7D&code=class+X+%7B%0A++static+accessor+a+%3D+b%3B%0A++static+c+%3D+d%3B%0A%7D%0A)):
+example](https://playground.oxc.rs/?code=const+value+%3D+1%3B%0Atest%28%27first%27%2C+%28%29+%3D%3E+%7B%7D%29%3B%0Aexpect%28value%29.toBe%281%29%3B%0A%7B%0A++const+local+%3D+1%3B%0A++afterAll%28%28%29+%3D%3E+%7B%7D%29%3B%0A%7D%0A&lintRules=jest%2Fpadding-around-test-blocks%2Cjest%2Fpadding-around-after-all-blocks)):
 
-```ts
-class X {
-  static accessor a = b;
-  static c = d;
-}
-```
+`
 
-Before output:
-
-```js
-class X {
-  static accessor a = b;
-  static c = d;
-}
-```
-
-After output:
-
-```js
-class X {
-  static accessor a = b;
-  static {
-    this.c = d;
-  }
-}
-```
-
-`c` is assigned again, as before #29748 and as in `tsc` 5.9.3. The
-outputs come from `cargo run -p oxc_transformer --example transformer`
-with `setPublicClassFields: true` and `transform-typescript`, on parent
-`c265eda3` and on thi
-
-**File**: `crates/oxc_transformer/src/common/class_lowering.rs` (modified, +47/-5)
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +24/-8)
 ```diff
-@@ -3,21 +3,23 @@
- //! Transforms look up the lowering decision by class scope. Decisions that depend on decorators
- //! or auto-accessors are recorded at class entry, before any transform can change the class.
+@@ -2412,14 +2412,22 @@ impl RuleRunner for crate::rules::jest::no_untyped_mock_factory::NoUntypedMockFa
+ impl RuleRunner
+     for crate::rules::jest::padding_around_after_all_blocks::PaddingAroundAfterAllBlocks
+ {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
  
--use oxc_ast::ast::Class;
-+use oxc_ast::ast::{Class, ClassElement};
- use oxc_syntax::scope::ScopeId;
- use rustc_hash::FxHashMap;
- use smallvec::SmallVec;
+ impl RuleRunner for crate::rules::jest::padding_around_test_blocks::PaddingAroundTestBlocks {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+@@ -4983,14 +4991,22 @@ impl RuleRunner
+ impl RuleRunner
+     for crate::rules::vitest::padding_around_after_all_blocks::PaddingAroundAfterAllBlocks
+ {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+ impl RuleRunner for crate::rules::vitest::padding_around_test_blocks::PaddingAroundTestBlocks {
+-    const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const NODE_TYPES: Option<&AstTypesBitset> = Some(&AstTypesBitset::from_types(&[
++        AstType::BlockStatement,
++        AstType::FunctionBody,
++        AstType::Program,
++        AstType::SwitchCase,
++    ]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/jest/padding_around_after_all_blocks.rs` (modified, +128/-2)
+```diff
+@@ -22,8 +22,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundAfterAllBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -46,11 +51,67 @@ fn test() {
+         "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
+         "const cleanUp = false; while (cleanUp) afterAll(() => {});",
+         "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
++        r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\n\nfoo();",
++        "label:\nafterAll(() => {});",
+     ];
+ 
+     let fail = vec![
+         "const thing = 123;\nafterAll(() => {});",
+         "const thing = 123;\n/* one */\n/* two */\nafterAll(() => {});",
++        r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\nfoo();",
++        "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++        "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++        "const thing = 123\n;afterAll(() => {})",
++        "const thing = 123;\nlabel: afterAll(() => {});",
+     ];
+ 
+     let fix = vec![
+@@ -79,6 +140,71 @@ fn test() {
+             "const thing = 123; await /* hook */ afterAll(() => {});",
+             "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
+         ),
++        (
++            r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++            r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        ),
++        ("afterAll(() => {});\nfoo();", "afterAll(() => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++            "{\n  const thing = 123;\n\n  afterAll(() => {});\n}",
++        ),
++        (
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n\n    foo();\n}",
++        ),
++        ("const thing = 123\n;afterAll(() => {})", "const thing = 123\n\n;afterAll(() => {})"),
++        (
++            "const thing = 123;\nlabel: afterAll(() => {});",
++            "const thing = 123;\n\nlabel: afterAll(() => {});",
++        ),
+     ];
+ 
+     Tester::new(PaddingAroundAfterAllBlocks::NAME, PaddingAroundAfterAllBlocks::PLUGIN, pass, fail)
+```
+
+**File**: `crates/oxc_linter/src/rules/jest/padding_around_test_blocks.rs` (modified, +165/-2)
+```diff
+@@ -24,8 +24,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundTestBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -50,6 +55,47 @@ fn test() {
+         "const slow = false; if (slow)\n  test('slow', () => {});",
+         "const slow = false; while (slow) test('slow', () => {});",
+         "const slow = false; for (; slow;) test('slow', () => {});",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\n\nfoo();",
++        "label:\ntest('foo', () => {});",
+     ];
+ 
+     let fail = vec![
+@@ -92,6 +138,38 @@ describe('other bar', function() {
+     });
+ });
+             ",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\nfoo();",
++        "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++        "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++        "const thing = 123\n;test('foo', () => {})",
++        "const thing = 123;\nlabel: test('foo', () => {});",
+     ];
+ 
+     let fix = vec![
+@@ -218,6 +296,91 @@ describe('other bar', function() {
+             "const thing = 123; await /* hook */ test('foo', () => {});",
+             "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
+         ),
++        (
++            r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        ),
++        ("test('foo', () => {});\nfoo();", "test('foo', () => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++            "{\n  const thing = 123;\n\n  test('foo', () => {});\n}",
++        ),
++        (
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n\n    foo();\n}",
++        ),
++        (
++            "const thing = 123\n;test('foo', () => {})",
++            "const thing = 123\n\n;test('foo', () => {})",
++        ),
++        (
++            "const thing = 123;\nlabel: test('foo', () => {});",
++            "const thing = 123;\n\nlabel: test('foo', () => {});",
++        ),
+     ];
+     Tester::new(PaddingAroundTestBlocks::NAME, PaddingAroundTestBlocks::PLUGIN, pass, fail)
+         .with_jest_plugin(true)
+```
+
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/padding_around_after_all_blocks.rs` (modified, +12/-26)
+```diff
+@@ -1,12 +1,8 @@
+-use oxc_ast::AstKind;
+ use oxc_semantic::AstNode;
  
  use crate::{
-     decorator::DecoratorMode,
--    utils::decorated_class::{class_body_has_auto_accessors, class_has_decorators},
-+    utils::decorated_class::{
-+        class_body_has_auto_accessors, class_has_decorators, is_auto_accessor,
+     context::LintContext,
+-    utils::{
+-        JestGeneralFnKind, ParsedGeneralJestFnCall, PossibleJestNode, parse_general_jest_fn_call,
+-        report_missing_padding_before_jest_block,
+-    },
++    utils::{PaddingConfig, PaddingStatement, check_padding},
+ };
+ 
+ pub const DOCUMENTATION: &str = r"### What it does
+@@ -27,36 +23,26 @@ Examples of **incorrect** code for this rule:
+ ```js
+ const thing = 123;
+ afterAll(() => {});
++describe('foo', () => {});
+ ```
+ 
+ Examples of **correct** code for this rule:
+ ```js
+ const thing = 123;
+ 
+ afterAll(() => {});
++
++describe('foo', () => {});
+ ```
+ ";
+ 
++const AFTER_ALL: PaddingStatement = PaddingStatement::Named(&["afterAll"]);
++
++pub const CONFIGS: &[PaddingConfig] = &[
++    PaddingConfig::always(PaddingStatement::Any, AFTER_ALL),
++    PaddingConfig::always(AFTER_ALL, PaddingStatement::Any),
++];
++
+ pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-    let AstKind::CallExpression(call_expr) = node.kind() else {
+-        return;
+-    };
+-    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
+-    else {
+-        return;
+-    };
+-    let Some(jest_fn_call) = parse_general_jest_fn_call(call_expr, &possible_jest_node, ctx) else {
+-        return;
+-    };
+-    let ParsedGeneralJestFnCall { kind, name, .. } = &jest_fn_call;
+-    let Some(kind) = kind.to_general() else {
+-        return;
+-    };
+-    if kind != JestGeneralFnKind::Hook {
+-        return;
+-    }
+-    if name != "afterAll" {
+-        return;
+-    }
+-    report_missing_padding_before_jest_block(node, ctx, name);
++    check_padding(node, ctx, &[CONFIGS]);
+ }
+```
+
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/padding_around_test_blocks.rs` (modified, +10/-22)
+```diff
+@@ -1,12 +1,8 @@
+-use oxc_ast::AstKind;
+ use oxc_semantic::AstNode;
+ 
+ use crate::{
+     context::LintContext,
+-    utils::{
+-        JestGeneralFnKind, ParsedGeneralJestFnCall, PossibleJestNode, parse_general_jest_fn_call,
+-        report_missing_padding_before_jest_block,
+-    },
++    utils::{PaddingConfig, PaddingStatement, check_padding},
+ };
+ 
+ pub const DOCUMENTATION: &str = r"### What it does
+@@ -54,22 +50,14 @@ it('bar', () => {});
+ ```
+ ";
+ 
++const TEST_BLOCKS: PaddingStatement =
++    PaddingStatement::Named(&["test", "it", "fit", "xit", "xtest"]);
++
++pub const CONFIGS: &[PaddingConfig] = &[
++    PaddingConfig::always(PaddingStatement::Any, TEST_BLOCKS),
++    PaddingConfig::always(TEST_BLOCKS, PaddingStatement::Any),
++];
++
+ pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-    let AstKind::CallExpression(call_expr) = node.kind() else {
+-        return;
+-    };
+-    let Some(jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx) else {
+-        return;
+-    };
+-    let Some(jest_fn_call) = parse_general_jest_fn_call(call_expr, &jest_node, ctx) else {
+-        return;
+-    };
+-    let ParsedGeneralJestFnCall { kind, name, .. } = &jest_fn_call;
+-    let Some(kind) = kind.to_general() else {
+-        return;
+-    };
+-    if kind != JestGeneralFnKind::Test {
+-        return;
+-    }
+-    report_missing_padding_before_jest_block(node, ctx, name);
++    check_padding(node, ctx, &[CONFIGS]);
+ }
+```
+
+**File**: `crates/oxc_linter/src/rules/vitest/padding_around_after_all_blocks.rs` (modified, +128/-2)
+```diff
+@@ -22,8 +22,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundAfterAllBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -55,6 +60,35 @@ fn test() {
+         "const cleanUp = false; if (cleanUp)\n  afterAll(() => {});",
+         "const cleanUp = false; while (cleanUp) afterAll(() => {});",
+         "const cleanUp = false; for (; cleanUp;) afterAll(() => {});",
++        r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\n\nfoo();",
++        "label:\nafterAll(() => {});",
+     ];
+ 
+     let fail = vec![
+@@ -67,6 +101,33 @@ fn test() {
+         "const thing = 123;\n/**\n * JSDoc comment\n */\nafterAll(() => {});",
+         "describe('foo', () => {\nafterAll(() => {});\nafterAll(() => {});\n});",
+         "import { afterAll } from 'vitest';\n/* setup notes */\nafterAll(() => {});",
++        r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        "afterAll(() => {});\nfoo();",
++        "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++        "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++        "const thing = 123\n;afterAll(() => {})",
++        "const thing = 123;\nlabel: afterAll(() => {});",
+     ];
+ 
+     let fix = vec![
+@@ -112,6 +173,71 @@ fn test() {
+             "const thing = 123; await /* hook */ afterAll(() => {});",
+             "const thing = 123;\n\nawait /* hook */ afterAll(() => {});",
+         ),
++        (
++            r"
++const someText = 'abc';
++afterAll(() => {
++});
++describe('someText', () => {
++  const something = 'abc';
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++            r"
++const someText = 'abc';
++
++afterAll(() => {
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  // A comment
++  afterAll(() => {
++    // stuff
++  });
++
++  afterAll(() => {
++    // other stuff
++  });
++});
++
++describe('someText', () => {
++  const something = 'abc';
++
++  afterAll(() => {
++    // stuff
++  });
++});
++",
++        ),
++        ("afterAll(() => {});\nfoo();", "afterAll(() => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  afterAll(() => {});\n}",
++            "{\n  const thing = 123;\n\n  afterAll(() => {});\n}",
++        ),
++        (
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    afterAll(() => {});\n\n    foo();\n}",
++        ),
++        ("const thing = 123\n;afterAll(() => {})", "const thing = 123\n\n;afterAll(() => {})"),
++        (
++            "const thing = 123;\nlabel: afterAll(() => {});",
++            "const thing = 123;\n\nlabel: afterAll(() => {});",
++        ),
+     ];
+ 
+     Tester::new(PaddingAroundAfterAllBlocks::NAME, PaddingAroundAfterAllBlocks::PLUGIN, pass, fail)
+```
+
+**File**: `crates/oxc_linter/src/rules/vitest/padding_around_test_blocks.rs` (modified, +165/-2)
+```diff
+@@ -24,8 +24,13 @@ declare_oxc_lint!(
+ 
+ impl Rule for PaddingAroundTestBlocks {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(_) = node.kind() else { return };
+-        run(node, ctx);
++        match node.kind() {
++            AstKind::Program(_)
++            | AstKind::BlockStatement(_)
++            | AstKind::FunctionBody(_)
++            | AstKind::SwitchCase(_) => run(node, ctx),
++            _ => {}
++        }
+     }
+ 
+     fn should_run(&self, ctx: &ContextHost) -> bool {
+@@ -50,6 +55,47 @@ fn test() {
+         "const slow = false; if (slow)\n  test('slow', () => {});",
+         "const slow = false; while (slow) test('slow', () => {});",
+         "const slow = false; for (; slow;) test('slow', () => {});",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\n\nfoo();",
++        "label:\ntest('foo', () => {});",
+     ];
+ 
+     let fail = vec![
+@@ -87,6 +133,38 @@ describe('other bar', function() {
+     });
+ });
+             ",
++        r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++        "test('foo', () => {});\nfoo();",
++        "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++        "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++        "const thing = 123\n;test('foo', () => {})",
++        "const thing = 123;\nlabel: test('foo', () => {});",
+     ];
+ 
+     let fix = vec![
+@@ -197,6 +275,91 @@ describe('other bar', function() {
+             "const thing = 123; await /* hook */ test('foo', () => {});",
+             "const thing = 123;\n\nawait /* hook */ test('foo', () => {});",
+         ),
++        (
++            r"
++const foo = 'bar';
++const bar = 'baz';
++it('foo', () => {
++  // stuff
++});
++fit('bar', () => {
++  // stuff
++});
++test('foo foo', () => {});
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++  test('is another bar w/ test', () => {
++  });
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++  test.skip('skipping', () => {}); // Another comment
++  it.skip('skipping too', () => {});
++});xtest('weird', () => {});
++test
++  .skip('skippy skip', () => {});
++xit('bar foo', () => {});
++",
++            r"
++const foo = 'bar';
++const bar = 'baz';
++
++it('foo', () => {
++  // stuff
++});
++
++fit('bar', () => {
++  // stuff
++});
++
++test('foo foo', () => {});
++
++test('bar bar', () => {});
++
++// Nesting
++describe('other bar', () => {
++  const thing = 123;
++
++  test('is another bar w/ test', () => {
++  });
++
++  // With a comment
++  it('is another bar w/ it', () => {
++  });
++
++  test.skip('skipping', () => {}); // Another comment
++
++  it.skip('skipping too', () => {});
++});
++
++xtest('weird', () => {});
++
++test
++  .skip('skippy skip', () => {});
++
++xit('bar foo', () => {});
++",
++        ),
++        ("test('foo', () => {});\nfoo();", "test('foo', () => {});\n\nfoo();"),
++        (
++            "{\n  const thing = 123;\n  test('foo', () => {});\n}",
++            "{\n  const thing = 123;\n\n  test('foo', () => {});\n}",
++        ),
++        (
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n    foo();\n}",
++            "switch (value) {\n  case 1:\n    test('foo', () => {});\n\n    foo();\n}",
++        ),
++        (
++            "const thing = 123\n;test('foo', () => {})",
++            "const thing = 123\n\n;test('foo', () => {})",
++        ),
++        (
++            "const thing = 123;\nlabel: test('foo', () => {});",
++            "const thing = 123;\n\nlabel: test('foo', () => {});",
++        ),
+     ];
+     Tester::new(PaddingAroundTestBlocks::NAME, PaddingAroundTestBlocks::PLUGIN, pass, fail)
+         .with_vitest_plugin(true)
+```
+
+**File**: `crates/oxc_linter/src/snapshots/jest_padding_around_after_all_blocks.snap` (modified, +91/-4)
+```diff
+@@ -2,18 +2,105 @@
+ source: crates/oxc_linter/src/tester.rs
+ ---
+ 
+-  ⚠ jest(padding-around-after-all-blocks): Missing padding before afterAll block
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
+    ╭─[padding_around_after_all_blocks.tsx:2:1]
+  1 │ const thing = 123;
+  2 │ afterAll(() => {});
+    · ▲
+    ╰────
+-  help: Make sure there is an empty new line before the afterAll block
++  help: Insert a blank line before this statement
+ 
+-  ⚠ jest(padding-around-after-all-blocks): Missing padding before afterAll block
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
+    ╭─[padding_around_after_all_blocks.tsx:4:1]
+  3 │ /* two */
+  4 │ afterAll(() => {});
+    · ▲
+    ╰────
+-  help: Make sure there is an empty new line before the afterAll block
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:3:1]
++ 2 │ const someText = 'abc';
++ 3 │ afterAll(() => {
++   · ▲
++ 4 │ });
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:5:1]
++ 4 │ });
++ 5 │ describe('someText', () => {
++   · ▲
++ 6 │   const something = 'abc';
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:8:3]
++ 7 │   // A comment
++ 8 │   afterAll(() => {
++   ·   ▲
++ 9 │     // stuff
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++    ╭─[padding_around_after_all_blocks.tsx:11:3]
++ 10 │   });
++ 11 │   afterAll(() => {
++    ·   ▲
++ 12 │     // other stuff
++    ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++    ╭─[padding_around_after_all_blocks.tsx:18:3]
++ 17 │   const something = 'abc';
++ 18 │   afterAll(() => {
++    ·   ▲
++ 19 │     // stuff
++    ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:1]
++ 1 │ afterAll(() => {});
++ 2 │ foo();
++   · ▲
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:3:3]
++ 2 │   const thing = 123;
++ 3 │   afterAll(() => {});
++   ·   ▲
++ 4 │ }
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:4:5]
++ 3 │     afterAll(() => {});
++ 4 │     foo();
++   ·     ▲
++ 5 │ }
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:2]
++ 1 │ const thing = 123
++ 2 │ ;afterAll(() => {})
++   ·  ▲
++   ╰────
++  help: Insert a blank line before this statement
++
++  ⚠ jest(padding-around-after-all-blocks): Expected blank line before this statement
++   ╭─[padding_around_after_all_blocks.tsx:2:1]
++ 1 │ const thing = 123;
++ 2 │ label: afterAll(() => {});
++   · ▲
++   ╰────
++  help: Insert a blank line before this statement
+```
+
+---
+
+### Incident Patch 3: `dc2e5313` (2026-11-23)
+**Commit Message**: fix(linter/unicorn/prefer-modern-dom-apis): report removing child nodes in a while loop (#30100)
+
+Part of #29818.
+
+`unicorn/prefer-modern-dom-apis` did not report `while` loops that clear
+a node by repeatedly calling `.remove()` on its `firstChild` or
+`lastChild`. Upstream reports these loops and recommends a single
+`replaceChildren()` call.
+
+### Example
+
+Input (`example.js`):
+
+```js
+while (node.firstChild) {
+  node.firstChild.remove();
+}
+```
+
+Command:
+
+```sh
+oxlint -A all -D unicorn/prefer-modern-dom-apis --threads=1 example.js
+```
+
+Before:
+
+```text
+Found 0 warnings and 0 errors.
+```
+
+After:
+
+```text
+  x unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
+   ,-[example.js:1:1]
+ 1 | ,-> while (node.firstChild) {
+ 2 | |     node.firstChild.remove();
+ 3 | `-> }
+   `----
+  help: Replace the loop with `node.replaceChildren()`.
+
+Found 0 warnings and 1 error.
+```
+
+Applying the suggestion rewrites the loop to `node.replaceChildren();`.
+
+AI disclosure: assisted by Gemini (exact model version string is
+unavailable in this environment; reasoning effort: high / 1.0); all
+changes were reviewed and verified locally with unit tests,
+ox
+
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +1/-1)
+```diff
+@@ -3813,7 +3813,7 @@ impl RuleRunner for crate::rules::unicorn::prefer_math_trunc::PreferMathTrunc {
+ 
+ impl RuleRunner for crate::rules::unicorn::prefer_modern_dom_apis::PreferModernDomApis {
+     const NODE_TYPES: Option<&AstTypesBitset> =
+-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression, AstType::WhileStatement]));
+     const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/unicorn/prefer_modern_dom_apis.rs` (modified, +778/-9)
+```diff
+@@ -1,12 +1,24 @@
++use std::borrow::Cow;
++
+ use oxc_ast::{
+     AstKind,
+-    ast::{Argument, Expression},
++    ast::{
++        Argument, CallExpression, Declaration, ExportDefaultDeclarationKind, Expression, Statement,
++        TSType, TSTypeName, WhileStatement,
 +    },
  };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+ use oxc_span::{GetSpan, Span};
++use oxc_syntax::precedence::Precedence;
  
- use super::class_transform::ClassTransform;
+-use crate::{AstNode, ast_util::is_method_call, context::LintContext, rule::Rule};
++use crate::{
++    AstNode,
++    ast_util::is_method_call,
++    context::LintContext,
++    rule::Rule,
++    utils::{get_precedence, is_same_expression},
++};
  
- /// Which transform owns a class.
- #[derive(Clone, Copy, PartialEq, Eq, Debug)]
--pub enum ClassLoweringMode {
-+enum ClassLoweringMode {
-     /// Class fields stay native; auto-accessors and static blocks may still be lowered.
-     Native,
-     /// Class-properties lowers this class because the target requires class field lowering.
-@@ -50,8 +52,48 @@ impl ClassLowering {
-         Self { mode, has_decorators, has_auto_accessor }
-     }
+ fn prefer_modern_dom_apis_diagnostic(
+     good_method: &str,
+@@ -17,6 +29,50 @@ fn prefer_modern_dom_apis_diagnostic(
+         .with_label(span)
+ }
  
--    pub fn mode(self) -> ClassLoweringMode {
--        self.mode
-+    /// Whether class-properties lowers the fields of this class.
-+    pub fn lowers_fields(self) -> bool {
-+        self.mode == ClassLoweringMode::LowerAll
-+    }
++fn prefer_replace_children_diagnostic(
++    parent_node: &str,
++    child_prop: &str,
++    span: Span,
++) -> OxcDiagnostic {
++    OxcDiagnostic::warn(format!(
++        "Prefer `{parent_node}.replaceChildren()` over directly removing `.{child_prop}` in a loop."
++    ))
++    .with_help(format!("Replace the loop with `{parent_node}.replaceChildren()`."))
++    .with_label(span)
++}
 +
-+    /// Whether a field or auto-accessor stays as written for the downstream transform.
++const NON_PARENT_NODE_TYPE_NAMES: &[&str] = &[
++    "Attr",
++    "CDATASection",
++    "CharacterData",
++    "ChildNode",
++    "Comment",
++    "DocumentType",
++    "Node",
++    "Text",
++    "Window",
++    "WindowProxy",
++];
++
++const TARGET_PARENT_NODE_TYPE_NAMES: &[&str] = &[
++    "Document",
++    "DocumentFragment",
++    "Element",
++    "HTMLDocument",
++    "HTMLElement",
++    "ParentNode",
++    "SVGElement",
++    "ShadowRoot",
++];
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum ReceiverTypeKind {
++    Target,
++    NonTarget,
++    Nullish,
++    Unknown,
++}
++
+ #[derive(Debug, Default, Clone)]
+ pub struct PreferModernDomApis;
+ 
+@@ -56,40 +112,60 @@ declare_oxc_lint!(
+     /// - `referenceNode.before(newNode)` over `parentNode.insertBefore(newNode, referenceNode)`
+     /// - `referenceNode.before('text')` over `referenceNode.insertAdjacentText('beforebegin', 'text')`
+     /// - `referenceNode.before(newNode)` over `referenceNode.insertAdjacentElement('beforebegin', newNode)`
++    /// - `parentNode.replaceChildren()` over `while (parentNode.firstChild) { parentNode.firstChild.remove(); }`
+     ///
+     /// ### Why is this bad?
+     ///
+     /// There are some advantages of using the newer DOM APIs, like:
+     /// - Traversing to the parent node is not necessary.
+     /// - Appending multiple nodes at once.
+     /// - Both `DOMString` and DOM node objects can be manipulated.
++    /// - Clearing all children with `replaceChildren()` is clearer and avoids removing nodes in a loop.
+     ///
+     /// ### Examples
+     ///
+     /// Examples of **incorrect** code for this rule:
+     /// ```javascript
+-    /// oldChildNode.replaceWith(newChildNode);
++    /// parentNode.replaceChild(newChildNode, oldChildNode);
 +    ///
-+    /// A preserved class keeps its decorated fields and its auto-accessors. Transforms that
-+    /// rewrite the other fields must leave these in place, and must not move other initializers
-+    /// after theirs (see [`Self::first_movable_instance_field`]).
-+    pub fn keeps_field(self, element: &ClassElement<'_>) -> bool {
-+        self.mode == ClassLoweringMode::Preserve
-+            && (is_auto_accessor(element)
-+                || matches!(element, ClassElement::PropertyDefinition(_))
-+                    && element.has_decorator())
-+    }
-+
-+    /// Index of the first instance field whose initializer can move after the field
-+    /// initializers that stay in the class, such as into the constructor.
++    /// while (node.firstChild) {
++    ///     node.firstChild.remove();
++    /// }
+     /// ```
+     ///
+     /// Examples of **correct** code for this rule:
+     /// ```javascript
+-    /// parentNode.replaceChild(newChildNode, oldChildNode);
++    /// oldChildNode.replaceWith(newChildNode);
 +    ///
-+    /// Instance fields before the last kept instance field that runs code on initialization (a
-+    /// decorated field, or an auto-accessor with an initializer or decorators) must stay in
-+    /// place, or their initializers would run after it.
-+    pub fn first_movable_instance_field(self, class: &Class<'_>) -> usize {
-+        if self.mode != ClassLoweringMode::Preserve {
-+            return 0;
-+        }
-+        class
-+            .body
-+            .body
-+            .iter()
-+            .rposition(|element| {
-+                !element.r#static()
-+                    && self.keeps_field(element)
-+                    && match element {
-+                        ClassElement::AccessorProperty(accessor) => {
-+                            accessor.value.is_some() || element.has_decorator()
-+                        }
-+                        _ => true,
-+                    }
-+            })
-+            .map_or(0, |index| index + 1)
-     }
++    /// node.replaceChildren();
+     /// ```
+     PreferModernDomApis,
+     unicorn,
+     style,
+     recommended,
+-    suggestion,
++    conditional_suggestion,
+     version = "0.0.20",
+-    short_description = "Prefer modern DOM APIs like `replaceWith` and `before` over older methods like `replaceChild` and `insertBefore`.",
++    short_description = "Prefer modern DOM APIs like `replaceWith`, `before`, and `replaceChildren` over older methods.",
+ );
  
-     /// Whether the class or one of its elements is decorated.
-```
-
-**File**: `crates/oxc_transformer/src/common/class_transform.rs` (modified, +2/-12)
-```diff
-@@ -1,4 +1,4 @@
--use crate::{decorator::DecoratorMode, es2022::ClassPropertiesOptions, options::EnvOptions};
-+use crate::{es2022::ClassPropertiesOptions, options::EnvOptions};
- 
- /// Program-wide ownership of class field and static block lowering.
- ///
-@@ -14,31 +14,21 @@ pub enum ClassTransform {
-     ClassProperties {
-         options: ClassPropertiesOptions,
-         transform_static_blocks: bool,
--        decorator_mode: DecoratorMode,
-     },
- }
- 
- impl ClassTransform {
--    pub fn new(env: &EnvOptions, decorator_mode: DecoratorMode) -> Self {
-+    pub fn new(env: &EnvOptions) -> Self {
-         let options = env.es2022;
-         if let Some(properties_options) = options.class_properties {
-             Self::ClassProperties {
-                 options: properties_options,
-                 transform_static_blocks: options.class_static_block,
--                decorator_mode,
-             }
-         } else if options.class_static_block {
-             Self::StaticBlocks
-         } else {
-             Self::None
-         }
-     }
--
--    /// Whether class-properties owns field lowering and initialization order for all classes.
--    ///
--    /// TypeScript must leave field lowering to it, and legacy decorators must leave class-alias
--    /// initialization to it instead of inserting an alias assignment in a static block.
--    pub fn owns_all_class_fields(self) -> bool {
--        matches!(self, Self::ClassProperties { decorator_mode, .. } if decorator_mode != DecoratorMode::Preserve)
--    }
- }
-```
-
-**File**: `crates/oxc_transformer/src/decorator/legacy/mod.rs` (modified, +36/-35)
-```diff
-@@ -842,43 +842,44 @@ impl<'a> LegacyDecorator<'a> {
-             ctx,
-         );
- 
--        let class_alias_with_this_assignment = if ctx.state.class_transform.owns_all_class_fields()
--        {
--            None
--        } else {
--            // If we're emitting to ES2022 or later then we need to reassign the class alias before
--            // static initializers are evaluated.
--            // <https://github.com/microsoft/TypeScript/blob/b86ab7dbe0eb2f1c9a624486d72590d638495c97/src/compiler/transformers/legacyDecorators.ts#L345-L366>
--            class_alias_binding.as_ref().and_then(|class_alias_binding| {
--                let has_static_field_or_block = class.body.body.iter().any(|element| {
--                    matches!(element, ClassElement::StaticBlock(_))
--                        || matches!(element, ClassElement::PropertyDefinition(prop)
--                                if prop.r#static
--                        )
--                });
--
--                if has_static_field_or_block {
--                    // `_Class = this`;
--                    let class_alias_with_this_assignment = Statement::new_expression_statement(
--                        SPAN,
--                        create_assignment(
--                            class_alias_binding,
--                            Expression::new_this_expression(SPAN, ctx),
-+        let class_alias_with_this_assignment =
-+            if ctx.state.class_lowering_of(class.scope_id()).lowers_fields() {
-+                None
-+            } else {
-+                // If we're emitting to ES2022 or later then we need to reassign the class alias before
-+                // static initializers are evaluated.
-+                // <https://github.com/microsoft/TypeScript/blob/b86ab7dbe0eb2f1c9a624486d72590d638495c97/src/compiler/transformers/legacyDecorators.ts#L345-L366>
-+                class_alias_binding.as_ref().and_then(|class_alias_binding| {
-+                    let has_static_field_or_block = class.body.body.iter().any(|element| {
-+                        matches!(element, ClassElement::StaticBlock(_))
-+                            || matches!(element, ClassElement::PropertyDefinition(prop)
-+                                    if prop.r#static
-+                            )
-+                    });
-+
-+                    if has_static_field_or_block {
-+                        // `_Class = this`;
-+                        let class_alias_with_this_assignment = Statement::new_expression_statement(
-                             SPAN,
-+                            create_assignment(
-+                                class_alias_binding,
-+                                Expression::new_this_expression(SPAN, ctx),
-+                                SPAN,
-+                                ctx,
-+                            ),
-                             ctx,
--                        ),
--                        ctx,
--                    );
--                    let body = [class_alias_with_this_assignment];
--                    let scope_id = ctx.create_child_scope_of_current(ScopeFlags::ClassStaticBlock);
--                    let element =
--                        ClassElement::new_static_block_with_scope_id(SPAN, body, scope_id, ctx);
--                    Some(element)
--                } else {
--                    None
--                }
--            })
--        };
-+                        );
-+                        let body = [class_alias_with_this_assignment];
-+                        let scope_id =
-+                            ctx.create_child_scope_of_current(ScopeFlags::ClassStaticBlock);
-+                        let element =
-+                            ClassElement::new_static_block_with_scope_id(SPAN, body, scope_id, ctx);
-+                        Some(element)
-+                    } else {
-+                        None
-+                    }
-+                })
-+            };
- 
-         if class_has_private_in_expression_in_decorator {
-             let decorations = mem::take(&mut decoration_stmts);
-```
-
-**File**: `crates/oxc_transformer/src/es2022/class_properties/class.rs` (modified, +2/-5)
-```diff
-@@ -12,10 +12,7 @@ use oxc_syntax::{
- use oxc_traverse::{Ancestor, BoundIdentifier};
- 
- use crate::{
--    common::{
--        class_lowering::ClassLoweringMode,
--        helper_loader::{Helper, helper_call_expr},
--    },
-+    common::helper_loader::{Helper, helper_call_expr},
-     context::TraverseCtx,
-     utils::ast_builder::{create_assignment, create_new_weakset, create_variable_declaration},
- };
-@@ -77,7 +74,7 @@ impl<'a> ClassProperties<'a> {
-             !is_declaration && Self::should_emit_private_method_helpers_in_class_sequence(ctx);
- 
-         let lowering = ctx.state.class_lowering_of(class_scope_id);
--        if matches!(lowering.mode(), ClassLoweringMode::Native | ClassLoweringMode::Preserve) {
-+        if !lowering.lowers_fields() {
-             // Register private names only when they can shadow a lowered name in an enclosing
-             // class. Other unresolved names belong to untouched classes and are left as-is.
-             let mut private_names = IdentIndexMap::default();
-```
-
-**File**: `crates/oxc_transformer/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -352,6 +352,8 @@ impl<'a> Traverse<'a, TransformState<'a>> for TransformerImpl<'a> {
- 
-     fn exit_class(&mut self, class: &mut Class<'a>, ctx: &mut TraverseCtx<'a>) {
-         self.decorator.exit_class(class, ctx);
-+        // Legacy decorators have taken the decorators off the fields they lowered, so TypeScript
-+        // can now remove those fields if they have no initializer.
-         if let Some(typescript) = self.x0_typescript.as_mut() {
-             typescript.exit_class(class, ctx);
-         }
-```
-
-**File**: `crates/oxc_transformer/src/state.rs` (modified, +1/-1)
-```diff
-@@ -85,7 +85,7 @@ impl<'a> TransformState<'a> {
-             .map_or_else(|| String::from("unknown"), |name| name.to_string_lossy().to_string());
- 
-         let decorator_mode = options.decorator.mode();
--        let class_transform = ClassTransform::new(&options.env, decorator_mode);
-+        let class_transform = ClassTransform::new(&options.env);
- 
-         Self {
-             errors: vec![],
-```
-
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +72/-36)
-```diff
-@@ -3,13 +3,14 @@ use rustc_hash::FxHashSet;
- use oxc_allocator::{ArenaVec, CloneIn, GetAllocator, ReplaceWith, TakeIn};
- use oxc_ast::ast::*;
- use oxc_semantic::{ScopeFlags, ScopeId};
--use oxc_span::SPAN;
-+use oxc_span::{SPAN, Span};
- use oxc_str::Ident;
- use oxc_syntax::operator::AssignmentOperator;
- use oxc_traverse::BoundIdentifier;
- 
- use crate::{
-     common::{
-+        class_lowering::ClassLowering,
-         computed_key::{create_computed_key_temp_var, key_needs_temp_var},
-         duplicate::duplicate_expression,
-     },
-@@ -97,16 +98,26 @@ impl<'a> TypeScript<'a> {
-     /// The transformation way is also the same as `TypeScript`, the advantage from the implementation is that
-     /// we don't need extra transformation for static properties, the output is the same as instance properties
-     /// transformation, and the greatest advantage is we don't need to care about `this` usage in static block.
--    pub(super) fn transform_class_fields(&self, class: &mut Class<'a>, ctx: &mut TraverseCtx<'a>) {
-+    ///
-+    /// Fields that `lowering` keeps for a downstream transform stay as written, and so do instance
-+    /// fields before [`ClassLowering::first_movable_instance_field`].
-+    pub(super) fn transform_class_fields(
-+        &self,
-+        class: &mut Class<'a>,
-+        lowering: ClassLowering,
-+        ctx: &mut TraverseCtx<'a>,
-+    ) {
-+        let first_movable_index = lowering.first_movable_instance_field(class);
-         // When any non-private instance field has an initializer, all instance field
-         // initializers (including private) must be hoisted to the constructor to preserve
-         // execution order. This matches TypeScript's `WillHoistInitializersToConstructor`:
-         // https://github.com/microsoft/TypeScript/blob/7b8cb3bdf8/src/compiler/transformers/classFields.ts#L339
--        let will_hoist_initializers_to_constructor = class.body.body.iter().any(|e| {
--            matches!(e, ClassElement::PropertyDefinition(prop)
--                if !prop.r#static && !prop.declare && !prop.key.is_private_identifier() && prop.value.is_some()
--            )
--        });
-+        let will_hoist_initializers_to_constructor =
-+            class.body.body[first_movable_index..].iter().any(|e| {
-+                matches!(e, ClassElement::PropertyDefinition(prop)
-+                    if !prop.r#static && !prop.declare && !prop.key.is_private_identifier() && prop.value.is_some()
-+                )
-+            });
- 
-         // Static blocks created below must be parented to the class body scope,
-         // not the current traversal scope (which is the scope enclosing the class).
-@@ -115,13 +126,16 @@ impl<'a> TypeScript<'a> {
-         let mut constructor = None;
-         let mut property_assignments = Vec::new();
-         let mut computed_key_assignments = Vec::new();
--        for element in &mut class.body.body {
-+        for (index, element) in class.body.body.iter_mut().enumerate() {
-+            let kept = lowering.keeps_field(element);
-             match element {
-                 // Skip static private properties — converting them to static blocks
-                 // would lose the private field declaration.
-                 ClassElement::PropertyDefinition(prop)
--                    if !prop.key.is_private_identifier()
--                        || (!prop.r#static && will_hoist_initializers_to_constructor) =>
-+                    if !kept
-+                        && (prop.r#static || index >= first_movable_index)
-+                        && (!prop.key.is_private_identifier()
-+                            || (!prop.r#static && will_hoist_initializers_to_constructor)) =>
-                 {
-                     if let Some(value) = prop.value.take() {
-                         // A static property is replaced by a static block below, and an instance
-@@ -192,6 +206,12 @@ impl<'a> TypeScript<'a> {
-                         ctx,
-                     );
-                 }
-+                // A computed key that stays in the class still evaluates after the keys before it.
-+                ClassElement::PropertyDefinition(prop)
-+                    if !prop.declare && prop.key.is_computed() =>
-+                {
-+                    Self::convert_computed_key(&mut prop.key, &mut computed_key_assignments, ctx);
-+                }
-                 _ => (),
-             }
-         }
-@@ -292,29 +312,47 @@ impl<'a> TypeScript<'a> {
-     /// Skips parameter properties whose name matches an existing instance field declaration on
-     /// the same class (matching TypeScript's dedup). Only static-identifier instance fields
-     /// count — static, private, computed, and `declare`-only fields don't suppress the new field.
--    pub(super) fn add_parameter_property_fields(class: &mut Class<'a>, ctx: &TraverseCtx<'a>) {
--        let Some(params) = Self::find_constructor_params(class) else { return };
--
--        // Bail before allocating when there are no parameter properties to emit.
--        // Parameter pr
-```
-
-**File**: `crates/oxc_transformer/src/typescript/mod.rs` (modified, +40/-35)
-```diff
-@@ -1,10 +1,11 @@
- use oxc_allocator::ArenaVec;
- use oxc_ast::ast::*;
-+use oxc_span::Span;
-+use oxc_str::Ident;
-+use oxc_syntax::scope::ScopeId;
- use oxc_traverse::Traverse;
- 
--use crate::{
--    common::class_lowering::ClassLoweringMode, context::TraverseCtx, state::TransformState,
--};
-+use crate::{common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState};
- 
- mod annotations;
- mod class;
-@@ -53,6 +54,11 @@ pub struct TypeScript<'a> {
-     source_type_is_typescript_definition: bool,
-     set_public_class_fields: bool,
-     remove_class_fields_without_initializer: bool,
-+    /// Parameter properties of the entered classes, for [`Self::add_parameter_property_fields`].
-+    parameter_properties: Vec<(Span, Ident<'a>)>,
-+    /// Entered classes with parameter properties, and where theirs start in
-+    /// `parameter_properties`. Classes without any push nothing, so most files never allocate.
-+    parameter_properties_starts: Vec<(ScopeId, usize)>,
- }
- 
- impl<'a> TypeScript<'a> {
-@@ -67,8 +73,16 @@ impl<'a> TypeScript<'a> {
-             set_public_class_fields: state.assumptions.set_public_class_fields,
-             remove_class_fields_without_initializer: !options.allow_declare_fields
-                 || options.remove_class_fields_without_initializer,
-+            parameter_properties: Vec::new(),
-+            parameter_properties_starts: Vec::new(),
-         }
-     }
-+
-+    /// Whether this transform turns the class's fields into assignments, as with
-+    /// `useDefineForClassFields: false`. This also converts its parameter properties.
-+    fn assigns_fields(&self, lowering: ClassLowering) -> bool {
-+        self.set_public_class_fields && !lowering.lowers_fields()
-+    }
- }
- 
- impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-@@ -119,32 +133,17 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-         let lowering = ctx.state.class_lowering_of(class.scope_id());
-         self.annotations.enter_class(class, ctx);
- 
--        if lowering.mode() == ClassLoweringMode::Preserve {
--            // Keep field decorators and initializer order for the downstream decorator transform,
--            // even when TypeScript normally moves fields into constructor assignments.
--            self.remove_uninitialized_class_fields(class, true, ctx);
--            if !self.set_public_class_fields {
--                Self::add_parameter_property_fields(class, ctx);
--            }
+ impl Rule for PreferModernDomApis {
+     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
+-        let AstKind::CallExpression(call_expr) = node.kind() else {
 -            return;
--        }
--
--        // Class-properties owns field lowering and initialization order when enabled.
--        // It also handles decorated classes when the target supports class fields.
--        if !ctx.state.class_transform.owns_all_class_fields() {
--            if lowering.mode() == ClassLoweringMode::Native {
--                if self.set_public_class_fields {
--                    self.transform_class_fields(class, ctx);
--                } else {
--                    // Default oxc behavior matches `useDefineForClassFields: true`. Emit an
--                    // uninitialized field declaration for each constructor parameter property so
--                    // downstream `[[Define]]` semantics see the property, matching TypeScript's
--                    // output.
--                    Self::add_parameter_property_fields(class, ctx);
--                }
--            } else {
--                // Erase type-only fields before class-properties moves instance initializers.
--                self.remove_uninitialized_class_fields(class, true, ctx);
-+        if lowering.lowers_fields() {
-+            // Erase type-only fields before class-properties lowers the rest.
-+            self.remove_uninitialized_class_fields(class, ctx);
-+        } else if self.assigns_fields(lowering) {
-+            self.transform_class_fields(class, lowering, ctx);
-+        } else {
-+            // Define semantics: parameter properties also get field declarations.
-+            let start = self.parameter_properties.len();
-+            Self::collect_parameter_properties(class, &mut self.parameter_properties);
-+            if self.parameter_properties.len() > start {
-+                self.parameter_properties_starts.push((class.scope_id(), start));
+-        };
++        match node.kind() {
++            AstKind::CallExpression(call_expr) => Self::check_call_expression(node, call_expr, ctx),
++            AstKind::WhileStatement(while_stmt) => {
++                Self::check_while_statement(node, while_stmt, ctx);
++            }
++            _ => {}
++        }
++    }
++}
+ 
++impl PreferModernDomApis {
++    fn check_call_expression<'a>(
++        node: &AstNode<'a>,
++        call_expr: &CallExpression<'a>,
++        ctx: &LintContext<'a>,
++    ) {
+         let Expression::StaticMemberExpression(member_expr) = &call_expr.callee else {
+             return;
+         };
+@@ -164,6 +240,456 @@ impl Rule for PreferModernDomApis {
              }
          }
      }
-@@ -153,10 +152,15 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-         self.annotations.exit_class(class, ctx);
- 
-         let lowering = ctx.state.class_lowering_of(class.scope_id());
--        if !ctx.state.class_transform.owns_all_class_fields()
--            && lowering.mode() == ClassLoweringMode::Native
-+        if lowering.lowers_fields() {
++
++    fn check_while_statement<'a>(
++        node: &AstNode<'a>,
++        while_stmt: &WhileStatement<'a>,
++        ctx: &LintContext<'a>,
++    ) {
++        let test_expr = while_stmt.test.without_parentheses();
++        let Expression::StaticMemberExpression(child_member) = test_expr else {
++            return;
++        };
++        if child_member.optional {
 +            return;
 +        }
-+        self.remove_uninitialized_class_fields(class, ctx);
-+        if let Some((_, start)) =
-+            self.parameter_properties_starts.pop_if(|(scope_id, _)| *scope_id == class.scope_id())
-         {
--            self.remove_uninitialized_class_fields(class, false, ctx);
-+            Self::add_parameter_property_fields(class, &self.par
+
 ```
 
----
-
-### Incident Patch 2: `a9284521` (2026-11-21)
-**Commit Message**: chore(oxlint): require oxlint-tsgolint 7.0.2008 (#29981)
-
-Pin the workspace to `oxlint-tsgolint` 7.0.2008 and raise Oxlint’s
-optional peer minimum to `>=7.0.2008`. [TSGolint release
-notes](https://github.com/oxc-project/tsgolint/releases/tag/v7.0.2008)
-
-All 34 TSGolint integration tests and the frozen pnpm lockfile check
-passed.
-
-AI assistance: Codex (GPT-6). The exact model build and reasoning effort
-were unavailable.
-
-**File**: `npm/oxlint/package.json` (modified, +1/-1)
+**File**: `crates/oxc_linter/src/snapshots/unicorn_prefer_modern_dom_apis.snap` (modified, +236/-0)
 ```diff
-@@ -46,7 +46,7 @@
-     "./package.json": "./package.json"
-   },
-   "peerDependencies": {
--    "oxlint-tsgolint": ">=7.0.2007",
-+    "oxlint-tsgolint": ">=7.0.2008",
-     "vite-plus": "*"
-   },
-   "peerDependenciesMeta": {
+@@ -249,3 +249,239 @@ source: crates/oxc_linter/src/tester.rs
+  1 │ const foo = { bar: referenceNode.insertAdjacentElement("beforebegin", newNode) }
+    ·                                  ─────────────────────
+    ╰────
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.firstChild) { node.firstChild.remove(); }
++   · ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.lastChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.lastChild) { node.lastChild.remove(); }
++   · ───────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.firstChild) node.firstChild.remove();
++   · ─────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.lastChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (node.lastChild) node.lastChild.remove();
++   · ───────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (this.firstChild) { this.firstChild.remove(); }
++   · ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo extends Element { method() { while (this.firstChild) { this.firstChild.remove(); } } }
++   ·                                        ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `super.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo extends Element { method() { while (super.firstChild) { super.firstChild.remove(); } } }
++   ·                                        ───────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `super.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `this.#node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:40]
++ 1 │ class Foo { #node: Element; method() { while (this.#node.firstChild) { this.#node.firstChild.remove(); } } }
++   ·                                        ─────────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `this.#node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `parent.node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (parent.node.firstChild) { parent.node.firstChild.remove(); }
++   · ───────────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `parent.node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `nodes[0].replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:1]
++ 1 │ while (nodes[0].firstChild) { nodes[0].firstChild.remove(); }
++   · ─────────────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `nodes[0].replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:31]
++ 1 │ function foo(node: Element) { while (node.firstChild) { node.firstChild.remove(); } }
++   ·                               ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_apis.tsx:1:43]
++ 1 │ function foo(node: Element | undefined) { while (node.firstChild) { node.firstChild.remove(); } }
++   ·                                           ─────────────────────────────────────────────────────
++   ╰────
++  help: Replace the loop with `node.replaceChildren()`.
++
++  ⚠ unicorn(prefer-modern-dom-apis): Prefer `node.replaceChildren()` over directly removing `.firstChild` in a loop.
++   ╭─[prefer_modern_dom_ap
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@
-     "emnapi": "catalog:",
-     "oxfmt": "^0.79.0",
-     "oxlint": "^1.66.0",
--    "oxlint-tsgolint": "7.0.2007"
-+    "oxlint-tsgolint": "7.0.2008"
-   },
-   "packageManager": "pnpm@12.7.0"
- }
-```
-
-**File**: `pnpm-lock.yaml` (modified, +34/-34)
-```diff
-@@ -231,10 +231,10 @@ importers:
-         version: 0.79.0(@astrojs/compiler-rs@0.5.3)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-       oxlint:
-         specifier: ^1.66.0
--        version: 1.94.0(oxlint-tsgolint@7.0.2007)(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-+        version: 1.94.0(oxlint-tsgolint@7.0.2008)(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-       oxlint-tsgolint:
--        specifier: 7.0.2007
--        version: 7.0.2007
-+        specifier: 7.0.2008
-+        version: 7.0.2008
- 
-   apps/oxfmt:
-     dependencies:
-@@ -583,8 +583,8 @@ importers:
-   npm/oxlint:
-     dependencies:
-       oxlint-tsgolint:
--        specifier: '>=7.0.2007'
--        version: 7.0.2007
-+        specifier: '>=7.0.2008'
-+        version: 7.0.2008
-       vite-plus:
-         specifier: '*'
-         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@astrojs/compiler-rs@0.5.3)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(@vitest/ui@5.1.0)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(playwright@1.65.0)(publint@0.3.24)(svelte@5.57.0(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)
-@@ -2947,8 +2947,8 @@ packages:
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@oxlint-tsgolint/darwin-arm64@7.0.2007':
--    resolution: {integrity: sha512-bjNxPFyu1wNK74epHzXrtVLrj7oEuB8jQvJZDSia2d5EZ/0YgnyhI37E9U530IUZlNCqlTWjko1iT3CKAYF9+A==}
-+  '@oxlint-tsgolint/darwin-arm64@7.0.2008':
-+    resolution: {integrity: sha512-RXcQ439KXqspwHtw39825cyFmvrkOa1AA2CnqFNNG0pVJB0FdhpfQZsDLjRc/3Mt/uEG0MWOG50Hl09J2Ra9UA==}
-     cpu: [arm64]
-     os: [darwin]
- 
-@@ -2962,8 +2962,8 @@ packages:
-     cpu: [x64]
-     os: [darwin]
- 
--  '@oxlint-tsgolint/darwin-x64@7.0.2007':
--    resolution: {integrity: sha512-dCd7mzk2FeTaU46LLeXy5mQyEFICaPqlew/LpehNzEuL86D0jTYlwZHbibRqdRrvkSNgq1szz/7014FIHgyV1g==}
-+  '@oxlint-tsgolint/darwin-x64@7.0.2008':
-+    resolution: {integrity: sha512-4FpkHVDF1I4W0Owgsff8rDdf/XVcI9aoqflqyh3JiMCg7zCzWNkB0hfKMNjMDYDAeK/k1CNawAb7Y7mYGr/Xhg==}
-     cpu: [x64]
-     os: [darwin]
- 
-@@ -2977,8 +2977,8 @@ packages:
-     cpu: [arm64]
-     os: [linux]
- 
--  '@oxlint-tsgolint/linux-arm64@7.0.2007':
--    resolution: {integrity: sha512-qb0XUQXuTmQ8H++zsx/tQitG0/fU3BE16KGp1qXExeDgRzEc7WIlCuN1i+rmA40lty9gQs+x3a73BFODVhTZqA==}
-+  '@oxlint-tsgolint/linux-arm64@7.0.2008':
-+    resolution: {integrity: sha512-CmheyZowc+sbXlZ2ksFrbqR6Mnu+HHheZZKTP3FpDBe64eCp6DzSrjcR2VHRj6mC2UKF1ZO0J8Z1e9Bgji4kKw==}
-     cpu: [arm64]
-     os: [linux]
- 
-@@ -2992,8 +2992,8 @@ packages:
-     cpu: [x64]
-     os: [linux]
- 
--  '@oxlint-tsgolint/linux-x64@7.0.2007':
--    resolution: {integrity: sha512-75vx0067HSgxq/HEZzlHwqhcujn3bshg43fVLTx604jZdZZMQfPVCcxTh2RTEShP7ACT1PRty6vboZlWh5RtEA==}
-+  '@oxlint-tsgolint/linux-x64@7.0.2008':
-+    resolution: {integrity: sha512-7by4bup5rF9q7i19G6zPDXgywBi3tFB6jGzefoc/BfleNS0Q/eleYpD2SDLmsXzN2hFpDrfAskx7H0WnUtKbtQ==}
-     cpu: [x64]
-     os: [linux]
- 
-@@ -3007,8 +3007,8 @@ packages:
-     cpu: [arm64]
-     os: [win32]
- 
--  '@oxlint-tsgolint/win32-arm64@7.0.2007':
--    resolution: {integrity: sha512-6zl7I+BvScfOPtnPtSEP5JA+z8NkDPGd47YnQChL5lLF/Dzs7Rasr1G+q0zGlQcP8OEgW43hW4QlUTXxPfD13Q==}
-+  '@oxlint-tsgolint/win32-arm64@7.0.2008':
-+    resolution: {integrity: sha512-u12UqT/xG64vXclqfe3/7I4j2mWSMZmXsMRBxbgmGfHaEfZUEzxl1QCNyx3TDM5OfsWWKH4dAHJtDRxTAiYA7A==}
-     cpu: [arm64]
-     os: [win32]
- 
-@@ -3022,8 +3022,8 @@ packages:
-     cpu: [x64]
-     os: [win32]
- 
--  '@oxlint-tsgolint/win32-x64@7.0.2007':
--    resolution: {integrity: sha512-VptFHYhBm0SIWCUkx89hmTrKVOQsDg0iB1YE3EBlvRRtCHGUd3pU1kMxPBg1wOd83ZMmIn7zB6maBROtpmrP5g==}
-+  '@oxlint-tsgolint/win32-x64@7.0.2008':
-+    resolution: {integrity: sha512-Vjev4Ns8rdGa4Tb85ZsBkei0reLa77j3FNJsCKPo2gi5oTPK5O2eN42sim2ewoorgx7JQ3+49YuUKa1d6UKHPw==}
-     cpu: [x64]
-     os: [win32]
- 
-@@ -6101,8 +6101,8 @@ packages:
-     resolution: {integrity: sha512-6ccPGu4u4J9bwYPHXBFPee3RZrX3BboRdU7k14zRDDB1lvN3O7J/vPRFdaEfa1+CWx4xnQQOp4ctoaF66oO0uw==}
-     hasBin: true
- 
--  oxlint-tsgolint@7.0.2007:
-```
-
----
-
-### Incident Patch 3: `27440dc5` (2026-11-21)
-**Commit Message**: fix(linter/react/jsx-curly-brace-presence): don't report or fix props with escape sequences and preserve raw text (#29976)
-
-JSX attribute strings are not JS string literals: escape sequences are
-not processed. With `props: "never"`, the fixer re-serialized the cooked
-value through codegen, which re-escaped `\` to `\\` and U+00A0 to
-`\xA0`, so the "fixed" attribute rendered a different value:
-
-```jsx
-export const A = <div title={"a\xa0b"} />; // before --fix → title="a\xA0b" (value changed)
-export const C = <div title={"a\xa0b"} />; // literal U+00A0 → title="a\xA0b" (re-escaped)
-```
-
-Strings whose raw text contains a backslash (like A, or ``
-title={`a\xa0b`} ``) were also reported at all, while
-eslint-plugin-react skips them via `needToEscapeCharacterForJSX` —
-template-literal escapes were invisible because the guard only saw the
-cooked value.
-
-The fix: skip reporting string literals and no-substitution templates
-whose raw text contains a backslash (replacing the `\u`-only check), and
-make the prop fixer splice the original raw text (wrapped in double
-quotes, or single quotes when the raw contains `"`) instead of
-re-serializing the cooked value, so a literal U+00A0 survives the fix
-
-**File**: `crates/oxc_linter/src/rules/react/jsx_curly_brace_presence.rs` (modified, +35/-22)
-```diff
-@@ -483,7 +483,6 @@ impl JsxCurlyBracePresence {
-                         ctx,
-                         container.span,
-                         string.span,
--                        string.value,
-                     );
-                 } else {
-                     report_unnecessary_curly(ctx, container, string.span);
-@@ -496,7 +495,9 @@ impl JsxCurlyBracePresence {
-                     return;
-                 };
-                 let Some(string) = value.as_str() else { return };
-+                let raw = ctx.source_range(template.span.shrink_left(1).shrink_right(1));
-                 if !parent_is_attribute && contains_quote_characters(string)
-+                    || raw.contains('\\')
-                     || is_allowed_string_like_in_container(
-                         ctx,
-                         string,
-@@ -512,7 +513,6 @@ impl JsxCurlyBracePresence {
-                         ctx,
-                         container.span,
-                         template.span,
--                        value,
-                     );
-                 } else {
-                     report_unnecessary_curly(ctx, container, template.span);
-@@ -532,13 +532,15 @@ fn is_allowed_string_like_in_container<'a>(
- ) -> bool {
-     is_whitespace(s)
-         || s.contains(['\n', '\r'])
-+        // A raw backslash means an escape sequence that a JSX attribute string
-+        // (which does not process escapes) cannot preserve.
-+        || s.contains('\\')
-         || contains_html_entity(s)
-         || is_prop && contains_both_quote_characters(s)
-         || !is_prop && contains_disallowed_jsx_text_chars(s)
-         || !is_prop && s.trim() != s
-         || contains_multiline_comment(s)
-         || contains_line_break_literal(s)
--        || contains_utf8_escape(s)
-         || has_adjacent_jsx_expression_containers(ctx, container, node_id)
- }
- 
-@@ -574,10 +576,6 @@ fn contains_both_quote_characters(s: &str) -> bool {
-     contains_double_quote_characters(s) && contains_single_quote_characters(s)
- }
- 
--fn contains_utf8_escape(s: &str) -> bool {
--    s.chars().zip(s.chars().skip(1)).any(|tuple| matches!(tuple, ('\\', 'u')))
--}
--
- pub static HTML_ENTITY_REGEX: Lazy<Regex> = lazy_regex!(r#"(&[A-Za-z\d#]+;)"#);
- 
- fn contains_html_entity(s: &str) -> bool {
-@@ -625,25 +623,24 @@ fn report_unnecessary_curly<'a>(
-     });
- }
- 
--fn report_unnecessary_curly_for_string_attribute_value<'a>(
--    ctx: &LintContext<'a>,
-+fn report_unnecessary_curly_for_string_attribute_value(
-+    ctx: &LintContext<'_>,
-     container_span: Span,
-     inner_span: Span,
--    value: JSStr<'a>,
- ) {
-     ctx.diagnostic_with_fix(jsx_curly_brace_presence_unnecessary_diagnostic(inner_span), |fixer| {
--        let mut fix = fixer.codegen();
--
--        let Some(str) = value.as_str() else {
--            return fixer.noop();
--        };
--        if !contains_double_quote_characters(str) {
--            fix = fix.with_options(CodegenOptions::default());
--        }
--
--        fix.print_string(str);
--
--        fixer.replace(container_span, fix.into_source_text())
-+        // A JSX attribute string is not a JS string literal: escape sequences
-+        // are not processed. Splice the original raw text instead of
-+        // re-serializing the cooked value, which would re-escape `\` (to `\\`)
-+        // and U+00A0 (to `\xA0`) and change the attribute value.
-+        // Strings containing a backslash never reach this fixer.
-+        let raw = ctx.source_range(inner_span.shrink_left(1).shrink_right(1));
-+        let quote = if raw.contains('"') { '\'' } else { '"' };
-+        let mut fixed = String::with_capacity(raw.len() + 2);
-+        fixed.push(quote);
-+        fixed.push_str(raw);
-+        fixed.push(quote);
-+        fixer.replace(container_span, fixed)
-     });
- }
- 
-@@ -878,6 +875,14 @@ fn test() {
-         (r#"<MyComponent>{"<Foo />"}</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent prop={"Hello \u1026 world"}>bar</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello \u1026 world"}</MyComponent>"#, Some(json!(["never"]))),
-+        // Strings whose raw text contains a backslash are never fixed, because
-+        // a JSX attribute string does not process escape sequences
-+        // (https://github.com/oxc-project/oxc/issues/29975).
-+        (r#"<div title={"a\xa0b"} />"#, None),
-+        (r#"<div title={"a\\b"} />"#, None),
-+        (r"<div title={`a\xa0b`} />", None),
-+        (r"<div title={`a\\b`} />", None),
-+        (r#"<App>{"a\xa0b"}</App>"#, None),
-         (r#"<MyComponent prop={"Hello &middot; world"}>bar</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello &middot; world"}</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello \n world"}</MyComponent>"#, Some(json!(["never"]))),
-@@ -1549,6 +1554,14 @@ fn test() {
-             Some(json!([{ "children": "always" }])),
-         ),
-         (r#"<Foo bar={'"'} />"#, r#"<Foo bar='"' />"#, Some(json!(["never"]))),
-+        // The fix sp
+@@ -611,7 +611,7 @@ unicorn/prefer-keyboard-event-key                       |  77225
+ unicorn/prefer-logical-operator-over-ternary            |   4722
+ unicorn/prefer-math-min-max                             |   4722
+ unicorn/prefer-math-trunc                               | 105321
+-unicorn/prefer-modern-dom-apis                          |  62606
++unicorn/prefer-modern-dom-apis                          |  62817
+ unicorn/prefer-modern-math-apis                         |  83210
+ unicorn/prefer-module                                   | 226148
+ unicorn/prefer-native-coercion-functions                |  16812
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29987** (2026-11-22): perf(oxlint): convert diagnostic offsets to positions with a line index (@nrayburn-tech)
-- **PR #29982** (2026-11-21): feat(linter/typescript/no-unsafe-class-instance-assignment): add rule (@camc314)
-- **PR #29981** (2026-11-21): chore(oxlint): require oxlint-tsgolint 7.0.2008 (@camc314)
-- **PR #29980** (2026-11-21): docs(skills): share PR title guidance with triagebot (@camc314)
-- **PR #29978** (closed): fix(transformer): keep legacy decorators on static fields under `setPublicClassFields` (@oxc-captain[bot])
-- **PR #29976** (2026-11-21): fix(linter/react/jsx-curly-brace-presence): don't report or fix props with escape sequences and preserve raw text (@oxc-captain[bot])
+- **PR #30133** (2026-11-23): fix(lexer): round hex, octal and binary literals above u64::MAX (@ShanonJackson)
+- **PR #30132** (2026-11-23): fix(lexer): evaluate legacy octal literals in base 8 (@ShanonJackson)
+- **PR #30130** (closed): fix(linter): skip type-aware rules the backend does not support instead of failing the run (@oxc-captain[bot])
+- **PR #30128** (2026-11-23): chore(deps): update dependency oxlint to v1.95.0 (@renovate[bot])
+- **PR #30124** (2026-11-23): chore(deps): update dependency oxfmt to ^0.80.0 (@renovate[bot])
+- **PR #30122** (2026-11-23): fix(linter/eslint/preserve-caught-error): only report missing catch parameter when a new error is thrown (@oxc-captain[bot])
 
 ---
 
@@ -1902,60 +2817,64 @@ re-serializing the cooked value, so a literal U+00A0 survives the fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transformer): keep TypeScript assign semantics for preserved classes
+## X. linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls
 
 **RULE**:
-When implementing operations in `crates/oxc_transformer/src/common/class_lowering.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08023adc`: transformer): keep TypeScript assign semantics for preserved classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bac1b48`: linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_transformer/src/common/class_lowering.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/unicorn/prefer_array_flat.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use oxc_ast::ast::{Class, ClassElement};
-    utils::decorated_class::{
-        class_body_has_auto_accessors, class_has_decorators, is_auto_accessor,
+        Argument, ArrayExpressionElement, BindingPattern, CallExpression, ChainElement, Expression,
+        IdentifierReference, MemberExpression, NewExpression,
+use oxc_semantic::IsGlobalReference;
+use oxc_span::{GetSpan, Span};
+use oxc_syntax::precedence::Precedence;
+    ast_util::{
+        could_be_asi_hazard, get_symbol_id_of_variable, is_method_call, variable_declaration_kind,
     },
-enum ClassLoweringMode {
-    /// Whether class-properties lowers the fields of this class.
-    pub fn lowers_fields(self) -> bool {
-        self.mode == ClassLoweringMode::LowerAll
-    }
-
-    /// Whether a field or auto-accessor stays as written for the downstream transform.
-    ///
-    /// A preserved class keeps its decorated fields and its auto-accessors. Transforms that
-    /// rewrite the other fields must leave these in place, and must not move other initializers
-    /// after theirs (see [`Self::first_movable_instance_field`]).
-    pub fn keeps_field(self, element: &ClassElement<'_>) -> bool {
-        self.mode == ClassLoweringMode::Preserve
-            && (is_auto_accessor(element)
-                || matches!(element, ClassElement::PropertyDefinition(_))
-                    && element.has_decorator())
-    }
-
-    /// Index of the first instance field whose initializer can move after the field
-    /// initializers that stay in the class, such as into the constructor.
-    ///
-    /// Instance fields before the last kept in
+        get_first_parameter_name, get_precedence, get_return_identifier_name,
+        is_empty_array_expression, is_prototype_property, pad_fix_with_token_boundary,
+    /// const foo = _.flatten(array);
+        check_lodash_flatten_case(node, call_expr, ctx);
+            matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+        | Expression::ClassExpression(_)
+        | Expression::PrivateInExpression(_)
+        | Expression::JSXElement(_)
+        | Expression::JSXFragment(_) => true,
+            !matches!(new_expr.callee.without_parentheses(), Expression::Identifier(ident) if ident.name == "Array")
+const TYPED_ARRAY_NAMES: &[&str] = &[
+    "Int8Array",
+    "Uint8Array",
+    "Uint8ClampedArray",
+    "Int16Array",
+    "Uint16Array",
+    "Int32Ar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use oxc_ast::ast::Class;
-    utils::decorated_class::{class_body_has_auto_accessors, class_has_decorators},
-pub enum ClassLoweringMode {
-    pub fn mode(self) -> ClassLoweringMode {
-        self.mode
+        Argument, ArrayExpressionElement, BindingPattern, CallExpression, Expression,
+        IdentifierReference, MemberExpression,
+use oxc_span::Span;
+    ast_util::variable_declaration_kind,
+    ast_util::{get_symbol_id_of_variable, is_method_call},
+        get_first_parameter_name, get_return_identifier_name, is_empty_array_expression,
+        is_prototype_property,
+            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name == "Array")
+        | Expression::ClassExpression(_) => true,
+            matches!(&new_expr.callee, Expression::Identifier(ident) if ident.name != "Array")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08023adc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bac1b48` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -12501,3 +12501,7 @@
 | `CYCLE-20261123-7AKE` | `2026-11-23T22:56:12.350Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`0c7e505c...`) |
 | `CYCLE-20261123-7FMD` | `2026-11-23T22:56:18.901Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10138` | Yes (`1f57f3b1...`) |
 | `CYCLE-20261123-7HAB` | `2026-11-23T22:56:21.059Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10139` | Yes (`52f037a8...`) |
+| `CYCLE-20261123-OTST` | `2026-11-23T23:09:50.429Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`7cb37523...`) |
+| `CYCLE-20261123-OUUV` | `2026-11-23T23:09:51.799Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10140` | Yes (`0d1a2325...`) |
+| `CYCLE-20261123-OZVK` | `2026-11-23T23:09:58.304Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9613` | Yes (`a0323c71...`) |
+| `CYCLE-20261123-P2MJ` | `2026-11-23T23:10:01.867Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10141` | Yes (`9a07cee7...`) |

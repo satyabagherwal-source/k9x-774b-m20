@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "9a97d00726b16f7b42159709fd8be7b7040ef7f16858059b1a0dd5d865d7965c",
-    "lastHarvestedAt": "2026-11-19T16:40:53.951Z",
+    "contentHash": "7cb37523bf94afd7029a10dbe59bd8631b1e6257b7465157a6267007a567175f",
+    "lastHarvestedAt": "2026-11-23T23:09:50.433Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "f4c69979",
+    "sourceVersion": "39fe0cb3",
     "license": "Apache-2.0",
-    "contentHash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
-    "lastHarvestedAt": "2026-11-19T18:06:24.096Z",
+    "contentHash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
+    "lastHarvestedAt": "2026-11-23T23:09:58.308Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "1e538a99",
+    "sourceVersion": "69961019",
     "license": "Apache-2.0",
-    "contentHash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
-    "lastHarvestedAt": "2026-11-23T19:00:59.589Z",
+    "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
+    "lastHarvestedAt": "2026-11-23T23:10:01.871Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "f9e90dec",
+    "sourceVersion": "4a6f9c61",
     "license": "MIT",
-    "contentHash": "92ad7b55934638591571f8fa54b669dab12fc21dda1cfdc81dc11d73df50d7c7",
-    "lastHarvestedAt": "2026-11-22T14:56:19.541Z",
+    "contentHash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
+    "lastHarvestedAt": "2026-11-23T23:09:51.803Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
