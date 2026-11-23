@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T13:07:04.716Z",
+  "updated_at": "2026-11-23T13:25:06.931Z",
   "stats": {
-    "total_discovered": 7831,
-    "approved_pending_harvest": 7408,
+    "total_discovered": 7834,
+    "approved_pending_harvest": 7411,
     "harvested_count": 0,
     "rejected_count": 423,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7399,
+      "COMMUNITY_AND_EXPERT": 7402,
       "OFFICIAL_DOCUMENTATION": 248,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -169344,6 +169344,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
         "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-B87293C6BB81": {
+      "id": "SRC-B87293C6BB81",
+      "url": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
+      "title": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:25:05.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md",
+        "fileName": "hf-inclusionai-lingsante-3.1-flash-learnings.md"
+      }
+    },
+    "SRC-68D63728CA70": {
+      "id": "SRC-68D63728CA70",
+      "url": "https://github.com/daveebbelaar/bama",
+      "title": "https://github.com/daveebbelaar/bama",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:25:05.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/daveebbelaar-bama-learnings.md",
+        "fileName": "daveebbelaar-bama-learnings.md"
+      }
+    },
+    "SRC-1284467AB572": {
+      "id": "SRC-1284467AB572",
+      "url": "https://github.com/freenet/freenet-core/actions/runs/45145015310",
+      "title": "https://github.com/freenet/freenet-core/actions/runs/45145015310",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:25:06.931Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

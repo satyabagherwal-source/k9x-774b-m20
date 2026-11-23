@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T13:07:05.660Z",
-  "total_verified_learnings": 9079,
+  "last_updated": "2026-11-23T13:25:07.758Z",
+  "total_verified_learnings": 9081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23951,
+  "total_items": 23965,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "1adb9678",
-      "content_hash": "c496b21b7e1c784fef22bc462de77758b03d6f32d64516fdf36eaf7ac0c109ef",
+      "source_version": "e655ebd9",
+      "content_hash": "7432ae12541000320d10c8c97de65760e79393182da7ea609a5af477cbb11ed0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T03:47:02.891Z"
+      "persisted_at": "2026-11-23T13:23:35.930Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "1adb9678",
-      "content_hash": "821b91ff85709e4a45282ac66aec84f13ac1f4233b6c1131794dcdfc34dd8ecf",
+      "source_version": "e655ebd9",
+      "content_hash": "8cbb70d88b4f14296b368ece0313ca0321342efe5701e10902e50849b8a6c68a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T03:47:03.069Z"
+      "persisted_at": "2026-11-23T13:23:36.158Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a63ca858ae2ccbeb404aa977a285ddb956309b41ad45c5a0280df49b1e2fdb9",
+      "content_hash": "5d5de4be5ef0c6edc1bc197e963af9311cc0b78dbf5058909426eb3a9795b8c7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T03:47:08.410Z"
+      "persisted_at": "2026-11-23T13:25:07.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "067fa3db8fe3ca6e6e31428044fe72b7ab2b97d3254e8b624b4a50950a4ff80e",
+      "content_hash": "4614bc54683ef6e195fd85f8e63d028a018303f4d5ef80d1ef965120c586ac66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T03:47:08.583Z"
+      "persisted_at": "2026-11-23T13:25:07.758Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220481,8 +220481,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "1adb9678",
-      "content_hash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
+      "source_version": "e655ebd9",
+      "content_hash": "433dd0742bb8c0a7fd0baa947385e2162f6e9c8048942c24e85838d8ace66ff2",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220595,6 +220595,11 @@
           "number": 10015,
           "title": "evict native legs from the transient pool and fail beside-native waiters on clos",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10045,
+          "title": "test(transport): give the QUIC breaker backoff tests their own state",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220602,7 +220607,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T03:47:02.281Z",
+      "verified_at": "2026-11-23T13:23:35.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229805,8 +229810,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "abc138d4",
-      "content_hash": "f234e552972488bc5c1ce4bdd46aa31c08df3e3698d60978f6ebe186b5af874a",
+      "source_version": "5779103e",
+      "content_hash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230066,7 +230071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:31:31.475Z",
+      "verified_at": "2026-11-23T13:23:39.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230108,10 +230113,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "abc138d4",
-      "content_hash": "7f403671750f427212080a136d63e4548a67831ceacf837cf3405c088b3e34bc",
+      "source_version": "5779103e",
+      "content_hash": "dfa05567875f5dccfe620a374d4f726638ffbaa22a09459336ff58efea3b1e5e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:31:32.248Z"
+      "persisted_at": "2026-11-23T13:23:40.607Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230120,10 +230125,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "abc138d4",
-      "content_hash": "614358bf9412dd60e82ac987ad4324fd9b1bc039e263f5e82be9ecf01701cd30",
+      "source_version": "5779103e",
+      "content_hash": "fcb354070a23f66733ef2be1e280e9ca97703954962162b36102f88dfeb0ce53",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:31:32.470Z"
+      "persisted_at": "2026-11-23T13:23:41.058Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -318821,10 +318826,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/nucleoidai-nucleoid-agent-contract-nucleoidai-nucleoid-autonomous-specialist-per.md",
       "title": "Agent Contract: NucleoidAI/Nucleoid Autonomous Specialist Persona",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fbdb7e41",
-      "content_hash": "4c0c903cc31083fbab2f8bcc8c99092db648eb2c1d5695fe8188396ef568b2dd",
+      "source_version": "5779103e",
+      "content_hash": "dc5ebe28d900c8fbcf121075920ed7190d526077beb028164218fc68b34a65fb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:44:09.367Z"
+      "persisted_at": "2026-11-23T13:23:40.836Z"
     },
     "agent_contract-agent-contract-nucleoidai-nucleoid-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-nucleoidai-nucleoid-learnings-autonomous-specialist-persona",
@@ -326219,6 +326224,214 @@
       "content_hash": "499e9a39d2b5d9cbddb48272555d2b90e3bc6edde4e83d584745e1ee8d7316c4",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T13:07:05.232Z"
+    },
+    "learn-github-daveebbelaar-bama": {
+      "learning_id": "learn-github-daveebbelaar-bama",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "daveebbelaar/bama",
+      "repository": "daveebbelaar/bama",
+      "slug": "daveebbelaar-bama",
+      "platform": "github",
+      "source_url": "https://github.com/daveebbelaar/bama",
+      "source_version": "22dc792e",
+      "content_hash": "cc18914fab509f43aaaeebb6c0f1ec849348528ee4acdd7d437225ddba8d3dd3",
+      "dossier_path": "07_PROJECT_LEARNING/daveebbelaar-bama-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/daveebbelaar-bama-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10044,
+          "title": "stop build.sh when the Swift build fails",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T13:23:27.329Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10044": {
+      "learning_id": "rule-10044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10044,
+      "title": "stop build.sh when the Swift build fails",
+      "source_url": "https://github.com/daveebbelaar/bama",
+      "source_version": "22dc792e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:23:27.329Z"
+    },
+    "candidate_directive-stop-build-sh-when-the-swift-build-fails": {
+      "item_id": "candidate_directive-stop-build-sh-when-the-swift-build-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QQRS-stop-build-sh-when-the-swift-build-fails.md",
+      "title": "stop build.sh when the Swift build fails",
+      "repository": "daveebbelaar/bama",
+      "source_version": "22dc792e",
+      "content_hash": "1fe017cc5f21e36bccbf342384db94c42fe0df24ce050d2dea1c30e1d574dd3a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T13:23:27.886Z"
+    },
+    "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-daveebbelaar-bama-content-information-intelligence-daveebbelaar-bama-core-invari.md",
+      "title": "Content & Information Intelligence: daveebbelaar/bama Core Invariants",
+      "repository": "daveebbelaar/bama",
+      "source_version": "22dc792e",
+      "content_hash": "74064bbf096d007945cafb444ae3c280332a9b97fe732bebe8928e46f3e582ae",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T13:23:28.121Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-daveebbelaar-bama": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-daveebbelaar-bama",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/daveebbelaar-bama-verification-protocol-empirical-defect-shield-for-daveebbelaar.md",
+      "title": "Verification Protocol: Empirical Defect Shield for daveebbelaar/bama",
+      "repository": "daveebbelaar/bama",
+      "source_version": "22dc792e",
+      "content_hash": "82d144787eaea2f68f5699b5409e28912672ecfd9d91eb0465a15842e9bae6fd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T13:23:28.343Z"
+    },
+    "rule-10045": {
+      "learning_id": "rule-10045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10045,
+      "title": "test(transport): give the QUIC breaker backoff tests their own state",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "e655ebd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:23:35.143Z"
+    },
+    "candidate_directive-test-transport-give-the-quic-breaker-backoff-tests-their-own-state": {
+      "item_id": "candidate_directive-test-transport-give-the-quic-breaker-backoff-tests-their-own-state",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SVFW-test-transport-give-the-quic-breaker-backoff-tests-their-own-state.md",
+      "title": "test(transport): give the QUIC breaker backoff tests their own state",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ab508a64affa481ea97b7905e201e651b42b5d18b14274b799c54826b953e28",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:25:07.258Z"
+    },
+    "candidate_directive-nuc-136-unknown-constructor-arguments-as-properties": {
+      "item_id": "candidate_directive-nuc-136-unknown-constructor-arguments-as-properties",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R0F1-nuc-136-unknown-constructor-arguments-as-properties.md",
+      "title": "NUC 136 Unknown Constructor Arguments as Properties",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "5779103e",
+      "content_hash": "c8d8465b2928bb1eada1a1e1a3b97190ee4e55e07edcb246f4070cafea7e2358",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:23:40.388Z"
+    },
+    "learn-huggingface-inclusionai-lingsante-3-1-flash": {
+      "learning_id": "learn-huggingface-inclusionai-lingsante-3-1-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inclusionAI/LingSante-3.1-flash",
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "slug": "hf-inclusionai-lingsante-3.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
+      "source_version": "hf-inclusionai-lingsante-3.1-flash",
+      "content_hash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T13:24:22.528Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-research-knowledge-intelligence-inclusionai-l.md",
+      "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-flash Core Invariants",
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "source_version": "hf-inclusionai-lingsante-3.1-flash",
+      "content_hash": "6949623cce3f3915e30e331805cb04999c0d873014df43c0896476a0231f0177",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T13:24:23.106Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-learnings-research-knowledge-intelligence-hf-.md",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-flash-learnings Core Invariants",
+      "repository": "hf-inclusionai-lingsante-3.1-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f35fed2113670527e6bd151cb2efabfad348190dcb80a58b69ce258ab5320744",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T13:25:05.410Z"
+    },
+    "candidate_directive-merge-stop-build-sh-when-the-swift-build-fails": {
+      "item_id": "candidate_directive-merge-stop-build-sh-when-the-swift-build-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SUKF-merge-stop-build-sh-when-the-swift-build-fails.md",
+      "title": "Merge: stop build.sh when the Swift build fails",
+      "repository": "daveebbelaar-bama-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07923b85c65749facdfec7c3e47bdd6d39643a4ea97559c6c4df20c52bb7c5c3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T13:25:06.125Z"
+    },
+    "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-daveebbelaar-bama-learnings-content-information-intelligence-daveebbelaar-bama-l.md",
+      "title": "Content & Information Intelligence: daveebbelaar-bama-learnings Core Invariants",
+      "repository": "daveebbelaar-bama-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c1e51f24e3f605c0e59d89e3917558b72496b0551b00249b5b7d7637e04d7653",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T13:25:06.372Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-daveebbelaar-bama-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-daveebbelaar-bama-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/daveebbelaar-bama-learnings-verification-protocol-empirical-defect-shield-for-da.md",
+      "title": "Verification Protocol: Empirical Defect Shield for daveebbelaar-bama-learnings",
+      "repository": "daveebbelaar-bama-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c01f0551af2c28cb9fd4df7e584e7f750112f5ba402a753ec0897ea75dd496e0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T13:25:06.622Z"
     }
   },
   "ai-builder-brain": {

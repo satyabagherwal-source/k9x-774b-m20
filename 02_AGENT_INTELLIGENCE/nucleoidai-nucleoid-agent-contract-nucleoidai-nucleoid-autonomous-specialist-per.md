@@ -4,17 +4,17 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "fbdb7e41",
+  "source_version": "5779103e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T01:44:09.054Z",
+  "timestamp": "2026-11-23T13:23:40.387Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `fbdb7e41`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T01:44:09.054Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `5779103e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T13:23:40.387Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:44:08.350Z  
+> **Harvest Timestamp**: 2026-11-23T13:23:39.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1230,10 +1230,17 @@ export async function declarations({ train }) {
   return { class_declaration, declarations, output_canvas };
 }
 
-export async function instances({ train }) {
-  milestone.segmenting_training_objects();
+export async function instances({ train, pair_number }) {
+  const [{ input_matrix, output_matrix }] = train.dataset;
+
+  milestone.segmenting_training_objects({
+    pair_number,
+    input_matrix,
+    output_matrix,
+  });
 
   const { result: instances } = await llm.generate({
+    grammar: true,
     messages: [
       {
         role: "user",
@@ -1346,7 +1353,7 @@ export async function state(train) {
     });
   }
 
-  milestone.state({ phase: "analysis", obj_list: objects });
+  milestone.state({ phase: "analysis", objects: objects });
 }
 
 ```
@@ -1403,8 +1410,9 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   train.declarations = declarations;
   train.output_canvas = output_canvas;
 
-  for (const dataset of train.dataset) {
+  for (const [index, dataset] of train.dataset.entries()) {
     const { instances } = await analyzer.instances({
+      pair_number: index + 1,
       train: { ...train, dataset: [dataset] },
     });
 
@@ -1466,6 +1474,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
+      phase: "visualization",
       test_input_matrix,
       train,
       instance: input_instance,
@@ -1475,6 +1484,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
+
+  milestone.test_output_composed({ instances: input_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1582,192 +1593,219 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbdb7e41` (2026-11-22)
-**Commit Message**: NUC 127 Colon-Free Implicit Iterator Suites
+### Incident Patch 1: `5779103e` (2026-11-23)
+**Commit Message**: NUC 136 Unknown Constructor Arguments as Properties
 
-Accepted under the automatic acceptance rule in continuous Syntax
-enhancement mode. The independent core and overall policy decisions
-were Accepted, with no findings or blockers. Required lexer-token
-comparison ran: 6 less, 1244 same, 0 more across 1250 paired cases.
+Accepted on the user-requested basis. The user asked for this feature
+directly ("Automatically accept unknown argument in constructor in all
+constructor types"), and the frozen candidate meets all three hard
+criteria.
 
-All three hard criteria passed independently and on the integrated tree:
-all-target build, warning-denied Clippy and formatting; the full suite
-with 3790 passed, 0 failed and 25 unchanged ignored; and backward
-compatibility with all 1250 original sources, protected assertions,
-expected returns and executed coverage. All 3802 existing test
-occurrences remain present and unweakened; all 13 additions passed.
-The 40 contextual/ordinary-name pairs include origins and outcomes.
-Integrated private-library rustdoc and export checks also passed.
+A constructor-call label that names no parameter of the effective
+constructor no longer raises TypeError("Unknown constructor argument
+..."). It binds like one more parameter and is assigned as
+this.<name> = <name> once the constructor's statements finish, normally
+or with return. This holds on every constructor route, super(...)
+included. Duplicate, positional-after-label and rest-label errors stay.
 
-Accepted claim: 5195a171879982752448d9cd651bb61f45bdbb08
-Frozen proposal: f388a47aba593f4cd5c754216cf7a63e369f2a59
-Independent core: 611028f49e4b99ab79dd39291ca4dfc84647c61f
-Independent outcome: 5e8a67baed18c81ab28284d24ee7bc34e6c73a51
-Integrated check log: d8c577cfae4190bcb1ccc7663c898df25a9db73a
-Final metadata-bound caller core: 1e3585d8b
+The user accepted three things in advance:
+- 22-Nov-2026: the one compatibility break.
+- 23-Nov-2026: the NUC 51 spec byte-seal update that migrating its
+  spec case entails.
+- 23-Nov-2026: assigning labels after a return.
+The 14 assertions that pinned the unknown-name error move to the new
+reading of the same calls. The NUC lists each one with its
+consequences.
 
-**File**: `README.md` (modified, +28/-3)
+Independent evaluator: policy decision Rejected, solely because the
+core gate flags that authorized migration, the case "Nucleoid validates
+constructor names
+
+**File**: `README.md` (modified, +25/-0)
 ```diff
-@@ -636,11 +636,15 @@ assert(task.done, true)
-   standing rule. A named noniterable source raises the existing TypeError.
- - The [NUC 51 candidate](docs/nuc-0051.md) additionally accepts String sources
-   as scalar snapshots, without changing that object-only List policy.
--- Require the immediate identifier/colon header, then a newline or indent and
--  a real indent after only normal newline/semicolon layout. No `:;`,
-+- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
-+  colon before that same genuinely indented body. `NAME` is exactly one Rust
-+  `Identifier`, including contextual names such as `while`, `enum` and `model`.
-+- Require the immediate identifier and optional colon, then a newline or indent
-+  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
-   inline/braced/missing-indent or expression-source shorthand is added.
- - Explicit `for variable of expression` and `for variable in expression`
--  remain valid with their existing arbitrary expressions and suite forms.
-+  remain valid with their existing arbitrary expressions and colon-required suite forms.
-+  Two-name entry loops also keep their colon.
-   Nested scopes, receivers, returns, snapshots, graphs and rollback are unchanged.
+@@ -3024,6 +3024,31 @@ assert([file.draft, file.table], [false, false])
+   JavaScript and Python spellings remain available.
+ - See the [root contract](nucleoid.spec.md#rust-string-boundary-method-aliases).
  
- Reasoning stays live too: `why b` explains its dependencies, and `affects a`
-@@ -2897,6 +2901,27 @@ assert(every h in Human: h.mortal, true)
-   variable named `every` work as before. See the
-   [root contract](nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- 
-+## Colon-free implicit iterator suites
++## Unknown constructor arguments as properties
 +
-+**Named iterator suites use indentation without a colon**
++**Unknown constructor arguments become live properties**
 +
 +```nuc
-+class Parcel(weight):
-+    this.weight = weight
-+light = Parcel(4)
-+heavy = Parcel(7)
-+total = 0
-+for Parcel
-+    total += it.weight
-+assert(total, 11)
++class Product(name):
++    this.name = name
++$Product.total = $Product.price * $Product.quantity
++item = Product(name="pen", price=2, quantity=3)
++assert(item, {"id": "item", "name": "pen", "price": 2, "quantity": 3, "total": 6})
++item.quantity = 5
++assert(item.total, 10)
++item.total
++# return: 10
 +```
 +
-+- `for Parcel` uses the same one-shot population snapshot, local `it` and
-+  imperative suite as `for Parcel:`. The optional colon never replaces the
-+  accepted spelling or broadens the source expression.
-+- See [NUC 127](docs/nuc-0127.md) and the
-+  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
++- [NUC 136](docs/nuc-0136.md) turns a constructor label that names no
++  parameter into a property: the call acts as if the constructor declared
++  the name and assigned `this.<name> = <name>` after its own statements.
++  The class declares only what its constructor uses, and the class-level
++  rule reads `price` and `quantity` like any other property.
++- Positional calls, declared labels and the binding errors for repeated
++  labels are unchanged. See the
++  [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
 +
  ## Benchmark
  
  This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +9/-1)
 ```diff
-@@ -838,3 +838,6 @@
- {"id":"spec-0838","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
- {"id":"spec-0839","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
- {"id":"spec-0840","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
-+{"id":"spec-0841","description":"Nucleoid omits colons from implicit instance iterator suites","code":"class Entry(amount):\n    this.amount = amount\nfirst = Entry(2)\nsecond = Entry(5)\nvalues = [first, 99, second, null, {amount: 9}]\nseen = []\ntotal = 0\nfor values\n    seen.push(it.amount)\n    total += it.amount\nassert(seen, [2, 5])\nassert(total, 7)\nempty = []\nfor empty\n    total += 100\nassert(total, 7)","return":null}
-+{"id":"spec-0842","description":"Nucleoid nests colon free implicit iterator scopes","code":"it = \"ab\"\ninner = \"xy\"\nseen = []\nfor it\n    for inner\n        seen.push(it)\nassert(seen, [\"x\", \"y\", \"x\", \"y\"])\nassert(it, \"ab\")","return":null}
-+{"id":"spec-0843","description":"Nucleoid propagates returns and rollback through colon free implicit iterators","code":"def first(text):\n    for text\n        return it\n    return \"empty\"\nassert(first(\"ab\"), \"a\")\nassert(first(\"\"), \"empty\")\ntext = \"ab\"\nvalue = 7\nfailure = null\ntry:\n    for text\n        value = 99\n        throw \"stop\"\ncatch error:\n    failure = error\nassert(value, 7)\nassert(failure, \"stop\")\nfor text\n    value += 1\nassert(value, 9)\nvalue","return":"9"}
+@@ -416,7 +416,7 @@
+ {"id":"spec-0416","description":"Nucleoid forwards named arguments to opted-in parent constructors","code":"class Parent(a, b):\n    this.a = a\n    this.b = b\nclass Child(first, second): Parent\n    super(b=second, a=first)\nchild = Child(1, 2)\nassert(child, {\"id\": \"child\", \"a\": 1, \"b\": 2})","return":null}
+ {"id":"spec-0417","description":"Nucleoid constructs students with positional and named arguments","code":"class Student(name):\n    this.name = name\npositional = Student(\"Can\")\nnamed = Student(name=\"Can\")\nassert(positional.name, \"Can\")\nassert(named.name, \"Can\")","return":null}
+ {"id":"spec-0418","description":"Nucleoid mixes positional and named constructor arguments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nordered = Student(name=\"Can\", age=20)\nreordered = Student(age=20, name=\"Can\")\nmixed = Student(\"Can\", age=20)\nassert(ordered, {\"id\": \"ordered\", \"name\": \"Can\", \"age\": 20})\nassert(reordered, {\"id\": \"reordered\", \"name\": \"Can\", \"age\": 20})\nassert(mixed, {\"id\": \"mixed\", \"name\": \"Can\", \"age\": 20})","return":null}
+-{"id":"spec-0419","description":"Nucleoid validates constructor names without caller assignments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nname = \"Before\"\nstudent = Student(name=\"Can\", age=20)\nassert(name, \"Before\")\nassert(student.name, \"Can\")\ntry:\n    Student(nmae=\"Can\", age=20)\ncatch error:\n    assert(error, TypeError(\"Unknown constructor argument 'nmae' for Student\"))\ntry:\n    Student(\"Can\", name=\"Other\", age=20)\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'name' for Student\"))","return":null}
++{"id":"spec-0419","description":"Nucleoid validates constructor names without caller assignments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nname = \"Before\"\nstudent = Student(name=\"Can\", age=20)\nassert(name, \"Before\")\nassert(student.name, \"Can\")\nmisspelled = Student(nmae=\"Can\", age=20)\nassert(misspelled, {\"id\": \"misspelled\", \"name\": null, \"age\": 20, \"nmae\": \"Can\"})\ntry:\n    Student(\"Can\", name=\"Other\", age=20)\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'name' for Student\"))","return":null}
+ {"id":"spec-0420","description":"Nucleoid preserves ordinary function argument assignments","code":"'use imperative'\ndef pair(a, b):\n    return [a, b]\na = 0\nb = 0\nresult = pair(b=2, a=1)\nassert(result, [2, 1])\nassert(a, 1)\nassert(b, 2)","return":null}
+ {"id":"spec-0421","description":"Nucleoid filters reasoning selections by stated and derived state","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nfacts = result |> why |> stated\nconclusions = result |> why |> derived\nassert(facts.map(step => step.node), [\"seed\"])\nassert(facts[0].holds, 2)\nassert(facts[0].from, [])\nassert(conclusions.map(step => step.node), [\"result\", \"middle\"])\nassert(conclusions[0].holds, 10)\nassert(conclusions[0].from, [\"middle\"])\nassert(conclusions[0].state, \"derived\")","return":null}
+ {"id":"spec-0422","description":"Nucleoid keeps reasoning state filters live through equal valued rewrites","code":"seed = 1\nvalue = seed + 1\nfacts = value |> why |> stated\nconclusions = value |> why |> derived\nassert(facts.map(step => step.node), [\"seed\"])\nassert(conclusions.map(step => step.node), [\"value\"])\nvalue = 2\nassert(facts.map(step => step.node), [\"value\"])\nassert(conclusions, [])\nvalue = seed + 1\nseed = 3\nassert(facts.map(step => step.node), [\"seed\"])\nassert(facts[0].holds, 3)\nassert(conclusions.map(step => step.node), [\"value\"])\nassert(conclusions[0].holds, 4)","return":null}
+@@ -859,3 +859,11 @@
+ {"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.name)\nchosen = Item.select(item -> item.score >= limit)\nassert([names, chosen], [[], []])\nfirst = Item(\"one\", 4)\nsecond = Item(\"two\", 8)\nassert(names, [\"one\", \"two\"])\nassert(chosen, [second])\nfirst.score = 9\nlimit = 8\nassert(chosen, [first, second])\nthird = Item(\"three\", 2)\nassert(names, [\"one\", \"two\", \"three\"])\nassert(Item.collect(item -> item.score), Item.map(item -> item.score))\nassert(Item.select(item -> item.score), Item.filter(item -> item.score))\ndelete third.name\ndelete third.score\ndelete third\nassert(names, [\"one\", \"two\"])\nassert(chosen, [first, second])\nclass Group(items):\n    this.items = items\n$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)\ngroup = Group([first, second])\nassert(group.names, [\"one\", \"two\"])\nsecond.score = 1\nassert([chosen, group.names], [[first], [\"one\"]])\nnames","return":"[\"one\",\"two\"]"}
+ {"id":"spec-0860","description":"Nucleoid preserves collection alias er
 ```
 
-**File**: `dataset/nucleoid.synth.31.jsonl` (modified, +1/-0)
+**File**: `dataset/nucleoid.synth.136.jsonl` (added, +8/-0)
 ```diff
-@@ -2,3 +2,4 @@
- {"id":"synth-31-0002","description":"A mutated string property cannot extend a one-shot scalar snapshot","code":"holder = {text: \"ab\"}\nseen = []\nfor character in holder.text:\n    seen.push(character)\n    holder.text = \"xyz\"\nassert(seen, [\"a\", \"b\"])\nassert(holder.text, \"xyz\")\nholder.text = \"cd\"\nassert(seen, [\"a\", \"b\"])\nfor character of holder.text:\n    seen.push(character)\nassert(seen, [\"a\", \"b\", \"c\", \"d\"])\nseen","return":"[\"a\",\"b\",\"c\",\"d\"]"}
- {"id":"synth-31-0003","description":"Nested named string loops restore their outer implicit iterator binding","code":"it = \"outside\"\nletters = \"xy\"\ndigits = \"12\"\nseen = []\nfor letters:\n    seen.push(it)\n    for digits:\n        seen.push(it)\n    seen.push(it)\nassert(seen, [\"x\", \"1\", \"2\", \"x\", \"y\", \"1\", \"2\", \"y\"])\nassert(it, \"outside\")\nempty = \"\"\nfor empty:\n    throw \"UNREACHABLE\"\nassert(it, \"outside\")\nseen","return":"[\"x\",\"1\",\"2\",\"x\",\"y\",\"1\",\"2\",\"y\"]"}
- {"id":"synth-31-0004","description":"A failed scalar traversal rolls back its effects and permits a later successful loop","code":"it = \"outside\"\nseen = [\"saved\"]\ntry:\n    for it of \"abc\":\n        seen.push(it)\n        if it == \"b\":\n            throw \"CANCEL_TEXT\"\ncatch error:\n    assert(error, \"CANCEL_TEXT\")\nassert(seen, [\"saved\"])\nassert(it, \"outside\")\nfor it in \"ok\":\n    seen.push(it)\nassert(seen, [\"saved\", \"o\", \"k\"])\nassert(it, \"outside\")\nseen","return":"[\"saved\",\"o\",\"k\"]"}
-+{"id":"synth-31-0005","description":"Colon-free named string suites preserve scalar order and restore an outer iterator","code":"it = \"outside\"\ntext = \"é🙂é\"\nseen = []\nfor text\n    seen.push(it)\nassert(seen, [\"é\", \"🙂\", \"e\", \"́\"])\nassert(seen.join(\"\"), text)\nassert(it, \"outside\")\nseen","return":"[\"é\",\"🙂\",\"e\",\"́\"]"}
+@@ -0,0 +1,8 @@
++{"id":"synth-136-0001","description":"An unknown constructor label becomes a property, as if the class declared it and assigned it last","code":"class Shape(type):\n    this.type = type\nshape1 = Shape(type=\"SQUARE\", color=\"RED\")\nassert(shape1, {\"id\": \"shape1\", \"type\": \"SQUARE\", \"color\": \"RED\"})\n[shape1.type, shape1.color]","return":"[\"SQUARE\",\"RED\"]"}
++{"id":"synth-136-0002","description":"A class without parameters or a body keeps every labeled attribute of its instances","code":"class Point\norigin = Point(x=0, y=0)\ncorner = Point(x=3, y=4)\nassert(origin, {\"id\": \"origin\", \"x\": 0, \"y\": 0})\nPoint.map(point -> point.x + point.y)","return":"[0,7]"}
++{"id":"synth-136-0003","description":"Unknown labels are assigned once the constructor statements finish, so a label replaces what the body set, even after a return","code":"class Lamp(room):\n    this.room = room\n    this.watts = 40\n    if room == \"attic\":\n        return\n    this.lit = true\nhall = Lamp(room=\"hall\")\ndesk = Lamp(room=\"desk\", watts=60, color=\"WARM\")\nattic = Lamp(room=\"attic\", watts=25)\nassert(hall, {\"id\": \"hall\", \"room\": \"hall\", \"watts\": 40, \"lit\": true})\nassert(attic, {\"id\": \"attic\", \"room\": \"attic\", \"watts\": 25})\n[desk.watts, desk.color, desk.lit]","return":"[60,\"WARM\",true]"}
++{"id":"synth-136-0004","description":"A bodyless subclass passes unknown labels to the inherited constructor, and super forwards its own","code":"class Animal(name):\n    this.name = name\nclass Dog: Animal\n    pass\nclass Puppy(age): Animal\n    super(name=\"Rex\", sound=\"yip\")\n    this.age = age\nfido = Dog(name=\"Fido\", sound=\"woof\")\nrex = Puppy(age=1, toy=\"ball\")\nassert(fido, {\"id\": \"fido\", \"name\": \"Fido\", \"sound\": \"woof\"})\n[rex.name, rex.sound, rex.age, rex.toy]","return":"[\"Rex\",\"yip\",1,\"ball\"]"}
++{"id":"synth-136-0005","description":"Adopted init signatures, with a block or an expression body, take unknown labels after their declared parameters","code":"class Account:\n    def init(owner):\n        this.owner = owner\nclass Badge:\n    def init(name) => this.name = name\naccount = Account(owner=\"Ada\", currency=\"EUR\")\nbadge = Badge(name=\"Ada\", rank=\"Captain\")\nassert(account, {\"id\": \"account\", \"owner\": \"Ada\", \"currency\": \"EUR\"})\nassert(badge, {\"id\": \"badge\", \"name\": \"Ada\", \"rank\": \"Captain\"})\n[account.currency, badge.rank]","return":"[\"EUR\",\"Captain\"]"}
++{"id":"synth-136-0006","description":"Class-level rules read properties from unknown labels and follow their changes","code":"class Order(item):\n    this.item = item\n$Order.total = $Order.price * $Order.count\norder = Order(item=\"tea\", price=4, count=2)\nassert(order.total, 8)\norder.count = 5\norder.total","return":"20"}
++{"id":"synth-136-0007","description":"Unknown label values are snapshots and never assign caller variables","code":"class Note\ncolor = \"BLUE\"\ntag = \"draft\"\nnote = Note(color=\"RED\", label=tag)\ntag = \"final\"\nassert([note.color, note.label, color], [\"RED\", \"draft\", \"BLUE\"])\nnote.label","return":"\"draft\""}
++{"id":"synth-136-0008","description":"A repeated unknown label is rejected before any value runs, and a failing value builds nothing","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\nduplicate = \"\"\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    duplicate = error\nmissed = \"\"\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    missed = error\n[duplicate, missed, events.count, Shape.length]","return":"[\"TypeError: Duplicate constructor argument 'color' for Shape\",\"ReferenceError: missing is not defined\",0,0]"}
 ```
 
-**File**: `docs/README.md` (modified, +21/-2)
+**File**: `docs/README.md` (modified, +51/-7)
 ```diff
-@@ -1837,9 +1837,13 @@ for question of Question:
- - Accepted [NUC 31](nuc-0031.md) specifies `for NAME:` with a genuine indented
-   body as exactly `for it of NAME:` with that same body; `NAME` is one ordinary
-   identifier source, not the iteration variable.
--- Require the immediate identifier and colon, an immediate newline or indent,
-+- The [NUC 127 draft](nuc-0127.md) permits that colon to be omitted before
-+  the same genuinely indented suite. The source is exactly one Rust
-+  `Identifier`; contextual spellings such as `while`, `enum`, `model`,
-+  `repeat` and `until` remain names and qualify with or without the colon.
-+- Require the immediate identifier and optional colon, an immediate newline or indent,
-   then a real indent after only existing newline/semicolon layout. Do not skip
--  header separators; `:;`, inline/braced/missing-indent shorthand and
-+  header separators; a header-line `;` or `:;`, inline/braced/missing-indent shorthand and
-   property/index/call/literal/class-reference/parenthesized shorthand sources
-   are not added.
- - Source lookup precedes binding local `it`, so `for it:` reads the outer
-@@ -1859,6 +1863,21 @@ for Task:
-     it.done = true
- ```
+@@ -1189,8 +1189,11 @@ class Shape:
+ - The values remain constructor snapshots, not new reactive relationships.
+   Binding validation precedes all RHS evaluation, including `.value` reads.
+ - `class Point` can adopt an ordinary `def init(x, y):` body and parameter
+-  list. Named binding adds no automatic fields or defaults; scalar defaults
+-  have their own [bounded contract](#literal-parameter-defaults).
++  list. Binding a declared parameter by name adds no automatic fields or
++  defaults; a label that names no parameter becomes a property, as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  describes, and scalar defaults have their own
++  [bounded contract](#literal-parameter-defaults).
+ - Named shared class-rule construction also sees the declaration caller's
+   parameters; legacy positional shared construction keeps its existing scope.
+ - Inheritance uses the nearest nonempty constructor body's signature; a child
+@@ -1201,9 +1204,9 @@ class Shape:
+   Compound and member assignments remain positional. Functions, methods,
+   built-ins and direct `init` calls keep assignment-expression behavior.
+   Class aliases gain no construction route.
+-- Duplicate bindings (including positional plus named), unknown labels, and
+-  positional arguments after labels raise explicit `TypeError`s before
+-  value effects or instance creation. Star headers raise the ordinary
++- Duplicate bindings (including positional plus named) and positional
++  arguments after labels raise explicit `TypeError`s before value effects or
++  instance creation. Star headers raise the ordinary
+   parameter `SyntaxError`; existing transactions still restore partial
+   construction and graph/class state on failure.
+ - This is the exact paired `Nucleoid constructs an object with named parameters`
+@@ -1221,6 +1224,47 @@ assert(point, {"id": "point", "x": 3, "y": 4})
+   [default named constructors](../nucleoid.spec.md#default-named-constructors)
+   section; [NUC 47](nuc-0047.md) records this isolated candidate revision.
  
-+- Named String sources keep the same scalar snapshot and local `it`.
-+  The colon-bearing form remains accepted with identical behavior.
++### Unknown constructor arguments as properties
 +
 +```
-+text = "cab"
-+letters = []
-+for text
-+    letters.push(it)
-+assert(letters, ["c", "a", "b"])
-+assert(letters.join(""), text)
++class Shape(type):
++    this.type = type
++shape1 = Shape(type="SQUARE", color="RED")
++assert(shape1, {"id": "shape1", "type": "SQUARE", "color": "RED"})
++shape1.color
 +```
 +
-+- Explicit `for item of SOURCE:`, `for item in SOURCE:` and two-name entry
-+  loops retain their required colons and all accepted suite forms.
++- A constructor label that names no parameter of the effective constructor
++  becomes a property ([NUC 136](nuc-0136.md)). The call acts as if that
++  constructor declared the name as one more parameter and its statements
++  were followed by `this.<name> = <name>`, so `shape1` is the instance that
++  `class Shape(type, color):` with `this.type = type` and
++  `this.color = color` would build.
++- Every constructor takes such labels: bodyless and parameterless headers,
++  inherited constructors, `super(...)`, adopted `def init` and
++  `def __init__(self, ...)`, initializing parameters, defaults, rest
++  parameters, `new`, nested and collection instances, shared class rules
++  and `is` assignments.
++- The assignments run after the constructor's own statements, so the
++  statements can read the name and a label replaces a property they set.
++  They run however the statements end, after an early `return` too, so an
++  expression-bodied `def init(...) => value` keeps its labels; that is the
++  one deliberate difference from the written-out spelling. A failing
++  statement still rolls back the whole instance.
++- Values are snapshots evaluated once in source order, labels never assign
++  caller variables, and class-level rules still apply after construction.
++- Positional values never fill these labels. A repeated label, a positional
++  argument after a label and a label naming a rest parameter still raise
++  their `TypeError`s before any value runs. A misspelled label is no longer
++  an error: it becomes a property of its own.
++- Functions, methods, built-ins and direct `init` calls keep their
++  assignment-expression arguments, and no syntax is added.
++- This is the exact
++  `Nucleoid builds an instance from unknown constructor arguments` example
++  in `tests/reference.md`. The authoritative
++  [root section](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
++  and its eight appended entries define the behavior.
 +
- - [NUC 72](nuc-0072.md) adds two-name loops over an object's entries:
-   `for key, value of source:` and `for key, value in source:`. A header is a
-   two-name header exactly when `for` is followed by a name, a comma, a name and
+ ### Initializing constructor parameters
+ 
+ - A constructor parameter written `this.name` or `self.name` declares the
+@@ -2111,7 +2155,7 @@ Normative detail: [exit-controlled repeat-until loops](../nucleoid.spec.md#exit-
+ - The effective literal initializes the fresh Scope slot at version zero.
+   Functions, aliases, callbacks, methods and function Values share binding;
+   positional/named/mixed/inherited constructors and `super` use the selected
+-  signature without changing strict labels, evaluation order, single
++  signature without changing label validation, evaluation order, single
+   evaluation, receiver capture or parent/class-resolution timing.
+ - Live redefinition and rollback retain their existing State/graph boundary.
+   Frozen/
 ```
 
-**File**: `docs/examples.md` (modified, +31/-2)
+**File**: `docs/examples.md` (modified, +27/-0)
 ```diff
-@@ -1866,12 +1866,16 @@ assert(second.scaled, 15)
-   Noniterable sources retain their existing errors, without auto-invocation.
- - The [NUC 51 candidate](nuc-0051.md) also accepts String snapshots without
-   changing List filtering; see [string iteration](#string-iteration).
--- Require the immediate colon followed by newline/indent and a real indent
--  after only normal newline/semicolon layout; `:;` never qualifies. No
-+- The [NUC 127 draft](nuc-0127.md) also permits `for Reading` before the
-+  same genuine indented suite. Contextual Rust identifiers such as `while`,
-+  `enum` and `model` qualify too; no keyword or token is added.
-+- Require the identifier and optional colon followed by newline/indent and a real indent
-+  after only normal newline/semicolon layout; a header-line `;` or `:;` never qualifies. No
-   inline/braced/missing-indent, parenthesized or expression-source shorthand
-   is added.
- - Nested `it` shadowing/restoration, receivers, return propagation, body
-   control flow, graph dependencies, rollback and resource limits are unchanged.
-+- Explicit single-name and two-name entry loops retain their required colon.
- - Full grammar and exact diagnostics are in the authoritative
-   [implicit iterator loop section](../nucleoid.spec.md#implicit-iterator-indented-loops).
+@@ -4550,6 +4550,33 @@ selected
+   not Rust pattern overloads. See [NUC 132](nuc-0132.md) and the
+   [root contract](../nucleoid.spec.md#rust-string-boundary-method-aliases).
  
-@@ -4410,6 +4414,31 @@ safe = every truck in Truck: not truck.overloaded
-   and makes the fleet safe. See [NUC 98](nuc-0098.md) and the
-   [root contract](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- 
-+## Colon-free implicit iterator suites
++## Unknown constructor arguments as properties
 +
-+**Colon-free implicit iterators keep population walks one shot**
++**Unknown constructor arguments describe a fleet's vehicles**
 +
 +```nuc
-+class Counter(amount):
-+    this.amount = amount
-+first = Counter(2)
-+second = Counter(3)
-+total = 0
-+for Counter
-+    total += it.amount
-+first.amount = 9
-+Counter(4)
-+assert(total, 5)
-+total
-+# return: 5
++class Vehicle(plate):
++    this.plate = plate
++$Vehicle.heavy = $Vehicle.weight > 3500
++van = Vehicle(plate="V1", weight=2800, color="WHITE")
++truck = Vehicle(plate="T1", weight=7200)
++heavy = Vehicle.filter(vehicle -> vehicle.heavy).map(vehicle -> vehicle.plate)
++assert(heavy, ["T1"])
++assert([van.color, truck.color], ["WHITE", null])
++van.weight = 4000
++assert(heavy, ["V1", "T1"])
++heavy
++# return: ["V1","T1"]
 +```
 +
-+- The genuine indented suite runs exactly as `for Counter:` would.
-+  Later instance updates or population growth do not rerun the completed
-+  body, and the loop retains the accepted scopes and transaction behavior.
-+- See [NUC 127](nuc-0127.md) and the
-+  [root contract](../nucleoid.spec.md#implicit-iterator-indented-loops).
++- Each vehicle carries the attributes its caller names, though the class
++  declares only `plate`; the class-level rule and the live selection read
++  `weight` like any property and follow its changes.
++- A label that names no parameter becomes a property after the
++  constructor's statements, as [NUC 136](nuc-0136.md) and the
++  [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
++  define. A vehicle built without a `color` label has none.
 +
  ## Copyright
  
@@ -1776,139 +1814,213 @@ Final metadata-bound caller core: 1e3585d8b
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -69,7 +69,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Accepted |
--| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Draft |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
+@@ -101,7 +101,7 @@ Created: 31-Jul-2026
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+ | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+-| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Draft |
++| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
  
- ### Runtime features
+ ### Utility enhancement
  
-@@ -310,7 +310,7 @@ Created: 31-Jul-2026
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
--| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Draft |
+@@ -328,7 +328,7 @@ Created: 31-Jul-2026
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
+-| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
++| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
  
 ```
 
-**File**: `docs/nuc-0127.md` (modified, +340/-7)
+**File**: `docs/nuc-0136.md` (modified, +583/-11)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 127
- Title: Colon-Free Implicit Iterator Suites
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
+@@ -4,11 +4,11 @@
+ NUC: 136
+ Title: Unknown Constructor Arguments as Properties
+ Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Syntax enhancement
- Created: 21-Nov-2026
-@@ -15,8 +15,9 @@ Requires: 31, 49, 51
+ Category: Runtime features
+ Created: 22-Nov-2026
+-Requires: 14, 47, 54, 74, 78, 87, 107
++Requires: 14, 47, 54, 74, 78, 87, 93, 95, 107
+ ```
  
- - An implicit iterator loop may omit its colon before a genuine indented
-   suite: `for NAME` followed by its indented body has the same meaning as
--  `for NAME:`. `NAME` remains exactly one ordinary identifier, and the
--  loop binds the existing local iterator `it`.
-+  `for NAME:`. `NAME` remains exactly one Rust `Identifier` token,
-+  including accepted contextual-name spellings such as `while`, `enum`
-+  and `model`, and the loop binds the existing local iterator `it`.
- - Reuse the accepted loop, source expression and suite parsers, with the
-   existing non-consuming genuine-indentation guard. Preserve the syntax
-   tree, canonical rendering, source positions, one-shot snapshot semantics,
-@@ -43,19 +44,351 @@ Requires: 31, 49, 51
+ ## Abstract
+@@ -22,7 +22,11 @@ Requires: 14, 47, 54, 74, 78, 87, 107
+   `shape1 = Shape(type='SQUARE', color='RED')` builds the instance that
+   `class Shape(type, color):` with the body `this.type = type` and
+   `this.color = color` builds:
+-  `{"id": "shape1", "type": "SQUARE", "color": "RED"}`.
++  `{"id": "shape1", "type": "SQUARE", "color": "RED"}`. The one deliberate
++  difference from that spelling, which the user decided, is that the
++  assignments run however the constructor's statements end, after an early
++  `return` too, so an expression-bodied `def init(...) => value` keeps its
++  labels.
+ - Every constructor route takes unknown labels: class headers with or
+   without a body or a parameter list, a parent named after a colon or with
+   `extends` ([NUC 78](nuc-0078.md)), inherited constructors, adopted
+@@ -43,14 +47,26 @@ Requires: 14, 47, 54, 74, 78, 87, 107
+   raised that `TypeError` before evaluating any argument, now evaluates its
+   values once in source order and builds the instance. The 14 existing
+   assertions that pin exactly that error move to the new reading, keeping
+-  their case identities, and this NUC lists each one: the specification
+-  case `Nucleoid validates constructor names without caller assignments`
+-  and assertions in `tests/named_constructors.rs`, with its CLI fixture
+-  `tests/fixtures/named-constructors-invalid.nuc`,
++  their case identities, and this NUC lists each one under
++  [Compatibility](#compatibility), with the direct consequences of the same
++  calls, the byte seal of the rewritten specification case among them: the
++  specification case
++  `Nucleoid validates constructor names without caller assignments` and
++  assertions in `tests/named_constructors.rs`, with its CLI fixture
++  `tests/fixtures/named-constructors-invalid.nuc`, which is unchanged,
+   `tests/initializing_parameters.rs`, `tests/self_parameters.rs`,
+   `tests/rest_parameters.rs`, `tests/literal_parameter_defaults.rs` and
+   `tests/item_words.rs`. That break alone fails no hard criterion; any
+   other break or test edit still does.
++- **Outcome: Accepted**, on the user-requested basis: the frozen candidate
++  met all three hard criteria in the independent evaluation and again on
++  the integrated tree. The independent evaluator's policy decision was
++  Rejected, solely because the deterministic core gate flags the migration
++  the user authorized, the specification case
++  `Nucleoid validates constructor names without caller assignments`, as an
++  invalid legacy case on replay and as changed assertions in its migrated
++  copy. Token comparison was skipped as a single-proposal request; see
++  [Evaluation](#evaluation).
+ 
+ ## Motivation
+ 
+@@ -78,19 +94,575 @@ Requires: 14, 47, 54, 74, 78, 87, 107
  
  ## Rationale
  
 -- Pending: the proposer completes this section.
-+- Use the accepted source and suite parsers and their non-consuming
-+  real-indentation guard. Add no speculative parse, token, keyword, AST
-+  variant, public API, dependency or runtime implementation.
-+- Keep exactly one named source. Property, index, call, literal,
-+  class-reference, parenthesized and wider expression shorthand remain
-+  outside this proposal.
-+- Keep explicit single-name and two-name loops on their existing
-+  colon-required parser paths, including their pinned diagnostics.
-+- Only genuine indentation supplies the optional delimiter. Inline,
-+  braced, missing, unindented and header-line-semicolon bodies do not
-+  qualify.
-+- Preserve accepted contextual identifiers through the grammar's existing
-+  `name`/`enumName` normalization. ANTLR's dedicated contextual token names
-+  do not make those spellings reserved keywords in the Rust lexer.
-+- This fresh revision-r4 ports the same bounded feature after Accepted
-+  NUC 128 advanced the shared runtime and corpus before r3 could reach
-+  primary. It is not an in-place repair or rebase of frozen r3. Preserve
-+  every accepted NUC 126 `repeat:`/`until` and NUC 128 `origins`/`outcomes`
-+  parser, AST, runtime, grammar, corpus and test behavior.
-+- Retain the caller's original uniform draw, index 0 of the five live
-+  eligible categories: Syntax enhancement, Runtime features, Utility
-+  enhancement, Reasoning enhancement and Language compatibility. No
-+  category is redrawn or reassigned.
- 
- ## Specification
- 
--- Pending: the proposer completes this section.
-+- After `for`, qualify exactly one Rust `Identifier` followed immediately
-+  by a colon and genuine indented layout, or by that layout directly.
-+  Contextual names, including `while`, `enum`, `model`, `repeat` and
-+  `until`, qualify in both spellings.
-+- Genuine layout begins with `Newline` or `Indent` and reaches a real
-+  `Indent` after only the accepted `Newline`/`Semicolon` layout. A
-+  header-line semicolon, including `:;`, never qualifies. Comments,
-+  blank lines, tabs and line endings keep their accepted layout rules.
-+- Leave the source to `clause_expression()`. A qualified implicit loop
-+  uses the accepted `clause_suite()`: a present colon selects unchanged
-+  `suite()`, while omission selects that same `suite_body()`.
-+- Construct the existing
-+  `Stmt::For { variable: "it", iterable: Identifier(NAME), body }`.
-+  Canonical rendering, graph keys, statement positions and source
-+  evaluation before the local `it` binding are unchanged.
-+- Classes supply their ordered population snapshots; lists retain
-+  registered-instance filtering, order and duplicates; Strings retain
-+  Unicode-scalar snapshots. Empty traversal, scopes, receiver restoration,
-+  imperative writes, returns, transactions, rollback and resource bounds
-+  are those of the accepted colon-bearing form.
-+- Explicit `for item of SOURCE:` and `for item in SOURCE:` keep their
-+  arbitrary accepted source expressions and colon-required suites.
-+  Two-name entry loops keep their required colon, parser and diagnostics.
-+- Native continuation and terminal indentation recognize exactly the
-+  lexical header `For Identifier`. Explicit or wider headers gain no
-+  colon-free opener; blank-line commit, EOF and recovery still invoke the
-+  real parser and its genuine-body requirements.
-+- The authoritative contract is
-+  [implicit iterator indented loops](../nucleoid.spec.md#implicit-iterator-indented-loops).
-+  Its three appended entries are
-+  `Nucleoid omits colons from implicit instance iterator suites`,
-+  `Nucleoid nests colon free implicit iterator scopes` and
-+  `Nucleoid propagates returns and rollback through colon free implicit iterators`.
-+- The reference, README and examples append the other three caller-owned
-+  paired cases. Across all six, only qualifying implicit-header colons are
-+  removed from the supplied accepted sources; all 14 cano
++- **The user's equivalence, taken literally.** An unknown label is one more
++  parameter of the effective constructor, followed by
++  `this.<name> = <name>`. Every observable then comes from the accepted
++  behavior of that written-out spelling: property order, snapshots,
++  dependencies, `why` rules, graph keys, transactions, rollback and
++  class-level rules. No second way of writing properties is added.
++- **The parsed statement, not a copy of it.** Each assignment is the
++  statement an initializing parameter `this.<name>` lowers to
++  ([NUC 87](nuc-0087.md)), the tree the parser builds for
++  `this.color = color`, so it explains, renders, depends and rolls back as
++  the written statement does.
++- **After the constructor's statements.** The user's spelling writes
++  `this.color = color` last. The statements can read the label as a
++  parameter, and a caller's label replaces a value the statements set, the
++  usual reason to pass a value the constructor does not declare.
++- **However the statements end.** Taken literally, the written-out spelling
++  would skip the assignments after a `return`, including the one an
++  expression-bodied `def init(...) => value` lowers to, so such a
++  constructor would accept a label and drop it. The user decided on
++  23-Nov-2026 that every constructor keeps its labels: the assignments run
++  once the statements finish, normally or with a `return`. This is the one
++  deliberate difference from the written-out spelling. A failing statement
++  still skips them and rolls back the whole instance.
++- **Per call, not per class.** Only the call that passes a label gets its
++  property; the class's signature, its other instances and later calls are
++  unchanged. The unknown names come after every declared parameter and any
++  rest formal and bind only by label, so positional values never reach
+
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +7/-1)
+**File**: `nucleoid.spec.md` (modified, +228/-19)
 ```diff
-@@ -292,9 +292,15 @@ directCondition
-     : clauseExpression COLON? indentedBlock elseClause?
-     ;
- 
-+// The implicit alternative requires exactly one Rust Identifier and a real
-+// indented body, with or without its colon. Contextual spellings such as
-+// WHILE, ENUM, MODEL, REPEAT and UNTIL normalize through name/enumName.
-+// Only NEWLINE or INDENT may immediately follow that name or its colon;
-+// a header-line ';', inline/braced body or wider source never qualifies.
-+// Both explicit alternatives retain their colon-required suite.
- forStmt
-     : FOR name COMMA name (OF | IN) clauseExpression suite  // Stmt::ForEntries
--    | FOR name COLON indentedBlock                          // Stmt::For, item "it"
-+    | FOR name COLON? indentedBlock                         // Stmt::For, item "it"
-     | FOR name (OF | IN) clauseExpression suite             // Stmt::For
-     ;
- 
+@@ -2893,15 +2893,19 @@ statement positions; caught values and transaction recovery are unchanged.
+   ordinary-call function/local shadowing differences remain unchanged.
+ - For calls containing labels, validate the entire binding plan before any
+   argument effects or `.value` reads. Positional arguments fill successive
+-  declared slots and must precede all labels. Reject the first unknown name,
+-  repeated binding (including positional plus named), or positional argument
+-  following a named argument, in source order.
++  declared slots and must precede all labels. Reject the first repeated
++  binding (including positional plus named) or positional argument following
++  a named argument, in source order. A label that names no parameter is not
++  rejected; it binds as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  specifies.
+ - Evaluate supplied values exactly once in source order in the caller's
+   scope, then bind them in declaration order. Omitted parameters without
+-  literal defaults retain `null`; named binding itself adds no defaults or
+-  automatic property assignments. Literal defaults are specified separately.
+-  Surplus positional values are still evaluated and ignored. Existing
+-  duplicate formal names and purely positional binding are not redesigned.
++  literal defaults retain `null`; binding a declared parameter by name adds
++  no defaults or automatic property assignments. Literal defaults are
++  specified separately. Surplus positional values are still evaluated and
++  ignored. Existing duplicate formal names and purely positional binding are
++  not redesigned.
+ - Use the nearest nonempty constructor body's signature, including adopted
+   `def init` signatures and inherited constructors. An empty child header
+   cannot replace that effective signature. Constructor scopes, receivers,
+@@ -2936,9 +2940,9 @@ statement positions; caught values and transaction recovery are unchanged.
+ - A constructor header star raises the ordinary parameter diagnostic
+   `SyntaxError("Expected a parameter but found '*'")`; no star form is
+   retained. Other parameter/suite diagnostics and source positions remain.
+-- An unknown label raises
+-  `TypeError("Unknown constructor argument '<name>' for <class>")`.
+-  A repeated binding raises
++- An unknown label raises no error; it becomes a property as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  specifies. A repeated binding raises
+   `TypeError("Duplicate constructor argument '<name>' for <class>")`.
+   A positional argument after a label raises
+   `TypeError("Positional constructor argument after named arguments for <class>")`.
+@@ -2948,7 +2952,96 @@ statement positions; caught values and transaction recovery are unchanged.
+   count limit, dependency, project version or ARC change is introduced.
+ - The eight historical constructor entries and four new pre-executed Student
+   and ordinary-function counterparts below protect all canonical assertions,
+-  expected returns, case identities and executed assertion coverage.
++  expected returns, case identities and executed assertion coverage. Under
++  the break that [NUC 136](docs/nuc-0136.md) records, the misspelled-label
++  assertion of `Nucleoid validates constructor names without caller assignments`
++  now asserts the instance that the call builds.
++
++## Unknown constructor arguments as properties
++
++- An unknown label is a constructor-call label that names no parameter of
++  the effective constructor, the one
++  [Default named constructors](#default-named-constructors) selects: the
++  nearest nonempty constructor of the class or an ancestor, with adopted
++  `def init(...)` and `def __init__(self, ...)` signatures. A label that
++  names only a parameter of a bodyless subclass header is unknown too.
++- An unknown label raises no error. The call acts as if the effective
++  constructor declared the label's name as one more parameter, after its
++  declared parameters in label source order, and its statements were
++  followed by `this.<name> = <name>` for each unknown label in source order.
++  After `class Shape(type):` with the body `this.type = type`,
++  `shape1 = Shape(type="SQUARE", color="RED")` builds the instance that
++  `class Shape(type, color):` with the body `this.type = type` and
++  `this.color = color` builds: `{"id": "shape1", "type": "SQUARE", "color": "RED"}`.
++- The whole call is still validated before any value runs. A repeated label,
++  an unknown one included, raises
++  `TypeError("Duplicate constructor argument '<name>' for <class>")`, and a
++  positional argument after a label and a label naming a rest formal keep
++  their `TypeError`s. Only the unknown-name rejection is gone.
++- Values still run once, in source order, in the caller's scope. Declared
++  parameters bind as before. Each unknown label's value is bound to its name
++  in the constructor scope after the declared parameters and any rest
++
 ```
+
+---
+
+### Incident Patch 2: `a7160446` (2026-11-23)
+**Commit Message**: Resume NUC 136 Unknown Constructor Arguments as Properties
+
+Renews the claim of NUC 136, still in progress in the session that
+allocated it (allocation 870bc76b at 2026-11-22T16:01:50-05:00, 13h39m
+ago). The candidate is prepared and awaiting its Rust improvement pass
+and independent evaluation. This empty commit records no outcome.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1936,13 +2048,13 @@ Final metadata-bound caller core: 1e3585d8b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 127 Colon-Free Implicit Iterator Suites
+## X. NUC 136 Unknown Constructor Arguments as Properties
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbdb7e41`: NUC 127 Colon-Free Implicit Iterator Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5779103e`: NUC 136 Unknown Constructor Arguments as Properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1950,46 +2062,41 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
-  colon before that same genuinely indented body. `NAME` is exactly one Rust
-  `Identifier`, including contextual names such as `while`, `enum` and `model`.
-- Require the immediate identifier and optional colon, then a newline or indent
-  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
-  remain valid with their existing arbitrary expressions and colon-required suite forms.
-  Two-name entry loops also keep their colon.
-## Colon-free implicit iterator suites
+## Unknown constructor arguments as properties
 
-**Named iterator suites use indentation without a colon**
+**Unknown constructor arguments become live properties**
 
 ```nuc
-class Parcel(weight):
-    this.weight = weight
-light = Parcel(4)
-heavy = Parcel(7)
-total = 0
-for Parcel
-    total += it.weight
-assert(total, 11)
+class Product(name):
+    this.name = name
+$Product.total = $Product.price * $Product.quantity
+item = Product(name="pen", price=2, quantity=3)
+assert(item, {"id": "item", "name": "pen", "price": 2, "quantity": 3, "total": 6})
+item.quantity = 5
+assert(item.total, 10)
+item.total
+# return: 10
 ```
 
-- `for Parcel` uses the same one-shot population snapshot, local `it` and
-  imperative suite as `for Parcel:`. The optional colon never replaces the
-  accepted spelling or broadens the source expression.
-- See [NUC 127](docs/nuc-0127.md) and the
-  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
+- [NUC 136](docs/nuc-0136.md) turns a constructor label that names no
+  parameter into a property: the call acts as if the constructor declared
+  the name and assigned `this.<name> = <name>` after its own statements.
+  The class declares only what its constructor uses, and the class-level
+  rule reads `price` and `quantity` like any other property.
+- Positional calls, declared labels and the binding errors for repeated
+  labels are unchanged. See the
+  [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Require the immediate identifier/colon header, then a newline or indent and
-  a real indent after only normal newline/semicolon layout. No `:;`,
-  remain valid with their existing arbitrary expressions and suite forms.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbdb7e41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5779103e` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

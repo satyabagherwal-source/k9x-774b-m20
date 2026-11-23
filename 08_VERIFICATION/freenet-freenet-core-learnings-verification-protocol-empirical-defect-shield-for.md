@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T03:47:08.118Z",
+  "timestamp": "2026-11-23T13:25:07.112Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T03:47:08.118Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T13:25:07.112Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `1adb9678`  
+> **Source Version**: `e655ebd9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T03:47:01.430Z  
+> **Timestamp**: 2026-11-23T13:23:34.109Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T03:47:00.130Z  
+> **Harvest Timestamp**: 2026-11-23T13:23:34.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1763,16 +1763,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6317** (2026-11-22): **feat(telemetry): per-arm CONNECT outcome counters and joiner/acceptor setup split**
-  *Symptoms*: ## Problem The QUIC-native step-1 analysis has no clean control arm. `nat_attempts_connect_*` / `nat_established_connect_*` count every UDP dial, including the rescue UDP dial after a failed native setup and dials to peers that did not offer. `connect_native_setup` is not split by role (spec 3.4 R1).  ## Approach New snapshot fields, recorded where the decision is made (never by subtracting counters): - `connect_arm` (8 entries, `{treated,control}_{attempts,established}_{joiner,acceptor}`): treated is counted by the native dial in `connect_outbound`; control is the decided UDP dial, counted on the acceptor from `native::acceptor_arm` (which `decide_native` now derives its answer from) and on the joiner only when bucket >= its own percent (so it is a subset of true control). The rescue UDP dial is in no arm. - `connect_native_setup_{joiner,acceptor}` (16 entries each); a gateway join stays in the total only. - At `QUIC_NATIVE_PERCENT` = 0 every both-offered pair is control, so the control counters are non-zero on 0.2.163 (pinned by `at_percent_zero_every_offered_pair_is_control`).  ## Testing Unit tests for the arm function, snapshot/reset per counter, the snapshot field-list tests, and driver tests that drive each arm and assert only the right counter moved (joiner, acceptor, native dial by origin). Mutation checks (four mutations: swapped arm condition, treated recorded as control, joiner control insert disabled, acceptor arm guard removed) each fail the intended tests. fmt 
-  **Post-Mortem & Fix Analysis**:
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/45073159748)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/45073159748)
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues, two minor suggestions  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md, transport.md **Files reviewed:** 7  I checked the diff against the rules that apply to it. The diff adds no `.unwrap()` in production code and no unguarded `biased;`. It has no retry loops, and its spawn is short-lived. It adds no catch-all `_ =>` arms to metric classifiers. The new `control_acceptors` set is bounded: it is a subset of `accepted`, which `acceptor_limit` caps. Each entry is removed when its dial result arrives, and the task-local set is dropped when the driver exits, so no GC exemption is left unbounded.  #### Warnings None.  #### Info - `crates/core/src/operations/connect/op_ctx_task.rs:2554` (rule: testing.md / transport.md): The existing source-scrape pin on `dispatch_expect_connection_from` only requires each call site to pass `accept.response.native_decision`. The PR adds a fifth argument, `accept.nati
+- **Issue #6337** (2026-11-23): **test: joiners-behind-one-address no longer depends on CI's backoff variable or one seed**
+  *Symptoms*: ## Problem `connection_lifecycle::tests::joiners_behind_one_address_get_past_transient_eviction` passed on main and failed on every CI run of #6305 (`never joined: [node-19]`), while passing locally on the same commit.  Two causes combined: - **CI sets a variable the test depends on.** CI's Test step sets `FREENET_BACKOFF_BASE_SECS=5`, and `PeerConnectionBackoff::new` reads it, so the simulated join ran with a 5 s connect-failure backoff in CI and the 30 s default everywhere else. - **The test's time budget only fit one seed.** An evicted joiner records a failure against the gateway and waits out the backoff before retrying, so the backoff decides when the last joiner gets in. On main, with the default backoff, the time until every joiner was connected ranged from 38 to 343 virtual seconds across seeds, against a fixed 303 s budget. The one seed the test used happened to finish early. #6305 changes how many random draws happen before this point, which moved that seed's last joiner past the budget.  A trace of seed 1 shows the backoff schedule doing exactly what it should: 17 evictions in five waves (about 0, 32, 56, 200 and 310 s), with five joiners evicted twice. No single joiner was starved.  ## Approach - **Fixed backoff in the sim.** `SimNetwork::with_connect_backoff_base` gives every node an explicit backoff base through `NodeConfig::connect_backoff_base`, which both the gateway backoff and the bridge's peer backoff use. The test pins the production default of 30 s. Prod
 
-- **Issue #6315** (2026-11-22): **fix: evict native legs from the transient pool and fail beside-native waiters on close**
-  *Symptoms*: ## Problem  Two gaps in how the transient connection pool treats QUIC-native legs (gate item 24 of the native-connect plan; both are inert while `NATIVE_DIAL_READY` is false).  a) #6296 exempted every QUIC-native entry, and every UDP entry with a native connection held beside it, from eviction at the transient budget. Once native dialing is on, an unpromoted native leg costs about the same as a UDP one, so around 16 sources each holding native legs could leave the pool with no evictable entry until the zombie sweep or the transport idle timeout.  b) Callbacks queued in `udp_beside_native` for an address were never answered when the budget closed that address, so those callers waited out their own timeout.  ## Approach  a) Only a UDP entry with a native connection held beside it is exempt now. That hold lasts `HELD_NATIVE_WINDOW` (15 s), so the exemption is bounded in time. A native entry is evictable like a UDP one, oldest first within the source holding the most slots. I did not use "evict only legs that never carried a frame": both ends send a first-frame probe as soon as a native connection starts, so every live leg has carried a frame within a round trip and that rule would exempt nearly all of them.  b) `fail_awaiting_connection_callbacks` also fails the `udp_beside_native` requesters for the address. All three budget-close sites call it (eviction victim, refused inbound, uncounted refused promotion), so one change covers them and removes the entry from the map.  ## Test
+- **Issue #6334** (2026-11-23): **CI: Claude rule review is failing to run**
+  *Symptoms*: <!-- claude-rule-review-outage --> @sanity: the `Claude PR Rule Review` workflow could not complete a review, so affected PRs were not reviewed. They show a red `rule-review/warnings` status; the required `Claude Rule Review` check stays green, so merges are not blocked.  If the run ended within about a turn, before any model work, that points at the credential or account behind `CLAUDE_CODE_OAUTH_TOKEN` rather than the diff (usage exhausted, or the token revoked or expired); see #5628 for that pattern. This was opened for a run that did not complete; the error annotation on the run below carries what the action recorded.  First failing run: https://github.com/freenet/freenet-core/actions/runs/45145015310  This issue is opened and closed automatically. It closes itself after the next review that completes, so a flaky reviewer can open and close it repeatedly.
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> I've read the diff and checked the surrounding code against the rules. I'm writing up the review now.  ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 2 (`connection_lifecycle.rs`, `connection_lifecycle/tests.rs`)  - **Cleanup exemptions:** The only exemption left in the eviction path is `held_native`. It is bounded by `HELD_NATIVE_WINDOW` (15 s, `p2p_protoc.rs:614`), and `expire_held_native` enforces it. The PR removes the unbounded exemption, the QUIC-native `e.native` case. That is the pattern the cleanup/GC rule warns about, and the new comment explains the reasoning. - **Regression tests (fix: PR):** The PR adds or updates four tests.   - `eviction_takes_native_entries_and_spares_only_a_held_pair` replaces the old "leaves native legs alone" test. It covers eviction order and the held-pair exemption, and checks the eviction count.   - `an_evicted_address_fails_its_udp_beside_native_callb
+  > A review completed again: https://github.com/freenet/freenet-core/actions/runs/45145015310. Closing.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1789,175 +1786,420 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02e1abb1` (2026-11-22)
-**Commit Message**: fix: evict native legs from the transient pool and fail beside-native waiters on close (#6315)
+### Incident Patch 1: `2fc3d192` (2026-11-23)
+**Commit Message**: test(transport): give the QUIC breaker backoff tests their own state (#6321)
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +23/-11)
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +116/-71)
 ```diff
-@@ -2980,17 +2980,24 @@ impl P2pConnManager {
-                         // whoever fills the budget has to keep opening
-                         // connections to keep it full, rather than holding
-                         // it and refusing every joiner.
--                        // A native leg is never evicted: neither an entry
--                        // that is a QUIC-native connection nor a UDP entry
--                        // with one held beside it (`held_native`), since
--                        // closing either ends a native path. A UDP session
--                        // cannot have a QUIC path while it is unpromoted
--                        // (the upgrade starts only at promotion, which takes
--                        // the connection out of this pool).
--                        let victim = cm.oldest_held_transient(|addr| {
--                            self.held_native.contains_key(&addr)
--                                || self.connections.get(&addr).is_some_and(|e| e.native)
--                        });
-+                        // Only a UDP entry with a native connection held
-+                        // beside it (`held_native`) is spared: the hold lasts
-+                        // `HELD_NATIVE_WINDOW`, so the exemption is bounded
-+                        // in time and closing the entry would end a path the
-+                        // two ends are still settling. A QUIC-native entry is
-+                        // evictable like a UDP one: it costs a requester the
-+                        // same, a native leg that never promotes is closed
-+                        // by nothing but the zombie sweep or the idle
-+                        // timeout, and exempting it (or only the ones that
-+                        // have not carried a frame, which the first-frame
-+                        // probe makes every live leg within a round trip)
-+                        // would let a few sources fill the pool with legs
-+                        // that cannot be evicted. A UDP session cannot have
-+                        // a QUIC path while it is unpromoted (the upgrade
-+                        // starts only at promotion, which takes the
-+                        // connection out of this pool).
-+                        let victim =
-+                            cm.oldest_held_transient(|addr| self.held_native.contains_key(&addr));
-                         if let Some(victim) = victim {
-                             cm.record_transient_eviction(victim);
-                             self.drop_connection_by_addr(
-@@ -3409,6 +3416,11 @@ async fn fail_awaiting_connection_callbacks(state: &mut EventListenerState, addr
-         }
-     }
-     state.awaiting_connection_txs.remove(&addr);
-+    // A UDP dial queued beside a native one for this address is a waiter
-+    // too: the budget has closed the address it was to connect. An inbound
-+    // native eviction thus fails our pending outbound's UDP waiters, as it
-+    // already does for `awaiting_connection`.
-+    fail_udp_beside_native(state, addr).await;
+@@ -307,19 +307,83 @@ fn backoff_first() -> Duration {
+     BACKOFF_FIRST
  }
  
- /// Sends the first-frame probe on a native connection's channel: a message
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +83/-27)
-```diff
-@@ -5928,13 +5928,14 @@ async fn eviction_takes_from_the_source_holding_the_most_slots() {
-     }
- }
- 
--/// (a) Eviction never takes a native leg. With a UDP entry that has a native
--/// connection held beside it, an unpromoted QUIC-native entry, and one plain
--/// unpromoted UDP entry holding the budget, an arrival evicts the plain entry
--/// even though both native legs are older; once only native legs remain, an
--/// arrival is refused rather than closing one of them.
-+/// Eviction spares only a UDP entry with a native connection held beside it
-+/// (the hold lasts `HELD_NATIVE_WINDOW`), and takes a QUIC-native entry like
-+/// a UDP one, oldest first. So legs a few sources hold cannot make the pool
-+/// non-evictable: here the native entry is older than the plain one and goes
-+/// first, then the plain one, then the arrivals; the held pair, older than all
-+/// of them, is never the victim.
- #[tokio::test]
--async fn eviction_leaves_native_legs_alone() {
-+async fn eviction_takes_native_entries_and_spares_only_a_held_pair() {
-     let mut h = non_gateway_with_budget("transient-evict-native-legs", 3).await;
-     let cm = h.mgr.bridge.op_manager.ring.connection_manager.clone();
-     let pair = SocketAddr::from(([198, 51, 100, 223], 7375));
-@@ -5958,37 +5959,55 @@ async fn eviction_leaves_native_legs_alone() {
-     let first = SocketAddr::from(([198, 51, 100, 224], 7376));
-     unexpected_inbound(&mut h, first).await;
-     assert!(
--        !h.mgr.connections.contains_key(&plain),
--        "the plain entry is evicted"
-+        !h.mgr.connections.contains_key(&native),
-+        "the older native entry is evicted"
-     );
-     assert!(
--        h.mgr.connections.contains_key(&first),
--        "and the arrival admitted"
-+        h.mgr.connections.contains_key(&plain),
-+        "the plain one stays"
-     );
-+    assert!(h.mgr.connections.contains_key(&first), "arrival admitted");
-+
-+    let second = SocketAddr::from(([198, 51, 100, 240], 7388));
-+    unexpected_inbound(&mut h, second).await;
-+    assert!(!h.mgr.connections.contains_key(&plain));
-+    let third = SocketAddr::from(([198, 51, 100, 241], 7389));
-+    unexpected_inbound(&mut h, third).await;
-+    assert!(!h.mgr.connections.contains_key(&first));
-+    assert!(h.mgr.connections.contains_key(&second));
-+    assert!(h.mgr.connections.contains_key(&third));
-     assert!(h.mgr.connections.contains_key(&pair), "the pair stays");
-     assert!(
-         h.mgr.held_native.contains_key(&pair),
-         "with its held native connection"
-     );
-+    assert_eq!(cm.transient_evictions(), 3);
+-/// The start delay [`gate`] decided for this run, until the transport waits
+-/// it out ([`wait_out_crash_loop_backoff`]).
+-static BACKOFF: parking_lot::Mutex<Option<Duration>> = parking_lot::Mutex::new(None);
+-
+-/// Set when this start is in a crash-loop backoff, so the binary's startup
+-/// update check runs after a few seconds of jitter instead of its 0-60 s one
+-/// ([`quic_crash_loop_update_now`]).
+-static UPDATE_NOW: AtomicBool = AtomicBool::new(false);
+-
+-fn note_backoff(delay: Duration) {
+-    *BACKOFF.lock() = Some(delay);
+-    BACKOFF_PENDING.store(true, Ordering::SeqCst);
+-    UPDATE_NOW.store(true, Ordering::Relaxed);
++/// The crash-loop backoff of one start: the delay [`gate`] decided, whether
++/// the wait is still pending, whether the update check should hurry, and the
++/// wakeup for [`Backoff::wait_for_transport_open`].
++///
++/// The binary has exactly one, [`BACKOFF`]. It is a value rather than four
++/// loose statics so a test can own its own and decide a backoff without
++/// touching the one every node built in the same test process reads
++/// ([`wait_out_crash_loop_backoff`] runs at the start of every node's event
++/// loop), which would take the test's delay and sleep through it.
++pub(super) struct Backoff {
++    /// The start delay, until the transport waits it out.
++    delay: parking_lot::Mutex<Option<Duration>>,
++    /// Set from [`Backoff::note`] until [`Backoff::wait_out`] ends.
++    pending: AtomicBool,
++    /// Set when this start is in a crash-loop backoff, so the binary's startup
++    /// update check runs after a few seconds of jitter instead of its 0-60 s
++    /// one ([`quic_crash_loop_update_now`]).
++    update_now: AtomicBool,
++    /// Wakes [`Backoff::wait_for_transport_open`] when the backoff wait ends.
++    over: tokio::sync::Notify,
 +}
 +
-+/// Callbacks queued for a UDP dial beside a native one are failed when the
-+/// transient budget closes that address by eviction, instead of waiting out
-+/// their own timeout; the entry is removed from `udp_beside_native` too.
-+#[tokio::test]
-+async fn an_evicted_address_fails_its_udp_beside_native_callbacks() {
-+    let mut h = non_gateway_with_budget("transient-evict-fails-beside", 1).await;
-+    let victim = SocketAddr::from(([198, 51, 100, 245], 7401));
-+    unexpected_inbound(&mut h, victim).await;
-+    let (callback, mut waiter) = mpsc::channel::<crate::message::ConnectResult>(1);
-+    h.state
-+        .udp_beside_native
-+        .entry(victim)
-+        .or_default()
-+        .push((Transaction::new::<ConnectMsg>(), Box::new(callback)));
++/// The binary's backoff: what [`gate`] decides and what the transport,
++/// the update check and the update probation read.
++static BACKOFF: Backoff = Backoff::new();
 +
-+    let arrival = SocketAddr::from(([198, 51, 100, 246], 7402));
-+    unexpected_inbound(&mut h, arrival).await;
-+    assert!(!h.mgr.connections.contains_key(&victim), "premise: evicted");
-+    assert!(h.mgr.connections.contains_key(&arrival), "arrival admitted");
-     assert!(
--        h.mgr.connections.contains_key(&native),
--        "the native entry stays"
-+        matches!(waiter.try_recv(), Ok(Err(_))),
-+        "the beside waiter is told"
-     );
--
--    // Now the oldest evictable entry is the arrival itself; the next one
--    // evicts it, and with only native legs left the one after is refused.
--    let second = SocketAddr::from(([198, 51, 100, 240], 7388));
--    unexpected_inbound(&mut h, second).await;
--    assert!(!h.mgr.connections.contains_key(&first));
--    assert!(h.mgr.connections.contains_key(&second));
--    assert!(cm.drop_transient(second).is_some());
--    assert!(cm.try_register_transient(SocketAddr::from(([198, 51, 100, 241], 1)), None));
--    let refused = SocketAddr::from(([198, 51, 100, 242], 7389));
--    unexpected_inbound(&mut h, refused).await;
--    assert!(!h.mgr.connections.contains_key(&refused), "refused");
--    assert!(h.mgr.held_native.contains_key(&pair));
--    assert!(h.mgr.connections.contains_key(&native));
--    assert_eq!(cm.transient_evictions(), 2);
-+    assert!(!h.state.udp_beside_native.contains_key(&victim));
++impl Backoff {
++    pub(super) const fn new() -> Self {
++        Self {
++            delay: parking_lot::Mutex::new(None),
++            pending: AtomicBool::new(false),
++            update_now: AtomicBool::new(false),
++            over: tokio::sync::Notify::const_new(),
++        }
++    }
++
++    pub(super) fn note(&self, delay: Duration) {
++        *self.delay.lock() = Some(delay);
++        self.pending.store(true, Ordering::SeqCst);
++        self.update_now.store(true, Ordering::Relaxed);
++    }
++
++    /// See [`wait_out_crash_loop_backoff`].
++    async fn wait_out(&self, shutting_down: &AtomicBool) -> bool {
++        let Some(delay) = self.delay.lock().take() else {
++            return false;
++        };
++        use crate::simulation::TimeSource;
++        let time = crate::simulation::RealTime::new();
++        let waited = wait_unless(
++            delay,
++            HOLDER_POLL,
++            || shutting_down.load(Ordering::SeqCst),
++            |d| time.sleep(d),
++        )
++        .await;
++        let stopped = shutting_down.load(Ordering::SeqCst);
++        self.pending.store(false, Ordering::SeqCst);
++        self.over.notify_waiters();
++        if stopped {
++            tracing::info!(
++                waited_secs = waited.as_secs(),
++                "Stopped during the QUIC crash-loop backoff; the transport is not opened"
++            );
++        } else {
++            tracing::info!(
++                waited_secs = waited.as_secs(),
++                "QUIC crash-loop backoff over; opening the transport"
++            );
++        }
++        stopped
++    }
++
++    /// See [`wait_for_transport_open`].
++    async fn wait_for_transport_open(&self) -> bool {
++        wait_while_pending(&self.pending, &self.over).await
++    }
  }
  
- /// A connection the transient budget closes tells whoever still waits for a
-@@ -6017,6 +6036,12 @@ async fn a_budget_close_fails_the_waiters_for_its_address() {
-         .entry(remote)
-         .or_default()
-         .push(Box::new(callback));
-+    let (beside_callback, mut
+ /// Whether this start found the node in a QUIC crash loop with no UDP to fall
+@@ -330,7 +394,7 @@ fn note_backoff(delay: Duration) {
+ /// through the same claim: a release pinned bad, the lockout, a release
+ /// cooling down and the download budget all still refuse it.
+ pub fn quic_crash_loop_update_now() -> bool {
+-    UPDATE_NOW.load(Ordering::Relaxed)
++    BACKOFF.update_now.load(Ordering::Relaxed)
+ }
+ 
+ /// Wait out this start's crash-loop backoff, if [`gate`] decided one, before
+@@ -340,41 +404,9 @@ pub fn quic_crash_loop_update_now() -> bool {
+ /// wait again. Real time: only the binary sets a backoff. Returns true when a
+ /// stop ended the wait: the caller must not open the transport.
+ pub(crate) async fn wait_out_crash_loop_backoff(shutting_down: &AtomicBool) -> bool {
+-    let Some(delay) = BACKOFF.lock().take() else {
+-        return false;
+-    };
+-    use crate::simulation::TimeSource;
+-    let time = crate::simulation::RealTime::new();
+-    let waited = wait_unless(
+-        delay,
+-        HOLDER_POLL,
+-        || shutting_down.load(Ordering::SeqCst),
+-        |d| time.sleep(d),
+-    )
+-    .await;
+-    let stopped = shutting_down.load(Ordering
+```
+
+**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +7/-1)
+```diff
+@@ -400,6 +400,7 @@ pub(super) fn gate<T>(
+     now: SystemTime,
+     role: BreakerRole,
+     udp_fallback: bool,
++    backoff: &super::Backoff,
+ ) -> (Gated<T>, Counted) {
+     if settings.is_none() {
+         return (
+@@ -464,7 +465,7 @@ pub(super) fn gate<T>(
+                 );
+             }
+             PENDING.lock().marker = marker.map(|marker| (path, marker));
+-            super::note_backoff(delay);
++            backoff.note(delay);
+             metrics.record_quic_breaker_trip();
+             tracing::warn!(
+                 short_runs = decision.short_runs,
+@@ -1596,6 +1597,7 @@ mod tests {
+             now,
+             BreakerRole::Peer,
+             super::super::UDP_FALLBACK,
++            &super::super::Backoff::new(),
+         );
+         assert_eq!(empty.settings, None);
+         assert_eq!(empty.breaker, BreakerOutcome::NotConsulted);
+@@ -1610,6 +1612,7 @@ mod tests {
+             now,
+             BreakerRole::Peer,
+             super::super::UDP_FALLBACK,
++            &super::super::Backoff::new(),
+         );
+         assert_eq!(gated.breaker, BreakerOutcome::NotConsulted);
+     }
+@@ -1642,6 +1645,7 @@ mod tests {
+             now,
+             BreakerRole::Peer,
+             super::super::UDP_FALLBACK,
++            &super::super::Backoff::new(),
+         );
+         assert_eq!(gated.settings, None);
+         assert_eq!(gated.breaker, BreakerOutcome::Decided(Verdict::Trip));
+@@ -1655,6 +1659,7 @@ mod tests {
+             now,
+             BreakerRole::Peer,
+             super::super::UDP_FALLBACK,
++            &super::super::Backoff::new(),
+         );
+         assert_eq!(cooling.settings, None);
+         assert_eq!(
+@@ -1700,6 +1705,7 @@ mod tests {
+             now,
+             BreakerRole::Peer,
+             super::super::UDP_FALLBACK,
++            &super::super::Backoff::new(),
+         );
+         assert_eq!(gated.settings, None);
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 2: `23de0069` (2026-11-23)
+**Commit Message**: fix(transport): stop the ring/transport desync error firing for a joiner's gateway connection (#6331)
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +122/-2)
+```diff
+@@ -1871,10 +1871,17 @@ impl P2pConnManager {
+                     ring_connections,
+                     "Event loop stats"
+                 );
+-                // Detect transport/ring divergence: transport has connections but ring doesn't
+-                if transport_connections > 0 && ring_connections == 0 {
++                if let Some(unexpected) = ring_transport_desync(
++                    ctx.connections.keys().copied(),
++                    ring_connections,
++                    |addr| {
++                        op_manager.ring.connection_manager.is_transient(addr)
++                            || ctx.gateways.iter().any(|gw| gw.socket_addr() == Some(addr))
++                    },
++                ) {
+                     tracing::error!(
+                         transport_connections,
++                        unexpected_transport_connections = unexpected,
+                         ring_connections,
+                         "RING_TRANSPORT_DESYNC: transport has connections but ring topology is empty - \
+                          connections are not being promoted or are being immediately pruned"
+@@ -4289,6 +4296,32 @@ fn warn_transient_send_failure(
+     }
+ }
+ 
++/// The number of transport connections that should have reached the ring but
++/// did not, when the ring is empty; `None` when there is no such connection.
++///
++/// A node that is joining holds a connection to its gateway outside the ring
++/// for as long as the join takes: a transient one, or one whose transient
++/// entry expired while the node keeps routing CONNECTs through it. Neither is
++/// a divergence between transport and ring, so `expected_outside_ring` (a
++/// transient connection, or one to a configured gateway) excludes them.
++/// Counting them made every node still joining at a stats tick log
++/// RING_TRANSPORT_DESYNC, including a peer that every acceptor refused for
++/// lack of capacity.
++fn ring_transport_desync(
++    transport_addrs: impl IntoIterator<Item = SocketAddr>,
++    ring_connections: usize,
++    expected_outside_ring: impl Fn(SocketAddr) -> bool,
++) -> Option<usize> {
++    if ring_connections > 0 {
++        return None;
++    }
++    let unexpected = transport_addrs
++        .into_iter()
++        .filter(|addr| !expected_outside_ring(*addr))
++        .count();
++    (unexpected > 0).then_some(unexpected)
++}
++
+ /// Whether the `count`th transient send failure on a connection is logged.
+ fn transient_failure_warns(count: u64) -> bool {
+     count.is_power_of_two()
+@@ -4426,6 +4459,93 @@ fn extract_sender_from_message_mut(msg: &mut NetMessage) -> Option<&mut PeerKeyL
+ 
+ // TODO: add testing for the network loop, now it should be possible to do since we don't depend upon having real connections
+ 
++#[cfg(test)]
++mod ring_transport_desync_tests {
++    use super::ring_transport_desync;
++    use std::net::SocketAddr;
++
++    fn addr(port: u16) -> SocketAddr {
++        SocketAddr::from(([127, 0, 0, 1], port))
++    }
++
++    /// A joining node holds only its gateway connection, which is transient
++    /// (or, once its transient entry expires, still a connection to a
++    /// configured gateway). The stranded-holder simulation logged ten false
++    /// RING_TRANSPORT_DESYNC errors from exactly this state.
++    #[test]
++    fn a_joiner_holding_only_its_gateway_connection_is_not_a_desync() {
++        let gateway = addr(31337);
++        assert_eq!(
++            ring_transport_desync([gateway], 0, |a| a == gateway),
++            None,
++            "the gateway connection a joiner holds is expected outside the ring"
++        );
++    }
++
++    #[test]
++    fn a_connection_that_should_be_in_the_ring_is_a_desync() {
++        let gateway = addr(31337);
++        let peer = addr(40000);
++        assert_eq!(
++            ring_transport_desync([gateway, peer], 0, |a| a == gateway),
++            Some(1),
++            "only the connection outside the expected set is counted"
++        );
++    }
++
++    #[test]
++    fn a_non_empty_ring_is_never_a_desync() {
++        assert_eq!(ring_transport_desync([addr(40000)], 1, |_| false), None);
++    }
++
++    #[test]
++    fn no_transport_connections_is_not_a_desync() {
++        assert_eq!(ring_transport_desync([], 0, |_| false), None);
++    }
++
++    /// The stats block must decide through `ring_transport_desync`, passing
++    /// the transient and gateway exclusions. Reverting to a raw
++    /// `connections.len() > 0` test brings the false errors back, and the
++    /// helper tests above would stay green.
++    #[test]
++    fn the_stats_block_decides_through_the_helper_with_both_exclusions() {
++        let source = include_str!("p2p_protoc.rs");
++        let production = &source[..source
++            .find("#[cfg(test)]\nmod ring_transport_desync_tests")
++            .expect("this test module's own header")];
++        let start = production
++            .find("// Periodic stats logging")
++            .expect("the stats block");
++        let end = start
++            + production[start..]
++                .
+```
+
+---
+
+### Incident Patch 3: `02ab90c3` (2026-11-23)
+**Commit Message**: build: release 0.2.163 (#6329)
+
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -1899,7 +1899,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fdev"
+-version = "0.3.324"
++version = "0.3.325"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.162"
++version = "0.2.163"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1715,7 +1715,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.162"
++version = "0.2.163"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.162"
++version = "0.2.163"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+```
+
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.324"
++version = "0.3.325"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.162/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.163/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
+ 
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.162/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.163/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
+ 
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.162", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.163", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6337** (2026-11-23): test: joiners-behind-one-address no longer depends on CI's backoff variable or one seed (@sanity)
+- **PR #6331** (2026-11-23): fix(transport): stop the ring/transport desync error firing for a joiner's gateway connection (@sanity)
+- **PR #6329** (2026-11-23): build: release 0.2.163 (@sanity)
+- **PR #6326** (2026-11-23): test(sim): native zero-percent mesh test no longer depends on the release floor (@sanity)
+- **PR #6321** (2026-11-23): test(transport): give the QUIC breaker backoff tests their own state (@sanity)
 - **PR #6317** (2026-11-22): feat(telemetry): per-arm CONNECT outcome counters and joiner/acceptor setup split (@sanity)
-- **PR #6315** (2026-11-22): fix: evict native legs from the transient pool and fail beside-native waiters on close (@sanity)
-- **PR #6314** (2026-11-22): feat(transport): run the egress cap on VirtualTime for a simulated QUIC node (@sanity)
-- **PR #6313** (2026-11-22): feat(config): warn that UDP-only transport keys stop applying once legacy UDP is removed (@sanity)
-- **PR #6312** (2026-11-22): chore(release): ship the QUIC-native wire variants in 0.2.163 (@sanity)
-- **PR #6311** (2026-11-22): test(transport): a dead native connection leaves no entry at this end (@sanity)
 
 ---
 
@@ -1977,57 +2219,79 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. evict native legs from the transient pool and fail beside-native waiters on clos
+## X. test(transport): give the QUIC breaker backoff tests their own state
 
 **RULE**:
-When implementing operations in `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02e1abb1`: evict native legs from the transient pool and fail beside-native waiters on close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fc3d192`: test(transport): give the QUIC breaker backoff tests their own state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        // Only a UDP entry with a native connection held
-                        // beside it (`held_native`) is spared: the hold lasts
-                        // `HELD_NATIVE_WINDOW`, so the exemption is bounded
-                        // in time and closing the entry would end a path the
-                        // two ends are still settling. A QUIC-native entry is
-                        // evictable like a UDP one: it costs a requester the
-                        // same, a native leg that never promotes is closed
-                        // by nothing but the zombie sweep or the idle
-                        // timeout, and exempting it (or only the ones that
-                        // have not carried a frame, which the first-frame
-                        // probe makes every live leg within a round trip)
-                        // would let a few sources fill the pool with legs
-                        // that cannot be evicted. A UDP session cannot have
-                        // a QUIC path while it is unpromoted (the upgrade
-                        // starts only at promotion, which takes the
-                        // connection out of this pool).
-         
+/// The crash-loop backoff of one start: the delay [`gate`] decided, whether
+/// the wait is still pending, whether the update check should hurry, and the
+/// wakeup for [`Backoff::wait_for_transport_open`].
+///
+/// The binary has exactly one, [`BACKOFF`]. It is a value rather than four
+/// loose statics so a test can own its own and decide a backoff without
+/// touching the one every node built in the same test process reads
+/// ([`wait_out_crash_loop_backoff`] runs at the start of every node's event
+/// loop), which would take the test's delay and sleep through it.
+pub(super) struct Backoff {
+    /// The start delay, until the transport waits it out.
+    delay: parking_lot::Mutex<Option<Duration>>,
+    /// Set from [`Backoff::note`] until [`Backoff::wait_out`] ends.
+    pending: AtomicBool,
+    /// Set when this start is in a crash-loop backoff, so the binary's startup
+    /// update check runs after a few seconds of jitter instead of its 0-60 s
+    /// one ([`quic_crash_loop_update_now`]).
+    update_now: AtomicBool,
+    /// Wakes [`Backoff::wait_for_transport_open`] when the backoff wait ends.
+    over: tokio::sync::Notify,
+}
+
+/// The binary's backoff: what [`gate`] decides and
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                        // A native leg is never evicted: neither an entry
-                        // that is a QUIC-native connection nor a UDP entry
-                        // with one held beside it (`held_native`), since
-                        // closing either ends a native path. A UDP session
-                        // cannot have a QUIC path while it is unpromoted
-                        // (the upgrade starts only at promotion, which takes
-                        // the connection out of this pool).
-                        let victim = cm.oldest_held_transient(|addr| {
-                            self.held_native.contains_key(&addr)
-                                || self.connections.get(&addr).is_some_and(|e| e.native)
-                        });
+/// The start delay [`gate`] decided for this run, until the transport waits
+/// it out ([`wait_out_crash_loop_backoff`]).
+static BACKOFF: parking_lot::Mutex<Option<Duration>> = parking_lot::Mutex::new(None);
+
+/// Set when this start is in a crash-loop backoff, so the binary's startup
+/// update check runs after a few seconds of jitter instead of its 0-60 s one
+/// ([`quic_crash_loop_update_now`]).
+static UPDATE_NOW: AtomicBool = AtomicBool::new(false);
+
+fn note_backoff(delay: Duration) {
+    *BACKOFF.lock() = Some(delay);
+    BACKOFF_PENDING.store(true, Ordering::SeqCst);
+    UPDATE_NOW.store(true, Ordering::Relaxed);
+    UPDATE_NOW.load(Ordering::Relaxed)
+    let Some(delay) = BACKOFF.lock().take() else {
+        return false;
+    };
+    use crate::simulation::TimeSource;
+    let time = crate::simulation::RealTime::new();
+    let waited = wait_unless(
+        delay,
+        HOLDER_POLL,
+        || shutting_down.load(Ordering::SeqCst),
+        |d| time.sleep(d),
+    )
+    .await;
+    let stopped = shutting_down.load(Ordering
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02e1abb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fc3d192` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

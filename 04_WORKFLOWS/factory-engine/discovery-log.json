@@ -22003,5 +22003,32 @@
     "qualityScore": 1662,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-23T13:04:16.793Z"
+  },
+  {
+    "name": "inclusionAI/LingSante-3.1-flash",
+    "fullName": "inclusionAI/LingSante-3.1-flash",
+    "url": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: inclusionAI/LingSante-3.1-flash (86 likes, 397 downloads)",
+    "likes": 86,
+    "downloads": 397,
+    "qualityScore": 1257,
+    "discoveredAt": "2026-11-23T13:20:59.513Z"
+  },
+  {
+    "name": "bama",
+    "fullName": "daveebbelaar/bama",
+    "url": "https://github.com/daveebbelaar/bama",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "BAMA: Build Any Mac App. Agent skills to research, clone, design, build, optimize, and test native macOS apps with Swift and SwiftUI.",
+    "stars": 1950,
+    "forks": 238,
+    "openIssues": 3,
+    "language": "Swift",
+    "qualityScore": 1202,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-23T13:21:15.937Z"
   }
 ]

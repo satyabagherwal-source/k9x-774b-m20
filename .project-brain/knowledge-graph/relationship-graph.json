@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-23T09:49:06.882Z",
+  "updated_at": "2026-11-23T13:25:05.020Z",
   "statistics": {
-    "total_nodes": 481,
+    "total_nodes": 482,
     "total_edges": 202,
     "domain_distribution": {
-      "D": 293,
+      "D": 294,
       "M": 1,
       "H": 86,
       "J": 22,
@@ -10746,6 +10746,28 @@
       ],
       "created_at": "2026-11-23T09:49:06.882Z",
       "updated_at": "2026-11-23T09:49:06.882Z"
+    },
+    "DOM-D-ED1762B4": {
+      "id": "DOM-D-ED1762B4",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/LingSante-3.1-flash",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-inclusionai-lingsante-3.1-flash/hf-inclusionai-lingsante-3.1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T13:24:26.043Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-lingsante-3.1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-23T13:25:05.020Z",
+      "updated_at": "2026-11-23T13:25:05.020Z"
     }
   },
   "edges": [

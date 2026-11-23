@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T13:06:58.693Z",
-  "total_cycles_completed": 11712,
-  "total_learnings_persisted": 11712,
-  "total_rules_promoted": 10878,
+  "last_updated": "2026-11-23T13:24:22.829Z",
+  "total_cycles_completed": 11716,
+  "total_learnings_persisted": 11716,
+  "total_rules_promoted": 10880,
   "history": [
-    {
-      "timestamp": "2026-11-22T15:41:31.312Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:42:07.223Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:55:53.166Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:58:57.122Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T16:12:17.985Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1403,6 +1375,34 @@
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:23:27.599Z",
+      "repository": "daveebbelaar/bama",
+      "learningId": "learn-github-daveebbelaar-bama",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:23:35.418Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:23:40.099Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:24:22.829Z",
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -12350,3 +12350,8 @@ Every entry in this ledger must capture:
 | `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `445abd1d` | Multi-dimensional audit evidence | 2026-11-23T13:06:46.916Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `7da6ab8d` | Multi-dimensional audit evidence | 2026-11-23T13:06:55.266Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ffead11c` | Multi-dimensional audit evidence | 2026-11-23T13:06:58.686Z |
+| `learn-github-daveebbelaar-bama` | `https://github.com/daveebbelaar/bama` | `22dc792e` | Multi-dimensional audit evidence | 2026-11-23T13:23:27.592Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `e655ebd9` | Multi-dimensional audit evidence | 2026-11-23T13:23:35.411Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5779103e` | Multi-dimensional audit evidence | 2026-11-23T13:23:40.038Z |
+| `learn-huggingface-inclusionai-lingsante-3-1-flash` | `https://huggingface.co/inclusionAI/LingSante-3.1-flash` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-23T13:24:22.822Z |
+| `learn-dom-d-ed1762b4` | `project://hf-inclusionai-lingsante-3.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md` | 2026-11-23T13:25:05.024Z |

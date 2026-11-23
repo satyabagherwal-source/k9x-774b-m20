@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T13:06:58.698Z",
+  "last_updated": "2026-11-23T13:24:22.834Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f234e552972488bc5c1ce4bdd46aa31c08df3e3698d60978f6ebe186b5af874a",
-      "verified_at": "2026-11-23T00:31:31.736Z",
+      "content_hash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
+      "verified_at": "2026-11-23T13:23:40.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:31:31.736Z"
+      "last_updated": "2026-11-23T13:23:40.103Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
-      "verified_at": "2026-11-23T03:47:02.503Z",
+      "content_hash": "433dd0742bb8c0a7fd0baa947385e2162f6e9c8048942c24e85838d8ace66ff2",
+      "verified_at": "2026-11-23T13:23:35.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T03:47:02.503Z"
+      "last_updated": "2026-11-23T13:23:35.423Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -19979,6 +19979,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-23T13:06:46.927Z"
+    },
+    "daveebbelaar/bama": {
+      "repository": "daveebbelaar/bama",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-daveebbelaar-bama",
+      "content_hash": "cc18914fab509f43aaaeebb6c0f1ec849348528ee4acdd7d437225ddba8d3dd3",
+      "verified_at": "2026-11-23T13:23:27.603Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T13:23:27.603Z"
+    },
+    "inclusionAI/LingSante-3.1-flash": {
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-inclusionai-lingsante-3-1-flash",
+      "content_hash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
+      "verified_at": "2026-11-23T13:24:22.833Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T13:24:22.833Z"
     }
   },
   "repos": {

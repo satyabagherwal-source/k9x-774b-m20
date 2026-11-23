@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T13:07:05.232Z",
-  "total_records": 2412,
+  "last_updated": "2026-11-23T13:25:07.504Z",
+  "total_records": 2417,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 929,
+      "total": 932,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -995,7 +995,10 @@
         "DOM-D-38571EB1",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-instruct-2507-core-invariants",
         "DOM-D-CBA8A85D",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants",
+        "DOM-D-ED1762B4",
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor"
       ]
     },
     "E": {
@@ -2113,7 +2116,7 @@
       ]
     },
     "I": {
-      "total": 131,
+      "total": 133,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2245,7 +2248,9 @@
         "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
         "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",
-        "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants",
+        "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants"
       ]
     },
     "J": {
@@ -9778,8 +9783,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "c496b21b7e1c784fef22bc462de77758b03d6f32d64516fdf36eaf7ac0c109ef",
-      "created_at": "2026-11-23T03:47:02.891Z"
+      "content_hash": "7432ae12541000320d10c8c97de65760e79393182da7ea609a5af477cbb11ed0",
+      "created_at": "2026-11-23T13:23:35.930Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9856,8 +9861,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "9a63ca858ae2ccbeb404aa977a285ddb956309b41ad45c5a0280df49b1e2fdb9",
-      "created_at": "2026-11-23T03:47:08.410Z"
+      "content_hash": "5d5de4be5ef0c6edc1bc197e963af9311cc0b78dbf5058909426eb3a9795b8c7",
+      "created_at": "2026-11-23T13:25:07.504Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15491,8 +15496,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "7f403671750f427212080a136d63e4548a67831ceacf837cf3405c088b3e34bc",
-      "created_at": "2026-11-23T00:31:32.248Z"
+      "content_hash": "dfa05567875f5dccfe620a374d4f726638ffbaa22a09459336ff58efea3b1e5e",
+      "created_at": "2026-11-23T13:23:40.607Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -40514,6 +40519,84 @@
       "repository": "bridgecrewio-checkov-learnings",
       "content_hash": "499e9a39d2b5d9cbddb48272555d2b90e3bc6edde4e83d584745e1ee8d7316c4",
       "created_at": "2026-11-23T13:07:05.232Z"
+    },
+    "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: daveebbelaar/bama Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-daveebbelaar-bama-content-information-intelligence-daveebbelaar-bama-core-invari.md",
+      "repository": "daveebbelaar/bama",
+      "content_hash": "74064bbf096d007945cafb444ae3c280332a9b97fe732bebe8928e46f3e582ae",
+      "created_at": "2026-11-23T13:23:28.121Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-research-knowledge-intelligence-inclusionai-l.md",
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "content_hash": "6949623cce3f3915e30e331805cb04999c0d873014df43c0896476a0231f0177",
+      "created_at": "2026-11-23T13:24:23.106Z"
+    },
+    "DOM-D-ED1762B4": {
+      "record_id": "DOM-D-ED1762B4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/LingSante-3.1-flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inclusionAI/LingSante-3.1-flash](https://huggingface.co/inclusionAI/LingSante-3.1-flash))  \n> **Source Version**: `hf-inclusion`  \n> **License",
+      "content_hash": "c678e5c21a3b57037e075cddda299a4245ab483b21663841bd48bb8282cd9d67",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-inclusionai-lingsante-3.1-flash/hf-inclusionai-lingsante-3.1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T13:24:26.043Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-lingsante-3.1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inclusionai-lingsante-3.1-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T13:25:04.985Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-inclusionai-lingsante-3.1-flash-learnings",
+      "content_hash": "f35fed2113670527e6bd151cb2efabfad348190dcb80a58b69ce258ab5320744",
+      "created_at": "2026-11-23T13:25:05.410Z"
+    },
+    "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: daveebbelaar-bama-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-daveebbelaar-bama-learnings-content-information-intelligence-daveebbelaar-bama-l.md",
+      "repository": "daveebbelaar-bama-learnings",
+      "content_hash": "c1e51f24e3f605c0e59d89e3917558b72496b0551b00249b5b7d7637e04d7653",
+      "created_at": "2026-11-23T13:25:06.372Z"
     }
   }
 }

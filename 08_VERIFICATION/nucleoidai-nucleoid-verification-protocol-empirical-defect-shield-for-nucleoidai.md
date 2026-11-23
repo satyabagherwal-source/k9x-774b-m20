@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "abc138d4",
+  "source_version": "5779103e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T00:31:32.029Z",
+  "timestamp": "2026-11-23T13:23:40.387Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `abc138d4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T00:31:32.029Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `5779103e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T13:23:40.387Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `abc138d4`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `5779103e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:31:30.453Z  
+> **Harvest Timestamp**: 2026-11-23T13:23:39.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,396 +1592,434 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abc138d4` (2026-11-23)
-**Commit Message**: Draft NUC 138 Reactive Secant
+### Incident Patch 1: `5779103e` (2026-11-23)
+**Commit Message**: NUC 136 Unknown Constructor Arguments as Properties
 
-Category: Utility enhancement.
-Add only native Math.sec(value), exactly 1.0 / first.cos() after existing intrinsic conversion, with radians and unchanged eager arguments, supplied-Undefined gate, dependencies, shadowing, rollback and legacy syntax.
-Continuous mode; one unbiased live-registry draw selected Utility enhancement, index2 of5. Immutable accepted reciprocal-cosine counterparts and independent token comparison remain required. No hint, scoring or strategy learner configured.
+Accepted on the user-requested basis. The user asked for this feature
+directly ("Automatically accept unknown argument in constructor in all
+constructor types"), and the frozen candidate meets all three hard
+criteria.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+A constructor-call label that names no parameter of the effective
+constructor no longer raises TypeError("Unknown constructor argument
+..."). It binds like one more parameter and is assigned as
+this.<name> = <name> once the constructor's statements finish, normally
+or with return. This holds on every constructor route, super(...)
+included. Duplicate, positional-after-label and rest-label errors stay.
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+The user accepted three things in advance:
+- 22-Nov-2026: the one compatibility break.
+- 23-Nov-2026: the NUC 51 spec byte-seal update that migrating its
+  spec case entails.
+- 23-Nov-2026: assigning labels after a return.
+The 14 assertions that pinned the unknown-name error move to the new
+reading of the same calls. The NUC lists each one with its
+consequences.
+
+Independent evaluator: policy decision Rejected, solely because the
+core gate flags that authorized migration, the case "Nucleoid validates
+constructor names
+
+**File**: `README.md` (modified, +25/-0)
 ```diff
-@@ -139,6 +139,7 @@ Created: 31-Jul-2026
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Accepted |
-+| [138](nuc-0138.md) | Reactive Secant | Draft |
+@@ -3024,6 +3024,31 @@ assert([file.draft, file.table], [false, false])
+   JavaScript and Python spellings remain available.
+ - See the [root contract](nucleoid.spec.md#rust-string-boundary-method-aliases).
  
- ### Reasoning enhancement
++## Unknown constructor arguments as properties
++
++**Unknown constructor arguments become live properties**
++
++```nuc
++class Product(name):
++    this.name = name
++$Product.total = $Product.price * $Product.quantity
++item = Product(name="pen", price=2, quantity=3)
++assert(item, {"id": "item", "name": "pen", "price": 2, "quantity": 3, "total": 6})
++item.quantity = 5
++assert(item.total, 10)
++item.total
++# return: 10
++```
++
++- [NUC 136](docs/nuc-0136.md) turns a constructor label that names no
++  parameter into a property: the call acts as if the constructor declared
++  the name and assigned `this.<name> = <name>` after its own statements.
++  The class declares only what its constructor uses, and the class-level
++  rule reads `price` and `quantity` like any other property.
++- Positional calls, declared labels and the binding errors for repeated
++  labels are unchanged. See the
++  [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
++
+ ## Benchmark
  
-@@ -329,6 +330,7 @@ Created: 31-Jul-2026
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
-+| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +9/-1)
+```diff
+@@ -416,7 +416,7 @@
+ {"id":"spec-0416","description":"Nucleoid forwards named arguments to opted-in parent constructors","code":"class Parent(a, b):\n    this.a = a\n    this.b = b\nclass Child(first, second): Parent\n    super(b=second, a=first)\nchild = Child(1, 2)\nassert(child, {\"id\": \"child\", \"a\": 1, \"b\": 2})","return":null}
+ {"id":"spec-0417","description":"Nucleoid constructs students with positional and named arguments","code":"class Student(name):\n    this.name = name\npositional = Student(\"Can\")\nnamed = Student(name=\"Can\")\nassert(positional.name, \"Can\")\nassert(named.name, \"Can\")","return":null}
+ {"id":"spec-0418","description":"Nucleoid mixes positional and named constructor arguments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nordered = Student(name=\"Can\", age=20)\nreordered = Student(age=20, name=\"Can\")\nmixed = Student(\"Can\", age=20)\nassert(ordered, {\"id\": \"ordered\", \"name\": \"Can\", \"age\": 20})\nassert(reordered, {\"id\": \"reordered\", \"name\": \"Can\", \"age\": 20})\nassert(mixed, {\"id\": \"mixed\", \"name\": \"Can\", \"age\": 20})","return":null}
+-{"id":"spec-0419","description":"Nucleoid validates constructor names without caller assignments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nname = \"Before\"\nstudent = Student(name=\"Can\", age=20)\nassert(name, \"Before\")\nassert(student.name, \"Can\")\ntry:\n    Student(nmae=\"Can\", age=20)\ncatch error:\n    assert(error, TypeError(\"Unknown constructor argument 'nmae' for Student\"))\ntry:\n    Student(\"Can\", name=\"Other\", age=20)\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'name' for Student\"))","return":null}
++{"id":"spec-0419","description":"Nucleoid validates constructor names without caller assignments","code":"class Student(name, age):\n    this.name = name\n    this.age = age\nname = \"Before\"\nstudent = Student(name=\"Can\", age=20)\nassert(name, \"Before\")\nassert(student.name, \"Can\")\nmisspelled = Student(nmae=\"Can\", age=20)\nassert(misspelled, {\"id\": \"misspelled\", \"name\": null, \"age\": 20, \"nmae\": \"Can\"})\ntry:\n    Student(\"Can\", name=\"Other\", age=20)\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'name' for Student\"))","return":null}
+ {"id":"spec-0420","description":"Nucleoid preserves ordinary function argument assignments","code":"'use imperative'\ndef pair(a, b):\n    return [a, b]\na = 0\nb = 0\nresult = pair(b=2, a=1)\nassert(result, [2, 1])\nassert(a, 1)\nassert(b, 2)","return":null}
+ {"id":"spec-0421","description":"Nucleoid filters reasoning selections by stated and derived state","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nfacts = result |> why |> stated\nconclusions = result |> why |> derived\nassert(facts.map(step => step.node), [\"seed\"])\nassert(facts[0].holds, 2)\nassert(facts[0].from, [])\nassert(conclusions.map(step => step.node), [\"result\", \"middle\"])\nassert(conclusions[0].holds, 10)\nassert(conclusions[0].from, [\"middle\"])\nassert(conclusions[0].state, \"derived\")","return":null}
+ {"id":"spec-0422","description":"Nucleoid keeps reasoning state filters live through equal valued rewrites","code":"seed = 1\nvalue = seed + 1\nfacts = value |> why |> stated\nconclusions = value |> why |> derived\nassert(facts.map(step => step.node), [\"seed\"])\nassert(conclusions.map(step => step.node), [\"value\"])\nvalue = 2\nassert(facts.map(step => step.node), [\"value\"])\nassert(conclusions, [])\nvalue = seed + 1\nseed = 3\nassert(facts.map(step => step.node), [\"seed\"])\nassert(facts[0].holds, 3)\nassert(conclusions.map(step => step.node), [\"value\"])\nassert(conclusions[0].holds, 4)","return":null}
+@@ -859,3 +859,11 @@
+ {"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.name)\nchosen = Item.select(item -> item.score >= limit)\nassert([names, chosen], [[], []])\nfirst = Item(\"one\", 4)\nsecond = Item(\"two\", 8)\nassert(names, [\"one\", \"two\"])\nassert(chosen, [second])\nfirst.score = 9\nlimit = 8\nassert(chosen, [first, second])\nthird = Item(\"three\", 2)\nassert(names, [\"one\", \"two\", \"three\"])\nassert(Item.collect(item -> item.score), Item.map(item -> item.score))\nassert(Item.select(item -> item.score), Item.filter(item -> item.score))\ndelete third.name\ndelete third.score\ndelete third\nassert(names, [\"one\", \"two\"])\nassert(chosen, [first, second])\nclass Group(items):\n    this.items = items\n$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)\ngroup = Group([first, second])\nassert(group.names, [\"one\", \"two\"])\nsecond.score = 1\nassert([chosen, group.names], [[first], [\"one\"]])\nnames","return":"[\"one\",\"two\"]"}
+ {"id":"spec-0860","description":"Nucleoid preserves collection alias er
+```
+
+**File**: `dataset/nucleoid.synth.136.jsonl` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{"id":"synth-136-0001","description":"An unknown constructor label becomes a property, as if the class declared it and assigned it last","code":"class Shape(type):\n    this.type = type\nshape1 = Shape(type=\"SQUARE\", color=\"RED\")\nassert(shape1, {\"id\": \"shape1\", \"type\": \"SQUARE\", \"color\": \"RED\"})\n[shape1.type, shape1.color]","return":"[\"SQUARE\",\"RED\"]"}
++{"id":"synth-136-0002","description":"A class without parameters or a body keeps every labeled attribute of its instances","code":"class Point\norigin = Point(x=0, y=0)\ncorner = Point(x=3, y=4)\nassert(origin, {\"id\": \"origin\", \"x\": 0, \"y\": 0})\nPoint.map(point -> point.x + point.y)","return":"[0,7]"}
++{"id":"synth-136-0003","description":"Unknown labels are assigned once the constructor statements finish, so a label replaces what the body set, even after a return","code":"class Lamp(room):\n    this.room = room\n    this.watts = 40\n    if room == \"attic\":\n        return\n    this.lit = true\nhall = Lamp(room=\"hall\")\ndesk = Lamp(room=\"desk\", watts=60, color=\"WARM\")\nattic = Lamp(room=\"attic\", watts=25)\nassert(hall, {\"id\": \"hall\", \"room\": \"hall\", \"watts\": 40, \"lit\": true})\nassert(attic, {\"id\": \"attic\", \"room\": \"attic\", \"watts\": 25})\n[desk.watts, desk.color, desk.lit]","return":"[60,\"WARM\",true]"}
++{"id":"synth-136-0004","description":"A bodyless subclass passes unknown labels to the inherited constructor, and super forwards its own","code":"class Animal(name):\n    this.name = name\nclass Dog: Animal\n    pass\nclass Puppy(age): Animal\n    super(name=\"Rex\", sound=\"yip\")\n    this.age = age\nfido = Dog(name=\"Fido\", sound=\"woof\")\nrex = Puppy(age=1, toy=\"ball\")\nassert(fido, {\"id\": \"fido\", \"name\": \"Fido\", \"sound\": \"woof\"})\n[rex.name, rex.sound, rex.age, rex.toy]","return":"[\"Rex\",\"yip\",1,\"ball\"]"}
++{"id":"synth-136-0005","description":"Adopted init signatures, with a block or an expression body, take unknown labels after their declared parameters","code":"class Account:\n    def init(owner):\n        this.owner = owner\nclass Badge:\n    def init(name) => this.name = name\naccount = Account(owner=\"Ada\", currency=\"EUR\")\nbadge = Badge(name=\"Ada\", rank=\"Captain\")\nassert(account, {\"id\": \"account\", \"owner\": \"Ada\", \"currency\": \"EUR\"})\nassert(badge, {\"id\": \"badge\", \"name\": \"Ada\", \"rank\": \"Captain\"})\n[account.currency, badge.rank]","return":"[\"EUR\",\"Captain\"]"}
++{"id":"synth-136-0006","description":"Class-level rules read properties from unknown labels and follow their changes","code":"class Order(item):\n    this.item = item\n$Order.total = $Order.price * $Order.count\norder = Order(item=\"tea\", price=4, count=2)\nassert(order.total, 8)\norder.count = 5\norder.total","return":"20"}
++{"id":"synth-136-0007","description":"Unknown label values are snapshots and never assign caller variables","code":"class Note\ncolor = \"BLUE\"\ntag = \"draft\"\nnote = Note(color=\"RED\", label=tag)\ntag = \"final\"\nassert([note.color, note.label, color], [\"RED\", \"draft\", \"BLUE\"])\nnote.label","return":"\"draft\""}
++{"id":"synth-136-0008","description":"A repeated unknown label is rejected before any value runs, and a failing value builds nothing","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\nduplicate = \"\"\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    duplicate = error\nmissed = \"\"\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    missed = error\n[duplicate, missed, events.count, Shape.length]","return":"[\"TypeError: Duplicate constructor argument 'color' for Shape\",\"ReferenceError: missing is not defined\",0,0]"}
+```
+
+**File**: `docs/README.md` (modified, +51/-7)
+```diff
+@@ -1189,8 +1189,11 @@ class Shape:
+ - The values remain constructor snapshots, not new reactive relationships.
+   Binding validation precedes all RHS evaluation, including `.value` reads.
+ - `class Point` can adopt an ordinary `def init(x, y):` body and parameter
+-  list. Named binding adds no automatic fields or defaults; scalar defaults
+-  have their own [bounded contract](#literal-parameter-defaults).
++  list. Binding a declared parameter by name adds no automatic fields or
++  defaults; a label that names no parameter becomes a property, as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  describes, and scalar defaults have their own
++  [bounded contract](#literal-parameter-defaults).
+ - Named shared class-rule construction also sees the declaration caller's
+   parameters; legacy positional shared construction keeps its existing scope.
+ - Inheritance uses the nearest nonempty constructor body's signature; a child
+@@ -1201,9 +1204,9 @@ class Shape:
+   Compound and member assignments remain positional. Functions, methods,
+   built-ins and direct `init` calls keep assignment-expression behavior.
+   Class aliases gain no construction route.
+-- Duplicate bindings (including positional plus named), unknown labels, and
+-  positional arguments after labels raise explicit `TypeError`s before
+-  value effects or instance creation. Star headers raise the ordinary
++- Duplicate bindings (including positional plus named) and positional
++  arguments after labels raise explicit `TypeError`s before value effects or
++  instance creation. Star headers raise the ordinary
+   parameter `SyntaxError`; existing transactions still restore partial
+   construction and graph/class state on failure.
+ - This is the exact paired `Nucleoid constructs an object with named parameters`
+@@ -1221,6 +1224,47 @@ assert(point, {"id": "point", "x": 3, "y": 4})
+   [default named constructors](../nucleoid.spec.md#default-named-constructors)
+   section; [NUC 47](nuc-0047.md) records this isolated candidate revision.
  
++### Unknown constructor arguments as properties
++
++```
++class Shape(type):
++    this.type = type
++shape1 = Shape(type="SQUARE", color="RED")
++assert(shape1, {"id": "shape1", "type": "SQUARE", "color": "RED"})
++shape1.color
++```
++
++- A constructor label that names no parameter of the effective constructor
++  becomes a property ([NUC 136](nuc-0136.md)). The call acts as if that
++  constructor declared the name as one more parameter and its statements
++  were followed by `this.<name> = <name>`, so `shape1` is the instance that
++  `class Shape(type, color):` with `this.type = type` and
++  `this.color = color` would build.
++- Every constructor takes such labels: bodyless and parameterless headers,
++  inherited constructors, `super(...)`, adopted `def init` and
++  `def __init__(self, ...)`, initializing parameters, defaults, rest
++  parameters, `new`, nested and collection instances, shared class rules
++  and `is` assignments.
++- The assignments run after the constructor's own statements, so the
++  statements can read the name and a label replaces a property they set.
++  They run however the statements end, after an early `return` too, so an
++  expression-bodied `def init(...) => value` keeps its labels; that is the
++  one deliberate difference from the written-out spelling. A failing
++  statement still rolls back the whole instance.
++- Values are snapshots evaluated once in source order, labels never assign
++  caller variables, and class-level rules still apply after construction.
++- Positional values never fill these labels. A repeated label, a positional
++  argument after a label and a label naming a rest parameter still raise
++  their `TypeError`s before any value runs. A misspelled label is no longer
++  an error: it becomes a property of its own.
++- Functions, methods, built-ins and direct `init` calls keep their
++  assignment-expression arguments, and no syntax is added.
++- This is the exact
++  `Nucleoid builds an instance from unknown constructor arguments` example
++  in `tests/reference.md`. The authoritative
++  [root section](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
++  and its eight appended entries define the behavior.
++
+ ### Initializing constructor parameters
+ 
+ - A constructor parameter written `this.name` or `self.name` declares the
+@@ -2111,7 +2155,7 @@ Normative detail: [exit-controlled repeat-until loops](../nucleoid.spec.md#exit-
+ - The effective literal initializes the fresh Scope slot at version zero.
+   Functions, aliases, callbacks, methods and function Values share binding;
+   positional/named/mixed/inherited constructors and `super` use the selected
+-  signature without changing strict labels, evaluation order, single
++  signature without changing label validation, evaluation order, single
+   evaluation, receiver capture or parent/class-resolution timing.
+ - Live redefinition and rollback retain their existing State/graph boundary.
+   Frozen/
+```
+
+**File**: `docs/examples.md` (modified, +27/-0)
+```diff
+@@ -4550,6 +4550,33 @@ selected
+   not Rust pattern overloads. See [NUC 132](nuc-0132.md) and the
+   [root contract](../nucleoid.spec.md#rust-string-boundary-method-aliases).
+ 
++## Unknown constructor arguments as properties
++
++**Unknown constructor arguments describe a fleet's vehicles**
++
++```nuc
++class Vehicle(plate):
++    this.plate = plate
++$Vehicle.heavy = $Vehicle.weight > 3500
++van = Vehicle(plate="V1", weight=2800, color="WHITE")
++truck = Vehicle(plate="T1", weight=7200)
++heavy = Vehicle.filter(vehicle -> vehicle.heavy).map(vehicle -> vehicle.plate)
++assert(heavy, ["T1"])
++assert([van.color, truck.color], ["WHITE", null])
++van.weight = 4000
++assert(heavy, ["V1", "T1"])
++heavy
++# return: ["V1","T1"]
++```
++
++- Each vehicle carries the attributes its caller names, though the class
++  declares only `plate`; the class-level rule and the live selection read
++  `weight` like any property and follow its changes.
++- A label that names no parameter becomes a property after the
++  constructor's statements, as [NUC 136](nuc-0136.md) and the
++  [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
++  define. A vehicle built without a `color` label has none.
++
  ## Copyright
  
-```
-
-**File**: `docs/nuc-0138.md` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+# NUC 138 -- Reactive Secant
-+
-+```
-+NUC: 138
-+Title: Reactive Secant
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 23-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Add only native static `Math.sec(value)`, taking radians and naming the
-+  accepted `1 / Math.cos(value)` composition.
-+- Intrinsically convert the first argument, then compute exactly
-+  `1.0 / first.cos()`, retaining cosine and reciprocal rounding rather than
-+  introducing angle normalization, pole shortcuts or another numerical model.
-+- Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
-+  extras, dependencies, deferral, shadowing, rollback and every accepted form.
-+- This continuous cycle selected Utility enhancement with one unbiased draw
-+  from the live eligible registry, index 2 among five categories. Paired
-+  lexer-token comparison and every hard criterion remain mandatory.
-+
-+## Motivation
-+
-+- Geometry and declarative trigonometric models use secant as the reciprocal
-+  of cosine; a named helper expresses that operation in live properties
-+  without repeating its surrounding division.
-+- Accepted cosine and division already provide an executable counterpart,
-+  while the accepted native runtime rejects `Math.sec(0)` as an unknown
-+  function and returns `1` for `1 / Math.cos(0)`.
-+- Extend one existing unary dispatcher arm without changing the parser,
-+  public Rust API, dependencies, options, versions or ARC implementation.
-+
-+## Rationale
-+
-+- Pending isolated preparation against the pushed allocation and immutable
-+  accepted-syntax baseline.
-+
-+## Specification
-+
-+- Pending isolated preparation; preserve all existing corpus identities,
-+  canonical assertions, expected returns and executed coverage.
-+
-+## Errors
-+
-+- Pending isolated preparation of the exact inherited diagnostics and the
-+  formerly unsupported native `sec` call boundary.
-+
-+## Reference Implementation
-+
-+- Pending isolated prototype and independent evaluation.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `809c9cc2` (2026-11-22)
-**Commit Message**: NUC 137 Floating-Point Absolute Value Alias
-
-Accepted under the automatic acceptance rule: all three hard criteria pass
-and the fresh independent evaluator returned Accepted with zero core issues.
-Integrate the unchanged frozen Math.fabs alias of Math.abs and its synchronized
-cases, reference, exports and two new synthesized records. Only derived
-historical corpus-count/tail-offset pins and caller outcome metadata change.
-
-No compile errors: cargo build --all-targets, warning-denied cargo clippy
---all-targets -- -D warnings, cargo fmt --check and rustdoc pass independently
-and on the integrated tree. Full cargo test --no-fail-fast passes 3926 tests,
-zero failures, with all 25 original ignored entries retained. Exact scoped
-inspection retains every one of 3943 accepted identities/multiplicities plus
-eight additions. All 1280 pinned accepted sources replay with protected
-assertions, expected returns and diagnostics; 6379 old assertions execute.
-New normative programs execute all 11 assertions. Backward compatibility and
-all 52 frozen non-outcome implementation-file pins are preserved.
-
-Continuous / Language compatibility. Token comparison is categorically
-skipped language_compatibili
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
-```diff
-@@ -858,3 +858,4 @@
- {"id":"spec-0858","description":"Nucleoid collects and selects lists with Ruby method names","code":"values = [1, 2, 3]\nfactor = 2\nthreshold = 1\ndef project(value) => [value, value * factor]\ncollected = values.collect(project)\nselected = values.select(value -> value > threshold)\nsnapshot = collected.value\nassert(collected, values.map(project))\nassert(selected, values.filter(value -> value > threshold))\nassert(collected, [[1, 2], [2, 4], [3, 6]])\nassert(selected, [2, 3])\nvalues.push(4)\nfactor = 3\nthreshold = 2\nassert(collected, [[1, 3], [2, 6], [3, 9], [4, 12]])\nassert(selected, [3, 4])\nassert(snapshot, [[1, 2], [2, 4], [3, 6]])\ndef project(value) => value + factor\nassert(collected, [4, 5, 6, 7])\nassert(values, [1, 2, 3, 4])\nassert([].collect(value -> missing), [])\nassert([].select(value -> missing), [])\nmixed = [\"\", 0, false, \"yes\", 7, []]\nassert(mixed.select(value -> value), [\"yes\", 7, []])\n[collected, selected]","return":"[[4,5,6,7],[3,4]]"}
- {"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.name)\nchosen = Item.select(item -> item.score >= limit)\nassert([names, chosen], [[], []])\nfirst = Item(\"one\", 4)\nsecond = Item(\"two\", 8)\nassert(names, [\"one\", \"two\"])\nassert(chosen, [second])\nfirst.score = 9\nlimit = 8\nassert(chosen, [first, second])\nthird = Item(\"three\", 2)\nassert(names, [\"one\", \"two\", \"three\"])\nassert(Item.collect(item -> item.score), Item.map(item -> item.score))\nassert(Item.select(item -> item.score), Item.filter(item -> item.score))\ndelete third.name\ndelete third.score\ndelete third\nassert(names, [\"one\", \"two\"])\nassert(chosen, [first, second])\nclass Group(items):\n    this.items = items\n$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)\ngroup = Group([first, second])\nassert(group.names, [\"one\", \"two\"])\nsecond.score = 1\nassert([chosen, group.names], [[first], [\"one\"]])\nnames","return":"[\"one\",\"two\"]"}
- {"id":"spec-0860","description":"Nucleoid preserves collection alias errors and rollback","code":"failure = \"\"\ntry:\n    [].collect()\ncatch error:\n    failure = error\nassert(failure, TypeError(\"map expects a function\"))\nclass Empty\ntry:\n    Empty.select(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"filter expects a function\"))\nnames = [\"a\", \"b\"]\nmapped = names.collect(name -> name.toUpperCase())\nkept = names.select(name -> name.toUpperCase() != \"\")\ntry:\n    names.push(7)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([names, mapped, kept], [[\"a\", \"b\"], [\"A\", \"B\"], [\"a\", \"b\"]])\nnames.push(\"c\")\nassert([mapped, kept], [[\"A\", \"B\", \"C\"], [\"a\", \"b\", \"c\"]])\n[mapped, kept]","return":"[[\"A\",\"B\",\"C\"],[\"a\",\"b\",\"c\"]]"}
-+{"id":"spec-0861","description":"Nucleoid computes floating point absolute values with fabs","code":"values = [-3.5, 0, -0]\nmagnitudes = values.map(value -> Math.fabs(value))\nassert(magnitudes, [3.5, 0, 0])\nassert(magnitudes, values.map(value -> Math.abs(value)))\nassert(1 / Math.fabs(-0), Number.POSITIVE_INFINITY)\nassert(Math.fabs(Number.NEGATIVE_INFINITY), Number.POSITIVE_INFINITY)\nassert(Number.isNaN(Math.fabs(Number.NaN)), true)\nassert(Number.isNaN(Math.fabs()), true)\nassert([Math.fabs(\" -4 \"), Math.fabs([-2]), Math.fabs(null), Math.fabs(true)], [4, 2, 0, 1])\nassert(Math.fabs(-3, \"ignored\", Number.NaN), 3)\nmagnitudes","return":"[3.5,0,0]"}
-```
-
-**File**: `dataset/nucleoid.synth.137.jsonl` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+{"id":"synth-137-0001","description":"Nucleoid keeps travelled distances live with floating point absolute values","code":"offsets = [-2, 5, -7]\ndistances = offsets.map(offset -> Math.fabs(offset))\nassert(distances, [2, 5, 7])\nassert(distances, offsets.map(offset -> Math.abs(offset)))\noffsets.push(-4)\nassert(distances, [2, 5, 7, 4])\ndistances.sum()","return":"18"}
-+{"id":"synth-137-0002","description":"Nucleoid derives independent reading magnitudes with fabs class rules","code":"class Reading(sample):\n    this.sample = sample\n$Reading.magnitude = Math.fabs($Reading.sample)\nfirst = Reading(-3)\nsecond = Reading(2)\nassert([first.magnitude, second.magnitude], [3, 2])\nfirst.sample = -4\nassert([first.magnitude, second.magnitude], [4, 2])\n[first.magnitude, second.magnitude]","return":"[4,2]"}
-```
-
-**File**: `docs/README.md` (modified, +42/-0)
-```diff
-@@ -2686,6 +2686,10 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   writable list receiver in place; see
-   [In-place list sorting](#in-place-list-sorting).
- - `Math.max` and `Math.min` propagate `NaN`, including when an argument cannot be coerced to a number.
-+- The [NUC 137 candidate](nuc-0137.md) adds `Math.fabs(value)` as exactly
-+  the existing `Math.abs(value)` operation, preserving intrinsic coercion,
-+  the supplied-Undefined gate and all accepted call behavior. See the
-+  [absolute-value alias](#floating-point-absolute-value-alias).
- - The [NUC 100 candidate](nuc-0100.md) adds only unshadowed static
-   `Math.cot(value)`, exactly `1 / Math.tan(value)` with radians as input.
-   After the existing any-supplied-Undefined gate and intrinsic first-input
-@@ -3506,6 +3510,44 @@ ratio
- 
- ---
- 
-+## Floating-point absolute value alias
-+
-+### Nucleoid keeps fabs absolute values live
-+
-+```
-+reading = -3.5
-+def magnitude(value) => Math.fabs(value)
-+absolute = magnitude(reading)
-+assert(absolute, 3.5)
-+reading = -0
-+assert(1 / absolute, Number.POSITIVE_INFINITY)
-+reading = 4
-+assert(absolute, Math.abs(reading))
-+absolute
-+```
-+
-+- This is the complete new `tests/reference.md` program without its title
-+  and expected-return metadata; it returns `4`. The [NUC 137 candidate](nuc-0137.md)
-+  and [root contract](../nucleoid.spec.md#floating-point-absolute-value-alias)
-+  add a familiar floating-point absolute-value name, not new math semantics
-+  or complete C, C++ or Python argument compatibility.
-+- Both names share `first.abs()` after Math's existing any-supplied-Undefined
-+  gate and intrinsic first-input conversion. Omission gives numeric NaN.
-+  Finite values, subnormals, both zero/infinity signs and NaN payloads retain
-+  the accepted absolute-value operation.
-+- All expressions evaluate once left to right; ignored extras retain reads,
-+  effects, strict errors and the Undefined gate without numeric conversion.
-+  Literal-null coercion, live-null/parameter deferral, named functions,
-+  class rules, deletion/recovery and transactional rollback are unchanged.
-+- Conversion never calls or tracks shadowable Number or Math.abs. Ordinary
-+  names/properties, `.Math` members and namespace shadowing keep lookup.
-+  `Math.fabs` value reads remain Undefined, like `Math.abs`, not callable
-+  native references. Lists, populations, numbers and strings gain no methods.
-+- Other math names, exact errors, accepted syntax, AST/source spelling,
-+  public Rust APIs, dependencies and versions remain unchanged.
-+
-+---
-+
- ## Reactive inverse interpolation
- 
- ### Unclamped inverse interpolation relationships stay live
+ Copyright 2020 Nucleoid
 ```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -180,7 +180,7 @@ Created: 31-Jul-2026
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
--| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Draft |
-+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+@@ -101,7 +101,7 @@ Created: 31-Jul-2026
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+ | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+-| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Draft |
++| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
  
- ### Documentation
+ ### Utility enhancement
  
 @@ -328,7 +328,7 @@ Created: 31-Jul-2026
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
  | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
--| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Draft |
-+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- 
- ## Copyright
+-| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
++| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
  
 ```
 
-**File**: `docs/nuc-0137.md` (modified, +215/-6)
+**File**: `docs/nuc-0136.md` (modified, +583/-11)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 137
- Title: Floating-Point Absolute Value Alias
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
+@@ -4,11 +4,11 @@
+ NUC: 136
+ Title: Unknown Constructor Arguments as Properties
+ Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Language compatibility
+ Category: Runtime features
  Created: 22-Nov-2026
-@@ -43,20 +43,229 @@ Created: 22-Nov-2026
+-Requires: 14, 47, 54, 74, 78, 87, 107
++Requires: 14, 47, 54, 74, 78, 87, 93, 95, 107
+ ```
+ 
+ ## Abstract
+@@ -22,7 +22,11 @@ Requires: 14, 47, 54, 74, 78, 87, 107
+   `shape1 = Shape(type='SQUARE', color='RED')` builds the instance that
+   `class Shape(type, color):` with the body `this.type = type` and
+   `this.color = color` builds:
+-  `{"id": "shape1", "type": "SQUARE", "color": "RED"}`.
++  `{"id": "shape1", "type": "SQUARE", "color": "RED"}`. The one deliberate
++  difference from that spelling, which the user decided, is that the
++  assignments run however the constructor's statements end, after an early
++  `return` too, so an expression-bodied `def init(...) => value` keeps its
++  labels.
+ - Every constructor route takes unknown labels: class headers with or
+   without a body or a parameter list, a parent named after a colon or with
+   `extends` ([NUC 78](nuc-0078.md)), inherited constructors, adopted
+@@ -43,14 +47,26 @@ Requires: 14, 47, 54, 74, 78, 87, 107
+   raised that `TypeError` before evaluating any argument, now evaluates its
+   values once in source order and builds the instance. The 14 existing
+   assertions that pin exactly that error move to the new reading, keeping
+-  their case identities, and this NUC lists each one: the specification
+-  case `Nucleoid validates constructor names without caller assignments`
+-  and assertions in `tests/named_constructors.rs`, with its CLI fixture
+-  `tests/fixtures/named-constructors-invalid.nuc`,
++  their case identities, and this NUC lists each one under
++  [Compatibility](#compatibility), with the direct consequences of the same
++  calls, the byte seal of the rewritten specification case among them: the
++  specification case
++  `Nucleoid validates constructor names without caller assignments` and
++  assertions in `tests/named_constructors.rs`, with its CLI fixture
++  `tests/fixtures/named-constructors-invalid.nuc`, which is unchanged,
+   `tests/initializing_parameters.rs`, `tests/self_parameters.rs`,
+   `tests/rest_parameters.rs`, `tests/literal_parameter_defaults.rs` and
+   `tests/item_words.rs`. That break alone fails no hard criterion; any
+   other break or test edit still does.
++- **Outcome: Accepted**, on the user-requested basis: the frozen candidate
++  met all three hard criteria in the independent evaluation and again on
++  the integrated tree. The independent evaluator's policy decision was
++  Rejected, solely because the deterministic core gate flags the migration
++  the user authorized, the specification case
++  `Nucleoid validates constructor names without caller assignments`, as an
++  invalid legacy case on replay and as changed assertions in its migrated
++  copy. Token comparison was skipped as a single-proposal request; see
++  [Evaluation](#evaluation).
+ 
+ ## Motivation
+ 
+@@ -78,19 +94,575 @@ Requires: 14, 47, 54, 74, 78, 87, 107
  
  ## Rationale
  
--Pending fresh isolated preparation after this Draft allocation is pushed.
-+- This is name compatibility within the confirmed Language compatibility
-+  category, not a new numerical utility or a promise of complete foreign
-+  argument compatibility.
-+- [Python's math.fabs](https://docs.python.org/3/library/math.html#math.fabs)
-+  and [C's fabs](https://en.cppreference.com/w/c/numeric/math/fabs) motivate
-+  the spelling; Nucleoid retains its own accepted numeric model and calls.
-+- Extend the accepted `abs` alternative in the unary math dispatcher.
-+  Sharing `first.abs()` preserves the same host operation, including
-+  signed-zero and NaN payload bits, without a second computation.
-+- Do not lower the parser's name or call a shadowable `Math.abs` or `Number`.
-+  The AST, graph and rendered source keep the written `fabs` spelling.
-+- Reject global aliases, `fabsf`, `fabsl`, `fmod`, other math aliases,
-+  additional receivers, callable native method values, flags and dependencies.
- 
- ## Specification
- 
--Pending fresh isolated preparation against the pinned accepted revision.
-+- Wherever accepted call resolution reaches the native Math namespace,
-+  `Math.fabs(value)` selects exactly the existing `Math.abs(value)` operation.
-+  Existing namespace-reference call forms retain their routing.
-+- All supplied argument expressions evaluate once, left to right, through
-+  the existing call path before math dispatch. Ignored extras retain their
-+  reads, dependencies, effects and strict errors.
-+- The math wrapper first returns `Undefined` if any supplied value is
-+  `Undefined`, including an extra. This already succeeds for the previously
-+  unsupported `fabs` name and remains unchanged.
-+- Otherwise intrinsically convert only the first supplied value with
-+  `Value::to_number`; omission supplies numeric `NaN`. Then apply
-+  `first.abs()`. Extras are not numerically converted.
-+- Preserve accepted number, boolean, string, list, date and nonnumeric
-+  coercions. Literal null converts to zero; live-null and parameter-null
-+  deferral remain distinct and unchanged.
-+- Both zero signs produce positive zero, both infinity signs produce
-+  positive infinity, and NaNs retain the accepted absolute-value operation's
-+  payload behavior. Finite values, including subnormals, share that operation.
-+- Named functions, class rules, receiver and scope handling, propagation,
-+  deletion/recovery and transactional rollback are inherited unchanged.
-+- Ordinary `fabs` identifiers and properties, user callable properties,
-+  ordinary `.Math` members and Math namespace shadowing keep their behavior.
-+  Reading `Math.fabs` as a value remains `Undefined`, like `Math.abs`; it is
-+  not a bound first-class native function.
-+- Lists, class populations, numbers, strings and every other receiver gain
-+  no `abs` or `fabs` method. Other math names and errors remain unchanged.
-+- The only changed successful call result is for a formerly unsupported
-+  native `Math.fabs` call whose supplied values pass the existing gate.
-+  No accepted successful result or syntax is replaced.
-+- The root [absolute-value contract](../nucleoid.spec.md#floating-point-absolute-value-alias)
-+  and `Nucleoid computes floating point absolute values with fabs` specify
-+  the new operation. `Nucleoid keeps fabs absolute values live` in
-+  `tests/reference.md` is mirrored in the language reference.
-+- The lexer and parser already accept `fabs` as an ordinary member name.
-+  `docs/nucleoid.ebnf` is unchanged because no accepted syntax changes.
-+- This caller-owned continuous cycle categorically skips token comparison
-+  as `language_compatibility`, not as a passed or zero-case gate. Runtime
-+  applicability is not applicable; runtime applicability/reason/evidence
-+  inputs remain absent. Every behavior, coverage, compatibility and
-+  development obligation remains.
- 
- ## Errors
- 
--Pending fresh isolated preparation.
-+- No new arity, type, numeric or range errors are introduced.
-+- A resolved native `Math.fabs(-3)` no longer raises
-+  `TypeError("Math.fabs is not a function")`; the existing any-`Undefined`
-+  result for that name remains unchanged.
-+- Strict undefined argument reads keep
-+  `ReferenceError("<name> is not defined")`, even after an earlier
-+  `Undefined` argument. Earlier argument errors still stop later evaluation.
-+- `Math.random()` retains `TypeError("Math.random is not supported")`;
-+  other unsupported Math names retain
-+  `TypeError("Math.<name> is not a function")`.
-+- A numeric `Math = 7` still raises
-+  `TypeError("number.fabs is not a function")` on `Math.fabs(1)`.
-+  `[-3].fabs()` still raises
-+  `TypeError("[-3].fabs is not a function")`. Other receiv
+-- Pending: the proposer completes this section.
++- **The user's equivalence, taken literally.** An unknown label is one more
++  parameter of the effective constructor, followed by
++  `this.<name> = <name>`. Every observable then comes from the accepted
++  behavior of that written-out spelling: property order, snapshots,
++  dependencies, `why` rules, graph keys, transactions, rollback and
++  class-level rules. No second way of writing properties is added.
++- **The parsed statement, not a copy of it.** Each assignment is the
++  statement an initializing parameter `this.<name>` lowers to
++  ([NUC 87](nuc-0087.md)), the tree the parser builds for
++  `this.color = color`, so it explains, renders, depends and rolls back as
++  the written statement does.
++- **After the constructor's statements.** The user's spelling writes
++  `this.color = color` last. The statements can read the label as a
++  parameter, and a caller's label replaces a value the statements set, the
++  usual reason to pass a value the constructor does not declare.
++- **However the statements end.** Taken literally, the written-out spelling
++  would skip the assignments after a `return`, including the one an
++  expression-bodied `def init(...) => value` lowers to, so such a
++  constructor would accept a label and drop it. The user decided on
++  23-Nov-2026 that every constructor keeps its labels: the assignments run
++  once the statements finish, normally or with a `return`. This is the one
++  deliberate difference from the written-out spelling. A failing statement
++  still skips them and rolls back the whole instance.
++- **Per call, not per class.** Only the call that passes a label gets its
++  property; the class's signature, its other instances and later calls are
++  unchanged. The unknown names come after every declared parameter and any
++  rest formal and bind only by label, so positional values never reach
+
 ```
 
-**File**: `nucleoid.spec.md` (modified, +37/-0)
+**File**: `nucleoid.spec.md` (modified, +228/-19)
 ```diff
-@@ -28887,4 +28887,41 @@ names.push("c")
- assert([mapped, kept], [["A", "B", "C"], ["a", "b", "c"]])
- [mapped, kept]
- # return: [["A","B","C"],["a","b","c"]]
+@@ -2893,15 +2893,19 @@ statement positions; caught values and transaction recovery are unchanged.
+   ordinary-call function/local shadowing differences remain unchanged.
+ - For calls containing labels, validate the entire binding plan before any
+   argument effects or `.value` reads. Positional arguments fill successive
+-  declared slots and must precede all labels. Reject the first unknown name,
+-  repeated binding (including positional plus named), or positional argument
+-  following a named argument, in source order.
++  declared slots and must precede all labels. Reject the first repeated
++  binding (including positional plus named) or positional argument following
++  a named argument, in source order. A label that names no parameter is not
++  rejected; it binds as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  specifies.
+ - Evaluate supplied values exactly once in source order in the caller's
+   scope, then bind them in declaration order. Omitted parameters without
+-  literal defaults retain `null`; named binding itself adds no defaults or
+-  automatic property assignments. Literal defaults are specified separately.
+-  Surplus positional values are still evaluated and ignored. Existing
+-  duplicate formal names and purely positional binding are not redesigned.
++  literal defaults retain `null`; binding a declared parameter by name adds
++  no defaults or automatic property assignments. Literal defaults are
++  specified separately. Surplus positional values are still evaluated and
++  ignored. Existing duplicate formal names and purely positional binding are
++  not redesigned.
+ - Use the nearest nonempty constructor body's signature, including adopted
+   `def init` signatures and inherited constructors. An empty child header
+   cannot replace that effective signature. Constructor scopes, receivers,
+@@ -2936,9 +2940,9 @@ statement positions; caught values and transaction recovery are unchanged.
+ - A constructor header star raises the ordinary parameter diagnostic
+   `SyntaxError("Expected a parameter but found '*'")`; no star form is
+   retained. Other parameter/suite diagnostics and source positions remain.
+-- An unknown label raises
+-  `TypeError("Unknown constructor argument '<name>' for <class>")`.
+-  A repeated binding raises
++- An unknown label raises no error; it becomes a property as
++  [Unknown constructor arguments as properties](#unknown-constructor-arguments-as-properties)
++  specifies. A repeated binding raises
+   `TypeError("Duplicate constructor argument '<name>' for <class>")`.
+   A positional argument after a label raises
+   `TypeError("Positional constructor argument after named arguments for <class>")`.
+@@ -2948,7 +2952,96 @@ statement positions; caught values and transaction recovery are unchanged.
+   count limit, dependency, project version or ARC change is introduced.
+ - The eight historical constructor entries and four new pre-executed Student
+   and ordinary-function counterparts below protect all canonical assertions,
+-  expected returns, case identities and executed assertion coverage.
++  expected returns, case identities and executed assertion coverage. Under
++  the break that [NUC 136](docs/nuc-0136.md) records, the misspelled-label
++  assertion of `Nucleoid validates constructor names without caller assignments`
++  now asserts the instance that the call builds.
 +
-+---
++## Unknown constructor arguments as properties
 +
-+# Nucleoid computes floating point absolute values with fabs
++- An unknown label is a constructor-call label that names no parameter of
++  the effective constructor, the one
++  [Default named constructors](#default-named-constructors) selects: the
++  nearest nonempty constructor of the class or an ancestor, with adopted
++  `def init(...)` and `def __init__(self, ...)` signatures. A label that
++  names only a parameter of a bodyless subclass header is unknown too.
++- An unknown label raises no error. The call acts as if the effective
++  constructor declared the label's name as one more parameter, after its
++  declared parameters in label source order, and its statements were
++  followed by `this.<name> = <name>` for each unknown label in source order.
++  After `class Shape(type):` with the body `this.type = type`,
++  `shape1 = Shape(type="SQUARE", color="RED")` builds the instance that
++  `class Shape(type, color):` with the body `this.type = type` and
++  `this.color = color` builds: `{"id": "shape1", "type": "SQUARE", "color": "RED"}`.
++- The whole call is still validated before any value runs. A repeated label,
++  an unknown one included, raises
++  `TypeError("Duplicate constructor argument '<name>' for <class>")`, and a
++  positional argument after a label and a label naming a rest formal keep
++  their `TypeError`s. Only the unknown-name rejection is gone.
++- Values still run once, in source order, in the caller's scope. Declared
++  parameters bind as before. Each unknown label's value is bound to its name
++  in the constructor scope after the declared parameters and any rest
 +
-+values = [-3.5, 0, -0]
-+magnitudes = values.map(value -> Math.fabs(value))
-+assert(magnitudes, [3.5, 0, 0])
-+assert(magnitudes, values.map(value -> Math.abs(value)))
-+assert(1 / Math.fabs(-0), Number.POSITIVE_INFINITY)
-+assert(Math.fabs(Number.NEGATIVE_INFINITY), Number.POSITIVE_INFINITY)
-+assert(Number.isNaN(Math.fabs(Number.NaN)), true)
-+assert(Number.isNaN(Math.fabs()), true)
-+assert([Math.fabs(" -4 "), Math.fabs([-2]), Math.fabs(null), Math.fabs(true)], [4, 2, 0, 1])
-+assert(Math.fabs(-3, "ignored", Number.NaN), 3)
-+magnitudes
-+# return: [3.5,0,0]
- ```
-+
-+## Floating-point absolute value alias
-+
-+- The NUC 137 candidate adds only the familiar `Math.fabs(value)` name for
-+  the existing `Math.abs(value)` operation, not foreign argument semantics.
-+- Wherever accepted call resolution reaches native Math, both names share
-+  `first.abs()`, including finite/subnormal values, positive-zero results
-+  for either zero sign, positive infinity for either infinity sign, and the
-+  accepted NaN payload behavior.
-+- Every supplied expression evaluates once left to right. The existing
-+  any-supplied-`Undefined` gate runs before intrinsic `Value::to_number`
-+  conversion of the first input; omission supplies numeric NaN. Extras
-+  retain effects, dependencies and strict errors without numeric conversion.
-+- Literal null retains zero coercion; live-null and parameter deferral,
-+  named/class-rule liveness, deletion/recovery and rollback are unchanged.
-+- Do not consult shadowable Number or Math.abs. Ordinary identifiers,
-+  properties, `.Math` members and namespace shadowing remain ordinary.
-+  Native method value reads remain Undefined, not callable references.
-+- No global aliases, additional receivers, other math names, flags,
-+  parser/lexer changes, public API changes or dependencies are introduced.
 ```
 
-**File**: `src/builtins/numeric.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ fn numeric_argument(arguments: &[Value], index: usize) -> f64 {
- 
- fn math_unary(name: &str, first: f64) -> Option<f64> {
-     Some(match name {
--        "abs" => first.abs(),
-+        "abs" | "fabs" => first.abs(),
-         "ceil" => first.ceil(),
-         "floor" => first.floor(),
-         "fract" => {
-```
+---
 
-**File**: `tests/case_conversion_aliases.rs` (modified, +2/-2)
-```diff
-@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
-         }
-     }
-     assert_eq!(assertions, 23);
--    assert_eq!(cases, 1280);
-+    assert_eq!(cases, 1282);
- }
- 
- #[test]
-@@ -442,7 +442,7 @@ fn the_appended_cases_stand_after_nuc_117_and_before_nuc_103() {
-         let index = cases.iter().position(|case| case.title == title).unwrap();
-         assert_eq!(
-             index,
--            cases.len() - 18 - usize::from(title == REFERENCE_TITLE),
-+            cases.len() - 18 - 2 * usize::from(title == REFERENCE_TITLE),
-             "{title}"
-         );
-         assert_eq!(cases[index - 1].title, previous);
-```
+### Incident Patch 2: `a7160446` (2026-11-23)
+**Commit Message**: Resume NUC 136 Unknown Constructor Arguments as Properties
+
+Renews the claim of NUC 136, still in progress in the session that
+allocated it (allocation 870bc76b at 2026-11-22T16:01:50-05:00, 13h39m
+ago). The candidate is prepared and awaiting its Rust improvement pass
+and independent evaluation. This empty commit records no outcome.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -2009,22 +2047,45 @@ skipped language_compatibili
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 138 Reactive Secant
+## X. NUC 136 Unknown Constructor Arguments as Properties
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abc138d4`: Draft NUC 138 Reactive Secant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5779103e`: NUC 136 Unknown Constructor Arguments as Properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [138](nuc-0138.md) | Reactive Secant | Draft |
-| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
+## Unknown constructor arguments as properties
+
+**Unknown constructor arguments become live properties**
+
+```nuc
+class Product(name):
+    this.name = name
+$Product.total = $Product.price * $Product.quantity
+item = Product(name="pen", price=2, quantity=3)
+assert(item, {"id": "item", "name": "pen", "price": 2, "quantity": 3, "total": 6})
+item.quantity = 5
+assert(item.total, 10)
+item.total
+# return: 10
+```
+
+- [NUC 136](docs/nuc-0136.md) turns a constructor label that names no
+  parameter into a property: the call acts as if the constructor declared
+  the name and assigned `this.<name> = <name>` after its own statements.
+  The class declares only what its constructor uses, and the class-level
+  rule reads `price` and `quantity` like any other property.
+- Positional calls, declared labels and the binding errors for repeated
+  labels are unchanged. See the
+  [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2034,7 +2095,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abc138d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5779103e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

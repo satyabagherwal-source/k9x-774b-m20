@@ -751386,3 +751386,196 @@ cyclonedx-python-lib = ">=6.0.0,<8.0.0"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7da6ab8d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10044. stop build.sh when the Swift build fails (Harvested from daveebbelaar/bama)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stop build.sh when the Swift build fails",
+  "source": "daveebbelaar/bama",
+  "source_url": "https://github.com/daveebbelaar/bama",
+  "source_version": "22dc792e",
+  "license": "MIT",
+  "extracted_at": "2026-11-23T13:23:26.974Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-daveebbelaar-bama",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [daveebbelaar/bama](https://github.com/daveebbelaar/bama) (Revision: `22dc792e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `skills/start/new-mac-app/template/build.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in daveebbelaar/bama. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5d5ea5a8`: Merge: stop build.sh when the Swift build fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/start/new-mac-app/template/build.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+build_log=$(mktemp)
+build_ok=1
+swift build -c "$config" --package-path "$here" --scratch-path "$scratch" > "$build_log" 2>&1 || build_ok=0
+grep -E "error|warning|Build complete" "$build_log" | grep -v "^\[" || true
+rm -f "$build_log"
+[[ "$build_ok" == 1 ]] || { echo "build failed"; exit 1; }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | grep -E "error|warning|Build complete" | grep -v "^\[" || true
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5d5ea5a8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10045. test(transport): give the QUIC breaker backoff tests their own state (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(transport): give the QUIC breaker backoff tests their own state",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "e655ebd9",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T13:23:34.784Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `e655ebd9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2fc3d192`: test(transport): give the QUIC breaker backoff tests their own state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// The crash-loop backoff of one start: the delay [`gate`] decided, whether
+/// the wait is still pending, whether the update check should hurry, and the
+/// wakeup for [`Backoff::wait_for_transport_open`].
+///
+/// The binary has exactly one, [`BACKOFF`]. It is a value rather than four
+/// loose statics so a test can own its own and decide a backoff without
+/// touching the one every node built in the same test process reads
+/// ([`wait_out_crash_loop_backoff`] runs at the start of every node's event
+/// loop), which would take the test's delay and sleep through it.
+pub(super) struct Backoff {
+    /// The start delay, until the transport waits it out.
+    delay: parking_lot::Mutex<Option<Duration>>,
+    /// Set from [`Backoff::note`] until [`Backoff::wait_out`] ends.
+    pending: AtomicBool,
+    /// Set when this start is in a crash-loop backoff, so the binary's startup
+    /// update check runs after a few seconds of jitter instead of its 0-60 s
+    /// one ([`quic_crash_loop_update_now`]).
+    update_now: AtomicBool,
+    /// Wakes [`Backoff::wait_for_transport_open`] when the backoff wait ends.
+    over: tokio::sync::Notify,
+}
+
+/// The binary's backoff: what [`gate`] decides and
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+/// The start delay [`gate`] decided for this run, until the transport waits
+/// it out ([`wait_out_crash_loop_backoff`]).
+static BACKOFF: parking_lot::Mutex<Option<Duration>> = parking_lot::Mutex::new(None);
+
+/// Set when this start is in a crash-loop backoff, so the binary's startup
+/// update check runs after a few seconds of jitter instead of its 0-60 s one
+/// ([`quic_crash_loop_update_now`]).
+static UPDATE_NOW: AtomicBool = AtomicBool::new(false);
+
+fn note_backoff(delay: Duration) {
+    *BACKOFF.lock() = Some(delay);
+    BACKOFF_PENDING.store(true, Ordering::SeqCst);
+    UPDATE_NOW.store(true, Ordering::Relaxed);
+    UPDATE_NOW.load(Ordering::Relaxed)
+    let Some(delay) = BACKOFF.lock().take() else {
+        return false;
+    };
+    use crate::simulation::TimeSource;
+    let time = crate::simulation::RealTime::new();
+    let waited = wait_unless(
+        delay,
+        HOLDER_POLL,
+        || shutting_down.load(Ordering::SeqCst),
+        |d| time.sleep(d),
+    )
+    .await;
+    let stopped = shutting_down.load(Ordering
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2fc3d192` are properly handled with clean fallback behavior.

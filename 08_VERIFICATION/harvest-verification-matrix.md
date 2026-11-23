@@ -12317,3 +12317,8 @@
 | `CYCLE-20261123-5AF3` | `2026-11-23T13:06:46.911Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10042` | Yes (`df4143a6...`) |
 | `CYCLE-20261123-5GV1` | `2026-11-23T13:06:55.261Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10043` | Yes (`6ba55737...`) |
 | `CYCLE-20261123-5JI1` | `2026-11-23T13:06:58.681Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`0f5bbb7e...`) |
+| `CYCLE-20261123-QQJN` | `2026-11-23T13:23:27.587Z` | `daveebbelaar/bama` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10044` | Yes (`cc18914f...`) |
+| `CYCLE-20261123-QWKU` | `2026-11-23T13:23:35.406Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10045` | Yes (`433dd074...`) |
+| `CYCLE-20261123-R05D` | `2026-11-23T13:23:40.033Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`39713a76...`) |
+| `CYCLE-20261123-RX5T` | `2026-11-23T13:24:22.817Z` | `inclusionAI/LingSante-3.1-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md` | Yes (`483bbd5e...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T13:25:05.024Z` | `hf-inclusionai-lingsante-3.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ED1762B4` [Domain D] | Yes (`c678e5c2...`) |
