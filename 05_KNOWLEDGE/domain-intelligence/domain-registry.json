@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T06:45:59.466Z",
+  "last_updated": "2026-11-23T06:54:05.330Z",
   "total_records": 2398,
   "domains": {
     "A": {
@@ -8168,8 +8168,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "34cc479065cab75e8530cbacd3ee2092c2bec21b2216102b1a958f7b7fd71415",
-      "created_at": "2026-11-23T06:45:59.466Z"
+      "content_hash": "71511afe5ba17f68588832fde6d58a5aacc67ffec13310398f894321d50c3d8b",
+      "created_at": "2026-11-23T06:54:04.476Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11789,8 +11789,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "d0be0d5d05dff4a6974fd9885822fe6d1bfffd91ac6dd7177610e931b38e3854",
-      "created_at": "2026-11-22T22:15:15.924Z"
+      "content_hash": "833df3fe5e24d761b7d06b3bfadcbe955599ca39ae3292364c9ca1bf1e64fb21",
+      "created_at": "2026-11-23T06:54:05.330Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -32412,8 +32412,8 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-research-knowledge-intelligence-openai-gpt-oss-20b-core-in.md",
       "repository": "openai/gpt-oss-20b",
-      "content_hash": "199990a9c5f15c879ba47cbb45520d86f9f9d09fef7e6b3e9a45c976c4267a68",
-      "created_at": "2026-11-18T21:33:43.023Z"
+      "content_hash": "11f6bdca8334a885ee0cd992ddcee8b31b4300870a38bd9480154764bec93e51",
+      "created_at": "2026-11-23T06:53:51.992Z"
     },
     "DOM-D-AE671E2B": {
       "record_id": "DOM-D-AE671E2B",
@@ -32463,8 +32463,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-learnings-research-knowledge-intelligence-hf-openai-gpt-os.md",
       "repository": "hf-openai-gpt-oss-20b-learnings",
-      "content_hash": "a707f3a84979a99131eaf4277971dd09ee9ed3303b3eb16ad19b8a03017a10aa",
-      "created_at": "2026-11-18T21:34:23.646Z"
+      "content_hash": "b0afde95297efdd50a5e7b8e3ed3f05919de924e11c613d17e54f3ee1eb68f83",
+      "created_at": "2026-11-23T06:54:03.626Z"
     },
     "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",

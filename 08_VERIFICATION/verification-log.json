@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-9EQ1",
-    "timestamp": "2026-11-21T07:58:42.889Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "5919375293dbaf225004b42c2ad398c590bbd4889b8327b8b1b731ae3bbff504",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-9IHT",
     "timestamp": "2026-11-21T07:58:47.777Z",
     "repository": "MetrolistGroup/Metrolist",
@@ -7492,6 +7477,21 @@
     "contentHash": "e8e731131cfccb4a7fbe6b480b5211e48aa7f2c8496c1059515bd2af924ac772",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-TPNT",
+    "timestamp": "2026-11-23T06:53:51.785Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

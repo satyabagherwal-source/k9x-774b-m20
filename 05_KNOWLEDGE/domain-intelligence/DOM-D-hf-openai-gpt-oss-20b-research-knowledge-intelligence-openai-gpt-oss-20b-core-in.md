@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/openai/gpt-oss-20b",
   "source_version": "hf-openai-gpt-oss-20b",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T21:33:43.022Z",
+  "timestamp": "2026-11-23T06:53:51.991Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openai/gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) (Revision: `hf-openai-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T21:33:43.022Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T06:53:51.991Z`  
 > **Learning ID**: `learn-huggingface-openai-gpt-oss-20b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:33:42.202Z  
+> **Harvest Timestamp**: 2026-11-23T06:53:51.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5576861 downloads | 5328 likes
+- **Stars / Engagement**: 5561797 downloads | 5343 likes
 
 ---
 

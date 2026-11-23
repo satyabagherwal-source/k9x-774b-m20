@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T06:45:54.226Z",
-  "total_cycles_completed": 11686,
-  "total_learnings_persisted": 11686,
+  "last_updated": "2026-11-23T06:53:51.794Z",
+  "total_cycles_completed": 11687,
+  "total_learnings_persisted": 11687,
   "total_rules_promoted": 10865,
   "history": [
-    {
-      "timestamp": "2026-11-22T11:47:50.683Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T11:47:58.396Z",
       "repository": "sqlpage/SQLPage",
@@ -1403,6 +1396,13 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:53:51.794Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T06:45:59.789Z",
+  "last_updated": "2026-11-23T06:54:05.497Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "34cc479065cab75e8530cbacd3ee2092c2bec21b2216102b1a958f7b7fd71415",
+      "content_hash": "71511afe5ba17f68588832fde6d58a5aacc67ffec13310398f894321d50c3d8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:45:59.466Z"
+      "persisted_at": "2026-11-23T06:54:04.476Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a515bcf868b7bf0f63cd6c13a068f69df13ee008282951ff8b0ecc976923b87",
+      "content_hash": "d4d088879f23f307dc5026cc577fd4e2cec139b53815c5937f3b54a0063e4070",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:45:59.653Z"
+      "persisted_at": "2026-11-23T06:54:04.638Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c7a9b77541d3981a0becbcd063fb3a2ef967b97e322812c7368c78d91a0adeb",
+      "content_hash": "737d2df862838acb026161c29adff876a1a573244318c2631cc4d71d07a2d58a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:45:59.789Z"
+      "persisted_at": "2026-11-23T06:54:04.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -218996,13 +218996,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ASE1-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZZE-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "036fd31f79d891a1e9e77dacf65475944dd61204245b31e53221c1260ddaaf8c",
+      "content_hash": "b514534e9fe72e99d2a5d3ae8b3a298a69c24da8c1c754a2db7953e401dc5510",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:15:15.769Z"
+      "persisted_at": "2026-11-23T06:54:05.163Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219012,9 +219012,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0be0d5d05dff4a6974fd9885822fe6d1bfffd91ac6dd7177610e931b38e3854",
+      "content_hash": "833df3fe5e24d761b7d06b3bfadcbe955599ca39ae3292364c9ca1bf1e64fb21",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:15:15.924Z"
+      "persisted_at": "2026-11-23T06:54:05.330Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219024,9 +219024,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "aae8d3cdea2ddd330347fe90968d68a984f81ccc61a284394c81be4a1c5ecc02",
+      "content_hash": "add20c662e1d42b11cf2cba644ba1d317747c955c3fdb1934a15fdbcb97ab1ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:15:16.083Z"
+      "persisted_at": "2026-11-23T06:54:05.497Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -223063,7 +223063,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "b2b554a1a468b873f9811ce4c648d656c9ba9102cdb5f3c97e7b5b25d85b9d20",
+      "content_hash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [
@@ -223088,7 +223088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:33:42.671Z",
+      "verified_at": "2026-11-23T06:53:51.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293333,9 +293333,9 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
       "repository": "openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "199990a9c5f15c879ba47cbb45520d86f9f9d09fef7e6b3e9a45c976c4267a68",
+      "content_hash": "11f6bdca8334a885ee0cd992ddcee8b31b4300870a38bd9480154764bec93e51",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:33:43.023Z"
+      "persisted_at": "2026-11-23T06:53:51.992Z"
     },
     "rule-9283": {
       "learning_id": "rule-9283",
@@ -293371,9 +293371,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
       "repository": "hf-openai-gpt-oss-20b-learnings",
       "source_version": "HEAD",
-      "content_hash": "a707f3a84979a99131eaf4277971dd09ee9ed3303b3eb16ad19b8a03017a10aa",
+      "content_hash": "b0afde95297efdd50a5e7b8e3ed3f05919de924e11c613d17e54f3ee1eb68f83",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:34:23.646Z"
+      "persisted_at": "2026-11-23T06:54:03.626Z"
     },
     "rule-9284": {
       "learning_id": "rule-9284",
@@ -310095,13 +310095,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JL34-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZBP-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "906819fe7fd4c481718d127b85818b5d1b75696c2b74486a3261146ef5013cdf",
+      "content_hash": "3cc32622abe7926b4c7f49357936f75b070442f5fb6c658711a26fb7521fc2c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:45:59.299Z"
+      "persisted_at": "2026-11-23T06:54:04.312Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
