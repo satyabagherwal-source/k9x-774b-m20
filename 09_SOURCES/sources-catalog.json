@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
-    "lastHarvestedAt": "2026-11-19T14:55:37.269Z",
+    "contentHash": "fb75e21dd9b5ab7a2533e34695a40e116a4ad398ade56c7bf29b340b19cede85",
+    "lastHarvestedAt": "2026-11-23T21:31:18.538Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "4468e50b",
+    "sourceVersion": "401721aa",
     "license": "MIT",
-    "contentHash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
-    "lastHarvestedAt": "2026-11-22T19:43:27.996Z",
+    "contentHash": "ef0408ccb75b49e48598c214a993526a14e7c2d78ec25b2058f74ea23cae0e18",
+    "lastHarvestedAt": "2026-11-23T21:31:35.846Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

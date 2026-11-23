@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T21:23:18.185Z",
+  "last_updated": "2026-11-23T21:31:40.956Z",
   "total_records": 2454,
   "domains": {
     "A": {
@@ -8663,10 +8663,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "33e225dfa69f71ea1895ca6e3f12e72f05a69d48a958f3506eededfa90014fc3",
-      "created_at": "2026-11-22T23:15:47.737Z"
+      "content_hash": "945a5cc1c74f57d9549b43bb3e159b26606cc0d313f7850fa3fdcf89f4c8958c",
+      "created_at": "2026-11-23T21:31:36.239Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -9187,8 +9187,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "8c99774419fc9ce58e0146d9e6b32b0b598803f748252889cf121ddfa6ded83a",
-      "created_at": "2026-11-23T20:00:24.056Z"
+      "content_hash": "3a435e217ed979e787390edf3c116f893397f6715a7547136518ba15254e48c8",
+      "created_at": "2026-11-23T21:31:40.956Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18891,8 +18891,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-research-knowledge-intelligence-autotrust-autotrust-decider.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-      "content_hash": "c3bc922fd8fcae615d2b7be39f9fcc50073953b451fc902ba4e7497244baa0f9",
-      "created_at": "2026-11-19T14:55:37.471Z"
+      "content_hash": "b323c2104ef5493762f515a12e00a2052677245f81f08c4a36d3c9c8f6cb9b76",
+      "created_at": "2026-11-23T21:31:18.749Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
@@ -19008,8 +19008,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-learnings-research-knowledge-intelligence-hf-autotrust-jev-.md",
       "repository": "hf-autotrust-jev-35b-learnings",
-      "content_hash": "48924b5d46f7f165c165eca8b23862bb446e04869401acb25ceca82f1b63cb18",
-      "created_at": "2026-11-19T14:55:40.515Z"
+      "content_hash": "39cf4bec24f5c828f01ce160793a8b748a87b0f843cbb2694180bf3476e7d89d",
+      "created_at": "2026-11-23T21:31:39.444Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
@@ -24126,8 +24126,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "e1b3bf350c10c72b31e3cfc0d7c9c07cfa6c44d295b85c118c4213873bddcfba",
-      "created_at": "2026-11-21T18:52:28.649Z"
+      "content_hash": "8cb8874db57098a2c6e6259f32b3207c167723516f9d07d4040718f04d64f94f",
+      "created_at": "2026-11-23T21:31:40.175Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T18:52:28.375Z",
+  "timestamp": "2026-11-23T21:31:39.881Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T18:52:28.375Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T21:31:39.881Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `1db4b548`  
+> **Source Version**: `401721aa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T18:52:23.319Z  
+> **Timestamp**: 2026-11-23T21:31:34.770Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:52:23.314Z  
+> **Harvest Timestamp**: 2026-11-23T21:31:34.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25314 stars
+- **Stars / Engagement**: 25332 stars
 
 ---
 
@@ -1457,13 +1457,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12230** (2026-11-21): **ci: make PR CI faster**
-  *Symptoms*: ## Description  On main, PR CI takes 9.3 min p50 and 15.9 min p90, from push until the last job ends. This PR removes slow or duplicated work from the jobs that end last. Estimate after this PR: **8.2 min p50, 10.4 min p90.**  | Change | Job | Time saved per job | Reason | |---|---|---|---| | Build `limbo_sim` with a new `simulator` Cargo profile: dev with opt-level 1 and `debug = "line-tables-only"` | Simulator | One WriteStress seed runs in 41 s instead of 534 s (on a Mac) | On main, CI runs an unoptimized simulator. The profile inherits dev, so debug assertions and overflow checks stay on. | | Remove 4 steps: install JS dependencies, build common package, build native binding, build TypeScript | JS sqltest | 73 s p50, 147 s p90 (removed steps, CI) | `make run-js` does all 4 again. It builds the binding with `test_helper`, so the binding from the removed step was never used. | | Add `CARGO_PROFILE_BENCH_LTO: "false"` to `codspeed-memory.yml`, plus the other 3 env vars from `codspeed.yml` | CodSpeed memory | Build after a `turso_core` change: 80 s instead of 106 s (on a Mac) | `codspeed.yml` sets this env var, but a called workflow does not get the caller's `env`. So on main the memory build uses thin LTO. | | Remove the "Memory leak check" step | Rust, `extra` suite | 56 s p50 (removed step, CI) | The `leak_tests` binary is already in the nextest run on Linux, macOS and Windows. The removed step built `turso_core` a second time with other features. |  How the estimate was m
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `bd1210755865` is [here](https://github.com/tursodatabase/turso/pull/12230#pullrequestreview-6003528435).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-recommends:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiYmQxMjEwNzU1ODY1MmU2NDdiY2FlNzE1MGU5YmQ1YjM5NmY4OWEwMyIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjFUMDY6Mjg6MDAuNzk0WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
+- **Issue #12323** (2026-11-23): **core: add a Type trait and write the built-in types in Rust**
+  *Symptoms*: A built-in type such as `boolean` is defined today by a `CREATE TYPE` statement in a string:  ```rust "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'" ```  That has three problems:  - Core parses the 17 strings on every schema build. - ENCODE, COERCE and DECODE are SQL expressions that name SQL functions. Every statement that uses the type looks `boolean_to_int` up by name again, and the helper is a public SQL function as a side effect. - The rest of what core knows about a built-in type is in two more places: a tuple of flags next to the string, and three functions that match on the type's name (`builtin_value_type`, `builtin_ordering`, `builtin_signatures`). A dialect cannot describe a type of its own through that.  This pull request adds a `Type` trait and writes the built-in types in Rust.  ## The trait  `core/types/custom_type.rs`:  ```rust pub trait Type: Debug + Send + Sync {     fn name(&self) -> &str;     fn params(&self) -> Vec<ast::TypeParam>;     fn base(&self) -> &str;     fn encode(&self) -> Option<Conversion> { None }     fn coerce(&self) -> Option<Conversion> { None }     fn decode(&self) -> Option<Conversion> { None }     // aliases, operators, ordering, COLLATE, RANGE offsets, ... }  pub enum Conversion {     Unchanged,     Function(fn(value: &Value, params: &[Value]) -> Result<Value>),     Expr(Box<ast::Expr>), } ```  A type says how it converts a value with a `Conversion`: a Ru
 
-- **Issue #12229** (2026-11-21): **core/vdbe: use the test dialect in test_serialize_array_from_blob**
-  *Symptoms*: Core no longer has a \`SqliteDialect\`; the frontends define it. The bytea hex change added a call with \`crate::SqliteDialect\` to a core unit test while the parser-free core change was removing it, so the \`turso_core\` tests did not compile on main.  The test now uses \`DialectThatCannotParse\`, like the other core unit tests that need a dialect but no SQL. It keeps the default blob element format that the test expects.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #12306** (2026-11-23): **core/translate: cast nonzero integers to true for a cast to boolean in postgres**
+  *Symptoms*: In tursopg `SELECT bool(5)` fails with "invalid input for type boolean". PostgreSQL returns true: its integer-to-boolean cast gives true for any nonzero integer.  `bool(x)` is written as a cast to core's `boolean` type, and the cast sent the integer straight into the type's ENCODE, which accepts only boolean text and 0 or 1.  Core already turns an integer into 0 or 1 first when `Dialect::casts_nonzero_integer_to_true` is on, but only for a cast to a domain over boolean. This pull request does the same for a cast to boolean itself.  | Statement | Before | After | | --- | --- | --- | | `SELECT bool(5)` | error | `t` | | `SELECT bool(0)` | `f` | `f` |  `5::boolean` is not changed here. The PostgreSQL translator writes it as a cast to `INTEGER`, so it does not reach this code.  The SQLite dialect leaves the hook off and is unchanged. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,313 +1478,937 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3885b0ea` (2026-11-21)
-**Commit Message**: ci: run the simulator built with optimizations
+### Incident Patch 1: `13d6d828` (2026-11-23)
+**Commit Message**: Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros in dev builds' from Mikaël Francoeur
 
-The simulator jobs ran a dev-profile (unoptimized) limbo_sim. Each job runs
-its iterations four at a time, so it takes as long as its slowest seed, and
-WriteStress seeds took 100 to 475 s each in CI. WriteStress (7.2 min p50,
-12.2 min p90) was the last check to finish on 7 of 34 pull request pushes.
+This PR makes the rebuild after a small edit faster. It has two changes
+and one fix:
 
-The new simulator profile is dev with opt-level 1, so debug assertions and
-overflow checks stay on. Measured locally with CARGO_INCREMENTAL=0, as in CI:
+1. **Link x86_64 Linux builds with the LLD of the Rust toolchain.**
+`.cargo/config.toml` sets `scripts/link-with-rust-lld.sh` as the linker.
+The script runs `cc -B<sysroot>/lib/rustlib/x86_64-unknown-linux-
+gnu/bin/gcc-ld -fuse-ld=lld -Wl,-z,nostart-stop-gc`. Rust 1.90 and later
+do the same by default on this target, but `rust-toolchain.toml` pins
+1.88. LLD is in the `rustc` component of rustup, so you do not need to
+install it.
+   The third commit keeps GNU ld for `turso_node` and `turso_sync_js`
+(see below).
+2. **Optimize `syn`, `proc-macro2`, `quote` and `turso_macros` in dev
+builds.** Proc macros run inside rustc each time that a crate that uses
+them compiles. `#[turso_macros::test]` runs on more than 800 functions
+in each rebuild of `tests/integration`.
 
-  WriteStress seed 10093952252616453925   dev 534 s   opt-level 1 41 s   opt-level 2 39 s
-  WriteStress seed 963397087373001144     dev 212 s                      opt-level 2 17 s
-  rebuild after a turso_core change       dev  33 s   opt-level 1 69 s   opt-level 2 90 s
+### The files that change most
 
-opt-level 2 runs no faster than 1 and builds slower, so the profile uses 1.
+The clone has the history from 2026-06-18 to 2026-11-20. In this period,
+2,359 commits (merges not counted) change Rust files:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- 1,756 commits (74%) change `turso_core`.
+- 567 commits (24%) chan
 
-**File**: `.github/workflows/rust.yml` (modified, +5/-2)
+**File**: `.cargo/config.toml` (modified, +8/-0)
 ```diff
-@@ -433,8 +433,11 @@ jobs:
-           prefix-key: "v1-rust"
-           cache-on-failure: true
-           save-if: ${{ github.ref == 'refs/heads/main' }}
-+      # The simulator profile (Cargo.toml) optimizes the code but keeps
-+      # debug assertions; simulations run about ten times faster than with
-+      # the dev profile.
-       - name: Build simulator
--        run: cargo build -p limbo_sim --bin limbo_sim --locked
-+        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
-       - name: Simulator ${{ matrix.profile.name }}
-         env:
-           SIM_ARGS: ${{ matrix.profile.args }}
-@@ -444,7 +447,7 @@ jobs:
-             i="$1"
-             log="sim-run-$i.log"
-             read -r -a args <<< "$SIM_ARGS"
--            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
-+            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
-               echo "iteration $i ok: $(grep -m1 "^seed: " "$log")"
-             else
-               echo "iteration $i FAILED:"
+@@ -37,6 +37,14 @@ rustflags = [
+   "link-args=-Wl,-z,nodelete",
+ ]
+ 
++# Link with the LLD that ships with the Rust toolchain, which is much faster
++# than GNU ld (see the script). The path is relative to the workspace root.
++# A build that has this file but not the script fails. Because the recipe of
++# `cargo chef` has this file, the Dockerfiles copy the script before
++# `cargo chef cook`.
++[target.x86_64-unknown-linux-gnu]
++linker = "scripts/link-with-rust-lld.sh"
++
+ # To be able to run unit tests on Windows, support compilation to MSVC targets.
+ [target.'cfg(target_env = "msvc")']
+ rustflags = [
 ```
 
-**File**: `Cargo.toml` (modified, +9/-0)
+**File**: `CONTRIBUTING.md` (modified, +12/-11)
 ```diff
-@@ -196,6 +196,15 @@ shuttle = { version = "0.8.1" }
+@@ -7,7 +7,7 @@ This document is a quick helper to get you going.
+ <!--toc:start-->
+ - [Contributing to Turso](#contributing-to-turso)
+   - [Getting Started](#getting-started)
+-    - [Configuring `mold` Linker](#configuring-mold-linker)
++    - [Linker](#linker)
+     - [Running Tests On Linux](#running-tests-on-linux)
+   - [Developing with AI coding agents](#developing-with-ai-coding-agents)
+   - [Debugging bugs](#debugging-bugs)
+@@ -92,11 +92,14 @@ cargo build -p turso_sqlite3 --features capi
+ cargo test
+ ```
+ 
+-### Configuring `mold` Linker
++### Linker
+ 
+-The `mold` linker (Linux only) can reduce your build time from a minute to just few seconds.
++On x86_64 Linux, `.cargo/config.toml` sets `scripts/link-with-rust-lld.sh` as the linker.
++The script links with the LLD linker that comes with the Rust toolchain, so you do not need
++to install a linker. On a machine with 4 cores, LLD links a debug build of `tursodb` in 1.4
++seconds. GNU ld needs 10 seconds.
+ 
+-First, install `mold`:
++To use the `mold` linker, install it:
+ 
+ ```console
+ # Fedora/RHEL
+@@ -106,16 +109,14 @@ sudo dnf install mold
+ sudo apt install mold
+ ```
+ 
+-Then configure Cargo to use mold by creating `.cargo/config.toml`:
++Then add this line to your shell profile:
+ 
+-**For Linux:**
+-
+-```toml
+-[target.x86_64-unknown-linux-gnu]
+-linker = "clang"
+-rustflags = ["-C", "link-arg=-fuse-ld=mold"]
++```console
++export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C link-arg=-fuse-ld=mold"
+ ```
+ 
++To use the default linker of your C compiler, set `CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc`.
++
+ ### Running Tests On Linux
+ 
+ > [!NOTE]
+```
+
+**File**: `Cargo.toml` (modified, +16/-0)
+```diff
+@@ -196,6 +196,22 @@ windows-sys = "0.61.2"
+ loom = { version = "0.7" }
+ shuttle = { version = "0.8.1" }
+ 
++# Proc macros run inside rustc each time that a crate that uses them compiles.
++# For example, #[turso_macros::test] runs on more than 800 functions in each
++# rebuild of tests/integration. Proc macros spend most of their time in syn,
++# proc-macro2 and quote, so these crates and turso_macros are optimized.
++[profile.dev.package.turso_macros]
++opt-level = 3
++
++[profile.dev.package.syn]
++opt-level = 3
++
++[profile.dev.package.proc-macro2]
++opt-level = 3
++
++[profile.dev.package.quote]
++opt-level = 3
++
  [profile.dev.package.similar]
  opt-level = 3
  
-+# CI runs the simulator built with this profile. A simulation runs about ten
-+# times faster than with the dev profile, and a rebuild after a change to
-+# turso_core takes about twice as long. opt-level 2 runs no faster than 1.
-+# Debug assertions and overflow checks stay on, as in dev.
-+[profile.simulator]
-+inherits = "dev"
-+opt-level = 1
-+debug = "line-tables-only"
+```
+
+**File**: `Dockerfile.antithesis` (modified, +2/-0)
+```diff
+@@ -28,6 +28,8 @@ RUN pip install --break-system-packages maturin
+ ADD https://antithesis.com/assets/instrumentation/libvoidstar.so /opt/antithesis/libvoidstar.so
+ 
+ COPY --from=planner /tmp/recipe.json recipe.json
++# The recipe has .cargo/config.toml, and its linker is this script.
++COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
+ RUN cargo chef cook --bin turso_stress --release --recipe-path recipe.json
+ COPY . .
+ 
+```
+
+**File**: `flake.nix` (modified, +6/-0)
+```diff
+@@ -36,6 +36,10 @@
+           src = ./.;
+           pname = "turso";
+           nativeBuildInputs = with pkgs; [ python3 ];
++          # .cargo/config.toml sets scripts/link-with-rust-lld.sh as the
++          # linker, but the dummy source of buildDepsOnly has no scripts/
++          # directory. In a Nix build, that script runs cc anyway.
++          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "cc";
+         };
+ 
+         commonArgs = {
+@@ -44,6 +48,8 @@
+           src = ./.;
+           nativeBuildInputs = with pkgs; [ python3 ];
+           strictDeps = true;
++          # The same linker as cargoArtifacts, so that Cargo reuses its build.
++          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "cc";
+         };
+ 
+         craneLib = ((crane.mkLib pkgs).overrideToolchain toolchain);
+```
+
+**File**: `scripts/link-with-rust-lld.sh` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++#!/bin/sh
++# link-with-rust-lld.sh - The linker for x86_64-unknown-linux-gnu (see .cargo/config.toml)
++#
++# Runs `cc` with the LLD linker that ships with the Rust toolchain. On a
++# machine with 4 cores, LLD links a debug build of tursodb in 1.4 seconds, and
++# GNU ld in 10 seconds. Rust 1.90 and later use this linker by default on this
++# target. When rust-toolchain.toml moves to 1.90 or later, remove this script,
++# but keep GNU ld for the crates in the `case` below.
++#
++# rustc puts the bin directory of its toolchain first in PATH when it runs the
++# linker. That directory has rust-lld and gcc-ld/ld.lld. If they are not
++# there, the script runs `cc` with its default linker.
++#
++# In a Nix build environment (NIX_CC is set), the script runs `cc` with its
++# default linker, because -fuse-ld=lld skips the Nix linker wrapper, which
++# adds the path of the Nix dynamic linker to each binary.
++#
++# The test binaries of the Node.js bindings (turso_node and turso_sync_js)
++# refer to Node-API symbols that only the node process defines. GNU ld with
++# --warn-unresolved-symbols (see .cargo/config.toml) resolves these symbols
++# to 0. LLD puts them into the dynamic symbol table, and because the binaries
++# link with -z now, they stop at start with "undefined symbol". So these two
++# crates link with GNU ld. Cargo sets CARGO_PKG_NAME for rustc, and rustc
++# gives its environment to the linker.
++#
++# -z nostart-stop-gc: with Rust 1.88, LLD removes the sections that only the
++# __start_ and __stop_ symbols refer to, and the link fails with undefined
++# symbols. linkme (a dependency of antithesis_sdk) uses these symbols. GNU ld
++# keeps these sections, and this option makes LLD keep them too.
 +
- [profile.release]
- debug = "line-tables-only"
- codegen-units = 4
++case "$CARGO_PKG_NAME" in
++  turso_node | turso_sync_js) exec cc "$@" ;;
++esac
++
++if [ -z "$NIX_CC" ] && lld=$(command -v rust-lld) && [ -x "${lld%/*}/gcc-ld/ld.lld" ]; then
++  exec cc -B"${lld%/*}/gcc-ld" -fuse-ld=lld -Wl,-z,nostart-stop-gc "$@"
++fi
++exec cc "$@"
+```
+
+**File**: `testing/simulator/simulator-docker-runner/Dockerfile.simulator` (modified, +2/-0)
+```diff
+@@ -20,6 +20,8 @@ RUN --mount=type=bind,source=.,target=/app \
+ FROM chef AS builder 
+ 
+ COPY --from=planner /tmp/recipe.json recipe.json
++# The recipe has .cargo/config.toml, and its linker is this script.
++COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
+ RUN cargo chef cook --bin limbo_sim --release --recipe-path recipe.json
+ COPY . .
+ 
+```
+
+**File**: `testing/sqlancer/sqlancer-runner/Dockerfile.sqlancer` (modified, +2/-0)
+```diff
+@@ -27,6 +27,8 @@ RUN --mount=type=bind,source=.,target=/app \
+ FROM chef AS builder
+ 
+ COPY --from=planner /tmp/recipe.json recipe.json
++# The recipe has .cargo/config.toml, and its linker is this script.
++COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
+ RUN cargo chef cook --release -p turso-java --recipe-path recipe.json
+ 
+ # Copy full source
 ```
 
 ---
 
-### Incident Patch 2: `76da890c` (2026-11-21)
-**Commit Message**: Merge 'perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file' from Jussi Saurio
+### Incident Patch 2: `73f048cb` (2026-11-23)
+**Commit Message**: testing/stress: require the first PCT schedule to complete TRUNCATE
 
-On main, `make bench-tpc-c` fails: it runs `perf/tpc-c/tpcc-
-turso/run_bench.sh`, and that directory does not exist. This PR points
-the target at `perf/tpc-c/run_bench.sh`, where `635b5c063e` put the
-TPC-C harness.
+shuttle_test_passive_truncate_preserves_late_commit required that at least
+one of its 100 random schedules complete TRUNCATE. When the yields of
+eaa8fa7a made TRUNCATE rare, the test failed only on some runs.
+tursodatabase/turso#11875 merged with 2 failures of this test in 32 CI
+attempts.
 
-It also deletes `perf/checkpoint-bench/src/main.rs`. That directory has
-no `Cargo.toml` and is not a workspace member, so nothing builds the
-file. `85c091e17c` deleted the crate, and `28af7f1b6e` re-added only
-`main.rs`.
-
-Ran `make bench-tpc-c` with this PR in a Linux container (aarch64, gcc).
-Last lines of the report:
-
-```
-  Turso / SQLite ratio: 0.14x
-  Winner: sqlite (+627.4%)
-```
-
-Not fixed here: the harness does not compile on macOS, because it uses
-`timer_t`.
-
-A broken Makefile target and a file that no build includes.
-
-Claude Code found both items, made the change, ran the target, and wrote
-this text.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Closes #12222
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -199,7 +199,7 @@ docker-cli-run:
- 	docker run -it -v ./:/app turso-cli
- 
- bench-tpc-c:
--	@cd perf/tpc-c/tpcc-turso && ./run_bench.sh
-+	@cd perf/tpc-c && ./run_bench.sh
- .PHONY: bench-tpc-c
- 
- merge-pr:
-```
-
-**File**: `perf/checkpoint-bench/src/main.rs` (removed, +0/-684)
-```diff
-@@ -1,684 +0,0 @@
--//! Multithreaded MVCC checkpoint benchmark: TRUNCATE (blocking) vs PASSIVE (non-blocking).
--//!
--//! Concurrent writer and reader tasks hammer a small table while the auto-checkpoint fires
--//! aggressively (low `mvcc_checkpoint_threshold`). The blocking Truncate checkpoint takes the
--//! global lock for the whole checkpoint, so transactions stall whenever one runs — visible as
--//! tail-latency spikes and throughput dips. The passive checkpoint only contends for a brief
--//! publish window. We record per-operation latency with timestamps, so the output includes a
--//! time series (CSV + self-contained SVG plots) that makes contention visible.
--//!
--//! File sizes (db / -wal / logical log) are reported per mode as a "did checkpointing keep up"
--//! signal: if checkpoints fall behind, the logical log and WAL grow without bound during the run.
--//!
--//! Example:
--//!   cargo run --profile bench-profile -p mvcc-checkpoint-bench -- \
--//!       --writers 8 --readers 8 --duration 15 --rows 2000 --checkpoint-threshold 4096
--
--use std::path::{Path, PathBuf};
--use std::sync::Arc;
--use std::time::{Duration, Instant};
--
--use clap::Parser;
--use tokio::sync::Mutex;
--use turso::Builder;
--
--#[derive(Parser, Clone)]
--#[command(about = "Compare TRUNCATE vs PASSIVE MVCC checkpoint latency/throughput")]
--struct Args {
--    /// Concurrent writer tasks (each runs BEGIN CONCURRENT / UPDATE / COMMIT in a loop).
--    #[arg(long, default_value_t = 4)]
--    writers: usize,
--    /// Concurrent reader tasks (each runs point SELECTs in a loop).
--    #[arg(long, default_value_t = 4)]
--    readers: usize,
--    /// Measurement duration per mode, in seconds.
--    #[arg(long, default_value_t = 10)]
--    duration: u64,
--    /// Rows seeded into the table (also the key space writers/readers touch).
--    #[arg(long, default_value_t = 1000)]
--    rows: i64,
--    /// `PRAGMA mvcc_checkpoint_threshold` in bytes: 0 = checkpoint on every commit,
--    /// N > 0 = when the logical log exceeds N bytes, -1 = never.
--    #[arg(long, default_value_t = 0)]
--    checkpoint_threshold: i64,
--    /// `PRAGMA synchronous`: full = fsync per commit (durable, default), normal/off = relax fsync.
--    #[arg(long, default_value = "full")]
--    synchronous: String,
--    /// Which mode(s) to run.
--    #[arg(long, value_enum, default_value_t = ModeArg::Both)]
--    mode: ModeArg,
--    /// Time-series bucket width in milliseconds.
--    #[arg(long, default_value_t = 200)]
--    bucket_ms: u32,
--    /// Output path prefix for the CSV and HTML report.
--    #[arg(long, default_value = "checkpoint-bench-out")]
--    out: String,
--    /// Tokio worker threads (0 = tokio default = number of cores).
--    #[arg(long, default_value_t = 0)]
--    worker_threads: usize,
--}
--
--#[derive(clap::ValueEnum, Clone, Copy, PartialEq)]
--enum ModeArg {
--    Truncate,
--    Passive,
--    Both,
--}
--
--/// One operation: milliseconds since the measurement window started, and its latency (us).
--type Sample = (u32, u32);
--
--struct ModeData {
--    writes: Vec<Sample>,
--    reads: Vec<Sample>,
--    write_conflicts: u64,
--    elapsed_secs: f64,
--    files: Vec<(String, u64)>,
--}
--
--struct Stats {
--    count: u64,
--    per_sec: f64,
--    mean: f64,
--    p50: u64,
--    p90: u64,
--    p99: u64,
--    p999: u64,
--    max: u64,
--}
--
--impl Stats {
--    fn compute(samples: &[Sample], elapsed_secs: f64) -> Self {
--        let mut lat: Vec<u64> = samples.iter().map(|&(_, l)| l as u64).collect();
--        let count = lat.len() as u64;
--        if lat.is_empty() {
--            return Stats {
--                count: 0,
--                per_sec: 0.0,
--                mean: 0.0,
--                p50: 0,
--                p90: 0,
--                p99: 0,
--                p999: 0,
--                max: 0,
--            };
--        }
--        lat.sort_unstable();
--        let sum: u128 = lat.iter().map(|&x| x as u128).sum();
--        let pct =
--            |p: f64| lat[((p * (lat.len() as f64 - 1.0)).round() as usize).min(lat.len() - 1)];
--        Stats {
--            count,
--            per_sec: count as f64 / elapsed_secs,
--            mean: sum as f64 / lat.len() as f64,
--            p50: pct(0.50),
--            p90: pct(0.90),
--            p99: pct(0.99),
--            p999: pct(0.999),
--            max: *lat.last().unwrap(),
--        }
--    }
--}
--
--/// Per-time-bucket aggregate for the time series.
--struct Bucket {
--    t_ms: u32,
--    throughput: f64,
--    p50: u64,
--    p99: u64,
--    max: u64,
--}
--
--fn bucketize(samples: &[Sample], bucket_ms: u32, duration_ms: u32) -> Vec<Bucket> {
--    let n = (duration_ms / bucket_ms) as usize + 1;
--    let mut buckets: Vec<Vec<u64>> = vec![Vec::new(); n];
--    for &(t, l) in samples {
--        let b = (t / bucket_ms) as usize;
--        if b < n {
--            buckets[b].push(l as u64);
--        }
--    }
--    let secs = bucket_ms as f64 / 1000.0;
--    buckets
--        .into_iter()
--        .enumerate()
--        .map(|(i, mut v)| {
--            let t_ms = i as u32
-```
-
----
-
-### Incident Patch 3: `e7fd7e2d` (2026-11-21)
-**Commit Message**: ci: build the CodSpeed memory benchmarks without LTO
-
-26fc7e7f27 turned off LTO for CodSpeed builds with CARGO_PROFILE_BENCH_LTO in
-codspeed.yml's env. codspeed-memory.yml is a called workflow, and a called
-workflow does not get the env of the workflow that calls it, so the memory
-benchmark build still used thin LTO. That build (233 s p50) plus the
-benchmark shard after it was the last check to finish on 11 of 34 pull
-request pushes. Locally, a rebuild after a turso_core change takes 80 s
-without LTO and 106 s with thin LTO.
+The first PCT schedule makes no random priority changes. In this schedule,
+the checkpoint task has a higher priority than the writer task, and
+TRUNCATE completes. The test now requires this. A change that makes
+TRUNCATE return Busy in this schedule fails the test on every run. Without
+the previous commit, the test fails on every run.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01SLcVSK8Jtwz1ovgnwBXPBC
 
-**File**: `.github/workflows/codspeed-memory.yml` (modified, +10/-0)
+**File**: `testing/stress/tests/shuttle_mvcc_checkpoint.rs` (modified, +12/-9)
 ```diff
-@@ -14,6 +14,16 @@ permissions:
-   contents: read
-   id-token: write # required for OIDC authentication with CodSpeed
+@@ -150,15 +150,18 @@ async fn passive_truncate_late_commit_scenario() -> bool {
+ fn shuttle_test_passive_truncate_preserves_late_commit() {
+     let scheduler = PctScheduler::new(3, 100);
+     let runner = shuttle::Runner::new(scheduler, shuttle_config());
+-    let saw_successful_checkpoint = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+-    let completed = saw_successful_checkpoint.clone();
++    let executions = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+     runner.run(move || {
+-        if shuttle::future::block_on(passive_truncate_late_commit_scenario()) {
+-            completed.store(true, std::sync::atomic::Ordering::SeqCst);
+-        }
++        let first = executions.fetch_add(1, std::sync::atomic::Ordering::SeqCst) == 0;
++        let completed = shuttle::future::block_on(passive_truncate_late_commit_scenario());
++        // The first PCT schedule makes no random priority changes, so in it the
++        // checkpoint task has a higher priority than the writer task, which was
++        // spawned later. TRUNCATE completes in this schedule. The random schedules
++        // complete it less often, so a check on them fails only on some runs when a
++        // change makes TRUNCATE rare. This check fails on every run of such a change.
++        assert!(
++            !first || completed,
++            "the first explored schedule must complete TRUNCATE"
++        );
+     });
+-    assert!(
+-        saw_successful_checkpoint.load(std::sync::atomic::Ordering::SeqCst),
+-        "at least one explored schedule must complete TRUNCATE"
+-    );
+ }
+```
+
+---
+
+### Incident Patch 3: `2c9cb016` (2026-11-23)
+**Commit Message**: Merge 'core: add a Type trait and write the built-in types in Rust' from Pekka Enberg
+
+A built-in type such as `boolean` is defined today by a `CREATE TYPE`
+statement in a string:
+
+```rust
+"CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"
+```
+
+That has three problems:
+
+- Core parses the 17 strings on every schema build.
+- ENCODE, COERCE and DECODE are SQL expressions that name SQL functions.
+Every statement that uses the type looks `boolean_to_int` up by name
+again, and the helper is a public SQL function as a side effect.
+- The rest of what core knows about a built-in type is in two more
+places: a tuple of flags next to the string, and three functions that
+match on the type's name (`builtin_value_type`, `builtin_ordering`,
+`builtin_signatures`). A dialect cannot describe a type of its own
+through that.
+
+This pull request adds a `Type` trait and writes the built-in types in
+Rust.
+
+## The trait
+
+`core/types/custom_type.rs`:
+
+```rust
+pub trait Type: Debug + Send + Sync {
+    fn name(&self) -> &str;
+    fn params(&self) -> Vec<ast::TypeParam>;
+    fn base(&self) -> &str;
+    fn encode(&self) -> Option<Conve
+
+**File**: `core/connection/reparse.rs` (modified, +1/-1)
+```diff
+@@ -245,7 +245,7 @@ mod tests {
+             schema.dialect_schema = Some(Arc::new(()));
+         })
+         .unwrap();
+-        let fresh = crate::schema::builtin::schema_builder(&DialectThatCannotParse, false)
++        let fresh = crate::schema::builtin::schema_builder(false)
+             .unwrap()
+             .build();
+         assert!(fresh.dialect_schema.is_none());
+```
+
+**File**: `core/dialect/mod.rs` (modified, +1/-1)
+```diff
+@@ -260,7 +260,7 @@ pub trait Dialect: Send + Sync + 'static {
+     ///
+     /// [`Dialect::new_schema`] finishes the schema.
+     fn schema_builder(&self, enable_custom_types: bool) -> Result<SchemaBuilder> {
+-        crate::schema::builtin::schema_builder(self, enable_custom_types)
++        crate::schema::builtin::schema_builder(enable_custom_types)
+     }
  
-+# A called workflow does not get the env block of the workflow that calls
-+# it, so codspeed.yml's settings are repeated here.
-+env:
-+  CARGO_INCREMENTAL: "0"
-+  CARGO_NET_RETRY: 10
-+  CARGO_TERM_COLOR: always
-+  # Thin LTO made up a large part of the bench build. CodSpeed compares each
-+  # PR against main built the same way, so the comparison does not need it.
-+  CARGO_PROFILE_BENCH_LTO: "false"
-+
- jobs:
-   build:
-     runs-on: blacksmith-4vcpu-ubuntu-2404
+     fn register_native_extensions(&self, options: OpenOptions) -> OpenOptions {
+```
+
+**File**: `core/functions/builtin.rs` (modified, +118/-83)
+```diff
+@@ -1068,35 +1068,7 @@ pub fn call_builtin_scalar(
+         }
+         ScalarFunc::BooleanToInt => {
+             check_arg_count(args, 1)?;
+-            Ok(match args[0].get_value() {
+-                Value::Null => Value::Null,
+-                Value::Numeric(Numeric::Integer(i)) => match *i {
+-                    0 => Value::from_i64(0),
+-                    1 => Value::from_i64(1),
+-                    _ => {
+-                        return Err(LimboError::Constraint(format!(
+-                            "invalid input for type boolean: \"{i}\""
+-                        )));
+-                    }
+-                },
+-                Value::Text(t) => {
+-                    let v = &t.value;
+-                    match v.to_ascii_lowercase().as_str() {
+-                        "true" | "t" | "yes" | "on" | "1" => Value::from_i64(1),
+-                        "false" | "f" | "no" | "off" | "0" => Value::from_i64(0),
+-                        _ => {
+-                            return Err(LimboError::Constraint(format!(
+-                                "invalid input for type boolean: \"{v}\""
+-                            )));
+-                        }
+-                    }
+-                }
+-                other => {
+-                    return Err(LimboError::Constraint(format!(
+-                        "invalid input for type boolean: \"{other}\""
+-                    )));
+-                }
+-            })
++            exec_boolean_to_int(args[0].get_value())
+         }
+         ScalarFunc::IntToBoolean => {
+             check_arg_count(args, 1)?;
+@@ -1108,73 +1080,27 @@ pub fn call_builtin_scalar(
+         }
+         ScalarFunc::ValidateIpAddr => {
+             check_arg_count(args, 1)?;
+-            Ok(match args[0].get_value() {
+-                Value::Null => Value::Null,
+-                Value::Text(t) => {
+-                    let v = &t.value;
+-                    v.parse::<std::net::IpAddr>().map_err(|_| {
+-                        LimboError::Constraint(format!("invalid input for type inet: \"{v}\""))
+-                    })?;
+-                    args[0].get_value().clone()
+-                }
+-                other => {
+-                    return Err(LimboError::Constraint(format!(
+-                        "invalid input for type inet: \"{other}\""
+-                    )));
+-                }
+-            })
++            exec_validate_ipaddr(args[0].get_value())
+         }
+         ScalarFunc::NumericEncode => {
+             check_arg_count(args, 1)?;
+-            Ok(match args[0].get_value() {
+-                Value::Null => Value::Null,
+-                other => {
+-                    let bd = numeric_from_value(other)?;
+-                    Value::from_blob(bigdecimal_to_blob(&bd))
+-                }
+-            })
++            exec_numeric_encode(args[0].get_value())
+         }
+         ScalarFunc::TemporalEncode => {
+             check_arg_count(args, 2)?;
+             exec_temporal_encode(args[0].get_value(), args[1].get_value())
+         }
+         ScalarFunc::NumericFit => {
+             check_arg_count(args, 3)?;
+-            Ok(match args[0].get_value() {
+-                Value::Null => Value::Null,
+-                Value::Blob(stored) => {
+-                    let bd = blob_to_bigdecimal(stored)?;
+-                    let (
+-                        Value::Numeric(Numeric::Integer(precision)),
+-                        Value::Numeric(Numeric::Integer(scale)),
+-                    ) = (args[1].get_value(), args[2].get_value())
+-                    else {
+-                        return Err(LimboError::Constraint(
+-                            "numeric_fit: precision and scale must be integers".to_string(),
+-                        ));
+-                    };
+-                    let fitted = validate_precision_scale(&bd, *precision, *scale)?;
+-                    Value::from_blob(bigdecimal_to_blob(&fitted))
+-                }
+-                other => {
+-                    return Err(LimboError::InternalError(format!(
+-                        "numeric_fit expects a stored numeric, got {}",
+-                        other.value_type()
+-                    )));
+-                }
+-            })
++            exec_numeric_fit(
++                args[0].get_value(),
++                args[1].get_value(),
++                args[2].get_value(),
++            )
+         }
+         ScalarFunc::NumericDecode => {
+             check_arg_count(args, 1)?;
+-            Ok(match args[0].get_value() {
+-                Value::Null => Value::Null,
+-                Value::Blob(b) => Value::build_text(format_numeric(&blob_to_bigdecimal(b)?)),
+-                other => {
+-                    return Err(LimboError::Constraint(format!(
+-                        "numeric_decode: expected blob, got \"{other}\""
+-                    )));
+-                }
+-            })
++            exec_numeric_decode(args[0].get_value())
+         }
+         ScalarFunc::NumericAdd
+         | ScalarFunc::NumericSub
+@@ -1325,6
+```
+
+**File**: `core/schema.rs` (modified, +120/-209)
+```diff
+@@ -21,6 +21,7 @@ use crate::translate::schema::type_def_uses_type;
+ use crate::type_ordering::TypeOrdering;
+ use crate::types::IOResultOr;
+ use crate::types::StrictType;
++use crate::types::{Conversion, StorageClass, UserType};
+ use crate::types::{IOResult, ImmutableRecord, ImmutableRecordRef};
+ use crate::util::{exprs_are_equivalent, is_builtin_strict_type, normalize_ident};
+ use crate::vdbe::affinity::Affinity;
+@@ -248,9 +249,9 @@ pub enum TypeDefKind {
+     Custom {
+         params: std::vec::Vec<ast::TypeParam>,
+         base: String,
+-        encode: Option<Box<ast::Expr>>,
+-        coerce: Option<Box<ast::Expr>>,
+-        decode: Option<Box<ast::Expr>>,
++        encode: Option<Conversion>,
++        coerce: Option<Conversion>,
++        decode: Option<Conversion>,
+         /// How values of the type compare, for built-in types that have their
+         /// own order, such as numeric. `None` compares the stored values as
+         /// SQLite does.
+@@ -319,116 +320,8 @@ pub enum OperatorArg {
+ pub const BINARY_OPERATORS: [&str; 9] = ["+", "-", "*", "/", "%", "&", "|", "<<", ">>"];
+ pub const PREFIX_OPERATORS: [&str; 2] = ["-", "~"];
+ 
+-/// The order of a built-in type whose stored values do not sort in the type's
+-/// order: numeric is stored as a blob. Every other type, and every user type,
+-/// sorts and compares by its stored value as SQLite does.
+-fn builtin_ordering(type_name: &str) -> Option<TypeOrdering> {
+-    match type_name {
+-        "numeric" => Some(TypeOrdering::Numeric),
+-        _ => None,
+-    }
+-}
+-
+-/// The kind of value a built-in type reads as. uuid, jsonb and numeric store
+-/// blobs and DECODE them to text. The built-in types are registered before any
+-/// connection's functions, so the kind of `uuid_str(value)` can't be worked
+-/// out from the DECODE then; a test checks these against the DECODE of each
+-/// type.
+-fn builtin_value_type(type_name: &str) -> crate::Result<BuiltinType> {
+-    Ok(match type_name {
+-        "boolean" | "smallint" | "bigint" => BuiltinType::Integer,
+-        "uuid" | "json" | "jsonb" | "numeric" | "varchar" | "date" | "time" | "timestamp"
+-        | "timestamptz" | "inet" | "cidr" | "macaddr" | "macaddr8" => BuiltinType::Text,
+-        "bytea" => BuiltinType::Blob,
+-        _ => {
+-            return Err(LimboError::InternalError(format!(
+-                "built-in type {type_name} has no kind of value"
+-            )))
+-        }
+-    })
+-}
+-
+-/// Operators on built-in types. User types have none: `x + 1` on a user type is
+-/// an error. The functions read plain values as they are, so nothing is encoded first:
+-/// - `numeric op x` and `x op numeric` for `+ - * / %`, and `-numeric`, compute
+-///   exactly, and the result is a numeric. Encoding a literal to the column's type would round it
+-///   to the column's scale first (`n * 0.005` would be `n * 0.01`). With a REAL
+-///   value `+ - * /` are SQLite's operators and give a REAL, as PostgreSQL gives
+-///   double precision; `%` with a REAL value does not exist, as in PostgreSQL.
+-/// - `date + integer`, `integer + date` and `date - integer` add or subtract
+-///   days and give a date. `date - date` gives the number of days between them;
+-///   a text literal on either side is encoded to a date first. Each signature
+-///   has its own function, so its result type is known before the statement
+-///   runs.
+-/// - `smallint` and `bigint` store plain integers, so SQLite's operators run,
+-///   including `-`, `~`, `&`, `|`, `<<` and `>>`.
+-///
+-/// Other built-in types have no operators, and these types have no others:
+-/// `-date` and `numeric & 1` are errors, as in PostgreSQL.
+-fn builtin_signatures(type_name: &str) -> std::vec::Vec<OperatorSignature> {
+-    use OperatorArg::{EncodableLiteral, Exact, Integer, Real, Value};
+-    let call = |op, args: &[OperatorArg], func: &str, result| OperatorSignature {
+-        op,
+-        args: args.to_vec(),
+-        func: Some(func.to_string()),
+-        result,
+-    };
+-    match type_name {
+-        "numeric" => {
+-            let mut signatures = std::vec::Vec::new();
+-            for (op, func) in [
+-                ("+", "numeric_add"),
+-                ("-", "numeric_sub"),
+-                ("*", "numeric_mul"),
+-                ("/", "numeric_div"),
+-                ("%", "numeric_mod"),
+-            ] {
+-                for args in [[Value, Value], [Value, Exact], [Exact, Value]] {
+-                    signatures.push(call(op, &args, func, Some("numeric")));
+-                }
+-                if op != "%" {
+-                    signatures.extend(sqlite_operator(op, Real));
+-                }
+-            }
+-            signatures.push(call("-", &[Value], "numeric_neg", Some("numeric")));
+-            signatures
+-        }
+-        "date" => std::vec![
+-            call("+", &[Value, Integer], "date_plus", Some("date")),
+-            call("+", &[Integer, Value], "date_plus", Some("date")),
+-            call("-", &[Value, Value], "date_diff", Some("integer")),
+
+```
+
+**File**: `core/schema/builtin.rs` (modified, +5/-81)
+```diff
+@@ -1,7 +1,7 @@
+ //! The catalog tables and types that the schema of every database has,
+ //! whatever its dialect.
+ 
+-use super::{RangeOffsets, SchemaBuilder, Table, TypeDef, TypeOrigin};
++use super::{SchemaBuilder, Table};
+ use crate::pragma::PragmaVirtualTable;
+ use crate::sync::Arc;
+ use crate::vtab::{VirtualTable, VirtualTableType};
+@@ -10,90 +10,14 @@ use turso_ext::VTabKind;
+ /// Starts the schema of a database: the built-in catalog tables and, if
+ /// `enable_custom_types`, the built-in types. A dialect adds its own tables
+ /// and types to the builder.
+-pub fn schema_builder(
+-    dialect: &(impl crate::dialect::Dialect + ?Sized),
+-    enable_custom_types: bool,
+-) -> crate::Result<SchemaBuilder> {
++pub fn schema_builder(enable_custom_types: bool) -> crate::Result<SchemaBuilder> {
+     let mut builder = SchemaBuilder::new()?.custom_types(enable_custom_types);
+     if enable_custom_types {
+-        builder = builtin_types(dialect, builder)?;
+-    }
+-    builtin_catalog(builder, enable_custom_types)
+-}
+-
+-fn builtin_types(
+-    dialect: &(impl crate::dialect::Dialect + ?Sized),
+-    mut builder: SchemaBuilder,
+-) -> crate::Result<SchemaBuilder> {
+-    use crate::ast::{Cmd, Stmt};
+-
+-    // Whether values of the type take a COLLATE. In PostgreSQL only text
+-    // types do, so of the types below only varchar does.
+-    const COLLATE: bool = true;
+-    const NO_COLLATE: bool = false;
+-    // Whether the stored form sorts in the same order as the values.
+-    const SORTS: bool = true;
+-    const NO_SORT: bool = false;
+-    let types: &[(bool, RangeOffsets, bool, &str)] = &[
+-        #[cfg(feature = "uuid")]
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE uuid(value any) BASE blob ENCODE CASE WHEN value IS NULL THEN NULL WHEN typeof(value) = 'blob' AND length(value) = 16 THEN value ELSE coalesce(uuid_blob(value), RAISE(ABORT, 'invalid UUID value')) END DECODE uuid_str(value) OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"),
+-        #[cfg(feature = "json")]
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE json(value text) BASE text ENCODE json(value) DECODE value"),
+-        #[cfg(feature = "json")]
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE jsonb(value text) BASE blob ENCODE jsonb(value) DECODE json(value)"),
+-        (COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE varchar(value text, maxlen integer) BASE text COERCE CASE WHEN length(value) <= maxlen THEN value ELSE RAISE(ABORT, 'value too long for varchar') END DECODE value OPERATOR '<'"),
+-        // The ENCODEs read PostgreSQL's input forms and store one text form
+-        // with a 4-digit year, which sorts in time order (see
+-        // functions/datetime_input.rs).
+-        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE date(value text) BASE text ENCODE temporal_encode(value, 'date') DECODE value OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE time(value text) BASE text ENCODE temporal_encode(value, 'time') DECODE value OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamp(value text) BASE text ENCODE temporal_encode(value, 'timestamp') DECODE value OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamptz(value text) BASE text ENCODE temporal_encode(value, 'timestamptz') DECODE value OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range for smallint') END OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE bigint(value integer) BASE integer"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE inet(value text) BASE text ENCODE validate_ipaddr(value) DECODE value"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE cidr(value text) BASE text ENCODE value DECODE value"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr(value text) BASE text ENCODE value DECODE value"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr8(value text) BASE text ENCODE value DECODE value"),
+-        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE bytea(value blob) BASE blob OPERATOR '<'"),
+-        (NO_COLLATE, RangeOffsets::Numeric, NO_SORT, "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) DECODE numeric_decode(value)"),
+-    ];
+-
+-    let aliases: &[(&str, &str)] = &[
+-        ("bool", "boolean"),
+-        ("int2", "smallint"),
+-        ("int8", "bigint"),
+-    ];
+-    for &(accepts_collate, range_offsets, stored_form_sorts_in_value_order, sql) in types {
+-        let Ok(Some(Cmd::Stmt(Stmt::CreateTy
+```
+
+**File**: `core/translate/expr/custom_types.rs` (modified, +51/-17)
+```diff
+@@ -1,5 +1,6 @@
+ use super::*;
+ use crate::schema::ResolvedType;
++use crate::types::Conversion;
+ 
+ /// Get the effective type name of a literal expression.
+ pub(super) fn literal_type_name(expr: &ast::Expr) -> Option<&'static str> {
+@@ -565,8 +566,8 @@ pub(crate) fn emit_decode(
+ 
+     // Apply decode in reverse order (parent/ancestor first, then child)
+     for td in resolved.chain.iter().rev() {
+-        if let Some(decode_expr) = td.decode() {
+-            emit_type_expr(program, decode_expr, reg, reg, resolver)?;
++        if let Some(decode) = td.decode() {
++            emit_conversion(program, td, "DECODE", decode, reg, resolver)?;
+         }
+     }
+ 
+@@ -698,15 +699,15 @@ pub(crate) fn emit_store_value(
+     });
+     for type_def in &resolved.chain {
+         if let Some(encode) = type_def.encode() {
+-            emit_type_expr(program, encode, reg, reg, resolver)?;
++            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
+         }
+         let type_params = match coerce {
+             Coerce::WithArgs(type_params) => type_params,
+             Coerce::Skip => continue,
+         };
+-        if let Some(coerce_expr) = coerce_to_run(type_def, type_params) {
++        if let Some(coerce) = coerce_to_run(type_def, type_params) {
+             program.emit_insn(convert.clone());
+-            emit_coerce(program, type_def, coerce_expr, reg, type_params, resolver)?;
++            emit_coerce(program, type_def, coerce, reg, type_params, resolver)?;
+         }
+     }
+     program.emit_insn(convert);
+@@ -727,7 +728,7 @@ pub(crate) fn emit_encode_for_comparison(
+ ) -> Result<()> {
+     for type_def in chain {
+         if let Some(encode) = type_def.encode() {
+-            emit_type_expr(program, encode, reg, reg, resolver)?;
++            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
+         }
+     }
+     program.emit_insn(Insn::Affinity {
+@@ -738,24 +739,39 @@ pub(crate) fn emit_encode_for_comparison(
+     Ok(())
+ }
+ 
+-/// Emit bytecode for a custom type ENCODE or DECODE expression, with `value`
+-/// referencing `value_reg`. The result is written to `dest_reg`.
+-pub(crate) fn emit_type_expr(
++/// Emits `conversion`, which is the ENCODE or DECODE of `type_def` as `clause`
++/// says, on the value in `reg`. A SQL expression is compiled with `value`
++/// referencing `reg`. A Rust function is called, unless the value is NULL.
++pub(crate) fn emit_conversion(
+     program: &mut ProgramBuilder,
+-    expr: &ast::Expr,
+-    value_reg: usize,
+-    dest_reg: usize,
++    type_def: &TypeDef,
++    clause: &str,
++    conversion: &Conversion,
++    reg: usize,
+     resolver: &Resolver,
+-) -> Result<usize> {
+-    emit_expr_with_bindings(program, expr, value_reg, dest_reg, &[], resolver)
++) -> Result<()> {
++    match conversion {
++        Conversion::Unchanged => {}
++        Conversion::Function(function) => program.emit_insn(Insn::TypeConversion {
++            function: *function,
++            reg,
++            params_reg: reg,
++            param_count: 0,
++            description: format!("{} {clause}", type_def.name),
++        }),
++        Conversion::Expr(expr) => {
++            emit_expr_with_bindings(program, expr, reg, reg, &[], resolver)?;
++        }
++    }
++    Ok(())
+ }
+ 
+ /// The type's COERCE, unless the type has parameters and is used without
+ /// arguments, as a column declared `numeric`: it then has no limits.
+ fn coerce_to_run<'a>(
+     type_def: &'a TypeDef,
+     type_params: &[Box<ast::Expr>],
+-) -> Option<&'a ast::Expr> {
++) -> Option<&'a Conversion> {
+     let coerce = type_def.coerce()?;
+     if type_params.is_empty() && type_def.user_params().next().is_some() {
+         return None;
+@@ -768,7 +784,7 @@ fn coerce_to_run<'a>(
+ fn emit_coerce(
+     program: &mut ProgramBuilder,
+     type_def: &TypeDef,
+-    coerce: &ast::Expr,
++    coerce: &Conversion,
+     reg: usize,
+     type_params: &[Box<ast::Expr>],
+     resolver: &Resolver,
+@@ -788,7 +804,25 @@ fn emit_coerce(
+         reg,
+         target_pc: skip_null,
+     });
+-    emit_expr_with_bindings(program, coerce, reg, reg, &bindings, resolver)?;
++    match coerce {
++        Conversion::Unchanged => {}
++        Conversion::Function(function) => {
++            let params_reg = program.alloc_registers(bindings.len());
++            for (i, (_, arg)) in bindings.iter().enumerate() {
++                translate_expr(program, None, arg, params_reg + i, resolver)?;
++            }
++            program.emit_insn(Insn::TypeConversion {
++                function: *function,
++                reg,
++                params_reg,
++                param_count: bindings.len(),
++                description: format!("{} COERCE", type_def.name),
++            });
++        }
++        Conversion::Expr(expr) => {
++            emit_expr_with_bindings(program, expr, reg, reg, &bindings, resolver)?;
++        }
++    }
+     program.preassign_label_to_next_insn(skip_null);
+     Ok(())
+ }
+```
+
+**File**: `core/translate/expr/expr_type.rs` (modified, +19/-81)
+```diff
+@@ -16,7 +16,7 @@ use crate::translate::emitter::Resolver;
+ use crate::translate::expr_context::TableMetadata;
+ use crate::translate::plan::{Plan, SelectPlan, TableReferences};
+ use crate::type_ordering::TypeOrdering;
+-use crate::types::{StorageClass, StrictType};
++use crate::types::{Conversion, StorageClass, StrictType};
+ use crate::vdbe::affinity::Affinity;
+ use crate::{Result, SymbolTable};
+ 
+@@ -954,7 +954,13 @@ pub(crate) fn decode_type(
+     if type_def.decode_returns_value_unchanged() {
+         return None;
+     }
+-    let decode = type_def.decode()?;
++    let decode = match type_def.decode()? {
++        Conversion::Expr(decode) => decode,
++        // A type written in Rust says what its DECODE gives when it is
++        // registered.
++        Conversion::Function(_) => return Some(ExprType::Builtin(type_def.value_type())),
++        Conversion::Unchanged => return None,
++    };
+     Some(type_of(
+         decode,
+         &TypeEnv::TypeBody {
+@@ -1413,7 +1419,7 @@ mod tests {
+     use super::*;
+     use crate::ast::{Expr, Literal, Name, Operator, UnaryOperator};
+     use crate::dialect::cannot_parse::DialectThatCannotParse;
+-    use crate::schema::{RangeOffsets, SchemaBuilder, TypeOrigin};
++    use crate::schema::SchemaBuilder;
+     use crate::translate::emitter::DoubleQuotedDml;
+     use crate::{DatabaseCatalog, RwLock, SymbolTable};
+     use rustc_hash::FxHashMap as HashMap;
+@@ -1806,8 +1812,8 @@ mod tests {
+         let mut schema = SchemaBuilder::new()
+             .unwrap()
+             .custom_types(true)
+-            .type_def("numeric", Arc::new(builtin_numeric()))
+-            .type_def("smallint", Arc::new(builtin_smallint()))
++            .type_def("numeric", Arc::new(builtin_type("numeric")))
++            .type_def("smallint", Arc::new(builtin_type("smallint")))
+             .build();
+         let sql = "CREATE TYPE cents BASE integer ENCODE value * 100 DECODE value / 100";
+         let cents = ast::CreateTypeBody::CustomType {
+@@ -1819,86 +1825,18 @@ mod tests {
+             operators: vec![],
+             default: None,
+         };
+-        let cents =
+-            TypeDef::from_create_type("cents", &cents, TypeOrigin::User, sql.to_string()).unwrap();
++        let cents = TypeDef::from_create_type("cents", &cents, sql.to_string()).unwrap();
+         schema.add_type(cents, &SymbolTable::new()).unwrap();
+         schema
+     }
+ 
+-    /// The built-in type numeric, as the database creates it when custom
++    /// The built-in type `name`, as the database creates it when custom
+     /// types are on.
+-    fn builtin_numeric() -> TypeDef {
+-        let sql = "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob \
+-                   ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) \
+-                   DECODE numeric_decode(value)";
+-        let body = ast::CreateTypeBody::CustomType {
+-            params: vec![
+-                type_param("value", "any"),
+-                type_param("precision", "integer"),
+-                type_param("scale", "integer"),
+-            ],
+-            base: "blob".to_string(),
+-            encode: Some(Box::new(call("numeric_encode", vec![id("value")]))),
+-            coerce: Some(Box::new(call(
+-                "numeric_fit",
+-                vec![id("value"), id("precision"), id("scale")],
+-            ))),
+-            decode: Some(Box::new(call("numeric_decode", vec![id("value")]))),
+-            operators: vec![],
+-            default: None,
+-        };
+-        let origin = TypeOrigin::Builtin {
+-            accepts_collate: false,
+-            range_offsets: RangeOffsets::Numeric,
+-            stored_form_sorts_in_value_order: false,
+-        };
+-        TypeDef::from_create_type("numeric", &body, origin, sql.to_string()).unwrap()
+-    }
+-
+-    /// The built-in type smallint, as the database creates it when custom
+-    /// types are on.
+-    fn builtin_smallint() -> TypeDef {
+-        let sql = "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value \
+-                   BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range \
+-                   for smallint') END OPERATOR '<'";
+-        let in_range = Expr::Between {
+-            lhs: Box::new(id("value")),
+-            not: false,
+-            start: Box::new(neg(int(32768))),
+-            end: Box::new(int(32767)),
+-        };
+-        let out_of_range = Expr::Raise(
+-            ast::ResolveType::Abort,
+-            Some(Box::new(text("integer out of range for smallint"))),
+-        );
+-        let body = ast::CreateTypeBody::CustomType {
+-            params: vec![type_param("value", "integer")],
+-            base: "integer".to_string(),
+-            encode: None,
+-            coerce: Some(Box::new(case_when(
+-                in_range,
+-                id("value"),
+-                Some(out_of_range),
+-            ))),
+-            decode: None,
+-            operators: vec![ast::TypeOperator {
+-                op:
+```
+
+**File**: `core/translate/expr/mod.rs` (modified, +2/-2)
+```diff
+@@ -108,8 +108,8 @@ pub(crate) use custom_type_operators::{
+ };
+ pub(crate) use custom_types::read_untyped_operand_as;
+ pub(crate) use custom_types::{
+-    emit_constraint_values_decode, emit_decode, emit_dml_expr_index_value,
+-    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers, emit_type_expr,
++    emit_constraint_values_decode, emit_conversion, emit_decode, emit_dml_expr_index_value,
++    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers,
+     emit_untyped_operand_store, emit_user_facing_column_value,
+ };
+ pub(crate) use custom_types::{runs_custom_type_function, takes_input_of_type};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12230** (2026-11-21): ci: make PR CI faster (@jussisaurio)
-- **PR #12229** (2026-11-21): core/vdbe: use the test dialect in test_serialize_array_from_blob (@jussisaurio)
-- **PR #12222** (2026-11-21): perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file (@jussisaurio)
-- **PR #12221** (2026-11-21): ci: remove the GitHub-runner criterion benchmark job (@jussisaurio)
-- **PR #12218** (2026-11-21): sync/engine: pass a session role to ConnectOpts::new in the verify test (@jussisaurio)
-- **PR #12210** (2026-11-21): core/translate: keep upsert clauses with INSERT OR IGNORE and OR REPLACE (@turso-github-handyman[bot])
+- **PR #12323** (2026-11-23): core: add a Type trait and write the built-in types in Rust (@penberg)
+- **PR #12306** (2026-11-23): core/translate: cast nonzero integers to true for a cast to boolean in postgres (@penberg)
+- **PR #12298** (2026-11-23): core: limit the encryption shuttle yields to turso_core unit tests (@LeMikaelF)
+- **PR #12290** (2026-11-23): sqltest: update the subquery-after-subquery-materialized snapshot for the min/max flag register (@jussisaurio)
+- **PR #12284** (2026-11-23): sync/engine: quote names when replaying DROP from sqlite_schema (@turso-github-handyman[bot])
+- **PR #12282** (2026-11-23): core/translate: stop storing the rowid twice in rows UPDATE and UPSERT write (@turso-github-handyman[bot])
 
 ---
 
@@ -1806,36 +2428,38 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: run the simulator built with optimizations
+## X. Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i
 
 **RULE**:
-When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3885b0ea`: ci: run the simulator built with optimizations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13d6d828`: Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros in dev builds' from Mikaël Francoeur. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # The simulator profile (Cargo.toml) optimizes the code but keeps
-      # debug assertions; simulations run about ten times faster than with
-      # the dev profile.
-        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
-            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
+# Link with the LLD that ships with the Rust toolchain, which is much faster
+# than GNU ld (see the script). The path is relative to the workspace root.
+# A build that has this file but not the script fails. Because the recipe of
+# `cargo chef` has this file, the Dockerfiles copy the script before
+# `cargo chef cook`.
+[target.x86_64-unknown-linux-gnu]
+linker = "scripts/link-with-rust-lld.sh"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        run: cargo build -p limbo_sim --bin limbo_sim --locked
-            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3885b0ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13d6d828` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

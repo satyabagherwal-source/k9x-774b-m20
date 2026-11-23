@@ -12476,3 +12476,5 @@
 | `CYCLE-20261123-VJEG` | `2026-11-23T21:23:05.080Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10126` | Yes (`88710714...`) |
 | `CYCLE-20261123-VNWJ` | `2026-11-23T21:23:10.915Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10127` | Yes (`ae356331...`) |
 | `CYCLE-20261123-VPM1` | `2026-11-23T21:23:13.129Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`2b177507...`) |
+| `CYCLE-20261123-645H` | `2026-11-23T21:31:18.533Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`fb75e21d...`) |
+| `CYCLE-20261123-6HIA` | `2026-11-23T21:31:35.842Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`ef0408cc...`) |

@@ -12509,3 +12509,5 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d486e054` | Multi-dimensional audit evidence | 2026-11-23T21:23:05.084Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `b74e3fe6` | Multi-dimensional audit evidence | 2026-11-23T21:23:10.920Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `5f12fdd2` | Multi-dimensional audit evidence | 2026-11-23T21:23:13.134Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T21:31:18.538Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `401721aa` | Multi-dimensional audit evidence | 2026-11-23T21:31:35.846Z |
