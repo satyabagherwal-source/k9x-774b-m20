@@ -12292,3 +12292,5 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `0b859805` | Multi-dimensional audit evidence | 2026-11-23T04:00:17.258Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5915d306` | Multi-dimensional audit evidence | 2026-11-23T04:00:19.223Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-23T04:08:10.002Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-23T04:23:24.562Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `8c86bcb2` | Multi-dimensional audit evidence | 2026-11-23T04:24:03.652Z |

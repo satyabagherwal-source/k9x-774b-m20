@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T04:08:23.563Z",
+  "last_updated": "2026-11-23T04:24:08.631Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -8159,8 +8159,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "eed746ab326afcbfcb9e8930b00e30e516b82fefc3850f679913aab37b0af250",
-      "created_at": "2026-11-23T04:08:23.563Z"
+      "content_hash": "9ff3fc809800d2f4cd63d266301081cec70c23011b96e86cd01f0d1ccccae81c",
+      "created_at": "2026-11-23T04:24:08.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -32091,8 +32091,8 @@
       "title": "Research & Knowledge Intelligence: CompVis/stable-diffusion-v1-4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-research-knowledge-intelligence-compvis-stable-.md",
       "repository": "CompVis/stable-diffusion-v1-4",
-      "content_hash": "3589732bb9141c48d7f911b2d57b15be6053c673c1f48043962e30965ffef7ca",
-      "created_at": "2026-11-18T18:38:06.052Z"
+      "content_hash": "b16a95d85211bf0dbe94df4948bc3a33823ab4fe9306aa75a1a4410078b62548",
+      "created_at": "2026-11-23T04:23:24.796Z"
     },
     "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
@@ -32160,8 +32160,8 @@
       "title": "Research & Knowledge Intelligence: hf-compvis-stable-diffusion-v1-4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-learnings-research-knowledge-intelligence-hf-co.md",
       "repository": "hf-compvis-stable-diffusion-v1-4-learnings",
-      "content_hash": "06943b1b54cf81e30ebc33bbf09749650a8fb5dcf6f6ec15def05039c1854045",
-      "created_at": "2026-11-18T18:39:02.634Z"
+      "content_hash": "dad83ded56b761654e5ceae214bf3b6592c0e0dcf2fc9750d23992363c4ccc2a",
+      "created_at": "2026-11-23T04:24:07.134Z"
     },
     "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",
@@ -34110,8 +34110,8 @@
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "db53bf033b428d355458b0906a3d70eff8ff5941eab22dbf4e1d43285ab0b8e1",
-      "created_at": "2026-11-22T02:29:32.761Z"
+      "content_hash": "d8b95671c7eb99490d5a72f2aa4d0035f80be74ed08e1c83c91bd935e1daffdb",
+      "created_at": "2026-11-23T04:24:03.998Z"
     },
     "DOM-D-2BF9F19D": {
       "record_id": "DOM-D-2BF9F19D",
@@ -39084,8 +39084,8 @@
       "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-learnings-technical-construction-intelligence-infiniflow-inf.md",
       "repository": "infiniflow-infinity-learnings",
-      "content_hash": "a621099bcbdec9a009ec13681bb17b5b386c5132491026f7dad67af4226b9895",
-      "created_at": "2026-11-22T02:29:39.291Z"
+      "content_hash": "7f9ce7db17f594503ba342c16482ad9b56db985efe0284da59ed1c5ba5bf24e4",
+      "created_at": "2026-11-23T04:24:07.703Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",

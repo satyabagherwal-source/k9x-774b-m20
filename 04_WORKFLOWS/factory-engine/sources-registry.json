@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T04:08:21.636Z",
-    "lastVerified": "2026-11-23T04:08:21.636Z",
+    "lastChecked": "2026-11-23T04:24:06.810Z",
+    "lastVerified": "2026-11-23T04:24:06.810Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T03:27:52.170Z",
-    "lastVerified": "2026-11-23T03:27:52.170Z",
+    "lastChecked": "2026-11-23T04:23:22.416Z",
+    "lastVerified": "2026-11-23T04:23:22.416Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1521,9 +1521,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-22T21:09:22.175Z",
+    "lastChecked": "2026-11-23T04:23:17.573Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-22T21:09:22.175Z"
+    "lastVerified": "2026-11-23T04:23:17.573Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2508,14 +2508,14 @@
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T02:29:31.339Z",
-    "lastVerified": "2026-11-22T02:29:31.339Z",
+    "lastChecked": "2026-11-23T04:23:24.693Z",
+    "lastVerified": "2026-11-23T04:23:24.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
+    "contentHash": "6432b38abb2d9dc3716c85d01b6e15d41c1e069597a7700582d39514a7f4f693",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3589,9 +3589,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-21T20:48:02.298Z",
+    "lastChecked": "2026-11-23T04:23:07.425Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-21T20:48:02.298Z"
+    "lastVerified": "2026-11-23T04:23:07.425Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4050,9 +4050,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-11-22T03:37:48.420Z",
+    "lastChecked": "2026-11-23T04:23:15.035Z",
     "revisionIdentifier": "727b3155",
-    "lastVerified": "2026-11-22T03:37:48.420Z"
+    "lastVerified": "2026-11-23T04:23:15.035Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -4076,12 +4076,12 @@
     "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T18:38:05.058Z",
-    "lastVerified": "2026-11-18T18:38:05.058Z",
+    "lastChecked": "2026-11-23T04:23:10.108Z",
+    "lastVerified": "2026-11-23T04:23:10.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
+    "contentHash": "90d9d4c897edd1647a4f5e1a90897d55178cc0b094e4dc665bf1dc06e742d97a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9700,9 +9700,9 @@
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-11-20T03:43:56.267Z",
+    "lastChecked": "2026-11-23T04:23:12.436Z",
     "revisionIdentifier": "8e9834df",
-    "lastVerified": "2026-11-20T03:43:56.267Z"
+    "lastVerified": "2026-11-23T04:23:12.436Z"
   },
   "melbahja-seo": {
     "name": "seo",

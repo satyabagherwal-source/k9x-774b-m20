@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `07c5af63`  
+> **Source Version**: `8c86bcb2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:29:31.345Z  
+> **Timestamp**: 2026-11-23T04:24:02.789Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:29:31.339Z  
+> **Harvest Timestamp**: 2026-11-23T04:23:24.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4772 stars
+- **Stars / Engagement**: 4773 stars
 
 ---
 
@@ -1349,611 +1349,1076 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38370ad8` (2026-11-21)
-**Commit Message**: rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan) (#3578)
+### Incident Patch 1: `d883351d` (2026-11-23)
+**Commit Message**: Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a tick (#3582)
 
-**File**: `.github/workflows/rust_engine.yml` (modified, +63/-2)
+Two pieces that belong to the Rust port of the row-visibility model and
+its
+memory budget.
+
+## Tombstones and row filters as bitmaps
+
+The reference expresses "which rows may this statement see" as a
+CRoaring
+`Bitmask` and folds the deleted rows into the same per-segment bitmaps
+as the
+`WHERE` result (`CommonQueryFilter::NewBuildFilter` ends with
+`CheckSegmentRowsVisible`). The port kept two separate `HashSet<u64>`s,
+which
+cost a deep copy per read and left the index probes filtering after the
+fact.
+
+- `common::bitmask` gains `Bitmask` (the reference's `u32` universe with
+its
+  all-true fast path), `RowBitmap` (a `RoaringTreemap` over row ids: its
+partitions are the segment ids, so a segment's runs stay compressed in
+that
+segment's container) and `RowMask` (the reference's `always_true_` plus
+the
+  admit/exclude halves an index probe consumes).
+- The delete journal, `BlockCursor::dead` and `SpannTail::dead` are
+`RowBitmap`s
+and are shared (`Arc`) instead of copied on every read. A 980-row run
+costs
+tens of bytes where a `HashSet` needed ~15 KB, and the 12
+`tombstone_set`
+  call sites no lo
+
+**File**: `.github/workflows/rust_engine.yml` (modified, +1/-0)
 ```diff
-@@ -43,6 +43,52 @@ env:
+@@ -42,6 +42,7 @@ env:
+   # rust_engine/docs/GAPS.md section 1.
    RUST_DESELECT: |
      python/restart_test/test_cross_engine_bytes_60_storage.py::test_the_port_round_trips_through_object_storage
++    python/restart_test/test_memidx.py::TestMemIdx::test_optimize_from_different_database
  
-+  # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
-+  # binary that has to run elsewhere, so every lane pins its own here.
-+  #
-+  # These are the *target-scoped* variables, not `RUSTFLAGS`: cargo appends them
-+  # to the section's list, so the `link-arg=-fuse-ld=mold` in `config.toml`
-+  # survives and the later `-C target-cpu=` wins. `RUSTFLAGS` would replace the
-+  # list wholesale and drop mold. The loom and sanitizer steps set `RUSTFLAGS`
-+  # deliberately - they want a clean slate - and pass the linker flag themselves
-+  # where it matters.
-+  #
-+  # AVX2 baseline (Haswell, 2013). The binary carries no AVX-512: `crc32fast`
-+  # was the only source of it, and it is patched to a slicing-by-8 stand-in
-+  # (`crates/crc32fast-shim`, see `[patch.crates-io]`). Without that patch the
-+  # crate emits 52 `zmm` instructions whatever `target-cpu` says, and on this
-+  # runner pool some CPUs advertise `avx512f` in CPUID and then reject it - the
-+  # engine died with SIGILL before it could log a line.
-+  #
-+  # The C flags repeat the level for a different reason: rustc's flag does not
-+  # reach RocksDB. `librocksdb-sys`'s build script reads
-+  # `CARGO_ENCODED_RUSTFLAGS` and takes the *first* `target-cpu` it finds
-+  # (`rustflags::from_env().find_map()`), which is the `native` in
-+  # `rust_engine/.cargo/config.toml` - the override above only wins for rustc,
-+  # which takes the last. So the C++ side was always `-march=native`: built on
-+  # an AMD runner it carried `insertq` (SSE4a, AMD-only), and an Intel Xeon
-+  # 6975P-C died in `rocksdb::ImmutableDBOptions` with SIGILL while an EPYC ran
-+  # the same artifact fine. `cc` appends `CFLAGS`/`CXXFLAGS` after every flag
-+  # the build script sets, so repeating the level here is what pins RocksDB.
-+  CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: >-
-+    -C target-cpu=x86-64-v3
-+  CFLAGS_x86_64_unknown_linux_gnu: -march=x86-64-v3 -mpclmul
-+  CXXFLAGS_x86_64_unknown_linux_gnu: -march=x86-64-v3 -mpclmul
-+  # ARMv9-A with SVE2, which is what `ubuntu-24.04-arm` (Azure Cobalt 100) is.
-+  # The default `generic` has NEON only, so `f32x8` would split across two
-+  # 128-bit registers. macOS lanes are `aarch64-apple-darwin` and read neither
-+  # variable - Apple Silicon has no SVE and must not inherit this.
-+  #
-+  # `CFLAGS`/`CXXFLAGS` repeat the level for the same reason as on x86_64: the
-+  # RocksDB build script takes the first `target-cpu`, which is the `native`
-+  # in `rust_engine/.cargo/config.toml`. On this triple `native` and
-+  # `neoverse-n2` describe the same hardware, so the repeat changes nothing
-+  # today; it keeps the two sides from drifting if the pin ever moves.
-+  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS: >-
-+    -C target-cpu=neoverse-n2
-+  CFLAGS_aarch64_unknown_linux_gnu: -mcpu=neoverse-n2
-+  CXXFLAGS_aarch64_unknown_linux_gnu: -mcpu=neoverse-n2
-+
- jobs:
-   quality:
-     # Gate F: formatting, lints, licenses / advisories.
-@@ -660,6 +706,8 @@ jobs:
-         # `/var/infinity/test_data`; this is the same generate-and-copy step
-         # the other Go jobs run.
-         run: uv run --python 3.13 python3 tools/sqllogictest.py -jc=1
-+      - name: Check the binary can run on this CPU
-+        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
-       - name: Start the engine
-         # `ulimit -n` is for the many-client case: it holds 5 000 sockets and
-         # the server, started here with the same limit, holds the 5 000 it
-@@ -721,6 +769,12 @@ jobs:
-       - uses: astral-sh/setup-uv@v7
-       - name: Install the SDK and the test dependencies
-         run: uv sync --python 3.13 --extra test --index-url https://pypi.org/simple/
-+      - name: Check the binary can run on this CPU
-+        # The binary is built on one runner and executed on another, so a
-+        # `target-cpu` the executor lacks shows up as a bare SIGILL with an
-+        # empty log - which is what "unhealthy in 60s" looked like when this was
-+        # first pinned to a level.
-+        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
-       - name: Start the engine
-         run: |
-           nohup ./bin/infinity --config=conf/infinity_conf.toml > infinity.log 2>&1 &
-@@ -792,6 +846,8 @@ jobs:
-         # generate-and-copy step the reference's jobs run (`-jc` copies without
-         # running the .slt suite).
-         run: uv run --python 3.13 python3 tools/sqllogictest.py -jc=1
-+      - name: Check the binary can run on this CPU
-+        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
-       - name: Start the engine
-         run: |
-           nohup ./bin/infinity --config=conf/infinity_conf.toml > infinity.log 2>&1 &
-@@ -845,6 +901,8 @@ jobs:
-         # The HTTP suite runs the same PySDK cases (`--http`), impo
+   # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
+   # binary that has to run elsewhere, so every lane pins its own here.
 ```
 
-**File**: `AGENTS.md` (modified, +338/-0)
+**File**: `conf/infinity_conf.toml` (modified, +12/-1)
 ```diff
-@@ -97,3 +97,341 @@ When executing shell commands:
- - If an environment variable is required, ask the user to configure it permanently (e.g., via pytest.ini, .env, or shell profile) instead of injecting it inline.
- - ONLY execute direct commands like "pytest", "python -m pytest", or "uv run pytest".
- - NEVER use chained commands with "&&", ";", or "|".
-+
-+## 7. Rust Engine — Async Conventions
-+
-+The engine runs every statement on **one** runtime. That runtime is the only
-+place a request can make progress, so a worker held while waiting is a
-+potential deadlock, not merely a slow path. Every rule below follows from one
-+direction:
-+
-+> **Write the async form first. A synchronous form may exist only where
-+> something outside the engine forces it, and it must say so.**
-+
-+Two consequences shape the rest of this section. First, "it compiles and the
-+tests pass" is not evidence that a conversion is right — a parked worker only
-+misbehaves under concurrency. Second, the absence of the word `block_on` is not
-+evidence that a call is safe; most of the stalls in this engine's history came
-+from ordinary synchronous calls made from the wrong place.
-+
-+### 7.1 Default direction: convert, do not bridge
-+
-+When a synchronous call site needs an asynchronous callee, the answer is
-+**make the chain async**, not "wrap it in `block_on`". Work down this list and
-+stop at the first step that applies:
-+
-+1. **Make the caller `async`.** If its caller is also ours, convert that too.
-+   Keep going up until you reach a boundary you genuinely do not own. This is
-+   the normal path — most conversions end here, and each one removes a place
-+   where a thread can be parked.
-+2. **Move the operation off the path.** If the caller cannot become async (a
-+   `Drop`, a callback from a foreign synchronous API), restructure so the wait
-+   happens somewhere that can await, instead of parking a thread mid-chain.
-+3. **Scope the bridge.** If a bridge is truly unavoidable, make it one
-+   well-named function that states why, or gate it behind `#[cfg(test)]` so
-+   production cannot reach it. One bridge, one comment, one place.
-+4. **Only then** keep a `block_on` — under the conditions in §7.4.
-+
-+Two habits to avoid, both of which cost real debugging time:
-+
-+- **Do not add a sync twin "for flexibility".** A synchronous variant beside
-+  the async one, written because it was convenient at one call site, ends up
-+  bridging a lock that the async path needs and deadlocks the commit. If nobody
-+  needs the sync form, do not write it.
-+- **Do not treat an existing `block_on` as furniture.** Each one was a decision
-+  made under constraints that may no longer hold. Re-derive it: "who calls
-+  this, and can they await?" If the answer is "nobody", delete it (§7.13); if
-+  it is "our code, and it can", convert it.
-+
-+The asymmetry is deliberate: an `async fn` costs a caller nothing it cannot
-+already do, while a parked thread costs a worker and a deadlock risk that only
-+appears under load. When the choice is unclear, prefer the async form and keep
-+the boundary explicit at the outermost edge rather than scattered through the
-+middle.
-+
-+### 7.2 Nothing blocking may run inside a task
-+
-+> **A task may not be paused for an unbounded time while holding a worker.**
-+
-+The loudest violation is a `block_on` inside an `async fn`: it parks the
-+worker outright. If the awaited work needs a worker to finish (a bottom half, a
-+row allocator, a fan-out on the blocking pool, a `tokio::sync::Mutex` held by
-+another task), the process deadlocks instead of failing.
-+
-+The quiet violations are just as real and contain none of those words:
-+
-+- **A synchronous system call** — `fsync`, `rename`, `mmap` faults, a
-+  synchronous database batch, a DNS lookup, `std::thread::sleep`. A `fsync`
-+  during a checkpoint runs on whichever worker called it, and a slow disk
-+  stalls every task behind it.
-+- **A `std::sync::Mutex` held across an `.await`** — the same stall one layer
-+  up (§7.8).
-+- **A CPU-bound leaf** — encoding a batch of rows, decoding a block, walking a
-+  graph — left on a worker (§7.10).
-+- **A blocking channel receive or a thread join** on the request path.
-+
-+Apply the test literally: *can this task be paused for an unbounded time while
-+holding a worker?* If yes, it is a bug however it is spelled. §7.1 says how to
-+get out of it; §7.4 lists the cases where the answer may legitimately be "yes".
-+
-+### 7.3 I/O and the system-call boundary
-+
-+Prefer an asynchronous I/O API whenever the library offers one. `tokio::fs`
-+covers open, read, write, `sync_all`, `rename`, `create_dir_all` and the rest;
-+using it means the syscall happens on the blocking pool while the worker stays
-+free. The same applies to sockets, timers and channels — if there is an async
-+form, the synchronous form has no reason to exist on a request path.
-+
-+Some operations have **no** portable async form. The common case is opening a
-+*directory* to `fsync` it after a rename, which `tokio::
-```
-
-**File**: `python/restart_test/bytes_common.py` (modified, +9/-1)
-```diff
-@@ -198,6 +198,14 @@ def _config(root, engine, pg_port, quota="2GB"):
-       row-capacity trigger as the only dumps.
-     """
-     persistence = "" if engine == "cpp" else f"{root}/persistence"
-+    # The Rust CLI serves Thrift, HTTP and PG from **one** process and refuses a
-+    # `client_port` that is already bound: with both set to `pg_port` it starts
-+    # the PG listener and then aborts with "cannot serve on ...: 127.0.0.1:...
-+    # is bound by another process". These harnesses drive everything over PG,
-+    # so PG keeps `pg_port` and Thrift moves one port up. The C++ engine is left
-+    # alone: its config has always used the default, and its front ends are
-+    # separate processes, so the two ports never meet.
-+    client_port_line = f"client_port = {pg_port + 1}" if engine == "rust" else ""
-     return f"""
- [general]
- version = "0.7.4"
-@@ -209,7 +217,7 @@ def _config(root, engine, pg_port, quota="2GB"):
- peer_ip = "0.0.0.0"
- peer_port = 23851
- postgres_port = {pg_port}
--
-+{client_port_line}
- [log]
- log_dir = "{root}/log"
- log_to_stdout = true
-```
-
-**File**: `rust_engine/.cargo/config.toml` (modified, +78/-4)
-```diff
-@@ -6,8 +6,82 @@
- CC = "clang"
- CXX = "clang++"
+@@ -51,7 +51,18 @@ buffer_manager_size      = "4GB"
+ lru_num                  = 7
+ temp_dir                 = "/var/infinity/tmp"
+ result_cache             = "off"
+-memindex_memory_quota    = "1GB"
++unsealed_memory_quota    = "1GB"
++# Periodic reclaim of memory that is not on disk yet (buffer + index tails):
++# tables nobody writes any more would otherwise hold it until the process ends.
++# A round sorts every such table by fused size/age ranks and dumps until the
++# ledger is back under HALF of unsealed_memory_quota. `unsealed_memory_quota = 0`
++# turns the whole mechanism off; it is the real switch, since the target is
++# derived from it. (The older name `memindex_memory_quota` is still accepted.)
++# unsealed_reclaim_interval:      the loop's period; "0s" stops the scheduler
++#                                 (a direct call still drains).
++# unsealed_max_tables_per_round:  how many tables one round may dump; 0 = no limit.
++unsealed_reclaim_interval     = "30s"
++unsealed_max_tables_per_round = 100
  
--# Link with mold. A full link of this workspace is dominated by the ~40 MB
--# binary plus the static RocksDB, and mold does that several times faster than
--# the system `ld` without changing the output.
-+# One section per target triple, so each architecture gets its own baseline and
-+# neither can affect the other. `cargo` only reads the section whose triple it
-+# is building for: an `aarch64-unknown-linux-gnu` build never sees the x86_64
-+# flags, and the macOS lanes (`aarch64-apple-darwin`) match no section here at
-+# all - Apple Silicon has no SVE, so it must not inherit the Linux ARMv9 one.
-+#
-+# `target-cpu=native` is the local default: a developer's build uses whatever
-+# the machine has, which is the right answer when the binary only runs there.
-+# A release cannot use it - the output would depend on whichever runner the job
-+# landed on, and a machine with AVX-512 would emit `zmm` the users' CPUs fault
-+# on. The release and test lanes override it with
-+# `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, which **appends** to this list rather than
-+# replacing it: the later `-C target-cpu=...` wins, and the `link-arg` below
-+# survives. (Setting `RUSTFLAGS` instead would replace the list wholesale and
-+# drop mold, so the CI must use the target-scoped variable.)
-+#
-+# `link-arg=-fuse-ld=mold` stays in each section for that reason: a full link of
-+# this workspace is dominated by the ~40 MB binary plus the static RocksDB, and
-+# mold does that several times faster than the system `ld` without changing the
-+# output.
- [target.x86_64-unknown-linux-gnu]
--rustflags = ["-C", "link-arg=-fuse-ld=mold"]
-+rustflags = [
-+    "-C", "link-arg=-fuse-ld=mold",
-+    "-C", "target-cpu=native",
-+]
-+
-+# The CI override for this triple is
-+#   -C target-cpu=x86-64-v3
-+# plus `CFLAGS`/`CXXFLAGS_x86_64_unknown_linux_gnu="-march=x86-64-v3 -mpclmul"`
-+# for the C side.
-+#
-+# The C flags need the level spelled out, and not only `-mpclmul`: this file's
-+# `native` still reaches `librocksdb-sys`, whose build script takes the *first*
-+# `target-cpu` in `CARGO_ENCODED_RUSTFLAGS` while rustc takes the last. A
-+# `-march=native` build on an AMD host therefore emits SSE4a (`insertq`) into
-+# RocksDB, which faults on any Intel CPU.
-+#
-+# `crc32fast` is patched to a SIMD-free stand-in, so nothing here pulls in an
-+# AVX-512 path that a hypervisor might advertise and then reject.
-+#
-+# `x86-64-v3` is the AVX2 baseline (Haswell, 2013). Without it the default
-+# `x86-64` target has only SSE2, and `std::simd`'s `f32x8` is split into two
-+# 128-bit halves: the exact scan's `l2_sq` came out as `subps`/`mulps`/`addps`
-+# with no `ymm` register at all. With v3 the same kernel is one
-+# `vsubps`/`vmulps`/`vaddps` over 256 bits, which took the SIFT 1M brute-force
-+# scan from 39.4 to 34.9 ms p50.
-+#
-+# RocksDB's `crc32c.cc` calls `_mm_clmulepi64_si128`, and no x86-64-vN level
-+# defines `__PCLMUL__` (v3 and v4 both leave it undefined), so the C compiler
-+# needs `-mpclmul` or the build dies with
-+# `'__builtin_ia32_pclmulqdq128' needs target feature pclmul`.
-+#
-+# That flag belongs on `CFLAGS`, **not** on `-C target-feature=+pclmulqdq`.
-+# Giving it to rustc makes LLVM emit 52 AVX-512 instructions elsewhere in the
-+# binary - measured: `zmm` goes 0 -> 52 with the target feature, 0 without.
-+# `native` implies `pclmul` anyway, which is why the local default needs no
-+# separate flag.
-+
-+# aarch64 Linux. The CI override for this triple is
-+#   -C target-cpu=neoverse-n2
-+#
-+# `neoverse-n2` is the CPU in `ubuntu-24.04-arm` (Azure Cobalt 100) and the
-+# smallest named ARMv9 profile `rustc` knows: it enables `v9a` plus `sve2`, so
-+# `std::simd`'s `f32x8` can use 256-bit SVE registers instead of being split
-+# across two 128-bit NEON ones. The default `generic` target has `neon` only.
-+#
-+# This is a bigger commitment than the x86 side: `sve2` is absent from ARMv8
-+# parts, and a binary built this way faults on them. It is pinned because the
-+# release lane and the arm64 test lane both run on that hardware; a build meant
-+# for older ARM servers needs the override changed to `generic`.
-+#
-+# The CI also sets `CFLAGS`/`CXXFLAGS_aarch64_unknown_linux_gnu=-mcpu=neoverse-n2`,
-+# for the same reason as on x86_64: the RocksDB build script sees the `native`
-+# above, not this override.
-+[target.aarch64-unknown-linux-gnu]
-+rustflags = [
-+    "-C", "link-arg=-fuse-ld=mold",
-+    "-C", "target-cpu=native",
-+]
+ [wal]
+ wal_dir                       = "/var/infinity/wal"
 ```
 
-**File**: `rust_engine/Cargo.lock` (modified, +1/-7)
+**File**: `rust_engine/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -629,11 +629,6 @@ dependencies = [
- [[package]]
- name = "crc32fast"
- version = "1.5.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
--dependencies = [
-- "cfg-if",
--]
- 
- [[package]]
- name = "crossbeam-deque"
-@@ -3231,7 +3226,6 @@ name = "storage"
+@@ -558,6 +558,7 @@ name = "common"
  version = "0.1.0"
  dependencies = [
-  "common",
-- "crc32fast",
-  "hmac",
-  "index",
-  "lz4_flex 0.13.1",
-@@ -3244,6 +3238,7 @@ dependencies = [
-  "serde_json",
-  "sha2",
-  "tempfile",
-+ "tokio",
+  "mimalloc",
++ "roaring",
+  "thiserror 1.0.69",
  ]
  
- [[package]]
-@@ -3626,7 +3621,6 @@ name = "txn"
- version = "0.1.0"
- dependencies = [
-  "common",
-- "futures-executor",
-  "loom",
-  "storage",
-  "tempfile",
 ```
 
-**File**: `rust_engine/Cargo.toml` (modified, +23/-3)
+**File**: `rust_engine/crates/cli/src/config.rs` (modified, +60/-0)
 ```diff
-@@ -31,15 +31,20 @@ warnings = "deny"
+@@ -101,6 +101,10 @@ pub struct Config {
+     /// budget. Only parsed real C++ configs set it.
+     buffer_manager_size: Option<i64>,
+     mem_index_memory_quota: i64,
++    /// `[buffer] unsealed_reclaim_interval` in seconds: the sweep's period.
++    unsealed_reclaim_interval: u64,
++    /// `[buffer] unsealed_max_tables_per_round`: `0` means no limit.
++    unsealed_max_tables_per_round: u64,
  
- [workspace.dependencies]
- rust-stemmers = "1.2"
--# block_on for the synchronous Engine::execute adapter (tests / cli / bin tools)
--futures-executor = "0.3"
- tokio = { version = "1", default-features = false, features = [
-     "rt",
-     "rt-multi-thread",
-     "net",
-     "sync",
-     "time",
-     "io-util",
-+    # `#[tokio::test]`: the engine's writes are async now, so a test that
-+    # compacts or checkpoints drives them with `.await` instead of a
-+    # synchronous bridge.
-+    "macros",
-+    # `tokio::fs::*`: the server's `SHOW` handlers stat the block mirror; the
-+    # async form keeps the reactor thread out of the syscall.
-+    "fs",
- ] }
- common = { path = "crates/common" }
- storage = { path = "crates/storage" }
-@@ -62,7 +67,6 @@ hmac = "0.12"
- sha2 = "0.10"
- rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
- rustls-native-certs = "0.8"
--crc32fast = "1"
- memmap2 = "0.9"
- thiserror = "1"
- tempfile = "3"
-@@ -76,3 +80,19 @@ serde_json = "1"
- [patch.crates-io]
- pilota = { git = "https://github.com/yuzhichang/pilota", branch = "fix/thrift-reference-field" }
- pilota-thrift-parser = { git = "https://github.com/yuzhichang/pilota", branch = "fix/thrift-reference-field" }
+     checkpoint_interval: u64,
+     wal_compact_threshold: i64,
+@@ -155,6 +159,8 @@ impl Default for Config {
+             temp_dir: "/var/infinity/tmp".into(),
+             buffer_manager_size: None,
+             mem_index_memory_quota: 4 * 1024 * 1024 * 1024,
++            unsealed_reclaim_interval: 30,
++            unsealed_max_tables_per_round: 100,
+             checkpoint_interval: 86400,
+             wal_compact_threshold: 1024 * 1024 * 1024,
+             wal_flush: "only_write".into(),
+@@ -270,9 +276,27 @@ impl Config {
+             }
+             ("buffer", "lru_num") => self.lru_num = integer()? as usize,
+             ("buffer", "temp_dir") => self.temp_dir = string(),
++            ("buffer", "unsealed_memory_quota") => {
++                self.mem_index_memory_quota = parse_byte_size(&string())?
++            }
++            // The old spelling. Kept so an existing config keeps working; the
++            // name is misleading now - the quota bounds everything not yet on
++            // disk (the append buffer plus every index tail), not one index.
+             ("buffer", "memindex_memory_quota") => {
+                 self.mem_index_memory_quota = parse_byte_size(&string())?
+             }
++            // The reclaim loop's two settings (`docs/MEMORY_RECLAIM.md` §5).
++            // This parser has no consumer of its own - the serving binary reads
++            // the same file through `toml_value` - but the shipped
++            // `conf/infinity_conf.toml` carries both keys and `Config::init`
++            // rejects a key it does not know, so leaving them out made the
++            // shipped config unloadable.
++            ("buffer", "unsealed_reclaim_interval") => {
++                self.unsealed_reclaim_interval = parse_time_info(&string())?
++            }
++            ("buffer", "unsealed_max_tables_per_round") => {
++                self.unsealed_max_tables_per_round = integer()? as u64
++            }
+             ("buffer", "result_cache") => self.result_cache = string(),
+             ("buffer", "cache_result_capacity") => self.cache_result_capacity = integer()? as u64,
+             ("wal", "wal_dir") => self.wal_dir = string(),
+@@ -430,6 +454,14 @@ impl Config {
+     pub fn mem_index_memory_quota(&self) -> i64 {
+         self.mem_index_memory_quota
+     }
++    /// `[buffer] unsealed_reclaim_interval` in seconds; `0` stops the sweep.
++    pub fn unsealed_reclaim_interval(&self) -> u64 {
++        self.unsealed_reclaim_interval
++    }
++    /// `[buffer] unsealed_max_tables_per_round`; `0` means no limit.
++    pub fn unsealed_max_tables_per_round(&self) -> u64 {
++        self.unsealed_max_tables_per_round
++    }
+     /// `[buffer] buffer_manager_size` in bytes, `None` when the config leaves
+     /// it out (the engine then keeps its built-in budget).
+     pub fn buffer_manager_size(&self) -> Option<i64> {
+@@ -473,6 +505,9 @@ fn parse_time_zone(text: &str) -> Result<(String, i32), ConfigError> {
+ }
+ 
+ /// C++: `Config::ParseByteSize`: `KB`/`MB`/`GB` suffixes; `TB` is rejected.
++///
++/// `B` is accepted as a factor of one (`"2B"` is two bytes), which is the
++/// spelling the reclaim tests use to force a drain on the first batch.
+ fn parse_byte_size(text: &str) -> Result<i64, ConfigError> {
+     let lower = text.trim().to_ascii_lowercase();
+     let (number, factor) = if let Some(v) = lower.strip_suffix("kb") {
+@@ -483,6 +518,8 @@ fn parse_byte_size(text: &str) -> Result<i64, ConfigError> {
+         (v, 1024 * 1024 * 1024)
+     } else if lower.ends_with("tb") {
+         return Err(ConfigError::InvalidByteSize);
++    } else if let Some(v) = lower.strip_suffix('b') {
++        (v, 1)
+     } else {
+         (lower.as_str(), 1)
+     };
+@@ -719,4 +756,27 @@ mod tests {
+         assert_eq!(config.resource_path(), "/usr/share/infinity/resource");
+         assert_eq!(config.persistence_dir(), "/var/infinity/persistence");
+     }
 +
-+# `crc32fast` compiles an AVX-512 path (`calculate_avx512`) behind
-+# `#[target_feature(enable = "avx512f")]`, which lands in the binary whatever
-+# `target-cpu` says: measured, 52 `zmm` instructions when building for
-+# `x86-64-v3` and 26 for `x86-64-v2`. A binary that carries instructions its CPU
-+# rejects dies with SIGILL before it can log anything, and a crate-level flag
-+# cannot remove a `#[target_feature]` function.
-+#
-+# It arrives through `parquet -> flate2` as well as directly, so patching is the
-+# only way to keep AVX2 in the rest of the build without carrying that path. The
-+# stand-in is the same slicing-by-8 CRC with no SIMD.
-+#
-+# This is not what the Xeon SIGILL turned out to be - that was an `insertq` in
-+# RocksDB built with `-march=native`, fixed by the CI's `CXXFLAGS`. The patch
-+# stays because the hazard it removes is real on its own.
-+crc32fast = { path = "crates/crc32fast-shim" }
++    /// The checked-in config carries the reclaim settings, so `Config::init`
++    /// has to accept them: a key it does not know is `InvalidConfig`.
++    #[test]
++    fn the_shipped_config_loads_its_reclaim_settings() {
++        let mut config = Config::default();
++        config.init(Some(&fixture("infinity_conf.toml"))).unwrap();
++        assert_eq!(config.unsealed_reclaim_interval(), 30);
++        assert_eq!(config.unsealed_max_tables_per_round(), 100);
++    }
++
++    /// `"2B"` is two bytes, not an unparseable value: the end-to-end reclaim
++    /// test sets it to force a drain on the first batch.
++    #[test]
++    fn a_bare_byte_suffix_is_a_factor_of_one() {
++        assert_eq!(parse_byte_siz
 ```
 
-**File**: `rust_engine/crates/cli/examples/result_bench.rs` (modified, +15/-8)
+**File**: `rust_engine/crates/cli/src/main.rs` (modified, +247/-34)
 ```diff
-@@ -30,19 +30,23 @@ fn rows_of(result: &[QueryResult]) -> usize {
-     }
+@@ -105,12 +105,43 @@ fn usage() -> ! {
  }
  
--fn best(e: &Engine, sql: &str, runs: usize) -> (Duration, usize) {
-+async fn best(e: &Engine, sql: &str, runs: usize) -> (Duration, usize) {
-     let mut best = Duration::from_secs(3600);
-     let mut rows = 0;
-     for _ in 0..runs {
-         let t0 = Instant::now();
--        let out = e.execute_blocking(sql).expect("execute");
-+        let out = e.execute(sql).await.expect("execute");
-         best = best.min(t0.elapsed());
-         rows = rows_of(&out);
-     }
-     (best, rows)
- }
- 
- fn main() {
-+    executor::scheduler().block_on_runtime(run());
+ /// Reads `key = "value"` out of a TOML text without pulling in a parser.
++///
++/// A trailing `# comment` is dropped, and only outside a quoted string: an
++/// operator who writes `unsealed_memory_quota = "512MB" # container budget`
++/// means the size, and the stricter validation below would otherwise reject the
++/// whole line and refuse to start. A `#` inside the quotes stays part of the
++/// value.
+ fn toml_value(text: &str, key: &str) -> Option<String> {
+-    text.lines()
++    let line = text
++        .lines()
+         .map(str::trim)
+-        .find(|l| l.starts_with(key) && l[key.len()..].trim_start().starts_with('='))
+-        .and_then(|l| l.split_once('='))
+-        .map(|(_, v)| v.trim().trim_matches('"').to_string())
++        .find(|l| l.starts_with(key) && l[key.len()..].trim_start().starts_with('='))?;
++    let (_, value) = line.split_once('=')?;
++    Some(
++        strip_toml_comment(value)
++            .trim()
++            .trim_matches('"')
++            .to_string(),
++    )
 +}
 +
-+async fn run() {
-     let dir = std::env::args()
-         .nth(1)
-         .unwrap_or_else(|| "/tmp/result-bench".into());
-@@ -51,21 +55,24 @@ fn main() {
-         .and_then(|s| s.parse().ok())
-         .unwrap_or(40000);
-     let _ = std::fs::remove_dir_all(&dir);
--    let e = Engine::open(&dir).expect("open");
--    let _ = e.execute_blocking("DROP TABLE IF EXISTS t;");
--    let _ = e.execute_blocking("CREATE TABLE t (id INT, name VARCHAR);");
-+    let e = Engine::open_async(&dir, Default::default())
-+        .await
-+        .expect("open");
-+    let _ = e.execute("DROP TABLE IF EXISTS t;").await;
-+    let _ = e.execute("CREATE TABLE t (id INT, name VARCHAR);").await;
-     let mut i = 0;
-     while i < n {
-         let batch = (n - i).min(100);
-         let vals: Vec<String> = (0..batch)
-             .map(|j| format!("({}, 'v{}')", i + j, i + j))
-             .collect();
--        e.execute_blocking(&format!("INSERT INTO t VALUES {};", vals.join(", ")))
-+        e.execute(&format!("INSERT INTO t VALUES {};", vals.join(", ")))
-+            .await
-             .expect("insert");
-         i += batch;
-     }
-     let t0 = Instant::now();
--    executor::block_on(e.flush()).expect("flush");
-+    e.flush().await.expect("flush");
-     println!("checkpoint: {:?}", t0.elapsed());
++/// Everything before an unquoted `#`, with a quoted run kept verbatim.
++fn strip_toml_comment(value: &str) -> &str {
++    let mut quoted = false;
++    let mut escaped = false;
++    for (at, ch) in value.char_indices() {
++        if escaped {
++            escaped = false;
++            continue;
++        }
++        match ch {
++            '\\' if quoted => escaped = true,
++            '"' => quoted = !quoted,
++            '#' if !quoted => return &value[..at],
++            _ => {}
++        }
++    }
++    value
+ }
  
-     for sql in [
-@@ -76,7 +83,7 @@ fn main() {
-         "SELECT * FROM t ORDER BY id;",
-         "SELECT count(*) FROM t;",
-     ] {
--        let (elapsed, rows) = best(&e, sql, 5);
-+        let (elapsed, rows) = best(&e, sql, 5).await;
-         println!("{elapsed:>12?}  {rows:>6} rows  {sql}");
+ /// The reference's default invocation: `infinity [-f <config>] [-m]` starts the
+@@ -222,15 +253,21 @@ async fn serve_from_config(path: Option<&str>, maintenance: bool) -> common::Res
+     // entry and lets the OS flush; the checkpoint is the durability boundary.
+     let wal_flush = toml_value(&text, "wal_flush").unwrap_or_default();
+     engine.set_wal_flush(txn::WalFlush::parse(&wal_flush));
+-    // `[buffer] memindex_memory_quota` — a memory index is dumped into a C++
+-    // chunk once it reaches this size. The reference defaults to 4 GiB.
+-    let quota = toml_value(&text, "memindex_memory_quota").unwrap_or_default();
+-    let quota = if quota.trim().is_empty() {
+-        4 * 1024 * 1024 * 1024
+-    } else {
+-        parse_size_bytes(&quota)
++    // `[buffer] unsealed_memory_quota` — everything not yet on disk (the append
++    // buffer plus every index tail) is drained once it passes this. The byte
++    // figure the loop compares against is `budget_bytes()`; the reference's
++    // nearest knob is `index_memory_limit` (default 4 GiB). The older spelling
++    // `memindex_memory_quota` is still accepted.
++    //
++    // Parsed before it reaches the engine and rejected with a message naming
++    // the field: a typo used to become zero, which is the explicit off switch,
++    // so the operator got a running server with reclaim disabled and no hint
++    // why. An explicit numeric `0` still disables the mechanism.
++    let quota = match configured_size(&text, "unsealed_memory_quota")? {
++        Some(bytes) => bytes,
++        None => configured_size(&text, "memindex_memory_quota")?.unwrap_or(4 * 1024 * 1024 * 1024),
+     };
+-    engine.set_memindex_quota(quota);
++    engine.set_unsealed_memory_quota(quota);
+     // `[storage] mem_index_capacity` — rows an in-memory index holds before it
+     // is dumped into a sealed chunk (the reference defaults to 65536 rows).
+     let capacity = toml_value(&text, "mem_index_capacity")
+@@ -255,11 +292,8 @@ async fn serve_from_config(path: Option<&str>, maintenance: bool) -> common::Res
+     // the decoded HNSW chunks and the block map, so the configured value is
+     // applied instead of being dropped - a memory-limited container that asks
+     // for 512MB must not get the built-in 8 GiB.
+-    if let Some(size) = toml_value(&text, "buffer_manager_size")
+-        .map(|v| v.trim().to_string())
+-        .filter(|v| !v.is_empty())
+-    {
+-        let bytes = parse_size_bytes(&size) as usize;
++    if let Some(bytes) = configured_size(&text, "buffer_manager_size")? {
++        let bytes = bytes as usize;
+         if bytes > 0 {
+             engine.set_buffer_budget(bytes);
+             // The same number is the process's RSS ceiling: the budget above
+@@ -272,7 +306,7 @@ async fn serve_from_config(path: Option<&str>, maintenance: bool) -> common::Res
      }
-     let _ = std::fs::remove_dir_all(&dir);
+     // The reference checkpoints periodically (`[wal] checkpoint_interval`), which
+     // is what dumps the memory blocks into the on-disk C++ layout.
+-    let secs = parse_interval_secs(&toml_value(&text, "checkpoint_interval").unwrap_or_default());
++    let secs = interval_or_zero(&text, "checkpoint_interval")?;
+     // `-m/--maintenance` (the reference's admin mode) leaves the periodic
+     // triggers off: maintenance is about inspecting and repairing a stopped
+     // node, not about letting cleanup/compact/checkpoint mutate it.
+@@ -303,16 +337,40 @@ async fn serv
 ```
 
-**File**: `rust_engine/crates/cli/src/fulltext_bench.rs` (modified, +25/-22)
+**File**: `rust_engine/crates/common/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -165,7 +165,7 @@ fn json_string_at(line: &str, start: usize) -> Option<(String, usize)> {
+@@ -13,6 +13,9 @@ thiserror.workspace = true
+ # `cargo test` alike - no per-target boilerplate, and no link-time conflict when
+ # a binary happens to reach two crates that both wanted it.
+ mimalloc.workspace = true
++# The tombstone / filter bitmaps: the reference's `Bitmask` is a CRoaring
++# bitmap (`roaring_bitmap.cppm`), and every read path builds one per statement.
++roaring.workspace = true
  
- /// Runs the reference's five queries (`FTBENCH_QUERY_REPEAT` samples each and
- /// the best is reported; `FTBENCH_EXTRA_QUERY` adds one).
--fn run_queries(e: &Engine) -> common::Result<()> {
-+async fn run_queries(e: &Engine) -> common::Result<()> {
-     let repeat: usize = std::env::var("FTBENCH_QUERY_REPEAT")
-         .ok()
-         .and_then(|v| v.parse().ok())
-@@ -190,7 +190,7 @@ fn run_queries(e: &Engine) -> common::Result<()> {
-         let mut hits = 0;
-         for i in 0..repeat {
-             let t = Instant::now();
--            let rs = e.execute_blocking(&sql)?;
-+            let rs = e.execute(&sql).await?;
-             let elapsed = t.elapsed();
-             if i == 0 {
-                 first = elapsed;
-@@ -207,18 +207,19 @@ fn run_queries(e: &Engine) -> common::Result<()> {
+ [lints]
+ workspace = true
+```
+
+**File**: `rust_engine/crates/common/src/bitmask.rs` (added, +777/-0)
+```diff
+@@ -0,0 +1,777 @@
++// Copyright(C) 2026 InfiniFlow, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! Row bitmaps: the reference's `Bitmask` / `Bitmap`
++//! (`src/storage/common/roaring_bitmap.cppm`).
++//!
++//! The reference expresses "which rows may this statement see" as a CRoaring
++//! bitmap, never as a hash set. The distinction is not cosmetic: a `DELETE FROM
++//! t WHERE id < 980` marks a *run*, which a roaring container stores in a few
++//! dozen bytes where a `HashSet<u64>` needs ~15 KB and one hash lookup per row
++//! tested. Every scan then tests membership once per candidate row, so the
++//! representation is on the hot path of every indexed query.
++//!
++//! Two shapes live here, matching the two universes the engine has:
++//!
++//! * [`Bitmask`] — a `u32` universe with the reference's **all-true fast
++//!   path**. This is what `CommonQueryFilter::filter_result_` holds, one per
++//!   segment (`common_query_filter.cppm:53`), keyed by segment offset. The
++//!   `all_true` flag is what makes "nobody deleted anything and the statement
++//!   has no predicate" cost zero bytes.
++//! * [`RowBitmap`] — a table-wide `u64` universe over **row ids**
++//!   (`segment << 32 | offset`). `roaring::RoaringTreemap` is a
++//!   `BTreeMap<u32, RoaringBitmap>`, and a row id's high 32 bits are exactly
++//!   that partition key, so one row id is one lookup in the partition its
++//!   segment already selects and the runs a segment deletes stay compressed.
++//!
++//! `RowBitmap` has no `all_true` flag: its callers always mean "these row ids
++//! are in the set", and the empty set is the common case, which is already
++//! zero-cost.
++
++use std::sync::Arc;
++
++use roaring::{RoaringBitmap, RoaringTreemap};
++
++/// The reference's `Bitmask`, i.e. `RoaringBitmap<true>`
++/// (`roaring_bitmap.cppm:27`): a `u32` universe that remembers whether it is
++/// still all-true without materialising the bits.
++///
++/// `count` is the universe (`RoaringBitmap::count_`), so [`Self::is_true`]
++/// answers `false` for an index at or past it exactly as the reference does
++/// (`roaring_bitmap.cppm:88-95`).
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct Bitmask {
++    count: u32,
++    all_true: bool,
++    values: RoaringBitmap,
++}
++
++impl Bitmask {
++    /// C++ `Bitmask(count)`: every bit in `0..count` is set.
++    pub fn all_true(count: u32) -> Self {
++        Self {
++            count,
++            all_true: true,
++            values: RoaringBitmap::new(),
++        }
++    }
++
++    /// C++ `Bitmap(count)`: nothing is set.
++    pub fn all_false(count: u32) -> Self {
++        Self {
++            count,
++            all_true: false,
++            values: RoaringBitmap::new(),
++        }
++    }
++
++    /// C++ `RoaringBitmap::count()`: the universe, not the cardinality.
++    pub fn count(&self) -> u32 {
++        self.count
++    }
++
++    /// C++ `RoaringBitmap::IsAllTrue()`.
++    pub fn is_all_true(&self) -> bool {
++        self.all_true
++    }
++
++    /// C++ `RoaringBitmap::IsTrue(row)`.
++    ///
++    /// A row outside the universe answers `false`: the reference logs and
++    /// returns `false` rather than including it (`roaring_bitmap.cppm:88-95`).
++    pub fn is_true(&self, row: u32) -> bool {
++        row < self.count && (self.all_true || self.values.contains(row))
++    }
++
++    /// C++ `RoaringBitmap::SetTrue(row)`. Out-of-universe writes are dropped;
++    /// the reference treats them as an unrecoverable error, and a bitmap that
++    /// silently grew past its universe would make [`Self::count_true`] lie.
++    pub fn set_true(&mut self, row: u32) {
++        if row >= self.count || self.all_true {
++            return;
++        }
++        self.values.insert(row);
++        if self.values.len() == u64::from(self.count) {
++            self.all_true = true;
++            self.values.clear();
++        }
++    }
++
++    /// C++ `RoaringBitmap::SetFalse(row)`.
++    pub fn set_false(&mut self, row: u32) {
++        if row >= self.count {
++            return;
++        }
++        // `TryRemoveAllTrueFlag`: the all-true shortcut has to become real bits
++        // before one can be cleared.
++        if self.all_true {
++            self.values.insert_range(0..self.count);
++            self.all_true = false;
++        }
++        self.values.remove(row);
++    }
++
++    /// C++ `RoaringBitmap::CountTrue()`.
++    pub fn count_true(&self) -> u32 {
++        if self.all_true {
++            self.count
++        } else {
++  
+```
+
+**File**: `rust_engine/crates/common/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -38,6 +38,7 @@
+ #[global_allocator]
+ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+ 
++pub mod bitmask;
+ pub mod cast;
+ pub mod datetime;
+ pub mod error;
+@@ -49,6 +50,7 @@ pub mod types;
+ pub mod utility;
+ pub mod varchar;
+ 
++pub use bitmask::{Bitmask, RowBitmap, RowMask, SharedRows};
+ pub use cast::{
+     bind_integer_cast, integer_try_cast_to_fixlen, integer_try_cast_to_varlen, CastError,
+ };
+```
+
+---
+
+### Incident Patch 2: `8c86bcb2` (2026-11-23)
+**Commit Message**: plaid: build and fold a tensor mirror in chunks (#3581)
+
+### Summary
+
+- The embedded host sets the memindex quota it was leaving at 0, so a
+multi-vector tail is sealed during the import instead of by the first
+query: 62 k units kept 3 GiB resident and one query peaked at 8.2 GiB
+because the structure that would have pruned it is what a dump builds.
+Its stop seals the secondary tails as well.
+- for_each_tensor_doc / build_plaid_chunk walk the block mirror a block
+at a time, so a build costs index + one batch instead of four
+whole-table images; both passes are capped (PLAID_BUILD_BATCH_BYTES /
+PLAID_TRAIN_SAMPLE_BYTES).
+- A chunk is written streaming and a fold plan reads chunk headers only,
+so the periodic trigger never decodes a large mirror; the optimize merge
+folds a subset and drops the files it folded.
+- EMVB gains search_filtered: the filter runs on the candidates, before
+the top_n cut, so the answer holds top_n live rows.
+- is_multivector_kind is what registers a TENSOR column's memory index
+with the write hook and the quota.
+
+**File**: `rust_engine/crates/embedded-ffi/Cargo.toml` (modified, +4/-3)
+```diff
+@@ -5,10 +5,11 @@ edition.workspace = true
+ license.workspace = true
+ 
+ [lib]
+-# The shared library a host process (rgrep's daemon) loads: the engine runs
+-# inside that process, so its lifetime is the host's.
++# The engine a host process links in: `staticlib` is what rgrep's Go binary
++# links (one file to ship, no dlopen, no library search path), `cdylib` stays
++# for a host that prefers to load it at runtime.
+ name = "infinity_embedded"
+-crate-type = ["cdylib", "rlib"]
++crate-type = ["cdylib", "staticlib", "rlib"]
+ 
+ [dependencies]
+ executor.workspace = true
+```
+
+**File**: `rust_engine/crates/embedded-ffi/src/lib.rs` (modified, +45/-18)
+```diff
+@@ -123,6 +123,20 @@ pub unsafe extern "C" fn inf_embedded_start(
+                 .block_on(Engine::open_async(&data_dir, Default::default()))
+                 .map_err(|e| format!("open {data_dir}: {e}"))?,
+         );
++        // `[buffer] memindex_memory_quota`, which the CLI sets and this host did
++        // not: `0` disables the dump trigger, so a tail was never sealed and
++        // every query rebuilt the index from the rows instead of mapping a
++        // chunk. A multi-vector row is ~48 KB, so a 62 k-unit table kept 3 GiB
++        // of vectors resident and one query peaked at 8.2 GiB and still had to
++        // brute-force its way through, because the structure that would have
++        // pruned it is what the dump builds.
++        //
++        // 1 GiB is a laptop's answer, not the reference's 4 GiB default: it
++        // bounds the tail at ~20 k units and pays the same build work the query
++        // would have paid, once per dump, during the import instead of on the
++        // first search. The chunks it writes are what later opens and queries
++        // map.
++        engine.set_memindex_quota(1 << 30);
+         // `install_engine_handle` records the running runtime, so the bind has
+         // to happen inside its context.
+         let _guard = runtime.enter();
+@@ -154,28 +168,41 @@ pub unsafe extern "C" fn inf_embedded_start(
+                     // seals (`flush_storage`), which is what keeps the log at
+                     // the size of one checkpoint.
+                     if engine.has_work_since_checkpoint().await {
+-                        // A checkpoint alone leaves every memory index in RAM,
+-                        // and the next open rebuilds those tails from the rows
+-                        // (`NewTxn::RecoverMemIndex`) - measured at 10.3 s of a
+-                        // 10.3 s open for 4.6 k rows, because a multi-vector
+-                        // row is ~96 KB. The operator's `FLUSH DATA` does not
+-                        // dump either (the reference's flush leaves the tails
+-                        // alone), but this host has no background trigger to
+-                        // dump later, so the dump belongs here: pay it once on
+-                        // the way down instead of on every open.
++                        // Seal the tails the checkpoint leaves in memory, now that
++                        // they are bounded: this host sets a memory quota, so what
++                        // is left is at most one watermark (~64 MiB of vectors,
++                        // seconds to dump) instead of the whole table. Without the
++                        // seal the rows written since the last quota dump have no
++                        // chunk, and the next query rebuilds the multi-vector index
++                        // from the rows rather than mapping the chunks - 248 s for
++                        // 62 k units against milliseconds once they are all there.
+                         engine.set_flush_dumps_mem_index(true);
+                         if let Err(e) = engine.flush().await {
+                             eprintln!("embedded engine: final checkpoint failed: {e}");
+                         }
+-                        // `WalManager::Cleanup` is the only path that removes a
+-                        // sealed segment, and it is the background trigger that
+-                        // normally runs it. This host has none, so the stop does
+-                        // it: without that step the log keeps every segment it
+-                        // ever wrote, which is the disk half of the same
+-                        // problem the replay half had.
+-                        if let Err(e) = engine.cleanup().await {
+-                            eprintln!("embedded engine: final cleanup failed: {e}");
+-                        }
++                    }
++                    // The secondary tails, always: a dump is a key-to-rows map
++                    // (no row is read to write it) and sealing it is what lets
++                    // the next open skip a scan of the whole table - measured
++                    // at 94.5 s of a 102 s open for 62 k units with one
++                    // `path` index and nothing sealed. Not gated on the
++                    // checkpoint flag: a checkpoint the append budget already
++                    // ran leaves those tails unsealed, and an empty one is
++                    // skipped inside `dump_index_transaction`.
++                    //
++                    // The vector tails are the other trade and stay put:
++                    // sealing one rebuilds that index from the rows, ~64 ms per
++                    // unit, against the ~1-2 ms per unit `RecoverMemIndex`
++                    // spends rebuilding the same rows on the next open.
++                    engine.dump_secondary_indexes().await;
++                    // `WalManager::Cleanup` is the only path that removes a
++                    // sealed segment, and it is the 
+```
+
+**File**: `rust_engine/crates/executor/src/bg_task_ut.rs` (modified, +5/-1)
+```diff
+@@ -153,7 +153,11 @@ async fn start_background_tasks_sets_processor() {
+             std::time::Duration::ZERO,
+         )
+         .await;
+-    assert!(engine.submit_optimize_indexes(), "no processor attached");
++    // `submit_cleanup` is the marker here, not `submit_optimize_indexes`: an
++    // optimize submission now refuses to queue a pass when no index has anything
++    // to fold (its cheap gate), so an empty catalog legitimately answers `false`
++    // whether or not a processor is attached.
++    assert!(engine.submit_cleanup(), "no processor attached");
+     engine.drain_background_tasks().await;
+     drop(engine);
+ }
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +1344/-202)
+```diff
+@@ -139,6 +139,20 @@ pub(crate) struct EmbeddingColumn<'a> {
+     pub element_type: i32,
  }
  
- /// `infinity fulltext-bench <dir> <mode> <corpus.jsonl> [batch]`.
--pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result<()> {
--    let e = Engine::open(dir)?;
-+pub async fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result<()> {
-+    let e = Engine::open_default_async(dir).await?;
-     // `query-only` reuses a directory a previous run left behind: no DDL, no
-     // index build. It exists so a profiler sees the query path alone.
-     if mode == "query-only" {
--        run_queries(&e)?;
-+        run_queries(&e).await?;
-         return Ok(());
-     }
--    let _ = e.execute_blocking(&format!("DROP TABLE IF EXISTS {TABLE};"));
--    e.execute_blocking(&format!(
-+    let _ = e.execute(&format!("DROP TABLE IF EXISTS {TABLE};")).await;
-+    e.execute(&format!(
-         "CREATE TABLE {TABLE} (id VARCHAR, title VARCHAR, text VARCHAR);"
--    ))?;
-+    ))
-+    .await?;
++/// A `TENSOR`/`MULTIVECTOR` column of one block: the variable-length twin of
++/// [`EmbeddingColumn`]. Its rows are slot/page pairs in the column's `.col` and
++/// their tokens live in `col_{id}_out`, so a reader needs the outline as well
++/// as the body.
++#[derive(Clone, Copy)]
++pub(crate) struct TensorColumn<'a> {
++    /// The declared types (`IndexMeta`/table meta `types`), in column order.
++    pub declared: &'a [String],
++    /// The storage types, in column order.
++    pub storage: &'a [i32],
++    /// Position of the tensor column.
++    pub col: usize,
++}
++
+ fn value_cell_text(values: &[Value], col: usize) -> std::borrow::Cow<'_, str> {
+     match values.get(col) {
+         Some(value) => std::borrow::Cow::Owned(mirror_cell_text(value)),
+@@ -230,6 +244,10 @@ fn is_id_ordered(rows: &[(usize, Vec<Value>)]) -> bool {
+     rows.windows(2).all(|w| w[0].0 <= w[1].0)
+ }
  
-     // C++ `BenchmarkCreateIndex` times `CreateIndex` + `Flush` together, but
-     // the two `Flush`es checkpoint different storage stacks, so the checkpoint
-@@ -235,9 +236,9 @@ pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result
-         None => format!("CREATE INDEX {INDEX} ON {TABLE} (text) USING FULLTEXT;"),
-     };
-     let t = Instant::now();
--    e.execute_blocking(&create_index_sql)?;
-+    e.execute(&create_index_sql).await?;
-     let create_index = t.elapsed();
--    match checkpoint_cost(&e)? {
-+    match checkpoint_cost(&e).await? {
-         Some(flush) => {
-             println!("Create index cost: {create_index:?} (DDL; Flush {flush:?} not included)")
-         }
-@@ -265,42 +266,44 @@ pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result
-             })
-             .collect()
-     };
--    let insert_all = |e: &Engine| -> common::Result<()> {
-+    let insert_all = async |e: &Engine| -> common::Result<()> {
-         let t = Instant::now();
-         for chunk in rows.chunks(batch.max(1)) {
--            e.insert_literals(QUALIFIED, Some(&columns), to_literals(chunk))?;
-+            e.insert_literals(QUALIFIED, Some(&columns), to_literals(chunk))
-+                .await?;
-         }
-         println!("Insert data {n} rows cost: {:?}", t.elapsed());
++/// What a tensor-index build produces: the chunk id, the number of documents,
++/// the index, and the row each document came from (in document order).
++type PlaidChunkBuild = (u32, usize, PlaidIndex, Vec<u64>);
++
+ /// The stored text form of a column default: the same value `AddColumnsData`
+ impl Engine {
+     /// Root of the C++-format block mirror. The C++ engine keeps the table
+@@ -836,6 +854,12 @@ impl Engine {
+         let totals = self.append_totals(&table);
+         let append_ts = self.append_ts(&table);
+         let mut counts = self.segment_row_counts(&table);
++        // The rows this write covers, table-wide. The append journal is
++        // table-wide too (`append_ts_of` maps a row id through `counts`), so
++        // the two are comparable: a `create` in a block's `version` may only
++        // name a ts whose append lies entirely inside this total. See
++        // [`Self::block_version_batches`].
++        let covered_rows: u64 = counts.iter().map(|(_, rows)| *rows).sum();
+         // The reference decides per block, by ts: a block is flushed when
+         // `record_ts < min(bound_ts, block_max_ts)` where `record_ts` is
+         // the ts at which the block was last written and `block_max_ts` the
+@@ -1067,7 +1091,13 @@ impl Engine {
+                     })
+                 };
+                 if let Some((rows, filter)) = staged {
+-                    let batches = self.block_version_batches(&totals, &append_ts, slot_base, rows);
++                    let batches = self.block_version_batches(
++                        &totals,
++                        &append_ts,
++                        slot_base,
++                        rows,
++                        covered_rows,
++                    );
+                     let mut version = BlockVersionFile::new(&batches, DEFAULT_BLOCK_CAPACITY);
+                     for k in 0..rows {
+                         if let Some(ts) = deleted_at.get(&(first_id + k)) {
+@@ -1197,8 +1227,13 @@ impl Engine {
+                     &chunk,
+                     bitmap_bits,
+                 )?;
+-                let batches =
+-                    self.block_version_batches(&totals, &append_ts, slot_base, chunk.len());
++                let batches = self.block_version_batches(
++                    &totals,
++                    &append_ts,
++                    slot_base,
++                    chunk.len(),
++                    covered_rows,
++                );
+                 let mut version = BlockVersionFile::new(&batches, DEFAULT_BLOCK_CAPACITY);
+                 // The slot of a deleted row is its in-segment offset inside the
+                 // block (`BlockVersion::Delete`); the id window is the block's.
+@@ -1474,16 +1509,34 @@ impl Engine {
+         ts: &[u64],
+         block_start: usize,
+         rows_in_block: usize,
++        covered_rows: u64,
+     ) -> Vec<(u64, u32)> {
+         let end = block_start + rows_in_block;
++        // A `create` may only name a ts whose append this write **covers**.
++        // `totals`/`ts` are the commit journal, read under the table lock, and
++        // the journal is written in a commit's top half while the segment map
++        // that decides what gets walked moves in its bottom: a checkpoint that
++        // lands in between sees an append whose rows it will not write. Naming
++        // that append's ts on rows that *are* in the file is not a cosmetic
++        // inaccuracy - `Engine::open` derives the row replay floor from these
++        // `create` timestamps (`recover_blocks` -> `newest`), so a `kill -9`
++        // then skips exactly the append it named and the batch is gone (the
++        // `restart_test` checkpoint race: 8192 rows short after a restart).
++        //
++        // Nothing changes while the journal and the segment map agree, which
++        // is every write whose rows are already placed.
++        let ahead = totals.last().copied().unwrap_or(0) > covered_rows;
++        let clamped =
++            |i: usize| -> bool { !ahead || totals.get(i).is_so
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/index_chunk.rs` (modified, +207/-0)
+```diff
+@@ -130,6 +130,169 @@ pub(crate) struct IvfOptions {
+     pub(crate) min_points: usize,
+ }
+ 
++/// Rows a PLAID chunk grows to before a dump starts a new one.
++///
++/// The engine's segment holds `DEFAULT_SEGMENT_CAPACITY` = 8M rows
++/// (`common/default_values.cppm:69`) and a segment's mirror must stay loadable
++/// as a handful of chunks, so `8M / max_open_chunks_per_index` (8) is the size a
++/// chunk aims for. A chunk is a *dump accumulator*, not a segment: the segment
++/// is what seals, and a sealed segment's chunks never change again.
++pub(crate) const PLAID_CHUNK_TARGET_ROWS: usize = 1 << 20;
++
++/// A chunk below `total / PLAID_SMALL_CHUNK_DIVISOR` is folded into its
++/// neighbour even when the chunk count is under the cap: eight chunks that are
++/// all tiny still make the loader copy the whole mirror.
++pub(crate) const PLAID_SMALL_CHUNK_DIVISOR: u32 = 16;
++
++/// Outliers buffered before the centroid set is expanded
++/// (`PlaidIndexInMem::Update`'s buffer, the reference's 100).
++pub(crate) const PLAID_OUTLIER_BUFFER: usize = 100;
++
++/// L2 distance above which a document counts as an outlier of the centroid set.
++pub(crate) const PLAID_OUTLIER_THRESHOLD: f32 = 0.1;
++
++/// Which chunks an optimize pass folds, from their document counts in chunk-id
++/// order: `Some(positions)` when the mirror needs work, `None` when it does not.
++///
++/// - over the cap: every chunk folds into one, because the loader would
++///   otherwise merge them all on every open;
++/// - under the cap but with a chunk below `total / 16`: that chunk and its
++///   neighbour fold together. Folding *all* of them for one small chunk would
++///   rewrite the mirror for nothing, which is the cost this rule exists to keep
++///   off the write path.
++pub(crate) fn plaid_fold_plan(doc_nums: &[u32], cap: usize) -> Option<Vec<usize>> {
++    if doc_nums.len() > cap {
++        return Some((0..doc_nums.len()).collect());
++    }
++    if doc_nums.len() < 2 {
++        return None;
++    }
++    let total: u64 = doc_nums.iter().map(|n| u64::from(*n)).sum();
++    let (smallest, &small_docs) = doc_nums.iter().enumerate().min_by_key(|(_, n)| **n)?;
++    if u64::from(small_docs) * u64::from(PLAID_SMALL_CHUNK_DIVISOR) >= total {
++        return None;
++    }
++    // Its neighbour: the previous chunk, so the pair covers a contiguous run of
++    // documents (`base_row_id` order is chunk-id order).
++    let neighbour = smallest.saturating_sub(1).min(doc_nums.len() - 2);
++    let mut plan = vec![neighbour, neighbour + 1];
++    plan.sort_unstable();
++    plan.dedup();
++    Some(plan)
++}
++
++/// Squared L2 distance beyond which a document is an outlier of `codec`.
++///
++/// The scale is the codec's own: the median squared distance between a centroid
++/// and its nearest neighbour, halved. A document farther from every centroid than
++/// half the spacing between them is served no better by the codec than by the
++/// neighbour, which is the case an expansion can fix.
++///
++/// An absolute constant cannot work here - a `TENSOR` column holds whatever
++/// floats the caller stored, normalized embeddings or not - and the reference
++/// never calls its own `PlaidIndex::ExpandCentroids`, so there is no default to
++/// inherit.
++pub(crate) fn plaid_outlier_threshold_sq(codec: &PlaidIndex, dims: usize) -> f32 {
++    if dims == 0 || codec.n_centroids() < 2 {
++        return 0.0;
++    }
++    // At most 256 centroids: the estimate is a median over pairs, and a full
++    // codec's k^2 x dims is more than a buffering heuristic is worth.
++    let stride = (codec.n_centroids() as usize / 256).max(1);
++    let picked: Vec<usize> = (0..codec.n_centroids() as usize).step_by(stride).collect();
++    let data = codec.centroids_data();
++    let mut spacing: Vec<f32> = Vec::with_capacity(picked.len());
++    for (i, a) in picked.iter().enumerate() {
++        let mut best = f32::MAX;
++        for (j, b) in picked.iter().enumerate() {
++            if i == j {
++                continue;
++            }
++            let mut d = 0.0f32;
++            for k in 0..dims {
++                let diff = data[a * dims + k] - data[b * dims + k];
++                d += diff * diff;
++            }
++            best = best.min(d);
++        }
++        if best.is_finite() {
++            spacing.push(best);
++        }
++    }
++    if spacing.is_empty() {
++        return 0.0;
++    }
++    spacing.sort_by(|x, y| x.partial_cmp(y).unwrap_or(std::cmp::Ordering::Equal));
++    spacing[spacing.len() / 2] / 2.0
++}
++
++/// The merge a mirror last performed: its source chunk ids, the chunk it wrote,
++/// and the `(len, mtime)` of each source.
++///
++/// A merge whose deprecation did not land leaves the sources listed beside the
++/// chunk that already contains them. Merging that set again would count those
++/// documents twice, so the manifest is what makes the retry a no-op instead.
++#[derive(Debug, Default, Clone, PartialEq, Eq)]
++pub(crate) struct PlaidMergeManifest {
++    pub(crate) sources: Vec<u64>,
++    pub(crate
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/misc.rs` (modified, +349/-1)
+```diff
+@@ -470,6 +470,129 @@ impl<'a> BlockCursor<'a> {
          Ok(())
-     };
+     }
  
-     match mode {
--        "insert" => insert_all(&e)?,
-+        "insert" => insert_all(&e).await?,
-         "import" => {
-             let t = Instant::now();
--            e.import_literals(QUALIFIED, Some(&columns), to_literals(&rows))?;
-+            e.import_literals(QUALIFIED, Some(&columns), to_literals(&rows))
-+                .await?;
-             println!("Import data cost: {:?}", t.elapsed());
-         }
-         "merge" => {
--            insert_all(&e)?;
-+            insert_all(&e).await?;
-             let t = Instant::now();
--            e.optimize_indexes()?;
-+            e.optimize_indexes_async().await?;
-             println!("Merge index cost: {:?}", t.elapsed());
-         }
-         "query" => {
--            insert_all(&e)?;
-+            insert_all(&e).await?;
-             let t = Instant::now();
--            e.optimize_indexes()?;
-+            e.optimize_indexes_async().await?;
-             println!("Merge index cost: {:?}", t.elapsed());
--            run_queries(&e)?;
-+            run_queries(&e).await?;
-         }
-         other => {
-             return Err(common::Error::Invalid(format!(
-                 "unknown fulltext-bench mode '{other}' (insert|import|merge|query)"
-             )))
++    /// `MaxSim` for the rows `ids` name, scored straight out of the column's
++    /// blocks: one decode per block the ids touch, no text round trip.
++    ///
++    /// This is what lets the multi-vector index keep only the row ids it
++    /// published instead of its own copy of the vectors (the `.mvec` segment
++    /// files it used to write): the column already holds them, and a row's
++    /// tokens are one `&[f32]` slice of the block's outline.
++    pub(crate) fn tensor_scores(
++        &mut self,
++        col: usize,
++        dim: usize,
++        query: &[Vec<f32>],
++        ids: &[u64],
++        out: &mut Vec<(u64, f32)>,
++    ) -> Result<()> {
++        if dim == 0 || ids.is_empty() {
++            return Ok(());
++        }
++        let tensor = crate::blocks::engine::TensorColumn {
++            declared: &self.meta.types,
++            storage: &self.types,
++            col,
++        };
++        // The ids arrive in query order, not row order: group them so each block
++        // is mapped once. The slot is the low 32 bits of the row id modulo the
++        // block capacity (`ROW_ID = segment << 32 | block * capacity + slot`).
++        #[allow(clippy::type_complexity)]
++        let mut by_block: std::collections::BTreeMap<(u32, u16), Vec<(u64, usize)>> =
++            Default::default();
++        for seq in ids {
++            let row = (*seq & 0xffff_ffff) as usize;
++            by_block
++                .entry(((seq >> 32) as u32, (row / DEFAULT_BLOCK_CAPACITY) as u16))
++                .or_default()
++                .push((*seq, row % DEFAULT_BLOCK_CAPACITY));
++        }
++        let db_id = self.engine.database_id_of(&self.table);
++        let table_id = self.meta.id;
++        let mut answered: std::collections::HashSet<u64> =
++            std::collections::HashSet::with_capacity(ids.len());
++        for ((segment, block_id), rows) in by_block {
++            if !self.visible.contains(&(segment, block_id)) {
++                continue;
++            }
++            let id = BlockId {
++                db_id,
++                table_id,
++                segment_id: segment,
++                block_id,
++            };
++            let Ok(block) = self.engine.block_map(&self.table, &self.root, id) else {
++                continue;
++            };
++            let version = block.version();
++            let Some((slots, outline, _live)) =
++                self.engine
++                    .block_tensor_body(&self.meta.ids, tensor, version, block.as_ref())
++            else {
++                continue;
++            };
++            for (seq, slot) in rows {
++                if version.deleted.get(slot).copied().unwrap_or(0) != 0 || self.dead.contains(seq) {
++                    continue;
++                }
++                let at = slot * 8;
++                let Some(bytes) = slots.get(at..at + 8) else {
++                    continue;
++                };
++                let Ok(word) = <[u8; 8]>::try_from(bytes) else {
++                    continue;
++                };
++                let word = u64::from_le_bytes(word);
++                let count = (word & 0xffff) as usize;
++                let offset = (word >> 16) as usize;
++                if count == 0 {
++                    continue;
++                }
++                let score = match storage::definition::fixed_f32::tensor_rows_f32(
++                    outline, offset, count, dim,
++                ) {
++                    Some(tokens) => storage::simd::maxsim_f32_rows(query, &tokens),
++                    None => {
++                        // A misaligned outline: decode instead of borrowing.
++                        let Some(owned) = storage::definition::fixed_f32::copy_tensor_rows(
++                            outline, offset, count, dim,
++                        ) else {
++                            continue;
++                        };
++                        let tokens: Vec<&[f32]> = owned.iter().map(Vec::as_slice).collect();
++                        storage::simd::maxsim_f32_rows(query, &tokens)
++                    }
++                };
++                out.push((seq, score));
++                answered.insert(seq);
++            }
++        }
++        // Rows a commit appended since the last checkpoint have no block bytes:
++        // their cell is parsed from the text it was written as, the same value
++        // the seal will one day write into a block.
++        let missing: Vec<u64> = ids
++            .iter()
++            .copied()
++            .filter(|seq| !answered.contains(seq))
++            .collect();
++        if !missing.is_empty() {
++            let wanted: std::collections::HashSet<u64> = missing.into_iter().collect();
++            for (row, values) in self.engine.pending_rows_of(&self.table) {
++                let seq = row as u64;
++                if !wanted.contains(&seq) || self.dead.contains(seq) {
++                    continue;
++                }
++        
+```
+
+**File**: `rust_engine/crates/executor/src/engine/admin.rs` (modified, +87/-1)
+```diff
+@@ -1096,6 +1096,80 @@ impl Engine {
          }
      }
--    let _ = checkpoint_cost(&e)?;
-+    let _ = checkpoint_cost(&e).await?;
-     Ok(())
- }
  
-@@ -313,11 +316,11 @@ fn flush_enabled() -> bool {
- 
- /// Runs `Engine::flush` (the reference's `Flush`) when `FTBENCH_FLUSH` asks for
- /// it and returns what it cost.
--fn checkpoint_cost(e: &Engine) -> common::Result<Option<std::time::Duration>> {
-+async fn checkpoint_cost(e: &Engine) -> common::Result<Option<std::time::Duration>> {
-     if !flush_enabled() {
-         return Ok(None);
-     }
-     let t = Instant::now();
--    executor::block_on(e.flush())?;
-+    e.flush()
++    /// Publishes the PLAID mirror of every multi-vector index this process has
++    /// built, so the chunks on disk cover the rows the checkpoint just wrote.
++    ///
++    /// PLAID is **rebuild-mode**: its chunk is a snapshot of the column, and
++    /// before this only a `DumpMemIndex`-style transaction wrote one. A table
++    /// loaded by an import therefore left chunks covering the rows of the last
++    /// dump, and the first query after the import rebuilt the whole index - a
++    /// full row scan plus centroid training over every token vector, on the read
++    /// path. Measured on a 62 k-unit table: past the 120 s RPC timeout, so the
++    /// query failed, and the client that timed out then desynchronised
++    /// (`Select: out of order sequence response` for every later call).
++    ///
++    /// The checkpoint is where this belongs, for the same reason SPANN uses it
++    /// (§9.4): the blocks are final, the write path is already the expensive
++    /// one, and the query path then only reads. `write_plaid_index` appends one
++    /// chunk per dump and shares the first chunk's centroids, so a checkpoint
++    /// that appended little writes little.
++    ///
++    /// Best effort: a column whose index was never built in this process has
++    /// nothing to publish, and a failure here leaves the previous chunks in
++    /// place - `read_plaid_index` compares their document count with the rows it
++    /// can read and falls back to a rebuild when they disagree.
++    pub(crate) async fn publish_plaid_chunks(&self) {
++        let Ok(indexes) = self.storage.catalog.list_indexes() else {
++            return;
++        };
++        for im in indexes {
++            if !im.index_type.eq_ignore_ascii_case("PLAID") {
++                continue;
++            }
++            let Ok(index_id) = self.index_position(&im.table, &im.name) else {
++                continue;
++            };
++            let Some(shared) = self.cached_multivector_index(&im.table, index_id as u64) else {
++                continue;
++            };
++            // A tail below the chunk target waits for the dump that creates the
++            // chunk and folds it (`fold_dumped_mirror`): publishing a stub here
++            // would leave a tiny chunk nothing folds, and inflate the chain the
++            // reader has to merge on every load.
++            let target = self.plaid_chunk_target_rows();
++            {
++                let Ok(index) = shared.read() else {
++                    continue;
++                };
++                // A mirror written before the row list existed can never be
++                // loaded again once a row is deleted (see
++                // `write_plaid_index`), so an index that has been built has to
++                // be published once even with an empty tail. Only a built index:
++                // a checkpoint on a table nothing has queried must not start a
++                // full build here.
++                let stale_layout =
++                    index.plaid.is_some() && self.plaid_chunk_rows(&im.table, &im.name).is_none();
++                if index.tail.len() < target && !stale_layout {
++                    continue;
++                }
++            }
++            {
++                let Ok(mut index) = shared.write() else {
++                    continue;
++                };
++                // `PlaidIndexInMem::BuildIndex` (or its incremental form): the
++                // buffered rows are encoded against the centroids the index
++                // already holds and the buffer is released. There is nothing to
++                // `seal` - a PLAID column's chunk is the index, written by
++                // `write_plaid_index` from the rows below.
++                index.build_plaid();
++            }
++            if let Err(e) = self.write_plaid_index(&im.table, &im.name).await {
++                eprintln!("plaid publish {}: {e}", im.name);
++            }
++        }
++    }
++
+     /// SPANN's optimize pass (§18, P5).
+     ///
+     /// The index is rebuild-mode, so "merge" is "dump once and keep one chunk":
+@@ -1347,6 +1421,15 @@ impl Engine {
+         // write (a column with no block layout) keeps its rows buffered only.
+         let mirror = self.flush_blocks(bound_ts).await;
+         mark("flush_blocks");
++        // Every table's rows are in a block for this bound, so the log below it
++        // is reclaimable - `CLEANUP` prunes by the frame alone otherwise, and
++        // the rows a previous crash left in the log would go with it. A table
++        // the mirror could not encode keeps its rows buffered, so a checkpoint
++        // that skipped one does not move this floor.
++        if mirror.as_ref().copied().unwrap_or(false) {
++            self.mirrored_ts
++                .store(bound_ts, std::sync::atomic::Ordering::Relaxed);
++        }
+         // `EngineOptions::object_dir`: publish this checkpoint's data files as
+         // the reference does (`
+```
+
+**File**: `rust_engine/crates/executor/src/engine/ddl.rs` (modified, +5/-10)
+```diff
+@@ -473,16 +473,11 @@ impl Engine {
+             }
+         }
+         for index in multi_indexes {
+-            let dir = index.read().map(|g| g.dir.clone()).ok();
+-            if let Some(dir) = dir {
+-                if let Ok(entries) = std::fs::read_dir(&dir) {
+-                    for entry in entries.flatten() {
+-                        let p = entry.path();
+-                        if p.extension().is_some_and(|x| x == "mvec" || x == "emvb") {
+-                            let _ = storage::chunk_store::remove_file(p);
+-                        }
+-                    }
+-                }
++            if let Ok(dir) = index.read().map(|g| g.dir.clone()) {
++                // Nothing writes under it any more (a multi-vector chunk is a
++                // row-id list); the tree may still hold `seg_*.mvec` files from
++                // before that change.
++                storage::chunk_store::remove_tree(dir);
+             }
+         }
+         self.recompute_memindex_total();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3582** (2026-11-23): Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a tick (@yuzhichang)
+- **PR #3581** (2026-11-23): plaid: build and fold a tensor mirror in chunks (@yingfeng)
 - **PR #3580** (2026-11-21): rust_engine: provided embedded engine running in-process (@yingfeng)
 - **PR #3579** (2026-11-21): fulltext and spann improvements (@yingfeng)
 - **PR #3578** (2026-11-21): rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan) (@yuzhichang)
 - **PR #3577** (2026-11-19): add license header (@yingfeng)
-- **PR #3576** (2026-11-19): rust_engine: bound process memory; read vectors in place (@yingfeng)
-- **PR #3575** (2026-11-21): Keep accented Latin letters inside words in the RAG tokenizer (@nthuat)
 
 ---
 
@@ -1973,13 +2438,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import me
+## X. Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a
 
 **RULE**:
 When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38370ad8`: rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d883351d`: Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a tick. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
@@ -1987,26 +2452,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
-  # binary that has to run elsewhere, so every lane pins its own here.
-  #
-  # These are the *target-scoped* variables, not `RUSTFLAGS`: cargo appends them
-  # to the section's list, so the `link-arg=-fuse-ld=mold` in `config.toml`
-  # survives and the later `-C target-cpu=` wins. `RUSTFLAGS` would replace the
-  # list wholesale and drop mold. The loom and sanitizer steps set `RUSTFLAGS`
-  # deliberately - they want a clean slate - and pass the linker flag themselves
-  # where it matters.
-  #
-  # AVX2 baseline (Haswell, 2013). The binary carries no AVX-512: `crc32fast`
-  # was the only source of it, and it is patched to a slicing-by-8 stand-in
-  # (`crates/crc32fast-shim`, see `[patch.crates-io]`). Without that patch the
-  # crate emits 52 `zmm` instructions whatever `target-cpu` says, and on this
-  # runner pool some CPUs advertise `avx512f` in CPUID and then reject it - the
-  # engine died with SIGILL before it could log a line.
-  #
-  # The C flags repeat the level for a different reason: rustc's flag does not
-  # reach RocksDB. `librocksdb-sys`'s build script reads
-  # `CARGO_ENCODED_RUSTFLAGS` and 
+    python/restart_test/test_memidx.py::TestMemIdx::test_optimize_from_different_database
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2016,4 +2462,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38370ad8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d883351d` are properly handled with clean fallback behavior.

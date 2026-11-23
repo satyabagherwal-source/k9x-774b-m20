@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
-    "lastHarvestedAt": "2026-11-18T18:38:05.829Z",
+    "contentHash": "90d9d4c897edd1647a4f5e1a90897d55178cc0b094e4dc665bf1dc06e742d97a",
+    "lastHarvestedAt": "2026-11-23T04:23:24.562Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "07c5af63",
+    "sourceVersion": "8c86bcb2",
     "license": "Apache-2.0",
-    "contentHash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
-    "lastHarvestedAt": "2026-11-22T02:29:32.380Z",
+    "contentHash": "6432b38abb2d9dc3716c85d01b6e15d41c1e069597a7700582d39514a7f4f693",
+    "lastHarvestedAt": "2026-11-23T04:24:03.652Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

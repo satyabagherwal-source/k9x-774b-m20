@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:08:10.006Z",
-  "total_cycles_completed": 11657,
-  "total_learnings_persisted": 11657,
-  "total_rules_promoted": 10847,
+  "last_updated": "2026-11-23T04:24:03.657Z",
+  "total_cycles_completed": 11659,
+  "total_learnings_persisted": 11659,
+  "total_rules_promoted": 10848,
   "history": [
-    {
-      "timestamp": "2026-11-22T07:56:35.046Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T07:56:43.048Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T08:09:19.071Z",
       "repository": "Edge0/Edge0-145B-NVFP4",
@@ -1403,6 +1389,20 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:23:24.567Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:24:03.657Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
