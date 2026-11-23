@@ -12275,3 +12275,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T00:31:15.193Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d3f1771a` | Multi-dimensional audit evidence | 2026-11-23T00:31:16.979Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `abc138d4` | Multi-dimensional audit evidence | 2026-11-23T00:31:31.726Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T00:39:27.106Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T00:31:38.617Z",
+  "last_updated": "2026-11-23T00:39:40.599Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -8204,8 +8204,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "edddc80912d6250a5ba76d8d05ffcfb513136b0a351ef22891247918a6e8ee61",
-      "created_at": "2026-11-22T23:41:29.072Z"
+      "content_hash": "adde4a414aa14bff2252c860126fc42c6e2447300cbfdb978d39995a4ea42770",
+      "created_at": "2026-11-23T00:39:40.599Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9122,8 +9122,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "387f150c662939f7ddc29a0569f95603dbdfc3c4ce41a853126eacc70687465f",
-      "created_at": "2026-11-22T23:41:27.933Z"
+      "content_hash": "a752dbdf07120c94b279ee7c8d5eeb38d908cc1c055ebd7d370d2cfce580a6ef",
+      "created_at": "2026-11-23T00:39:39.574Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10823,8 +10823,8 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-research-knowledge-intelligence-google-elec.md",
       "repository": "google/electra-base-discriminator",
-      "content_hash": "72319707006574942220ac0235bb4132bd84b5367b806902b513fba71fe84f0c",
-      "created_at": "2026-11-18T17:10:16.298Z"
+      "content_hash": "077478d89edde396ee67de90f93ac14d0cb8ee98c323059913bbec0194299c2c",
+      "created_at": "2026-11-23T00:39:27.300Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
@@ -10901,8 +10901,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-google-electra-base-discriminator-learnings",
-      "content_hash": "266a1a40a7edf1c8822578c91cb7dab2f502114038ac2c18db8602e562ac05be",
-      "created_at": "2026-11-18T17:10:30.190Z"
+      "content_hash": "c9d99ae23cf66d88d5ac1f7248da8a389b69af7dd8ff68bf92ac13413ea5ee12",
+      "created_at": "2026-11-23T00:39:38.973Z"
     },
     "DOM-H-169AAD95": {
       "record_id": "DOM-H-169AAD95",

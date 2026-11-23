@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-ESIL",
-    "timestamp": "2026-11-21T02:26:58.653Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "abbc7ac879166bbeb22d8ab6d98632075f4f96f7388f87fe40174970b9d8d630",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-IM0X",
     "timestamp": "2026-11-21T02:29:56.865Z",
     "repository": "astral-sh/ruff",
@@ -7492,6 +7477,21 @@
     "contentHash": "f234e552972488bc5c1ce4bdd46aa31c08df3e3698d60978f6ebe186b5af874a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-G7SU",
+    "timestamp": "2026-11-23T00:39:27.102Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

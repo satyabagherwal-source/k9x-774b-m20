@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T23:49:25.967Z",
-    "lastVerified": "2026-11-22T23:49:25.967Z",
+    "lastChecked": "2026-11-23T00:39:38.618Z",
+    "lastVerified": "2026-11-23T00:39:38.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T00:31:35.213Z",
-    "lastVerified": "2026-11-23T00:31:35.213Z",
+    "lastChecked": "2026-11-23T00:39:38.627Z",
+    "lastVerified": "2026-11-23T00:39:38.627Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -906,9 +906,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-22T20:00:24.150Z",
+    "lastChecked": "2026-11-23T00:39:33.666Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-22T20:00:24.150Z"
+    "lastVerified": "2026-11-23T00:39:33.666Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -1936,9 +1936,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-22T01:07:36.246Z",
+    "lastChecked": "2026-11-23T00:39:36.180Z",
     "revisionIdentifier": "64a87f9b",
-    "lastVerified": "2026-11-22T01:07:36.246Z"
+    "lastVerified": "2026-11-23T00:39:36.180Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -3029,9 +3029,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-11-21T18:52:03.447Z",
+    "lastChecked": "2026-11-23T00:39:23.614Z",
     "revisionIdentifier": "e2c66002",
-    "lastVerified": "2026-11-21T18:52:03.447Z"
+    "lastVerified": "2026-11-23T00:39:23.614Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -3627,12 +3627,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "peerdb-io-peerdb": {
-    "name": "PeerDB-io/peerdb",
+    "name": "peerdb",
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T02:18:07.945Z",
-    "lastVerified": "2026-11-22T02:18:07.945Z",
+    "lastChecked": "2026-11-23T00:39:31.176Z",
+    "lastVerified": "2026-11-23T00:39:31.176Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
@@ -3641,7 +3641,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "78271fc2"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -3672,12 +3673,12 @@
     "officialUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T17:10:15.402Z",
-    "lastVerified": "2026-11-18T17:10:15.402Z",
+    "lastChecked": "2026-11-23T00:39:26.511Z",
+    "lastVerified": "2026-11-23T00:39:26.511Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
+    "contentHash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9580,9 +9581,9 @@
   "emergetools-pow": {
     "name": "Pow",
     "officialUrl": "https://github.com/EmergeTools/Pow",
-    "lastChecked": "2026-11-20T02:14:54.871Z",
+    "lastChecked": "2026-11-23T00:39:28.698Z",
     "revisionIdentifier": "1b4b1dda",
-    "lastVerified": "2026-11-20T02:14:54.871Z"
+    "lastVerified": "2026-11-23T00:39:28.698Z"
   },
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",

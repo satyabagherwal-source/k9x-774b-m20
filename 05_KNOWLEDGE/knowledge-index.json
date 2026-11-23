@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T00:31:38.833Z",
+  "last_updated": "2026-11-23T00:39:40.599Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "edddc80912d6250a5ba76d8d05ffcfb513136b0a351ef22891247918a6e8ee61",
+      "content_hash": "adde4a414aa14bff2252c860126fc42c6e2447300cbfdb978d39995a4ea42770",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:41:29.072Z"
+      "persisted_at": "2026-11-23T00:39:40.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "387f150c662939f7ddc29a0569f95603dbdfc3c4ce41a853126eacc70687465f",
+      "content_hash": "a752dbdf07120c94b279ee7c8d5eeb38d908cc1c055ebd7d370d2cfce580a6ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:41:27.933Z"
+      "persisted_at": "2026-11-23T00:39:39.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a4b3f91c12590a468d82fb857081828ff46ebdc792aac7f1adc2b5a20e989a0",
+      "content_hash": "b82cc1c820de1cfe865594415fb928d59d2003b63605a28c23eb31087beeffa4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:41:28.117Z"
+      "persisted_at": "2026-11-23T00:39:39.742Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215657,7 +215657,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
+      "content_hash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [],
@@ -215666,7 +215666,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:10:15.817Z",
+      "verified_at": "2026-11-23T00:39:26.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215683,9 +215683,9 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "repository": "google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "72319707006574942220ac0235bb4132bd84b5367b806902b513fba71fe84f0c",
+      "content_hash": "077478d89edde396ee67de90f93ac14d0cb8ee98c323059913bbec0194299c2c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:10:16.298Z"
+      "persisted_at": "2026-11-23T00:39:27.300Z"
     },
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
@@ -216163,9 +216163,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "repository": "hf-google-electra-base-discriminator-learnings",
       "source_version": "HEAD",
-      "content_hash": "266a1a40a7edf1c8822578c91cb7dab2f502114038ac2c18db8602e562ac05be",
+      "content_hash": "c9d99ae23cf66d88d5ac1f7248da8a389b69af7dd8ff68bf92ac13413ea5ee12",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:10:30.190Z"
+      "persisted_at": "2026-11-23T00:39:38.973Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar": {
       "item_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
@@ -318776,13 +318776,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DN46-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GHAM-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "527ce986bf1b4d4251cb3d7165e43dc0c3aef17c2d5cc9ede2d7b6ac95fd890c",
+      "content_hash": "3ec6e8ca749139929fbfd33bf19978705f59d0a22699497dcf8ee3cc9d23e4f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:41:27.753Z"
+      "persisted_at": "2026-11-23T00:39:39.409Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T00:31:31.737Z",
+  "last_updated": "2026-11-23T00:39:27.113Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
-      "verified_at": "2026-11-18T17:10:16.069Z",
+      "content_hash": "569ffdd6fbcc092b4ae37f3d3ba29caac68481fb8f21da90c6adae0e448ce46f",
+      "verified_at": "2026-11-23T00:39:27.113Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:10:16.069Z"
+      "last_updated": "2026-11-23T00:39:27.113Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
