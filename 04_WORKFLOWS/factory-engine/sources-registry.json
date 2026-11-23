@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T05:59:54.945Z",
-    "lastVerified": "2026-11-23T05:59:54.945Z",
+    "lastChecked": "2026-11-23T06:14:28.147Z",
+    "lastVerified": "2026-11-23T06:14:28.147Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T05:24:02.232Z",
-    "lastVerified": "2026-11-23T05:24:02.232Z",
+    "lastChecked": "2026-11-23T06:14:24.676Z",
+    "lastVerified": "2026-11-23T06:14:24.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2178,22 +2178,21 @@
     "lastVerified": "2026-11-22T20:46:50.583Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T22:37:24.301Z",
-    "lastVerified": "2026-11-22T22:37:24.301Z",
+    "lastChecked": "2026-11-23T06:14:23.256Z",
+    "lastVerified": "2026-11-23T06:14:23.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
+    "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "87b3a5ff"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3023,9 +3022,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-22T03:54:14.391Z",
+    "lastChecked": "2026-11-23T06:14:21.982Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-22T03:54:14.391Z"
+    "lastVerified": "2026-11-23T06:14:21.982Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -4110,14 +4109,14 @@
     "officialUrl": "https://github.com/erkamyaman/rust-anything",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T22:16:15.252Z",
-    "lastVerified": "2026-11-21T22:16:15.252Z",
+    "lastChecked": "2026-11-23T06:14:12.843Z",
+    "lastVerified": "2026-11-23T06:14:12.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
+    "contentHash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 12,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4477,22 +4476,21 @@
     "lastVerified": "2026-11-22T01:07:28.363Z"
   },
   "zarf-dev-zarf": {
-    "name": "zarf",
+    "name": "zarf-dev/zarf",
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T05:12:34.337Z",
-    "lastVerified": "2026-11-22T05:12:34.337Z",
+    "lastChecked": "2026-11-23T06:14:21.635Z",
+    "lastVerified": "2026-11-23T06:14:21.635Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
+    "contentHash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "14a502fa"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -4591,12 +4589,12 @@
     "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T20:45:37.572Z",
-    "lastVerified": "2026-11-18T20:45:37.572Z",
+    "lastChecked": "2026-11-23T06:14:12.123Z",
+    "lastVerified": "2026-11-23T06:14:12.123Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
+    "contentHash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9852,9 +9850,9 @@
   "obytes-react-native-template-obytes": {
     "name": "react-native-template-obytes",
     "officialUrl": "https://github.com/obytes/react-native-template-obytes",
-    "lastChecked": "2026-11-20T05:16:12.111Z",
+    "lastChecked": "2026-11-23T06:14:14.857Z",
     "revisionIdentifier": "fd9b358e",
-    "lastVerified": "2026-11-20T05:16:12.111Z"
+    "lastVerified": "2026-11-23T06:14:14.857Z"
   },
   "raghav453-multilipi-hreflang-generator": {
     "name": "multilipi-hreflang-generator",

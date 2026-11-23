@@ -12279,3 +12279,7 @@
 | `CYCLE-20261123-LWER` | `2026-11-23T05:51:48.051Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10028` | Yes (`d42a823a...`) |
 | `CYCLE-20261123-W37W` | `2026-11-23T05:59:43.436Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`542d2f8f...`) |
 | `CYCLE-20261123-W4UI` | `2026-11-23T05:59:45.546Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10029` | Yes (`47c4ffc0...`) |
+| `CYCLE-20261123-EQ3Y` | `2026-11-23T06:14:12.910Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`ed34a30a...`) |
+| `CYCLE-20261123-ER4Q` | `2026-11-23T06:14:14.234Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10030` | Yes (`eca9f2ee...`) |
+| `CYCLE-20261123-EXWH` | `2026-11-23T06:14:23.009Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10031` | Yes (`83769852...`) |
+| `CYCLE-20261123-EZ56` | `2026-11-23T06:14:24.618Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10032` | Yes (`f52e754a...`) |

@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
-    "lastHarvestedAt": "2026-11-18T20:45:38.155Z",
+    "contentHash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
+    "lastHarvestedAt": "2026-11-23T06:14:12.916Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "87b3a5ff",
+    "sourceVersion": "f7d2828f",
     "license": "BSD-3-Clause",
-    "contentHash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
-    "lastHarvestedAt": "2026-11-22T18:00:29.006Z",
+    "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
+    "lastHarvestedAt": "2026-11-23T06:14:24.624Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "14a502fa",
+    "sourceVersion": "e3bea4e4",
     "license": "Apache-2.0",
-    "contentHash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
-    "lastHarvestedAt": "2026-11-20T00:43:20.800Z",
+    "contentHash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
+    "lastHarvestedAt": "2026-11-23T06:14:23.014Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "8ac2c1c8",
+    "sourceVersion": "b30206b1",
     "license": "MIT",
-    "contentHash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
-    "lastHarvestedAt": "2026-11-21T22:16:16.332Z",
+    "contentHash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
+    "lastHarvestedAt": "2026-11-23T06:14:14.239Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T05:59:45.561Z",
+  "last_updated": "2026-11-23T06:14:24.636Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1160,14 +1160,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "content_hash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
-      "verified_at": "2026-11-18T20:45:38.162Z",
+      "content_hash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
+      "verified_at": "2026-11-23T06:14:12.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:45:38.162Z"
+      "last_updated": "2026-11-23T06:14:12.927Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
-      "verified_at": "2026-11-22T18:00:29.013Z",
+      "content_hash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
+      "verified_at": "2026-11-23T06:14:24.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:00:29.013Z"
+      "last_updated": "2026-11-23T06:14:24.635Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
-      "verified_at": "2026-11-20T00:43:20.808Z",
+      "content_hash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
+      "verified_at": "2026-11-23T06:14:23.025Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T00:43:20.808Z"
+      "last_updated": "2026-11-23T06:14:23.025Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -19461,14 +19461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-erkamyaman-rust-anything",
-      "content_hash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
-      "verified_at": "2026-11-21T22:16:16.342Z",
+      "content_hash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
+      "verified_at": "2026-11-23T06:14:14.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:16:16.342Z"
+      "last_updated": "2026-11-23T06:14:14.266Z"
     },
     "akhaliq/MiniMax-H3-Image-Character-Swap": {
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",

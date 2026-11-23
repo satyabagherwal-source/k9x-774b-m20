@@ -12312,3 +12312,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `54f0eb95` | Multi-dimensional audit evidence | 2026-11-23T05:51:48.056Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-23T05:59:43.441Z |
 | `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `938605ba` | Multi-dimensional audit evidence | 2026-11-23T05:59:45.551Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-23T06:14:12.916Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `b30206b1` | Multi-dimensional audit evidence | 2026-11-23T06:14:14.239Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `e3bea4e4` | Multi-dimensional audit evidence | 2026-11-23T06:14:23.014Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f7d2828f` | Multi-dimensional audit evidence | 2026-11-23T06:14:24.624Z |

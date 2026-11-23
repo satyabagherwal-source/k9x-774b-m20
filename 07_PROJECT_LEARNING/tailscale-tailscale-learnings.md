@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `87b3a5ff`  
+> **Source Version**: `f7d2828f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T18:00:28.205Z  
+> **Timestamp**: 2026-11-23T06:14:23.262Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:00:28.202Z  
+> **Harvest Timestamp**: 2026-11-23T06:14:23.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39466 stars
+- **Stars / Engagement**: 39490 stars
 
 ---
 
@@ -823,331 +823,194 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87b3a5ff` (2026-11-22)
-**Commit Message**: control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled
+### Incident Patch 1: `f7d2828f` (2026-11-22)
+**Commit Message**: wgengine: stamp Status.AsOf when endpoints are read, strictly increasing
 
-The ts2021 protocol speaks HTTP/2 inside the Noise stream. With
-GODEBUG=http2client=0 (or the nethttpomithttp2 build tag), net/http
-can't, and http.DefaultTransport also never gets a TLSClientConfig,
-which made controlhttp crash tailscaled with a nil pointer dereference.
-Return a clear user-visible error from ts2021.NewClient instead, and
-make netutil.NewDefaultTransport always return a non-nil
-TLSClientConfig.
+TestTUNDNS failed on Windows CI with:
 
-Fixes #22578
+    waitForPeerReachable([uOLy9]): peer [uOLy9]: no endpoints
 
-Change-Id: I119c6ebbd6f1bbb5c693fb44a577862b98e688f3
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+The peer had a HomeDERP in control but never any endpoints, for 30s.
 
-**File**: `control/ts2021/client.go` (modified, +19/-0)
+userspaceEngine.getStatus snapshotted e.endpoints under e.mu, then
+walked the wireguard-go peers (which can block on the device mutex),
+and only then set AsOf: time.Now(). RequestStatus lets two goroutines
+run getStatus concurrently (for example the magicsock endpoints
+callback and the TUN "external route: up" event goroutine). If the
+goroutine that read the old, empty endpoints finished last, its status
+had the newest AsOf, so LocalBackend.setWgengineStatus's AsOf ordering
+check accepted it, reset b.endpoints to empty and sent that to
+control. magicsock's endpoints hadn't changed, so nothing ever resent
+them. On Windows the monotonic clock is coarse, so two statuses can
+also get equal AsOf values, which the strict Before check lets through
+in either order.
+
+Take AsOf in the same critical section as the endpoints read and make
+it strictly increasing, so a status with older endpoints always has an
+older AsOf and is discarded.
+
+Reproduced on 
+
+**File**: `wgengine/userspace.go` (modified, +10/-1)
 ```diff
-@@ -32,6 +32,7 @@ import (
- 	"tailscale.com/util/httpbody"
- 	"tailscale.com/util/mak"
- 	"tailscale.com/util/set"
-+	"tailscale.com/util/vizerror"
- )
+@@ -140,6 +140,7 @@ type userspaceEngine struct {
+ 	closing        bool             // Close was called (even if we're still closing)
+ 	statusCallback StatusCallback
+ 	endpoints      []tailcfg.Endpoint
++	lastStatusAsOf time.Time                           // AsOf of the last status from getStatus
+ 	pendOpen       map[flowtrackTuple]*pendingOpenFlow // see pendopen.go
  
- // Client provides a http.Client to connect to tailcontrol over
-@@ -101,6 +102,21 @@ type ClientOpts struct {
- 	ProtocolVersion uint16
- }
+ 	// pongCallback is the map of response handlers waiting for disco or TSMP
+@@ -1044,9 +1045,17 @@ func (e *userspaceEngine) getStatus() (*Status, error) {
+ 	// (See comment in userspaceEngine's declaration.)
+ 	derpConns := e.magicConn.DERPs()
  
-+// errNoHTTP2 is returned by [NewClient] when net/http's HTTP/2 support is
-+// disabled, which the ts2021 protocol requires.
-+var errNoHTTP2 = vizerror.New("unsupported configuration: Tailscale requires Go's HTTP/2 support, but it's disabled (is GODEBUG=http2client=0 set?)")
-+
-+// transportHasHTTP2 reports whether net/http configured HTTP/2 on tr.
-+//
-+// net/http sets up HTTP/2 on a Transport once, on first use or Clone, and
-+// skips it when HTTP/2 is disabled with GODEBUG=http2client=0 or the
-+// nethttpomithttp2 build tag. When it does set it up, it registers an "h2"
-+// entry in TLSNextProto, the historical signal that HTTP/2 is enabled.
-+func transportHasHTTP2(tr *http.Transport) bool {
-+	tr.Clone() // run net/http's one-time HTTP/2 setup on tr
-+	return tr.TLSNextProto["h2"] != nil
-+}
-+
- // NewClient returns a new noiseClient for the provided server and machine key.
- //
- // netMon may be nil, if non-nil it's used to do faster interface lookups.
-@@ -171,6 +187,9 @@ func NewClient(opts ClientOpts) (*Client, error) {
- 	// speaks inside the ts2021 Noise encryption. But Go doesn't know about that,
- 	// so we use "SetUnencryptedHTTP2" even though it's actually encrypted.
- 	tr.Protocols.SetUnencryptedHTTP2(true)
-+	if !transportHasHTTP2(tr) {
-+		return nil, errNoHTTP2
++	// Stamp AsOf when endpoints are read, strictly increasing, so the
++	// status consumer's AsOf ordering check discards any status carrying
++	// stale endpoints, even with coarse clocks.
+ 	e.mu.Lock()
+ 	closing := e.closing
+ 	localAddrs := slices.Clone(e.endpoints)
++	asOf := time.Now()
++	if !asOf.After(e.lastStatusAsOf) {
++		asOf = e.lastStatusAsOf.Add(1)
 +	}
- 	tr.DialTLSContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
- 		return np.dial(ctx)
- 	}
-```
-
-**File**: `control/ts2021/client_test.go` (modified, +36/-0)
-```diff
-@@ -14,6 +14,8 @@ import (
- 	"math"
- 	"net/http"
- 	"net/http/httptrace"
-+	"os"
-+	"os/exec"
- 	"strconv"
- 	"strings"
- 	"sync/atomic"
-@@ -457,3 +459,37 @@ func (up *Upgrader) ServeHTTP(w http.ResponseWriter, r *http.Request) {
- 		BaseConfig: up.httpBaseConfig,
- 	})
- }
-+
-+// TestNewClientNoHTTP2 verifies that NewClient fails with a clear error when
-+// net/http's HTTP/2 support is disabled. See tailscale/tailscale#22578.
-+// It runs in a child process because GODEBUG=http2client=0 must be set at
-+// process start.
-+func TestNewClientNoHTTP2(t *testing.T) {
-+	newClient := func() error {
-+		nc, err := NewClient(ClientOpts{
-+			Logf:         t.Logf,
-+			PrivKey:      testPrivKey,
-+			ServerPubKey: testServerPub,
-+			ServerURL:    "https://unused.example",
-+			Dialer:       tsdial.NewDialer(netmon.NewStatic()),
-+		})
-+		if err == nil {
-+			nc.Close()
-+		}
-+		return err
-+	}
-+	if os.Getenv("TS_TEST_TS2021_CHILD") == "1" {
-+		if err := newClient(); err != errNoHTTP2 {
-+			t.Fatalf("NewClient error = %v; want %v", err, errNoHTTP2)
-+		}
-+		return
-+	}
-+	if err := newClient(); err != nil {
-+		t.Fatalf("NewClient with HTTP/2 enabled: %v", err)
-+	}
-+	cmd := exec.Command(os.Args[0], "-test.run=^TestNewClientNoHTTP2$")
-+	cmd.Env = append(os.Environ(), "TS_TEST_TS2021_CHILD=1", "GODEBUG=http2client=0")
-+	if out, err := cmd.CombinedOutput(); err != nil {
-+		t.Errorf("with GODEBUG=http2client=0: %v\n%s", err, out)
-+	}
-+}
-```
-
-**File**: `net/netutil/netutil.go` (modified, +14/-0)
-```diff
-@@ -6,6 +6,7 @@ package netutil
++	e.lastStatusAsOf = asOf
+ 	e.mu.Unlock()
  
- import (
- 	"bufio"
-+	"crypto/tls"
- 	"io"
- 	"net"
- 	"net/http"
-@@ -23,7 +24,20 @@ import (
- // standard *http.Transport) it returns a clone of it, preserving the existing
- // behavior exactly; otherwise it returns a fresh transport mirroring the
- // stdlib defaults.
-+//
-+// The returned transport's TLSClientConfig is always non-nil. The stdlib's
-+// DefaultTransport only gets a TLSClientConfig as a side effect of its HTTP/2
-+// setup, which is skipped when HTTP/2 is disabled (such as with
-+// GODEBUG=http2client=0).
- func NewDefaultTransport() *http.Transport {
-+	tr := newDefaultTransport()
-+	if tr.TLSClientConfig == nil {
-+		tr.TLSClientConfig = &tls.Config{}
-+	}
-+	return tr
-+}
-+
-+func newDefaultTransport() *http.Transport {
- 	if tr, ok := http.DefaultTransport.(*http.Transport); ok {
- 		return tr.Clone()
+ 	if closing {
+@@ -1072,7 +1081,7 @@ func (e *userspaceEngine) getStatus() (*Status, error) {
  	}
-```
-
-**File**: `net/netutil/netutil_test.go` (modified, +26/-0)
-```diff
-@@ -7,6 +7,8 @@ import (
- 	"io"
- 	"net"
- 	"net/http"
-+	"os"
-+	"os/exec"
- 	"runtime"
- 	"testing"
- 	"time"
-@@ -55,6 +57,27 @@ func TestOneConnListener(t *testing.T) {
- 	}
- }
  
-+// TestNewDefaultTransportNoHTTP2 is a regression test for
-+// tailscale/tailscale#22578. http.DefaultTransport only gets a TLSClientConfig
-+// from its one-time HTTP/2 setup, so it runs the GODEBUG=http2client=0 case
-+// in a child process.
-+func TestNewDefaultTransportNoHTTP2(t *testing.T) {
-+	if os.Getenv("TS_TEST_NETUTIL_CHILD") == "1" {
-+		if NewDefaultTransport().TLSClientConfig == nil {
-+			t.Fatal("TLSClientConfig = nil; want non-nil")
-+		}
-+		return
-+	}
-+	if NewDefaultTransport().TLSClientConfig == nil {
-+		t.Error("TLSClientConfig = nil; want non-nil")
-+	}
-+	cmd := exec.Command(os.Args[0], "-test.run=^TestNewDefaultTransportNoHTTP2$")
-+	cmd.Env = append(os.Environ(), "TS_TEST_NETUTIL_CHILD=1", "GODEBUG=http2client=0")
-+	if out, err := cmd.CombinedOutput(); err != nil {
-+		t.Errorf("with GODEBUG=http2client=0: %v\n%s", err, out)
-+	}
-+}
-+
- // roundTripperFunc is an http.RoundTripper that is not a *http.Transport,
- // used to exercise the fallback path of NewDefaultTransport.
- type roundTripperFunc func(*http.Request) (*http.Response, error)
-@@ -103,6 +126,9 @@ func TestNewDefaultTransport(t *testing.T) {
- 	if tr.DialContext == nil {
- 		t.Error("fallback DialContext = nil; want non-nil")
- 	}
-+	if tr.TLSClientConfig == nil {
-+		t.Error("fallback TLSClientConfig = nil; want non-nil")
-+	}
- 	if tr.Proxy == nil {
- 		t.Error("fallback Proxy = nil; want non-nil")
- 	}
+ 	return &Status{
+-		AsOf:       time.Now(),
++		AsOf:       asOf,
+ 		LocalAddrs: localAddrs,
+ 		Peers:      peers,
+ 		DERPs:      derpConns,
 ```
 
 ---
 
-### Incident Patch 2: `a54bdf2b` (2026-11-21)
-**Commit Message**: .github/actions/go-cache: cache the cigocacher binary
+### Incident Patch 2: `ceccbc30` (2026-11-23)
+**Commit Message**: go.mod: bump 5 modules
 
-Building cigocacher took most of the ~15-27s "Set up cigocacher" step
-on every Windows job. Cache the binary in actions/cache, keyed on
-cmd/cigocacher, go.mod, and go.sum, and add a test that cigocacher has
-no other tailscale.com dependencies so that key stays complete.
+* github.com/gokrazy/firmware: https://github.com/gokrazy/firmware/compare/6bd1fd16a2e2...d8b761d7b4ca
+* github.com/gokrazy/kernel.amd64: https://github.com/gokrazy/kernel.amd64/compare/eb0ff0075854...17ff614bf8bc
+* github.com/gokrazy/kernel.arm64: https://github.com/gokrazy/kernel.arm64/compare/595ae821533a...03045c240b24
+* github.com/gokrazy/kernel.rpi: https://github.com/gokrazy/kernel.rpi/compare/85ea215f0624...a4a58496f7f6
+* github.com/gokrazy/rpi-eeprom: https://github.com/gokrazy/rpi-eeprom/compare/30711eb43bb5...fb3324aa4fc1
+* github.com/gokrazy/breakglass: already current
+* github.com/gokrazy/gokrazy: already current
+* github.com/gokrazy/serial-busybox: already current
 
-Updates tailscale/corp#34812
-Updates tailscale/corp#28679
+Triggered by the gokrazy-bump workflow's schedule.
 
-Change-Id: I2def6f28a045249b2e87331a1f42c621e161031f
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Updates #1866
 
-**File**: `.github/actions/go-cache/action.sh` (modified, +12/-2)
+Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
+
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@
- # Inputs:
- #   URL: The cigocached server URL.
- #   HOST: The cigocached server host to dial.
-+#   BIN_DIR: Optional directory to find or build the cigocacher binary in.
- # Outputs:
- #   success: Whether cigocacher was set up successfully.
- 
-@@ -25,7 +26,16 @@ fi
- 
- BIN_PATH="$(PATH="$PATH:$HOME/bin" command -v cigocacher || true)"
- if [ -z "${BIN_PATH}" ]; then
--  echo "cigocacher not found in PATH, attempting to build or fetch it"
-+  EXE=""
-+  if [ "${RUNNER_OS:-}" = "Windows" ]; then
-+    EXE=".exe"
-+  fi
-+  BIN_PATH="${BIN_DIR:-${RUNNER_TEMP:-/tmp}}/cigocacher${EXE}"
-+fi
-+if [ -f "${BIN_PATH}" ]; then
-+  echo "Using cigocacher at ${BIN_PATH}"
-+else
-+  echo "cigocacher not found in PATH or cache, attempting to build or fetch it"
- 
-   GOPATH=$(command -v go || true)
-   if [ -z "${GOPATH}" ]; then
-@@ -36,7 +46,7 @@ if [ -z "${BIN_PATH}" ]; then
-     GOPATH="./tool/go"
-   fi
- 
--  BIN_PATH="${RUNNER_TEMP:-/tmp}/cigocacher$(${GOPATH} env GOEXE)"
-+  mkdir -p "$(dirname "${BIN_PATH}")"
-   if [ -d "cmd/cigocacher" ]; then
-     echo "cmd/cigocacher found locally, building from local source"
-     "${GOPATH}" build -o "${BIN_PATH}" ./cmd/cigocacher
+@@ -172,4 +172,4 @@
+     });
+   };
+ }
+-# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
++# nix-direnv cache busting line: sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo=
 ```
 
-**File**: `.github/actions/go-cache/action.yml` (modified, +17/-0)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -23,13 +23,30 @@ outputs:
- runs:
-   using: composite
-   steps:
-+    # cigocacher has no tailscale.com dependencies outside cmd/cigocacher
-+    # (see TestDeps), so its binary depends only on these files.
-+    - name: Compute cigocacher cache key
-+      id: key
-+      if: inputs.cigocached-url != ''
-+      shell: bash
-+      working-directory: ${{ inputs.checkout-path }}
-+      run: echo "key=cigocacher-$RUNNER_OS-$RUNNER_ARCH-$(cat cmd/cigocacher/*.go go.mod go.sum | sha256sum | cut -c1-32)" >> "$GITHUB_OUTPUT"
-+
-+    - name: Restore cigocacher binary
-+      if: inputs.cigocached-url != ''
-+      uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # zizmor: ignore[cache-poisoning] v5.0.4
-+      with:
-+        path: ${{ runner.temp }}/cigocacher-bin
-+        key: ${{ steps.key.outputs.key }}
-+
-     - name: Setup cigocacher
-       id: setup
-       shell: bash
-       env:
-         URL: ${{ inputs.cigocached-url }}
-         HOST: ${{ inputs.cigocached-host }}
-         CACHE_DIR: ${{ inputs.cache-dir }}
-+        BIN_DIR: ${{ runner.temp }}/cigocacher-bin
-       working-directory: ${{ inputs.checkout-path }}
-       # https://github.com/orgs/community/discussions/25910
-       run: $GITHUB_ACTION_PATH/action.sh
+@@ -4,7 +4,7 @@
+     "sri": "sha256-Qmy06FkeFkjqCo1FLSD9dO7hTvdo/gC2VACJniuiQBU="
+   },
+   "vendor": {
+-    "goModSum": "sha256-QP1as7ifhlOtEVS1hZaWhNQ1HMDQRKve2PEZMziRxCQ=",
+-    "sri": "sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI="
++    "goModSum": "sha256-BxqNT0K8QLic7/KKqLBjZIRre3sTzzm/4CUCuNgBMaw=",
++    "sri": "sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo="
+   }
+ }
 ```
 
-**File**: `cmd/cigocacher/deps_test.go` (added, +28/-0)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,28 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package main
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"tailscale.com/tstest/deptest"
-+)
-+
-+// TestDeps checks that cigocacher depends on no other tailscale.com
-+// packages. The .github/actions/go-cache action caches the cigocacher
-+// binary keyed on only cmd/cigocacher, go.mod, and go.sum.
-+func TestDeps(t *testing.T) {
-+	for _, goos := range []string{"linux", "darwin", "windows"} {
-+		deptest.DepChecker{
-+			GOOS:   goos,
-+			GOARCH: "amd64",
-+			OnDep: func(dep string) {
-+				if strings.HasPrefix(dep, "tailscale.com/") {
-+					t.Errorf("GOOS=%s: unexpected dependency %q; update the cache key in .github/actions/go-cache/action.yml", goos, dep)
-+				}
-+			},
-+		}.Check(t)
-+	}
-+}
+@@ -57,12 +57,12 @@ require (
+ 	github.com/go4org/plan9netshell v0.0.0-20250324183649-788daa080737
+ 	github.com/godbus/dbus/v5 v5.2.2
+ 	github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e
+-	github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2
++	github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca
+ 	github.com/gokrazy/gokrazy v0.0.0-20260916140236-39fe3e5557b8
+-	github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854
+-	github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a
+-	github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624
+-	github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5
++	github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc
++	github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24
++	github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6
++	github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1
+ 	github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7
+ 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8
+ 	github.com/golang/snappy v1.0.0
+```
+
+**File**: `go.sum` (modified, +10/-10)
+```diff
+@@ -519,8 +519,8 @@ github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
+ github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
+ github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e h1:0s0peXcMjOPhvh+V57bhSP4qQXSEGCWGvstjZnbOk70=
+ github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e/go.mod h1:xQ9/k3J7wdHdqJla7tcQ0LTMabpUd9fy/dEpm0JfEng=
+-github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2 h1:RivYZHoClwkrjWY1oeHetAlCHuHPqjoeTgEQlZ36WJA=
+-github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2/go.mod h1:x8Lwd/ZFqJTBWUGW7yt/qwgxO8/AHh5KGFYJ4yfH+FE=
++github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca h1:CMhJAtbAusU7M0wDNrQiahNLMuFpiuWIUEkqCB/iaWU=
++github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca/go.mod h1:x8Lwd/ZFqJTBWUGW7yt/qwgxO8/AHh5KGFYJ4yfH+FE=
+ github.com/gokrazy/gokapi v0.0.0-20251205165548-0927bab199d4 h1:XFo3EqnHUbmAySp7zqms8ee/tU8bM9k+YzT7L4o5CcQ=
+ github.com/gokrazy/gokapi v0.0.0-20251205165548-0927bab199d4/go.mod h1:+StofDb/2cMb7vbA2znaNolgp9SadTYeyRIFtdhH1KQ=
+ github.com/gokrazy/gokrazy v0.0.0-20200501080617-f3445e01a904/go.mod h1:pq6rGHqxMRPSaTXaCMzIZy0wLDusAJyoVNyNo05RLs0=
+@@ -529,14 +529,14 @@ github.com/gokrazy/gokrazy v0.0.0-20260916140236-39fe3e5557b8/go.mod h1:QGwonQ8B
+ github.com/gokrazy/internal v0.0.0-20200407075822-660ad467b7c9/go.mod h1:LA5TQy7LcvYGQOy75tkrYkFUhbV2nl5qEBP47PSi2JA=
+ github.com/gokrazy/internal v0.0.0-20260625065634-6994f9152c44 h1:hUOyCucKrO5bNvL7Wrn2eglA5mxMvXrhuUVepWKjHhI=
+ github.com/gokrazy/internal v0.0.0-20260625065634-6994f9152c44/go.mod h1:dQY4EMkD4L5ZjYJ0SPtpgYbV7MIUMCxNIXiOfnZ6jP4=
+-github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854 h1:k15GuehXKBxNBj69ekUIW0yptJB6+MHdoZQFqDI7nws=
+-github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854/go.mod h1:bcNzFtcy9x+l7l4KUqOkVFyIqrtWn8U92Jo9ZEOckbw=
+-github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a h1:9e+sT20wCe/R6fcJCENhrY6dZ10oXv1Z4cXfTbv+LUA=
+-github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a/go.mod h1:WWx72LXHEesuJxbopusRfSoKJQ6ffdwkT0DZditdrLo=
+-github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624 h1:Yv83NliWX6U7/PBPlwsZywUP4r32wwlLAQrO6idydP4=
+-github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624/go.mod h1:p5uBeUWKZVv3KJWWD6s9MpAjPjGJUe2CmKDML+5pm6U=
+-github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5 h1:PXGqBI+GcoZbNAkkwe6rlnfK+8yMLqHEH79kyk7bxxk=
+-github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5/go.mod h1:vabxV1M+i6S3rGuWoFieHxCJW3jlob3rqe0KV82j+0o=
++github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc h1:ya260egbgfj74qF6bIXU2l5vBkx+8EXv1tX8be0LT/4=
++github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc/go.mod h1:bcNzFtcy9x+l7l4KUqOkVFyIqrtWn8U92Jo9ZEOckbw=
++github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24 h1:nUQpDr1CzCVmZZ4j7eAuCDGWW9P17iuDUqJNYe9I+CA=
++github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24/go.mod h1:WWx72LXHEesuJxbopusRfSoKJQ6ffdwkT0DZditdrLo=
++github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6 h1:0Nhq0EKqt+8p2zppNYK3LCHXJ6ibbzmdItsphbZ5nLA=
++github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6/go.mod h1:p5uBeUWKZVv3KJWWD6s9MpAjPjGJUe2CmKDML+5pm6U=
++github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1 h1:ajf+/PkmxPYnsVFwxXImuK2mov7ZGiYJEkNVkSNvMzA=
++github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1/go.mod h1:vabxV1M+i6S3rGuWoFieHxCJW3jlob3rqe0KV82j+0o=
+ github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7 h1:gurTGc4sL7Ik+IKZ29rhGgHNZQTXPtEXLw+aM9E+/HE=
+ github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7/go.mod h1:OYcG5tSb+QrelmUOO4EZVUFcIHyyZb0QDbEbZFUp1TA=
+ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF08vX0COfcOBJRhZ8lUbR+ZWIs0Y5g=
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
++# nix-direnv cache busting line: sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
+- **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
 - **PR #22579** (2026-11-22): control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled (@bradfitz)
+- **PR #22571** (2026-11-23): wgengine: stamp Status.AsOf when endpoints are read, strictly increasing (@bradfitz)
+- **PR #22564** (2026-11-23): net/tstun, feature/conn25: make app connector hooks safe to set while running (@bradfitz)
 - **PR #22556** (closed): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
-- **PR #22555** (closed): net/netmon: don't hold Monitor.mu while closing the OS monitor (@bradfitz)
-- **PR #22554** (2026-11-22): net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic (@bradfitz)
-- **PR #22546** (2026-11-22): .github/actions/go-cache: cache the cigocacher binary (@bradfitz)
-- **PR #22544** (2026-11-21): ipn/ipnlocal: deflake TestServeAppCapsConcurrentStreams on Windows (@bradfitz)
 
 ---
 
@@ -1167,46 +1030,37 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled
+## X. wgengine: stamp Status.AsOf when endpoints are read, strictly increasing
 
 **RULE**:
-When implementing operations in `control/ts2021/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wgengine/userspace.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87b3a5ff`: control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7d2828f`: wgengine: stamp Status.AsOf when endpoints are read, strictly increasing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control/ts2021/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/userspace.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"tailscale.com/util/vizerror"
-// errNoHTTP2 is returned by [NewClient] when net/http's HTTP/2 support is
-// disabled, which the ts2021 protocol requires.
-var errNoHTTP2 = vizerror.New("unsupported configuration: Tailscale requires Go's HTTP/2 support, but it's disabled (is GODEBUG=http2client=0 set?)")
-
-// transportHasHTTP2 reports whether net/http configured HTTP/2 on tr.
-//
-// net/http sets up HTTP/2 on a Transport once, on first use or Clone, and
-// skips it when HTTP/2 is disabled with GODEBUG=http2client=0 or the
-// nethttpomithttp2 build tag. When it does set it up, it registers an "h2"
-// entry in TLSNextProto, the historical signal that HTTP/2 is enabled.
-func transportHasHTTP2(tr *http.Transport) bool {
-	tr.Clone() // run net/http's one-time HTTP/2 setup on tr
-	return tr.TLSNextProto["h2"] != nil
-}
-
-	if !transportHasHTTP2(tr) {
-		return nil, errNoHTTP2
+	lastStatusAsOf time.Time                           // AsOf of the last status from getStatus
+	// Stamp AsOf when endpoints are read, strictly increasing, so the
+	// status consumer's AsOf ordering check discards any status carrying
+	// stale endpoints, even with coarse clocks.
+	asOf := time.Now()
+	if !asOf.After(e.lastStatusAsOf) {
+		asOf = e.lastStatusAsOf.Add(1)
 	}
+	e.lastStatusAsOf = asOf
+		AsOf:       asOf,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		AsOf:       time.Now(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87b3a5ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7d2828f` are properly handled with clean fallback behavior.

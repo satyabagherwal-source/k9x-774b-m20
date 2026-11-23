@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-IR05",
-    "timestamp": "2026-11-21T06:14:00.245Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0MIL",
-    "timestamp": "2026-11-21T06:27:54.237Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0P2C",
-    "timestamp": "2026-11-21T06:27:57.540Z",
-    "repository": "sceneview/sceneview",
-    "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0VK6",
-    "timestamp": "2026-11-21T06:28:05.958Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-J2MU",
     "timestamp": "2026-11-21T06:42:14.934Z",
     "repository": "Folkbench/folkbench",
@@ -7490,6 +7430,66 @@
     "repository": "fujiapple852/trippy",
     "learningId": "learn-github-fujiapple852-trippy",
     "contentHash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EQ3Y",
+    "timestamp": "2026-11-23T06:14:12.910Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ER4Q",
+    "timestamp": "2026-11-23T06:14:14.234Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EXWH",
+    "timestamp": "2026-11-23T06:14:23.009Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EZ56",
+    "timestamp": "2026-11-23T06:14:24.618Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `14a502fa`  
+> **Source Version**: `e3bea4e4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T00:43:19.796Z  
+> **Timestamp**: 2026-11-23T06:14:21.642Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:43:15.987Z  
+> **Harvest Timestamp**: 2026-11-23T06:14:21.635Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2104 stars
+- **Stars / Engagement**: 2106 stars
 
 ---
 
@@ -1459,13 +1459,13 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5697** (2026-11-22): **chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7**
+  *Symptoms*: Bumps [github.com/containerd/containerd/v2](https://github.com/containerd/containerd) from 2.3.6 to 2.3.7. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/containerd/containerd/releases">github.com/containerd/containerd/v2's releases</a>.</em></p> <blockquote> <h2>containerd 2.3.7</h2> <p>Welcome to the v2.3.7 release of containerd!</p> <p>The seventh patch release for containerd 2.3 contains various fixes and updates including security patches.</p> <h3>Security Updates</h3> <ul> <li><strong>containerd</strong> <ul> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-vwhp-8p66-mq4f"><strong>CVE-2026-95839</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-5p7c-hggf-c748"><strong>GHSA-5p7c-hggf-c748</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-8647-2jxj-p2rc"><strong>GHSA-8647-2jxj-p2rc</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-hc94-p972-ch66"><strong>GHSA-hc94-p972-ch66</strong></a></li> </ul> </li> </ul> <h3>Highlights</h3> <h4>Container Runtime Interface (CRI)</h4> <ul> <li>Apply hardening to not follow symlinks for container log files (<a href="https://redirect.github.com/containerd/containerd/pull/14301">#14301</a>)</li> </ul> <h4>Image Distribution</h4> <ul> <li>Apply hardening to reject image references with &quot;..&quot; path components (<a href="ht
+
 - **Issue #5694** (2026-11-19): **chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr**
   *Symptoms*: ## Description  All ADRs are moved to proposals repo in https://github.com/zarf-dev/proposals/pull/76, once that merges we'll be able to drop the entire `adr/` directory from this repo.   ## Related Issue  Fixes #5693  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
   > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 9f682a8cfa8468572dce2221838395677d577daf |
-
-- **Issue #5693** (2026-11-19): **Transfer all ADRs from the main zarf repo to archived directory under proposals**
-  *Symptoms*: We've decided to move all Architecture Decision Record documents (ADRs) from https://github.com/zarf-dev/zarf/tree/main/adr to https://github.com/zarf-dev/proposals under `archived/adr` while maintaining the git log history for the transferred files.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1482,367 +1482,421 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14a502fa` (2026-11-19)
-**Commit Message**: docs: contribution workflow changes (#5680)
+### Incident Patch 1: `e3bea4e4` (2026-11-22)
+**Commit Message**: chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7 (#5697)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-Co-authored-by: David Wertenteil <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/pull_request_template.md` (modified, +3/-2)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -3,12 +3,13 @@
- ...
- 
- ## Related Issue
-+<!-- Every PR must link to an issue that has a `ready` status and is assigned to you. Otherwise, the PR will be closed. See CONTRIBUTING.md#pull-request-requirements. -->
- 
- Fixes #
- <!-- or -->
- Relates to #
- 
- ## Checklist before merging
- 
--- [ ] Test, docs, adr added or updated as needed
--- [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed
-+- [ ] Tests and docs added or updated as needed
-+- [ ] [Contributor Guide Steps](https://docs.zarf.dev/contribute/contributor-guide/#developer-workflow) followed
+@@ -107,7 +107,7 @@ require (
+ 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
+ 	github.com/containerd/cgroups/v3 v3.1.3 // indirect
+ 	github.com/containerd/containerd/api v1.11.1 // indirect
+-	github.com/containerd/containerd/v2 v2.3.6 // indirect
++	github.com/containerd/containerd/v2 v2.3.7 // indirect
+ 	github.com/containerd/errdefs v1.0.0 // indirect
+ 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
+ 	github.com/containerd/platforms v1.0.0-rc.5 // indirect
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +18/-6)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -508,8 +508,8 @@ github.com/containerd/console v1.0.5 h1:R0ymNeydRqH2DmakFNdmjR2k0t7UPuiOV/N/27/q
+ github.com/containerd/console v1.0.5/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
+ github.com/containerd/containerd/api v1.11.1 h1:h8nfoDW9+fNsC/9TwiAHj8B1GzXKtR4eFtkhi/X5RLU=
+ github.com/containerd/containerd/api v1.11.1/go.mod h1:CaQFRu+N1MtbgL6JDOJLUB1hCKESU1lD6MuTJhgtdlw=
+-github.com/containerd/containerd/v2 v2.3.6 h1:huoqZXaDW1x1kgPvFC4rMwxv92vUJnqgq7I5b1rSddM=
+-github.com/containerd/containerd/v2 v2.3.6/go.mod h1:qaUSWKk9EchqbudSbhv1MxI8dXKGYHLpZtMQdkEkVZ4=
++github.com/containerd/containerd/v2 v2.3.7 h1:7PGbgAVKE4ieQjFPv7+kwAv7f9dCtRpExZwjExHD/Fk=
++github.com/containerd/containerd/v2 v2.3.7/go.mod h1:usc1tgzxnUlhLLW9KLqTEKRTSix46fIc6XHDZt4Tlrs=
+ github.com/containerd/continuity v0.5.0 h1:7a85HZpCSs+1Zps0Ee3DPSuAWY+0SJM1JNM51nlEVDg=
+ github.com/containerd/continuity v0.5.0/go.mod h1:/lNJvtJKUQStBzpVQ1+rasXO1LAWtUQssk28EZvJ3nE=
+ github.com/containerd/errdefs v1.0.0 h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI=
+```
+
+**File**: `vendor/github.com/containerd/containerd/v2/core/content/helpers.go` (modified, +16/-1)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
++	"math"
+ 	"sync"
+ 	"time"
  
- First off, thanks so much for wanting to help out! :tada:
+@@ -189,7 +190,9 @@ func OpenWriter(ctx context.Context, cs Ingester, opts ...WriterOpt) (Writer, er
+ //
+ // Copy is buffered, so no need to wrap reader in buffered io.
+ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected digest.Digest, opts ...Opt) error {
+-	r := or
++	if size < 0 {
++		return fmt.Errorf("invalid content size %d: %w", size, errdefs.ErrInvalidArgument)
++	}
+ 	for i := 0; ; i++ {
+ 		if i >= 1 {
+ 			log.G(ctx).WithField("digest", expected).Debugf("retrying copy due to reset")
+@@ -199,6 +202,7 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
+ 		if err != nil {
+ 			return fmt.Errorf("failed to get status: %w", err)
+ 		}
++		r := or
+ 		// Reset the original reader if
+ 		// 1. there is an offset, or
+ 		// 2. this is a retry due to Reset error
+@@ -208,6 +212,14 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
+ 				return fmt.Errorf("unable to resume write to %v: %w", ws.Ref, err)
+ 			}
+ 		}
++		if size > 0 {
++			if ws.Offset > size {
++				return fmt.Errorf("writer offset %d exceeds expected size %d: %w", ws.Offset, size, errdefs.ErrFailedPrecondition)
++			}
++			if rem := size - ws.Offset; rem < math.MaxInt64 {
++				r = io.LimitReader(r, rem+1)
++			}
++		}
  
--This document describes the steps and requirements for contributing a bug fix or feature in a Pull Request to Zarf! If you have any questions about the process or the pull request you are working on feel free to reach out in the [Zarf Kubernetes Slack Channel](https://kubernetes.slack.com/archives/C03B6BJAUJ3). The doc also details a bit about the governance structure of the project.
-+This document describes the steps and requirements for contributing a bug fix or feature in a Pull Request to Zarf! If you have any questions about the process or the pull request you are working on feel free to reach out in the [Zarf OpenSSF Slack Channel](https://openssf.slack.com/archives/C07AKUMBDMJ). The doc also details a bit about the governance structure of the project.
+ 		copied, err := copyWithBuffer(cw, r)
+ 		if errors.Is(err, ErrReset) {
+@@ -220,6 +232,9 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
+ 			// Short writes would return its own error, this indicates a read failure
+ 			return fmt.Errorf("short read: expected %d bytes but got %d: %w", size-ws.Offset, copied, io.ErrUnexpectedEOF)
+ 		}
++		if size > 0 && copied > size-ws.Offset {
++			return fmt.Errorf("read exceeds expected size %d: %w", size-ws.Offset, errdefs.ErrFailedPrecondition)
++		}
+ 		if err := cw.Commit(ctx, size, expected, opts...); err != nil {
+ 			if errors.Is(err, ErrReset) {
+ 				continue
+```
+
+**File**: `vendor/github.com/containerd/containerd/v2/core/images/handlers.go` (modified, +21/-1)
+```diff
+@@ -27,6 +27,7 @@ import (
  
- ## Developer Experience
+ 	"github.com/containerd/containerd/v2/core/content"
+ 	"github.com/containerd/errdefs"
++	"github.com/containerd/log"
+ 	"github.com/containerd/platforms"
+ 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
+ 	"golang.org/x/sync/errgroup"
+@@ -59,6 +60,12 @@ var (
+ 	ErrEmptyWalk = errors.New("image might be filtered out")
+ )
  
-@@ -63,23 +63,35 @@ Zarf is a tool used within the United States Government and as such security is
- 
- Zarf maintainers will require one (1) core team review before merge. See the (contributing ladder)[CONTRIBUTING_LADDER.md] for more information.
- 
-+### Issue Guidelines
++const (
++	// referrerLabelDigestLen is the number of hex characters from a digest
++	// used in referrer GC labels (e.g., containerd.io/gc.ref.content.referrer.sha256.abc123def456).
++	referrerLabelDigestLen = 12
++)
 +
-+Issues primarily move through the following statuses: `triage` → `accepted` → `ready`. Issues begin in `triage`. A Maintainer or Reviewer can move an issue to `accepted` once its scope and value to the project are clear. Once prioritized and assigned, the issue moves to `ready`.
-+
-+To help move an issue forward, from `triage` to `accepted`, ask clarifying questions or clear up undefined behavior.
-+
-+When creating or scoping issues, do not use AI to generate project feedback or use cases. Feedback grounded in experience with the project is extremely helpful to maintainers, while AI output can create noise that distracts from higher priorities.
-+
-+### Pull Request Requirements
-+
-+A pull request must reference an issue with `ready` status on the project board and its assignee must be the PR author. Otherwise the PR will be closed.
-+
-+Issues labeled `open-for-contribution` or `good-first-issue` are looking for contributors. Comment to request assignment to an issue.
-+
- ### Developer Workflow
+ // Handler handles image manifests
+ type Handler interface {
+ 	Handle(ctx context.Context, desc ocispec.Descriptor) (subdescs []ocispec.Descriptor, err error)
+@@ -331,7 +338,20 @@ func SetChildrenMappedLabels(manager content.Manager, f HandlerFunc, labelMap fu
+ 					idx := keys[key]
+ 					keys[key] = idx + 1
+ 					if strings.HasSuffix(key, ".sha256.") {
+-						key = fmt.Sprintf("%s%s", key, ch.Digest.Hex()[:12])
++						// The digest of a child is not validated until its
++						// content is fetched, but the referrer label derived
++						// here requires a valid, truncatable digest. Skip
++						// malformed digests instead of panicking on them.
++						if err := ch.Digest.Validate(); err != nil {
++							log.G(ctx).WithFields(log.Fields{"digest": ch.Digest, "error": err}).Warn("skipping child with invalid digest for referrer label")
++							continue
++						}
++						encoded := ch.Digest.Encoded()
++						if len(encoded) < referrerLabelDigestLen {
++							log.G(ctx).WithField("digest", ch.Digest).Warn("skipping child with digest too short for referrer label")
++							continue
++						}
++						key += encoded[:referrerLabelDigestLen]
+ 					} else if idx > 0 || key[len(key)-1] == '.' {
+ 						key = fmt.Sprintf("%s%d", key, idx)
+ 					}
+```
+
+**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/docker/fetcher.go` (modified, +81/-15)
+```diff
+@@ -254,6 +254,9 @@ func isRegistryOrigin(u *url.URL, hosts []RegistryHost) bool {
  
- :key: == Required by automation
+ func (r dockerFetcher) Fetch(ctx context.Context, desc ocispec.Descriptor) (io.ReadCloser, error) {
+ 	ctx = log.WithLogger(ctx, log.G(ctx).WithField("digest", desc.Digest))
++	if desc.Size < 0 {
++		return nil, fmt.Errorf("invalid descriptor size %d: %w", desc.Size, errdefs.ErrInvalidArgument)
++	}
  
--1. Review the issues list for `good-first-issue` or `help-wanted` labels. Issues with the `Triage` status in the project need to be triaged first before evaluation of implementation. Other issues with the `Ready` status may be of more complexity and can be worked by those familiar with the code base and other in-progress work.
--1. Drop a comment in the issue; request any additional questions with regards to scope and ask to be assigned. If you have any questions as you work through the code, reach out in the [Zarf Kubernetes Slack Channel](https://kubernetes.slack.com/archives/C03B6BJAUJ3).
-+1. Find an issue and follow the [Pull Request Requirements](#pull-request-requirements).
-+    - Questions during implementation can be discussed in the issue or in the [Zarf OpenSSF Slack Channel](https://openssf.slack.com/archives/C07AKUMBDMJ).
- 1. :key: Set up your Git config to GPG sign all commits. [Here's some documentation on how to set it up](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits). You won't be able to merge your PR if you have any unverified commits.
- 1. In addition to signing your commits, you will also need to sign-off on commits stating you agree to the contribution terms.
-    - This can be done by using `-s` with your git commit - adding "Signed-off-by" line automatically.
-    - Example: `git commit -s -m "fix: add missing newline"`
--1. Create a Draft Pull Request as soon as you can, even if it is just 5 minutes after you started working on it. We lean towards working in the open as much as we can. If you're not sure what to put in the PR description, just put a link to the issue you're working on.
-+1. Create a Draft Pull Request as soon as you can. We lean towards working in the open. Ensure there is a link to the issue you're working on.
-    - :key: We follow the [conventional commits spec](https://www.conventionalcommits.org/en/v1.0.0/) with the [commitlint conventional config](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional) as extended types for PR titles.
- 1. :key: Automated tests will begin based on the paths you have edited in your Pull Request.
-    > ⚠️ **NOTE:** _If you are an external third-party contributor, the pipelines won't run until a [CODEOWNER](https://github.com/zarf-dev/zarf/blob/main/CODEOWNERS) approves the pipeline run._
--1. :key: Be sure to use the [needs-adr,needs-docs,needs-tests](https://github.com/zarf-dev/zarf/labels?q=needs) labels as appropriate for the PR. Once you have addressed all of the needs, remove the label.
- 1. Once the review is complete and approved, a core member of the zarf project will merge your PR. If you are a contributor, two core members of the zarf project will be required to approve the PR.
--1. Cl
+ 	hosts := r.filterHosts(HostCapabilityPull)
+ 	if len(hosts) == 0 {
+@@ -549,57 +552,82 @@ func (r dockerFetcher) open(ctx context.Context, req *request, mediatype string,
+ 			parallelism = numChunks
+ 		}
+ 
+-		// Prepare channels, buffer pool, and readers/writers for parallel fetching.
+-		queue := make(chan int64, parallelism)
++		// A dispatcher goroutine creates an in-memory pipe for each chunk in
++		// order. A pool of worker goroutines downloads chunks into the write
++		// ends of the pipes while chunkReader reads from the read ends
++		// sequentially. Each pipe buffers its chunk in memory so a worker can
++		// finish a chunk before the caller reads it, with at most parallelism
++		// pipes active at a time.
++		type chunk struct {
++			i int64
++			w *pipeWriter
++		}
++		// queue hands chunks from the dispatcher to the worker goroutines.
++		queue := make(chan chunk)
++		// readers passes pipeReaders in chunk order from the dispatcher to
++		// chunkReader.
++		readers := make(chan *pipeReader, parallelism)
++		// slots limits the number of active pipes to parallelism. The
++		// dispatcher sends to slots before creating a pipe. chunkReader
++		// receives from slots after reading a pipe to io.EOF.
++		slots := make(chan struct{}, parallelism)
+ 		ctx, cancel := context.WithCancel(ctx)
+ 		eg, ctx := errgroup.WithContext(ctx)
+-		readers, writers := make([]io.Reader, numChunks), make([]*pipeWriter, numChunks)
+ 		bufPool := newbufferPool(chunkSize)
+-		for i := range numChunks {
+-			readers[i], writers[i] = newPipeWriter(bufPool)
+-		}
+ 		// keep reference of the initial body value to ensure it is closed
+ 		ibody := body
+ 		eg.Go(func() error {
+ 			defer close(queue)
++			defer close(readers)
+ 			for i := range numChunks {
+ 				select {
+-				case queue <- i:
++				case slots <- struct{}{}:
+ 				case <-ctx.Done():
+ 					if i == 0 {
+ 						ibody.Close()
+ 					}
+ 					return ctx.Err()
+ 				}
++				pr, pw := newPipeWriter(bufPool)
++				readers <- pr
++				select {
++				case queue <- chunk{i: i, w: pw}:
++				case <-ctx.Done():
++					if i == 0 {
++						ibody.Close()
++					}
++					_ = pw.CloseWithError(ctx.Err())
++					return ctx.Err()
++				}
+ 			}
+ 			return nil
+ 		})
+ 
+ 		for range parallelism {
+ 			eg.Go(func() error {
+-				for i := range queue { // first in first out
++				for c := range queue { // first in first out
+ 					copy := func() error {
+ 						var body io.ReadCloser
+-						if i == 0 {
++						if c.i == 0 {
+ 							body = ibody
+ 						} else {
+ 							if err := r.Acquire(ctx, 1); err != nil {
+-								_ = writers[i].CloseWithError(err)
++								_ = c.w.CloseWithError(err)
+ 								return err
+ 							}
+ 							defer r.Release(1)
+ 							reqClone := req.clone()
+-							reqClone.setOffset(offset + i*chunkSize)
++							reqClone.setOffset(offset + c.i*chunkSize)
+ 							nresp, err := reqClone.doWithRetries(ctx, lastHost, withErrorCheck)
+ 							if err != nil {
+-								_ = writers[i].CloseWithError(err)
++								_ = c.w.CloseWithError(err)
+ 								return err
+ 							}
+ 							body = nresp.Body
+ 						}
+-						_, err := io.Copy(writers[i], io.LimitReader(body, chunkSize))
++						_, err := io.Copy(c.w, io.LimitReader(body, chunkSize))
+ 						_ = body.Close()
+-						_ = writers[i].CloseWithError(err)
++						_ = c.w.CloseWithError(err)
+ 						if err != nil && err != io.EOF {
+ 							return err
+ 						}
+@@ -619,7 +647,11 @@ func (r dockerFetcher) open(ctx context.Context, req *request, mediatype string,
+ 					log.G(ctx).WithError(err).Warn("parallel fetch failed")
+ 				}
+ 			},
+-			ReadCloser: io.NopCloser(io.MultiReader(readers...)),
++			ReadCloser: io.NopCloser(&chunkReader{
++				ctx:     ctx,
++				readers: readers,
++				slots:   slots,
++			}),
+ 		}
+ 	}
+ 
+@@ -665,3 +697,37 @@ func (f *fnOnClose) Close() error {
+ }
+ 
+ var _ io.ReadCloser = &fnOnClose{}
++
++type chunkReader struct {
++	ctx     context.Context
++	readers <-chan *pipeReader
++	slots   <-chan struct{}
++	cur     *pipeReader
++}
++
++func (r *chunkReader) Read(p []byte) (int, error) {
++	for {
++		if r.cur == nil {
++			var ok bool
++			r.cur, ok = <-r.readers
++			if !ok {
++				if err := r.ctx.Err(); err != nil {
++					return 0, err
++				}
++				return 0, io.EOF
++			}
++		}
++		n, err := r.cur.Read(p)
++		if err == io.EOF {
++			// The current chunk has been read to completion and its buffer
++			// returned to bufPool; release the slot for the next chunk.
++			r.cur = nil
++			<-r.slots
++			if n > 0 {
++				return n, nil
++			}
++			continue
++		}
++		return n, err
++	}
++}
 ```
 
----
-
-### Incident Patch 2: `d8a4007c` (2026-11-19)
-**Commit Message**: chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr (#5694)
-
-Signed-off-by: Maciej Szulik <[REDACTED_EMAIL]>
-
-**File**: `adr/0001-record-architecture-decisions.md` (removed, +0/-23)
+**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/docker/httpreadseeker.go` (modified, +24/-0)
 ```diff
-@@ -1,23 +0,0 @@
--# 1. Record architecture decisions
--
--Date: 2022-03-01
--
--## Status
--
--Accepted
--
--## Context
--
--> NOTE:
-->
--> This file was automatically created when we used [adr-tools](https://github.com/npryce/adr-tools) to initialize the document log in the repo. ADRs on ADRs are a little silly, but it does give a lightweight way to direct the reader over to our contributor guide that has a lot more information.
--
--We need to record the architectural decisions made on this project.
--
--## Decision
--
--We will use Architecture Decision Records, as [described by Michael Nygard](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions), with a couple of small tweaks. See the [Documentation section in the Contributor guide](../CONTRIBUTING.md#documentation) for full details.
--
--## Consequences
--
--See Michael Nygard's article, linked above. For a lightweight ADR toolset, see Nat Pryce's [adr-tools](https://github.com/npryce/adr-tools).
+@@ -20,6 +20,7 @@ import (
+ 	"bytes"
+ 	"fmt"
+ 	"io"
++	"math"
+ 
+ 	"github.com/containerd/errdefs"
+ 	"github.com/containerd/log"
+@@ -38,6 +39,9 @@ type httpReadSeeker struct {
+ }
+ 
+ func newHTTPReadSeeker(size int64, open func(offset int64) (io.ReadCloser, error)) (io.ReadCloser, error) {
++	if size < -1 {
++		return nil, fmt.Errorf("httpReadSeeker: invalid size %d: %w", size, errdefs.ErrInvalidArgument)
++	}
+ 	return &httpReadSeeker{
+ 		size: size,
+ 		open: open,
+@@ -49,13 +53,33 @@ func (hrs *httpReadSeeker) Read(p []byte) (n int, err error) {
+ 		return 0, io.EOF
+ 	}
+ 
++	var rem int64
++	if hrs.size >= 0 {
++		rem = hrs.size - hrs.offset
++		if rem < 0 {
++			return 0, fmt.Errorf("httpReadSeeker: read past expected size %d: %w", hrs.size, errdefs.ErrFailedPrecondition)
++		}
++		if rem < math.MaxInt64 && int64(len(p)) > rem+1 {
++			p = p[:rem+1]
++		}
++	}
++
+ 	rd, err := hrs.reader()
+ 	if err != nil {
+ 		return 0, err
+ 	}
+ 
+ 	n, err = rd.Read(p)
+ 	hrs.offset += int64(n)
++	if hrs.size >= 0 && int64(n) > rem {
++		if hrs.rc != nil {
++			if clsErr := hrs.rc.Close(); clsErr != nil {
++				log.L.WithError(clsErr).Error("httpReadSeeker: failed to close ReadCloser")
++			}
++			hrs.rc = nil
++		}
++		return 0, fmt.Errorf("httpReadSeeker: read past expected size %d: %w", hrs.size, errdefs.ErrFailedPrecondition)
++	}
+ 	if n > 0 || err == nil {
+ 		hrs.errsWithNoProgress = 0
+ 	}
 ```
 
-**File**: `adr/0002-moving-e2e-tests-away-from-terratest.md` (removed, +0/-36)
+**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/handlers.go` (modified, +3/-0)
 ```diff
-@@ -1,36 +0,0 @@
--# 2. Moving E2E Tests Away From Terratest
--
--Date: 2022-03-04
--
--## Status
--
--Accepted
--
--## Context
--
--In previous releases of Zarf, the creation of the initialization package at the core of many of our E2E tests required repository secrets to login to registry1. Since this is an open-source project, anyone could submit a change to one of our GitHub workflows that could steal our secrets. In order to protect our secrets from any bad-actors we used [peter-evans/slash-command-dispatch@v2](https://github.com/peter-evans/slash-command-dispatch) so that only a maintainer would have the ability to run the E2E tests when a PR is submitted for review.
--
--In the current version of Zarf (v0.15) images from registry1 are no longer needed to create the zarf-init-{{arch}}.tar.zst. This means, given our current span of E2E tests, we no longer need to use repository secrets when running tests. This gives us the ability to reassess the way we do our E2E testing.
--
--When considering how to handle the tests, some of the important additions we were considering were:
--  1. Ability to test against different kubernetes distributions
--  2. Ability to test against different linux distributions
--  3. Ability to run (at least some of) the E2E tests locally without relying on an ec2 instance - for quicker feedback loops when developing new features
--
--## Decision
--
--The previous E2E test code was not extensible enough to be reused to test Zarf against different kubernetes distributions. The test suite was refactored so that we could write a setup and teardown function for each kubernetes distribution we wanted to verify against and the test suite was then responsible for cycling through the different distributions. This gives us the ability to test multiple kubernetes distributions against the same exact test cases.
--
--The individual test cases were also rewritten to not rely on terratest running a bash command over ssh. Instead, the test uses the locally built Zarf binary and example packages to validate expected behavior. This approach works both on local dev machines (linux/mac) and on the Ubuntu GitHub Runner that gets triggered when a pull request is created. This also has the positive side effect of not needing to wait several minutes for an ec2 instance to spin up for testing.
--
--Since we no longer need repository secrets to run the E2E tests, we removed the requirement for a maintainer to use a `/test all` chatops command to dispatch the tests. Instead, there is a new test workflow defined for each kubernetes distribution we are verifying against and the tests get run automatically whenever a PR is created or updated.
--
--When looking back at the list of 'important additions' we were considering above. All three are addressed with this approach. Testing against different kubernetes distributions is as simple as defining how to create and destroy the cluster. All of the test cases are runnable locally and then because of that testing on a linux distribution is possible by just switching over to another machine and running the same `make test-e2e` there. This also gives us the ability to test against cloud distributions like EKS! All you need is a valid kubeconfig and running `go test ./...` in the `./src/test/e2e` directory will run all of the test cases against the EKS cluster.
--
--## Consequences
--
--While it was not something we were doing before, testing directly on the GitHub Runner instead of using Terratest to test on an ec2 instance means that when we get around to adding automated testing of Zarf against different linux distributions we will want to have more discussions on if we want to use self-hosted runners of different OS's or if we want to go back to Terratest to stand up ec2 instances with different AMIs.
--
--In the future, we will likely want to write E2E tests that use images that require repository secrets to access. When that happens we will want to bring back some form of 'maintainer action' to initiate the test workflow. Going back to [peter-evans/slash-command-dispatch@v2](https://github.com/peter-evans/slash-command-dispatch) might be the right answer for that but there will need to be more discussion to make sure the team agrees that's the best solution first.
--
--As the amount of E2E tests we have grows, the longer it will take to get results back on each PR. Duhh! Paralyzing the tests on a single host will be difficult (but not impossible) because it means more logic will be needed in the test suite to make sure the host has enough resources to handle multiple clusters being run in parallel. The simpler solution would be to break out each of our tests into a new GitHub Workflow. This will easily mitigate the issue of tests taking long to run but also give us a lot more yaml to maintain. Either solution is valid but more team discussions will be needed as we get closer to needing it.
+@@ -155,6 +155,9 @@ func Fetch(ctx context.Context, ingester content.Ingester, fetcher Fetcher, desc
+ 		// into the content store. Error out here otherwise the error sent back is confusing
+ 		return fmt.Errorf("unable to fetch descriptor (%s) which reports content size of zero: %w", desc.Digest, errdefs.ErrInvalidArgument)
+ 	}
++	if desc.Size < 0 {
++		return fmt.Errorf("unable to fetch descriptor (%s) which reports negative content size (%d): %w", desc.Digest, desc.Size, errdefs.ErrInvalidArgument)
++	}
+ 	if ws.Offset == desc.Size {
+ 		// If writer is already complete, commit and return
+ 		err := cw.Commit(ctx, desc.Size, desc.Digest)
 ```
 
-**File**: `adr/0003-image-injection-into-remote-clusters-without-native-support.md` (removed, +0/-23)
+**File**: `vendor/github.com/containerd/containerd/v2/core/unpack/unpacker.go` (modified, +16/-5)
 ```diff
-@@ -1,23 +0,0 @@
--# 3. Image injection into remote clusters without native support
--
--Date: 2022-03-04
--
--## Status
--
--Accepted
--
--Amended by [7. Use Rust Binary for Both Injection Stages](0007-use-rust-binary-for-both-injection-stages.md)
--
--## Context
--
--In order to create any workloads in K8s, an image has to exist on the node or be pulled in from an OCI Distribution server (docker registry). Local K8s distros such as KIND, K3D, K3S, Microk8s have CLI support for injecting or pushing images into the CRIs of cluster nodes. No standard or tool exists to do this generically in K8s as the CRI sits outside the problem of K8s beyond just communicating with it. For Zarf to push images into a K8s cluster that does not have a CLI option to inject the image, we have to establish some mechanism to create a temporary registry, use an existing one, or inject the image in the cluster. Zarf must also support unknown environments with no other dependencies; we cannot assume a registry exists. Typically when K8s pulls images from a remote registry, it sends the request to the CRI that then does the pull outside of the K8s context. The CRI runs at the host level on a per-node basis, so to access a private registry, the TLS trust needs to be modified on any host/node that would attempt to pull the image. The two primary ways to do this are modifying the node's root certificate authorities or the CRIs configuration if it has an option for TLS root CA. Lastly, as this is per node, all nodes in the cluster would need to be modified or some affinity/taint to force the pod to use a single node during bootstrapping.
--
--## Decision
--
--Because we cannot require third-party dependencies, the requirement from some cloud-managed or distro-managed registry is not an option as not every K8s cluster will have that available.  Running an in-memory registry while zarf is performing `zarf init` was initially explored to resolve the external dependency issue.  However, this solution proved too complex when dealing with network traversal (especially behind NATs), firewall, and NACL rulesets.  Additionally, because of the complexities around TLS trust, the in-memory registry was not a viable solution.
--
--After iterating on several solutions, including `kubectl cp`, `kubectl exec`, a busybox configmap injection that brought in netcat to stream files, and a few variations on those ideas, we found using only configmaps to be the most predictable method for injection. The challenge with this mode is that the ETCD limit is 1 MB total, with binary data base64-encoded leaving roughly 670 KBs of data per configmap, far too small to bring the registry tarball in a single configmap. So instead, we used a combination of a custom Rust binary compiled with MUSL to perform file concatenation, untarring, and verification of a set of split tarball chunks across a variable number of configmaps. We found that chunking by less than the near-maximum configmap size was more performant on some resource-constrained control planes. The details of this solution and a drawing are located in the main README of this repo.
--
--## Consequences
--
--Because this mechanism uses only a standard Podspec and Configmap definition, there should be no problem running this on any generic K8s cluster.  However, the current implementation requires manually compiling the Rust binary, and mini go binary for injection; these binaries are also committed to the git repo.  Future updates should move these two compile actions to pipeline stages to eliminate stale binaries.  The other consideration is that this brings in a new language; even if it is only for a few dozen lines of code, it is a context switch for the engineering team should an update need to be made.
-```
-
-**File**: `adr/0004-generate-sboms-with-witness.md` (removed, +0/-19)
-```diff
-@@ -1,19 +0,0 @@
--# 4. SBOM Generation with Witness
--
--Date: 2022-03-29
--
--## Status
--
--Accepted
--
--## Context
--
--SBOM are required for software running on government hardware per EO14028.
--
--## Decision
--
--Using Witness' Syft attestor functionality allows Zarf to continue to get more refined SBOM capabilities as Witness' capabilities expand over time. Syft is capable of finding installed packages and some binaries for statically compiled dependencies over each image within a Zarf package. This allows for SBOMs for each image to be generated and packaged along with the Zarf package.  Abilities to export the SBOM to SDPX and CycloneDX formatted documents as well as a browse-able web page are in works.
--
--## Consequences
--
--Added dependencies of Witness and Syft which may inflate Zarf binary size.  Increased Zarf package size -- Jeff noted that uncompressed SBOMs for Big Bang Core came in at around 200MB.
-```
-
-**File**: `adr/0005-mutating-webhook.md` (removed, +0/-21)
-```diff
-@@ -1,21 +0,0 @@
--# 5. Mutating Webhook
--
--Date: 2022-05-18
--
--## Status
--
--Accepted
--
--## Context
--
--Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/init/v1alpha1/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/init/v1alpha1/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
--
--## Decision
--
--A [mutating webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) is standard practice in K8s and there [are a lot of them](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do). Using the normal Zarf component structure and deployment strategy we can leverage a mutating webhook to perform automatic imagePullSecret binding and image path updates as well as add additional as-needed mutations such as updating the [GitRepository](https://fluxcd.io/docs/components/source/gitrepositories/) CRD with the appropriate secret and custom URL for the git server if someone is using Flux.
--
--## Consequences
--
--While deploying the webhook will greatly reduce the package development burden, the nature of how helm manages resources still means we will have to be careful how we apply secrets that could collide with secrets deployed by helm with other tools. Additionally, to keep the webhook simple we are foregoing any side-effects in this iteration such as creating secrets on-demand in a namespace as it is created.  Adding side effects carries with it the need to roll those back on failure, handle additional RBAC in the cluster and integrate with the K8s API in the webhook. Therefore, some care will have to be taken for now with how registry and git secrets are generated in a namespace. For example, in the case of [Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang) these secrets can be created by those helm charts if we pass in the proper configuration.
--
--Another benefit of this approach is another layer security for Zarf clusters.  The Zarf Agent will act as an intermediary not allowing images not in the Zarf Registry or git repos not stored in the internal git server.  
-```
-
-**File**: `adr/0006-package-variables.md` (removed, +0/-33)
-```diff
-@@ -1,33 +0,0 @@
--# 6. package variables
--
--Date: 2022-07-28
--
--## Status
--
--Accepted
--
--## Context
--
--Currently, Zarf only allows variables to be specified within components which introduces the following limitations:
--
-- - Variables are scoped to the component making reuse between components impossible
-- - Variables cannot be used for elements within the package definition itself
-- - Variables can only be set at create time, not by a user at deploy time
--
--This forces a package creator to copy information within their package/component definitions and also requires them to make bespoke packages per environment even if only small changes are needed to the overall spec (such as changing a domain name).
--
--## Decision
--
--The decision was made to move variable definitions to the package level and to split "variables" into three distinct types:
--
--- Variables (specified with the `variables` yaml key) allow for the templating of component files similar to the component variables before them.  The main changes are that they are now specified at the package level (allowing for reuse between components) and have additional prompting and defaulting features to allow a package creator to ask for more information during `zarf package deploy`.
--- Constants (specified with the `constants` yaml key) also template component files, but must be specified at package create time.  This allows a package creator to use the same value in multiple places without the need for copying it and without the package deployer being able to override it.
--- Package Variables (specified by using `###ZARF_PKG_VAR_*###` in the package definition) allow package creators to template the same information multiple times within the package definition or dynamically specify values or defaults in constants and variables.
--
--> ⚠️ `###ZARF_PKG_VAR_*###` has been changed to `###ZARF_PKG_TMPL_*###` to semantically dissociate it from normal variables.
--
--## Consequences
--
--This makes it easier to build a single package that will apply to multiple environments and helps package creators to develop automation around their packages while keeping their package definitions DRY.  Choosing to have constants *and* variables also allows us to reduce potential confusion from package deployers who would otherwise be able to accidentally override values that are meant to be static.
--
--As for drawbacks, the largest one is that this provides the potential for a user to build imperative packages depending on what they template or are allowed to template.  This will need to be considered carefully in the future.  The current implementation also ties us to only templating string values for the time being and we will have to think through what should be technically variablizable in the future (for example variables cannot be used in component import paths because this would introduce a lot of fragility for not much perceived user benefit).
-```
-
-**File**: `adr/0007-use-rust-binary-for-both-injection-stages.md` (removed, +0/-30)
-```diff
-@@ -1,30 +0,0 @@
--# 7. Use Rust Binary for Both Injection Stages
--
--Date: 2022-10-29
--
--## Status
--
--Accepted
--
--Amends [3. Image injection into remote clusters without native support](0003-image-injection-into-remote-clusters-without-native-support.md)
--
--## Context
--
--In ADR 3, the decision was made to create a rust binary (`stage1`) that would re-assemble a `registry:2` image and a go registry binary (`stage2`) from a series of configmaps. While this solution works, it is overkill for the operations that `stage2` performs. The `stage2` binary is only responsible for 1. starting a docker registry in `rw` mode, 2. pushing the `registry:2` crane tarball into said registry, 3. starting the docker registry in `r` mode. This `registry:2` image is then immediately consumed by the `zarf-registry` package, creating a true in-cluster docker registry. The injector pod is then destroyed. The overhead this operation creates:
--
--- having to keep track of another binary (making the total number 3 for the zarf ecosystem)
--- nearly doubling the amount of configmaps loaded into the cluster (makes init slower)
--- having to compile the binary for each platform (adds to the build time + ci)
--- using a full-featured docker registry to host a single image (wasteful)
--
--## Decision
--
--The rust binary is already being injected via configmap and unpacking the tarball. There is little need to bring everything but the kitchen sink to just serve a single image. Therefore the decision is to use the rust binary to perform the entire injection process. This required a few changes to the rust binary:
--
--- not only re-assemble + unpack the tarball, but also unpack the `registry:2` image (stored as a [crane tarball format](https://github.com/google/go-containerregistry/tree/main/pkg/v1/tarball))
--- transform the `registry:2` crane manifest to a docker v2 manifest
--- spin up an HTTP server compliant with the v2 docker registry API to serve the `registry:2` image
--
--## Consequences
--
--The removal of the `stage2` binary makes the build process much simpler, and cuts down on make targets, as well as considerations needed during the build process. Additionally, the init process is faster, as the `stage2` binary is not injected anymore and the `registry:2` image is directly served instead of being pushed to an ephemeral registry, then served. There is a current risk to the new size of the `stage1` binary. Using stable compiler optimizations, the smallest it is able to come to is 868kb. While successfully tested on `k3s`, `kind`, and `k3d`, it is possible that the binary is too large for some Kubernetes distros (due to the potential interpretation of the configmap size limit). Additionally, the docker API implementation only serves a v2 manifest (most likely OCI in a future iteration) / image pull flow. This also greatly increases the lines of rust code and logic used within this repo, and future changes to this code will require more rust knowledge and experience, especially understanding the docker registry API and docker manifest formats.
-```
-
-**File**: `adr/0008-begin-using-unit-tests.md` (removed, +0/-44)
-```diff
-@@ -1,44 +0,0 @@
--# 8. Begin using unit tests
--
--Date: 2022-12-12
--
--## Status
--
--Accepted
--
--## Context
--
--There are sections of the code that are not easily able to be tested by our end-to-end testing and now that Zarf is moving into being a library for other products there will be more scrutiny around our defined interfaces.  This ADR explores ways that we could adjust our testing strategy to address these concerns.
--
--Potential considerations:
--
--1. Introduce Unit-Testing Zarf-wide
--    Pros:
--        - More of the codebase is covered with tests and will force us to take more consideration when updating it
--    Cons:
--        - As the codebase evolves the efficacy of these tests is likely to go down, especially if they are written to the code rather than the interface
--
--2. Introduce Unit Testing in a defined and limited capacity within Zarf
--    Pros:
--        - A decent amount of the codebase will be tested (specifically we can target those areas difficult to e2e test)
--        - We can be picky about what/where we unit test so that the maintenance burden of the tests is not too high
--    Cons:
--        - We will need to be vigilant when PRs come through with Unit Tests that these are correct applications of them
--
--3. Introduce Integration Testing or partial End-to-End testing
--    Pros:
--        - This is closer to how we already test within Zarf
--    Cons:
--        - These can be relatively complex to orchestrate and maintain over time requiring complex mocks or other mechanisms to make them work
--
--## Decision
--
--It was decided to introduce a limited set of unit tests to the Zarf codebase (2) because this will enable us the most flexibility and control over how we test while also allowing us to specifically target specific units without a ton of overhead.  Specifically we will ask the following before implementing a Unit Test:
--
--1. Is what I want to test a true unit (i.e. a single function or file)?
--2. Does what I want to test have a clearly defined interface (i.e. a public specification)?
--3. Is this code inside of the `src/pkg` folder or should it be?
--
--## Consequences
--
--This will help us to test things like specific file formats or interactions with certain standards more easily and will allow us to define our own function signatures that are well tested for use in library code.  We will need to be vigilant though going forward that any new test follows the guidelines above, and that contributors are aware of when they should introduce a unit test.
+@@ -343,6 +343,20 @@ type unpackStatus struct {
+ 	startAt time.Time
+ }
+ 
++// layerSnapshotLabels filters out containerd.io/snapshot/uidmapping and
++// .../gidmapping annotations from the (untrusted) image manifest to prevent
++// snapshotters from incorrectly chowning the extracted layer to the supplied
++// mapped host uid/gid.
++func layerSnapshotLabels(annotations map[string]string) map[string]string {
++	labels := snapshots.FilterInheritedLabels(annotations)
++	if labels == nil {
++		labels = make(map[string]string)
++	}
++	delete(labels, snapshots.LabelSnapshotUIDMapping)
++	delete(labels, snapshots.LabelSnapshotGIDMapping)
++	return labels
++}
++
+ func (u *Unpacker) unpack(
+ 	h images.Handler,
+ 	config ocispec.Descriptor,
+@@ -435,11 +449,8 @@ func (u *Unpacker) unpack(
+ 			}
+ 		}()
+ 
+-		// inherits annotations which are provided as snapshot labels.
+-		snapshotLabels := snapshots.FilterInheritedLabels(desc.Annotations)
+-		if snapshotLabels == nil {
+-			snapshotLabels = make(map[string]string)
+-		}
++		// inherits a filtered set of annotations which are provided as snapshot labels
++		snapshotLabels := layerSnapshotLabels(desc.Annotations)
+ 		snapshotLabels[labelSnapshotRef] = chainID
+ 		snapshotLabels[labelSnapshotDiffID] = diffIDs[i].String()
+ 		if i > 0 {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5697** (2026-11-22): chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7 (@dependabot[bot])
 - **PR #5694** (2026-11-19): chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr (@soltysh)
 - **PR #5685** (2026-11-17): chore(docs): update AirGap link to IBM's website (@BraedenOlney)
 - **PR #5683** (2026-11-17): docs: remove variables example (@AustinAbro321)
 - **PR #5680** (2026-11-19): docs: contribution workflow changes (@AustinAbro321)
 - **PR #5676** (2026-11-16): fix: paginate registry tag listings (@briantwatson)
-- **PR #5675** (2026-11-16): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 
 ---
 
@@ -1862,31 +1916,28 @@ Signed-off-by: Maciej Szulik <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: contribution workflow changes
+## X. deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7
 
 **RULE**:
-When implementing operations in `.github/pull_request_template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14a502fa`: docs: contribution workflow changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3bea4e4`: deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pull_request_template.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<!-- Every PR must link to an issue that has a `ready` status and is assigned to you. Otherwise, the PR will be closed. See CONTRIBUTING.md#pull-request-requirements. -->
-- [ ] Tests and docs added or updated as needed
-- [ ] [Contributor Guide Steps](https://docs.zarf.dev/contribute/contributor-guide/#developer-workflow) followed
+	github.com/containerd/containerd/v2 v2.3.7 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- [ ] Test, docs, adr added or updated as needed
-- [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed
+	github.com/containerd/containerd/v2 v2.3.6 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14a502fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3bea4e4` are properly handled with clean fallback behavior.

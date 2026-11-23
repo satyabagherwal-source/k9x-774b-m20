@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:59:45.557Z",
-  "total_cycles_completed": 11676,
-  "total_learnings_persisted": 11676,
-  "total_rules_promoted": 10859,
+  "last_updated": "2026-11-23T06:14:24.631Z",
+  "total_cycles_completed": 11680,
+  "total_learnings_persisted": 11680,
+  "total_rules_promoted": 10862,
   "history": [
-    {
-      "timestamp": "2026-11-22T10:29:47.189Z",
-      "repository": "xevrion/hatchzip",
-      "learningId": "learn-github-xevrion-hatchzip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:29:59.119Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:54:50.447Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:55:03.218Z",
-      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
-      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T11:14:15.687Z",
       "repository": "n4ze3m/tiny-voca",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T05:59:45.557Z",
       "repository": "fujiapple852/trippy",
       "learningId": "learn-github-fujiapple852-trippy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:14:12.923Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:14:14.260Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:14:23.021Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:14:24.631Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

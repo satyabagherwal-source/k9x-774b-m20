@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T05:59:57.276Z",
+  "last_updated": "2026-11-23T06:14:31.809Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23888,
+  "total_items": 23898,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "87b3a5ff",
-      "content_hash": "618b30d6ad5fba1ebded274026d8d460768f6a0e4c45b81032c04515639966e8",
+      "source_version": "f7d2828f",
+      "content_hash": "3163dbbc4aee59b92d2dcf25306d3ea7bf0272e61b58e0ba2f2f4b4644561948",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T18:00:29.316Z"
+      "persisted_at": "2026-11-23T06:14:25.161Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "87b3a5ff",
-      "content_hash": "7ddb3d45711cb9e7d41d1954cd96ce8a4fb5be5cd25996c5b5015c50613e7115",
+      "source_version": "f7d2828f",
+      "content_hash": "1371cc786d9e02140785602165878810cb5a30c59db7f06a03a87a862472ac0a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:00:29.473Z"
+      "persisted_at": "2026-11-23T06:14:25.428Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -221977,7 +221977,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
+      "content_hash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [],
@@ -221986,7 +221986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T20:45:37.955Z",
+      "verified_at": "2026-11-23T06:14:12.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222003,9 +222003,9 @@
       "title": "Research & Knowledge Intelligence: Tongyi-MAI/Z-Image-Turbo Core Invariants",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "8c4bffe63bb59849041162a3f925596fc2b34a18900ae9bd62eb9a880f8fa1d4",
+      "content_hash": "794ef69c282305da0f30562aab0f0cd05ee96e96b434bea62ae2ead53e3a3f18",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:45:38.338Z"
+      "persisted_at": "2026-11-23T06:14:13.251Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar",
@@ -222015,9 +222015,9 @@
       "title": "Research & Knowledge Intelligence: hf-tongyi-mai-z-image-turbo-learnings Core Invariants",
       "repository": "hf-tongyi-mai-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ebd29c48ceda51a99d2c1ce6ee554f77696c9dc738a9ecffdcecc9be9cbe3e6",
+      "content_hash": "8c4d0aed01b88d4a7d204e7e5cc8e22e15a3926629c4247111ecf216178a7c07",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:45:51.884Z"
+      "persisted_at": "2026-11-23T06:14:29.762Z"
     },
     "learn-huggingface-meituan-longcat-longcat-2-5": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
@@ -223445,8 +223445,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "87b3a5ff",
-      "content_hash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
+      "source_version": "f7d2828f",
+      "content_hash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223564,6 +223564,11 @@
           "number": 9968,
           "title": "control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10032,
+          "title": "stamp Status.AsOf when endpoints are read, strictly increasing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223571,7 +223576,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:00:28.850Z",
+      "verified_at": "2026-11-23T06:14:24.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270773,8 +270778,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "14a502fa",
-      "content_hash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
+      "source_version": "e3bea4e4",
+      "content_hash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -270792,6 +270797,11 @@
           "number": 9476,
           "title": "contribution workflow changes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10031,
+          "title": "bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270799,7 +270809,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T00:43:20.606Z",
+      "verified_at": "2026-11-23T06:14:22.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270841,10 +270851,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "repository": "zarf-dev/zarf",
-      "source_version": "14a502fa",
-      "content_hash": "b6b087617672194aaf0ef8413417bbaa1a16703b887bec9aefb9a081422e9a98",
+      "source_version": "e3bea4e4",
+      "content_hash": "7de281aaf2848ce54efa80ea6b38cd129048fc1f92e43c3ab5f3f96b8d9c92a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:43:21.152Z"
+      "persisted_at": "2026-11-23T06:14:23.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf",
@@ -270853,10 +270863,10 @@
       "relative_path": "08_VERIFICATION/zarf-dev-zarf-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf.md",
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev/zarf",
       "repository": "zarf-dev/zarf",
-      "source_version": "14a502fa",
-      "content_hash": "1f1bed588cd948241629b391263b5ed1bedda7dbc412aaa35921e76051113086",
+      "source_version": "e3bea4e4",
+      "content_hash": "153ac16b30df75b4d21b73e80ba7ee949555be4b2dbe2acf50e6f553e3848805",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:43:21.297Z"
+      "persisted_at": "2026-11-23T06:14:23.866Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -270940,9 +270950,9 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "60e564fcedef3e47b3bd8dde82a4c9342f80f4236642291192c3d955076b4de1",
+      "content_hash": "af99d2268cb16d9066a0b420217fe02f654d4dd0a6001a4e61047718bcacc74e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:45:41.696Z"
+      "persisted_at": "2026-11-23T06:14:31.552Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings",
@@ -270952,9 +270962,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev-zarf-learnings",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2f52acc16df292017f32c02beb307620e4c5acfd0931edefd356fe98f2e8b7f",
+      "content_hash": "1d3f882af61cc30b37df16b3964bbe58919f9a91d396497022bde5f89950dce9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:45:41.832Z"
+      "persisted_at": "2026-11-23T06:14:31.809Z"
     },
     "learn-huggingface-facebook-sam-3d-body-dinov3": {
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
@@ -292571,8 +292581,8 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "8ac2c1c8",
-      "content_hash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
+      "source_version": "b30206b1",
+      "content_hash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
@@ -292590,6 +292600,11 @@
           "number": 9853,
           "title": "read `__all__` after a docstring or an import, and only when it is lite",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10030,
+          "title": "capture `--from-tests` arguments with the codec `record` uses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -292597,7 +292612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:16:16.125Z",
+      "verified_at": "2026-11-23T06:14:13.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292651,10 +292666,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "8ac2c1c8",
-      "content_hash": "39213d7ba9ae84f5076cc298879e1dac1bff2e852c96d68ccca90991ef3777bd",
+      "source_version": "b30206b1",
+      "content_hash": "6025e592e14691583232c46d88936542dee22115927f010baab99bba0969f70b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:16:16.970Z"
+      "persisted_at": "2026-11-23T06:14:15.066Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -292702,9 +292717,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b906a0c0b2903e3e322e13a098e96f3beef71e4799c2cfc5084a6c76a32ae4a",
+      "content_hash": "7f4362383605afe3eea156fb856667806dc1f9e73ee2102caa8064c2fcc7680d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:16:27.911Z"
+      "persisted_at": "2026-11-23T06:14:29.234Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -325323,6 +325338,132 @@
       "content_hash": "699e5d3f5a2ded48307f5e0f30c17054eca2212e82383b9e4163f111cd89b852",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T05:59:55.642Z"
+    },
+    "rule-10030": {
+      "learning_id": "rule-10030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10030,
+      "title": "capture `--from-tests` arguments with the codec `record` uses",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "b30206b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T06:14:13.945Z"
+    },
+    "candidate_directive-capture-from-tests-arguments-with-the-codec-record-uses": {
+      "item_id": "candidate_directive-capture-from-tests-arguments-with-the-codec-record-uses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EREJ-capture-from-tests-arguments-with-the-codec-record-uses.md",
+      "title": "capture `--from-tests` arguments with the codec `record` uses",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "b30206b1",
+      "content_hash": "17a37471d7f03924df9b4de6714e498b68b8d5b5a85a718e252dc23214b39461",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:14.594Z"
+    },
+    "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-architecture-intelligence-erkamyaman-rust-anything-core.md",
+      "title": "Architecture Intelligence: erkamyaman/rust-anything Core Invariants",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "b30206b1",
+      "content_hash": "35a66aa1161d4674ad3385450cd87ae051c873052a99d1e9a3171daf07bb3d7d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:14.824Z"
+    },
+    "rule-10031": {
+      "learning_id": "rule-10031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10031,
+      "title": "bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "e3bea4e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T06:14:22.738Z"
+    },
+    "candidate_directive-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7": {
+      "item_id": "candidate_directive-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EY50-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7.md",
+      "title": "bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7",
+      "repository": "zarf-dev/zarf",
+      "source_version": "e3bea4e4",
+      "content_hash": "9d64339224ce0abfabc0d1f233505ab9c2b4e253d462229918f6d1ca975535a4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:23.322Z"
+    },
+    "rule-10032": {
+      "learning_id": "rule-10032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10032,
+      "title": "stamp Status.AsOf when endpoints are read, strictly increasing",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f7d2828f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T06:14:24.349Z"
+    },
+    "candidate_directive-stamp-status-asof-when-endpoints-are-read-strictly-increasing": {
+      "item_id": "candidate_directive-stamp-status-asof-when-endpoints-are-read-strictly-increasing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EZDM-stamp-status-asof-when-endpoints-are-read-strictly-increasing.md",
+      "title": "stamp Status.AsOf when endpoints are read, strictly increasing",
+      "repository": "tailscale/tailscale",
+      "source_version": "f7d2828f",
+      "content_hash": "75f74469918d732f63211d7717a9a56ef87f49e1c178086a408a59c5079ee297",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:24.923Z"
+    },
+    "candidate_directive-js-capture-from-tests-arguments-with-the-codec-record-uses": {
+      "item_id": "candidate_directive-js-capture-from-tests-arguments-with-the-codec-record-uses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F2BN-js-capture-from-tests-arguments-with-the-codec-record-uses.md",
+      "title": "js): capture `--from-tests` arguments with the codec `record` uses",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e1ed0debda719f17dbacc9b1562de43a71d0949bde88c9e62e6ca87bd980fe6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:28.746Z"
+    },
+    "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-learnings-architecture-intelligence-erkamyaman-rust-any.md",
+      "title": "Architecture Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30b6d6733c199cc0213f778933c8951266e408e208a9e7c444274461571b912d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:28.984Z"
+    },
+    "candidate_directive-deps-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7": {
+      "item_id": "candidate_directive-deps-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F4BB-deps-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7.md",
+      "title": "deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b964196df01ba74af43e2b6985382cd10bcd922d4f6418d8b4b35eafb348dc97",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:14:31.325Z"
     }
   },
   "ai-builder-brain": {

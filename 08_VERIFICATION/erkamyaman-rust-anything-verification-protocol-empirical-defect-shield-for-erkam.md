@@ -4,22 +4,22 @@
 {
   "source_repository": "erkamyaman/rust-anything",
   "source_url": "https://github.com/erkamyaman/rust-anything",
-  "source_version": "8ac2c1c8",
+  "source_version": "b30206b1",
   "license": "MIT",
-  "timestamp": "2026-11-21T22:16:16.579Z",
+  "timestamp": "2026-11-23T06:14:14.593Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-erkamyaman-rust-anything",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `8ac2c1c8`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T22:16:16.579Z`  
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `b30206b1`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T06:14:14.593Z`  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `erkamyaman/rust-anything` (Commit: `8ac2c1c8`)
+- **Target Repository**: `erkamyaman/rust-anything` (Commit: `b30206b1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:16:15.252Z  
+> **Harvest Timestamp**: 2026-11-23T06:14:12.843Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Rewrite your whole app in Rust, one piece at a time, checked against the original's recorded behavior at every step. CLIs, HTTP servers and libraries in TypeScript, Python, C, Go, Ruby and Java.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7361 stars
+- **Stars / Engagement**: 8161 stars
 
 ---
 
@@ -1948,24 +1948,267 @@ pub fn is_default_this_binding(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce48b6fa` (2026-11-21)
-**Commit Message**: fix(python): read `__all__` after a docstring or an import, and only when it is literal (#187)
+### Incident Patch 1: `8a675e19` (2026-11-22)
+**Commit Message**: fix(js): capture `--from-tests` arguments with the codec `record` uses (#198)
 
-`dunder_all` returned `None` at the first top-level statement that held no assignment, so a
-module whose `__all__` came after a docstring or an import (most modules) fell back to "every
-name without a leading underscore": a helper left out of `__all__` was bridged, and an
-underscore name listed in it was dropped.
-
-It now reads every top-level `__all__ = [...]` (typed or not; the last one wins) and
-`__all__ += [...]` made of plain string literals, skipping a bare `__all__: list[str]` and
-comments in the list, and taking the content of prefixed strings. An `__all__` built or changed
-any other way (`+ other.__all__`, `sorted(...)`, `__all__.extend(...)`, an f-string, bytes or
-escapes, a change inside a top-level `if`/`try`/`for`/`with` block) gives `None`, so the caller
-keeps the underscore rule instead of a partial or empty list. Another module's `__all__`, a
-keyword argument named `__all__` and reads inside functions are not changes.
+The JS capture hook had its own copy of the encoder, behind `CODEC_JS`: a `Buffer` was captured
+as a `Uint8Array`, other typed arrays as objects with numeric keys, and an object shaped like a
+marker (`{ $date: 'x' }`) was replayed as a `Date`, so the original recorded results its tests
+never saw. The hook now takes `enc` from `CODEC_JS` and leaves out a call whose arguments `dec`
+would turn into a different value (a RegExp, Error, URL, ArrayBuffer, boxed primitive, or an
+object with `toJSON`). Its names take a `__ra` prefix and it reads built-ins from `globalThis`,
+so a wrapped function named `enc` or `Buffer` changes nothing. Array holes stay `undefined`, and
+a typed array subclass is captured as its built-in kind. A unit test keeps the copy in step with
+`CODEC_JS`.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Co-authored-by: Kam <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -11,6 +11,14 @@
+   failed every case with `TypeError: unexpected keyword argument`. A Python mismatch shows its
+   keyword arguments after the positional ones, as Ruby's does, so a `known-diffs.jsonl` entry
+   for `f(x)` no longer explains `f(x, flag=True)`.
++- JS/TS `record --from-tests` encodes the captured arguments with the codec `record` and `diff`
++  use, instead of a copy of it that had fallen behind. A `Buffer` was captured as a `Uint8Array`
++  (so `b.toString('hex')` recorded `"104,105"`), a `Float64Array` or other typed array as an
++  object with numeric keys, and an object shaped like a marker (`{ $date: 'x' }`) was replayed as
++  a `Date`. A call is now left out, as one that passes a function or a cycle already was, when an
++  argument is a RegExp, an Error, a `URL`, an `ArrayBuffer`, a boxed primitive or an object with
++  `toJSON`: those were captured as `{}`, their own fields or their `toJSON` result, which replay
++  passed as a different value. A class instance is still captured as its own fields.
+ 
+ ## 3.1.0 (2026-11-22)
+ 
+```
+
+**File**: `src/from_tests.rs` (modified, +111/-17)
+```diff
+@@ -167,6 +167,7 @@ fn instrument_js(m: &Manifest, skipped: &mut Vec<String>) -> Result<Restore> {
+         by_file.entry(&f.file).or_default().push(&f.name);
+     }
+     let mut guard = Restore(Vec::new());
++    let capture = JS_CAPTURE.replace("__CODEC__", &js_codec());
+     for (file, names) in by_file {
+         let path = m.root.join(file);
+         restore(&path);
+@@ -202,7 +203,7 @@ fn instrument_js(m: &Manifest, skipped: &mut Vec<String>) -> Result<Restore> {
+         let instrumented = format!(
+             "{}{text}\n{}",
+             if ts { "// @ts-nocheck\n" } else { "" },
+-            JS_CAPTURE.replace("__WRAPS__", &wraps)
++            capture.replace("__WRAPS__", &wraps)
+         );
+         std::fs::write(&path, instrumented)
+             .with_context(|| format!("instrumenting {}", path.display()))?;
+@@ -216,29 +217,19 @@ const JS_CAPTURE: &str = r#"// rust-anything record --from-tests: removed when t
+ {
+   const __raFs = globalThis.process?.getBuiltinModule?.('node:fs')
+   const __raOut = globalThis.process?.env?.RUST_ANYTHING_CAPTURE
+-  const __raCount = new Map()
+-  const __raReplacer = function (k, v) {
+-    const raw = this[k]
+-    if (typeof raw === 'function' || typeof raw === 'symbol') throw new Error('not data')
+-    if (raw instanceof Date) return { $date: Number.isNaN(raw.getTime()) ? 'Invalid' : raw.toISOString() }
+-    if (raw instanceof Uint8Array) return { $bytes: Array.from(raw) }
+-    if (raw instanceof Map) return { $map: [...raw] }
+-    if (raw instanceof Set) return { $set: [...raw] }
+-    return v === undefined ? { $undefined: true }
+-      : typeof v === 'bigint' ? { $bigint: String(v) }
+-      : typeof v === 'number' ? (Number.isFinite(v) && !Object.is(v, -0) ? v : { $num: Object.is(v, -0) ? '-0' : String(v) })
+-      : typeof v === 'string' && !v.isWellFormed() ? { $utf16: Array.from({ length: v.length }, (_, i) => v.charCodeAt(i)) }
+-      : v
+-  }
++  const __raCount = new globalThis.Map()
++  // The built-in name of a typed array, which a subclass cannot change.
++  const __raTypedName = globalThis.Object.getOwnPropertyDescriptor(globalThis.Object.getPrototypeOf(globalThis.Uint8Array.prototype), globalThis.Symbol.toStringTag).get
++__CODEC__
+   const __raWrap = (name, orig) => {
+     if (!__raFs || !__raOut || typeof orig !== 'function') return orig
+     const wrapped = function (...args) {
+       const n = __raCount.get(name) ?? 0
+       if (n < 5000) {
+         __raCount.set(name, n + 1)
+-        try { __raFs.appendFileSync(__raOut, JSON.stringify({ fn: name, args }, __raReplacer) + '\n') } catch {}
++        try { __raFs.appendFileSync(__raOut, globalThis.JSON.stringify({ fn: name, args: globalThis.Array.from(args, a => __raEnc(a)) }) + '\n') } catch {}
+       }
+-      return new.target ? Reflect.construct(orig, args, new.target) : orig.apply(this, args)
++      return new.target ? globalThis.Reflect.construct(orig, args, new.target) : orig.apply(this, args)
+     }
+     if (typeof exports === 'object' && exports !== null) {
+       for (const key of [name, 'default']) if (exports[key] === orig) exports[key] = wrapped
+@@ -249,6 +240,71 @@ __WRAPS__}
+ /* c8 ignore stop */
+ "#;
+ 
++/// What the capture hook changes in the `enc` of `CODEC_JS`: a value `dec` cannot give back
++/// throws, so the call is left out. That is a function, symbol, cycle, RegExp or Error, an
++/// object `dec` would rebuild as a plain one although it is not (a `URL`, an `ArrayBuffer`, a
++/// boxed string, anything with `toJSON`, or a RegExp, Error, Map, Set or Date from another
++/// realm), and a typed array keeps its built-in kind (a subclass is not a global `dec` can find).
++/// Array holes stay `undefined`, as `JSON.stringify` saw them before. A class instance is still
++/// captured as its own fields, as before.
++const JS_CAPTURE_ENC: &[(&str, &str)] = &[
++    ("return { $function: v.name }", NOT_DATA),
++    ("return { $symbol: String(v.description) }", NOT_DATA),
++    ("return { $cycle: true }", NOT_DATA),
++    ("return { $regexp: String(v) }", NOT_DATA),
++    ("return { $error: v.message }", NOT_DATA),
++    (
++        "if (Array.isArray(v)) return v.map(x => enc(x, next))",
++        "if (Array.isArray(v)) return Array.from(v, x => enc(x, next))",
++    ),
++    ("kind: v.constructor.name,", "kind: __raTypedName.call(v),"),
++    (
++        "const plain = Object.fromEntries(",
++        "if (Object.prototype.toString.call(v) !== '[object Object]' || typeof v.toJSON === 'function') throw new Error('not data')\n  const plain = Object.fromEntries(",
++    ),
++];
++
++const NOT_DATA: &str = "throw new Error('not data')";
++
++/// The `enc` of `CODEC_JS`, which `record` uses, for the capture hook, changed as
++/// `JS_CAPTURE_ENC` says. It runs inside the user's module: its names take a `__ra` prefix so
++/// they cannot shadow a wrapped function of the same name, and the built-ins it uses are read
++/// from `globalThis` so the module's own names cannot shadow them. Strings and comments are left
++/// as they ar
+```
+
+**File**: `tests/recording.rs` (modified, +72/-0)
+```diff
+@@ -289,6 +289,78 @@ fn records_the_calls_a_js_test_suite_makes_and_restores_the_source() {
+     assert!(inputs.contains(r#"{"fn":"label","args":[7]}"#), "{inputs}");
+ }
+ 
++#[test]
++fn js_test_calls_are_captured_with_the_codec_record_uses() {
++    if !common::have("node") {
++        return;
++    }
++    let root = project(
++        "ts-codec",
++        &[
++            (
++                "package.json",
++                r#"{"name":"bin","version":"0.1.0","type":"module"}"#,
++            ),
++            (
++                "src/bin.ts",
++                "export function hex(b: Buffer): string {\n  return b.toString('hex')\n}\n\n\
++                 export function total(xs: Float64Array): number {\n  let s = 0\n  for (const x of xs) s += x\n  return s\n}\n\n\
++                 export function tag(o: { $date: string }): string {\n  return typeof o.$date\n}\n\n\
++                 export function hole(xs: (number | undefined)[]): boolean {\n  return xs[1] === undefined\n}\n\n\
++                 export function enc(s: string): string {\n  return s + '!'\n}\n\n\
++                 export function looksLikeMarker(s: string): string {\n  return s + '?'\n}\n\n\
++                 export function kind(v: unknown): string {\n  return Object.prototype.toString.call(v)\n}\n\n\
++                 export function Buffer(s: string): string {\n  return s + '#'\n}\n",
++            ),
++            (
++                "test.ts",
++                "import { hex, total, tag, hole, enc, looksLikeMarker, kind, Buffer as B } from './src/bin.ts'\n\
++                 class Sub extends Float64Array {}\n\
++                 class Tagged extends Float64Array { get [Symbol.toStringTag]() { return 'Tagged' } }\n\
++                 class T { a = 1; toJSON() { return 1 } }\n\
++                 const cyclic: any = {}\ncyclic.self = cyclic\n\
++                 if (hex(Buffer.from('hi')) !== '6869') process.exit(1)\n\
++                 if (total(new Float64Array([1.5, 2])) !== 3.5) process.exit(1)\n\
++                 if (total(new Sub([1, 2])) !== 3 || total(new Tagged([2, 2])) !== 4) process.exit(1)\n\
++                 if (B('c') !== 'c#') process.exit(1)\n\
++                 if (tag({ $date: 'x' }) !== 'string') process.exit(1)\n\
++                 if (!hole([1, , 3])) process.exit(1)\n\
++                 if (enc('a') !== 'a!' || looksLikeMarker('b') !== 'b?') process.exit(1)\n\
++                 for (const v of [() => 1, Symbol('s'), cyclic, /a/, new Error('e'), { r: /a/ },\n\
++                   new URL('https://example.com/'), new ArrayBuffer(2), new String('s'), new T()]) kind(v)\n\
++                 if (kind([0]) !== '[object Array]') process.exit(1)\n",
++            ),
++        ],
++    );
++    let (printed, inputs) = from_tests(&root, "src/bin.ts", &["node", "test.ts"]);
++    let cases = std::fs::read_to_string(root.join("port").join("cases.jsonl")).unwrap();
++    std::fs::remove_dir_all(&root).unwrap();
++    // Values `dec` cannot give back (a function, symbol, cycle, RegExp, Error, URL, ArrayBuffer,
++    // boxed string, or anything with `toJSON`, also nested) leave their call out; functions of
++    // the unit named like the codec's `enc` and `looksLikeMarker` are still wrapped, and one
++    // named `Buffer` does not stop the codec from telling a `Buffer`.
++    assert!(
++        printed.contains("Captured 10 call(s)"),
++        "{printed}\n{inputs}"
++    );
++    assert_eq!(inputs.matches(r#"{"fn":"kind""#).count(), 1, "{inputs}");
++    // Replayed through `dec`, each captured input gives the original what the test passed.
++    for line in [
++        r#"{"fn":"hex","args":[{"$buffer":[104,105]}],"ok":"6869"}"#,
++        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[1.5,2]}}],"ok":3.5}"#,
++        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[1,2]}}],"ok":3}"#,
++        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[2,2]}}],"ok":4}"#,
++        r#"{"fn":"Buffer","args":["c"],"ok":"c#"}"#,
++        r#"{"fn":"tag","args":[{"$object":{"$date":"x"}}],"ok":"string"}"#,
++        r#"{"fn":"hole","args":[[1,{"$undefined":true},3]],"ok":true}"#,
++        r#"{"fn":"enc","args":["a"],"ok":"a!"}"#,
++        r#"{"fn":"looksLikeMarker","args":["b"],"ok":"b?"}"#,
++        r#"{"fn":"kind","args":[[0]],"ok":"[object Array]"}"#,
++    ] {
++        assert!(cases.contains(line), "{line}\n{cases}");
++    }
++}
++
+ #[test]
+ fn record_reports_lines_of_the_original_no_case_reached() {
+     if !common::have("node") {
+```
+
+---
+
+### Incident Patch 2: `ca817a1d` (2026-11-22)
+**Commit Message**: fix(demo): link the Ruby and Python real-world crates on macOS
+
+ruby-shellwords-rs and python-colorsys-rs predate the build.rs that bridge now writes for magnus
+and PyO3, so they failed to link on macOS without -undefined dynamic_lookup.
+
+**File**: `demo/real-world/python-colorsys-rs/build.rs` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++fn main() {
++    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
++        println!("cargo:rustc-link-arg=-Wl,-undefined,dynamic_lookup");
++    }
++}
+```
+
+**File**: `demo/real-world/ruby-shellwords-rs/build.rs` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++fn main() {
++    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
++        println!("cargo:rustc-link-arg=-Wl,-undefined,dynamic_lookup");
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `7b9f7e99` (2026-11-22)
+**Commit Message**: fix(python): keep `--from-tests` calls that pass arguments by keyword (#193)
+
+* fix(python): keep `--from-tests` calls that pass arguments by keyword
+
+The Python capture hook wrote a call only when `inspect.Signature.bind` put every argument in
+`bound.args`. A keyword-only argument (`def f(x, *, flag)`) or one named after a skipped default
+(`f(x, fill='*')`) lands in `bound.kwargs`, so those calls were silently dropped. They are now
+written with a `kwargs` object of encoded values, which `run_case` in the driver already reads.
+The `--inputs` help and the `RecordOptions` doc now mention `kwargs`.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(python): replay keyword arguments under the bindings' names, and key mismatches by them
+
+`diff` and `bench` passed captured and generated keyword arguments to the Rust bindings under
+the original's names, while `signature()` names each binding parameter in snake_case: a
+keyword-only `scaleBy` failed every case with `unexpected keyword argument 'scaleBy'`. The driver
+now renames them with `binding_name()`, a copy of `bridge::snake_case` without `r#`.
+
+A Python mismatch now shows keyword arguments after the positional ones, as Ruby's 
 
 **File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
@@ -1973,667 +2216,307 @@ Co-authored-by: Kam <[REDACTED_EMAIL]>
  
  ## Unreleased
  
-+- Python: `__all__` was ignored when an earlier top-level statement held no assignment (a
-+  docstring or an import, as in most modules), so `analyze`, `bridge`, library ports and
-+  `profile` took every name without a leading underscore: names left out of `__all__` were
-+  bridged and underscore names listed in it were dropped. `__all__` is now read after such
-+  statements, with or without a type, follows `__all__ += [...]` and a later `__all__ = [...]`,
-+  and reads prefixed strings (`r'name'`). An `__all__` built or changed any other way
-+  (`+ other.__all__`, `sorted(...)`, `__all__.extend(...)`, inside an `if` or `try` block) falls
-+  back to the names without a leading underscore rather than a partial list. Functions and
-+  classes a module's `__all__` leaves out are no longer bridged.
++- Python `record --from-tests` keeps the calls that pass arguments by keyword where Python does
++  not bind them by position: keyword-only parameters (`def f(x, *, flag)`) and an argument named
++  after a skipped default (`f(x, fill='*')`). They were dropped from `test-inputs.jsonl`; they
++  are now written with a `kwargs` object, which the driver already replays.
++- Python `diff` and `bench` pass keyword arguments to the Rust bindings under the bindings'
++  snake_case names (`scaleBy=10` as `scale_by=10`); a keyword-only parameter named in camelCase
++  failed every case with `TypeError: unexpected keyword argument`. A Python mismatch shows its
++  keyword arguments after the positional ones, as Ruby's does, so a `known-diffs.jsonl` entry
++  for `f(x)` no longer explains `f(x, flag=True)`.
 +
- ## 3.0.0 (2026-11-21)
+ ## 3.1.0 (2026-11-22)
  
- - `package` makes a whole Node CLI installable: pointed at a front door (`rust/app`), it lays out
+ - `go` runs `bench` after gate and switches a unit on only when it is not slower as its callers
 ```
 
-**File**: `src/lang/python.rs` (modified, +147/-21)
+**File**: `src/from_tests.rs` (modified, +10/-6)
 ```diff
-@@ -947,31 +947,94 @@ fn entry_calls<'s>(root: Node, source: &'s str, main_module: bool) -> Vec<&'s st
-     out
+@@ -26,7 +26,8 @@ const BACKUP: &str = ".rust-anything-backup";
+ 
+ #[derive(Debug)]
+ pub struct Capture {
+-    /// The captured inputs, one `{"fn", "args"}` per line, in the `--inputs` format.
++    /// The captured inputs, one `{"fn", "args"}` per line (with `"kwargs"` for Python arguments
++    /// passed by keyword), in the `--inputs` format.
+     pub inputs: PathBuf,
+     pub per_function: BTreeMap<String, usize>,
+     /// Exports the capture cannot see (not a function declaration), with why.
+@@ -292,11 +293,14 @@ def _wrap(name, orig):
+         if n < 5000 and sig is not None:
+             try:
+                 bound = sig.bind(*args, **kwargs)
+-                if not bound.kwargs:
+-                    line = json.dumps({"fn": name, "args": enc(list(bound.args))}, ensure_ascii=False, allow_nan=False)
+-                    with open(_OUT, "a", encoding="utf-8") as f:
+-                        f.write(line + "\n")
+-                    _COUNT[name] = n + 1
++                case = {"fn": name, "args": enc(list(bound.args))}
++                # Keyword-only arguments, and those named after a skipped default.
++                if bound.kwargs:
++                    case["kwargs"] = {k: enc(v) for k, v in bound.kwargs.items()}
++                line = json.dumps(case, ensure_ascii=False, allow_nan=False)
++                with open(_OUT, "a", encoding="utf-8") as f:
++                    f.write(line + "\n")
++                _COUNT[name] = n + 1
+             except Exception:
+                 pass
+         return orig(*args, **kwargs)
+```
+
+**File**: `src/harness.rs` (modified, +2/-1)
+```diff
+@@ -110,7 +110,8 @@ pub struct RecordOptions<'a> {
+     pub crate_dir: &'a Path,
+     /// Generated cases per function.
+     pub count: usize,
+-    /// Extra cases, one `{"fn": name, "args": [...]}` JSON object per line.
++    /// Extra cases, one `{"fn": name, "args": [...]}` JSON object per line, with `"kwargs": {...}`
++    /// for Python and Ruby arguments passed by keyword.
+     pub inputs: Option<&'a Path>,
+     /// Import the original from this JS module instead of the TS source files.
+     pub module: Option<&'a Path>,
+```
+
+**File**: `src/harness_py.rs` (modified, +35/-8)
+```diff
+@@ -389,7 +389,34 @@ def call_args(args):
+     return [dec(a) for a in args]
+ 
+ 
+-def run_case(mod, c):
++def binding_name(name):
++    """The name the Rust bindings give a parameter: `bridge::snake_case`, without `r#`."""
++    out = []
++    for i, ch in enumerate(name):
++        if ch.isupper():
++            prev = name[i - 1] if i else ""
++            nxt = name[i + 1:i + 2]
++            if prev and (prev.islower() or "0" <= prev <= "9") or (prev.isupper() and nxt.islower()):
++                out.append("_")
++            out.append(ch.lower())
++        else:
++            out.append(ch if ch.isalnum() else "_")
++    return "".join(out)
++
++
++def call_kwargs(c, rename=None):
++    """Keyword arguments by their names in the original, or in the bindings with `rename`."""
++    return {(rename(k) if rename else k): dec(v) for k, v in c.get("kwargs", {}).items()}
++
++
++def shown_args(c):
++    """A case's arguments as mismatches show them: keyword arguments appended, as Ruby does."""
++    if c.get("class"):
++        return [c.get("ctor"), c.get("calls")]
++    return c["args"] + [c["kwargs"]] if c.get("kwargs") else c["args"]
++
++
++def run_case(mod, c, rename=None):
+     if c.get("class"):
+         cls = getattr(mod, c["class"])
+         results = []
+@@ -409,7 +436,7 @@ def run_case(mod, c):
+             except BaseException as e:  # noqa: BLE001
+                 results.append({"error": error_text(e)})
+         return {"results": results}
+-    kwargs = {k: dec(v) for k, v in c.get("kwargs", {}).items()}
++    kwargs = call_kwargs(c, rename)
+     try:
+         return {"ok": enc(getattr(mod, c["fn"])(*call_args(c["args"]), **kwargs))}
+     except (KeyboardInterrupt, SystemExit):
+@@ -474,7 +501,7 @@ def diff(cases_path, out_path, package_dir, name, key_order):
+             continue
+         if PIN_CASE:
+             PIN_CASE(index)
+-        got = run_case(mod, c)
++        got = run_case(mod, c, binding_name)
+         if c.get("class"):
+             want, have = c["results"], got["results"]
+             ok = len(want) == len(have) and all(same(w, h, sort) for w, h in zip(want, have))
+@@ -487,7 +514,7 @@ def diff(cases_path, out_path, package_dir, name, key_order):
+             summary["passed"] += 1
+         else:
+             summary["failed"] += 1
+-            summary["mismatches"].append({"fn": name_, "args": c.get("args", [c.get("ctor"), c.get("calls")]), "expected": expected, "actual": actual})
++            summary["mismatches"].append({"fn": name_, "args": shown_args(c), "expected": expected, "actual": actual})
+     json.dump(summary, open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
+ 
+ 
+@@ -505,15 +532,15 @@ def bench(cases_path, out_path, package_dir, name, modules_path, min_ms):
+             continue
+         old = load(sources[key])
+ 
+-        def timed(mod):
++        def timed(mod, rename=None):
+             if cases[0].get("class"):
+                 def once():
+                     for c in cases:
+-                        run_case(mod, c)
++                        run_case(mod, c, rename)
+             else:
+                 # Arguments are decoded once: only the calls are timed.
+                 fn = getattr(mod, key)
+-                prepared = [(call_args(c["args"]), {k: dec(v) for k, v in c.get("kwargs", {}).items()}) for c in cases]
++                prepared = [(call_args(c["args"]), call_kwargs(c, rename)) for c in cases]
+ 
+                 def once():
+                     for args, kwargs in prepared:
+@@ -531,7 +558,7 @@ def bench(cases_path, out_path, package_dir, name, modules_path, min_ms):
+                 elapsed = time.perf_counter() - start
+                 if elapsed * 1000 >= min_ms:
+                     return elapsed * 1e9 / (passes * len(cases))
+-        original_ns, rust_ns = timed(old), timed(new)
++        original_ns, rust_ns = timed(old), timed(new, binding_name)
+         label = f"class {key}" if cases[0].get("class") else key
+         rows.append({"fn": label, "cases": len(cases), "original_ns": original_ns, "rust_ns": rust_ns, "speedup": original_ns / rust_ns})
+     json.dump(rows, open(out_path, "w", encoding="utf-8"))
+```
+
+**File**: `src/main.rs` (modified, +2/-1)
+```diff
+@@ -118,7 +118,8 @@ enum Cmd {
+         /// Generated cases per function.
+         #[arg(long, default_value_t = 200)]
+         count: usize,
+-        /// Extra cases: JSONL of `{"fn": name, "args": [...]}`.
++        /// Extra cases: JSONL of `{"fn": name, "args": [...]}`, plus `"kwargs": {...}` for Python
++        /// and Ruby arguments passed by keyword.
+         #[arg(long)]
+         inputs: Option<PathBuf>,
+         /// Import the original from this JS module (e.g. built output) instead of the TS source.
+```
+
+**File**: `tests/recording.rs` (modified, +119/-0)
+```diff
+@@ -132,6 +132,125 @@ fn records_the_calls_a_python_test_suite_makes() {
+     assert!(inputs.contains(r#"{"$num": "NaN"}"#), "{inputs}");
  }
  
-+/// The names a module's `__all__` lists, when its top level sets it from string literals only:
-+/// `__all__ = [...]` (with or without a type; the last one wins) and `__all__ += [...]`. `None`
-+/// when there is no `__all__`, or when it is built or changed any other way (`+ other.__all__`,
-+/// `sorted(...)`, `__all__.extend(...)`, inside an `if` or `try` block), so the caller falls
-+/// back to the names without a leading underscore instead of trusting a partial list.
- fn dunder_all(root: Node, source: &str) -> Option<Vec<String>> {
-+    let mut names: Option<Vec<String>> = None;
-     for statement in named_children(root) {
--        let assignment = named_children(statement)
--            .into_iter()
--            .find(|n| n.kind() == "assignment")?;
--        if assignment
--            .child_by_field_name("left")
--            .map(|l| text(l, source))
--            == Some("__all__")
--        {
--            let right = assignment.child_by_field_name("right")?;
--            return Some(
--                named_children(right)
--                    .into_iter()
--                    .filter(|n| n.kind() == "string")
--                    .map(|n| {
--                        text(n, source)
--                            .trim_matches(|c| c == '"' || c == '\'')
--                            .to_string()
--                    })
--                    .collect(),
--            );
-+        match statement.kind() {
-+            "expression_statement" => {}
-+            // Their bodies are not the module's top level.
-+            "function_definition" | "class_definition" | "decorated_definition" => continue,
-+            // A change inside a block (`if sys.platform == ...: __all__ += [...]`) cannot be
-+            // followed.
-+            _ if mentions_all(statement, source) => return None,
-+            _ => continue,
-+        }
-+        for node in named_children(statement) {
-+            let left = node.child_by_field_name("left").map(|l| text(l, source));
-+            match node.kind() {
-+                "assignment" | "augmented_assignment" if left == Some("__all__") => {
-+                    // `__all__: list[str]` alone declares it without a value.
-+                    let Some(right) = node.child_by_field_name("right") else {
-+                        continue;
-+                    };
-+                    let listed = string_literals(right, source)?;
-+                    match node
-+                        .child_by_field_name("operator")
-+                        .map(|o| text(o, source))
-+                    {
-+                        None => names = Some(listed),
-+                        Some("+=") => names.get_or_insert_with(Vec::new).extend(listed),
-+                        Some(_) => return None,
-+                    }
-+                }
-+                _ if mentions_all(node, source) => return None,
-+                _ => {}
-+            }
-         }
-     }
--    None
-+    names
++#[test]
++fn records_python_test_calls_that_pass_arguments_by_keyword() {
++    if !common::have("python3") {
++        return;
++    }
++    let root = project(
++        "py-kw",
++        &[
++            (
++                "pyproject.toml",
++                "[project]\nname = \"shape\"\nversion = \"0.1.0\"\n",
++            ),
++            (
++                "shape.py",
++                "def scale(n: float, *, by: float = 2.0) -> float:\n    return n * by\n\n\n\
++                 def pad(s: str, width: int = 4, fill: str = ' ') -> str:\n    return s.ljust(width, fill)\n",
++            ),
++            (
++                "test_shape.py",
++                "import unittest\nfrom shape import pad, scale\n\n\
++                 class T(unittest.TestCase):\n    def test_it(self):\n        \
++                 self.assertEqual(scale(3), 6)\n        self.assertEqual(scale(3, by=10), 30)\n        \
++                 self.assertEqual(pad('a', fill='*'), 'a***')\n",
++            ),
++        ],
++    );
++    let (printed, inputs) = from_tests(&root, "shape.py", &["python3", "-m", "unittest"]);
++    let cases = std::fs::read_to_string(root.join("port").join("cases.jsonl")).unwrap();
++    std::fs::remove_dir_all(&root).unwrap();
++    // The original ran with the keyword arguments when the cases were recorded.
++    assert!(
++        cases.contains(r#""args": [3], "kwargs": {"by": 10}, "ok": 30"#),
++        "{cases}"
++    );
++    assert!(
++        cases.contains(r#""args": ["a"], "kwargs": {"fill": "*"}, "ok": "a***""#),
++        "{cases}"
++    );
++    // A keyword-only argument, and one passed by name after a skipped default.
++    assert!(printed.contains("Captured 3 call(s)"), "{printed}");
++    assert!(
++        inputs.contains(r#"{"fn": "scale", "args": [3], "kwargs": {"by": 10}}"#),
++        "{inputs}"
++    );
++    assert!(
++        inputs.contains(r#"{"fn": "pad", "args": ["a"], "kwargs": {"fill": "*"}}"#),
++        "{inputs}"
++    );
 +}
 +
-+/// The values of a list or tuple made only of plain string literals (comments allowed).
-+fn string_literals(node: Node, source: &str) -> Option<Vec<String>> {
-+    if !matches!(node.kind(), "list" | "tuple" | "expression_list") {
-+        return None;
++#[test]
++fn diff_replays_python_keyword_arguments_by_their_binding_names() {
++    if !common::have("python3") {
++        return;
 +    }
-+    let mut out = Vec::new();
-+    for item in named_children(node) {
-+        match item.kind() {
-+            "comment" => {}
-+            "string" => {
-+                let mut content = String::new();
-+                for part in named_children(item) {
-+                    match part.kind() {
-+                        // Bytes are not names.
-+                        "string_start" if text(part, source).contains(['b', 'B']) => return None,
-+                        "string_start" | "string_end" => {}
-+                        // Escape sequences would need decoding.
-+                        "string_content" if part.named_child_count() > 0 => return None,
-+                        "string_content" => content.push_str(text(part, source)),
-+                        _ => return None,
-+                    }
-+                }
-+                out.push(content);
-+            }
-+            _ => return None,
-+        }
-+    }
-+    Some(out)
-+}
-+
-+/// Whether the module's own `__all__` appears inside `node`; `other.__all__` and a keyword
-+/// argument named `__all__` do not count.
-+fn mentions_all(node: Node, source: &str) -> bool {
-+    match node.kind() {
-+        "identifier" => text(node, source) == "__all__",
-+        "attribute" => node
-+            .child_by_field_name("object")
-+            .is_some_and(|object| mentions_all(object, source)),
-+        "keyword_argument" => node
-+            .child_by_field_name("value")
-+            .is_some_and(|value| mentions_all(value, source)),
-+        _ => named_children(node)
-+            .into_iter()
-+            .any(|child| mentions_all(child, source)),
-+    }
- }
- 
- fn unwrap_decorated<'t>(node: Node<'t>, source: &st
-```
-
----
-
-### Incident Patch 2: `528920e4` (2026-11-21)
-**Commit Message**: go, enable/disable, report and one shared build cache
-
-- go: profile, bridge the top portable function, record, hand the port to an agent, then build, diff, gate and enable only when everything matches (CLI and MCP)
-- enable/disable: switch a TS/JS or Python unit in and out with one marked block, removed byte for byte; every switch documented in how-it-works
-- report: REPORT.md and card.svg with cases matched, speedup, fallback rate and the machine
-- ports and bridges share one cargo target folder (CARGO_TARGET_DIR or the user cache), one crate folder per package name; clean removes it
-- profile: structured portable/params/batch fields; the workload's stdout goes to stderr
-- README "Only the slow part" (English, Turkish)
-
-**File**: `CHANGELOG.md` (modified, +31/-0)
-```diff
-@@ -2,6 +2,37 @@
- 
- ## Unreleased
- 
-+- `go`: the hot-path loop in one command. `rust-anything go --agent claude -- python3 app.py`
-+  profiles the workload, picks the outermost exported function of a portable unit that takes
-+  arguments (bridged with `--batch` where `profile` advises it; `--function` picks another),
-+  bridges it alone into `rust/<function>-rs`, records generated cases plus the calls the workload
-+  makes, writes `TASK.md`, and hands the port to the agent (`claude`, `codex`, or any command
-+  reading the prompt on stdin, with up to `--rounds` turns that get the failing cases back). It
-+  then builds, diffs and gates, and switches the unit on with `enable` only when every case
-+  matches and gate passes. Without `--agent` it stops at the task; run it again after porting and
-+  it keeps every finished step. Also an MCP tool.
-+- `enable` and `disable`: switch a TS/JS or Python unit on in place, for every caller, with one
-+  marked block in its original files that rebinds the ported functions to the Rust module (no
-+  import changes, no absolute paths); `disable` removes exactly those lines. The unit's
-+  `RUST_ANYTHING_UNIT_<NAME>=original` or `RUST_ANYTHING_MODE=old` keeps the original for a run,
-+  and `record`, `diff`, `bench` and `fuzz` set it for the original's side. `enable` refuses
-+  while recorded cases differ (`--force`). Every switch is listed in one place,
-+  [Switch a port on and off](docs/how-it-works.md#switch-a-port-on-and-off). MCP tools too.
-+- `report`: `report/REPORT.md` and `report/card.svg` for a pull request or README, in the v3
-+  card's light style: the unit, recorded cases matched (`diff`), speedup with the call included
-+  (`bench`), fallback rate, on or off, and the machine with its core count. MCP tool too.
-+- One build cache: ports and bridges build into one cargo target folder (`CARGO_TARGET_DIR`, else
-+  `rust-anything/target` in the user's cache folder), so dependencies compile once. A package
-+  name belongs to one crate folder there, so a second crate with the same name builds in its own
-+  `target/` and cannot replace the first one's library; libraries are copied to each crate's
-+  `target/release`. `clean` removes the folder (`--dry-run`, `--force` for a `CARGO_TARGET_DIR`).
-+  Front doors keep their own `target/`.
-+- `profile` reports `portable`, `params` and the `batch` spec per hot function, and its workload's
-+  stdout goes to stderr, so the MCP `profile` tool no longer writes the workload's output into
-+  the protocol stream.
-+- README: "Only the slow part" near the top (English and Turkish; the other translations still
-+  need it).
-+
- - Python: `__all__` was ignored when an earlier top-level statement held no assignment (a
-   docstring or an import, as in most modules), so `analyze`, `bridge`, library ports and
-   `profile` took every name without a leading underscore: names left out of `__all__` were
-```
-
-**File**: `DECISIONS.md` (modified, +3/-0)
-```diff
-@@ -42,6 +42,9 @@ Choices made so far, with reasons. Each one can be revisited.
- | L8 | wasm builds use `cargo` + `wasm-bindgen-cli` (version-checked), not wasm-pack. | wasm-pack downloads tools at run time, which fails offline and in locked-down CI. |
- | L9 | Shadow mode returns the original's result, runs Rust second, and never lets Rust errors reach callers. | Shipping shadow code must not change behavior; only the report sees Rust. |
- | L10 | The MCP server is a small hand-written JSON-RPC loop on serde_json. | The stdio transport needs four methods; an SDK would add churn for no gain. |
-+| L11 | `go` composes `profile`, `bridge`, `record`, `diff`, `gate` and `enable`; it picks the outermost portable exported function that takes arguments, and bridges that one function alone. | One crossing per run instead of one per item, and a crate small enough to compile in seconds. A function without arguments (`main`) has nothing to record. |
-+| L12 | `enable` rebinds functions with a marked block in the original file, not by editing imports. | Every caller switches at once, in any number of files, and removing the block restores the file byte for byte. Plain function declarations only: a `const` arrow cannot be rebound. |
-+| L13 | One shared cargo target folder, with each package name owned by one crate folder. | Dependencies compile once; ownership keeps two same-named crates from replacing each other's library (pitfalls). Front doors stay apart: every app binary has the same name. |
- 
- ## Learned from porting x18n's core
- 
-```
-
-**File**: `README.md` (modified, +26/-0)
-```diff
-@@ -90,6 +90,32 @@ C the win is safety, not speed: [ffmpeg's libavutil](docs/real-world.md#ffmpeg)
- matches all 226,447 recorded calls and runs at about C's speed (18 of 42 benchmarks even, 8
- faster, 16 slower by 3 to 40%).
- 
-+## Only the slow part
-+
-+You don't have to port the whole app. Point `go` at a command that is too slow, and it ports
-+the one function that takes the time:
-+
-+```sh
-+rust-anything go --agent claude -- python3 app.py
-+```
-+
-+It profiles the run, picks the outermost function worth moving (the loop, not the small call
-+inside it, batched where the profile says so), records it on generated inputs plus the calls your
-+run makes, and hands `src/port.rs` to your agent (`claude`, `codex`, or any command that reads a
-+prompt on stdin; without `--agent` it writes `TASK.md` for you and stops). It switches the
-+function on only when every recorded case matches and `gate` passes. Then:
-+
-+```sh
-+rust-anything report rust/dedupe-rs     # REPORT.md and card.svg for the pull request
-+rust-anything disable rust/dedupe-rs    # back to the original, byte for byte
-+```
-+
-+The [Fuse.js](docs/real-world.md#fusejs) row above is this shape: Fuse's score for one string,
-+batched over the list, moved to Rust while object keys, extended search and the rest stay in
-+JavaScript, for 91.2 ms to 2.8 ms per query over 50,000 strings. Try `go` on
-+[`tests/fixtures/go-fuzzy`](tests/fixtures/go-fuzzy), a 20-line Python dedupe. Every way to switch
-+a port on and off: [Switch a port on and off](docs/how-it-works.md#switch-a-port-on-and-off).
-+
- <p align="center">
-   <img src="docs/assets/json-server.gif" alt="json-server as a Node server and as one Rust binary: memory at idle 74 MB and 3.5 MB, start to first response 79 to 85 ms and 8 to 10 ms, and 514 of 514 recorded HTTP cases match." width="820">
-   <br>
-```
-
-**File**: `directory/skills/rust-anything/SKILL.md` (modified, +26/-3)
-```diff
-@@ -23,15 +23,33 @@ take PHP units yet, so tell the user before planning a PHP port past the front d
- the same way: record a built app (`dotnet out/app.dll`, servers with
- `--urls http://127.0.0.1:{port}`); `bridge` does not take C# units yet.
- 
--Tools: the `rust-anything` CLI, or the same steps as MCP tools (`rust-anything mcp`): `profile`,
--`analyze`, `bridge`, `refresh`, `record`, `build`, `diff`, `bench`, `shadow`, `gate`, and for a
--whole app `app_record`, `app_replay`, `app_front_door`, `app_wire`, `app_lift`.
-+Tools: the `rust-anything` CLI, or the same steps as MCP tools (`rust-anything mcp`): `go`,
-+`profile`, `analyze`, `bridge`, `refresh`, `record`, `build`, `diff`, `bench`, `shadow`, `gate`,
-+`enable`, `disable`, `report`, and for a whole app `app_record`, `app_replay`, `app_front_door`, `app_wire`, `app_lift`.
- If the MCP tools are not available, use the CLI; if `rust-anything` is not installed, ask the user
- to install it (`cargo install rust-anything`) and run
- `rust-anything setup`, then restart the agent. When a step fails because a runtime, the agent
- setup or the MCP server is missing or out of date, run `rust-anything doctor`: it checks each one
- and prints the command that fixes it.
- 
-+## Only the slow part: `go`
-+
-+When the user wants one slow command faster rather than a migration, `go` runs steps 0 to 5 for
-+the top hot function in one call:
-+
-+```sh
-+rust-anything go -- python3 app.py          # profile, bridge, record, write rust/<fn>-rs/TASK.md
-+# port src/port.rs as TASK.md says (build, diff, gate), then the same command again:
-+rust-anything go -- python3 app.py          # build, diff, gate, and enable when all pass
-+```
-+
-+It picks the outermost exported function of a portable unit that takes arguments, batched where
-+`profile` advises it (`--function` picks another), and records generated cases plus the calls the
-+workload makes. You are the agent: port only that function, and do not pass `--agent` (that hands
-+the port to another agent process). `go` switches the unit on only when every case matches and gate
-+passes; report its stage and next step to the user. `rust-anything report <crate>` then writes
-+`report/REPORT.md` and `report/card.svg` with measured numbers for the pull request.
-+
- ## 0. Profile: find what is worth moving
- 
- When the goal is speed, measure before choosing anything:
-@@ -197,6 +215,11 @@ Load the shadow where the app loaded the original. `RUST_ANYTHING_MODE=shadow` (
- original's results and reports Rust mismatches; `new` switches to Rust; `old` turns Rust off.
- The public API does not change.
- 
-+For TS/JS and Python, `rust-anything enable <crate>` switches a gated unit on in place instead: one
-+marked block in the original files rebinds its functions to Rust for every caller.
-+`rust-anything disable <crate>` removes it byte for byte; `RUST_ANYTHING_UNIT_<NAME>=original`
-+runs the original for one run. Ask the user before enabling: it edits their source files.
-+
- ## 5. Done means gate passes
- 
- ```sh
-```
-
-**File**: `docs/README_TR.md` (modified, +27/-0)
-```diff
-@@ -86,6 +86,33 @@ iki kez çalıştırılarak ölçülmüştür; her çıktı, süre ölçülmeden
- ([ayrıntılar](real-world.md)). Her küçük fonksiyon için Rust'ı ayrı ayrı çağırmak genellikle bir
- JIT'ten *daha yavaştır*; rust-anything taşımaya değer döngüyü bulur ve onu taşır.
- 
-+## Sadece yavaş kısım
-+
-+Uygulamanın tamamını port etmeniz gerekmez. `go`'yu fazla yavaş çalışan bir komuta yöneltin,
-+zamanı yiyen tek fonksiyonu port etsin:
-+
-+```sh
-+rust-anything go --agent claude -- python3 app.py
-+```
-+
-+Çalıştırmayı profiller, taşımaya değer en dıştaki fonksiyonu seçer (içindeki küçük çağrıyı değil
-+döngüyü; profil öyle diyorsa batch olarak), onu üretilen girdiler ve çalıştırmanızın yaptığı
-+çağrılarla kaydeder ve `src/port.rs` dosyasını ajanınıza verir (`claude`, `codex` ya da istemi
-+stdin'den okuyan herhangi bir komut; `--agent` olmadan sizin için `TASK.md` yazar ve durur).
-+Fonksiyonu ancak kaydedilen her vaka eşleştiğinde ve `gate` geçtiğinde devreye alır. Sonra:
-+
-+```sh
-+rust-anything report rust/dedupe-rs     # pull request için REPORT.md ve card.svg
-+rust-anything disable rust/dedupe-rs    # bayt bayt orijinale geri dönüş
-+```
-+
-+Yukarıdaki [Fuse.js](real-world.md#fusejs) satırı da bu biçimdedir: Fuse'un tek bir string için
-+skoru, listenin tamamı üzerinde batch olarak Rust'a taşındı; nesne anahtarları, genişletilmiş
-+arama ve geri kalan her şey JavaScript'te kaldı. 50,000 string üzerinde sorgu başına 91.2 ms'den
-+2.8 ms'ye. `go`'yu 20 satırlık bir Python dedupe olan
-+[`tests/fixtures/go-fuzzy`](../tests/fixtures/go-fuzzy) üzerinde deneyin. Bir portu açıp
-+kapatmanın bütün yolları: [Switch a port on and off](how-it-works.md#switch-a-port-on-and-off).
-+
- <p align="center">
-   <img src="assets/json-server.gif" alt="Node sunucusu olarak ve tek bir Rust binary'si olarak json-server: boştayken bellek 74 MB ve 3.5 MB, başlatmadan ilk yanıta 79 ila 85 ms ve 8 ila 10 ms, kaydedilen 514 HTTP vakasının 514'ü eşleşiyor." width="820">
-   <br>
-```
-
-**File**: `docs/STATUS.md` (modified, +4/-0)
-```diff
-@@ -43,6 +43,10 @@ Details of every run: [real-world.md](real-world.md) (TS/JS) and
- | wasm bridge (`--kind wasm`) | Verified | x18n search |
- | `shadow` | Verified | x18n's `packages/core` |
- | `profile` | Tested | |
-+| `go` | Tested | Python fixture `tests/fixtures/go-fuzzy` by hand on macOS arm64 (2026-11-21): picks `dedupe` over `levenshtein`, 207 cases (one captured from the run), a stand-in agent command writes the port, 207/207, gate passes, switched on; the pick, the agent command lines and crate names in `src/go.rs`. Not yet run with `--agent claude` or `codex`, on TS/JS, or with a batch pick |
-+| `enable`, `disable` | Tested | TS/JS (napi, ESM) and Python: callers get the stand-in Rust module, the kill switch brings the original back, disable restores the file byte for byte (`tests/switch.rs`); wasm units untested |
-+| `report` | Tested | Markdown and SVG in `src/card.rs`; the `go` fixture above by hand (207/207, `bench` on a loaded machine, so its number is not published) |
-+| Shared build cache, `clean` | Tested | one owner per package name and per-crate copies in `src/cache.rs`; two crates named alike built into one shared folder keep their own library in `tests/switch.rs`. Front doors keep their own `target/` |
- | `map` | Tested | ports, upstream changes and `--crates` in `tests/port_map.rs` |
- | `app record`, `app replay` | Verified (servers and CLIs) | json-server: 514 HTTP cases with `--fresh`, `--arg`, `--pace`; Prettier: 17,224 CLI cases with `--inputs`, 63 of them with config files around the input; CLIs in `tests/app.rs`, CLI `--fresh` in `tests/app_fresh.rs` |
- | Side effects (`app record --effects`, `--db-reset`, `--db-dump`) | Tested | email, webhooks and SQLite rows for a CLI and a server in `tests/effects.rs` |
-```
-
-**File**: `docs/how-it-works.md` (modified, +39/-0)
-```diff
-@@ -29,6 +29,7 @@ analyze --whole-app ──> app record ──> app front-door ──> per unit:
- 
- | Step | Command | What it does |
- | --- | --- | --- |
-+| All in one | `rust-anything go --agent claude -- python3 app.py` | The hot-path loop end to end: profile, pick the outermost portable function (batched where `profile` says so), bridge it into `rust/<function>-rs`, record generated cases plus the calls the run makes, hand `src/port.rs` to the agent (`claude`, `codex`, or any command reading a prompt on stdin; without `--agent` it writes `TASK.md` and stops), then build, diff, gate, and `enable` only when all pass. Run it again after porting by hand: finished steps are kept |
- | 0. Profile | `rust-anything profile <repo> -- node bench.mjs` | Runs a real workload under the language's profiler (node, cProfile, `go test` pprof, JFR, a Ruby tracer): hot functions by inclusive time, their callers, and which loops to batch; flags code that is already compiled (numba, Cython, JAX), where Rust gains little |
- | 1. Plan | `rust-anything analyze <repo>` | Units, port order, risks with `file:line`, bridge per unit, dependency-to-crate fit, best first ports; `--whole-app` adds entry points and shape, every dependency (imported or declared) with its crate, pieces (units that import each other move together) and numbered decisions with a recommended answer |
- | 2. Bridge | `rust-anything bridge <repo> <unit>` | Crate with the bindings (`lib.rs`, plus the wrapper the source language loads) and stubs to port (`port.rs`); `--batch fn:param` adds a class that keeps many `param` values in Rust; `--as-json T` bridges a type parameter the app only fills with data as JSON values |
-@@ -39,6 +40,9 @@ analyze --whole-app ──> app record ──> app front-door ──> per unit:
- | 3. Bench | `rust-anything bench <crate>` | Times the recorded cases on the original and on Rust, bridge included |
- | 4. Shadow | `rust-anything shadow <crate>` | Drop-in that runs both, returns the original's result, reports mismatches; `RUST_ANYTHING_MODE=old\|shadow\|new` |
- | 5. Gate | `rust-anything gate <crate>` | fmt, clippy `-D warnings`, tests, `unsafe` audit, nothing unported, a recorded failing case for every error path of the original, no `unwrap`/`expect`/`panic!` where the original returns an error (unless marked `// INFALLIBLE: <why>`), build, API, behavior |
-+| 6. Switch | `rust-anything enable <crate>` / `disable <crate>` | Turns a gated TS/JS or Python port on for every caller, and off again byte for byte ([Switch a port on and off](#switch-a-port-on-and-off)) |
-+| 7. Report | `rust-anything report <crate>` | `report/REPORT.md` and `report/card.svg` for a pull request: recorded cases matched, speedup from `bench`, fallback rate, on or off, the machine and its cores |
-+| Cache | `rust-anything clean` | Removes the build folder every port and bridge shares ([One build cache](#one-build-cache)) |
- | Agents | `rust-anything setup` | Registers the MCP server (`rust-anything mcp`, every step as a tool) and the workflow skill ([`skills/rust-anything/SKILL.md`](../skills/rust-anything/SKILL.md)) with your coding agents |
- 
- ## Hot paths: keep the data in Rust
-@@ -92,6 +96,41 @@ that way the Java original beats the Rust batch ([#110](https://github.com/erkam
- mimalloc: with the system allocator the Go batch was slower than one thread. `bridge --allocator
- rusty_alloc` opts into a pure-Rust allocator instead. Demo: [`demo/x18n-search`](../demo/x18n-search/README.md).
- 
-+## Switch a port on and off
-+
-+Every way to switch, in one place:
-+
-+| What | On | Off |
-+| --- | --- | --- |
-+| A TS/JS or Python unit, in place | `rust-anything enable <crate>`: one marked block in each original file rebinds the ported functions to the Rust module, so every caller gets Rust and no import changes. It refuses while a recorded case differs (`--force` skips that check); `go` runs it only after diff and gate pass | `rust-anything disable <crate>`: removes exactly the lines `enable` added, so the files are byte for byte what they were |
-+| That unit, for one run | (on by default once enabled) | `RUST_ANYTHING_UNIT_<NAME>=original` (`<NAME>` is the crate name without `-rs`, upper case: `RUST_ANYTHING_UNIT_DEDUPE`), or `RUST_ANYTHING_MODE=old` for every unit |
-+| A shadow module (any language) | Import it where the app imported the original; `RUST_ANYTHING_MODE=new` runs only Rust | `RUST_ANYTHING_MODE=old`; the default, `shadow`, returns the original's result and compares Rust |
-+| A unit wired into a front door (`app wire`) | Wired units answer in Rust | `RUST_ANYTHING_UNIT_<NAME>=original` sends that unit's commands to the original |
-+| An installed package (`package`) | The platform's binary | `RUST_ANYTHING_MODE=old` runs the original it depends on |
-+
-+The `enable` block names the crate by a path relative to the source file, so it holds no path
-+of your machine, and it falls back to the original when the module does not load (with
-+`RUST_ANYTHING_MODE=new` that is an error instead)
-```
-
-**File**: `docs/tools.md` (modified, +54/-0)
-```diff
-@@ -118,6 +118,60 @@ Runs the original's code or commands.
- | `command` | string[] | yes | The workload, run in root: ["node", "bench.mjs"]. |
- | `lang` | string |  | Detected from the repository when omitted. |
- 
-+## Port the hot path end to end
-+
-+Tool `go` · CLI `rust-anything go`
-+
-+The hot-path loop in one call: profile the workload, pick the top portable function (the outermost loop; batched where profile says so), bridge it into rust/<function>-rs, record generated cases plus the calls the workload makes, write TASK.md, hand the port to `agent` (claude, codex, or a command reading the prompt on stdin), then build, diff and gate, and switch the unit on with `enable` only when every case matches and gate passes. Without `agent` it stops at `waiting_for_port`: port src/port.rs as TASK.md says and call go again; finished steps are kept. Returns the stage (waiting_for_port, mismatch, gate_failed, on, passed), the pick, the steps and what to do next.
-+
-+Runs the original's code or commands.
-+
-+| Parameter | Type | Required | Description |
-+| --- | --- | --- | --- |
-+| `root` | string | yes | Repository root. |
-+| `command` | string[] | yes | The workload, run in root: ["python3", "app.py"]. |
-+| `agent` | string |  | claude, codex, or a command that reads a prompt on stdin. Omit to port it yourself. |
-+| `function` | string |  | Port this hot function instead of the profile's pick. |
-+| `lang` | string |  | Detected from the repository when omitted. |
-+| `count` | integer |  | Generated cases per function (default 200). |
-+| `rounds` | integer |  | Agent turns: the port, then one per failing diff or gate (default 3). |
-+
-+## Switch a unit on
-+
-+Tool `enable` · CLI `rust-anything enable`
-+
-+Switch a ported TS/JS or Python unit on: one marked block in each original source file rebinds the unit's functions to the built Rust module, for every caller, with no import changed. RUST_ANYTHING_MODE=old or RUST_ANYTHING_UNIT_<NAME>=original runs the original for one run. Refuses while recorded cases differ unless `force`.
-+
-+| Parameter | Type | Required | Description |
-+| --- | --- | --- | --- |
-+| `crate` | string | yes | Folder of the generated crate (holds rust-anything.json). |
-+| `force` | boolean |  |  |
-+
-+## Switch a unit off
-+
-+Tool `disable` · CLI `rust-anything disable`
-+
-+Switch a unit off: removes exactly the lines enable added, leaving the source files byte for byte as they were.
-+
-+| Parameter | Type | Required | Description |
-+| --- | --- | --- | --- |
-+| `crate` | string | yes | Folder of the generated crate (holds rust-anything.json). |
-+
-+## Write a report card
-+
-+Tool `report` · CLI `rust-anything report`
-+
-+Write <crate>/report/REPORT.md and card.svg for a pull request or README: the unit, recorded cases matched (diff), speedup call included (bench), fallback rate, on or off, and the machine with its core count. Builds first; every number comes from this run.
-+
-+Runs the original's code or commands.
-+
-+| Parameter | Type | Required | Description |
-+| --- | --- | --- | --- |
-+| `crate` | string | yes | Folder of the generated crate (holds rust-anything.json). |
-+| `out` | string |  | Output folder; defaults to <crate>/report. |
-+| `min_ms` | integer |  | Minimum measured time per function and side, in milliseconds (default 200). |
-+| `node_args` | string[] |  | Extra arguments for node, e.g. ["--import=tsx"]. |
-+
- ## Benchmark port
- 
- Tool `bench` · CLI `rust-anything bench`
-```
-
----
-
-### Incident Patch 3: `688baa21` (2026-11-21)
-**Commit Message**: fix(ruby): name an old Ruby and doctor's fix when rb-sys has no stable API (#172)
-
-* fix(ruby): name an old Ruby and doctor's fix when rb-sys has no stable API
-
-On macOS's system Ruby (2.6), `build` of a Ruby bridge fails in rb-sys with a C header dump and
-"Stable API is needed but could not find a candidate", whose hint is to enable an rb-sys
-feature. rust-anything's floor is `doctor`'s Ruby 3.0, so the fix it supports is a newer Ruby.
-
-When a build fails with that message, `build` now asks the Ruby rb-sys used (`RUBY`, else
-`ruby`, run from a scratch folder as rb-sys runs it from its own) for its version. Below
-`doctor`'s minimum, the error ends with that version and `doctor`'s install command. A Ruby
-newer than rb-sys knows gets the same message from rb-sys and is left alone, and a build that
-works never reaches the check, so a Ruby chosen through `RUBY` or a version manager is never
-second-guessed.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(ruby): drop RUBYOPT from the version probe, as rb-sys does
-
-rb-sys removes `RUBYOPT` when it asks Ruby for its configuration. The probe kept it, so an
-option Ruby 2.6 rejects (`RUBYOPT=--yjit`) made `ruby --version` fail and 
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -11,6 +11,10 @@
-   (`+ other.__all__`, `sorted(...)`, `__all__.extend(...)`, inside an `if` or `try` block) falls
-   back to the names without a leading underscore rather than a partial list. Functions and
-   classes a module's `__all__` leaves out are no longer bridged.
-+- When `build` of a Ruby bridge fails with rb-sys's `Stable API is needed but could not find a
-+  candidate` and the Ruby rb-sys used (`RUBY`, else `ruby`) is older than `doctor`'s 3.0, the
-+  error now ends with that Ruby's version and `doctor`'s install command (macOS's system Ruby is
-+  2.6), instead of only rb-sys's hint to enable `stable-api-compiled-fallback`.
- 
- ## 3.0.0 (2026-11-21)
- 
-```
-
-**File**: `src/doctor.rs` (modified, +23/-0)
-```diff
-@@ -209,6 +209,17 @@ pub fn run() -> Report {
-     Report { checks }
- }
- 
-+/// The command `doctor` gives on this platform to install or update a runtime, by its name.
-+pub(crate) fn install_command(name: &str) -> Option<String> {
-+    let r = RUNTIMES.iter().find(|r| r.name == name)?;
-+    runtime_fix(r, Status::Outdated, Platform::HERE)
-+}
-+
-+/// The oldest version of a runtime that `doctor` accepts, by its name.
-+pub(crate) fn minimum(name: &str) -> Option<Version> {
-+    RUNTIMES.iter().find(|r| r.name == name)?.minimum
-+}
-+
- struct Runtime {
-     name: &'static str,
-     program: &'static str,
-@@ -923,6 +934,18 @@ pub fn text(r: &Report) -> String {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn install_command_is_doctor_fix_for_a_runtime() {
-+        let ruby = RUNTIMES.iter().find(|r| r.name == "ruby").unwrap();
-+        assert_eq!(
-+            install_command("ruby"),
-+            runtime_fix(ruby, Status::Outdated, Platform::HERE)
-+        );
-+        assert!(install_command("cobol").is_none());
-+        assert_eq!(minimum("ruby"), ruby.minimum);
-+        assert!(minimum("cobol").is_none());
-+    }
-+
-     #[test]
-     fn versions_are_read_from_every_banner() {
-         let cases = [
-```
-
-**File**: `src/harness_ruby.rs` (modified, +133/-1)
-```diff
-@@ -161,7 +161,7 @@ pub fn bench(crate_dir: &Path, m: &Manifest, min_ms: u64) -> Result<Vec<BenchRow
- 
- /// Builds the extension and puts it beside the wrapper as `ruby/<lib>_native.so`.
- pub fn build(crate_dir: &Path, m: &Manifest) -> Result<PathBuf> {
--    let lib = crate::harness_c::build(crate_dir, m)?;
-+    let lib = crate::harness_c::build(crate_dir, m).map_err(explain_old_ruby)?;
-     let ext = if cfg!(target_os = "macos") {
-         "bundle"
-     } else {
-@@ -172,3 +172,135 @@ pub fn build(crate_dir: &Path, m: &Manifest) -> Result<PathBuf> {
-     std::fs::copy(&lib, &target)?;
-     Ok(target)
- }
-+
-+/// rb-sys's error for a Ruby it has no stable API for: older than it supports, or newer.
-+const NO_STABLE_API: &str = "Stable API is needed but could not find a candidate";
-+
-+/// rb-sys answers a Ruby it has no stable API for with a hint about its own features. When the
-+/// Ruby it built against (`RUBY`, else `ruby`) is older than `doctor`'s minimum, this adds that
-+/// cause and doctor's fix. Only a failed build gets it, so a Ruby chosen through `RUBY` or a
-+/// version manager never stops a build that would work.
-+fn explain_old_ruby(err: anyhow::Error) -> anyhow::Error {
-+    if !err.to_string().contains(NO_STABLE_API) {
-+        return err;
-+    }
-+    let mut cmd = version_probe();
-+    // Not the caller's folder: rb-sys runs Ruby from its own, where a version manager's
-+    // `.ruby-version` of the project does not apply.
-+    let Ok(_scratch) = crate::harness::scratch_cwd(&mut cmd) else {
-+        return err;
-+    };
-+    let banner = crate::process::output(&mut cmd, crate::process::QUICK)
-+        .ok()
-+        .filter(|out| out.success())
-+        .map(|out| out.stdout_text());
-+    old_ruby_note(err, banner.as_deref(), std::env::var_os("RUBY").is_some())
-+}
-+
-+/// `ruby --version` for the Ruby rb-sys asks: `RUBY`, else `ruby`, without `RUBYOPT` as rb-sys
-+/// runs it (an option the old Ruby rejects would make it fail before printing its version).
-+fn version_probe() -> Command {
-+    let mut cmd = Command::new(std::env::var_os("RUBY").unwrap_or_else(|| "ruby".into()));
-+    cmd.arg("--version").env_remove("RUBYOPT");
-+    cmd
-+}
-+
-+/// `err` with the cause and doctor's fix when `banner` (`ruby --version`) is below the minimum.
-+/// When `RUBY` chose that Ruby, installing another is not enough: `RUBY` has to change too.
-+fn old_ruby_note(err: anyhow::Error, banner: Option<&str>, ruby_var: bool) -> anyhow::Error {
-+    let (Some(banner), Some(min)) = (banner.map(str::trim), crate::doctor::minimum("ruby")) else {
-+        return err;
-+    };
-+    if !crate::doctor::parse_version(banner).is_some_and(|v| v < min) {
-+        return err;
-+    }
-+    let system = if cfg!(target_os = "macos") {
-+        " (macOS's system Ruby is 2.6)"
-+    } else {
-+        ""
-+    };
-+    let fix = crate::doctor::install_command("ruby")
-+        .map(|fix| format!("\nfix: {fix}"))
-+        .unwrap_or_default();
-+    let ruby_var = if ruby_var {
-+        "\n`RUBY` is set, and rb-sys uses it before `ruby` on PATH: point it at the new Ruby, or unset it"
-+    } else {
-+        ""
-+    };
-+    anyhow::anyhow!(
-+        "{err}\n\n{banner}: rust-anything needs Ruby {}.{}+{system}{fix}{ruby_var}",
-+        min.0,
-+        min.1
++    let root = project(
++        "py-kw-diff",
++        &[
++            (
++                "pyproject.toml",
++                "[project]\nname = \"shape\"\nversion = \"0.1.0\"\n",
++            ),
++            (
++                "shape.py",
++                "def scale(n: float, *, scaleBy: float = 2.0) -> float:\n    return n * scaleBy\n\n\n\
++                 def pad(s: str, width: int = 4, fill: str = ' ') -> str:\n    return s.ljust(width, fill)\n",
++            ),
++            (
++                "test_shape.py",
++                "import unittest\nfrom shape import pad, scale\n\n\
++                 class T(unittest.TestCase):\n    def test_it(self):\n        \
++                 self.assertEqual(scale(3, scaleBy=10), 30)\n        \
++                 self.assertEqual(pad('a'), 'a   ')\n        self.assertEqual(pad('a', fill='*'), 'a***')\n",
++            ),
++        ],
++    );
++    let (printed, _) = from_tests(&root, "shape.py", &["python3", "-m", "unittest"]);
++    assert!(printed.contains("Captured 3 call(s)"), "{printed}");
++    let crate_dir = root.join("port");
++    let lib = std::fs::read_to_string(crate_dir.join("src/lib.rs")).unwrap();
++    // The bindings name the parameter in snake_case.
++    assert!(lib.contains("signature = (n, *, scale_by="), "{lib}");
++    // A pure-Python stand-in for the built package, with the bindings' parameter names: `scale`
++    // is right, and `pad` ignores a `fill` of `*`.
++    let manifest = Manifest::load(&crate_dir).unwrap();
++    let package = crate_dir.join("python").join(manifest.lib_name());
++    std::fs::create_dir_all(&package).unwrap();
++    std::fs::write(
++        package.join("__init__.py"),
++        "def scale(n, *, scale_by=2.0):\n    return n * scale_by\n\n\n\
++         def pad(s, width=4, fill=' '):\n    return s.ljust(width, ' ' if fill == '*' else fill)\n",
 +    )
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn failed() -> anyhow::Error {
-+        anyhow::anyhow!(
-+            "cargo build failed (exit status: 101):\n  Failed to setup stable API: {NO_STABLE_API}. \
-+             Try enabling the `stable-api-compiled-fallback` feature in rb-sys."
-+        )
-+    }
-+
-+    #[test]
-+    fn a_ruby_below_the_minimum_gets_the_cause_and_the_fix() {
-+        let banner = "ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin26]";
-+        let explained = old_ruby_note(failed(), Some(banner), false).to_string();
-+        assert!(explained.starts_with("cargo build failed"), "{explained}");
-+        assert!(
-+            explained.contains(&format!("\n\n{banner}: rust-anything needs Ruby 3.0+")),
-+            "{explained}"
-+        );
-+        let fix = crate::doctor::install_command("ruby").unwrap();
-+        assert!(explained.ends_with(&format!("\nfix: {fix}")), "{explained}");
-+    }
-+
-+    #[test]
-+    fn a_newer_or_unknown_ruby_keeps_rb_sys_error() {
-+        let plain = failed().to_string();
-+        let newer = "ruby 4.1.0preview1 (2026-12-25 master 0123456789) +PRISM [arm64-darwin25]";
-+        assert_eq!(
-+            old_ruby_note(failed(), Some(newer), false).to_string(),
-+            plain
-+        );
-+        assert_eq!(old_ruby_note(failed(), None, true).to_string(), plain);
-+    }
-+
-+    #[test]
-+    fn a_ruby_chosen_through_ruby_var_says_to_change_it() {
-+        let banner = "ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin26]";
-+        let explained = old_ruby_note(failed(), Some(banner), true).to_string();
-+        let fix = crate::doctor::install_command("ruby").unwrap();
-+        assert!(
-+     
++    .unwrap();
++    let outcome = rust_anything::harness::diff(&rust_anything::harness::DiffOptions {
++        crate_dir: &crate_dir,
++        module: None,
++        ignore_key_order: false,
++        float_tolerance: None,
++        node_args: &[],
++    })
++    .unwrap();
++    // A known difference for `pad('a')` does not explain `pad('a', fill='*')`.
++    let known = [serde_json::json!({
++        "fn": "pad", "args": ["a"], "actual": {"ok": "a   "}, "reason": "x"
++    })];
++    let (failed, mismatches) = (outcome.failed, outcome.mismatches.clone());
++    let accepted = recording::apply_known(outcome, &known);
++    std::fs::remove_dir_all(&root).unwrap();
++    // `scaleBy=10` reached the bindings as `scale_by=10`.
++    assert_eq!(failed, 1, "{mismatches:?}");
++    // The mismatch shows the keyword argument, as Ruby's do.
++    assert_eq!(mismatches[0]["fn"], "pad");
++    assert_eq!(
++        mis
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #192** (2026-11-21): docs: add the Italian README (@XiaoBinGan)
-- **PR #191** (closed): fix(map): name the path that could not be read (@XiaoBinGan)
-- **PR #190** (closed): fix(python): keep a dotted import the crate table knows (@XiaoBinGan)
-- **PR #189** (2026-11-21): docs(faq): name the runtimes beyond the language itself (@XiaoBinGan)
-- **PR #187** (2026-11-21): fix(python): read `__all__` after a docstring or an import, and only when it is literal (@OnurrUgur)
-- **PR #185** (2026-11-21): fix(report): name a status that exists, and explain an empty Start here (@XiaoBinGan)
+- **PR #206** (2026-11-22): fix(profile): judge hot functions with the rules `bridge` applies, so `go` skips what it keeps in JS (@OnurrUgur)
+- **PR #205** (2026-11-22): fix(enable): switch a wasm port on through its wrapper (@XiaoBinGan)
+- **PR #203** (2026-11-22): fix(python): record a float subclass as its float value (@fullfud)
+- **PR #201** (2026-11-22): docs(status): say which command covers which language (@XiaoBinGan)
+- **PR #199** (2026-11-22): fix(analyze): judge bridgeable exports with the rules `bridge` applies (@OnurrUgur)
+- **PR #198** (2026-11-22): fix(js): capture `--from-tests` arguments with the codec `record` uses (@OnurrUgur)
 
 ---
 
@@ -2653,13 +2536,13 @@ option Ruby 2.6 rejects (`RUBYOPT=--yjit`) made `ruby --version` fail and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): read `__all__` after a docstring or an import, and only when it is lite
+## X. js): capture `--from-tests` arguments with the codec `record` uses
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce48b6fa`: python): read `__all__` after a docstring or an import, and only when it is literal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a675e19`: js): capture `--from-tests` arguments with the codec `record` uses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2667,16 +2550,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Python: `__all__` was ignored when an earlier top-level statement held no assignment (a
-  docstring or an import, as in most modules), so `analyze`, `bridge`, library ports and
-  `profile` took every name without a leading underscore: names left out of `__all__` were
-  bridged and underscore names listed in it were dropped. `__all__` is now read after such
-  statements, with or without a type, follows `__all__ += [...]` and a later `__all__ = [...]`,
-  and reads prefixed strings (`r'name'`). An `__all__` built or changed any other way
-  (`+ other.__all__`, `sorted(...)`, `__all__.extend(...)`, inside an `if` or `try` block) falls
-  back to the names without a leading underscore rather than a partial list. Functions and
-  classes a module's `__all__` leaves out are no longer bridged.
-
+- JS/TS `record --from-tests` encodes the captured arguments with the codec `record` and `diff`
+  use, instead of a copy of it that had fallen behind. A `Buffer` was captured as a `Uint8Array`
+  (so `b.toString('hex')` recorded `"104,105"`), a `Float64Array` or other typed array as an
+  object with numeric keys, and an object shaped like a marker (`{ $date: 'x' }`) was replayed as
+  a `Date`. A call is now left out, as one that passes a function or a cycle already was, when an
+  argument is a RegExp, an Error, a `URL`, an `ArrayBuffer`, a boxed primitive or an object with
+  `toJSON`: those were captured as `{}`, their own fields or their `toJSON` result, which replay
+  passed as a different value. A class instance is still captured as its own fields.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2686,7 +2567,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce48b6fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a675e19` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
