@@ -4,22 +4,22 @@
 {
   "source_repository": "embassy-rs/embassy",
   "source_url": "https://github.com/embassy-rs/embassy",
-  "source_version": "1c5f29e0",
+  "source_version": "5fb737cd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T01:32:23.769Z",
+  "timestamp": "2026-11-23T14:29:17.741Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-embassy-rs-embassy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `1c5f29e0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T01:32:23.769Z`  
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `5fb737cd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:29:17.741Z`  
 > **Learning ID**: `learn-github-embassy-rs-embassy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `embassy-rs/embassy` (Commit: `1c5f29e0`)
+- **Target Repository**: `embassy-rs/embassy` (Commit: `5fb737cd`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:32:22.452Z  
+> **Harvest Timestamp**: 2026-11-23T14:29:16.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10137 stars
+- **Stars / Engagement**: 10141 stars
 
 ---
 
@@ -1446,13 +1446,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7613** (2026-11-21): **mcxa5xx/rtc: wait out STATUS resync before unlock**
-  *Symptoms*: After Stop exit, MCXA5xx RTC `STATUS` reads `FFFEh` and register writes are ignored until the clock domains resync (RM 38.3.1.2). `FFFEh` has `WRITE_PROT_EN` set, so `disable_write_protect()` sends the unlock sequence, the RTC drops it, and the next protected write faults once resync completes.  1. MCU wakes from Stop. 2. `set_alarm()` -> `disable_write_protect()` sees `FFFEh` and sends the unlock. 3. The RTC ignores it and stays locked. 4. The `CTRL` write lands after resync -> BusFault.  - `disable_write_protect()`: wait out `FFFEh` before unlocking (bounded). - `set_datetime()`: wait through `FFFEh` instead of returning an error. - `read_datetime()`: wait through `FFFEh` as well as `INVAL_BIT`.  ## Testing - `cargo check` for mcxa577, mcxa266 and `examples/mcxa577`. - Hardware Stop-wake test pending.
+- **Issue #7627** (2026-11-23): **net: update xarxa**
+  *Symptoms*: 
 
-- **Issue #7612** (2026-11-21): **stm32/hsem: fix lost notifications and secondary core boot deadlock**
-  *Symptoms*: Fixes #7609. Closes #7576.  ## Verification  - HIL: `hsem_notify` + `hsem` on nucleo-stm32wb55rg, nucleo-stm32wl55jc, nucleo-stm32h755zi (table above), including a run against the pre-fix code to confirm the test detects the regression. - `cargo check` of `embassy-stm32` for `stm32h755zi-cm7`, `stm32h755zi-cm4`, `stm32wl55jc-cm4`, `stm32wl55jc-cm0p`, `stm32wba65ri`, `stm32h743zi`, `stm32wb55rg` + `low-power`. - `cargo check` of the `intercore` examples for `stm32h755cm7`/`stm32h755cm4`/`stm32wl55cm4-lp`/`stm32wl55cm0p-lp`. 
-  **Post-Mortem & Fix Analysis**:
-  > This pull request is a **draft**, so it isn't in the [review queue](https://bot.embassy.dev) yet. Mark it as **ready for review** when you'd like someone to look at it.
+- **Issue #7624** (2026-11-23): **embassy-usb: add CDC-ACM `SEND_BREAK` support**
+  *Symptoms*: This PR implements the CDC `SEND_BREAK` request in the CDC-ACM device class. The request is needed by a USB-to-UART bridge, which uses the request to deliver the break from the host to the UART, e.g., when `tcsendbreak()` is called.  The feature is disabled by default: only when `Config::send_break` is set does the device class set D2 of `bmCapabilities` and handles the request, without the flag the behavior does not change. I made the feature opt-in as Linux sends the `SEND_BREAK` request only when D2 is set, and otherwise returns an error to the application informing that the port cannot send a break. A device that does not handle breaks should keep reporting that it can't send a break.  The application can take each request exactly once from `take_break()` on `CdcAcmClass` or `ControlChanged`, either as `Break::Stop`, `Break::UntilStopped` or `Break::Millis(n)`, and `control_changed()` returns for each new request. This is better than a getter such as `dtr()`, because sending a timed break is an event: with a getter every control change not related to the break would show the old `Millis(n)`, and two successive identical breaks would appear as a single break.  If a reset of the bus happens or the device gets disabled (by removing VBUS or by invoking `UsbDevice::disable`), then `take_break()` will return `Break::Stop`. Otherwise, the device will be able to keep the break ongoing even though the host can’t stop it anymore.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1469,1178 +1467,90 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f0e5b86` (2026-11-21)
-**Commit Message**: stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW
+### Incident Patch 1: `2cc46e55` (2026-11-23)
+**Commit Message**: Merge pull request #7623 from arihant2math/nrf54-rram-flash-size-fix
 
-The HIL regression test for #7609 (tests/stm32 hsem_notify, run on
-nucleo-stm32wb55rg/wl55jc/h755zi) uncovered two more bugs in the same
-notify/listen path, both of which made `listen()` unusable in practice:
+embassy-nrf: Fix RRAM size for the nrf54LM20
 
-The HSEM interrupt line follows the *latched* masked status: MISFx is only
-cleared by HSEM_CnICR, and masking HSEM_CnIER does not deassert the line.
-`HardwareSemaphoreInterruptHandler` only masked HSEM_IER, so arming the
-interrupt with a notification pending re-entered the handler forever: each
-entry left the line asserted, the storm starved the executor and the timer
-(including `with_timeout`), and the listener could never run to consume the
-flag. The handler now consumes the flags with HSEM_CnICR and latches each
-notification in software before waking, so a wake that happens before the
-listener registers its waker is not lost.
-
-`AtomicModify::set_bits`/`clear_bits` did the register read-modify-write
-with `AtomicU32::fetch_or`/`fetch_and`. LDREX/STREX on peripheral
-registers is UNPREDICTABLE on Armv7-M: under the interrupt storm above the
-retry loop livelocked outright (every STREX is interrupted, cleari
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +4/-3)
+**File**: `embassy-nrf/src/chips/nrf54lm20_app.rs` (modified, +2/-2)
 ```diff
-@@ -19,11 +19,12 @@ PAC:
+@@ -203,9 +203,9 @@ pub mod pac {
  
- Atomic:
- - fix: stm32/atomic: make `AtomicClear::clear` atomic on targets without 8-bit atomic RMW (thumbv6m)
-+- fix: stm32/atomic: `Reg::set_bits`/`clear_bits` (used by the HSEM, IPCC, I2C and SDMMC drivers) no longer use core atomics for the read-modify-write. `LDREX`/`STREX` on peripheral registers is UNPREDICTABLE on Armv7-M, and when the write re-arms an interrupt whose handler runs between the `LDREX` and the `STREX` the retry loop never terminates. The update is now done in a critical section.
+ pub const FORCE_COPY_BUFFER_SIZE: usize = 1024;
  
- HSEM:
--- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The interrupt flag is now consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
--- fix: stm32/hsem: `listen` waits on the unmasked interrupt status instead of the masked one. The interrupt handler disables the interrupt in `HSEM_IER` before waking, so the masked status could read as clear while a notification was still pending and the future would never complete.
--- feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification flag without consuming it.
-+- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The notification is consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
-+- fix: stm32/hsem: `HardwareSemaphoreInterruptHandler` now consumes the notification flags with `HSEM_CnICR` and latches them in software before waking. The latched masked status keeps the interrupt line asserted until the flags are cleared, so masking `HSEM_CnIER` (the old behavior) did not deassert it: arming the interrupt with a notification pending re-entered the handler forever, starving the tasks supposed to consume the notification. The software latch also delivers a notification whose wake happens before the listener registers its waker.
-+- feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification without consuming it.
- - fix: stm32: `init_primary` discards a stale HSEM notification from a previous run of the core before initializing the hardware, and `init_secondary`/`try_init_secondary` treat the notification as a level rather than an event. The secondary core can now be started (or restarted under a debugger) in any order relative to the primary core without deadlocking or consuming a stale notification.
- - change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
+-// 2 MB NVM
++// 2036 KB usable RRAM
+ #[allow(unused)]
+-pub const FLASH_SIZE: usize = 2048 * 1024;
++pub const FLASH_SIZE: usize = 2036 * 1024;
  
-```
-
-**File**: `embassy-stm32/src/atomic.rs` (modified, +8/-26)
-```diff
-@@ -8,6 +8,14 @@ pub trait AtomicModify<T: Sized> {
-     /// Atomically mask bits
-     ///
-     /// Call `set_xxx(true)` inside the closure
-+    ///
-+    /// The read-modify-write is atomic against the local interrupt handlers (it
-+    /// runs in a critical section). It must not be implemented with core atomics:
-+    /// `LDREX`/`STREX` on peripheral registers is UNPREDICTABLE on Armv*-M, and
-+    /// when the write re-arms an interrupt condition whose handler runs between
-+    /// the `LDREX` and the `STREX` (e.g. `HSEM_IER` with the status flag already
-+    /// set), the interrupt clears the exclusive monitor and the retry loop never
-+    /// terminates.
-     fn set_bits(&self, f: impl FnOnce(&mut T));
-     /// Atomically unmask bits
-     ///
-@@ -19,9 +27,6 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
-     #[inline]
-     fn set_bits(&self, f: impl FnOnce(&mut T)) {
-         unsafe {
--            #[cfg(target_has_atomic = "32")]
--            use core::sync::atomic::{AtomicU32, Ordering, compiler_fence};
--
-             let mut v = u32::MIN;
- 
-             core::assert_eq!(size_of::<u32>(), size_of::<T>());
-@@ -31,29 +36,16 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
- 
-             let ptr = self.as_ptr() as *mut u32;
- 
--            #[cfg(not(target_has_atomic = "32"))]
-             critical_section::with(|_| {
-                 let val = ptr.read_volatile();
-                 ptr.write_volatile(val | v);
-             });
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
--
--            #[cfg(target_has_atomic = "32")]
--            AtomicU32::from_ptr(ptr).fetch_or(v, Ordering::Relaxed);
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
-         }
-     }
- 
-     #[inline]
-     fn clear_bits(&self, f: impl FnOnce(&mut T)) {
-         unsafe {
--            #[cfg(target_has_atomic = "32")]
--            use core::sync::atomic::{AtomicU32, Ordering, compiler_fence};
--
-             let mut v = u32::MAX;
- 
-             core::assert_eq!(size_of::<u32>(), size_of::<T>());
-@@ -63,20 +55,10 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
- 
-             let ptr = self.as_ptr() as *mut u32;
- 
--            #[cfg(not(target_has_atomic = "32"))]
-             critical_section::with(|_| {
-                 let val = ptr.read_volatile();
-                 ptr.write_volatile(val & v);
-             });
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
--
--            #[cfg(target_has_atomic = "32")]
--            AtomicU32::from_ptr(ptr).fetch_and(v, Ordering::Relaxed);
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
-         }
-     }
- }
-```
-
-**File**: `embassy-stm32/src/hsem/mod.rs` (modified, +61/-34)
-```diff
-@@ -2,7 +2,7 @@
- 
- use core::future::poll_fn;
- use core::marker::PhantomData;
--use core::sync::atomic::{Ordering, compiler_fence};
-+use core::sync::atomic::{AtomicBool, Ordering, compiler_fence};
- use core::task::Poll;
- 
- use critical_section::CriticalSection;
-@@ -14,7 +14,7 @@ use interrupt::typelevel::Interrupt;
- // The nonsecure lock/listen flow used here is compatible with the common
- // semaphore interface and remains usable across WBA52/54/55/65 families.
- use crate::Peri;
--use crate::atomic::{ActiveInterrupt, InterruptRegister};
-+use crate::atomic::{ActiveInterrupt, AtomicClear, InterruptRegister};
- use crate::cpu::CoreId;
- use crate::pac::common::{RW, Reg};
- use crate::peripherals::HSEM;
-@@ -58,22 +58,31 @@ pub struct HardwareSemaphoreInterruptHandler<T: Instance> {
- impl<T: Instance> interrupt::typelevel::Handler<T::Interrupt> for HardwareSemaphoreInterruptHandler<T> {
-     unsafe fn on_interrupt() {
-         let core = CoreId::current();
--        // Get pending semaphore bits from masked ISR for the current core
-+        // Get pending notification flags for the current core.
-         let mut pending = T::regs().misr(core.to_index().into()).read().0;
- 
--        T::regs().ier(core.to_index().into()).modify(|w| {
--            while pending != 0 {
--                // Index of lowest set bit
--                let n = pending.trailing_zeros() as u8;
--
--                // Clear lowest set bit.
--                // Safe when pending != 0 enforced by while predicate
--                pending &= pending - 1;
--
--                w.set_ise(n.into(), false);
-+        // Consume the flags with HSEM_CnICR. The interrupt line follows the
-+        // latched masked status, which only this clear releases: masking
-+        // HSEM_CnIER does not deassert the line, so without this the handler
-+        // would re-enter forever and starve the tasks that are supposed to
-+        // consume the notification.
-+        T::regs().icr(core.to_index().into()).write(|w| w.0 = pending);
-+
-+        while pending != 0 {
-+            // Index of lowest set bit
-+            let n = pending.trailing_zeros() as u8;
-+
-+            // Clear lowest set bit.
-+            // Safe when pending != 0 enforced by while predicate
-+            pending &= pending - 1;
-+
-+            if (n as usize) < CHANNELS {
-+                // Latch the notification before waking: the wake is lost if the
-+                // listener has not registered its waker yet.
-+                T::state().flag_for(n).store(true, Ordering::Relaxed);
-                 T::state().waker_for(n).wake();
-             }
--        });
-+        }
-     }
- }
- 
-@@ -190,18 +199,13 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-     pub fn blocking_listen(&mut self) {
-         let core = CoreId::current();
- 
--        // Wait for the semaphore interrupt flag. It is only cleared once it has
--        // been observed: clearing it before waiting would drop a notification that
--        // was already pending (e.g. when this core starts after the other core has
--        // already notified).
--        while !T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {}
-+        // Wait for a notification to be pending. It is only consumed once it has
-+        // been observed: consuming it before waiting would drop a notification
-+        // that was already pending (e.g. when this core starts after the other
-+        // core has already notified).
-+        while !self.take_notification(core) {}
- 
-         cortex_m::asm::dmb();
--
--        // Consume the notification.
--        T::regs()
--            .icr(core.to_index().into())
--            .write(|w| w.set_isc(self.index.into(), true));
-     }
- 
-     /// Asynchronous wait for a notification on this semaphore channel.
-@@ -224,17 +228,9 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
- 
-             compiler_fence(Ordering::SeqCst);
- 
--            // Check the unmasked status flag: the interrupt handler disables the
--            // interrupt in HSEM_IER before waking, so the masked status may read
--            // as clear while a notification is still pending.
--            if T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {
-+            if self.take_notification(core) {
-                 cortex_m::asm::dmb();
- 
--                // Consume the notification.
--                T::regs()
--                    .icr(core.to_index().into())
--                    .write(|w| w.set_isc(self.index.into(), true));
--
-                 Poll::Ready(())
-             } else {
-                 Poll::Pending
-@@ -243,6 +239,28 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-         .await;
-     }
- 
-+    /// Consume one pending notification on this semaphore channel, if any.
-+    ///
-+    /// A notification is either latched by [`HardwareSemaphoreInterruptHandler`]
-+    /// (the interrupt handler consumes the hardware flag so that its line
-+    /// deasserts) or still pending in the hardware flag when no inter
-```
-
-**File**: `tests/stm32/Cargo.toml` (modified, +6/-1)
-```diff
-@@ -21,7 +21,7 @@ stm32g071rb = ["embassy-stm32/stm32g071rb", "stop", "jiff", "cm0", "not-gpdma",
- stm32g491re = ["embassy-stm32/stm32g491re", "stop", "jiff", "not-gpdma", "rng", "fdcan", "cordic", "adc"]
- stm32h563zi = ["embassy-stm32/stm32h563zi", "stop", "spi-v345", "jiff", "eth", "rng", "fdcan", "hash-v34", "cordic", "adc", "edata"]
- stm32h753zi = ["embassy-stm32/stm32h753zi", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "rng", "fdcan", "hash", "cryp", "adc", "mem2mem", "mem2mem-dma", "mem2mem-mdma"]
--stm32h755zi = ["embassy-stm32/stm32h755zi-cm7", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "dac", "rng", "fdcan", "hash", "cryp", "adc"]
-+stm32h755zi = ["embassy-stm32/stm32h755zi-cm7", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "dac", "rng", "fdcan", "hash", "cryp", "adc", "hsem"]
- stm32h7a3zi = ["embassy-stm32/stm32h7a3zi", "not-stop", "spi-v345", "not-gpdma", "rng", "fdcan", "adc"]
- stm32h723zg = ["embassy-stm32/stm32h723zg", "not-stop", "spi-v345", "jiff", "not-gpdma", "dac", "rng", "fdcan", "cordic", "adc", "adc-b", "mem2mem", "mem2mem-dma", "mem2mem-mdma"]
- stm32l073rz = ["embassy-stm32/stm32l073rz", "stop", "jiff", "cm0", "not-gpdma", "rng", "eeprom", "adc"]
-@@ -274,6 +274,11 @@ name = "hsem"
- path = "src/bin/hsem.rs"
- required-features = [ "hsem",]
- 
-+[[bin]]
-+name = "hsem_notify"
-+path = "src/bin/hsem_notify.rs"
-+required-features = [ "hsem",]
-+
- [[bin]]
- name = "i2s_dma"
- path = "src/bin/i2s_dma.rs"
-```
-
-**File**: `tests/stm32/src/bin/hsem.rs` (modified, +6/-0)
-```diff
-@@ -11,6 +11,12 @@ use embassy_stm32::bind_interrupts;
- use embassy_stm32::hsem::{HardwareSemaphore, HardwareSemaphoreInterruptHandler};
- use embassy_stm32::peripherals::HSEM;
- 
-+#[cfg(feature = "stm32h755zi")]
-+bind_interrupts!(struct Irqs{
-+    HSEM1 => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[cfg(not(feature = "stm32h755zi"))]
- bind_interrupts!(struct Irqs{
-     HSEM => HardwareSemaphoreInterruptHandler<HSEM>;
- });
-```
-
-**File**: `tests/stm32/src/bin/hsem_notify.rs` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+// required-features: hsem
-+
-+//! HSEM notify/listen regression test for issue #7609.
-+//!
-+//! `blocking_listen` and `listen` used to clear the notification flag *before*
-+//! waiting for it, so a notification sent before the call was lost and the waiter
-+//! blocked forever. The dual-core init handshake deadlocks on this: `init_secondary`
-+//! waits on a notification that `init_primary` may have sent long before, e.g. when
-+//! the secondary core is started or restarted under a debugger while the primary
-+//! core keeps running.
-+//!
-+//! This exercises the same `blocking_listen`/`is_notified` primitives that
-+//! `init_secondary` uses. (The handshake itself needs both cores running, which the
-+//! HIL farm cannot do; `init_primary` is covered by `common::init()` on this board.)
-+#![no_std]
-+#![no_main]
-+
-+#[path = "../common.rs"]
-+mod common;
-+
-+use common::*;
-+use embassy_executor::Spawner;
-+use embassy_stm32::bind_interrupts;
-+use embassy_stm32::hsem::{HardwareSemaphore, HardwareSemaphoreChannel, HardwareSemaphoreInterruptHandler};
-+use embassy_stm32::peripherals::HSEM;
-+use embassy_time::{Duration, Timer, with_timeout};
-+
-+teleprobe_meta::timeout!(30);
-+
-+#[cfg(feature = "stm32h755zi")]
-+bind_interrupts!(struct Irqs {
-+    HSEM1 => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[cfg(not(feature = "stm32h755zi"))]
-+bind_interrupts!(struct Irqs {
-+    HSEM => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[embassy_executor::task]
-+async fn notify_later(mut ch: HardwareSemaphoreChannel<'static, HSEM>) {
-+    Timer::after_millis(100).await;
-+    info!("notifier: notifying");
-+    ch.blocking_notify();
-+}
-+
-+#[embassy_executor::main(executor = "common::Executor", entry = "cortex_m_rt::entry")]
-+async fn main(spawner: Spawner) {
-+    let p: embassy_stm32::Peripherals = init();
-+    let hsem = HardwareSemaphore::new(p.HSEM, Irqs);
-+
-+    // Channel 5 is not used by the low-power CPU2 coordination channels (WB uses
-+    // 3/4, WL uses 3). `split` returns channels with a caller-chosen lifetime, so
-+    // a copy can be moved into the notifier task.
-+    let mut ch: HardwareSemaphoreChannel<'static, HSEM> =
-+        hsem.split().into_iter().find(|ch| ch.channel() == 5).unwrap();
-+    ch.clear_notification();
-+
-+    // `is_notified` is a level: observing it does not consume the notification.
-+    // The init handshake relies on this so the secondary core can be restarted
-+    // under a debugger without losing the notification of `init_primary`.
-+    info!("level: notify, observe twice, clear");
-+    ch.blocking_notify();
-+    defmt::assert!(ch.is_notified());
-+    defmt::assert!(ch.is_notified());
-+    ch.clear_notification();
-+    defmt::assert!(!ch.is_notified());
-+
-+    // A notification sent *before* `listen()` must be consumed by it, not dropped.
-+    // (This also covers arming the notification interrupt while the status flag
-+    // is already set, which used to livelock the interrupt handler.)
-+    info!("async: notification sent before listen is not lost");
-+    ch.blocking_notify();
-+    if with_timeout(Duration::from_secs(5), ch.listen()).await.is_err() {
-+        defmt::panic!("listen() did not consume the pending notification");
-+    }
-+    defmt::assert!(!ch.is_notified());
-+
-+    // A notification sent while `listen()` is waiting must wake it (interrupt
-+    // handler path).
-+    info!("async: notification sent while listen is waiting");
-+    let notifier = ch;
-+    spawner.spawn(notify_later(notifier).unwrap());
-+    if with_timeout(Duration::from_secs(5), ch.listen()).await.is_err() {
-+        defmt::panic!("listen() was not woken by a later notification");
-+    }
-+    defmt::assert!(!ch.is_notified());
-+
-+    // Same for the blocking variant that `init_secondary` waits on. On regression
-+    // this hangs and the teleprobe job times out.
-+    info!("blocking: notification sent before blocking_listen is not lost");
-+    ch.blocking_notify();
-+    defmt::assert!(ch.is_notified());
-+    ch.blocking_listen();
-+    defmt::assert!(!ch.is_notified());
-+
-+    info!("Test OK");
-+    cortex_m::asm::bkpt();
-+}
+ embassy_hal_internal::peripherals! {
+     // USB
 ```
 
 ---
 
-### Incident Patch 2: `1c5f29e0` (2026-11-21)
-**Commit Message**: Merge pull request #7612 from xoviat/fix-hsem-listen-race
+### Incident Patch 2: `fc0193f9` (2026-11-22)
+**Commit Message**: Merge pull request #7621 from decaday/fix/stm32-stop-time-jumping-forward
 
-stm32/hsem: fix lost notifications and secondary core boot deadlock
+stm32: fix `Instant` jumping forward after STOP mode in `low-power` time-driver
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +8/-0)
+**File**: `embassy-stm32/src/time_driver/tim.rs` (modified, +11/-2)
 ```diff
-@@ -19,6 +19,14 @@ PAC:
- 
- Atomic:
- - fix: stm32/atomic: make `AtomicClear::clear` atomic on targets without 8-bit atomic RMW (thumbv6m)
-+- fix: stm32/atomic: `Reg::set_bits`/`clear_bits` (used by the HSEM, IPCC, I2C and SDMMC drivers) no longer use core atomics for the read-modify-write. `LDREX`/`STREX` on peripheral registers is UNPREDICTABLE on Armv7-M, and when the write re-arms an interrupt whose handler runs between the `LDREX` and the `STREX` the retry loop never terminates. The update is now done in a critical section.
-+
-+HSEM:
-+- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The notification is consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
-+- fix: stm32/hsem: `HardwareSemaphoreInterruptHandler` now consumes the notification flags with `HSEM_CnICR` and latches them in software before waking. The latched masked status keeps the interrupt line asserted until the flags are cleared, so masking `HSEM_CnIER` (the old behavior) did not deassert it: arming the interrupt with a notification pending re-entered the handler forever, starving the tasks supposed to consume the notification. The software latch also delivers a notification whose wake happens before the listener registers its waker.
-+- feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification without consuming it.
-+- fix: stm32: `init_primary` discards a stale HSEM notification from a previous run of the core before initializing the hardware, and `init_secondary`/`try_init_secondary` treat the notification as a level rather than an event. The secondary core can now be started (or restarted under a debugger) in any order relative to the primary core without deadlocking or consuming a stale notification.
-+- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
- 
- SUBGHZ:
- - feat: stm32/subghz: add a driver for the on-chip sub-GHz radio of STM32WL and STM32WLE5 (`SubghzSpi`, `SubghzControl`). It covers the dedicated `SUBGHZSPI`, radio reset, `RFBUSY` waiting and the `SUBGHZ_RADIO` interrupt. The driver does not wrap the radio's command set: the caller sends the commands.
-```
-
-**File**: `embassy-stm32/src/atomic.rs` (modified, +8/-26)
-```diff
-@@ -8,6 +8,14 @@ pub trait AtomicModify<T: Sized> {
-     /// Atomically mask bits
-     ///
-     /// Call `set_xxx(true)` inside the closure
-+    ///
-+    /// The read-modify-write is atomic against the local interrupt handlers (it
-+    /// runs in a critical section). It must not be implemented with core atomics:
-+    /// `LDREX`/`STREX` on peripheral registers is UNPREDICTABLE on Armv*-M, and
-+    /// when the write re-arms an interrupt condition whose handler runs between
-+    /// the `LDREX` and the `STREX` (e.g. `HSEM_IER` with the status flag already
-+    /// set), the interrupt clears the exclusive monitor and the retry loop never
-+    /// terminates.
-     fn set_bits(&self, f: impl FnOnce(&mut T));
-     /// Atomically unmask bits
-     ///
-@@ -19,9 +27,6 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
-     #[inline]
-     fn set_bits(&self, f: impl FnOnce(&mut T)) {
-         unsafe {
--            #[cfg(target_has_atomic = "32")]
--            use core::sync::atomic::{AtomicU32, Ordering, compiler_fence};
--
-             let mut v = u32::MIN;
- 
-             core::assert_eq!(size_of::<u32>(), size_of::<T>());
-@@ -31,29 +36,16 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
- 
-             let ptr = self.as_ptr() as *mut u32;
- 
--            #[cfg(not(target_has_atomic = "32"))]
-             critical_section::with(|_| {
-                 let val = ptr.read_volatile();
-                 ptr.write_volatile(val | v);
-             });
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
--
--            #[cfg(target_has_atomic = "32")]
--            AtomicU32::from_ptr(ptr).fetch_or(v, Ordering::Relaxed);
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
-         }
+@@ -332,12 +332,21 @@ impl super::LPTimeDriver for RtcDriver {
      }
  
-     #[inline]
-     fn clear_bits(&self, f: impl FnOnce(&mut T)) {
-         unsafe {
--            #[cfg(target_has_atomic = "32")]
--            use core::sync::atomic::{AtomicU32, Ordering, compiler_fence};
--
-             let mut v = u32::MAX;
+     fn resume_time(&self, cs: CriticalSection) {
+-        assert!(!regs_gp16().cr1().read().cen());
++        let r = regs_gp16();
++        assert!(!r.cr1().read().cen());
  
-             core::assert_eq!(size_of::<u32>(), size_of::<T>());
-@@ -63,20 +55,10 @@ impl<T: Copy, A: Read + Write> AtomicModify<T> for Reg<T, A> {
+         let now = crate::rtc::stop_wakeup_alarm(cs);
+         self.set_time(now.map_or(self.now(), |now| now.as_ticks()), cs);
  
-             let ptr = self.as_ptr() as *mut u32;
- 
--            #[cfg(not(target_has_atomic = "32"))]
-             critical_section::with(|_| {
-                 let val = ptr.read_volatile();
-                 ptr.write_volatile(val & v);
-             });
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
--
--            #[cfg(target_has_atomic = "32")]
--            AtomicU32::from_ptr(ptr).fetch_and(v, Ordering::Relaxed);
--
--            #[cfg(target_has_atomic = "32")]
--            compiler_fence(Ordering::Release);
-         }
-     }
- }
-```
-
-**File**: `embassy-stm32/src/hsem/mod.rs` (modified, +110/-28)
-```diff
-@@ -2,7 +2,7 @@
- 
- use core::future::poll_fn;
- use core::marker::PhantomData;
--use core::sync::atomic::{Ordering, compiler_fence};
-+use core::sync::atomic::{AtomicBool, Ordering, compiler_fence};
- use core::task::Poll;
- 
- use critical_section::CriticalSection;
-@@ -14,7 +14,7 @@ use interrupt::typelevel::Interrupt;
- // The nonsecure lock/listen flow used here is compatible with the common
- // semaphore interface and remains usable across WBA52/54/55/65 families.
- use crate::Peri;
--use crate::atomic::{ActiveInterrupt, InterruptRegister};
-+use crate::atomic::{ActiveInterrupt, AtomicClear, InterruptRegister};
- use crate::cpu::CoreId;
- use crate::pac::common::{RW, Reg};
- use crate::peripherals::HSEM;
-@@ -58,22 +58,31 @@ pub struct HardwareSemaphoreInterruptHandler<T: Instance> {
- impl<T: Instance> interrupt::typelevel::Handler<T::Interrupt> for HardwareSemaphoreInterruptHandler<T> {
-     unsafe fn on_interrupt() {
-         let core = CoreId::current();
--        // Get pending semaphore bits from masked ISR for the current core
-+        // Get pending notification flags for the current core.
-         let mut pending = T::regs().misr(core.to_index().into()).read().0;
- 
--        T::regs().ier(core.to_index().into()).modify(|w| {
--            while pending != 0 {
--                // Index of lowest set bit
--                let n = pending.trailing_zeros() as u8;
--
--                // Clear lowest set bit.
--                // Safe when pending != 0 enforced by while predicate
--                pending &= pending - 1;
--
--                w.set_ise(n.into(), false);
-+        // Consume the flags with HSEM_CnICR. The interrupt line follows the
-+        // latched masked status, which only this clear releases: masking
-+        // HSEM_CnIER does not deassert the line, so without this the handler
-+        // would re-enter forever and starve the tasks that are supposed to
-+        // consume the notification.
-+        T::regs().icr(core.to_index().into()).write(|w| w.0 = pending);
+-        regs_gp16().cr1().modify(|w| w.set_cen(true));
++        // The restored period and counter already account for any pending rollover.
++        // Clear its flags while the timer is stopped, preserving the alarm flag.
++        r.sr().write(|w| {
++            w.0 = 0xFFFF_FFFF; // Status flags are write-zero-to-clear.
++            w.set_uif(false);
++            w.set_ccif(0, false);
++        });
 +
-+        while pending != 0 {
-+            // Index of lowest set bit
-+            let n = pending.trailing_zeros() as u8;
-+
-+            // Clear lowest set bit.
-+            // Safe when pending != 0 enforced by while predicate
-+            pending &= pending - 1;
-+
-+            if (n as usize) < CHANNELS {
-+                // Latch the notification before waking: the wake is lost if the
-+                // listener has not registered its waker yet.
-+                T::state().flag_for(n).store(true, Ordering::Relaxed);
-                 T::state().waker_for(n).wake();
-             }
--        });
-+        }
++        r.cr1().modify(|w| w.set_cen(true));
      }
  }
  
-@@ -181,35 +190,46 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-         self.unlock(0);
-     }
- 
--    /// Blocking poll for semaphore interrupt flag
-+    /// Blocking wait for a notification on this semaphore channel.
-+    ///
-+    /// A notification sent by [`Self::blocking_notify`] or [`Self::unlock`] on the
-+    /// other core is not lost if it was sent before this call: if one is already
-+    /// pending it is consumed and this returns immediately. Otherwise this waits
-+    /// for the next notification and consumes it.
-     pub fn blocking_listen(&mut self) {
-         let core = CoreId::current();
- 
--        // Clear the interrupt
--        T::regs()
--            .icr(core.to_index().into())
--            .write(|w| w.set_isc(self.index.into(), true));
-+        // Wait for a notification to be pending. It is only consumed once it has
-+        // been observed: consuming it before waiting would drop a notification
-+        // that was already pending (e.g. when this core starts after the other
-+        // core has already notified).
-+        while !self.take_notification(core) {}
- 
--        // Wait for the semaphore interrupt flag
--        while !T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {}
-+        cortex_m::asm::dmb();
-     }
- 
--    /// Asynchronous listen for a notification interrupt when this semaphore channel is unlocked
-+    /// Asynchronous wait for a notification on this semaphore channel.
-+    ///
-+    /// A notification sent by [`Self::blocking_notify`] or [`Self::unlock`] on the
-+    /// other core is not lost if it was sent before this call: if one is already
-+    /// pending it is consumed and this returns immediately. Otherwise this waits
-+    /// for the next notification and consumes it.
-     pub async fn listen(&mut self) {
-         let _scoped_wake_guard = T::RCC_INFO.wake_guard();
-         let core = CoreId::current();
- 
--        let _irq = self.clear_and_enable_interupt(core);
--        // Wait for the semaphore interrupt flag
-+        // Enable the notification interrupt without clearing a pending
-+        // notification first: the notification is consumed below when it is
-+        // observed, so one that was already sent is not lost.
-+        let _irq = self.enable_interupt(core);
-+
-         poll_fn(|cx| {
-             T::state().waker_for(self.index).register(cx.w
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +46/-4)
-```diff
-@@ -681,12 +681,21 @@ mod dual_core {
-     /// This should only be called once at startup, otherwise it panics.
-     ///
-     /// A hardware semaphore is used to coordinate the init with the second core.
-+    /// The notification sent at the end of this function is a level, not an event:
-+    /// a secondary core that starts (or restarts) after this function has completed
-+    /// observes it immediately. Any stale notification from a previous run of this
-+    /// core is discarded before the hardware is initialized, so a secondary core
-+    /// cannot mistake it for this run's notification.
-     pub fn init_primary(config: Config, shared_data: &'static MaybeUninit<SharedData>) -> Peripherals {
-         let shared_data = unsafe { shared_data.assume_init_ref() };
- 
-         // Enable hardware semaphore.
-         critical_section::with(|cs| crate::hsem::init_hsem(cs, true));
- 
-+        // Discard any notification left over from a previous run of this core (e.g.
-+        // when restarting only this core under a debugger).
-+        hsem::get_hsem(1).clear_notification();
-+
-         #[cfg(stm32h7)]
-         {
-             use stm32_metapac::RCC;
-@@ -713,18 +722,47 @@ mod dual_core {
-     /// Try to initialize the `embassy-stm32` HAL based on the init done by the other core using [init_primary].
-     ///
-     /// This returns the peripheral singletons that can be used for creating drivers if the other core is done with its init.
--    /// If the other core is not done yet, this will return `None`.
-+    /// If the other core is not done yet, this will return `None`. It never blocks:
-+    /// call it repeatedly (as [init_secondary] does) until it returns `Some`.
-     ///
--    /// This should only be called once at startup, otherwise it may panic.
-+    /// The notification from the other core is consumed as a level rather than an
-+    /// event, so this core can be restarted (e.g. under a debugger) while the other
-+    /// core keeps running, and still proceed.
-+    ///
-+    /// This can only succeed once per boot, otherwise it may panic.
-     ///
-     /// A hardware semaphore is used to coordinate the init with the second core.
-     pub fn try_init_secondary(shared_data: &'static MaybeUninit<SharedData>) -> Option<Peripherals> {
-+        // The HSEM peripheral must be clocked before its registers can be used.
-+        //
-+        // On families where each core has its own RCC enable registers this core
-+        // can safely enable it. On families where the RCC enable registers are
-+        // shared between the cores (STM32H7), doing so here would race with the
-+        // other core's clock setup: critical sections are core-local and do not
-+        // synchronize across cores, so a concurrent read-modify-write could drop
-+        // either side's enable bit and leave the peripheral unclocked. Instead,
-+        // wait for `init_primary`, which enables the HSEM peripheral before
-+        // anything else, to clock it.
-+        #[cfg(stm32wl5x)]
-         critical_section::with(|cs| {
-             rcc::enable_with_cs_no_refcount::<peripherals::HSEM>(cs);
-         });
- 
--        // Wait for the semaphore to be unlocked by the primary core
--        hsem::get_hsem(1).blocking_listen();
-+        #[cfg(not(stm32wl5x))]
-+        if !rcc::is_enabled::<peripherals::HSEM>() {
-+            return None;
-+        }
-+
-+        // Wait for the primary core to complete its init. The notification is not
-+        // consumed here, so a notification sent before this call (or before this
-+        // core was restarted) is not lost.
-+        if !hsem::get_hsem(1).is_notified() {
-+            return None;
-+        }
-+
-+        // Ensure the notification is observed before the shared data written by
-+        // the other core is read.
-+        cortex_m::asm::dmb();
- 
-         let shared_data = unsafe { shared_data.assume_init_ref() };
- 
-@@ -736,6 +774,10 @@ mod dual_core {
-     /// This returns the peripheral singletons that can be used for creating drivers when the other core is done with its init.
-     /// If the other core is not done yet, this will spinloop wait on it.
-     ///
-+    /// This can be called again if this core is restarted while the other core
-+    /// keeps running; the notification from [init_primary] is not consumed, so a
-+    /// restart does not miss it.
-+    ///
-     /// This should only be called once at startup, otherwise it may panic.
-     ///
-     /// The `shared_data` is used to coordinate the init with the second core. Read the [SharedData] docs
-```
-
-**File**: `embassy-stm32/src/rcc/mod.rs` (modified, +20/-0)
-```diff
-@@ -372,6 +372,16 @@ impl RccInfo {
-         self.enable_with_cs_inner(cs, true);
-     }
- 
-+    /// Returns whether the peripheral clock is currently enabled.
-+    ///
-+    /// This only reads the RCC enable register, so unlike `enable_with_cs` it is
-+    /// safe to call concurrently with the other core's own clock setup.
-+    #[allow(dead_code)]
-+    pub(crate) fn is_enabled(&self) -> bool {
-+        // TODO: should this be `unsafe`?
-+        unsafe { self.enable_ptr().read_volatile() & 1u32 << self.enable_bit != 0 }
-+    }
-+
-     // TODO: should this be `unsafe`?
-     fn enable_with_cs_inner(&self, cs: CriticalSection, no_refcount: bool) {
-         // set the xxxEN bit
-@@ -647,6 +657,16 @@ pub(crate) fn enable_with_cs_no_refcount<T: RccPeripheral>(cs: CriticalSection)
-     T::RCC_INFO.enable_with_cs_no_refcount(cs);
- }
- 
-+/// Returns whether the peripheral clock of `T` is currently enabled.
-+///
-+/// Unlike [`enable_with_cs_no_refcount`], this does not write to the (possibly
-+/// shared) RCC enable register, so it is safe to use while the other core is
-+/// concurrently enabling its own peripherals.
-+#[allow(dead_code)]
-+pub(crate) fn is_enabled<T: RccPeripheral>() -> bool {
-+    T::RCC_INFO.is_enabled()
-+}
-+
- /// Enables and clears the reset for peripheral `T`.
- ///
- /// # Safety
-```
-
-**File**: `tests/stm32/Cargo.toml` (modified, +6/-1)
-```diff
-@@ -21,7 +21,7 @@ stm32g071rb = ["embassy-stm32/stm32g071rb", "stop", "jiff", "cm0", "not-gpdma",
- stm32g491re = ["embassy-stm32/stm32g491re", "stop", "jiff", "not-gpdma", "rng", "fdcan", "cordic", "adc"]
- stm32h563zi = ["embassy-stm32/stm32h563zi", "stop", "spi-v345", "jiff", "eth", "rng", "fdcan", "hash-v34", "cordic", "adc", "edata"]
- stm32h753zi = ["embassy-stm32/stm32h753zi", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "rng", "fdcan", "hash", "cryp", "adc", "mem2mem", "mem2mem-dma", "mem2mem-mdma"]
--stm32h755zi = ["embassy-stm32/stm32h755zi-cm7", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "dac", "rng", "fdcan", "hash", "cryp", "adc"]
-+stm32h755zi = ["embassy-stm32/stm32h755zi-cm7", "not-stop", "spi-v345", "jiff", "not-gpdma", "eth", "dac", "rng", "fdcan", "hash", "cryp", "adc", "hsem"]
- stm32h7a3zi = ["embassy-stm32/stm32h7a3zi", "not-stop", "spi-v345", "not-gpdma", "rng", "fdcan", "adc"]
- stm32h723zg = ["embassy-stm32/stm32h723zg", "not-stop", "spi-v345", "jiff", "not-gpdma", "dac", "rng", "fdcan", "cordic", "adc", "adc-b", "mem2mem", "mem2mem-dma", "mem2mem-mdma"]
- stm32l073rz = ["embassy-stm32/stm32l073rz", "stop", "jiff", "cm0", "not-gpdma", "rng", "eeprom", "adc"]
-@@ -274,6 +274,11 @@ name = "hsem"
- path = "src/bin/hsem.rs"
- required-features = [ "hsem",]
- 
-+[[bin]]
-+name = "hsem_notify"
-+path = "src/bin/hsem_notify.rs"
-+required-features = [ "hsem",]
-+
- [[bin]]
- name = "i2s_dma"
- path = "src/bin/i2s_dma.rs"
-```
-
-**File**: `tests/stm32/src/bin/hsem.rs` (modified, +6/-0)
-```diff
-@@ -11,6 +11,12 @@ use embassy_stm32::bind_interrupts;
- use embassy_stm32::hsem::{HardwareSemaphore, HardwareSemaphoreInterruptHandler};
- use embassy_stm32::peripherals::HSEM;
- 
-+#[cfg(feature = "stm32h755zi")]
-+bind_interrupts!(struct Irqs{
-+    HSEM1 => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[cfg(not(feature = "stm32h755zi"))]
- bind_interrupts!(struct Irqs{
-     HSEM => HardwareSemaphoreInterruptHandler<HSEM>;
- });
-```
-
-**File**: `tests/stm32/src/bin/hsem_notify.rs` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+// required-features: hsem
-+
-+//! HSEM notify/listen regression test for issue #7609.
-+//!
-+//! `blocking_listen` and `listen` used to clear the notification flag *before*
-+//! waiting for it, so a notification sent before the call was lost and the waiter
-+//! blocked forever. The dual-core init handshake deadlocks on this: `init_secondary`
-+//! waits on a notification that `init_primary` may have sent long before, e.g. when
-+//! the secondary core is started or restarted under a debugger while the primary
-+//! core keeps running.
-+//!
-+//! This exercises the same `blocking_listen`/`is_notified` primitives that
-+//! `init_secondary` uses. (The handshake itself needs both cores running, which the
-+//! HIL farm cannot do; `init_primary` is covered by `common::init()` on this board.)
-+#![no_std]
-+#![no_main]
-+
-+#[path = "../common.rs"]
-+mod common;
-+
-+use common::*;
-+use embassy_executor::Spawner;
-+use embassy_stm32::bind_interrupts;
-+use embassy_stm32::hsem::{HardwareSemaphore, HardwareSemaphoreChannel, HardwareSemaphoreInterruptHandler};
-+use embassy_stm32::peripherals::HSEM;
-+use embassy_time::{Duration, Timer, with_timeout};
-+
-+teleprobe_meta::timeout!(30);
-+
-+#[cfg(feature = "stm32h755zi")]
-+bind_interrupts!(struct Irqs {
-+    HSEM1 => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[cfg(not(feature = "stm32h755zi"))]
-+bind_interrupts!(struct Irqs {
-+    HSEM => HardwareSemaphoreInterruptHandler<HSEM>;
-+});
-+
-+#[embassy_executor::task]
-+async fn notify_later(mut ch: HardwareSemaphoreChannel<'static, HSEM>) {
-+    Timer::after_millis(100).await;
-+    info!("notifier: notifying");
-+    ch.blocking_notify();
-+}
-+
-+#[embassy_executor::main(executor = "common::Executor", entry = "cortex_m_rt::entry")]
-+async fn main(spawner: Spawner) {
-+    let p: embassy_stm32::Peripherals = init();
-+    let hsem = HardwareSemaphore::new(p.HSEM, Irqs);
-+
-+    // Channel 5 is not used by the low-power CPU2 coordination channels (WB uses
-+    // 3/4, WL uses 3). `split` returns channels with a caller-chosen lifetime, so
-+    // a copy can be moved into the notifier task.
-+    let mut ch: HardwareSemaphoreChannel<'static, HSEM> =
-+        hsem.split().into_iter().find(|ch| ch.channel() == 5).unwrap();
-+    ch.clear_notification();
-+
-+    // `is_notified` is a level: observing it does not consume the notification.
-+    // The init handshake relies on this so the secondary core can be restarted
-+    // under a debugger without losing the notification of `init_primary`.
-+    info!("level: notify, observe twice, clear");
-+    ch.blocking_notify();
-+    defmt::assert!(ch.is_notified());
-+    defmt::assert!(ch.is_notified());
-+    ch.clear_notification();
-+    defmt::assert!(!ch.is_notified());
-+
-+    // A notification sent *before* `listen()` must be consumed by it, not dropped.
-+    // (This also covers arming the notification interrupt while the status flag
-+    // is already set, which used to livelock the interrupt handler.)
-+    info!("async: notification sent before listen is not lost");
-+    ch.blocking_notify();
-+    if with_timeout(Duration::from_secs(5), ch.listen()).await.is_err() {
-+        defmt::panic!("listen() did not consume the pending notification");
-+    }
-+    defmt::assert!(!ch.is_notified());
-+
-+    // A notification sent while `listen()` is waiting must wake it (interrupt
-+    // handler path).
-+    info!("async: notification sent while listen is waiting");
-+    let notifier = ch;
-+    spawner.spawn(notify_later(notifier).unwrap());
-+    if with_timeout(Duration::from_secs(5), ch.listen()).await.is_err() {
-+        defmt::panic!("listen() was not woken by a later notification");
-+    }
-+    defmt::assert!(!ch.is_notified());
-+
-+    // Same for the blocking variant that `init_secondary` waits on. On regression
-+    // this hangs and the teleprobe job times out.
-+    info!("blocking: notification sent before blocking_listen is not lost");
-+    ch.blocking_notify();
-+    defmt::assert!(ch.is_notified());
-+    ch.blocking_listen();
-+    defmt::assert!(!ch.is_notified());
-+
-+    info!("Test OK");
-+    cortex_m::asm::bkpt();
-+}
 ```
 
 ---
 
-### Incident Patch 3: `fd0d2e31` (2026-11-21)
-**Commit Message**: stm32/hsem: fix lost notifications and secondary core boot deadlock
+### Incident Patch 3: `ab9619b5` (2026-11-22)
+**Commit Message**: nrf54: Fix RRAM size
 
-`blocking_listen` (and async `listen`) cleared the interrupt flag before
-waiting for it. A notification sent before the call was therefore dropped:
-when the secondary core reached `init_secondary` after the primary core had
-already completed `init_primary` (e.g. when starting or restarting the
-secondary core under a debugger), `blocking_listen` cleared the latched
-notification and then waited forever (issue #7609).
-
-Consume the notification after observing it instead of before waiting for
-it, so an already pending notification returns immediately. In `listen`,
-also wait on the unmasked interrupt status: the interrupt handler disables
-the interrupt in HSEM_IER before waking, so the masked status could read as
-clear while a notification was still pending.
-
-Make the dual-core init handshake robust to the core start order:
-
-- `init_primary` discards stale notifications from a previous run of the
-  core before initializing, so a secondary core cannot mistake one for the
-  notification of the current run.
-- `init_secondary`/`try_init_secondary` observe the notification as a
-  level (`is_notified`) instead of consuming i
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +7/-0)
+**File**: `embassy-nrf/src/chips/nrf54lm20_app.rs` (modified, +2/-2)
 ```diff
-@@ -20,6 +20,13 @@ PAC:
- Atomic:
- - fix: stm32/atomic: make `AtomicClear::clear` atomic on targets without 8-bit atomic RMW (thumbv6m)
+@@ -203,9 +203,9 @@ pub mod pac {
  
-+HSEM:
-+- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The interrupt flag is now consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
-+- fix: stm32/hsem: `listen` waits on the unmasked interrupt status instead of the masked one. The interrupt handler disables the interrupt in `HSEM_IER` before waking, so the masked status could read as clear while a notification was still pending and the future would never complete.
-+- feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification flag without consuming it.
-+- fix: stm32: `init_primary` discards a stale HSEM notification from a previous run of the core before initializing the hardware, and `init_secondary`/`try_init_secondary` treat the notification as a level rather than an event. The secondary core can now be started (or restarted under a debugger) in any order relative to the primary core without deadlocking or consuming a stale notification.
-+- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
-+
- SUBGHZ:
- - feat: stm32/subghz: add a driver for the on-chip sub-GHz radio of STM32WL and STM32WLE5 (`SubghzSpi`, `SubghzControl`). It covers the dedicated `SUBGHZSPI`, radio reset, `RFBUSY` waiting and the `SUBGHZ_RADIO` interrupt. The driver does not wrap the radio's command set: the caller sends the commands.
- - feat: stm32/subghz: `SubghzControl::wait_on_busy_timeout` bounds the `RFBUSY` wait, `SubghzControl::wakeup` wakes the radio from sleep, and `SubghzControl::set_wakeup_sources` lets a radio interrupt or `RFBUSY` wake the CPU from Standby.
-```
-
-**File**: `embassy-stm32/src/hsem/mod.rs` (modified, +64/-9)
-```diff
-@@ -181,32 +181,56 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-         self.unlock(0);
-     }
+ pub const FORCE_COPY_BUFFER_SIZE: usize = 1024;
  
--    /// Blocking poll for semaphore interrupt flag
-+    /// Blocking wait for a notification on this semaphore channel.
-+    ///
-+    /// A notification sent by [`Self::blocking_notify`] or [`Self::unlock`] on the
-+    /// other core is not lost if it was sent before this call: if one is already
-+    /// pending it is consumed and this returns immediately. Otherwise this waits
-+    /// for the next notification and consumes it.
-     pub fn blocking_listen(&mut self) {
-         let core = CoreId::current();
+-// 2 MB NVM
++// 2036 KB usable RRAM
+ #[allow(unused)]
+-pub const FLASH_SIZE: usize = 2048 * 1024;
++pub const FLASH_SIZE: usize = 2036 * 1024;
  
--        // Clear the interrupt
-+        // Wait for the semaphore interrupt flag. It is only cleared once it has
-+        // been observed: clearing it before waiting would drop a notification that
-+        // was already pending (e.g. when this core starts after the other core has
-+        // already notified).
-+        while !T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {}
-+
-+        cortex_m::asm::dmb();
-+
-+        // Consume the notification.
-         T::regs()
-             .icr(core.to_index().into())
-             .write(|w| w.set_isc(self.index.into(), true));
--
--        // Wait for the semaphore interrupt flag
--        while !T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {}
-     }
- 
--    /// Asynchronous listen for a notification interrupt when this semaphore channel is unlocked
-+    /// Asynchronous wait for a notification on this semaphore channel.
-+    ///
-+    /// A notification sent by [`Self::blocking_notify`] or [`Self::unlock`] on the
-+    /// other core is not lost if it was sent before this call: if one is already
-+    /// pending it is consumed and this returns immediately. Otherwise this waits
-+    /// for the next notification and consumes it.
-     pub async fn listen(&mut self) {
-         let _scoped_wake_guard = T::RCC_INFO.wake_guard();
-         let core = CoreId::current();
- 
--        let _irq = self.clear_and_enable_interupt(core);
--        // Wait for the semaphore interrupt flag
-+        // Enable the notification interrupt without clearing a pending
-+        // notification first: the notification is consumed below when it is
-+        // observed, so one that was already sent is not lost.
-+        let _irq = self.enable_interupt(core);
-+
-         poll_fn(|cx| {
-             T::state().waker_for(self.index).register(cx.waker());
- 
-             compiler_fence(Ordering::SeqCst);
- 
--            if T::regs().misr(core.to_index().into()).read().misf(self.index.into()) {
-+            // Check the unmasked status flag: the interrupt handler disables the
-+            // interrupt in HSEM_IER before waking, so the masked status may read
-+            // as clear while a notification is still pending.
-+            if T::regs().isr(core.to_index().into()).read().isf(self.index.into()) {
-+                cortex_m::asm::dmb();
-+
-+                // Consume the notification.
-                 T::regs()
-                     .icr(core.to_index().into())
-                     .write(|w| w.set_isc(self.index.into(), true));
-@@ -219,6 +243,30 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-         .await;
-     }
- 
-+    /// Returns whether a notification is pending on this semaphore channel.
-+    ///
-+    /// Unlike [`Self::blocking_listen`] and [`Self::listen`], this does not consume
-+    /// the notification: it stays pending until [`Self::clear_notification`] is
-+    /// called. This makes it usable as a persistent "the other core has notified"
-+    /// level, which survives restarting this core.
-+    pub fn is_notified(&self) -> bool {
-+        let core = CoreId::current();
-+
-+        T::regs().isr(core.to_index().into()).read().isf(self.index.into())
-+    }
-+
-+    /// Clear a pending notification on this semaphore channel.
-+    ///
-+    /// A notification is broadcast: unlocking the channel latches the interrupt
-+    /// flag in the status register of every core. This clears the flag for all
-+    /// cores, discarding a pending notification even if the other core has not
-+    /// observed it yet.
-+    pub fn clear_notification(&mut self) {
-+        for bank in [0, 1] {
-+            T::regs().icr(bank).write(|w| w.set_isc(self.index.into(), true));
-+        }
-+    }
-+
-     /// Clear interrupts for this semaphore and return an active interrupt
-     #[inline]
-     fn clear_and_enable_interupt(
-@@ -229,6 +277,13 @@ impl<'a, T: Instance> HardwareSemaphoreChannel<'a, T> {
-             .icr(core.to_index().into())
-             .write(|w| w.set_isc(self.index.into(), true));
- 
-+        self.enable_interupt(core)
-+    }
-+
-+    /// Enable interrupts for this semaphore and return an active interrupt,
-+    /// without clearing a pending notification
-+    #[inline]
-+    fn enable_interupt(&self, core: CoreId) -> ActiveInterrupt<Reg<pac::hsem::regs::Ier, RW>, pac::hsem::regs::Ier> {
-         T::regs()
-             .ier(core.to_index().into(
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +46/-4)
-```diff
-@@ -681,12 +681,21 @@ mod dual_core {
-     /// This should only be called once at startup, otherwise it panics.
-     ///
-     /// A hardware semaphore is used to coordinate the init with the second core.
-+    /// The notification sent at the end of this function is a level, not an event:
-+    /// a secondary core that starts (or restarts) after this function has completed
-+    /// observes it immediately. Any stale notification from a previous run of this
-+    /// core is discarded before the hardware is initialized, so a secondary core
-+    /// cannot mistake it for this run's notification.
-     pub fn init_primary(config: Config, shared_data: &'static MaybeUninit<SharedData>) -> Peripherals {
-         let shared_data = unsafe { shared_data.assume_init_ref() };
- 
-         // Enable hardware semaphore.
-         critical_section::with(|cs| crate::hsem::init_hsem(cs, true));
- 
-+        // Discard any notification left over from a previous run of this core (e.g.
-+        // when restarting only this core under a debugger).
-+        hsem::get_hsem(1).clear_notification();
-+
-         #[cfg(stm32h7)]
-         {
-             use stm32_metapac::RCC;
-@@ -713,18 +722,47 @@ mod dual_core {
-     /// Try to initialize the `embassy-stm32` HAL based on the init done by the other core using [init_primary].
-     ///
-     /// This returns the peripheral singletons that can be used for creating drivers if the other core is done with its init.
--    /// If the other core is not done yet, this will return `None`.
-+    /// If the other core is not done yet, this will return `None`. It never blocks:
-+    /// call it repeatedly (as [init_secondary] does) until it returns `Some`.
-     ///
--    /// This should only be called once at startup, otherwise it may panic.
-+    /// The notification from the other core is consumed as a level rather than an
-+    /// event, so this core can be restarted (e.g. under a debugger) while the other
-+    /// core keeps running, and still proceed.
-+    ///
-+    /// This can only succeed once per boot, otherwise it may panic.
-     ///
-     /// A hardware semaphore is used to coordinate the init with the second core.
-     pub fn try_init_secondary(shared_data: &'static MaybeUninit<SharedData>) -> Option<Peripherals> {
-+        // The HSEM peripheral must be clocked before its registers can be used.
-+        //
-+        // On families where each core has its own RCC enable registers this core
-+        // can safely enable it. On families where the RCC enable registers are
-+        // shared between the cores (STM32H7), doing so here would race with the
-+        // other core's clock setup: critical sections are core-local and do not
-+        // synchronize across cores, so a concurrent read-modify-write could drop
-+        // either side's enable bit and leave the peripheral unclocked. Instead,
-+        // wait for `init_primary`, which enables the HSEM peripheral before
-+        // anything else, to clock it.
-+        #[cfg(stm32wl5x)]
-         critical_section::with(|cs| {
-             rcc::enable_with_cs_no_refcount::<peripherals::HSEM>(cs);
-         });
- 
--        // Wait for the semaphore to be unlocked by the primary core
--        hsem::get_hsem(1).blocking_listen();
-+        #[cfg(not(stm32wl5x))]
-+        if !rcc::is_enabled::<peripherals::HSEM>() {
-+            return None;
-+        }
-+
-+        // Wait for the primary core to complete its init. The notification is not
-+        // consumed here, so a notification sent before this call (or before this
-+        // core was restarted) is not lost.
-+        if !hsem::get_hsem(1).is_notified() {
-+            return None;
-+        }
-+
-+        // Ensure the notification is observed before the shared data written by
-+        // the other core is read.
-+        cortex_m::asm::dmb();
- 
-         let shared_data = unsafe { shared_data.assume_init_ref() };
- 
-@@ -736,6 +774,10 @@ mod dual_core {
-     /// This returns the peripheral singletons that can be used for creating drivers when the other core is done with its init.
-     /// If the other core is not done yet, this will spinloop wait on it.
-     ///
-+    /// This can be called again if this core is restarted while the other core
-+    /// keeps running; the notification from [init_primary] is not consumed, so a
-+    /// restart does not miss it.
-+    ///
-     /// This should only be called once at startup, otherwise it may panic.
-     ///
-     /// The `shared_data` is used to coordinate the init with the second core. Read the [SharedData] docs
-```
-
-**File**: `embassy-stm32/src/rcc/mod.rs` (modified, +20/-0)
-```diff
-@@ -372,6 +372,16 @@ impl RccInfo {
-         self.enable_with_cs_inner(cs, true);
-     }
- 
-+    /// Returns whether the peripheral clock is currently enabled.
-+    ///
-+    /// This only reads the RCC enable register, so unlike `enable_with_cs` it is
-+    /// safe to call concurrently with the other core's own clock setup.
-+    #[allow(dead_code)]
-+    pub(crate) fn is_enabled(&self) -> bool {
-+        // TODO: should this be `unsafe`?
-+        unsafe { self.enable_ptr().read_volatile() & 1u32 << self.enable_bit != 0 }
-+    }
-+
-     // TODO: should this be `unsafe`?
-     fn enable_with_cs_inner(&self, cs: CriticalSection, no_refcount: bool) {
-         // set the xxxEN bit
-@@ -647,6 +657,16 @@ pub(crate) fn enable_with_cs_no_refcount<T: RccPeripheral>(cs: CriticalSection)
-     T::RCC_INFO.enable_with_cs_no_refcount(cs);
- }
- 
-+/// Returns whether the peripheral clock of `T` is currently enabled.
-+///
-+/// Unlike [`enable_with_cs_no_refcount`], this does not write to the (possibly
-+/// shared) RCC enable register, so it is safe to use while the other core is
-+/// concurrently enabling its own peripherals.
-+#[allow(dead_code)]
-+pub(crate) fn is_enabled<T: RccPeripheral>() -> bool {
-+    T::RCC_INFO.is_enabled()
-+}
-+
- /// Enables and clears the reset for peripheral `T`.
- ///
- /// # Safety
+ embassy_hal_internal::peripherals! {
+     // USB
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7613** (closed): mcxa5xx/rtc: wait out STATUS resync before unlock (@gjpmsft)
-- **PR #7612** (2026-11-21): stm32/hsem: fix lost notifications and secondary core boot deadlock (@xoviat)
-- **PR #7605** (2026-11-20): embassy-usb: upgrade UVC class to UVC 1.5 (@leftger)
-- **PR #7604** (2026-11-20): embassy-usb: add MTP (Media Transfer Protocol) device class (@leftger)
-- **PR #7602** (2026-11-20): stm32/npu: run streaming-engine epochs (@leftger)
-- **PR #7599** (2026-11-19): stm32: update metapac (@Dirbaio)
+- **PR #7627** (2026-11-23): net: update xarxa (@Dirbaio)
+- **PR #7624** (2026-11-23): embassy-usb: add CDC-ACM `SEND_BREAK` support (@joelsa)
+- **PR #7623** (2026-11-23): embassy-nrf: Fix RRAM size for the nrf54LM20 (@arihant2math)
+- **PR #7622** (2026-11-22): stm32/ucpd: fix transmitting after a cancelled transmission or Hard Reset (@Finomnis)
+- **PR #7621** (2026-11-22): stm32: fix `Instant` jumping forward after STOP mode in `low-power` time-driver (@decaday)
+- **PR #7620** (2026-11-22): Fix USB HID examples to use Report protocol by default (@photomultiplier)
 
 ---
 
@@ -2660,35 +1570,33 @@ Make the dual-core init handshake robust to the core start order:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW
+## X. Empirical Invariant Guard in nrf54lm20_app.rs
 
 **RULE**:
-When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-nrf/src/chips/nrf54lm20_app.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f0e5b86`: stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cc46e55`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-nrf/src/chips/nrf54lm20_app.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- fix: stm32/atomic: `Reg::set_bits`/`clear_bits` (used by the HSEM, IPCC, I2C and SDMMC drivers) no longer use core atomics for the read-modify-write. `LDREX`/`STREX` on peripheral registers is UNPREDICTABLE on Armv7-M, and when the write re-arms an interrupt whose handler runs between the `LDREX` and the `STREX` the retry loop never terminates. The update is now done in a critical section.
-- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The notification is consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
-- fix: stm32/hsem: `HardwareSemaphoreInterruptHandler` now consumes the notification flags with `HSEM_CnICR` and latches them in software before waking. The latched masked status keeps the interrupt line asserted until the flags are cleared, so masking `HSEM_CnIER` (the old behavior) did not deassert it: arming the interrupt with a notification pending re-entered the handler forever, starving the tasks supposed to consume t
+// 2036 KB usable RRAM
+pub const FLASH_SIZE: usize = 2036 * 1024;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- fix: stm32/hsem: `blocking_listen` and `listen` no longer drop a notification that was sent before the call. The interrupt flag is now consumed after it has been observed instead of being cleared before waiting for it, which deadlocked `init_secondary` when the other core had already completed `init_primary` (e.g. when starting or restarting the secondary core under a debugger).
-- fix: stm32/hsem: `listen` waits on the unmasked interrupt status instead of the masked one. The interrupt handler disables the interrupt in `HSEM_IER` before waking, so the masked status could read as clear while a notification was still pending and the future would never complete.
-- feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification flag without consuming it.
+// 2 MB NVM
+pub const FLASH_SIZE: usize = 2048 * 1024;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f0e5b86` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cc46e55` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

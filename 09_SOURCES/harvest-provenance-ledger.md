@@ -12365,3 +12365,5 @@ Every entry in this ledger must capture:
 | `learn-github-fei-craft-ds-bot` | `https://github.com/Fei-Craft/DS-Bot` | `d104d9ca` | Multi-dimensional audit evidence | 2026-11-23T14:21:00.287Z |
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T14:21:02.414Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `e11ca719` | Multi-dimensional audit evidence | 2026-11-23T14:21:09.878Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T14:29:14.804Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `5fb737cd` | Multi-dimensional audit evidence | 2026-11-23T14:29:17.499Z |

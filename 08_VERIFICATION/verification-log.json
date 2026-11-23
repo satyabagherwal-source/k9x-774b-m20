@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-8MRI",
-    "timestamp": "2026-11-21T12:38:02.814Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-8RXD",
-    "timestamp": "2026-11-21T12:38:09.505Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-MB2U",
     "timestamp": "2026-11-21T12:48:40.854Z",
     "repository": "RecursiveSI/flint",
@@ -7490,6 +7460,36 @@
     "repository": "kamgurgul/cpu-info",
     "learningId": "learn-github-kamgurgul-cpu-info",
     "contentHash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-3C8G",
+    "timestamp": "2026-11-23T14:29:14.800Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "15f4b4ea8de989cc12d62f50d4027ed87cbc3a05d328a3e5ddb5050648433e24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-3EBB",
+    "timestamp": "2026-11-23T14:29:17.495Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

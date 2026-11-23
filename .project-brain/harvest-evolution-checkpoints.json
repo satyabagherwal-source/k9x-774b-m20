@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:21:16.439Z",
+  "last_updated": "2026-11-23T14:29:28.861Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T09:29:54.071Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-23T07:05:40.248Z",
+      "processed_at": "2026-11-23T14:29:27.565Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -908,7 +908,7 @@
       "staged_for_review": 0
     },
     "embassy-rs-embassy-learnings.md": {
-      "processed_at": "2026-11-22T01:32:33.671Z",
+      "processed_at": "2026-11-23T14:29:26.307Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2493,7 +2493,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-mpnet-base-v2-learnings.md": {
-      "processed_at": "2026-11-19T00:41:46.890Z",
+      "processed_at": "2026-11-23T14:29:27.118Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3768,7 +3768,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3387,
+  "total_dossiers_evaluated": 3390,
   "total_canonical_promoted": 484,
-  "total_staged_for_review": 2547
+  "total_staged_for_review": 2549
 }

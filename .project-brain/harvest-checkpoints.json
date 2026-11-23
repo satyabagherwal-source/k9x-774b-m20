@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T14:21:09.888Z",
+  "last_updated": "2026-11-23T14:29:17.509Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "633c97af718a002042872e62c511eded1c198283ca1274f58585f62c5ab0fae0",
-      "verified_at": "2026-11-19T00:41:06.264Z",
+      "content_hash": "15f4b4ea8de989cc12d62f50d4027ed87cbc3a05d328a3e5ddb5050648433e24",
+      "verified_at": "2026-11-23T14:29:14.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:41:06.264Z"
+      "last_updated": "2026-11-23T14:29:14.814Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "16e41f55a35454187bcffc944b75952f64a261bbe3f202aac855eaa34b864177",
-      "verified_at": "2026-11-22T01:32:23.546Z",
+      "content_hash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
+      "verified_at": "2026-11-23T14:29:17.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T01:32:23.546Z"
+      "last_updated": "2026-11-23T14:29:17.508Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",

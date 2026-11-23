@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "633c97af718a002042872e62c511eded1c198283ca1274f58585f62c5ab0fae0",
-    "lastHarvestedAt": "2026-11-19T00:41:06.257Z",
+    "contentHash": "15f4b4ea8de989cc12d62f50d4027ed87cbc3a05d328a3e5ddb5050648433e24",
+    "lastHarvestedAt": "2026-11-23T14:29:14.804Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "1c5f29e0",
+    "sourceVersion": "5fb737cd",
     "license": "Apache-2.0",
-    "contentHash": "16e41f55a35454187bcffc944b75952f64a261bbe3f202aac855eaa34b864177",
-    "lastHarvestedAt": "2026-11-22T01:32:23.538Z",
+    "contentHash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
+    "lastHarvestedAt": "2026-11-23T14:29:17.499Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

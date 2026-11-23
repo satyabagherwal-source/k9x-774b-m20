@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T14:21:16.104Z",
+  "last_updated": "2026-11-23T14:29:28.359Z",
   "total_records": 2421,
   "domains": {
     "A": {
@@ -8191,8 +8191,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b7c5e7a49dd12b75759cc81388209bb66d87b71155afd6fdc396ef79bd4a339f",
-      "created_at": "2026-11-23T07:05:41.202Z"
+      "content_hash": "564b67af73ef6713aa4681fde332a747c84169b3780e6235c91e9301adf3507f",
+      "created_at": "2026-11-23T14:29:28.359Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -10234,8 +10234,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "9eae6b1693aa8efacfb09c4ca655dc096e505f2b27315613f672d675a6b6f4a3",
-      "created_at": "2026-11-22T01:32:23.937Z"
+      "content_hash": "6c16bfbbd53583a3cfda320a63e12c9374c390f8e407919f3de34ee3bba1e899",
+      "created_at": "2026-11-23T14:29:17.930Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10279,8 +10279,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "97c0272ef74e371feede81854c4ccaa31e9f042d7ec505014c74b6a398ef96db",
-      "created_at": "2026-11-22T01:32:34.131Z"
+      "content_hash": "cdcfcc50db0bb00b7c90404e0c5860bad893d2b50d1c78ec326952e9dc91568e",
+      "created_at": "2026-11-23T14:29:26.755Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -14874,8 +14874,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/all-mpnet-base-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-research-knowledge-intelligence-sente.md",
       "repository": "sentence-transformers/all-mpnet-base-v2",
-      "content_hash": "5afd5b0a44f9f5e126e271d71f7212f85fbd8663d3c6bf12f9464ed80999c9ed",
-      "created_at": "2026-11-19T00:41:06.433Z"
+      "content_hash": "dce4b237afe1517704ace4f615688c00f38eb2ca8766b841ea8b33f63c7ce3c0",
+      "created_at": "2026-11-23T14:29:15.039Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
@@ -14934,8 +14934,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-mpnet-base-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-learnings-research-knowledge-intellig.md",
       "repository": "hf-sentence-transformers-all-mpnet-base-v2-learnings",
-      "content_hash": "70d5f3d1948e9a88510af9f53da47d5617ae12fc6b8bda4056e5c492f63237c2",
-      "created_at": "2026-11-19T00:41:47.100Z"
+      "content_hash": "eb53d5dda36edd74a91fac89ad9196495950bcc4bb71effd2b1bc4c00a0aede0",
+      "created_at": "2026-11-23T14:29:27.347Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",

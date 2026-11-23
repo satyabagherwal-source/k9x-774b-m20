@@ -12332,3 +12332,5 @@
 | `CYCLE-20261123-SQNV` | `2026-11-23T14:21:00.283Z` | `Fei-Craft/DS-Bot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10050` | Yes (`20e6f6a0...`) |
 | `CYCLE-20261123-SSAY` | `2026-11-23T14:21:02.410Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`70cbe293...`) |
 | `CYCLE-20261123-SY2A` | `2026-11-23T14:21:09.874Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`d915c223...`) |
+| `CYCLE-20261123-3C8G` | `2026-11-23T14:29:14.800Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`15f4b4ea...`) |
+| `CYCLE-20261123-3EBB` | `2026-11-23T14:29:17.495Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10051` | Yes (`a4025046...`) |

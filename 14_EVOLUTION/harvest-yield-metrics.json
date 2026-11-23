@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:21:09.884Z",
-  "total_cycles_completed": 11726,
-  "total_learnings_persisted": 11726,
-  "total_rules_promoted": 10886,
+  "last_updated": "2026-11-23T14:29:17.505Z",
+  "total_cycles_completed": 11728,
+  "total_learnings_persisted": 11728,
+  "total_rules_promoted": 10887,
   "history": [
-    {
-      "timestamp": "2026-11-22T16:57:22.516Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T16:57:25.052Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T16:57:29.350Z",
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T14:21:09.884Z",
       "repository": "kamgurgul/cpu-info",
       "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:29:14.810Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:29:17.505Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
