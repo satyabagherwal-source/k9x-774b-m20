@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T15:20:45.717Z",
+  "last_updated": "2026-11-23T15:29:07.770Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
-      "verified_at": "2026-11-23T06:14:24.635Z",
+      "content_hash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
+      "verified_at": "2026-11-23T15:29:05.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:14:24.635Z"
+      "last_updated": "2026-11-23T15:29:05.217Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6666,14 +6666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyzh-mini-lsm",
-      "content_hash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
-      "verified_at": "2026-11-07T18:57:18.851Z",
+      "content_hash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
+      "verified_at": "2026-11-23T15:29:07.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:57:18.851Z"
+      "last_updated": "2026-11-23T15:29:07.770Z"
     },
     "PaulLeCam/react-leaflet": {
       "repository": "PaulLeCam/react-leaflet",
@@ -19476,14 +19476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
-      "content_hash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
-      "verified_at": "2026-11-19T01:54:57.671Z",
+      "content_hash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
+      "verified_at": "2026-11-23T15:28:52.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:54:57.671Z"
+      "last_updated": "2026-11-23T15:28:52.458Z"
     },
     "inworld/voice-isolator": {
       "repository": "inworld/voice-isolator",

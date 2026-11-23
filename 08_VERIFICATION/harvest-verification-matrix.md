@@ -12349,3 +12349,6 @@
 | `CYCLE-20261123-NBCJ` | `2026-11-23T15:12:46.387Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10058` | Yes (`dc9e1791...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T15:13:16.123Z` | `hf-tenstrip-10eros-max` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-864519D2` [Domain D] | Yes (`e984ae6b...`) |
 | `CYCLE-20261123-XL6X` | `2026-11-23T15:20:45.705Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`ac9cd589...`) |
+| `CYCLE-20261123-80RH` | `2026-11-23T15:28:52.445Z` | `akhaliq/MiniMax-H3-Image-Character-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md` | Yes (`c91a311f...`) |
+| `CYCLE-20261123-8ALX` | `2026-11-23T15:29:05.205Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10059` | Yes (`c8c4a18f...`) |
+| `CYCLE-20261123-8CKT` | `2026-11-23T15:29:07.757Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10060` | Yes (`36b424e6...`) |

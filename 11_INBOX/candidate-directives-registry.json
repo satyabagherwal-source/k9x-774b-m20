@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:20:59.156Z",
+  "last_updated": "2026-11-23T15:29:13.424Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49538,6 +49538,46 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-16DEDF-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-8FPJ",
+      "directive_title": ".github/workflows: give golangci-lint its own Go build cache",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8FPJ-github-workflows-give-golangci-lint-its-own-go-build-cache.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-8GY6",
+      "directive_title": "Add the Built with Raft badge to the README",
+      "source_repo": "skyzh-mini-lsm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8GY6-add-the-built-with-raft-badge-to-the-readme.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-0FE27A",
+      "directive_title": ".github/workflows: give golangci-lint its own Go build cache",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FE27A--github-workflows-give-golangci-lint-its.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-C9C270",
+      "directive_title": "Add the Built with Raft badge to the README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "skyzh-mini-lsm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C9C270-add-the-built-with-raft-badge-to-the-rea.md",
       "staged_date": "2026-11-23"
     }
   ]

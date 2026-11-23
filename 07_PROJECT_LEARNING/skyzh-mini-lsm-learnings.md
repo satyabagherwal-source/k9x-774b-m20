@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source**: github ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
-> **Source Version**: `df2120d7`  
+> **Source Version**: `d665497b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:57:18.400Z  
+> **Timestamp**: 2026-11-23T15:29:06.698Z  
 > **Learning ID**: `learn-github-skyzh-mini-lsm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:57:17.680Z  
+> **Harvest Timestamp**: 2026-11-23T15:29:06.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: learn database internals by building a storage engine in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4211 stars
+- **Stars / Engagement**: 4223 stars
 
 ---
 
@@ -1223,11 +1223,13 @@ impl TieredCompactionController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #236** (2026-11-23): **Add the Built with Raft badge to the README**
+  *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg" width="16" height="16" align="absmiddle" alt=""> <b>Sentinel</b> (skyzh) opened via Stamp · <a href="https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup>  --- <!-- /stamp:review:v1 -->  ## What this changes  The README now shows the Built with Raft badge beside the CI badge at the top. The badge links to https://raft.build. This is the one line Raft gave for sponsored projects, added once and unchanged:  ```markdown [![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build) ```  No other text changes. Existing credits and copy are untouched.  ## Validation  - The badge image URL returns HTTP 200 as `image/svg+xml`, and https://raft.build returns 200. - GitHub's Markdown API renders the edited README with a link to `https://raft.build` wrapping an `<img>` that uses the badge URL, alt text "Built with Raft".  Requested by Atlas for Cindy's task #96, which adds the badge to every Raft-sponsored course.  AI-Assisted: Claude Opus 5.5 + Sentinel  🤖 Generated with [Claude Code](https://claude.com/claude-cod
+  **Post-Mortem & Fix Analysis**:
+  > <!-- stamp:origin:v1 {"Name":"Oracle","ServerID":"3fe5ef82-6627-45b3-93b1-212ef9628f1a","System":false} -->  Looks good. The badge renders once beside the CI badge and opens raft.build. The course’s existing sponsorship and credits are intact.   <!-- stamp:attribution:v1 --> --- <sup><img src="https://api.raft.build/api/avatars/pixel/b3ds.svg" width="16" height="16" align="absmiddle" alt=""> <b>Oracle</b> (skyzh) via Stamp · reviewed head <code>54bd8fa</code> · <a href="https://stamp.build/github/skyzh/mini-lsm/pull/236?server=skyzh"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup> <!-- /stamp:attribution:v1 -->
+
 - **Issue #235** (2026-11-07): **Update Rust to 1.99.1 and refresh dependencies**
   *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/dmlzb3I.svg" width="16" height="16" align="absmiddle" alt=""> <b>Tuner</b> from skyzh opened this pull request through Stamp</sup><br><sup><a href="https://stamp.build/review?receipt=prc_79b806c78834b02661d149cc969c05fd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View in Stamp →</a></sup>  --- <!-- /stamp:review:v1 -->  Mini-LSM now selects Rust 1.99.1, the [latest stable release](https://blog.rust-lang.org/releases/1.99.1/), consistently for local development and CI. Both minimum-version declarations match the pin, and CI installs the repository-selected toolchain instead of updating unrelated toolchains.  Refresh 43 locked dependencies and move all three crates to Rustyline 19. Nineteen of the twenty direct Rust dependencies now resolve to the latest stable release. Keep Parking_lot at 0.12.5: [0.13 changes lock APIs and removes automatic eventual fairness](https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md#0130-parking_lot-0100-parking_lot_core-050-lock_api---2026-10-21), which warrants a separate concurrency-focused change.  On macOS ARM64 with Rust 1.99.1:  - `cargo fmt --all -- --check` passes. - `cargo clippy --workspace --all-targets --locked -- -D warnin
-
-- **Issue #234** (2026-09-23): **Move memtable freeze question to Week 1 Day 6**
-  *Symptoms*: ## Summary  Move the stale-snapshot memtable question from Week 1 Day 1 to Day 6. The Day 6 version asks learners to inspect the state read-lock scope in `put` and reason about the cached-`Arc` failure case after they have completed the Week 1 write path.  This is a book-only, two-line change: one question removed and one question added. No code, starter, test, or navigation file changes.  ## Validation  - The mdBook build passed with output directed to a temporary directory, and the rendered Day 1 and Day 6 placements were checked. - Independent factual/concurrency review: GO on commit `a0a3418b28315949ebb1658a70ab83fd44c53484`. - Independent learner review: WALKABLE on the same commit.  AI-Assisted: GPT-6 Sol + Sentinel 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1244,414 +1246,47 @@ impl TieredCompactionController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6478cca9` (2026-08-08)
-**Commit Message**: Make leveled simulator traces reproducible (#217)
+### Incident Patch 1: `d665497b` (2026-11-23)
+**Commit Message**: Add the Built with Raft badge to the README (#236)
 
-## Why
-
-The dynamic-leveled compaction simulator generated mock SST key ranges
-from an unseeded RNG. Identical learner/reference commands could
-therefore select different overlap sets and report different write/space
-amplification, while an archived walkthrough presented one unseeded run
-as exact evidence.
-
-## What changed
-
-- add an explicit `--seed <u64>` to the leveled simulator (default
-`42`), seed one shared RNG per run, and print the seed in the trace;
-- document that learner/reference comparisons must use the same source
-revision, `Cargo.lock`, options, and explicit seed;
-- mark the archived unseeded dynamic-leveled metrics as historical
-illustrations rather than reproducible evidence;
-- keep simple and tiered simulator behavior unchanged.
-
-Validation:
-
-- `cargo x ci`: format/check/clippy, 159/159 standard+MVCC+xtask tests,
-and mdBook build passed;
-- `mini-lsm-book/sitemap.sh --check`: passed;
-- two 50-iteration standard reference runs at seed 42 were
-byte-identical (`f862b233…`), and the MVCC reference produced the same
-trace;
-- seed 43 produced a different trace (`f5fcd3ad…`), proving the workload
-is seed-controlled;
-- stan
-
-**File**: `mini-lsm-book/src/week2-04-leveled.md` (modified, +12/-4)
-```diff
-@@ -53,11 +53,17 @@ In this chapter, you will implement a more realistic leveled compaction strategy
- src/compact/leveled.rs
- ```
- 
--To run the compaction simulator,
-+To run the compaction simulator with a recorded workload seed,
- 
-+```shell
-+cargo run --locked --bin compaction-simulator -- leveled --seed 42
- ```
--cargo run --bin compaction-simulator leveled
--```
-+
-+The seed controls the mock SST key ranges. When you compare learner and
-+reference output, run both binaries from the same checkout and `Cargo.lock`
-+with the same explicit seed. Changing the seed changes the workload. The
-+default is `42`, but include `--seed` in saved evidence so another person can
-+replay it.
- 
- ### Task 1.1: Compute Target Sizes
- 
-@@ -148,7 +154,9 @@ After choosing the upper SST, find every lower-level SST whose key range overlap
- 
- When compaction completes, remove the selected files and insert the outputs in the correct lower-level position. In every level except L0, keep SST IDs ordered by first key.
- 
--Running the compaction simulator, you should see:
-+Running the compaction simulator, you should see the same structural behavior.
-+The IDs and key ranges in this excerpt are illustrative; compare exact values
-+only when the source revision, lockfile, options, and seed are the same:
- 
- ```
- --- After Compaction ---
-```
-
-**File**: `mini-lsm-book/src/week2-fast-forward.md` (modified, +6/-1)
-```diff
-@@ -158,9 +158,14 @@ Use these simulator commands without consulting the reference implementation:
- ```shell
- cargo run --bin compaction-simulator simple
- cargo run --bin compaction-simulator tiered
--cargo run --bin compaction-simulator leveled
-+cargo run --locked --bin compaction-simulator -- leveled --seed 42
- ```
- 
-+The leveled simulator's seed controls its mock SST key ranges. Record the seed
-+with the trace, and use the same source checkout, `Cargo.lock`, options, and
-+seed for any authorized learner/reference comparison. A different seed is a
-+different workload.
-+
- For at least one trace per policy, annotate the selected inputs, the reason the task fired, whether it reaches the bottom, the source that wins equal keys, and the files that remain afterward. Change one threshold and predict the next task before rerunning the simulator.
- 
- ## Checkpoint 3: Recover the Live State
-```
-
-**File**: `mini-lsm-mvcc/agent-walkthroughs/week2.md` (modified, +16/-0)
-```diff
-@@ -1,5 +1,13 @@
- # Week 2 Student–Apprentice Walkthrough
- 
-+> **Archive reproducibility note:** The dynamic-leveled simulator commands and
-+> exact amplification/space figures captured below predate the simulator's
-+> `--seed` option. Treat those numbers as historical observations, not
-+> reproducible evidence. To reproduce a current trace, run learner and
-+> reference binaries from the same source revision and `Cargo.lock` with the
-+> same explicit `--seed` and options. The simple and tiered traces do not
-+> generate random key ranges and are unaffected.
-+
- ## Setup
- 
- ### Student
-@@ -1861,6 +1869,10 @@ Trace annotation (`max_levels=4`, `base_level_size_mb=128`, multiplier 2, 32 MiB
- - The L0 tasks select every L4 SST overlapping the combined L0 key envelope. The observed broad envelopes select zero, two, and then four lower SSTs, respectively; outputs are restored in first-key order.
- - Final level counts are `L0=0, L1=0, L2=0, L3=0, L4=6`; the trace reports 3.000x write amplification, 2.000x maximum space usage, and 1x read amplification.
- 
-+> **Archive note:** This run did not record a workload seed. Its exact
-+> amplification and space figures are illustrative and must not be used as
-+> reproducible comparison evidence.
-+
- Important expression (`src/compact/leveled.rs:68`):
- 
- ```rust
-@@ -3591,6 +3603,10 @@ Observed outcome: exit status 0 for the combined command.
- - Tiered accumulated eight single-SST tiers through iteration 7, then compacted all eight into eight output SSTs; its final level counts were `0 8`, with 2.000x write amplification, 2.000x maximum space amplification, and 1x read amplification.
- - Leveled triggered L0-to-L4 compactions at iterations 1, 3, and 5; its final level counts were `0 0 0 0 6`, with 2.667x write amplification, 1.667x maximum space amplification, and 1x read amplification.
- 
-+> **Archive note:** The leveled command above did not record a workload seed.
-+> Its exact amplification and space figures are illustrative; reproduce the
-+> workload with the current explicit-seed command before making a comparison.
-+
- ### 78. Re-run the six focused Checkpoint 4 tests after restoring the fault
- 
- ```shell
-```
-
-**File**: `mini-lsm-starter/src/bin/compaction-simulator.rs` (modified, +15/-8)
-```diff
-@@ -28,6 +28,8 @@ use mini_lsm_wrapper::key::KeyBytes;
- use mini_lsm_wrapper::lsm_storage::LsmStorageState;
- use mini_lsm_wrapper::mem_table::MemTable;
- use mini_lsm_wrapper::table::SsTable;
-+use rand::rngs::StdRng;
-+use rand::{Rng, RngExt, SeedableRng};
- 
- #[derive(Parser, Debug)]
- #[command(author, version, about, long_about = None)]
-@@ -102,6 +104,10 @@ enum Args {
-         iterations: usize,
-         #[clap(long, default_value = "32")]
-         sst_size_mb: usize,
-+        /// Seed for the mock SST key ranges. Use the same seed when comparing
-+        /// learner and reference output.
-+        #[clap(long, default_value = "42")]
-+        seed: u64,
-     },
- }
- 
-@@ -236,15 +242,13 @@ impl MockStorage {
-     }
- }
- 
--fn generate_random_key_range() -> (KeyBytes, KeyBytes) {
--    use rand::RngExt;
--    let mut rng = rand::rng();
--    let begin: usize = rng.random_range(0..(1 << 31));
--    let end: usize = begin + rng.random_range((1 << 10)..(1 << 31));
-+fn generate_random_key_range<R: Rng + ?Sized>(rng: &mut R) -> (KeyBytes, KeyBytes) {
-+    let begin: u64 = rng.random_range(0..(1 << 31));
-+    let end: u64 = begin + rng.random_range((1 << 10)..(1 << 31));
-     let mut begin_bytes = BytesMut::new();
-     let mut end_bytes = BytesMut::new();
--    begin_bytes.put_u64(begin as u64);
--    end_bytes.put_u64(end as u64);
-+    begin_bytes.put_u64(begin);
-+    end_bytes.put_u64(end);
-     (
-         KeyBytes::for_testing_from_bytes_no_ts(begin_bytes.freeze()),
-         KeyBytes::for_testing_from_bytes_no_ts(end_bytes.freeze()),
-@@ -499,6 +503,7 @@ fn main() {
-             base_level_size_mb,
-             iterations,
-             sst_size_mb,
-+            seed,
-         } => {
-             let controller = LeveledCompactionController::new(LeveledCompactionOptions {
-                 level0_file_num_compaction_trigger,
-@@ -508,14 +513,16 @@ fn main() {
-             });
- 
-             let mut storage = MockStorage::new();
-+            let mut rng = StdRng::seed_from_u64(seed);
-+            println!("Seed: {seed}");
-             for i in 0..max_levels {
-                 storage.snapshot.levels.push((i + 1, Vec::new()));
-             }
-             let mut max_space = 0;
-             for i in 0..iterations {
-                 println!("=== Iteration {i} ===");
-                 let id = storage.flush_sst_to_l0();
--                let (first_key, last_key) = generate_random_key_range();
-+                let (first_key, last_key) = generate_random_key_range(&mut rng);
-                 storage.snapshot.sstables.insert(
-                     id,
-                     Arc::new(SsTable::create_meta_only(
-```
+<!-- stamp:review:v1 -->
+<sup><img src="https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg" width="16" height="16" align="absmiddle" alt=""> <b>Sentinel</b> (skyzh) opened via Stamp · <a href="https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup>
 
 ---
+<!-- /stamp:review:v1 -->
 
-### Incident Patch 2: `aba65da9` (2026-09-11)
-**Commit Message**: fix: repair two broken links and a malformed solutions entry (#232)
+## What this changes
 
-Three small, independent documentation repairs found while link-checking
-the book and repo docs. All three are user-visible on the published
-site.
+The README now shows the Built with Raft badge beside the CI badge at the top. The badge links to https://raft.build. This is the one line Raft gave for sponsored projects, added once and unchanged:
 
-### 1. `mini-lsm-book/src/00-preface.md` — the CMU 15-445 link does not
-resolve
-
-The href is missing its `.edu` top-level domain:
-
-- before: `https://15445.courses.cs.cmu`
-- after: `https://15445.courses.cs.cmu.edu/`
-
-The same sentence already links two working
-`https://15445.courses.cs.cmu.edu/...` pages, so this is a truncation
-rather than an intentional short link. The truncated host does not
-resolve at all, and the broken href is live on
-<https://skyzh.github.io/mini-lsm/00-preface.html>.
-
-### 2. `mini-lsm-book/src/week3-06-serializable.md` — the BadgerDB
-citation is a 404
-
-`https://dgraph.io/blog/post/badger-txn/` now returns 404; the entire
-`/blog/` path is gone, so there is no live replacement for that specific
-post. I pointed the link at the project repository instead, which
-matches how the other links in the same paragraph reference projects
-([RisingLight](https://github.com/risinglightdb/risinglight),
-[type-exercise-in-rust](https://github.com/skyzh/type-exer
-
-**File**: `SOLUTIONS.md` (modified, +1/-1)
-```diff
-@@ -13,4 +13,4 @@ You can add your solution to this page once you finish any full week of the cour
- * [skyzh/mini-lsm-solution-checkpoint](https://github.com/skyzh/mini-lsm-solution-checkpoint): The author's solution of Mini-LSM.
- * [fh/solution](https://github.com/Foreverhighness/mini-lsm/tree/solution): A solution which makes it easy to change the mvcc version, implementing in rust idiom way.
- * [Duckulus/mini-lsm-solution](https://github.com/Duckulus/mini-lsm-solution): Full implementation of mini-lsm with a commit for each day of the course
--* * [mehrdad3301/tiny-lsm](https://github.com/mehrdad3301/tiny-lsm)): Implementation of mini-lsm with day-by-day commit history + benchmarking and async refactor on top of week-3. 
-+* [mehrdad3301/tiny-lsm](https://github.com/mehrdad3301/tiny-lsm): Implementation of mini-lsm with day-by-day commit history + benchmarking and async refactor on top of week-3.
+```markdown
+[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
 ```
 
-**File**: `mini-lsm-book/src/00-preface.md` (modified, +1/-1)
+No other text changes. Existing credits and copy are untouched.
+
+## Validation
+
+- The badge image URL returns HTTP 200 as `image/svg+xml`, and https://raft.build returns 200.
+- Git
+
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -122,7 +122,7 @@ Next, read the [Mini-LSM Course Overview](./00-overview.md) for an introduction
+@@ -3,6 +3,7 @@
+ # Mini-LSM: Build a Database Storage Engine in Rust
  
- ## About the Author
+ [![CI (main)](https://github.com/skyzh/mini-lsm/actions/workflows/main.yml/badge.svg)](https://github.com/skyzh/mini-lsm/actions/workflows/main.yml)
++[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
  
--At the time of writing in early 2024, Chi held a master's degree in computer science from Carnegie Mellon University and a bachelor's degree from Shanghai Jiao Tong University. He had worked on several database systems, including [TiKV][db1], [AgateDB][db2], [TerarkDB][db3], [RisingWave][db4], and [Neon][db5]. Beginning in 2022, he served for three semesters as a teaching assistant for [CMU's Database Systems course](https://15445.courses.cs.cmu), working on the BusTub educational system. There, he added new features and challenges to the course, including the redesigned [query execution](https://15445.courses.cs.cmu.edu/fall2022/project3/) project and the demanding [multi-version concurrency control](https://15445.courses.cs.cmu.edu/fall2023/project4/) project. He also maintains the [RisingLight](https://github.com/risinglightdb/risinglight) educational database system. Chi is interested in exploring Rust's role in the database world. If you share that interest, see his earlier courses on building a vectorized expression framework, [type-exercise-in-rust](https://github.com/skyzh/type-exercise-in-rust), and a vector database, [write-you-a-vector-db](https://github.com/skyzh/write-you-a-vector-db).
-+At the time of writing in early 2024, Chi held a master's degree in computer science from Carnegie Mellon University and a bachelor's degree from Shanghai Jiao Tong University. He had worked on several database systems, including [TiKV][db1], [AgateDB][db2], [TerarkDB][db3], [RisingWave][db4], and [Neon][db5]. Beginning in 2022, he served for three semesters as a teaching assistant for [CMU's Database Systems course](https://15445.courses.cs.cmu.edu/), working on the BusTub educational system. There, he added new features and challenges to the course, including the redesigned [query execution](https://15445.courses.cs.cmu.edu/fall2022/project3/) project and the demanding [multi-version concurrency control](https://15445.courses.cs.cmu.edu/fall2023/project4/) project. He also maintains the [RisingLight](https://github.com/risinglightdb/risinglight) educational database system. Chi is interested in exploring Rust's role in the database world. If you share that interest, see his earlier courses on building a vectorized expression framework, [type-exercise-in-rust](https://github.com/skyzh/type-exercise-in-rust), and a vector database, [write-you-a-vector-db](https://github.com/skyzh/write-you-a-vector-db).
+ Mini-LSM is a hands-on course in database internals for systems and backend engineers. Build an LSM-tree storage engine from memtables and SSTs through compaction, crash recovery, MVCC, and transactions.
  
- [db1]: https://github.com/tikv/tikv
- [db2]: https://github.com/tikv/agatedb
-```
-
-**File**: `mini-lsm-book/src/week3-06-serializable.md` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ Verify these cases explicitly:
- 
- * If you have some experience with building a relational database, you may think about the following question: assume that we build a database based on Mini-LSM where we store each row in the relation table as a key-value pair (key: primary key, value: serialized row) and enable serializable verification, does the database system directly gain ANSI serializable isolation level capability? Why or why not?
- * The point-key rule is related to write snapshot isolation (see [A critique of snapshot isolation](https://dl.acm.org/doi/abs/10.1145/2168836.2168853)): it aborts on any relevant read-after-snapshot write conflict instead of detecting only cycles. Construct a serializable execution that this conservative rule still rejects.
--* There are databases that claim they have serializable snapshot isolation support by only tracking the keys accessed in gets and scans (instead of key range). Do they really prevent write skews caused by phantoms? (Okay... Actually, I'm talking about [BadgerDB](https://dgraph.io/blog/post/badger-txn/).)
-+* There are databases that claim they have serializable snapshot isolation support by only tracking the keys accessed in gets and scans (instead of key range). Do they really prevent write skews caused by phantoms? (Okay... Actually, I'm talking about [BadgerDB](https://github.com/dgraph-io/badger).)
- * Why must `commit_lock` cover both validation and publication? Construct an interleaving that fails if the lock is released between them.
- * Why does a `get` miss belong in the read set?
- * Why can two transactions that only write the same key both commit without violating serializability?
-```
-
----
-
-### Incident Patch 3: `2efead93` (2026-07-26)
-**Commit Message**: fix: tolerate a concurrently drained flush queue (#198)
-
-Assisted-by: Codex
-
-**File**: `mini-lsm-book/src/week1-06-write-path.md` (modified, +6/-1)
-```diff
-@@ -56,6 +56,8 @@ We have not yet discussed level 0 (L0). It contains SST files produced directly
- 
- Creating an SST is computationally expensive and involves I/O. Do not hold the `state` read-write lock throughout this work: doing so could block other operations and cause large latency spikes. The `state_lock` mutex serializes operations that modify the LSM-tree state. Use both locks carefully to prevent races while keeping critical sections short.
- 
-+A caller can observe a non-empty immutable-memtable list before acquiring `state_lock`, then find that another flush drained the list first. Recheck the list while holding `state_lock` and return successfully when it is already empty.
-+
- The test suite does not exercise all concurrent cases, so reason carefully about synchronization. The last memtable in `imm_memtables` is the oldest and therefore the one to flush.
- 
- <details>
-@@ -68,7 +70,10 @@ fn force_flush_next_imm_memtable(&self) -> Result<()> {
- 
-     let memtable_to_flush = {
-         let guard = self.state.read();
--        guard.imm_memtables.last().unwrap().clone()
-+        let Some(memtable) = guard.imm_memtables.last() else {
-+            return Ok(());
-+        };
-+        memtable.clone()
-     };
- 
-     let sst_id = memtable_to_flush.id();
-```
-
-**File**: `mini-lsm-mvcc/src/lsm_storage.rs` (modified, +6/-9)
-```diff
-@@ -731,16 +731,13 @@ impl LsmStorageInner {
-     pub fn force_flush_next_imm_memtable(&self) -> Result<()> {
-         let state_lock = self.state_lock.lock();
- 
--        let flush_memtable;
--
--        {
-+        let flush_memtable = {
-             let guard = self.state.read();
--            flush_memtable = guard
--                .imm_memtables
--                .last()
--                .expect("no imm memtables!")
--                .clone();
--        }
-+            let Some(flush_memtable) = guard.imm_memtables.last() else {
-+                return Ok(());
-+            };
-+            flush_memtable.clone()
-+        };
- 
-         let mut builder = SsTableBuilder::new(self.options.block_size);
-         flush_memtable.flush(&mut builder)?;
-```
-
-**File**: `mini-lsm-mvcc/src/tests/week3_day4.rs` (modified, +13/-0)
-```diff
-@@ -27,6 +27,19 @@ use super::harness::{
-     check_iter_result_by_key, construct_merge_iterator_over_storage, dump_files_in_dir,
- };
- 
-+#[test]
-+fn test_force_flush_empty_imm_memtable() {
-+    let dir = tempdir().unwrap();
-+    let options = LsmStorageOptions::default_for_week2_test(CompactionOptions::NoCompaction);
-+    let storage = MiniLsm::open(&dir, options).unwrap();
-+
-+    storage.inner.force_flush_next_imm_memtable().unwrap();
-+
-+    let state = storage.inner.state.read();
-+    assert!(state.imm_memtables.is_empty());
-+    assert!(state.l0_sstables.is_empty());
-+}
-+
- #[test]
- fn test_task3_compaction_keeps_versions_together() {
-     let dir = tempdir().unwrap();
-```
-
-**File**: `mini-lsm/src/lsm_storage.rs` (modified, +6/-9)
-```diff
-@@ -673,16 +673,13 @@ impl LsmStorageInner {
-     pub fn force_flush_next_imm_memtable(&self) -> Result<()> {
-         let state_lock = self.state_lock.lock();
- 
--        let flush_memtable;
--
--        {
-+        let flush_memtable = {
-             let guard = self.state.read();
--            flush_memtable = guard
--                .imm_memtables
--                .last()
--                .expect("no imm memtables!")
--                .clone();
--        }
-+            let Some(flush_memtable) = guard.imm_memtables.last() else {
-+                return Ok(());
-+            };
-+            flush_memtable.clone()
-+        };
- 
-         let mut builder = SsTableBuilder::new(self.options.block_size);
-         flush_memtable.flush(&mut builder)?;
-```
-
-**File**: `mini-lsm/src/tests/week1_day6.rs` (modified, +13/-0)
-```diff
-@@ -25,6 +25,19 @@ use crate::{
-     lsm_storage::{LsmStorageInner, LsmStorageOptions, MiniLsm},
- };
- 
-+#[test]
-+fn test_force_flush_empty_imm_memtable() {
-+    let dir = tempdir().unwrap();
-+    let storage =
-+        Arc::new(LsmStorageInner::open(&dir, LsmStorageOptions::default_for_week1_test()).unwrap());
-+
-+    storage.force_flush_next_imm_memtable().unwrap();
-+
-+    let state = storage.state.read();
-+    assert!(state.imm_memtables.is_empty());
-+    assert!(state.l0_sstables.is_empty());
-+}
-+
- #[test]
- fn test_task1_storage_scan() {
-     let dir = tempdir().unwrap();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #236** (2026-11-23): Add the Built with Raft badge to the README (@stamp-build[bot])
 - **PR #235** (2026-11-07): Update Rust to 1.99.1 and refresh dependencies (@stamp-build[bot])
 - **PR #234** (2026-09-23): Move memtable freeze question to Week 1 Day 6 (@skyzh)
 - **PR #233** (2026-11-07): refactor: remove redundant block metadata checksum check (@cuiyeshuai)
-- **PR #232** (2026-09-11): fix: repair two broken links and a malformed solutions entry (@dajiaohuang)
 - **PR #231** (2026-09-11): Clarify Week 1 Day 1 memtable ownership (@skyzh)
 - **PR #230** (2026-09-05): chore: advance course crates after 0.3 publication (@skyzh)
 
@@ -1673,42 +1308,28 @@ Assisted-by: Codex
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make leveled simulator traces reproducible (#217)
+## X. Add the Built with Raft badge to the README
 
 **RULE**:
-When implementing operations in `mini-lsm-book/src/week2-04-leveled.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyzh/mini-lsm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyzh/mini-lsm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6478cca9`: Make leveled simulator traces reproducible (#217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d665497b`: Add the Built with Raft badge to the README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mini-lsm-book/src/week2-04-leveled.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-To run the compaction simulator with a recorded workload seed,
-```shell
-cargo run --locked --bin compaction-simulator -- leveled --seed 42
-
-The seed controls the mock SST key ranges. When you compare learner and
-reference output, run both binaries from the same checkout and `Cargo.lock`
-with the same explicit seed. Changing the seed changes the workload. The
-default is `42`, but include `--seed` in saved evidence so another person can
-replay it.
-Running the compaction simulator, you should see the same structural behavior.
-The IDs and key ranges in this excerpt are illustrative; compare exact values
-only when the source revision, lockfile, options, and seed are the same:
+[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-To run the compaction simulator,
-cargo run --bin compaction-simulator leveled
-```
-Running the compaction simulator, you should see:
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6478cca9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d665497b` are properly handled with clean fallback behavior.

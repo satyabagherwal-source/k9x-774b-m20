@@ -2,17 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T15:13:17.573Z",
+  "updated_at": "2026-11-23T15:29:13.206Z",
   "stats": {
-    "total_discovered": 7864,
-    "approved_pending_harvest": 7440,
+    "total_discovered": 7881,
+    "approved_pending_harvest": 7457,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7431,
+      "COMMUNITY_AND_EXPERT": 7447,
       "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
-      "ENGINEERING_BLOGS": 6,
+      "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 44,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
@@ -170063,6 +170063,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
         "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-6C3A85ABD113": {
+      "id": "SRC-6C3A85ABD113",
+      "url": "https://github.com/skyzh/mini-lsm",
+      "title": "https://github.com/skyzh/mini-lsm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-F32748D9A7A3": {
+      "id": "SRC-F32748D9A7A3",
+      "url": "https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg",
+      "title": "https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-79FC68464A02": {
+      "id": "SRC-79FC68464A02",
+      "url": "https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc",
+      "title": "https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.481Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-56F9F1342804": {
+      "id": "SRC-56F9F1342804",
+      "url": "https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg",
+      "title": "https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-FF6E2DB434F5": {
+      "id": "SRC-FF6E2DB434F5",
+      "url": "https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg",
+      "title": "https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-44009AB42F82": {
+      "id": "SRC-44009AB42F82",
+      "url": "https://raft.build/",
+      "title": "https://raft.build/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-E671C1CD9BFF": {
+      "id": "SRC-E671C1CD9BFF",
+      "url": "https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg",
+      "title": "https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-F2A76C6A4D0A": {
+      "id": "SRC-F2A76C6A4D0A",
+      "url": "https://raft.build`/",
+      "title": "https://raft.build`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-0D532CFB1EC8": {
+      "id": "SRC-0D532CFB1EC8",
+      "url": "https://claude.com/claude-cod",
+      "title": "https://claude.com/claude-cod",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-7F6A306186AC": {
+      "id": "SRC-7F6A306186AC",
+      "url": "https://api.raft.build/api/avatars/pixel/b3ds.svg",
+      "title": "https://api.raft.build/api/avatars/pixel/b3ds.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-08B23585EEEF": {
+      "id": "SRC-08B23585EEEF",
+      "url": "https://stamp.build/github/skyzh/mini-lsm/pull/236?server=skyzh",
+      "title": "https://stamp.build/github/skyzh/mini-lsm/pull/236?server=skyzh",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.883Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-63F283924474": {
+      "id": "SRC-63F283924474",
+      "url": "https://api.raft.build/api/avatars/pixel/dmlzb3I.svg",
+      "title": "https://api.raft.build/api/avatars/pixel/dmlzb3I.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.931Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-B43111416980": {
+      "id": "SRC-B43111416980",
+      "url": "https://stamp.build/review?receipt=prc_79b806c78834b02661d149cc969c05fd",
+      "title": "https://stamp.build/review?receipt=prc_79b806c78834b02661d149cc969c05fd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:12.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-CCD54C818DBF": {
+      "id": "SRC-CCD54C818DBF",
+      "url": "https://blog.rust-lang.org/releases/1.99.1",
+      "title": "https://blog.rust-lang.org/releases/1.99.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "ENGINEERING_BLOGS",
+      "authorityTier": "ENGINEERING_PEER",
+      "trustScore": 0.85,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:13.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-960339741DFD": {
+      "id": "SRC-960339741DFD",
+      "url": "https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md",
+      "title": "https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:13.083Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-4FDF04C32BF4": {
+      "id": "SRC-4FDF04C32BF4",
+      "url": "https://github.com/skyzh/mini-lsm/actions/workflows/main.yml/badge.svg",
+      "title": "https://github.com/skyzh/mini-lsm/actions/workflows/main.yml/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:13.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-AEAB618D5691": {
+      "id": "SRC-AEAB618D5691",
+      "url": "https://github.com/skyzh/mini-lsm/actions/workflows/main.yml",
+      "title": "https://github.com/skyzh/mini-lsm/actions/workflows/main.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:29:13.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
       }
     }
   }

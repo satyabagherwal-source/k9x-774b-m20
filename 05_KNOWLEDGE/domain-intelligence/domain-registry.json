@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T15:20:59.328Z",
-  "total_records": 2424,
+  "last_updated": "2026-11-23T15:29:13.595Z",
+  "total_records": 2426,
   "domains": {
     "A": {
       "total": 20,
@@ -2123,7 +2123,7 @@
       ]
     },
     "I": {
-      "total": 133,
+      "total": 135,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2257,7 +2257,9 @@
         "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",
         "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants",
-        "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",
+        "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8311,8 +8313,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "3163dbbc4aee59b92d2dcf25306d3ea7bf0272e61b58e0ba2f2f4b4644561948",
-      "created_at": "2026-11-23T06:14:25.161Z"
+      "content_hash": "6fd51611768a2fddf2209c63af7edc32214a013df863995d25565dd9c1b8a289",
+      "created_at": "2026-11-23T15:29:05.608Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13338,8 +13340,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "37f0a815be3e4f986fc6d16feb9d8060e76d50a60cbb00f8286f6dadd8816ef8",
-      "created_at": "2026-11-22T10:04:01.024Z"
+      "content_hash": "f5d519f55ebd87f9f7a09503c77630f668dde56af2d9a7d13ce1ee5624cab666",
+      "created_at": "2026-11-23T15:29:11.992Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -32909,8 +32911,8 @@
       "title": "Research & Knowledge Intelligence: akhaliq/MiniMax-H3-Image-Character-Swap Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-research-knowledge-intelligence-akhal.md",
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
-      "content_hash": "910c949be58f61f2543dd2ed7717a8591de3b734f87e8da89742cb740cc4a50d",
-      "created_at": "2026-11-19T01:54:57.858Z"
+      "content_hash": "5066421eb333b14b1ece2530f627df25a00e6ce11614a8adb82667b6860913cf",
+      "created_at": "2026-11-23T15:28:52.661Z"
     },
     "DOM-D-C41D220B": {
       "record_id": "DOM-D-C41D220B",
@@ -32960,8 +32962,8 @@
       "title": "Research & Knowledge Intelligence: hf-akhaliq-minimax-h3-image-character-swap-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-learnings-research-knowledge-intellig.md",
       "repository": "hf-akhaliq-minimax-h3-image-character-swap-learnings",
-      "content_hash": "b218c41936dae20d101496da15b760bec5fbd437f16926af9aecf917fbaec33a",
-      "created_at": "2026-11-19T01:55:42.784Z"
+      "content_hash": "d67bc409d76e2157e0d6bc2b58854893a58e24d15a03241b1d2c35bbb76bc721",
+      "created_at": "2026-11-23T15:29:11.381Z"
     },
     "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",
@@ -40700,6 +40702,24 @@
       "repository": "hf-tenstrip-10eros-max-learnings",
       "content_hash": "50da9cf658c2028e2e76df409478a1ef48a86ef28f9d0e93cdecf6fa02ff37cc",
       "created_at": "2026-11-23T15:13:16.399Z"
+    },
+    "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: skyzh/mini-lsm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-skyzh-mini-lsm-content-information-intelligence-skyzh-mini-lsm-core-invariants.md",
+      "repository": "skyzh/mini-lsm",
+      "content_hash": "a694c5c8807e2eecc559a353494392bebbb1a933e60316a0a1efc8a26973000a",
+      "created_at": "2026-11-23T15:29:08.155Z"
+    },
+    "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: skyzh-mini-lsm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-skyzh-mini-lsm-learnings-content-information-intelligence-skyzh-mini-lsm-learnin.md",
+      "repository": "skyzh-mini-lsm-learnings",
+      "content_hash": "33e25a826b0b9228059b94ab442c41bebe84a80be14e956de623c4d8ac2141bb",
+      "created_at": "2026-11-23T15:29:13.595Z"
     }
   }
 }

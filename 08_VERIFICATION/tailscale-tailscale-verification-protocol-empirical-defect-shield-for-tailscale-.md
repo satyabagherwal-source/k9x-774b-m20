@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "f7d2828f",
+  "source_version": "0345103e",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-23T06:14:24.923Z",
+  "timestamp": "2026-11-23T15:29:05.431Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `f7d2828f`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T06:14:24.923Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `0345103e`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T15:29:05.431Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `f7d2828f`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `0345103e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:14:23.256Z  
+> **Harvest Timestamp**: 2026-11-23T15:29:04.144Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39490 stars
+- **Stars / Engagement**: 39523 stars
 
 ---
 
@@ -811,13 +811,13 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
+  *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
+
 - **Issue #22450** (2026-11-17): **wireguard-go: wakes up once a second when idle**
   *Symptoms*: I noticed when working on a new version of natlab that runs the Linux kernel within Go synctest tests that an idle Tailscale wakes up once a second interacting the Linux kernel.  Turns out that it's the hack for checking for network namespace moves (moving the tun device), which Tailscale doesn't even use, and which is also seemingly broken in modern kernels. (I didn't bisect whenever it last worked)  Tracking bug to fix that and stop its once/second wake-ups.  /cc @raggi 
   **Post-Mortem & Fix Analysis**:
   > Hahahah, asking Claude to look at the Linux git repo to figure if/when this code ever worked, starting by trying to find whether it worked when it was first written, and then bisecting...  ``` ● The hack only ever worked on Linux 4.5 through 5.0, and the 2019   stable backports broke it on the older series too. It was written in   November 2017, against roughly 4.14, where it did work.    When it worked:   - v4.5: commit 1bd4978a88ac ("tun: honor IFF_UP in tun_get_user()")     added if (!(tun->dev->flags & IFF_UP)) return -EIO; as the first     statement in tun_get_user. A zero-length write on a down interface     therefore got EIO. On an up interface it fell through to the     packet-info length check and got EINVAL.   - Before v4.5 there was no IFF_UP check in the write path, so a     zero-length write always got EINVAL, meaning "up".   - Evidence it was designed around this: in wireguard-go, the hack     was added 2017-11-29 (471f7ff, "Added cross namespace TUN status     detection"
-
-- **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
-  *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -834,194 +834,102 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7d2828f` (2026-11-22)
-**Commit Message**: wgengine: stamp Status.AsOf when endpoints are read, strictly increasing
+### Incident Patch 1: `fefe73ac` (2026-11-21)
+**Commit Message**: .github/workflows: give golangci-lint its own Go build cache
 
-TestTUNDNS failed on Windows CI with:
+The golangci-lint job's setup-go cache key collided with the CodeQL
+workflow's, so PRs restored CodeQL's main-branch build cache, which
+lacks the test packages and export data golangci-lint loads. Package
+loading thus ran nearly cold every time (~9 of ~10 minutes), and jobs
+now regularly hit the 10m timeout. Use a dedicated cache key, and run
+on pushes to main so there's a cache for PRs to restore.
 
-    waitForPeerReachable([uOLy9]): peer [uOLy9]: no endpoints
+Updates #18366
+Updates tailscale/corp#28679
 
-The peer had a HomeDERP in control but never any endpoints, for 30s.
+Change-Id: I7a23a66dc7198c030d6a378aa2733d558c8c37d9
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-userspaceEngine.getStatus snapshotted e.endpoints under e.mu, then
-walked the wireguard-go peers (which can block on the device mutex),
-and only then set AsOf: time.Now(). RequestStatus lets two goroutines
-run getStatus concurrently (for example the magicsock endpoints
-callback and the TUN "external route: up" event goroutine). If the
-goroutine that read the old, empty endpoints finished last, its status
-had the newest AsOf, so LocalBackend.setWgengineStatus's AsOf ordering
-check accepted it, reset b.endpoints to empty and sent that to
-control. magicsock's endpoints hadn't changed, so nothing ever resent
-them. On Windows the monotonic clock is coarse, so two statuses can
-also get equal AsOf values, which the strict Before check lets through
-in either order.
-
-Take AsOf in the same critical section as the endpoints read and make
-it strictly increasing, so a status with older endpoints always has an
-older AsOf and is discarded.
-
-Reproduced on 
-
-**File**: `wgengine/userspace.go` (modified, +10/-1)
+**File**: `.github/workflows/golangci-lint.yml` (modified, +36/-7)
 ```diff
-@@ -140,6 +140,7 @@ type userspaceEngine struct {
- 	closing        bool             // Close was called (even if we're still closing)
- 	statusCallback StatusCallback
- 	endpoints      []tailcfg.Endpoint
-+	lastStatusAsOf time.Time                           // AsOf of the last status from getStatus
- 	pendOpen       map[flowtrackTuple]*pendingOpenFlow // see pendopen.go
+@@ -1,16 +1,20 @@
+ name: golangci-lint
+ on:
+-  # For now, only lint pull requests, not the main branches.
+   pull_request:
+     paths:
+       - ".github/workflows/golangci-lint.yml"
+       - "**.go"
+       - "go.mod"
+       - "go.sum"
+-  # TODO(andrew): enable for main branch after an initial waiting period.
+-  #push:
+-  #  branches:
+-  #    - main
++  # Runs on main populate the Go build cache that pull requests restore.
++  push:
++    branches:
++      - main
++    paths:
++      - ".github/workflows/golangci-lint.yml"
++      - "**.go"
++      - "go.mod"
++      - "go.sum"
  
- 	// pongCallback is the map of response handlers waiting for disco or TSMP
-@@ -1044,9 +1045,17 @@ func (e *userspaceEngine) getStatus() (*Status, error) {
- 	// (See comment in userspaceEngine's declaration.)
- 	derpConns := e.magicConn.DERPs()
+   workflow_dispatch:
  
-+	// Stamp AsOf when endpoints are read, strictly increasing, so the
-+	// status consumer's AsOf ordering check discards any status carrying
-+	// stale endpoints, even with coarse clocks.
- 	e.mu.Lock()
- 	closing := e.closing
- 	localAddrs := slices.Clone(e.endpoints)
-+	asOf := time.Now()
-+	if !asOf.After(e.lastStatusAsOf) {
-+		asOf = e.lastStatusAsOf.Add(1)
-+	}
-+	e.lastStatusAsOf = asOf
- 	e.mu.Unlock()
+@@ -29,10 +33,25 @@ jobs:
+     steps:
+       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
  
- 	if closing {
-@@ -1072,7 +1081,7 @@ func (e *userspaceEngine) getStatus() (*Status, error) {
- 	}
++      # setup-go's own cache is disabled because its key collides with the
++      # one used by the CodeQL workflow, whose saved build cache lacks the
++      # test packages and export data that golangci-lint needs. We manage
++      # our own cache below instead.
+       - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+         with:
+           go-version-file: go.mod
+-          cache: true
++          cache: false
++
++      - name: Restore Go cache
++        id: restore-cache
++        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
++        with:
++          path: |
++            ~/.cache/go-build
++            ~/go/pkg/mod
++          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
++          restore-keys: |
++            ${{ runner.os }}-golangci-lint-
  
- 	return &Status{
--		AsOf:       time.Now(),
-+		AsOf:       asOf,
- 		LocalAddrs: localAddrs,
- 		Peers:      peers,
- 		DERPs:      derpConns,
-```
-
----
-
-### Incident Patch 2: `ceccbc30` (2026-11-23)
-**Commit Message**: go.mod: bump 5 modules
-
-* github.com/gokrazy/firmware: https://github.com/gokrazy/firmware/compare/6bd1fd16a2e2...d8b761d7b4ca
-* github.com/gokrazy/kernel.amd64: https://github.com/gokrazy/kernel.amd64/compare/eb0ff0075854...17ff614bf8bc
-* github.com/gokrazy/kernel.arm64: https://github.com/gokrazy/kernel.arm64/compare/595ae821533a...03045c240b24
-* github.com/gokrazy/kernel.rpi: https://github.com/gokrazy/kernel.rpi/compare/85ea215f0624...a4a58496f7f6
-* github.com/gokrazy/rpi-eeprom: https://github.com/gokrazy/rpi-eeprom/compare/30711eb43bb5...fb3324aa4fc1
-* github.com/gokrazy/breakglass: already current
-* github.com/gokrazy/gokrazy: already current
-* github.com/gokrazy/serial-busybox: already current
-
-Triggered by the gokrazy-bump workflow's schedule.
-
-Updates #1866
-
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -172,4 +172,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
-+# nix-direnv cache busting line: sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Qmy06FkeFkjqCo1FLSD9dO7hTvdo/gC2VACJniuiQBU="
-   },
-   "vendor": {
--    "goModSum": "sha256-QP1as7ifhlOtEVS1hZaWhNQ1HMDQRKve2PEZMziRxCQ=",
--    "sri": "sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI="
-+    "goModSum": "sha256-BxqNT0K8QLic7/KKqLBjZIRre3sTzzm/4CUCuNgBMaw=",
-+    "sri": "sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +5/-5)
-```diff
-@@ -57,12 +57,12 @@ require (
- 	github.com/go4org/plan9netshell v0.0.0-20250324183649-788daa080737
- 	github.com/godbus/dbus/v5 v5.2.2
- 	github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e
--	github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2
-+	github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca
- 	github.com/gokrazy/gokrazy v0.0.0-20260916140236-39fe3e5557b8
--	github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854
--	github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a
--	github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624
--	github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5
-+	github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc
-+	github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24
-+	github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6
-+	github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1
- 	github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8
- 	github.com/golang/snappy v1.0.0
-```
-
-**File**: `go.sum` (modified, +10/-10)
-```diff
-@@ -519,8 +519,8 @@ github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
- github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
- github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e h1:0s0peXcMjOPhvh+V57bhSP4qQXSEGCWGvstjZnbOk70=
- github.com/gokrazy/breakglass v0.0.0-20260711072910-0f882c44303e/go.mod h1:xQ9/k3J7wdHdqJla7tcQ0LTMabpUd9fy/dEpm0JfEng=
--github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2 h1:RivYZHoClwkrjWY1oeHetAlCHuHPqjoeTgEQlZ36WJA=
--github.com/gokrazy/firmware v0.0.0-20261103105416-6bd1fd16a2e2/go.mod h1:x8Lwd/ZFqJTBWUGW7yt/qwgxO8/AHh5KGFYJ4yfH+FE=
-+github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca h1:CMhJAtbAusU7M0wDNrQiahNLMuFpiuWIUEkqCB/iaWU=
-+github.com/gokrazy/firmware v0.0.0-20261117115341-d8b761d7b4ca/go.mod h1:x8Lwd/ZFqJTBWUGW7yt/qwgxO8/AHh5KGFYJ4yfH+FE=
- github.com/gokrazy/gokapi v0.0.0-20251205165548-0927bab199d4 h1:XFo3EqnHUbmAySp7zqms8ee/tU8bM9k+YzT7L4o5CcQ=
- github.com/gokrazy/gokapi v0.0.0-20251205165548-0927bab199d4/go.mod h1:+StofDb/2cMb7vbA2znaNolgp9SadTYeyRIFtdhH1KQ=
- github.com/gokrazy/gokrazy v0.0.0-20200501080617-f3445e01a904/go.mod h1:pq6rGHqxMRPSaTXaCMzIZy0wLDusAJyoVNyNo05RLs0=
-@@ -529,14 +529,14 @@ github.com/gokrazy/gokrazy v0.0.0-20260916140236-39fe3e5557b8/go.mod h1:QGwonQ8B
- github.com/gokrazy/internal v0.0.0-20200407075822-660ad467b7c9/go.mod h1:LA5TQy7LcvYGQOy75tkrYkFUhbV2nl5qEBP47PSi2JA=
- github.com/gokrazy/internal v0.0.0-20260625065634-6994f9152c44 h1:hUOyCucKrO5bNvL7Wrn2eglA5mxMvXrhuUVepWKjHhI=
- github.com/gokrazy/internal v0.0.0-20260625065634-6994f9152c44/go.mod h1:dQY4EMkD4L5ZjYJ0SPtpgYbV7MIUMCxNIXiOfnZ6jP4=
--github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854 h1:k15GuehXKBxNBj69ekUIW0yptJB6+MHdoZQFqDI7nws=
--github.com/gokrazy/kernel.amd64 v0.0.0-20261111110037-eb0ff0075854/go.mod h1:bcNzFtcy9x+l7l4KUqOkVFyIqrtWn8U92Jo9ZEOckbw=
--github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a h1:9e+sT20wCe/R6fcJCENhrY6dZ10oXv1Z4cXfTbv+LUA=
--github.com/gokrazy/kernel.arm64 v0.0.0-20261111111623-595ae821533a/go.mod h1:WWx72LXHEesuJxbopusRfSoKJQ6ffdwkT0DZditdrLo=
--github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624 h1:Yv83NliWX6U7/PBPlwsZywUP4r32wwlLAQrO6idydP4=
--github.com/gokrazy/kernel.rpi v0.0.0-20261103170006-85ea215f0624/go.mod h1:p5uBeUWKZVv3KJWWD6s9MpAjPjGJUe2CmKDML+5pm6U=
--github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5 h1:PXGqBI+GcoZbNAkkwe6rlnfK+8yMLqHEH79kyk7bxxk=
--github.com/gokrazy/rpi-eeprom v0.0.0-20261031093638-30711eb43bb5/go.mod h1:vabxV1M+i6S3rGuWoFieHxCJW3jlob3rqe0KV82j+0o=
-+github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc h1:ya260egbgfj74qF6bIXU2l5vBkx+8EXv1tX8be0LT/4=
-+github.com/gokrazy/kernel.amd64 v0.0.0-20261122110609-17ff614bf8bc/go.mod h1:bcNzFtcy9x+l7l4KUqOkVFyIqrtWn8U92Jo9ZEOckbw=
-+github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24 h1:nUQpDr1CzCVmZZ4j7eAuCDGWW9P17iuDUqJNYe9I+CA=
-+github.com/gokrazy/kernel.arm64 v0.0.0-20261122124656-03045c240b24/go.mod h1:WWx72LXHEesuJxbopusRfSoKJQ6ffdwkT0DZditdrLo=
-+github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6 h1:0Nhq0EKqt+8p2zppNYK3LCHXJ6ibbzmdItsphbZ5nLA=
-+github.com/gokrazy/kernel.rpi v0.0.0-20261122104422-a4a58496f7f6/go.mod h1:p5uBeUWKZVv3KJWWD6s9MpAjPjGJUe2CmKDML+5pm6U=
-+github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1 h1:ajf+/PkmxPYnsVFwxXImuK2mov7ZGiYJEkNVkSNvMzA=
-+github.com/gokrazy/rpi-eeprom v0.0.0-20261118113622-fb3324aa4fc1/go.mod h1:vabxV1M+i6S3rGuWoFieHxCJW3jlob3rqe0KV82j+0o=
- github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7 h1:gurTGc4sL7Ik+IKZ29rhGgHNZQTXPtEXLw+aM9E+/HE=
- github.com/gokrazy/serial-busybox v0.0.0-20250119153030-ac58ba7574e7/go.mod h1:OYcG5tSb+QrelmUOO4EZVUFcIHyyZb0QDbEbZFUp1TA=
- github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF08vX0COfcOBJRhZ8lUbR+ZWIs0Y5g=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
-+# nix-direnv cache busting line: sha256-CEZxW9kZUIjI3frTZOEKssYJz3Uo58+YdLm8iEjTeMo=
+       - name: golangci-lint
+         uses: golangci/golangci-lint-action@b7bcab6379029e905e3f389a6bf301f1bc220662 # head as of 2026-03-04
+@@ -44,4 +63,14 @@ jobs:
+ 
+           # Loading packages with a cold cache takes a while:
+           args: --timeout=10m
+-          
++
++      - name: Save Go cache
++        # Save even on lint failure, but only on main and only once per
++        # go.mod/go.sum hash, as each entry is several GB.
++        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
++        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
++        with:
++          path: |
++            ~/.cache/go-build
++            ~/go/pkg/mod
++          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22591** (2026-11-23): wgengine/router: add envknob to disable src_valid_mark (@mikeodr)
 - **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
+- **PR #22583** (2026-11-23): client/systray: shut down cleanly on termination signals (@fQwQf)
 - **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
+- **PR #22580** (2026-11-23): net/dnsfallback: continue to remove the DNS fallback mechanism (@bradfitz)
 - **PR #22579** (2026-11-22): control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled (@bradfitz)
-- **PR #22571** (2026-11-23): wgengine: stamp Status.AsOf when endpoints are read, strictly increasing (@bradfitz)
-- **PR #22564** (2026-11-23): net/tstun, feature/conn25: make app connector hooks safe to set while running (@bradfitz)
-- **PR #22556** (closed): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
 
 ---
 
@@ -1041,40 +949,67 @@ Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wgengine: stamp Status.AsOf when endpoints are read, strictly increasing
+## X. .github/workflows: give golangci-lint its own Go build cache
 
 **RULE**:
-When implementing operations in `wgengine/userspace.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/golangci-lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7d2828f`: wgengine: stamp Status.AsOf when endpoints are read, strictly increasing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fefe73ac`: .github/workflows: give golangci-lint its own Go build cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/userspace.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/golangci-lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	lastStatusAsOf time.Time                           // AsOf of the last status from getStatus
-	// Stamp AsOf when endpoints are read, strictly increasing, so the
-	// status consumer's AsOf ordering check discards any status carrying
-	// stale endpoints, even with coarse clocks.
-	asOf := time.Now()
-	if !asOf.After(e.lastStatusAsOf) {
-		asOf = e.lastStatusAsOf.Add(1)
-	}
-	e.lastStatusAsOf = asOf
-		AsOf:       asOf,
+  # Runs on main populate the Go build cache that pull requests restore.
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/golangci-lint.yml"
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+      # setup-go's own cache is disabled because its key collides with the
+      # one used by the CodeQL workflow, whose saved build cache lacks the
+      # test packages and export data that golangci-lint needs. We manage
+      # our own cache below instead.
+          cache: false
+
+      - name: Restore Go cache
+        id: restore-cache
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-golangci-lint-
+
+      - name: Save Go cache
+        # Save even on lint failure, but only on main and only once per
+        # go.mod/go.sum hash, as each entry is several GB.
+        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@668228422ae6a00e4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		AsOf:       time.Now(),
+  # For now, only lint pull requests, not the main branches.
+  # TODO(andrew): enable for main branch after an initial waiting period.
+  #push:
+  #  branches:
+  #    - main
+          cache: true
+          
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7d2828f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fefe73ac` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

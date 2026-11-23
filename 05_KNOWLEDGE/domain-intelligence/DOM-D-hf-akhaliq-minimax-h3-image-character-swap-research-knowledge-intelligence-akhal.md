@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
   "source_version": "hf-akhaliq-minimax-h3-image-character-swap",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:54:57.858Z",
+  "timestamp": "2026-11-23T15:28:52.660Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [akhaliq/MiniMax-H3-Image-Character-Swap](https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap) (Revision: `hf-akhaliq`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:54:57.858Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:28:52.660Z`  
 > **Learning ID**: `learn-huggingface-akhaliq-minimax-h3-image-character-swap`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap](https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:54:56.974Z  
+> **Harvest Timestamp**: 2026-11-23T15:28:51.799Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 289 downloads | 90 likes
+- **Stars / Engagement**: 412 downloads | 213 likes
 
 ---
 

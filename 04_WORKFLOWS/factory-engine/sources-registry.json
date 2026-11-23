@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T15:20:57.255Z",
-    "lastVerified": "2026-11-23T15:20:57.255Z",
+    "lastChecked": "2026-11-23T15:29:11.005Z",
+    "lastVerified": "2026-11-23T15:29:11.005Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T14:55:30.795Z",
+    "lastChecked": "2026-11-23T15:29:04.023Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T14:55:30.795Z"
+    "lastVerified": "2026-11-23T15:29:04.023Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2180,14 +2180,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T06:14:23.256Z",
-    "lastVerified": "2026-11-23T06:14:23.256Z",
+    "lastChecked": "2026-11-23T15:29:04.144Z",
+    "lastVerified": "2026-11-23T15:29:04.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
+    "contentHash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4669,11 +4669,21 @@
     "lastVerified": "2026-11-23T06:45:44.178Z"
   },
   "skyzh-mini-lsm": {
-    "name": "mini-lsm",
+    "name": "skyzh/mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-22T09:04:36.025Z",
-    "revisionIdentifier": "df2120d7",
-    "lastVerified": "2026-11-22T09:04:36.026Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-23T15:29:06.692Z",
+    "lastVerified": "2026-11-23T15:29:06.692Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-skyzh-mini-lsm",
+    "contentHash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -5403,9 +5413,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-22T02:40:03.705Z",
+    "lastChecked": "2026-11-23T15:28:49.223Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-22T02:40:03.705Z"
+    "lastVerified": "2026-11-23T15:28:49.223Z"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -6217,8 +6227,8 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T10:29:49.289Z",
-    "lastVerified": "2026-11-22T10:29:49.289Z",
+    "lastChecked": "2026-11-23T15:28:56.529Z",
+    "lastVerified": "2026-11-23T15:28:56.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -6252,12 +6262,12 @@
     "officialUrl": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T01:54:56.974Z",
-    "lastVerified": "2026-11-19T01:54:56.974Z",
+    "lastChecked": "2026-11-23T15:28:51.799Z",
+    "lastVerified": "2026-11-23T15:28:51.799Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
-    "contentHash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
+    "contentHash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10446,9 +10456,9 @@
   "yattee-yattee": {
     "name": "yattee",
     "officialUrl": "https://github.com/yattee/yattee",
-    "lastChecked": "2026-11-20T13:08:16.971Z",
+    "lastChecked": "2026-11-23T15:28:54.097Z",
     "revisionIdentifier": "10ea2798",
-    "lastVerified": "2026-11-20T13:08:16.971Z"
+    "lastVerified": "2026-11-23T15:28:54.097Z"
   },
   "itsdecodingai-llm-twin-course": {
     "name": "itsdecodingai/llm-twin-course",

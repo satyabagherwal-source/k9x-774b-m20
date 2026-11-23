@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:20:45.713Z",
-  "total_cycles_completed": 11742,
-  "total_learnings_persisted": 11742,
-  "total_rules_promoted": 10894,
+  "last_updated": "2026-11-23T15:29:07.767Z",
+  "total_cycles_completed": 11745,
+  "total_learnings_persisted": 11745,
+  "total_rules_promoted": 10896,
   "history": [
-    {
-      "timestamp": "2026-11-22T18:00:13.689Z",
-      "repository": "BaaRai/ARTEX",
-      "learningId": "learn-github-baarai-artex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:00:17.624Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:00:24.478Z",
-      "repository": "darrylmorley/whatcable",
-      "learningId": "learn-github-darrylmorley-whatcable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T18:00:29.010Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1382,27 @@
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:28:52.455Z",
+      "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+      "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:29:05.215Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:29:07.767Z",
+      "repository": "skyzh/mini-lsm",
+      "learningId": "learn-github-skyzh-mini-lsm",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

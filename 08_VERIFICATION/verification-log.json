@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-XT1K",
-    "timestamp": "2026-11-21T13:53:36.584Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XVCS",
-    "timestamp": "2026-11-21T13:53:39.580Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "b9faaf523c862198f4cc48e63ad34a5292f6485d150570145fe94d77dcb7ec6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XZWC",
-    "timestamp": "2026-11-21T13:53:45.468Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5MGY",
     "timestamp": "2026-11-21T14:27:40.930Z",
     "repository": "Comfy-Org/Z-Image-Turbo",
@@ -7492,6 +7447,51 @@
     "contentHash": "ac9cd589f5000be6a131ad49c90cbb0dd119c47310853ab7b5a0a11f3061edf5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-80RH",
+    "timestamp": "2026-11-23T15:28:52.445Z",
+    "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
+    "contentHash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-8ALX",
+    "timestamp": "2026-11-23T15:29:05.205Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-8CKT",
+    "timestamp": "2026-11-23T15:29:07.757Z",
+    "repository": "skyzh/mini-lsm",
+    "learningId": "learn-github-skyzh-mini-lsm",
+    "contentHash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "f7d2828f",
+    "sourceVersion": "0345103e",
     "license": "BSD-3-Clause",
-    "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
-    "lastHarvestedAt": "2026-11-23T06:14:24.624Z",
+    "contentHash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
+    "lastHarvestedAt": "2026-11-23T15:29:05.209Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4363,10 +4363,10 @@
     "repository": "skyzh/mini-lsm",
     "platform": "github",
     "sourceUrl": "https://github.com/skyzh/mini-lsm",
-    "sourceVersion": "df2120d7",
+    "sourceVersion": "d665497b",
     "license": "Apache-2.0",
-    "contentHash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
-    "lastHarvestedAt": "2026-11-07T18:57:18.836Z",
+    "contentHash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
+    "lastHarvestedAt": "2026-11-23T15:29:07.762Z",
     "learningId": "learn-github-skyzh-mini-lsm"
   },
   "paullecam-react-leaflet": {
@@ -12925,8 +12925,8 @@
     "sourceUrl": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
     "sourceVersion": "hf-akhaliq-minimax-h3-image-character-swap",
     "license": "Open-Source",
-    "contentHash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
-    "lastHarvestedAt": "2026-11-19T01:54:57.662Z",
+    "contentHash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
+    "lastHarvestedAt": "2026-11-23T15:28:52.449Z",
     "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap"
   },
   "hf-inworld-voice-isolator": {

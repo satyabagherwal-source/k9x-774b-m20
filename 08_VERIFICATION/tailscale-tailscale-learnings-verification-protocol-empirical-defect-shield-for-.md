@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T10:04:00.732Z",
+  "timestamp": "2026-11-23T15:29:11.701Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T10:04:00.732Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:29:11.701Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `a3309793`  
+> **Source Version**: `0345103e`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:03:52.315Z  
+> **Timestamp**: 2026-11-23T15:29:04.149Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:03:52.310Z  
+> **Harvest Timestamp**: 2026-11-23T15:29:04.144Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39448 stars
+- **Stars / Engagement**: 39523 stars
 
 ---
 
@@ -825,13 +825,13 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
+  *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
+
 - **Issue #22450** (2026-11-17): **wireguard-go: wakes up once a second when idle**
   *Symptoms*: I noticed when working on a new version of natlab that runs the Linux kernel within Go synctest tests that an idle Tailscale wakes up once a second interacting the Linux kernel.  Turns out that it's the hack for checking for network namespace moves (moving the tun device), which Tailscale doesn't even use, and which is also seemingly broken in modern kernels. (I didn't bisect whenever it last worked)  Tracking bug to fix that and stop its once/second wake-ups.  /cc @raggi 
   **Post-Mortem & Fix Analysis**:
   > Hahahah, asking Claude to look at the Linux git repo to figure if/when this code ever worked, starting by trying to find whether it worked when it was first written, and then bisecting...  ``` ● The hack only ever worked on Linux 4.5 through 5.0, and the 2019   stable backports broke it on the older series too. It was written in   November 2017, against roughly 4.14, where it did work.    When it worked:   - v4.5: commit 1bd4978a88ac ("tun: honor IFF_UP in tun_get_user()")     added if (!(tun->dev->flags & IFF_UP)) return -EIO; as the first     statement in tun_get_user. A zero-length write on a down interface     therefore got EIO. On an up interface it fell through to the     packet-info length check and got EINVAL.   - Before v4.5 there was no IFF_UP check in the write path, so a     zero-length write always got EINVAL, meaning "up".   - Evidence it was designed around this: in wireguard-go, the hack     was added 2017-11-29 (471f7ff, "Added cross namespace TUN status     detection"
-
-- **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
-  *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -848,153 +848,102 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3309793` (2026-11-22)
-**Commit Message**: net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic
+### Incident Patch 1: `fefe73ac` (2026-11-21)
+**Commit Message**: .github/workflows: give golangci-lint its own Go build cache
 
-The static fallback DERP map embedded in net/dnsfallback still lists
-node 6a at 68.183.90.120 (an old Bangalore DigitalOcean IP). That IP
-is no longer a Tailscale DERP server: it now belongs to an unrelated
-nginx host that either times out or answers /generate_204 with "404
-Not Found". Captive portal detection treats any 404 as a captive
-portal.
+The golangci-lint job's setup-go cache key collided with the CodeQL
+workflow's, so PRs restored CodeQL's main-branch build cache, which
+lacks the test packages and export data golangci-lint loads. Package
+loading thus ran nearly cold every time (~9 of ~10 minutes), and jobs
+now regularly hit the 10m timeout. Use a dedicated cache key, and run
+on pushes to main so there's a cache for PRs to restore.
 
-This is a production bug, not just a test bug: a client without a
-DERP map yet (fresh start, no on-disk cache) falls back to this static
-map, so a detection that picks 6a wrongly warns the user about a
-captive portal. It also made TestDetectCaptivePortalReturnsFalse,
-which probed five random nodes from that map, flaky whenever 6a was
-picked and nginx happened to answer.
+Updates #18366
+Updates tailscale/corp#28679
 
-Region 6's only node, 6a, is dead, so remove region 6 entirely. The
-DERP server at that IP was retired when region 6 moved from
-DigitalOcean Bangalore to Linode Mumbai (tailscale/corp#50435,
-tailscale/corp#51314). Region 6 still exists in the control-sent DERP
-map, but its new nodes are deliberately not added here: the list is
-not regenerated or grown, as we're moving away from DERP ser
+Change-Id: I7a23a66dc7198c030d6a378aa2733d558c8c37d9
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-**File**: `net/captivedetection/captivedetection_test.go` (modified, +59/-1)
+**File**: `.github/workflows/golangci-lint.yml` (modified, +36/-7)
 ```diff
-@@ -5,6 +5,8 @@ package captivedetection
+@@ -1,16 +1,20 @@
+ name: golangci-lint
+ on:
+-  # For now, only lint pull requests, not the main branches.
+   pull_request:
+     paths:
+       - ".github/workflows/golangci-lint.yml"
+       - "**.go"
+       - "go.mod"
+       - "go.sum"
+-  # TODO(andrew): enable for main branch after an initial waiting period.
+-  #push:
+-  #  branches:
+-  #    - main
++  # Runs on main populate the Go build cache that pull requests restore.
++  push:
++    branches:
++      - main
++    paths:
++      - ".github/workflows/golangci-lint.yml"
++      - "**.go"
++      - "go.mod"
++      - "go.sum"
  
- import (
- 	"context"
-+	"fmt"
-+	"net"
- 	"net/http"
- 	"net/http/httptest"
- 	"net/url"
-@@ -18,6 +20,7 @@ import (
- 	"tailscale.com/derp/derpserver"
- 	"tailscale.com/net/netmon"
- 	"tailscale.com/syncs"
-+	"tailscale.com/tailcfg"
- 	"tailscale.com/tstest/nettest"
- 	"tailscale.com/util/must"
- )
-@@ -37,12 +40,67 @@ func TestAvailableEndpointsAlwaysAtLeastTwo(t *testing.T) {
- 	}
- }
+   workflow_dispatch:
  
-+// localDERPMap returns a DERPMap whose nodes are local HTTP servers using
-+// the given handlers, and a counter of requests they received.
-+// Callers pass at least five handlers so that detectOnInterface never
-+// reaches the non-hermetic Tailscale endpoints sorted after DERP nodes.
-+func localDERPMap(t *testing.T, handlers ...http.HandlerFunc) (*tailcfg.DERPMap, *atomic.Int64) {
-+	if len(handlers) < 5 {
-+		t.Fatalf("got %d handlers; want at least 5", len(handlers))
-+	}
-+	var hits atomic.Int64
-+	dm := &tailcfg.DERPMap{Regions: map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{}}
-+	for i, h := range handlers {
-+		s := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			hits.Add(1)
-+			h(w, r)
-+		}))
-+		// Endpoints are IPv4-only, so don't let httptest fall back to [::1].
-+		s.Listener.Close()
-+		s.Listener = must.Get(net.Listen("tcp4", "127.0.0.1:0"))
-+		s.Start()
-+		t.Cleanup(s.Close)
-+		rid := tailcfg.DERPRegionID(i + 1)
-+		dm.Regions[rid] = &tailcfg.DERPRegion{
-+			RegionID: rid,
-+			Nodes: []*tailcfg.DERPNode{{
-+				Name:      fmt.Sprintf("%da", rid),
-+				RegionID:  rid,
-+				IPv4:      s.Listener.Addr().String(),
-+				CanPort80: true,
-+			}},
-+		}
-+	}
-+	return dm, &hits
-+}
+@@ -29,10 +33,25 @@ jobs:
+     steps:
+       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+ 
++      # setup-go's own cache is disabled because its key collides with the
++      # one used by the CodeQL workflow, whose saved build cache lacks the
++      # test packages and export data that golangci-lint needs. We manage
++      # our own cache below instead.
+       - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+         with:
+           go-version-file: go.mod
+-          cache: true
++          cache: false
 +
- func TestDetectCaptivePortalReturnsFalse(t *testing.T) {
-+	ok := derpserver.ServeNoContent
-+	dm, hits := localDERPMap(t, ok, ok, ok, ok, ok)
- 	d := NewDetector(t.Logf)
--	found := d.Detect(context.Background(), netmon.NewStatic(), nil, 0)
-+	found := d.Detect(t.Context(), netmon.NewStatic(), dm, 0)
- 	if found {
- 		t.Errorf("DetectCaptivePortal returned true, expected false.")
- 	}
-+	if hits.Load() == 0 {
-+		t.Skip("no endpoint was reached; no usable non-loopback interface?")
-+	}
-+}
-+
-+func TestDetectCaptivePortalReturnsTrue(t *testing.T) {
-+	notFound := func(w http.ResponseWriter, r *http.Request) {
-+		http.Error(w, "404 Not Found", http.StatusNotFound)
-+	}
-+	ok := derpserver.ServeNoContent
-+	dm, hits := localDERPMap(t, ok, ok, ok, ok, notFound)
-+	d := NewDetector(t.Logf)
-+	found := d.Detect(t.Context(), netmon.NewStatic(), dm, 0)
-+	if hits.Load() == 0 {
-+		t.Skip("no endpoint was reached; no usable non-loopback interface?")
-+	}
-+	if !found {
-+		t.Errorf("DetectCaptivePortal returned false, expected true.")
-+	}
- }
++      - name: Restore Go cache
++        id: restore-cache
++        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
++        with:
++          path: |
++            ~/.cache/go-build
++            ~/go/pkg/mod
++          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
++          restore-keys: |
++            ${{ runner.os }}-golangci-lint-
  
- func TestEndpointsAreUpAndReturnExpectedResponse(t *testing.T) {
-```
-
-**File**: `net/dnsfallback/dns-fallback-servers.json` (modified, +0/-15)
-```diff
-@@ -184,21 +184,6 @@
- 				}
- 			]
- 		},
--		"6": {
--			"RegionID": 6,
--			"RegionCode": "r6",
--			"RegionName": "r6",
--			"Nodes": [
--				{
--					"Name": "6a",
--					"RegionID": 6,
--					"HostName": "derp6.tailscale.com",
--					"IPv4": "68.183.90.120",
--					"IPv6": "2400:6180:100:d0::982:d001",
--					"CanPort80": true
--				}
--			]
--		},
- 		"7": {
- 			"RegionID": 7,
- 			"RegionCode": "r7",
+       - name: golangci-lint
+         uses: golangci/golangci-lint-action@b7bcab6379029e905e3f389a6bf301f1bc220662 # head as of 2026-03-04
+@@ -44,4 +63,14 @@ jobs:
+ 
+           # Loading packages with a cold cache takes a while:
+           args: --timeout=10m
+-          
++
++      - name: Save Go cache
++        # Save even on lint failure, but only on main and only once per
++        # go.mod/go.sum hash, as each entry is several GB.
++        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
++        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
++        with:
++          path: |
++            ~/.cache/go-build
++            ~/go/pkg/mod
++          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22556** (closed): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
-- **PR #22555** (closed): net/netmon: don't hold Monitor.mu while closing the OS monitor (@bradfitz)
-- **PR #22554** (2026-11-22): net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic (@bradfitz)
-- **PR #22544** (2026-11-21): ipn/ipnlocal: deflake TestServeAppCapsConcurrentStreams on Windows (@bradfitz)
-- **PR #22542** (2026-11-21): .github: use gomodfs for the Go module cache on Windows CI (@bradfitz)
-- **PR #22537** (2026-11-21): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
+- **PR #22591** (2026-11-23): wgengine/router: add envknob to disable src_valid_mark (@mikeodr)
+- **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
+- **PR #22583** (2026-11-23): client/systray: shut down cleanly on termination signals (@fQwQf)
+- **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
+- **PR #22580** (2026-11-23): net/dnsfallback: continue to remove the DNS fallback mechanism (@bradfitz)
+- **PR #22579** (2026-11-22): control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled (@bradfitz)
 
 ---
 
@@ -1014,61 +963,67 @@ not regenerated or grown, as we're moving away from DERP ser
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test he
+## X. .github/workflows: give golangci-lint its own Go build cache
 
 **RULE**:
-When implementing operations in `net/captivedetection/captivedetection_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/golangci-lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3309793`: net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fefe73ac`: .github/workflows: give golangci-lint its own Go build cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/captivedetection/captivedetection_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/golangci-lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"fmt"
-	"net"
-	"tailscale.com/tailcfg"
-// localDERPMap returns a DERPMap whose nodes are local HTTP servers using
-// the given handlers, and a counter of requests they received.
-// Callers pass at least five handlers so that detectOnInterface never
-// reaches the non-hermetic Tailscale endpoints sorted after DERP nodes.
-func localDERPMap(t *testing.T, handlers ...http.HandlerFunc) (*tailcfg.DERPMap, *atomic.Int64) {
-	if len(handlers) < 5 {
-		t.Fatalf("got %d handlers; want at least 5", len(handlers))
-	}
-	var hits atomic.Int64
-	dm := &tailcfg.DERPMap{Regions: map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{}}
-	for i, h := range handlers {
-		s := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			hits.Add(1)
-			h(w, r)
-		}))
-		// Endpoints are IPv4-only, so don't let httptest fall back to [::1].
-		s.Listener.Close()
-		s.Listener = must.Get(net.Listen("tcp4", "127.0.0.1:0"))
-		s.Start()
-		t.Cleanup(s.Close)
-		rid := tailcfg.DERPRegionID(i + 1)
-		dm.Regions[rid] = &tailcfg.DERPRegion{
-			RegionID: rid,
-			Nodes: []*tailcfg.DERPNode{{
-				Name:      fmt.Sprintf("%da", rid),
-				RegionID:  rid,
-				IPv4:      s.Listener.Addr().String(),
-				CanPor
+  # Runs on main populate the Go build cache that pull requests restore.
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/golangci-lint.yml"
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+      # setup-go's own cache is disabled because its key collides with the
+      # one used by the CodeQL workflow, whose saved build cache lacks the
+      # test packages and export data that golangci-lint needs. We manage
+      # our own cache below instead.
+          cache: false
+
+      - name: Restore Go cache
+        id: restore-cache
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-golangci-lint-
+
+      - name: Save Go cache
+        # Save even on lint failure, but only on main and only once per
+        # go.mod/go.sum hash, as each entry is several GB.
+        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@668228422ae6a00e4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	found := d.Detect(context.Background(), netmon.NewStatic(), nil, 0)
+  # For now, only lint pull requests, not the main branches.
+  # TODO(andrew): enable for main branch after an initial waiting period.
+  #push:
+  #  branches:
+  #    - main
+          cache: true
+          
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3309793` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fefe73ac` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:55:42.691Z",
+  "timestamp": "2026-11-23T15:29:11.263Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-akhaliq-minimax-h3-image-character-swap-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-akhaliq-minimax-h3-image-character-swap-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:55:42.691Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:29:11.263Z`  
 > **Learning ID**: `LEARN-EVO-hf-akhaliq-minimax-h3-image-character-swap-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-akhaliq-m`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:54:57.183Z  
+> **Timestamp**: 2026-11-23T15:28:51.945Z  
 > **Learning ID**: `learn-huggingface-akhaliq-minimax-h3-image-character-swap`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap](https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:54:56.974Z  
+> **Harvest Timestamp**: 2026-11-23T15:28:51.799Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 289 downloads | 90 likes
+- **Stars / Engagement**: 412 downloads | 213 likes
 
 ---
 
