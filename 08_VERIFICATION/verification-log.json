@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-5GVA",
-    "timestamp": "2026-11-21T11:11:36.358Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "7bb30a1b451adaa34bce05a62edaca6c7a70818a9fdb1db55fd6ee28c0f544da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5M3L",
     "timestamp": "2026-11-21T11:11:43.137Z",
     "repository": "apple/foundationdb",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
     "contentHash": "37cc39b42dbe118639727c8e25e96105ba7ecdfec05cb8055a39a422abf437dd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-E8DL",
+    "timestamp": "2026-11-23T09:29:47.241Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

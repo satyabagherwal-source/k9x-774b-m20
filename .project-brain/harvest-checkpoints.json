@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T09:06:38.894Z",
+  "last_updated": "2026-11-23T09:29:47.257Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1370,14 +1370,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
-      "content_hash": "a92320d16e9f5969c010b5b1569eebae2601c9b6dc1be917474a339526c2cd7f",
-      "verified_at": "2026-11-18T23:18:09.936Z",
+      "content_hash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
+      "verified_at": "2026-11-23T09:29:47.256Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:18:09.936Z"
+      "last_updated": "2026-11-23T09:29:47.256Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",

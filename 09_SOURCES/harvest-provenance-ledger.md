@@ -12341,3 +12341,4 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a46ba6ab` | Multi-dimensional audit evidence | 2026-11-23T08:33:09.361Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-23T08:33:12.135Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-23T09:06:38.886Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-23T09:29:47.246Z |

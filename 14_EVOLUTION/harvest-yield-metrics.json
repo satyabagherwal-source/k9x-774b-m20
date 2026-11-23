@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T09:06:38.891Z",
-  "total_cycles_completed": 11704,
-  "total_learnings_persisted": 11704,
+  "last_updated": "2026-11-23T09:29:47.252Z",
+  "total_cycles_completed": 11705,
+  "total_learnings_persisted": 11705,
   "total_rules_promoted": 10874,
   "history": [
-    {
-      "timestamp": "2026-11-22T14:45:34.931Z",
-      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T14:56:19.548Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-23T09:06:38.891Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T09:29:47.252Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

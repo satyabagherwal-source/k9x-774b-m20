@@ -12308,3 +12308,4 @@
 | `CYCLE-20261123-DEJW` | `2026-11-23T08:33:09.356Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10040` | Yes (`8ec15bbd...`) |
 | `CYCLE-20261123-DGOY` | `2026-11-23T08:33:12.130Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`678114bd...`) |
 | `CYCLE-20261123-KH41` | `2026-11-23T09:06:38.881Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`37cc39b4...`) |
+| `CYCLE-20261123-E8DL` | `2026-11-23T09:29:47.241Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`630ff7a6...`) |

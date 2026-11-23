@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T09:06:43.670Z",
+  "last_updated": "2026-11-23T09:29:55.106Z",
   "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "96702829daabde4a0e438de3d47fc3bac19b16a6acdaa1e3e24c9d9ab8788468",
+      "content_hash": "a00f0dff24fc133f46bb479f4f8face814e5733e447eaf1b014cd87a34f9863b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T09:06:43.670Z"
+      "persisted_at": "2026-11-23T09:29:55.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d94eb4f10536acde17cd51620f74216cff4fc0979e2bc0e48021583c844cc883",
+      "content_hash": "cfdce15d93d4d37b12b5a8927514c8d6f37ee60e38a5f36376b62ba6528301f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T09:06:42.685Z"
+      "persisted_at": "2026-11-23T09:29:53.630Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3437bfe5ad7c6fe5726769fcf63c800895ab662898ee5dcc83ebde8ad8c09554",
+      "content_hash": "d619f8956038bd9f18de1715c7d8d8ba9ba40e1db50f89799162bfa35de326e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:06:42.839Z"
+      "persisted_at": "2026-11-23T09:29:53.862Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -226083,7 +226083,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "a92320d16e9f5969c010b5b1569eebae2601c9b6dc1be917474a339526c2cd7f",
+      "content_hash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [],
@@ -226092,7 +226092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:18:09.709Z",
+      "verified_at": "2026-11-23T09:29:46.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226109,9 +226109,9 @@
       "title": "Research & Knowledge Intelligence: FermionResearch/Phonon-2 Core Invariants",
       "repository": "FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "586484a5d88dee4dc23283f7dc7c3583e52554c7c60156733f4949c8a8703076",
+      "content_hash": "21a681872f7c29066686563fa8249e7bc19606a412c48bf7216ada5a9e58e95b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:18:10.116Z"
+      "persisted_at": "2026-11-23T09:29:47.524Z"
     },
     "learn-github-founded-labs-react-native-reusables": {
       "learning_id": "learn-github-founded-labs-react-native-reusables",
@@ -226317,9 +226317,9 @@
       "title": "Research & Knowledge Intelligence: hf-fermionresearch-phonon-2-learnings Core Invariants",
       "repository": "hf-fermionresearch-phonon-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "20af19aaec5df3327371db8030422929dd977d76526e1ba133eac40f1be93575",
+      "content_hash": "8e692ee9e297b2cdb9321174ebab080e8324c73d400363f450bfe208b9455dc8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:18:30.862Z"
+      "persisted_at": "2026-11-23T09:29:52.800Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning": {
       "item_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
@@ -318917,13 +318917,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KJXE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ED4T-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbed955c79d3bd7a3064e95f70d1f11108149b21c8ac5cb10586b901fc9e8b7f",
+      "content_hash": "aad5969f62cc25db074ea9fceb3295014d3b9153e5f5e25aa55ef6637b353626",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:06:42.533Z"
+      "persisted_at": "2026-11-23T09:29:53.411Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

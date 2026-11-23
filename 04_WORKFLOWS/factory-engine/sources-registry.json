@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T07:45:10.665Z",
-    "lastVerified": "2026-11-23T07:45:10.665Z",
+    "lastChecked": "2026-11-23T09:29:52.322Z",
+    "lastVerified": "2026-11-23T09:29:52.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T09:06:41.766Z",
-    "lastVerified": "2026-11-23T09:06:41.766Z",
+    "lastChecked": "2026-11-23T09:29:52.334Z",
+    "lastVerified": "2026-11-23T09:29:52.334Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -971,8 +971,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T00:48:26.567Z",
-    "lastVerified": "2026-11-23T00:48:26.567Z",
+    "lastChecked": "2026-11-23T09:29:47.372Z",
+    "lastVerified": "2026-11-23T09:29:47.372Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -3834,9 +3834,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-22T06:19:30.769Z",
+    "lastChecked": "2026-11-23T09:29:49.866Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-22T06:19:30.769Z"
+    "lastVerified": "2026-11-23T09:29:49.866Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -4803,9 +4803,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-22T00:53:41.502Z",
+    "lastChecked": "2026-11-23T09:29:37.377Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-22T00:53:41.502Z"
+    "lastVerified": "2026-11-23T09:29:37.377Z"
   },
   "hf-openai-gpt-oss-20b": {
     "name": "openai/gpt-oss-20b",
@@ -5307,8 +5307,8 @@
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T07:13:54.032Z",
-    "lastVerified": "2026-11-22T07:13:54.032Z",
+    "lastChecked": "2026-11-23T09:29:44.821Z",
+    "lastVerified": "2026-11-23T09:29:44.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5415,12 +5415,12 @@
     "officialUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T23:18:09.284Z",
-    "lastVerified": "2026-11-18T23:18:09.284Z",
+    "lastChecked": "2026-11-23T09:29:40.047Z",
+    "lastVerified": "2026-11-23T09:29:40.047Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "a92320d16e9f5969c010b5b1569eebae2601c9b6dc1be917474a339526c2cd7f",
+    "contentHash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10132,12 +10132,12 @@
     "lastVerified": "2026-11-20T07:35:52.080Z"
   },
   "juullabs-kable": {
-    "name": "JuulLabs/kable",
+    "name": "kable",
     "officialUrl": "https://github.com/JuulLabs/kable",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-20T07:36:00.140Z",
-    "lastVerified": "2026-11-20T07:36:00.140Z",
+    "lastChecked": "2026-11-23T09:29:42.332Z",
+    "lastVerified": "2026-11-23T09:29:42.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juullabs-kable",
@@ -10146,7 +10146,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9836c4e2"
   },
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",
