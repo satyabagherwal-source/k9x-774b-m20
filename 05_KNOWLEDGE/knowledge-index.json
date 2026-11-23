@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T16:28:53.019Z",
+  "last_updated": "2026-11-23T16:37:15.967Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24039,
+  "total_items": 24044,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "e75c83bd",
-      "content_hash": "1d047f4970b4cc0a54780371b68332eea746a1a9533c463282cb374943b0b9f6",
+      "source_version": "2011f567",
+      "content_hash": "a48ab7d9f380f8846524861d2a8a439447a20a39013b0a664a945e09909f6cdb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:20.298Z"
+      "persisted_at": "2026-11-23T16:37:10.578Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "e75c83bd",
-      "content_hash": "21b8d5b6083a3b6926127e1f166f82c46c743d4845baa461c94259009411719a",
+      "source_version": "2011f567",
+      "content_hash": "f23c572c66a981ab59face5d24b9e4654f9ed6d4a635207f215a8deff0d9f3d8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:20.459Z"
+      "persisted_at": "2026-11-23T16:37:10.752Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "e75c83bd",
-      "content_hash": "17b208b7f8d66deab8b59e231e5b9738e8525d75e5d83d4066debcc26d3686c5",
+      "source_version": "2011f567",
+      "content_hash": "075fa823bd48a23f0435bafdc919a1a7fbd5724c8931ef5782b604449839a89d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:35:20.601Z"
+      "persisted_at": "2026-11-23T16:37:10.899Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113854,9 +113854,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "5569b12c81ac57a97568f0827db5052dd1c66ae3d4ca13c9a09c30a94cfae656",
+      "content_hash": "dbd39c44b92fc25fde5cfff9528f8d83b6beff2a0b931593d7cbad3a01ad0422",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:26.545Z"
+      "persisted_at": "2026-11-23T16:37:15.639Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113866,9 +113866,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bc114c11099a933b311aa2c9cee31a6fa71e48605f13f833f2c27c6e937c811",
+      "content_hash": "1502055e30d0f5b16f38cfeaa61eabe4bd0aab4f57221e4b292e70c731ffb843",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:26.705Z"
+      "persisted_at": "2026-11-23T16:37:15.824Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113878,9 +113878,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "a40dbe08401934b4b600b04a62be1763e6775162ada6d8f7b8fd6aadb4f88971",
+      "content_hash": "077a0a7a14b02a3fca8d04b534be6122ceed9e371b249abf135609a28fcc3a69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:35:26.847Z"
+      "persisted_at": "2026-11-23T16:37:15.967Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -214164,8 +214164,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "e4f652d8",
-      "content_hash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
+      "source_version": "c24e1d8f",
+      "content_hash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -214193,6 +214193,11 @@
           "number": 9542,
           "title": "Skip repeated rule names when resolving refs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10067,
+          "title": "Reuse pooled step continuation for bare terms",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214200,7 +214205,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:38:02.624Z",
+      "verified_at": "2026-11-23T16:37:07.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214242,10 +214247,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "e4f652d8",
-      "content_hash": "4b205a91f37808058c34b0b9457d6aa3795038d203e1e8b96b56e11eb43b9374",
+      "source_version": "c24e1d8f",
+      "content_hash": "215813a291e7e977ef51ec6919d0c5ed3bab2d89c5fb4f64b73a850c2d033cb8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:38:03.223Z"
+      "persisted_at": "2026-11-23T16:37:07.725Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -214254,10 +214259,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "e4f652d8",
-      "content_hash": "28639e9d1e69f9a501230a55d1b240220a21c5cc38fbaf8f39dbb4009fa8ed38",
+      "source_version": "c24e1d8f",
+      "content_hash": "89fda4dc53aa1d63f8357046af36afbccd6d4462a7b1299bd5968dca6ea4bb5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:38:03.388Z"
+      "persisted_at": "2026-11-23T16:37:07.912Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214568,9 +214573,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a9de0b786faaec4fa6723510de3e204dbb344fda14c9d2a789765ed8e8be9e5",
+      "content_hash": "603131b6cde20d86e4da2913d4a95992b8af57ab0fd54a683066c9487fb005d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:38:41.978Z"
+      "persisted_at": "2026-11-23T16:37:14.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214580,9 +214585,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "66b6a1c57674a5a1014fd76565323d307e347d9d4a34507d2795bb99799406b7",
+      "content_hash": "e933ecab4b26caedbb8447c1b8973107cc1e1bce72c29e6ea92acb4d4dc43020",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:38:42.164Z"
+      "persisted_at": "2026-11-23T16:37:14.827Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -231775,7 +231780,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
+      "content_hash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [],
@@ -231784,7 +231789,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T03:39:06.978Z",
+      "verified_at": "2026-11-23T16:36:55.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231801,9 +231806,9 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "repository": "google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "b270349c6f87d220d61d563bed13a7e2fe37099300e1296dc54302983ba0424e",
+      "content_hash": "b938d4437fa47e997da828c9b99fd21efa945724ed60f0aac2e005f422ac3a1f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T03:39:07.430Z"
+      "persisted_at": "2026-11-23T16:36:56.130Z"
     },
     "candidate_directive-nuc-105-list-and-population-sorting-by-key": {
       "item_id": "candidate_directive-nuc-105-list-and-population-sorting-by-key",
@@ -231837,9 +231842,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "repository": "hf-google-gemma-4-31b-it-learnings",
       "source_version": "HEAD",
-      "content_hash": "2080e2fea6c64f3a0dfd4e5c625b8a137dd54ff62781ab51a9a15f8e736935ac",
+      "content_hash": "58f078d8a675b3c6a8f9568d700a805894b8cf6187a2b74aa1558f8f671fb61e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T03:39:52.253Z"
+      "persisted_at": "2026-11-23T16:37:13.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
@@ -240849,8 +240854,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "e75c83bd",
-      "content_hash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
+      "source_version": "2011f567",
+      "content_hash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -240893,6 +240898,11 @@
           "number": 9590,
           "title": "preserve agent TUIs during remote approvals",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10068,
+          "title": "update url and stabilize proxy keep-alive test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240900,7 +240910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:35:19.696Z",
+      "verified_at": "2026-11-23T16:37:09.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -327519,6 +327529,70 @@
       "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T16:28:51.932Z"
+    },
+    "rule-10067": {
+      "learning_id": "rule-10067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10067,
+      "title": "Reuse pooled step continuation for bare terms",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "c24e1d8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:37:07.107Z"
+    },
+    "candidate_directive-reuse-pooled-step-continuation-for-bare-terms": {
+      "item_id": "candidate_directive-reuse-pooled-step-continuation-for-bare-terms",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NSKD-reuse-pooled-step-continuation-for-bare-terms.md",
+      "title": "Reuse pooled step continuation for bare terms",
+      "repository": "open-policy-agent/opa",
+      "source_version": "c24e1d8f",
+      "content_hash": "dda7b2d09c51c5e284dbc83dd20d78979bfe1a7f6017c0148030cfdc90c9518f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T16:37:07.550Z"
+    },
+    "rule-10068": {
+      "learning_id": "rule-10068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10068,
+      "title": "update url and stabilize proxy keep-alive test",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "2011f567",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:37:09.959Z"
+    },
+    "candidate_directive-update-url-and-stabilize-proxy-keep-alive-test": {
+      "item_id": "candidate_directive-update-url-and-stabilize-proxy-keep-alive-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NYO4-update-url-and-stabilize-proxy-keep-alive-test.md",
+      "title": "update url and stabilize proxy keep-alive test",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47d65ea26440d07e8f08edeca0747d90252ca6e9d0a6f48991861f7c5ec4e463",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T16:37:15.464Z"
+    },
+    "candidate_directive-topdown-reuse-pooled-step-continuation-for-bare-terms": {
+      "item_id": "candidate_directive-topdown-reuse-pooled-step-continuation-for-bare-terms",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NXWS-topdown-reuse-pooled-step-continuation-for-bare-terms.md",
+      "title": "topdown: Reuse pooled step continuation for bare terms",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a7201f0e675edad1612b89f8d4058a345bb9737692e2a4a8e1230df1271d9ab1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T16:37:14.477Z"
     }
   },
   "ai-builder-brain": {

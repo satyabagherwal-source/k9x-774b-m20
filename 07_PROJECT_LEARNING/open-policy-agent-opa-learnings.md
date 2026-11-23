@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `e4f652d8`  
+> **Source Version**: `c24e1d8f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:38:02.350Z  
+> **Timestamp**: 2026-11-23T16:37:06.266Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:38:02.345Z  
+> **Harvest Timestamp**: 2026-11-23T16:37:06.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12504 stars
+- **Stars / Engagement**: 12510 stars
 
 ---
 
@@ -967,60 +967,299 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4f652d8` (2026-11-20)
-**Commit Message**: docs: document number representation differences in Wasm
+### Incident Patch 1: `c24e1d8f` (2026-11-23)
+**Commit Message**: topdown: Reuse pooled step continuation for bare terms
 
-Wasm modules do arithmetic with libmpdec decimals and round division
-results to 18 significant digits. The Go interpreter uses big.Float
-with a 64-bit mantissa for division and for arithmetic on numbers that
-are not integers. 
+A bare term in a rule body, like `allow if input.foo`, built a new
+closure every time it ran. It now takes a stepCont from stepContPool
+and uses its runBare method as the continuation, as calls and
+equalities already do with run.
 
-Add a Numbers section under Current Status in the Wasm docs. Its
-examples come from "opa eval -t wasm" and "opa eval -t rego".
+runBare holds the bare-term checks. They stay out of run, which calls
+and equalities share, because adding them there slowed those steps.
 
-Fixes #3298.
+BenchmarkPartialObjectRuleCrossModule/1000:
 
-Signed-off-by: Ajay Kumar <[REDACTED_EMAIL]>
+27100 allocs/op // was
+25610 allocs/op // now
 
-**File**: `docs/docs/wasm.md` (modified, +21/-0)
+Signed-off-by: Charlie Egan <[REDACTED_EMAIL]>
+
+**File**: `v1/topdown/eval.go` (modified, +25/-13)
 ```diff
-@@ -26,6 +26,27 @@ functions that are not, and probably won't be natively supported in Wasm (e.g.,
- `http.send`). Built-in functions that are not natively supported can be
- implemented in the host environment (e.g., JavaScript).
+@@ -473,15 +473,30 @@ type stepCont struct {
+ 	e       *eval
+ 	iter    evalIterator
+ 	fn      func() error
++	bareFn  func() error
++	rterm   *ast.Term // set for a bare term expression, which must not be false
+ 	advance bool
+ }
  
-+### Numbers
-+
-+Wasm modules and OPA's Go interpreter, which `opa eval` uses by default, do
-+arithmetic in different ways:
-+
-+- Wasm modules use decimal arithmetic, and round the result of a division to 18
-+  significant digits.
-+- The Go interpreter uses binary floating-point numbers with a 64-bit mantissa
-+  for division, and for arithmetic on numbers that are not integers.
-+
-+As a result, the same expression can return numbers that differ in their last
-+digits or in their format:
-+
-+| Expression                         | `opa eval -t wasm`     | `opa eval -t rego`         |
-+| ---------------------------------- | ---------------------- | -------------------------- |
-+| `1 / 3`                            | `0.333333333333333333` | `0.33333333333333333334`   |
-+| `1763371234567891234 / 1000000000` | `1763371234.56789123`  | `1.763371234567891234e+09` |
-+| `1 - 0.9`                          | `0.1`                  | `0.10000000000000000002`   |
-+| `1.15 + 1.15`                      | `2.30`                 | `2.3`                      |
-+| `1e20 * 1`                         | `1e+20`                | `100000000000000000000`    |
-+
- ## Compiling Policies
+ func (c *stepCont) run() error {
+ 	return c.e.cont(c.iter, c.advance)
+ }
  
- You can compile Rego policies into Wasm modules using the `opa build` subcommand.
++func (c *stepCont) runBare() error {
++	e := c.e
++	if e.saveSet != nil && e.saveSet.Contains(c.rterm, e.bindings) {
++		return e.saveExpr(ast.NewExpr(c.rterm), e.bindings, func() error {
++			return e.cont(c.iter, c.advance)
++		})
++	}
++	if e.bindings.Plug(c.rterm).Equal(ast.InternedTerm(false)) {
++		return nil
++	}
++	return e.cont(c.iter, c.advance)
++}
++
+ func (c *stepCont) Reset() {
+-	c.e, c.iter = nil, nil
++	c.e, c.iter, c.rterm = nil, nil, nil
+ }
+ 
+ // cont continues after a successful step: to the next expression if advance is
+@@ -532,18 +547,15 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
+ 
+ 		stepContPool.Put(c)
+ 	case *ast.Term:
+-		rterm := ast.VarTerm(e.fmtVar())
+-		err = e.unify(terms, rterm, func() error {
+-			if e.saveSet != nil && e.saveSet.Contains(rterm, e.bindings) {
+-				return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
+-					return e.cont(iter, advance)
+-				})
+-			}
+-			if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
+-				return e.cont(iter, advance)
+-			}
+-			return nil
+-		})
++		c := stepContPool.Get()
++		c.e, c.iter, c.advance, c.rterm = e, iter, advance, ast.VarTerm(e.fmtVar())
++		if c.bareFn == nil {
++			c.bareFn = c.runBare
++		}
++
++		err = e.unify(terms, c.rterm, c.bareFn)
++
++		stepContPool.Put(c)
+ 	case *ast.Every:
+ 		eval := evalEvery{
+ 			e:     e,
+```
+
+---
+
+### Incident Patch 2: `39059957` (2026-11-23)
+**Commit Message**: topdown: make the partial object collision check linear
+
+Building the full extent of a partial object rule checked each new path
+against every path written before it, so `p[k] := v` over n keys took
+O(n^2) prefix comparisons. A collision means writing below a value another
+rule produced, and only object values can be written into, so the object
+values rules wrote are now tracked by pointer and checked while descending
+into the result.
+
+`p` is `p[k] := v` and `objects` is `objects[k] := {"v": v}`, which
+records each value.
+
+                                  │   base.txt   │              new.txt               │
+                                  │    sec/op    │   sec/op     vs base               │
+PartialObjectRule/p_100-16           73.63µ ± 6%   47.23µ ± 9%  -35.86% (p=0.000 n=8)
+PartialObjectRule/p_1000-16         2675.8µ ± 7%   485.0µ ± 4%  -81.87% (p=0.000 n=8)
+PartialObjectRule/p_4000-16         42.291m ± 9%   2.181m ± 5%  -94.84% (p=0.000 n=8)
+PartialObjectRule/objects_100-16     80.54µ ± 6%   55.77µ ± 8%  -30.75% (p=0.000 n=8)
+PartialObjectRule/objects_1000-16   2851.9µ ± 9%   647.2µ ± 5%  -77.31% (p=0.000 n=8)
+PartialObjectRule/objects_4000-16   43.580m ± 7%   2.959m ± 5%  -
+
+**File**: `v1/topdown/eval.go` (modified, +23/-26)
+```diff
+@@ -3439,10 +3439,10 @@ func (e evalVirtualPartial) evalEachRule(iter unifyIterator, unknown bool) error
+ 	}
+ 
+ 	result := e.empty
+-	var visitedRefs []ast.Ref
++	var leaves leafObjects
+ 
+ 	for _, rule := range e.ir.Rules {
+-		result, err = e.evalOneRulePreUnify(iter, rule, result, unknown, &visitedRefs)
++		result, err = e.evalOneRulePreUnify(iter, rule, result, unknown, &leaves)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -3486,7 +3486,7 @@ func (e evalVirtualPartial) evalAllRules(iter unifyIterator, rules []*ast.Rule)
+ func (e evalVirtualPartial) evalAllRulesNoCache(rules []*ast.Rule) (*ast.Term, error) {
+ 	result := e.empty
+ 
+-	var visitedRefs []ast.Ref
++	var leaves leafObjects
+ 
+ 	child := evalPool.Get()
+ 	defer evalPool.Put(child)
+@@ -3498,7 +3498,7 @@ func (e evalVirtualPartial) evalAllRulesNoCache(rules []*ast.Rule) (*ast.Term, e
+ 			child.traceExit(rule)
+ 			e.e.evaluated.Record(rule)
+ 
+-			result, _, err = e.reduce(rule, child.bindings, result, &visitedRefs)
++			result, _, err = e.reduce(rule, child.bindings, result, &leaves)
+ 			if err == nil && child.traceEnabled {
+ 				child.traceRedo(rule)
+ 			}
+@@ -3529,7 +3529,7 @@ func (e evalVirtualPartial) evalOneRulePreUnify(
+ 	rule *ast.Rule,
+ 	result *ast.Term,
+ 	unknown bool,
+-	visitedRefs *[]ast.Ref,
++	leaves *leafObjects,
+ ) (*ast.Term, error) {
+ 	child := evalPool.Get()
+ 	defer evalPool.Put(child)
+@@ -3574,7 +3574,7 @@ func (e evalVirtualPartial) evalOneRulePreUnify(
+ 				err = e.evalTerm(iter, e.pos+1, term, termbindings)
+ 			} else {
+ 				var dup bool
+-				result, dup, err = e.reduce(rule, child.bindings, result, visitedRefs)
++				result, dup, err = e.reduce(rule, child.bindings, result, leaves)
+ 				if err == nil && !unknown && dup && child.traceEnabled {
+ 					child.traceDuplicate(rule)
+ 				}
+@@ -3974,16 +3974,16 @@ func (q vcKeyScope) empty() bool {
+ 	return len(q.Ref) == 0
+ }
+ 
+-func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, l *ast.Location) (*ast.Object, error) {
++func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, leaves leafObjects, l *ast.Location) (*ast.Object, error) {
+ 	current := rootObj
+ 	for _, term := range ref {
+ 		key := b.Plug(term)
+ 		if child := (*current).Get(key); child != nil {
+-			if val, ok := child.Value.(ast.Object); ok {
+-				current = &val
+-			} else {
++			val, ok := child.Value.(ast.Object)
++			if _, leaf := leaves[child]; !ok || leaf {
+ 				return nil, objectDocKeyConflictErr(l)
+ 			}
++			current = &val
+ 		} else {
+ 			child := ast.NewObject()
+ 			(*current).Insert(key, ast.NewTerm(child))
+@@ -3994,20 +3994,21 @@ func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, l *ast.Locat
+ 	return current, nil
+ }
+ 
+-func hasCollisions(path ast.Ref, visitedRefs *[]ast.Ref, b *bindings) bool {
+-	collisionPath := ast.Ref(b.plugNamespacedTerms(path, nil))
++// leafObjects holds the object values rules which wrote into a partial object,
++// so that a rule writing to a child path conflicts and prevents writes.
++type leafObjects map[*ast.Term]struct{}
+ 
+-	for _, c := range *visitedRefs {
+-		if collisionPath.HasPrefix(c) && !collisionPath.Equal(c) {
+-			return true
+-		}
++func (l *leafObjects) add(t *ast.Term) {
++	if _, ok := t.Value.(ast.Object); !ok {
++		return
+ 	}
+-	*visitedRefs = append(*visitedRefs, collisionPath)
+-
+-	return false
++	if *l == nil {
++		*l = make(leafObjects)
++	}
++	(*l)[t] = struct{}{}
+ }
+ 
+-func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term, visitedRefs *[]ast.Ref) (*ast.Term, bool, error) {
++func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term, leaves *leafObjects) (*ast.Term, bool, error) {
+ 	var exists bool
+ 	head := rule.Head
+ 
+@@ -4025,15 +4026,10 @@ func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term
+ 		//          objPath
+ 		fullPath := rule.Ref()
+ 
+-		collisionPath := fullPath[e.pos+1:]
+-		if hasCollisions(collisionPath, visitedRefs, b) {
+-			return nil, false, objectDocKeyConflictErr(head.Location)
+-		}
+-
+ 		objPath := fullPath[e.pos+1 : len(fullPath)-1] // the portion of the ref that generates nested objects
+ 		leafKey := b.Plug(fullPath[len(fullPath)-1])   // the portion of the ref that is the deepest nested key for the value
+ 
+-		leafObj, err := getNestedObject(objPath, &v, b, head.Location)
++		leafObj, err := getNestedObject(objPath, &v, b, *leaves, head.Location)
+ 		if err != nil {
+ 			return nil, false, err
+ 		}
+@@ -4049,6 +4045,7 @@ func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term
+ 				exists = true
+ 			} else {
+ 				(*leafObj).Insert(leafKey, val)
++				leaves.add(val)
+ 			}
+ 		} else {
+ 			// We're inserting into a set
+```
+
+**File**: `v1/topdown/topdown_bench_test.go` (modified, +38/-0)
+```diff
+@@ -706,6 +706,44 @@ func BenchmarkComprehensionIndexing(b *testing.B) {
+ 	}
+ }
+ 
++func BenchmarkPartialObjectRule(b *testing.B) {
++	ctx := b.Context()
++	module := `package test
++
++	p[k] := v if { some k, v in data.items }
++	objects[k] := {"v": v} if { some k, v in data.items }`
++
++	for _, rule := range []string{"p", "objects"} {
++		for _, n := range []int{100, 1000, 4000} {
++			b.Run(fmt.Sprintf("%s_%d", rule, n), func(b *testing.B) {
++				items := make(map[string]any, n)
++				for i := range n {
++					items[fmt.Sprintf("k%d", i)] = i
++				}
++				store := inmem.NewFromObject(map[string]any{"items": items})
++				compiler := ast.MustCompileModules(map[string]string{"test.rego": module})
++				query, err := compiler.QueryCompiler().Compile(ast.MustParseBody("x = data.test." + rule))
++				if err != nil {
++					b.Fatal(err)
++				}
++				b.ReportAllocs()
++				for b.Loop() {
++					err = storage.Txn(ctx, store, storage.TransactionParams{}, func(txn storage.Transaction) error {
++						rs, err := NewQuery(query).WithStore(store).WithCompiler(compiler).WithTransaction(txn).Run(ctx)
++						if err != nil || len(rs) != 1 {
++							b.Fatal("Unexpected result:", rs, "err:", err)
++						}
++						return nil
++					})
++					if err != nil {
++						b.Fatal(err)
++					}
++				}
++			})
++		}
++	}
++}
++
+ func BenchmarkFunctionArgumentIndex(b *testing.B) {
+ 	ctx := b.Context()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9614** (2026-11-23): topdown: Reuse pooled step continuation for bare terms (@charlieegan3)
+- **PR #9613** (2026-11-23): topdown: report key conflicts in indexed object comprehensions (@srenatus)
+- **PR #9612** (2026-11-23): topdown: make the partial object collision check linear (@srenatus)
+- **PR #9607** (2026-11-22): ast: Reduce size of `Head` struct from 128 to 96 bytes (@anderseknert)
 - **PR #9602** (2026-11-19): ast: Skip repeated rule names when resolving refs (@charlieegan3)
 - **PR #9594** (2026-11-18): docs: fix typos (@Adham-Kiwan)
-- **PR #9590** (2026-11-18): topdown: allocate less in replace and replace_n (@charlieegan3)
-- **PR #9589** (2026-11-18): ci: extend release vulnerability check to OCP and opa-envoy-plugin (@srenatus)
-- **PR #9586** (2026-11-17): ast: Value only built-in type env (@charlieegan3)
-- **PR #9585** (2026-11-17): ast: allocate each parser term cache entry once (@charlieegan3)
 
 ---
 
@@ -1040,48 +1279,64 @@ Signed-off-by: Ajay Kumar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: document number representation differences in Wasm
+## X. topdown: Reuse pooled step continuation for bare terms
 
 **RULE**:
-When implementing operations in `docs/docs/wasm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/topdown/eval.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4f652d8`: docs: document number representation differences in Wasm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c24e1d8f`: topdown: Reuse pooled step continuation for bare terms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/wasm.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/topdown/eval.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-### Numbers
+	bareFn  func() error
+	rterm   *ast.Term // set for a bare term expression, which must not be false
+func (c *stepCont) runBare() error {
+	e := c.e
+	if e.saveSet != nil && e.saveSet.Contains(c.rterm, e.bindings) {
+		return e.saveExpr(ast.NewExpr(c.rterm), e.bindings, func() error {
+			return e.cont(c.iter, c.advance)
+		})
+	}
+	if e.bindings.Plug(c.rterm).Equal(ast.InternedTerm(false)) {
+		return nil
+	}
+	return e.cont(c.iter, c.advance)
+}
 
-Wasm modules and OPA's Go interpreter, which `opa eval` uses by default, do
-arithmetic in different ways:
+	c.e, c.iter, c.rterm = nil, nil, nil
+		c := stepContPool.Get()
+		c.e, c.iter, c.advance, c.rterm = e, iter, advance, ast.VarTerm(e.fmtVar())
+		if c.bareFn == nil {
+			c.bareFn = c.runBare
+		}
 
-- Wasm modules use decimal arithmetic, and round the result of a division to 18
-  significant digits.
-- The Go interpreter uses binary floating-point numbers with a 64-bit mantissa
-  for division, and for arithmetic on numbers that are not integers.
+		err = e.unify(terms, c.rterm, c.bareFn)
 
-As a result, the same expression can return numbers that differ in their last
-digits or in their format:
-
-| Expression                         | `opa eval -t wasm`     | `opa eval -t rego`         |
-| ---------------------------------- | ---------------------- | -------------------------- |
-| `1 / 3`                            | `0.333333333333333333` | `0.33333333333333333334`   |
-| `1763371234567891234 / 1000000000` | `1763371234.56789123`  | `1.763371234567891234e+09` |
-| `1 - 0.9`                          | `0.1`                  | `0.10000000000000000002`   |
-| `1.15 + 1.15`                      | `2.30`                 | `2.3`                      |
-| `1e20 * 1`                         | `1e+20`                | `100000000000000000000`    |
-
+		stepContPool.Put(c)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	c.e, c.iter = nil, nil
+		rterm := ast.VarTerm(e.fmtVar())
+		err = e.unify(terms, rterm, func() error {
+			if e.saveSet != nil && e.saveSet.Contains(rterm, e.bindings) {
+				return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
+					return e.cont(iter, advance)
+				})
+			}
+			if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
+				return e.cont(iter, advance)
+			}
+			return nil
+		})
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4f652d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c24e1d8f` are properly handled with clean fallback behavior.

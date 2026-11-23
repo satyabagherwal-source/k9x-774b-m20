@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
-    "lastHarvestedAt": "2026-11-19T03:39:07.228Z",
+    "contentHash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
+    "lastHarvestedAt": "2026-11-23T16:36:55.918Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "e75c83bd",
+    "sourceVersion": "2011f567",
     "license": "Apache-2.0",
-    "contentHash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
-    "lastHarvestedAt": "2026-11-20T15:35:19.901Z",
+    "contentHash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
+    "lastHarvestedAt": "2026-11-23T16:37:10.175Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "e4f652d8",
+    "sourceVersion": "c24e1d8f",
     "license": "Apache-2.0",
-    "contentHash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
-    "lastHarvestedAt": "2026-11-21T12:38:02.819Z",
+    "contentHash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
+    "lastHarvestedAt": "2026-11-23T16:37:07.324Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

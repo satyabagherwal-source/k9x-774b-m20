@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:28:53.019Z",
+  "last_updated": "2026-11-23T16:37:15.639Z",
   "total_records": 2431,
   "domains": {
     "A": {
@@ -9182,8 +9182,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "1d047f4970b4cc0a54780371b68332eea746a1a9533c463282cb374943b0b9f6",
-      "created_at": "2026-11-20T15:35:20.298Z"
+      "content_hash": "a48ab7d9f380f8846524861d2a8a439447a20a39013b0a664a945e09909f6cdb",
+      "created_at": "2026-11-23T16:37:10.578Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -9251,8 +9251,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "5569b12c81ac57a97568f0827db5052dd1c66ae3d4ca13c9a09c30a94cfae656",
-      "created_at": "2026-11-20T15:35:26.545Z"
+      "content_hash": "dbd39c44b92fc25fde5cfff9528f8d83b6beff2a0b931593d7cbad3a01ad0422",
+      "created_at": "2026-11-23T16:37:15.639Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -10463,8 +10463,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "4b205a91f37808058c34b0b9457d6aa3795038d203e1e8b96b56e11eb43b9374",
-      "created_at": "2026-11-21T12:38:03.223Z"
+      "content_hash": "215813a291e7e977ef51ec6919d0c5ed3bab2d89c5fb4f64b73a850c2d033cb8",
+      "created_at": "2026-11-23T16:37:07.725Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10532,8 +10532,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "5a9de0b786faaec4fa6723510de3e204dbb344fda14c9d2a789765ed8e8be9e5",
-      "created_at": "2026-11-21T12:38:41.978Z"
+      "content_hash": "603131b6cde20d86e4da2913d4a95992b8af57ab0fd54a683066c9487fb005d7",
+      "created_at": "2026-11-23T16:37:14.650Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -16185,8 +16185,8 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-research-knowledge-intelligence-google-gemma-4-31b-it-c.md",
       "repository": "google/gemma-4-31B-it",
-      "content_hash": "b270349c6f87d220d61d563bed13a7e2fe37099300e1296dc54302983ba0424e",
-      "created_at": "2026-11-19T03:39:07.430Z"
+      "content_hash": "b938d4437fa47e997da828c9b99fd21efa945724ed60f0aac2e005f422ac3a1f",
+      "created_at": "2026-11-23T16:36:56.130Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -16245,8 +16245,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-learnings-research-knowledge-intelligence-hf-google-gem.md",
       "repository": "hf-google-gemma-4-31b-it-learnings",
-      "content_hash": "2080e2fea6c64f3a0dfd4e5c625b8a137dd54ff62781ab51a9a15f8e736935ac",
-      "created_at": "2026-11-19T03:39:52.253Z"
+      "content_hash": "58f078d8a675b3c6a8f9568d700a805894b8cf6187a2b74aa1558f8f671fb61e",
+      "created_at": "2026-11-23T16:37:13.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",

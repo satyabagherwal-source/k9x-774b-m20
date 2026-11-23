@@ -12370,3 +12370,6 @@
 | `CYCLE-20261123-2L23` | `2026-11-23T16:20:38.043Z` | `rook/rook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rook-rook-learnings.md` | Yes (`8ed40e51...`) |
 | `CYCLE-20261123-CWAP` | `2026-11-23T16:28:39.169Z` | `inworld/voice-isolator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md` | Yes (`d5f76d7b...`) |
 | `CYCLE-20261123-D1ND` | `2026-11-23T16:28:46.105Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10066` | Yes (`6a048c11...`) |
+| `CYCLE-20261123-NJL6` | `2026-11-23T16:36:55.914Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`ba60c8bb...`) |
+| `CYCLE-20261123-NSE0` | `2026-11-23T16:37:07.320Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10067` | Yes (`f7994762...`) |
+| `CYCLE-20261123-NUL6` | `2026-11-23T16:37:10.170Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10068` | Yes (`70b959fd...`) |

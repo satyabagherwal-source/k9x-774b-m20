@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T16:28:51.528Z",
+  "updated_at": "2026-11-23T16:37:15.132Z",
   "stats": {
-    "total_discovered": 7905,
-    "approved_pending_harvest": 7481,
+    "total_discovered": 7906,
+    "approved_pending_harvest": 7482,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7471,
+      "COMMUNITY_AND_EXPERT": 7472,
       "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -170965,6 +170965,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
         "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-4DDFFC718B52": {
+      "id": "SRC-4DDFFC718B52",
+      "url": "https://github.com/nolabs-ai/nono/actions/runs/45157958328",
+      "title": "https://github.com/nolabs-ai/nono/actions/runs/45157958328",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:37:15.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
       }
     }
   }

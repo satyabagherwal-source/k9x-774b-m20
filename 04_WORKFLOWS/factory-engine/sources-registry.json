@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T16:28:50.921Z",
-    "lastVerified": "2026-11-23T16:28:50.921Z",
+    "lastChecked": "2026-11-23T16:37:13.574Z",
+    "lastVerified": "2026-11-23T16:37:13.574Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T16:03:01.476Z",
+    "lastChecked": "2026-11-23T16:37:07.521Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T16:03:01.476Z"
+    "lastVerified": "2026-11-23T16:37:07.521Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -538,22 +538,21 @@
     "revisionIdentifier": "741e1637"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T07:36:50.476Z",
-    "lastVerified": "2026-11-23T07:36:50.476Z",
+    "lastChecked": "2026-11-23T16:37:09.083Z",
+    "lastVerified": "2026-11-23T16:37:09.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
+    "contentHash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e75c83bd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -5210,9 +5209,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-22T11:14:24.802Z",
+    "lastChecked": "2026-11-23T16:37:04.987Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-22T11:14:24.802Z"
+    "lastVerified": "2026-11-23T16:37:04.987Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -5930,9 +5929,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-22T04:04:48.958Z",
+    "lastChecked": "2026-11-23T16:36:52.497Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-22T04:04:48.958Z"
+    "lastVerified": "2026-11-23T16:36:52.497Z"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -6621,12 +6620,12 @@
     "officialUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T03:39:06.726Z",
-    "lastVerified": "2026-11-19T03:39:06.726Z",
+    "lastChecked": "2026-11-23T16:36:55.221Z",
+    "lastVerified": "2026-11-23T16:36:55.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
+    "contentHash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6697,22 +6696,21 @@
     "lastVerified": "2026-11-22T07:27:31.071Z"
   },
   "open-policy-agent-opa": {
-    "name": "opa",
+    "name": "open-policy-agent/opa",
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T13:20:30.160Z",
-    "lastVerified": "2026-11-22T13:20:30.160Z",
+    "lastChecked": "2026-11-23T16:37:06.261Z",
+    "lastVerified": "2026-11-23T16:37:06.261Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
-    "promotedRulesCount": 0,
+    "contentHash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e4f652d8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mariadb-server": {
     "name": "server",
@@ -10629,9 +10627,9 @@
   "signerlabs-shipswift": {
     "name": "ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
-    "lastChecked": "2026-11-20T15:35:06.507Z",
+    "lastChecked": "2026-11-23T16:36:57.471Z",
     "revisionIdentifier": "d05d75e7",
-    "lastVerified": "2026-11-20T15:35:06.507Z"
+    "lastVerified": "2026-11-23T16:36:57.471Z"
   },
   "archivebox-archivebox": {
     "name": "ArchiveBox/ArchiveBox",

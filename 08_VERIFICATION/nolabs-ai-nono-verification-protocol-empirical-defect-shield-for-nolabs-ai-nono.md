@@ -4,22 +4,22 @@
 {
   "source_repository": "nolabs-ai/nono",
   "source_url": "https://github.com/nolabs-ai/nono",
-  "source_version": "e75c83bd",
+  "source_version": "2011f567",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T15:35:20.138Z",
+  "timestamp": "2026-11-23T16:37:10.405Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nolabs-ai-nono",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `e75c83bd`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T15:35:20.138Z`  
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `2011f567`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T16:37:10.405Z`  
 > **Learning ID**: `learn-github-nolabs-ai-nono`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nolabs-ai/nono` (Commit: `e75c83bd`)
+- **Target Repository**: `nolabs-ai/nono` (Commit: `2011f567`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:35:18.861Z  
+> **Harvest Timestamp**: 2026-11-23T16:37:09.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5055 stars
+- **Stars / Engagement**: 5078 stars
 
 ---
 
@@ -1104,8 +1104,8 @@ impl DomainEndpointState {
 pub struct EndpointRuleState {
     /// HTTP method ("GET", "POST", "*", etc.)
     pub method: String,
-    /// URL path glob pattern
-    pub path: String,
+    /// URL path glob pattern, normalized like the proxy's rule paths
+    pub path: nono_proxy::config::EndpointPath,
 }
 
 /// Serializable filesystem capability state
@@ -1166,10 +1166,7 @@ impl SandboxState {
     ) -> Self {
         Self::from_caps_with_denies(
             caps,
-            bypass_protection_paths,
-            &[],
-            allowed_domains,
-
+            bypas
 ```
 
 ### Core Architecture Module: `crates/nono-cli/src/state_paths.rs`
@@ -2973,13 +2970,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2355** (2026-11-23): **fix: update url and stabilize proxy keep-alive test**
+  *Symptoms*: ## Linked Issue  Maintainer-directed fix for the [main CI failures](https://github.com/nolabs-ai/nono/actions/runs/45157958328).  ## Summary  - Require `url` 2.5.9, fixing RUSTSEC-2026-0592, and update its required `form_urlencoded` dependency. - Make both HTTP origin fixtures read the complete request before responding. A single TCP read sometimes captured only headers, falsely failing the keep-alive test. Add a fragmented-request regression test.  ## Test Plan  - `make ci` passed on macOS with isolated config/state directories. - Linux/Rust 1.95: 895 proxy tests and `cargo check --workspace --locked` passed. - Keep-alive regression passed 30 consecutive runs. - Cargo Audit: zero vulnerabilities; five existing maintenance warnings remain unsuppressed.  ## Agent Disclosure  Prepared with Codex under maintainer direction. Reviewed AGENTS.md, CONTRIBUTING.md, GOVERNANCE.md, SECURITY.md, the release guide and affected code; follows repository contribution and security requirements.  ## Checklist  - [x] Maintainer-directed routine work - [x] All commits carry DCO sign-off - [x] Code follows repository standards and has regression coverage - [x] Documentation: not applicable to this dependency/test-fixture fix - [x] NEP: not applicable; no enforcement changes  ## Agent Compliance Check  - [x] Not prohibited from contributing - [x] Directly maintainer-directed work - [x] Reviewed contribution and security rules - [x] Original changes; no reused code requiring attribution - [x] No p
+
 - **Issue #2349** (2026-11-20): **fix(cli): allow mise to read ~/.local/state/mise**
   *Symptoms*: ## Linked Issue  Closes #2348  ## Summary  mise keeps trusted/tracked config records under `~/.local/state/mise`. Add it to the `mise_manager` group's read list.  ## Agent Disclosure  Prepared with Claude Code on behalf of the contributor. It read AGENTS.md, CONTRIBUTING.md and the PR template, and followed their requirements (linked issue, DCO sign-off, disclosure).  ## Test Plan  - `cargo test -p nono-cli --bin nono policy`: 456 passed  ## Checklist  - [x] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates   - Not applicable: read-only grant added to an existing opt-in group, same as #2307. - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked   - Not applicable: read-only grant added to an existing opt-in group, same as #2307.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
   **Post-Mortem & Fix Analysis**:
   > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +1 | | Lines removed | -0 | | Total changed | 1 | | **Classification** | **Small (< 50 lines)** |  ### Affected crates  - **crates/nono-cli** — CLI changes. Verify argument parsing, flag documentation, and UX behaviour across supported platforms.  ### Blast radius — Contained  This PR touches: **configuration / policy files**  --- <sub>Updated automatically on each push to this PR.</sub>
-
-- **Issue #2347** (2026-11-20): **fix(profile): resolve .jsonc siblings and paths**
-  *Symptoms*: ## Linked Issue  Part of #2343 (points 1 and 2; point 3 is waiting on a decision in the issue)  ## Summary  Two places in profile resolution still only knew about `.json`:  - Sibling `extends` lookup now checks `{name}.jsonc` before `{name}.json`, the same order as user profiles. It still skips the file being loaded, so `base.jsonc` extending `base` picks up a sibling `base.json` like before. - `is_registry_ref` no longer treats `dir/foo.jsonc` as a `namespace/name` package ref, so it loads as a file instead of going to the registry.  This is a bug fix, not a change to enforcement semantics: `.jsonc` profiles are already supported, these two paths just missed them.  ## Agent Disclosure  This PR was written with an AI coding agent (Claude Code) and reviewed by me. The agent read `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md` and `crates/nono-cli/src/profile/mod.rs`. It wrote the regression tests first and checked that they failed before the fix.  ## Test Plan  - New tests in `profile::tests`:   - `test_extends_resolves_jsonc_sibling`: failed before the fix.   - `test_profile_file_paths_are_not_registry_refs`: failed before the fix.   - `test_extends_jsonc_self_still_resolves_json_sibling`: passed before and after; guards the self-skip. - `make fmt-check clippy lint-docs test-doc` pass on macOS. - `make test` on macOS: everything under `profile` passes. Elsewhere, `session_auth::tests::ancestry_does_not_accept_an_unrelated_root` fails and the `terminal_approval` tests hang on my
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2996,522 +2993,144 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3f82bec` (2026-11-20)
-**Commit Message**: fix(cli): preserve agent TUIs during remote approvals (#2344)
-
-Show remote approval status in a supervisor-owned screen and restore
-current agent output after a decision or timeout. For example, a Codex
-network request can wait for platform approval without overlapping its TUI.
+### Incident Patch 1: `a93ccdfe` (2026-11-23)
+**Commit Message**: fix: update url and stabilize proxy keep-alive test (#2355)
 
 Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -2728,6 +2728,7 @@ dependencies = [
-  "urlencoding",
-  "uuid",
-  "vt100",
-+ "vte",
-  "walkdir",
-  "which",
-  "x509-parser",
-```
-
-**File**: `crates/nono-cli/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -96,6 +96,7 @@ regex = "1"
- urlencoding = "2"
- tempfile.workspace = true
- vt100 = "0.18.1"
-+vte = "0.15"
- shlex = "2"
- jsonc-parser = { version = "0.34", features = ["serde"] }
- zstd = "0.14"
-```
-
-**File**: `crates/nono-cli/src/approval_runtime.rs` (modified, +28/-2)
-```diff
-@@ -261,6 +261,7 @@ const BACKEND_NOTICE_PAUSE_WAIT: Duration = Duration::from_secs(1);
- /// deadline match this backend's `timeout_secs`.
- const HEADER_TIMEOUT_SECS: &str = "X-Nono-Timeout-Secs";
+@@ -1702,9 +1702,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
  
-+#[derive(Clone)]
- struct WebhookApproval {
-     name: String,
-     url: String,
-@@ -688,6 +689,22 @@ impl WebhookApproval {
- }
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -4990,9 +4990,9 @@ dependencies = [
  
- impl ApprovalBackend for WebhookApproval {
-+    fn request_approval_with_deadline(
-+        &self,
-+        request: &ApprovalRequest,
-+        deadline: Instant,
-+    ) -> Result<ApprovalDecision> {
-+        let remaining = deadline.saturating_duration_since(Instant::now());
-+        if remaining.is_zero() {
-+            return Ok(ApprovalDecision::Timeout);
-+        }
-+        Self {
-+            timeout: self.timeout.min(remaining),
-+            ..self.clone()
-+        }
-+        .request_approval(request)
-+    }
-+
-     fn request_approval(&self, request: &ApprovalRequest) -> Result<ApprovalDecision> {
-         let body = serde_json::to_vec(&WebhookApprovalRequest {
-             backend: &self.name,
-@@ -701,9 +718,18 @@ impl ApprovalBackend for WebhookApproval {
-         })?;
-         let started = Instant::now();
-         let deadline = started.checked_add(self.timeout).unwrap_or(started);
--        let announced = Self::show_notice(deadline, || {
--            crate::terminal_approval::announce_backend_query(&self.name, request, self.timeout)
-+        let progress = crate::relay_prompt_gate::relay_active().then(|| {
-+            crate::approval_status::PendingNotice::start(
-+                &self.name,
-+                request,
-+                self.timeout,
-+                self.platform.is_some(),
-+            )
-         });
-+        let announced = progress.is_none()
-+            && Self::show_notice(deadline, || {
-+                crate::terminal_approval::announce_backend_query(&self.name, request, self.timeout)
-+            });
-         let decision = match &self.platform {
-             None => self.request_unsigned(&body, started),
-             Some(state) => self.drive_platform_approval(
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
-**File**: `crates/nono-cli/src/approval_runtime_network_tests.rs` (modified, +26/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -559,6 +559,32 @@ async fn webhook_retry_and_signed_polls_retain_the_attempt_id() {
-     assert!(session.decisions.lock().unwrap().is_empty());
- }
- 
-+#[tokio::test]
-+async fn caller_deadline_ends_remote_wait_before_the_backend_timeout() {
-+    let mut webhook = WebhookServer::start().await;
-+    let backend = webhook.backend();
-+    let request = ApprovalRequest::Capability {
-+        request_id: "caller-deadline".into(),
-+        path: "/test/file".into(),
-+        access: nono::AccessMode::Read,
-+        reason: None,
-+        child_pid: 42,
-+        session_id: "test-session".into(),
-+    };
-+    let query = tokio::task::spawn_blocking(move || {
-+        backend
-+            .request_approval_with_deadline(&request, Instant::now() + Duration::from_millis(100))
-+    });
-+    let held = webhook.next().await;
-+    let result = tokio::time::timeout(Duration::from_secs(2), query).await;
-+    // Close the held connection even on regression, so the worker cannot leak.
-+    drop(held);
-+    let result = result
-+        .expect("caller deadline must end the transport and its pending notice")
-+        .unwrap();
-+    assert!(result.is_err() || matches!(result, Ok(ApprovalDecision::Timeout)));
-+}
-+
- #[tokio::test]
- async fn unsigned_webhook_is_given_only_the_remaining_budget() {
-     let mut webhook = WebhookServer::start().await;
+@@ -50,7 +50,7 @@ globset = "0.4"
+ # Shared system dependencies
+ nix = "0.31.3"
+ landlock = "0.4.7"
+-url = "2"
++url = "2.5.9"
+ idna = "1"
+ getrandom = "0.4"
+ base64 = "0.23"
 ```
 
-**File**: `crates/nono-cli/src/approval_status.rs` (added, +223/-0)
+**File**: `crates/nono-proxy/src/server.rs` (modified, +51/-7)
 ```diff
-@@ -0,0 +1,223 @@
-+//! Supervisor-owned presentation state; never participates in approval decisions.
-+
-+use crate::output::{SummaryKind, summary_heading, summary_row};
-+use crate::terminal_approval::{request_summary, sanitize_for_terminal};
-+use nono::ApprovalRequest;
-+use std::collections::{BTreeMap, BTreeSet};
-+use std::sync::{Mutex, PoisonError};
-+use std::time::{Duration, Instant};
-+use uuid::Uuid;
-+
-+const DISPLAY_DELAY: Duration = Duration::from_millis(300);
-+static PENDING: Mutex<BTreeMap<Uuid, PendingApproval>> = Mutex::new(BTreeMap::new());
-+
-+#[derive(Clone)]
-+pub(crate) struct PendingApproval {
-+    backend: String,
-+    summary: String,
-+    started: Instant,
-+    timeout: Duration,
-+    platform: bool,
-+}
-+
-+impl PendingApproval {
-+    pub(crate) fn new(
-+        backend: &str,
-+        request: &ApprovalRequest,
-+        timeout: Duration,
-+        platform: bool,
-+    ) -> Self {
-+        Self {
-+            backend: sanitize_for_terminal(backend),
-+            summary: request_summary(request),
-+            started: Instant::now(),
-+            timeout,
-+            platform,
-+        }
-+    }
-+}
-+
-+/// Removal on every return path, including backend errors and unwinding.
-+pub(crate) struct PendingNotice(Uuid);
-+
-+impl PendingNotice {
-+    pub(crate) fn start(
-+        backend: &str,
-+        request: &ApprovalRequest,
-+        timeout: Duration,
-+        platform: bool,
-+    ) -> Self {
-+        let id = Uuid::new_v4();
-+        PENDING
-+            .lock()
-+            .unwrap_or_else(PoisonError::into_inner)
-+            .insert(
-+                id,
-+                PendingApproval::new(backend, request, timeout, platform),
-+            );
-+        Self(id)
-+    }
-+}
-+
-+impl Drop for PendingNotice {
-+    fn drop(&mut self) {
-+        PENDING
-+            .lock()
-+            .unwrap_or_else(PoisonError::into_inner)
-+            .remove(&self.0);
-+    }
-+}
-+
-+pub(crate) fn snapshot() -> BTreeMap<Uuid, PendingApproval> {
-+    PENDING
-+        .lock()
-+        .unwrap_or_else(PoisonError::into_inner)
-+        .clone()
-+}
-+
-+#[derive(Default)]
-+pub(crate) struct ApprovalView {
-+    dismissed: BTreeSet<Uuid>,
-+    shown: BTreeSet<Uuid>,
-+    pub(crate) frame: Option<String>,
-+    pub(crate) size: (u16, u16),
-+}
-+
-+impl ApprovalView {
-+    pub(crate) fn dismiss(&mut self) {
-+        self.dismissed.extend(&self.shown);
-+    }
-+
-+    pub(crate) fn render(
-+        &mut self,
-+        pending: &BTreeMap<Uuid, PendingApproval>,
-+        now: Instant,
-+    ) -> Option<String> {
-+        self.dismissed.retain(|id| pending.contains_key(id));
-+        self.shown = pending.keys().copied().collect();
-+        let approval = pending
-+            .iter()
-+            .filter(|(id, approval)| {
-+                !self.dismissed.contains(id)
-+                    && now.saturating_duration_since(approval.started) >= DISPLAY_DELAY
-+            })
-+            .min_by_key(|(_, approval)| approval.started)?
-+            .1;
-+        let mut text = summary_heading("Approval", SummaryKind::Attention);
-+        text.push_str(&summary_row(
-+            "Status",
-+            if approval.platform {
-+                "Waiting for platform approval"
-+            } else {
-+                "Waiting for approval backend"
-+            },
-+        ));
-+        text.push_str(&summary_row("Backend", &approval.backend));
-+        text.push_str(&summary_row("Request", &approval.summary));
-+        text.push_str(&summary_row(
-+            "Waiting",
-+            &format!(
-+                "{}s (timeout {}s)",
-+                now.saturating_duration_since(approval.started).as_secs(),
-+                approval.timeout.as_secs()
-+            ),
-+        ));
-+        if pending.len() > 1 {
-+            text.push_str(&summary_row("Pending", &pending.len().to_string()));
-+        }
-+        text.push_str("\n    Esc: return to agent; approval remains pending.\n");
-+        Some(text)
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    pub(crate) fn request() -> ApprovalRequest {
-+        ApprovalRequest::Network {
-+            request_id: "test-approval".into(),
-+            host: "api.example.com".into(),
-+            port: 443,
-+            protocol: "tcp".into(),
-+            resolved_ips: vec![],
-+            reason: Some("secret reason must not be displayed".into()),
-+            child_pid: 42,
-+            session_id: "test-session".into(),
-+        }
-+    }
-+
-+    #[test]
-+    fn delayed_view_tracks_concurrent_requests_until_the_last_completes() {
-+        let approval = PendingApproval::new("platform", &request(), Duration::from_secs(60), true);
-+        let now = approval.started;
-+        let first = Uuid::new_v4();
-+        let second = Uuid::new_v4();
-+        let mut pending = BTreeMap::from([(first, approval.clone()), (second, approval)]);
-+        let mut view = ApprovalView::default();
-+        assert!(view.render(&pending, now).is_none());
-+        let later = now + DISPLAY_DELAY;
-+        let frame = vie
-```
-
-**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +59/-13)
-```diff
-@@ -3597,21 +3597,64 @@ struct SupervisorDenials {
-     seen_request_ids: HashSet<String>,
- }
- 
--/// Run a supervisor-thread approval request with the PTY relay paused.
--///
--/// See [`crate::pty_proxy::PtyProxy::run_with_terminal_paused`]. Requests
--/// raised on other threads pause the relay through
--/// [`service_off_thread_prompts`] instead.
--fn request_approval_with_relay_paused(
-+/// Keep the terminal relay alive while a blocking backend decides. Interactive
-+/// backends still acquire the prompt gate; remote backends publish status.
-+fn request_approval_with_relay(
-     config: &SupervisorConfig<'_>,
-     request: &nono::supervisor::ApprovalRequest,
-+    child: Pid,
-     pty: Option<&mut crate::pty_proxy::PtyProxy>,
- ) -> Result<ApprovalDecision> {
--    let request_approval = || config.approval_backend.request_approval(request);
--    match pty {
--        Some(proxy) => proxy.run_with_terminal_paused(request_approval),
--        None => request_approval(),
--    }
-+    let Some(pty) = pty else {
-+        return config.approval_backend.request_approval(request);
-+    };
-+    let backend = config.approval_backend;
-+    std::thread::scope(|scope| {
-+        let worker = std::thread::Builder::new()
-+            .name("approval".into())
-+            .spawn_scoped(scope, || backend.request_approval(request))
-+            .map_err(|err| {
-+                NonoError::SandboxInit(format!("cannot start approval worker: {err}"))
-+            })?;
-+        let mut relay_open = true;
-+        while !worker.is_finished() {
-+            let (master, client, attach, resize) = pty.poll_fds();
-+            let mut fds =
-+                [if relay_open { master } else { -1 }, client, attach, resize].map(|fd| {
-+                    libc::pollfd {
-+                        fd,
-+                        events: libc::POLLIN,
-+                        revents: 0,
-+                    }
-+                });
-+            // SAFETY: fds contains four initialized pollfd values, valid for
-+            // this synchronous call; descriptors are borrowed from the relay.
-+            if unsafe { libc::poll(fds.as_mut_ptr(), fds.len() as _, 50) } > 0 {
-+                relay_open = handle_pty_poll_events(
-+                    pty,
-+                    fds[0].revents,
-+                    fds[1].revents,
-+                    fds[2].revents,
-+                    fds[3].revents,
-+                    "approval wait",
-+                );
-+            }
-+            let pause_requested = drain_pause_pipe();
-+            if pause_requested {
-+                pty.sync_current_terminal_winsize();
-+            }
-+            let detach_requested = pty.take_detach_request();
-+            handle_pty_detach_request(Some(pty), pause_requested, detach_requested);
-+            handle_pty_signal_relay(Some(pty));
-+            handle_pty_suspension(Some(pty), child);
-+            handle_pty_capture(Some(pty), child);
-+            service_off_thread_prompts(Some(pty));
-+        }
-+        pty.service_approval_view();
-+        worker
-+            .join()
-+            .map_err(|_| NonoError::SandboxInit("approval worker failed; access denied".into()))?
-+    })
- }
- 
- /// Pause the PTY relay for terminal prompts raised off the supervisor thread.
-@@ -3625,6 +3668,7 @@ fn service_off_thread_prompts(pty: Option<&mut crate::pty_proxy::PtyProxy>) {
-         crate::relay_prompt_gate::service_pending_prompts(|prompts| {
-             proxy.run_with_terminal_paused(prompts)
-         });
-+        proxy.service_approval_view();
-     }
- }
- 
-@@ -3750,9 +3794,10 @@ fn handle_supervisor_message(
-                         // Stash the verified digest for TOCTOU re-check at open time
-                         verified_digest = Some(verified.digest);
-                         // Instruction file verified — proceed to approval backend
--                        let backend_decision = match request_approval_with_relay_paused(
-+                        let backend_decision = match request_approval_with_relay(
-                             config,
-                             &nono::supervisor::ApprovalRequest::from(request.clone()),
-+                            child,
-                             pty.as_deref_mut(),
-                         ) {
-                             Ok(d) => {
-@@ -3816,9 +3861,10 @@ fn handle_supervisor_message(
-                 }
-             } else {
-                 // 3. Delegate to approval backend (non-instruction files)
--                let backend_decision = match request_approval_with_relay_paused(
-+                let backend_decision = match request_approval_with_relay(
-                     config,
-                     &nono::supervisor::ApprovalRequest::from(request.clone()),
-+                    child,
-                     pty,
-                 ) {
-                     Ok(d) => {
-```
-
-**File**: `crates/nono-cli/src/exec_strategy/supervisor_linux.rs` (modified, +3/-2)
-```diff
-@@ -681,7 +681,7 @@ fn handle_received_filesystem_notification(
-     };
-     let decision_started: Instant = Instant::now();
- 
--    let decision = match super::request_approval_with_relay_paused(config, &request, pty) {
-+    let decision = match super::request_approval_with_relay(config, &request, child, pty) {
-         Ok(d) => {
-             if d.is_denied() {
-                 record_denial(
-@@ -1107,9 +1107,10 @@ fn request_unix_socket_approval(
-         session_id: config.session_id.to_string(),
-     };
-     let decision_started = Instant::now();
--    let decision = match super::request_approval_with_relay_paused(
-+    let decision = match super::request_approval_with_relay(
-         config,
-         &request,
-+        approval.child,
-         approval.pty.as_deref_mut(),
-     ) {
-         Ok(decision) => decision,
-```
-
-**File**: `crates/nono-cli/src/main.rs` (modified, +2/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- mod app_runtime;
- mod approval_runtime;
-+mod approval_status;
- mod audit_attestation;
- mod audit_client;
- mod audit_commands;
-@@ -92,6 +93,7 @@ mod temp_keepalive;
- mod tenant_selector;
- mod terminal_approval;
- mod terminal_capture;
-+mod terminal_modes;
- mod terminal_prompt;
- mod terminal_selector;
- mod theme;
-```
-
----
-
-### Incident Patch 2: `e75c83bd` (2026-11-20)
-**Commit Message**: fix(cli): allow mise to read ~/.local/state/mise (#2349)
-
-Signed-off-by: Andrea Jemmett <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/data/policy.json` (modified, +1/-0)
-```diff
-@@ -422,6 +422,7 @@
-           "~/.local/bin/mise",
-           "~/.config/mise",
-           "~/.local/share/mise",
-+          "~/.local/state/mise",
-           "~/.tool-versions"
-         ]
-       }
-```
-
----
-
-### Incident Patch 3: `5b283ca6` (2026-11-20)
-**Commit Message**: fix: allow reading /etc/debian_version in system_read_linux_core (#2346)
-
-The policy now grants read access to /etc/debian_version. The policy
-test checks for that specific grant alongside its existing check that
-/etc as a whole has no read grant.
-
-Fixes #2324
-
-Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
-Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/data/policy.json` (modified, +1/-0)
-```diff
-@@ -231,6 +231,7 @@
-           "/etc/locale.gen",
-           "/etc/alternatives",
-           "/etc/os-release",
-+          "/etc/debian_version",
-           "/etc/passwd",
-           "/etc/services",
-           "/etc/mime.types",
-```
-
-**File**: `crates/nono-cli/src/policy.rs` (modified, +4/-0)
-```diff
-@@ -3955,6 +3955,10 @@ mod tests {
-             read_paths.iter().any(|p| p == "/etc/mime.types"),
-             "system_read_linux_core must grant read access to '/etc/mime.types'"
+@@ -7681,19 +7681,65 @@ mod tests {
          );
-+        assert!(
-+            read_paths.iter().any(|p| p == "/etc/debian_version"),
-+            "system_read_linux_core must grant read access to '/etc/debian_version'"
+     }
+ 
++    /// Wait for the fixture's headers and Content-Length body before replying.
++    /// A TCP read can contain just part of either, even over loopback.
++    async fn read_origin_request(stream: impl tokio::io::AsyncRead + Unpin) -> String {
++        use tokio::io::{AsyncBufReadExt, AsyncReadExt, BufReader};
++
++        tokio::time::timeout(std::time::Duration::from_secs(5), async {
++            let mut reader = BufReader::new(stream);
++            let mut request = String::new();
++            let mut content_length = 0;
++            loop {
++                let mut line = String::new();
++                assert!(reader.read_line(&mut line).await.unwrap() > 0);
++                request.push_str(&line);
++                if line == "\r\n" {
++                    break;
++                }
++                if let Some((name, value)) = line.split_once(':')
++                    && name.eq_ignore_ascii_case("content-length")
++                {
++                    content_length = value.trim().parse().unwrap();
++                }
++            }
++            let mut body = vec![0; content_length];
++            reader.read_exact(&mut body).await.unwrap();
++            request.push_str(&String::from_utf8_lossy(&body));
++            request
++        })
++        .await
++        .expect("origin must receive a complete request")
++    }
++
++    #[tokio::test]
++    async fn origin_fixture_reads_fragmented_request_without_waiting_for_eof() {
++        use tokio::io::AsyncWriteExt;
++
++        let (mut sender, receiver) = tokio::io::duplex(16);
++        let reader = tokio::spawn(read_origin_request(receiver));
++        let body = "fragmented request body";
++        let head = format!(
++            "POST /mcp HTTP/1.1\r\nHost: localhost\r\ncOnTeNt-LeNgTh: {}\r\n\r\n",
++            body.len()
 +        );
-         assert!(
-             !read_paths.iter().any(|p| p == "/etc"),
-             "system_read_linux_core must not grant bare '/etc'; use specific paths instead. Found: {:?}",
++        sender.write_all(head.as_bytes()).await.unwrap();
++        tokio::task::yield_now().await;
++        sender.write_all(body.as_bytes()).await.unwrap();
++        assert_eq!(reader.await.unwrap(), format!("{head}{body}"));
++    }
++
+     /// Spawn a one-shot local HTTP/1.1 origin server that echoes the received
+     /// request line back in the body and returns 200. Returns its address and
+     /// a receiver that yields the raw request bytes it saw.
+     async fn spawn_echo_origin() -> (std::net::SocketAddr, tokio::sync::oneshot::Receiver<String>) {
+-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++        use tokio::io::AsyncWriteExt;
+         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+         let addr = listener.local_addr().unwrap();
+         let (tx, rx) = tokio::sync::oneshot::channel();
+         tokio::spawn(async move {
+             if let Ok((mut sock, _)) = listener.accept().await {
+-                let mut buf = [0u8; 4096];
+-                let n = sock.read(&mut buf).await.unwrap_or(0);
+-                let received = String::from_utf8_lossy(&buf[..n]).to_string();
++                let received = read_origin_request(&mut sock).await;
+                 let body = "ok";
+                 let response = format!(
+                     "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+@@ -7727,9 +7773,7 @@ mod tests {
+             let Ok((mut sock, _)) = listener.accept().await else {
+                 return;
+             };
+-            let mut buf = [0u8; 4096];
+-            let n = sock.read(&mut buf).await.unwrap_or(0);
+-            let received = String::from_utf8_lossy(&buf[..n]).to_string();
++            let received = read_origin_request(&mut sock).await;
+             let body = "event: message\r\ndata: {}\r\n\r\n";
+             let response = format!(
+                 "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\nmcp-session-id: s1\r\nconnection: keep-alive\r\ntransfer-encoding: chunked\r\n\r\n{:x}\r\n{body}\r\n0\r\n\r\n",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2358** (2026-11-23): chore(deps): bump typify from 0.8.0 to 0.10.1 (@dependabot[bot])
+- **PR #2357** (2026-11-23): chore(deps): bump the routine-rust group with 8 updates (@dependabot[bot])
+- **PR #2355** (2026-11-23): fix: update url and stabilize proxy keep-alive test (@SequeI)
 - **PR #2349** (2026-11-20): fix(cli): allow mise to read ~/.local/state/mise (@acidghost)
 - **PR #2347** (2026-11-20): fix(profile): resolve .jsonc siblings and paths (@acidghost)
 - **PR #2346** (2026-11-20): fix: allow reading /etc/debian_version in system_read_linux_core (@mvanhorn)
-- **PR #2344** (2026-11-20): fix(cli): preserve agent TUIs during remote approvals (@SequeI)
-- **PR #2342** (closed): test(platform): pick the bundle root policy.json in pack cache test (@daescha)
-- **PR #2341** (2026-11-19): feat(platform): enforce signed policy at session startup (@SequeI)
 
 ---
 
@@ -3531,13 +3150,13 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): preserve agent TUIs during remote approvals
+## X. update url and stabilize proxy keep-alive test
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3f82bec`: cli): preserve agent TUIs during remote approvals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a93ccdfe`: update url and stabilize proxy keep-alive test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -3545,17 +3164,23 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "vte",
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3f82bec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a93ccdfe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

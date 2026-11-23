@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-FUQX",
-    "timestamp": "2026-11-21T15:59:37.065Z",
-    "repository": "KRAFTON/Raon-1-mini-preview",
-    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-G4Q0",
-    "timestamp": "2026-11-21T15:59:49.992Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4DZQ",
-    "timestamp": "2026-11-21T16:18:41.750Z",
-    "repository": "ornith-ai/Ornith-1.5-122B",
-    "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-    "contentHash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-4GHM",
     "timestamp": "2026-11-21T16:18:44.986Z",
     "repository": "flox/flox",
@@ -7490,6 +7445,51 @@
     "repository": "duongductrong/Snapzy",
     "learningId": "learn-github-duongductrong-snapzy",
     "contentHash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NJL6",
+    "timestamp": "2026-11-23T16:36:55.914Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NSE0",
+    "timestamp": "2026-11-23T16:37:07.320Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NUL6",
+    "timestamp": "2026-11-23T16:37:10.170Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:28:53.197Z",
+  "last_updated": "2026-11-23T16:37:16.114Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T16:28:52.270Z",
@@ -158,9 +158,9 @@
       "staged_for_review": 1
     },
     "open-policy-agent-opa-learnings.md": {
-      "processed_at": "2026-11-21T12:38:41.419Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-23T16:37:14.141Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "rustls-rustls-learnings.md": {
       "processed_at": "2026-11-22T14:45:39.234Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-20T15:35:26.024Z",
+      "processed_at": "2026-11-23T16:37:15.004Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2608,7 +2608,7 @@
       "staged_for_review": 0
     },
     "hf-google-gemma-4-31b-it-learnings.md": {
-      "processed_at": "2026-11-19T03:39:52.045Z",
+      "processed_at": "2026-11-23T16:37:13.719Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3432,
+  "total_dossiers_evaluated": 3435,
   "total_canonical_promoted": 486,
-  "total_staged_for_review": 2576
+  "total_staged_for_review": 2578
 }

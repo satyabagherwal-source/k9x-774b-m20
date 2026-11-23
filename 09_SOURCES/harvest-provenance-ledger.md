@@ -12403,3 +12403,6 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `40d33b11` | Multi-dimensional audit evidence | 2026-11-23T16:20:38.048Z |
 | `learn-huggingface-inworld-voice-isolator` | `https://huggingface.co/inworld/voice-isolator` | `hf-inworld` | Multi-dimensional audit evidence | 2026-11-23T16:28:39.174Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `508f68ca` | Multi-dimensional audit evidence | 2026-11-23T16:28:46.110Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T16:36:55.918Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `c24e1d8f` | Multi-dimensional audit evidence | 2026-11-23T16:37:07.324Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `2011f567` | Multi-dimensional audit evidence | 2026-11-23T16:37:10.175Z |

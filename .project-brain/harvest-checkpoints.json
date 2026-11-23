@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T16:28:46.118Z",
+  "last_updated": "2026-11-23T16:37:10.184Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
-      "verified_at": "2026-11-19T03:39:07.236Z",
+      "content_hash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
+      "verified_at": "2026-11-23T16:36:55.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T03:39:07.236Z"
+      "last_updated": "2026-11-23T16:36:55.927Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
-      "verified_at": "2026-11-20T15:35:19.910Z",
+      "content_hash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
+      "verified_at": "2026-11-23T16:37:10.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T15:35:19.910Z"
+      "last_updated": "2026-11-23T16:37:10.183Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
-      "verified_at": "2026-11-21T12:38:02.861Z",
+      "content_hash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
+      "verified_at": "2026-11-23T16:37:07.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:38:02.861Z"
+      "last_updated": "2026-11-23T16:37:07.333Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
