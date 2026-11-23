@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "45d41e96ef29b646fe39f9f16e249b7c4ef962bb114ded78b5088f7d8eb008e3",
-    "lastHarvestedAt": "2026-11-19T04:36:20.289Z",
+    "contentHash": "b12d212d293a5e8d1479d8732e7b1fcfacde67b21a151738d6daa8d86b829a36",
+    "lastHarvestedAt": "2026-11-23T16:53:28.464Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "0c437895",
+    "sourceVersion": "0eb2f794",
     "license": "NOASSERTION",
-    "contentHash": "764035fdcd12d7994646abbda81486689a439eba6cacce72f969ee64a961aca4",
-    "lastHarvestedAt": "2026-11-23T08:11:46.085Z",
+    "contentHash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
+    "lastHarvestedAt": "2026-11-23T16:53:42.333Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "d65bda49",
+    "sourceVersion": "f0d8890e",
     "license": "MIT",
-    "contentHash": "b38ef501836b54f8d9f5ba73dfd1fa7d23606205ffd3916f5d3ca9f924f3e275",
-    "lastHarvestedAt": "2026-11-22T11:47:58.390Z",
+    "contentHash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
+    "lastHarvestedAt": "2026-11-23T16:53:44.439Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "bd882c1a",
+    "sourceVersion": "610575b9",
     "license": "BSD-3-Clause",
-    "contentHash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
-    "lastHarvestedAt": "2026-11-20T18:16:54.512Z",
+    "contentHash": "4475e702a205ec7b43f7e292598bab78492662f018b2fe211a5b9aacd8a5f005",
+    "lastHarvestedAt": "2026-11-23T16:53:31.285Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "e64ff8dd",
+    "sourceVersion": "c8c17e5c",
     "license": "Apache-2.0",
-    "contentHash": "c1fbe7f3f07ab59255289c392fedd8eb2af0687159e751dab2b108f2cde9e811",
-    "lastHarvestedAt": "2026-11-21T13:05:26.314Z",
+    "contentHash": "d22b11734688df2cfbd931a1d91a647e540b5c6e47f643f3d20eac29ab3a4465",
+    "lastHarvestedAt": "2026-11-23T16:53:39.571Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "aa9fb54b",
+    "sourceVersion": "f3256c21",
     "license": "MIT",
-    "contentHash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
-    "lastHarvestedAt": "2026-11-20T16:13:57.724Z",
+    "contentHash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
+    "lastHarvestedAt": "2026-11-23T16:53:37.268Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {

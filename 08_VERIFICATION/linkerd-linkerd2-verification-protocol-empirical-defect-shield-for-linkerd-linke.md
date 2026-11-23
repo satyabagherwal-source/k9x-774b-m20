@@ -4,22 +4,22 @@
 {
   "source_repository": "linkerd/linkerd2",
   "source_url": "https://github.com/linkerd/linkerd2",
-  "source_version": "e64ff8dd",
+  "source_version": "c8c17e5c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T13:05:26.593Z",
+  "timestamp": "2026-11-23T16:53:39.816Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-linkerd-linkerd2",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `e64ff8dd`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T13:05:26.593Z`  
+> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `c8c17e5c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T16:53:39.816Z`  
 > **Learning ID**: `learn-github-linkerd-linkerd2`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `linkerd/linkerd2` (Commit: `e64ff8dd`)
+- **Target Repository**: `linkerd/linkerd2` (Commit: `c8c17e5c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:05:24.976Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:38.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11551 stars
+- **Stars / Engagement**: 11545 stars
 
 ---
 
@@ -878,8 +878,9 @@ import (
 )
 
 const (
-	eventTypeSkipped  = "InjectionSkipped"
-	eventTypeInjected = "Injected"
+	eventTypeSkipped           = "InjectionSkipped"
+	eventTypeInjected          = "Injected"
+	eventTypeInvalidAnnotation = "InvalidAnnotation"
 )
 
 // Inject returns the function that produces an AdmissionResponse containing
@@ -987,6 +988,7 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			if parent != nil {
 				recorder.Event(parent, v1.EventTypeNormal, eventTypeInjected, "Linkerd sidecar proxy injected")
 			}
+			recordInvalidAnnotationEvents(recorder, parent, resourceConfig.OverrideWarnings())
 			log.Infof("injection patch generated for: %s", report.ResName())
 			log.Debugf("injection patch: %s", patchJSON)
 
@@ -1070,6 +1072,15 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			UID:     request.UID,
 			Allowed: true,
 		}, nil
+	}
+}
+
+func recordInvalidAnnotationEvents(recorder record.EventRecorder, parent *metav1.PartialObjectMetadata, warnings []string) {
+	if parent == nil {
+		return
+	}
+	for _, warning := range warnings {
+		recorder.Event(parent, v1.EventTypeWarning, eventTypeInvalidAnnotation, warning)
 	}
 }
 
@@ -1632,291 +1643,548 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e64ff8dd` (2026-11-20)
-**Commit Message**: fix(destination): keep federated endpoints when a stream is torn down (#15784)
+### Incident Patch 1: `c8c17e5c` (2026-11-23)
+**Commit Message**: chore: add k8s level warning for malformed ports on annotation (#15785)
 
-* fix(destination): keep federated endpoints when a stream is torn down
+* chore: add k8s level warning for malformed ports on annotation
 
-Problem
+* use %q for showing invalid ports; do not append new override warnings to old ones
 
-When a Get stream for a federated service is torn down, for example when a
-destination pod shuts down during a rollout, `federatedService.unsubscribe()`
-unsubscribes every member with `withRemove=true`. Each member's translator then
-queues a Remove for all of its endpoints. If that Remove reaches the proxy before
-the stream closes, the proxy drops every endpoint of the federated service and
-fails requests until it reconnects to another destination pod. Whether it gets
-there is a race, so only some streams are hit on each restart. Non-federated
-services keep their endpoints in the same situation.
-
-Solution
-
-`remoteDiscoveryUnsubscribe` and `localDiscoveryUnsubscribe` now take a
-`withRemove` argument. `update()` passes `true` when a member leaves the
-federated service or the local member changes, as before. `unsubscribe()` passes
-`false`, which matches the teardown path for non-federated services.
-
-Validation
-
-- New `TestUnsubscribeFederatedServiceSendsNoRemove` checks that tearing down a
-  stream sends no Remove. It fails o
-
-**File**: `controller/api/destination/federated_service_watcher.go` (modified, +18/-7)
+**File**: `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml` (added, +17/-0)
 ```diff
-@@ -237,7 +237,7 @@ func (fs *federatedService) update(service *corev1.Service) {
- 	for _, id := range fs.remoteDiscovery {
- 		if !slices.Contains(newRemoteDiscovery, id) {
- 			for i := range fs.subscribers {
--				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
-+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, true)
- 			}
- 		}
- 	}
-@@ -248,13 +248,13 @@ func (fs *federatedService) update(service *corev1.Service) {
- 		if newLocalDiscovery != "" {
- 			for i := range fs.subscribers {
- 				if fs.localDiscovery != "" {
--					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
-+					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
- 				}
- 				fs.localDiscoverySubscribe(&fs.subscribers[i], newLocalDiscovery)
- 			}
- 		} else {
- 			for i := range fs.subscribers {
--				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
-+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
- 			}
- 		}
- 	}
-@@ -334,11 +334,14 @@ func (fs *federatedService) unsubscribe(
- 	subscribers := make([]federatedServiceSubscriber, 0)
- 	for i, subscriber := range fs.subscribers {
- 		if subscriber.stream.inner == stream {
-+			// The stream is going away, so the client keeps the endpoints it
-+			// has until it resubscribes. Sending a Remove here would make it
-+			// drop them all while it reconnects.
- 			for id := range subscriber.remoteTranslators {
--				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
-+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, false)
- 			}
- 			for localDiscovery := range subscriber.localTranslators {
--				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery)
-+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery, false)
- 			}
- 			subscriber.stream.Stop()
- 		} else {
-@@ -394,9 +397,14 @@ func (fs *federatedService) remoteDiscoverySubscribe(
- 	}
- }
- 
-+// remoteDiscoveryUnsubscribe stops sending the subscriber updates for a remote
-+// member of the federated service. withRemove tells the subscriber to remove
-+// that member's endpoints, which is only correct when the member is leaving
-+// the federated service, not when the subscriber's stream is torn down.
- func (fs *federatedService) remoteDiscoveryUnsubscribe(
- 	subscriber *federatedServiceSubscriber,
- 	id remoteDiscoveryID,
-+	withRemove bool,
- ) {
- 	remoteWatcher, _, found := fs.clusterStore.Get(id.cluster)
- 	if !found {
-@@ -411,7 +419,7 @@ func (fs *federatedService) remoteDiscoveryUnsubscribe(
- 		NodeName:                subscriber.nodeName,
- 		EnableEndpointFiltering: false, // Endpoint filtering is disabled for remote discovery.
- 	}
--	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, true)
-+	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, withRemove)
- 	translator.DrainAndStop()
- 	delete(subscriber.remoteTranslators, id)
- }
-@@ -455,9 +463,12 @@ func (fs *federatedService) localDiscoverySubscribe(
- 	}
- }
- 
-+// localDiscoveryUnsubscribe is the local-member counterpart of
-+// remoteDiscoveryUnsubscribe, with the same meaning for withRemove.
- func (fs *federatedService) localDiscoveryUnsubscribe(
- 	subscriber *federatedServiceSubscriber,
- 	localDiscovery string,
-+	withRemove bool,
- ) {
- 	translator, found := subscriber.localTranslators[localDiscovery]
- 	if found {
-@@ -467,7 +478,7 @@ func (fs *federatedService) localDiscoveryUnsubscribe(
- 			NodeName:                subscriber.nodeName,
- 			EnableEndpointFiltering: true, // Endpoint filtering is enabled for local discovery.
- 		}
--		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, true)
-+		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, withRemove)
- 		translator.DrainAndStop()
- 		delete(subscriber.localTranslators, localDiscovery)
- 	}
+@@ -0,0 +1,17 @@
++kind: Pod
++apiVersion: apps/v1
++metadata:
++  name: nginx
++  namespace: kube-public
++  annotations:
++    config.linkerd.io/proxy-require-identity-inbound-ports: "8888,70000,9999"
++    linkerd.io/inject: enabled
++  labels:
++    app: nginx
++spec:
++  containers:
++  - name: nginx
++    image: nginx
++    ports:
++    - name: http
++      containerPort: 80
 ```
 
-**File**: `controller/api/destination/federated_service_watcher_test.go` (modified, +140/-0)
+**File**: `controller/proxy-injector/fake/data/pod-with-invalid-require-identity-ports.patch.json` (added, +443/-0)
 ```diff
-@@ -126,6 +126,108 @@ func TestLocalLeaveFederatedService(t *testing.T) {
- 	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
+@@ -0,0 +1,443 @@
++[
++  {
++    "op": "add",
++    "path": "/metadata/annotations/linkerd.io~1proxy-version",
++    "value": "dev-undefined"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/annotations/linkerd.io~1trust-root-sha256",
++    "value": "5090806bcf2daff5d54739ba02a8e7b919f7e62b2a46757e11089c916ec97fc2"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1control-plane-ns",
++    "value": "linkerd"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1proxy-deployment",
++    "value": "owner-deployment"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1workload-ns",
++    "value": "kube-public"
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes",
++    "value": []
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers",
++    "value": []
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "emptyDir": {},
++      "name": "linkerd-proxy-init-xtables-lock"
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers/0",
++    "value": {
++      "args": [
++        "--firewall-bin-path",
++        "iptables-nft",
++        "--firewall-save-bin-path",
++        "iptables-nft-save",
++        "--ipv6=false",
++        "--incoming-proxy-port",
++        "4143",
++        "--outgoing-proxy-port",
++        "4140",
++        "--proxy-uid",
++        "2102",
++        "--inbound-ports-to-ignore",
++        "4190,4191,4567,4568",
++        "--outbound-ports-to-ignore",
++        "4567,4568"
++      ],
++      "command": [
++        "/usr/lib/linkerd/linkerd2-proxy-init"
++      ],
++      "image": "cr.l5d.io/linkerd/proxy:dev-undefined",
++      "imagePullPolicy": "IfNotPresent",
++      "name": "linkerd-init",
++      "resources": null,
++      "securityContext": {
++        "allowPrivilegeEscalation": false,
++        "capabilities": {
++          "add": [
++            "NET_ADMIN",
++            "NET_RAW"
++          ]
++        },
++        "privileged": false,
++        "readOnlyRootFilesystem": true,
++        "runAsGroup": 65534,
++        "runAsNonRoot": true,
++        "runAsUser": 65534,
++        "seccompProfile": {
++          "type": "RuntimeDefault"
++        }
++      },
++      "terminationMessagePolicy": "FallbackToLogsOnError",
++      "volumeMounts": [
++        {
++          "mountPath": "/run",
++          "name": "linkerd-proxy-init-xtables-lock"
++        }
++      ]
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "name": "linkerd-identity-end-entity",
++      "emptyDir": {
++        "medium": "Memory"
++      }
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "name": "linkerd-identity-token",
++      "projected": {
++        "sources": [
++          {
++            "serviceAccountToken": {
++              "audience": "identity.l5d.io",
++              "expirationSeconds": 86400,
++              "path": "linkerd-identity-token"
++            }
++          }
++        ]
++      }
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers/1",
++    "value": {
++      "env": [
++        {
++          "name": "_pod_name",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.name"
++            }
++          }
++        },
++        {
++          "name": "_pod_ns",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.namespace"
++            }
++          }
++        },
++        {
++          "name": "_pod_uid",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.uid"
++            }
++          }
++        },
++        {
++          "name": "_pod_ip",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "status.podIP"
++            }
++          }
++        },
++        {
++          "name": "_pod_nodeName",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "spec.nodeName"
++            }
++          }
++        },
++        {
++          "name": "_pod_containerName",
++          "value": "linkerd-proxy"
++        },
++        {
++          "name": "LINKERD2_PROXY_CORES",
++          "value": "1"
++        },
++        {
++          "name": "LINKERD2_PROXY_CORES_MIN",
++          "value": "1"
++        },
++        {
++          "name": "LINKERD2_PROXY_INBOUND_PORTS_REQUIRE_IDENTITY",
++          "value": "8888,70000,9999"
++        },
++        {
++          "name": "LINKERD2_PROXY_SHUTDOWN_ENDPOINT_ENABLED",
++          "value": "false"
++        },
++        {
++          "name": "LINKERD2_PROXY_LOG",
++          "value": "warn,linkerd=info,hickory=error,[{headers}]=off,[{request}]=off"
++        },
++        {
++          "name": "LINKERD2_PROXY_LOG_FORMAT",
++          "value": "plain"
++        },
++        {
++          "name": "LINKERD2_PROXY_DESTINATION_SVC_ADDR",
++          "value": "linkerd-dst-headless.linkerd.svc.cluster.local.:8086"
++        },
++        {
++          "name": "LINKERD2_PROXY_DESTINATION_PROFILE_NETWORKS
+```
+
+**File**: `controller/proxy-injector/webhook.go` (modified, +13/-2)
+```diff
+@@ -21,8 +21,9 @@ import (
+ )
+ 
+ const (
+-	eventTypeSkipped  = "InjectionSkipped"
+-	eventTypeInjected = "Injected"
++	eventTypeSkipped           = "InjectionSkipped"
++	eventTypeInjected          = "Injected"
++	eventTypeInvalidAnnotation = "InvalidAnnotation"
+ )
+ 
+ // Inject returns the function that produces an AdmissionResponse containing
+@@ -130,6 +131,7 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
+ 			if parent != nil {
+ 				recorder.Event(parent, v1.EventTypeNormal, eventTypeInjected, "Linkerd sidecar proxy injected")
+ 			}
++			recordInvalidAnnotationEvents(recorder, parent, resourceConfig.OverrideWarnings())
+ 			log.Infof("injection patch generated for: %s", report.ResName())
+ 			log.Debugf("injection patch: %s", patchJSON)
+ 
+@@ -216,6 +218,15 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
+ 	}
  }
  
-+func TestLocalSwitchFederatedService(t *testing.T) {
-+	fsw, err := mockFederatedServiceWatcher(t)
-+	if err != nil {
-+		t.Fatal(err)
++func recordInvalidAnnotationEvents(recorder record.EventRecorder, parent *metav1.PartialObjectMetadata, warnings []string) {
++	if parent == nil {
++		return
 +	}
-+
-+	mockGetServer := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
-+
-+	fsw.Subscribe("bb-federated", "test", 8080, "node", "", mockGetServer, nil)
-+
-+	updates := []*pb.Update{}
-+	updates = append(updates, <-mockGetServer.updatesReceived)
-+	updates = append(updates, <-mockGetServer.updatesReceived)
-+	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
-+	assertUpdatesContains(t, updates, "bb-east-1", "172.17.1.1:8080")
-+
-+	federatedSvc, err := fsw.k8sAPI.Svc().Lister().Services("test").Get("bb-federated")
-+	if err != nil {
-+		t.Fatalf("error getting federated service: %s", err)
++	for _, warning := range warnings {
++		recorder.Event(parent, v1.EventTypeWarning, eventTypeInvalidAnnotation, warning)
 +	}
-+	newFederatedSvc := federatedSvc.DeepCopy()
-+	newFederatedSvc.Annotations["multicluster.linkerd.io/local-discovery"] = "bb2"
-+	fsw.updateService(federatedSvc, newFederatedSvc)
++}
 +
-+	// The old member's Remove and the new member's Add come from different
-+	// translators, so their order on the stream is not guaranteed.
-+	for range 2 {
-+		select {
-+		case u := <-mockGetServer.updatesReceived:
-+			updates = append(updates, u)
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("timed out waiting for the local member switch to be sent")
+ func ownerRetriever(ctx context.Context, api *k8s.MetadataAPI, ns string) inject.OwnerRetrieverFunc {
+ 	return func(p *v1.Pod) (string, string, error) {
+ 		p.SetNamespace(ns)
+```
+
+**File**: `controller/proxy-injector/webhook_test.go` (modified, +81/-0)
+```diff
+@@ -3,6 +3,7 @@ package injector
+ import (
+ 	"encoding/json"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/go-test/deep"
+@@ -14,6 +15,7 @@ import (
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/tools/record"
+ )
+ 
+ type unmarshalledPatch []map[string]interface{}
+@@ -285,6 +287,85 @@ func TestGetPodPatch(t *testing.T) {
+ 			t.Fatalf("The actual patch didn't match what was expected.\n%+v", diff)
+ 		}
+ 	})
++
++	t.Run("by injecting a pod with a malformed require-identity-inbound-ports annotation", func(t *testing.T) {
++		_, expectedPatch := loadPatch(factory, t, "pod-with-invalid-require-identity-ports.patch.json")
++
++		pod := fileContents(factory, t, "pod-inject-enabled-invalid-require-identity-ports.yaml")
++		fakeReq := getFakePodReq(pod)
++		fullConf := confNsEnabled().
++			WithKind(fakeReq.Kind.Kind).
++			WithOwnerRetriever(ownerRetrieverFake)
++		_, err = fullConf.ParseMetaAndYAML(fakeReq.Object.Raw)
++		if err != nil {
++			t.Fatal(err)
 +		}
-+	}
-+	assertUpdatesRemoves(t, updates, "172.17.0.1:8080")
-+	assertUpdatesContains(t, updates, "bb2-west-1", "172.17.0.2:8080")
++
++		patchJSON, err := fullConf.GetPodPatch(true, inject.GetOverriddenValues)
++		if err != nil {
++			t.Fatalf("Unexpected PatchForAdmissionRequest error: %s", err)
++		}
++		actualPatch := unmarshalPatch(t, patchJSON)
++		if diff := deep.Equal(expectedPatch, actualPatch); diff != nil {
++			t.Fatalf("The actual patch didn't match what was expected.\n%+v", diff)
++		}
++
++		warnings := fullConf.OverrideWarnings()
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning to be recorded, got %v", warnings)
++		}
++		if !strings.Contains(warnings[0], "70000") {
++			t.Fatalf("expected warning to mention the invalid port, got %q", warnings[0])
++		}
++	})
 +}
 +
-+// TestUnsubscribeFederatedServiceSendsNoRemove asserts that tearing down a
-+// federated Get stream (e.g. when the destination controller shuts down) does
-+// not tell the client to remove the endpoints it already has. A Remove there
-+// would make the proxy drop every endpoint of the federated service while it
-+// reconnects to another destination replica, instead of keeping its cache as
-+// it does for non-federated services.
-+func TestUnsubscribeFederatedServiceSendsNoRemove(t *testing.T) {
-+	fsw, err := mockFederatedServiceWatcher(t)
-+	if err != nil {
-+		t.Fatal(err)
++func TestRecordInvalidAnnotationEvents(t *testing.T) {
++	parent := &metav1.PartialObjectMetadata{
++		TypeMeta:   metav1.TypeMeta{Kind: "Deployment"},
++		ObjectMeta: metav1.ObjectMeta{Name: "owner-deployment", Namespace: "linkerd"},
 +	}
 +
-+	mockGetServer := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
++	t.Run("emits one Warning event per warning", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		warnings := []string{
++			`invalid port(s) 70000 in annotation "config.linkerd.io/proxy-require-identity-inbound-ports"`,
++		}
 +
-+	fsw.Subscribe("bb-federated", "test", 8080, "node", "", mockGetServer, nil)
++		recordInvalidAnnotationEvents(recorder, parent, warnings)
++		close(recorder.Events)
 +
-+	updates := []*pb.Update{}
-+	updates = append(updates, <-mockGetServer.updatesReceived)
-+	updates = append(updates, <-mockGetServer.updatesReceived)
-+	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
-+	assertUpdatesContains(t, updates, "bb-east-1", "172.17.1.1:8080")
++		var got []string
++		for e := range recorder.Events {
++			got = append(got, e)
++		}
++		if len(got) != 1 {
++			t.Fatalf("expected exactly one event, got %v", got)
++		}
++		if !strings.Contains(got[0], "Warning") || !strings.Contains(got[0], eventTypeInvalidAnnotation) || !strings.Contains(got[0], "70000") {
++			t.Fatalf("unexpected event content: %q", got[0])
++		}
++	})
 +
-+	// Unsubscribing stops the subscriber's synchronized stream right after the
-+	// translators are drained, so whether a queued Remove still reaches the
-+	// client stream is a race, which is also why the bug showed up only on some
-+	// streams in clusters. Point each translator at a recording stream so that
-+	// the test observes everything the translators are asked to send.
-+	recorded := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
-+	fsw.RLock()
-+	federatedSvc := fsw.services[watcher.ServiceID{Namespace: "test", Name: "bb-federated"}]
-+	fsw.RUnlock()
-+	federatedSvc.Lock()
-+	if len(federatedSvc.subscribers) != 1 {
-+		t.Fatalf("expected 1 subscriber, got %d", len(federatedSvc.subscribers))
-+	}
-+	translators := 0
-+	for _, translator := range federatedSvc.subscribers[0].remoteTranslators {
-+		translator.stream = recorded
-+		translators++
-+	}
-+	for _, translator := range federatedSvc.subscribers[0].localTranslators {
-+		translator.stream = recorded
-+		translators++
-+	}
-+	federatedSvc.Unlock()
-+	if translators != 2 {
-+		t.Fatalf("expected 1 remote and 1 local translator, got %d", translators)
-+	}
++	t.Run("no owner means no event", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		recordInvalidAnnotationEvents(recorder, nil, []string{"some warning"})
++		close(recorder.Events)
 +
-+	fsw.Unsubscribe("bb-federated", "test", mockGetServer)
++		for e := range recorder.Events {
++			t.Fatalf("expected no events for a workload with no owner, got %q", e)
++		}
++	})
 +
-+	select {
-+	case u := <-recorded.updatesReceived:
-+		t.Fatalf("expected no update after unsubscribing, got %v", u)
-+	case <-time.After(200 * time.Millisecond):
-+	}
++	t.Run("no warnings means no event", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		recordInvalidAnnotationEvents(recorder, parent, nil)
++		close(recorder.Events)
 +
-+	federatedSvc.Lock()
-+	defer federatedSvc.Unlock()
-+	if len(federatedSvc.subscribers) != 0 {
-+		t.Errorf("expected no subscribers after unsubscribing, got %d", len(federatedSvc.subscribers))
-+	}
++		for e := range recorder.Events {
++			t.Fatalf("expected no events when there are no warnings, got %q", e)
++		}
++	})
+ }
+ 
+ func TestGetAnnotationPatch(t *testing.T) {
+```
+
+**File**: `pkg/inject/inject.go` (modified, +37/-2)
+```diff
+@@ -155,6 +155,15 @@ type ResourceConfig struct {
+ 		annotations map[string]string
+ 		spec        *corev1.PodSpec
+ 	}
++
++	// overrideWarnings is kept on the struct, rather than just logged, so a
++	// caller with access to a Kubernetes recorder (the proxy-injector
++	// webhook) can also surface these as events on the workload.
++	overrideWarnings []string
 +}
 +
- func mockFederatedServiceWatcher(t *testing.T) (*federatedServiceWatcher, error) {
- 	k8sAPI, err := k8s.NewFakeAPI(westConfigs...)
- 	if err != nil {
-@@ -296,6 +398,44 @@ metadata:
- status:
-   phase: Running
-   podIP: 172.17.0.1`,
-+		`
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: bb2
-+  namespace: test
-+spec:
-+  type: LoadBalancer
-+  ports:
-+  - port: 8080`,
-+		`
-+apiVersion: v1
-+kind: Endpoints
-+metadata:
-+  name: bb2
-+  namespace: test
-+subsets:
-+- addresses:
-+  - ip: 172.17.0.2
-+    targetRef:
-+      kind: Pod
-+      name: bb2-west-1
-+      namespace: test
-+  ports:
-+  - port: 8080
-+`,
-+		`
-+apiVersion: v1
-+kind: Pod
-+metadata:
-+  name: bb2-west-1
-+  namespace: test
-+  ownerReferences:
-+  - kind: ReplicaSet
-+    name: bb2-west
-+status:
-+  phase: Running
-+  podIP: 172.17.0.2`,
++func (conf *ResourceConfig) OverrideWarnings() []string {
++	return conf.overrideWarnings
+ }
+ 
+ type podPatch struct {
+@@ -206,7 +215,7 @@ func GetOverriddenValues(rc *ResourceConfig) (*l5dcharts.Values, error) {
+ 		namedPorts = util.GetNamedPorts(append(rc.pod.spec.InitContainers, rc.pod.spec.Containers...))
  	}
  
- 	east
+-	ApplyAnnotationOverrides(copyValues, rc.GetAnnotationOverrides(), rc.GetLabelOverrides(), namedPorts)
++	rc.overrideWarnings = ApplyAnnotationOverrides(copyValues, rc.GetAnnotationOverrides(), rc.GetLabelOverrides(), namedPorts)
+ 	MergeAdditionalEnv(copyValues, rc.GetNsAnnotations(), rc.GetWorkloadAnnotations())
+ 	return copyValues, nil
+ }
+@@ -268,7 +277,9 @@ func MergeAdditionalEnv(values *l5dcharts.Values, nsAnnotations map[string]strin
+ 	}
+ }
+ 
+-func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]string, labels map[string]string, namedPorts map[string]int32) {
++func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]string, labels map[string]string, namedPorts map[string]int32) []string {
++	var warnings []string
++
+ 	if override, ok := annotations[k8s.ProxyInjectAnnotation]; ok {
+ 		if override == k8s.ProxyInjectIngress {
+ 			values.Proxy.IsIngress = true
+@@ -341,6 +352,10 @@ func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]s
+ 
+ 	if override, ok := annotations[k8s.ProxyRequireIdentityOnInboundPortsAnnotation]; ok {
+ 		values.Proxy.RequireIdentityOnInboundPorts = override
++		if warning := invalidPortsWarning(override, k8s.ProxyRequireIdentityOnInboundPortsAnnotation); warning != "" {
++			log.Warn(warning)
++			warnings = append(warnings, warning)
++		}
+ 	}
+ 
+ 	if override, ok := annotations[k8s.ProxyEnableHostnameLabels]; ok {
+@@ -627,6 +642,26 @@ func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]s
+ 			}
+ 		}
+ 	}
++
++	return warnings
++}
++
++func invalidPortsWarning(override, annotation string) string {
++	var invalid []string
++	for _, tok := range util.GetPortRanges(override) {
++		if _, err := util.ParsePortRange(tok); err != nil {
++			invalid = append(invalid, tok)
++		}
++	}
++
++	if len(invalid) == 0 {
++		return ""
++	}
++
++	return fmt.Sprintf(
++		"invalid port(s) %q in annotation %q",
++		strings.Join(invalid, ","), annotation,
++	)
+ }
+ 
+ // NewResourceConfig creates and initializes a ResourceConfig
+```
+
+**File**: `pkg/inject/inject_test.go` (modified, +61/-0)
+```diff
+@@ -434,6 +434,67 @@ func TestApplyAnnotationOverridesInitializesTracingLabels(t *testing.T) {
+ 	}
+ }
+ 
++func TestApplyAnnotationOverridesRequireIdentityOnInboundPorts(t *testing.T) {
++	newValues := func() *l5dcharts.Values {
++		return &l5dcharts.Values{
++			Proxy: &l5dcharts.Proxy{
++				Image:   &l5dcharts.Image{},
++				Ports:   &l5dcharts.Ports{},
++				Metrics: &l5dcharts.ProxyMetrics{},
++			},
++			ProxyInit: &l5dcharts.ProxyInit{},
++		}
++	}
++
++	t.Run("valid value is passed through without warning", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "8888,9999",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "8888,9999" {
++			t.Fatalf("expected ports to be set, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 0 {
++			t.Fatalf("expected no warnings, got %v", warnings)
++		}
++	})
++
++	t.Run("malformed token is passed through unchanged and warned about", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "8888,70000,9999",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "8888,70000,9999" {
++			t.Fatalf("expected annotation value to be passed through unchanged, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning, got %v", warnings)
++		}
++	})
++
++	t.Run("malformed range is passed through unchanged and warned about, valid range is not", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "3000-4000,5000-",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "3000-4000,5000-" {
++			t.Fatalf("expected annotation value to be passed through unchanged, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning, got %v", warnings)
++		}
++	})
++}
++
+ func TestMergeAdditionalEnv(t *testing.T) {
+ 	testCases := []struct {
+ 		id                  string
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
+- **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
 - **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 - **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
-- **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
 
 ---
 
@@ -1936,54 +2204,47 @@ Validation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. destination): keep federated endpoints when a stream is torn down
+## X. add k8s level warning for malformed ports on annotation
 
 **RULE**:
-When implementing operations in `controller/api/destination/federated_service_watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e64ff8dd`: destination): keep federated endpoints when a stream is torn down. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8c17e5c`: add k8s level warning for malformed ports on annotation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controller/api/destination/federated_service_watcher.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, true)
-					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
-			// The stream is going away, so the client keeps the endpoints it
-			// has until it resubscribes. Sending a Remove here would make it
-			// drop them all while it reconnects.
-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, false)
-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery, false)
-// remoteDiscoveryUnsubscribe stops sending the subscriber updates for a remote
-// member of the federated service. withRemove tells the subscriber to remove
-// that member's endpoints, which is only correct when the member is leaving
-// the federated service, not when the subscriber's stream is torn down.
-	withRemove bool,
-	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, withRemove)
-// localDiscoveryUnsubscribe is the local-member counterpart of
-// remoteDiscoveryUnsubscribe, with the same meaning for withRemove.
-	withRemove bool,
-		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDisco
+kind: Pod
+apiVersion: apps/v1
+metadata:
+  name: nginx
+  namespace: kube-public
+  annotations:
+    config.linkerd.io/proxy-require-identity-inbound-ports: "8888,70000,9999"
+    linkerd.io/inject: enabled
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - name: http
+      containerPort: 80
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
-					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery)
-	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, true)
-		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, true)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e64ff8dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8c17e5c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

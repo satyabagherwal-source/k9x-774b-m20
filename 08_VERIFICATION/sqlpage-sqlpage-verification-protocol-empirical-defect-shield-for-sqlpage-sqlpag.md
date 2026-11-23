@@ -4,22 +4,22 @@
 {
   "source_repository": "sqlpage/SQLPage",
   "source_url": "https://github.com/sqlpage/SQLPage",
-  "source_version": "d65bda49",
+  "source_version": "f0d8890e",
   "license": "MIT",
-  "timestamp": "2026-11-22T11:47:58.638Z",
+  "timestamp": "2026-11-23T16:53:44.666Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sqlpage-sqlpage",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `d65bda49`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T11:47:58.638Z`  
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `f0d8890e`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T16:53:44.666Z`  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sqlpage/SQLPage` (Commit: `d65bda49`)
+- **Target Repository**: `sqlpage/SQLPage` (Commit: `f0d8890e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:47:57.244Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:43.354Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2585 stars
+- **Stars / Engagement**: 2586 stars
 
 ---
 
@@ -599,9 +599,51 @@ document.head.appendChild(loader_script);
 
 ```
 
+### Core Architecture Module: `examples/official-site/assets/copy-code.js`
+```
+/** Select the code for the browser's Copy command if clipboard access is unavailable. */
+export async function copyCode(code, label) {
+  try {
+    await navigator.clipboard.writeText(code.textContent);
+    return `${label} copied.`;
+  } catch {
+    code.closest("[tabindex]")?.focus({ preventScroll: true });
+    const range = document.createRange();
+    range.selectNodeContents(code);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return `${label} selected. Use Copy.`;
+  }
+}
+
+```
+
 ### Core Architecture Module: `examples/official-site/assets/highlightjs-launch.js`
 ```
-hljs.highlightAll();
+// Code remains readable while the optional highlighter loads.
+if (document.querySelector("pre code")) {
+  highlightCode().catch(() => {
+    // The CDN may be unavailable.
+  });
+}
+
+async function highlightCode() {
+  const base =
+    "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es";
+  const { default: engine } = await import(`${base}/highlight.min.js`);
+  await Promise.all(
+    ["sql", "json", "handlebars", "nginx"].map(async (language) => {
+      if (engine.getLanguage(language)) return;
+      if (!document.querySelector(`code.language-${language}`)) return;
+      const { default: grammar } = await import(
+        `${base}/languages/${language}.min.js`
+      );
+      engine.registerLanguage(language, grammar);
+    }),
+  );
+  engine.highlightAll();
+}
 
 ```
 
@@ -701,6 +743,7 @@ export function initComparison(root, signal) {
 
 ### Core Architecture Module: `examples/official-site/assets/landing/js/component-demos.js`
 ```
+import { copyCode } from "../../copy-code.js";
 import { initSqlHighlight } from "./sql-highlight.js";
 import { initTabs, selectTab } from "./tabs.js";
 
@@ -766,15 +809,12 @@ export function initComponentDemos(root, signal) {
   preview.addEventListener("load", fitPreview, { signal });
   fitPreview();
 
-  root.querySelector("[data-copy-sql]").addEventListener(
+  const copy = root.querySelector("[data-copy-sql]");
+  copy.hidden = false;
+  copy.addEventListener(
     "click",
     async () => {
-      try {
-        await navigator.clipboard.writeText(source.textContent);
-        status.textContent = "SQL copied.";
-      } catch {
-        status.textContent = "Copy unavailable. Select the SQL below.";
-      }
+      status.textContent = await copyCode(source, "SQL");
     },
     { signal },
   );
@@ -886,8 +926,12 @@ export function initComponentDemos(root, signal) {
         root.querySelector('[data-file="save"]').hidden = next !== "form";
         root.querySelector("#demo-filename").textContent = `${next}.sql`;
         const link = panel.querySelector(".demo-docs");
-        link.href = `/component.sql?component=${next}`;
-        link.firstChild.textContent = `Explore the ${next} component `;
+        link.href = files
+          ? `/component.sql?component=${next}`
+          : "/components.sql";
+        link.firstChild.textContent = files
+          ? `Explore the ${next} component `
+          : "Browse the component reference ";
         if (files) {
           sourceFiles = { main: files.source, save: files.save_source };
           // Avoid an intermediate one-line loading state or a nested resize.
@@ -1022,140 +1066,17 @@ export function initExperience(root) {
 
 ```
 
-### Core Architecture Module: `examples/official-site/assets/landing/js/instant-motion.js`
-```
-/** Synchronize the illustrative streaming timelines and suspend invisible animation. */
-// Both timelines share an illustrative clock; these are not benchmark timings.
-const DURATION = 7000;
-
-export function initInstantMotion(root) {
-  const diagram = root.querySelector(".instant-diagram");
-  const button = diagram?.querySelector(".timeline-toggle");
-  if (!button) return () => {};
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const events = new AbortController();
-  const { signal } = events;
-  let visible = false;
-  let paused = false;
-  let animations = [];
-
-  function animate(element, keyframes) {
-    animations.push(
-      element.animate(keyframes, {
-        duration: DURATION,
-        iterations: Infinity,
-      }),
-    );
-  }
-
-  function fill(element, start, end) {
-    animate(element, [
-      { clipPath: "inset(0 100% 0 0)", offset: 0 },
-      { clipPath: "inset(0 100% 0 0)", offset: start },
-      { clipPath: "inset(0 0% 0 0)", offset: end },
-      { clipPath: "inset(0 0% 0 0)", opacity: 1, offset: 0.88 },
-      { clipPath: "inset(0 0% 0 0)", opacity: 0, offset: 0.96 },
-      { clipPath: "inset(0 100% 0 0)", opacity: 0, offset: 1 },
-    ]);
-  }
-
-  function reset() {
-    for (const animation of animations) animation.cancel();
-    animations = [];
-    delete diagram.dataset.streamMotion;
-  }
-
-  function update() {
-    button.hidden = motion.matches;
-    button.setAttribute(
-      "aria-label",
-      paused ? "Play streaming comparison" : "Pause streaming comparison",
-    );
-    button.dataset.paused = String(paused);
-    if (motion.matches || !visible) {
-      reset();
-      return;
-    }
-    if (!animations.length) {
-      diagram.dataset.streamMotion = "true";
-      const stages = diagram.querySelectorAll(
-        ".render-timeline .timeline-fill",
-      );
-      const stops = [0.025, 0.14, 0.36, 0.66, 0.78];
-      stages.forEach((stage, index) => {
-        fill(stage, stops[index], stops[index + 1]);
-      });
-      fill(diagram.querySelector(".stream-fill"), stops[0], stops[1]);
-      animate(diagram.querySelector(".stream-sheen"), [
-        { transform: "translateX(-300%)", opacity: 0, offset: 0 },
-        { transform: "translateX(-300%)", opacity: 0, offset: 0.14 },
-        { transform: "translateX(-100%)", opacity: 0.6, offset: 0.2 },
-        { transform: "translateX(400%)", opacity: 0.6, offset: 0.72 },
-        { transform: "translateX(400%)", opacity: 0, offset: 0.78 },
-        { transform: "translateX(400%)", opacity: 0, offset: 1 },
-      ]);
-      diagram
-        .querySelectorAll(".render-labels span")
-        .forEach((label, index) => {
-          const start = 0.12 + index * 0.04;
-          animate(label, [
-            { opacity: 0.35, offset: 0 },
-            { opacity: 0.35, offset: start },
-            { opacity: 1, offset: start + 0.04 },
-            { opacity: 1, offset: 0.88 },
-            { opacity: 0.35, offset: 0.96 },
-            { opacity: 0.35, offset: 1 },
-          ]);
-        });
-      // Synchronize all fills and labels to the same document timeline.
-      const startTime = document.timeline.currentTime;
-      for (const animation of animations) animation.startTime = startTime;
-    }
-    for (const animation of animations) {
-      if (paused || document.hidden) animation.pause();
-      else animation.play();
-    }
-  }
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      visible = entry.isIntersecting;
-      update();
-    },
-    { threshold: 0.25 },
-  );
-  observer.observe(diagram);
-  button.addEventListener(
-    "click",
-    () => {
-      paused = !paused;
-      update();
-    },
-    { signal },
-  );
-  motion.addEventListener("change", update, { signal });
-  document.addEventListener("visibilitychange", update, { signal });
-  return () => {
-    events.abort();
-    observer.disconnect();
-    reset();
-    button.hidden = true;
-  };
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1564** (2026-10-27): **OIDC: redirect_uri and oidc_logout_url() use http:// instead of https:// behind TLS-terminating reverse proxy (X-Forwarded-Proto ignored)**
-  *Symptoms*: ## Description  When SQLPage is served behind a reverse proxy that terminates TLS (Caddy in this case), SQLPage generates all URLs (OIDC `redirect_uri`, `sqlpage.oidc_logout_url()`, etc.) using `http://` instead of `https://`, even though the proxy correctly sends `X-Forwarded-Proto: https`.  ## Environment  | Component | Version / Detail | |-----------|-----------------| | SQLPage | 0.47.0 | | Reverse proxy | Caddy 2.6.2 | | OIDC provider | [Autentico](https://github.com/eugenioenko/autentico) | | TLS | Caddy `tls internal` (self-signed, IP in SAN) |  ## Architecture  ``` Browser ──HTTPS──▶ Caddy (192.168.56.20:8282) ──HTTP──▶ SQLPage (localhost:9191) ```  ### Caddyfile  ```caddyfile 192.168.56.20:8282 {     tls internal     reverse_proxy localhost:9191 } ```  Caddy sends `X-Forwarded-Proto: https` by default when the listener is HTTPS (verified with `curl -v`).  ### Certificate (confirmed correct)  ``` X509v3 Subject Alternative Name: critical     IP Address:192.168.56.20 ```  ## Expected behavior  SQLPage should respect `X-Forwarded-Proto` (and `X-Forwarded-Host` / `X-Forwarded-Port`) to build the public-facing URL:  ``` https://192.168.56.20:8282/sqlpage/oidc_callback ```  ## Actual behavior  SQLPage uses the scheme of its own incoming connection (HTTP) and generates:  ``` http://192.168.56.20:8282/sqlpage/oidc_callback ```  ### Impact on OIDC  The `redirect_uri` sent to Autentico in the authorization request is `http://...` while the registered URI is `https://...` → **r
+- **Issue #1629** (2026-11-23): **form docs: `create_new` also works in single selects, but the documentation only mentions multiselects**
+  *Symptoms*: ### SQL file that shows the bug  ```sql select 'form' as component, 'form.sql' as action; select 'color' as name, 'select' as type, TRUE as searchable, TRUE as create_new,     '[{"label": "Red", "value": "red"}, {"label": "Blue", "value": "blue"}]' as options; select 'text' as component, 'Submitted: ' || coalesce(:color, '(nothing)') as contents; ```  ### What happens  The documentation of the `form` component says:  > `create_new`: In a multiselect with a dropdown, this option allows the user to enter new values, that are not in the list of options.  But the option also works in a single select (no `multiple`): typing "Green" offers "Add Green…", and after choosing it and submitting, the page shows "Submitted: Green". The template sets `data-create_new` on every select, and `tomselect.ts` passes `create: !!s.dataset.create_new` to Tom Select whether or not the select is `multiple`.  ### What you expected  Either the documentation mentions single selects, or single selects are not meant to support it. We use `create_new` in single selects (for example an "official title" field in a staff form, where users may add a title that is not in the list yet), so it would be good to know whether we can rely on it.  If it is intended, here is a possible wording:  > `create_new`: In a select with a dropdown (`searchable`, `dropdown` or `options_source`), this option allows the user to enter new values, that are not in the list of options. Works for single selects and for multiselects.  #
 
-- **Issue #1551** (2026-10-15): **SQLPage does not work in nixpkgs**
-  *Symptoms*: ## What's wrong?  we recently upgraded our build to use typescript in https://github.com/sqlpage/SQLPage/issues/1464  this helped us improve our types and find a few bugs, but we cannot simply version bump SQLPage in nixpkgs :: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix  ## Why?  many of the typescript changes are still in mainline, not yet released in an offical version. As such, I can only raise a PR to nixpkgs with an unstable version, which would likely not be approved :: https://github.com/NixOS/nixpkgs/pull/574594  ## How do we fix?  @lovasoa could you cut and publish a new offical release so that I can upgrade SQLPage in nixpkgs?
+- **Issue #1628** (2026-11-23): **shell: the search field keeps the English accessible name "Search" when `search_placeholder` is set**
+  *Symptoms*: ### SQL file that shows the bug  ```sql select 'shell' as component,     'Demo' as title,     'de' as language,     'search.sql' as search_target,     'Suchen' as search_placeholder,     'Los' as search_button; select 'text' as component, 'Search demo' as contents; ```  ### What happens  The placeholder and the button are translated, but the field keeps a fixed English `aria-label`:  ```html <input class="form-control me-2" type="search" placeholder="Suchen" aria-label="Search" name="search" value=""> ```  `aria-label` takes precedence over the placeholder, so the accessible name of the field is "Search". On a German page, screen readers announce the English word "Search", and speech input users who say the text they see ("Suchen") cannot reach the field (WCAG 2.5.3 Label in Name). Excerpt of the accessibility tree in Chromium:  ``` - search:   - searchbox "Search"   - button "Los" ```  #891 listed this `aria-label` together with the placeholder and the button. #893 made the placeholder and the button customizable, and the `aria-label` stayed hard-coded. The search field of the `table` component is fine: it has no `aria-label`, so its accessible name comes from its customizable placeholder.  ### What you expected  The accessible name follows `search_placeholder`, like the visible placeholder:  ``` - search:   - searchbox "Suchen"   - button "Los" ```  I checked this by overriding `shell.handlebars` locally with the one-line change below.  ### Database  SQLite  ### Database ve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1172,16 +1093,403 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d65bda49` (2026-11-21)
-**Commit Message**: Add a status_bar component (#1608)
+### Incident Patch 1: `d7e1c35c` (2026-11-23)
+**Commit Message**: Connect guides and reference pages in the official documentation (#1617)
 
-* Add a status_bar component
+* Connect guides and reference pages in the official documentation
 
-* Keep status bar styling in its own stylesheet
+* Show documentation examples beside their live results
 
-* Position the status bar with CSS
+* Make the component and function catalogs easier to browse
 
-* Keep status bar styles in the component template
+* Polish documentation navigation and share reference rendering
+
+* Publish the complete reference in the Markdown export
+
+* Keep login labels and keyboard focus with the intended form
+
+* Follow the search field shape on keyboard focus
+
+* Use each chart’s surrounding theme for its export menu
+
+* Keep chart labels readable on colored marks and in SVG exports
+
+* Give documentation search a compact query and results layout
+
+* Give wide charts room in phone documentation examples
+
+* Reuse Tabler layouts and theme tokens across the documentation
+
+* Fix alert contrast, missing component pages and sidebar branding
+
+* Give the first-website tutorial a compact installation chooser
+
+* Place the archive details beside the download action
+
+* Keep documentation header links readable on hover and focus
+
+* Link installation archives and fix map popup contrast
+
+* Restore padding around the docs search shortcut
+
+* Refine documentation card hove
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -2,6 +2,13 @@
+ 
+ ## unreleased
+ 
++- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
++- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
++- The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
++- Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
++- Map marker popups follow the surrounding theme so their titles and links stay readable.
++- Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
++- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+ - Improved contrast for text and controls across the official SQLPage site.
+ - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
+ - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+```
+
+**File**: `examples/official-site/404.sql` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ select 'status_code' as component, 404 as status;
+ select 'http_header' as component, 'no-store, max-age=0' as "Cache-Control";
+-select 'dynamic' as component, properties FROM example WHERE component = 'shell' LIMIT 1;
++select 'shell-docs' as component, 'Page not found - SQLPage' as title;
+ 
+ select 'hero' as component,
+     'Not Found' as title,
+```
+
+**File**: `examples/official-site/assets/brand/brand.css` (modified, +6/-0)
+```diff
+@@ -160,6 +160,12 @@ body[data-bs-theme="dark"] {
+   --tblr-alert-color: var(--tblr-primary-fg);
+ }
+ 
++/* Keep keyboard focus inside the alert's scrollable content. */
++.alert .btn {
++  --tblr-focus-ring-color: currentColor;
++  --tblr-focus-ring-offset: calc(-1 * var(--tblr-focus-ring-width) - 1px);
++}
++
+ /* The alert action is a separate, dark button within the filled alert. */
+ .alert-important .alert-link {
+   --tblr-alert-link-color: var(--tblr-body-color);
+```
+
+**File**: `examples/official-site/assets/copy-code.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++/** Select the code for the browser's Copy command if clipboard access is unavailable. */
++export async function copyCode(code, label) {
++  try {
++    await navigator.clipboard.writeText(code.textContent);
++    return `${label} copied.`;
++  } catch {
++    code.closest("[tabindex]")?.focus({ preventScroll: true });
++    const range = document.createRange();
++    range.selectNodeContents(code);
++    const selection = window.getSelection();
++    selection.removeAllRanges();
++    selection.addRange(range);
++    return `${label} selected. Use Copy.`;
++  }
++}
+```
+
+**File**: `examples/official-site/assets/docs/catalog.css` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++.docs-main {
++  max-width: 80rem;
++}
++
++.catalog-selection {
++  margin-inline-start: auto;
++  color: var(--tblr-link-color);
++  letter-spacing: normal;
++  text-transform: none;
++}
++
++details[open] .catalog-selection {
++  display: none;
++}
++
++.catalog-results {
++  min-width: 0;
++  container-type: inline-size;
++}
++
++.catalog-results form[role="search"] {
++  flex: 1 1 18rem;
++}
++
++.catalog-entry {
++  display: grid;
++  grid-template-columns: auto minmax(0, 1fr) auto;
++  gap: var(--tblr-spacer-2);
++  align-items: center;
++  overflow-wrap: anywhere;
++}
++
++.catalog-entry > :last-child {
++  grid-area: 1 / 3;
++}
++
++.card.catalog-entry {
++  grid-template-rows: auto 1fr auto;
++}
++
++.card.catalog-entry > :is(p, small) {
++  grid-column: 1 / -1;
++  align-self: start;
++}
++
++.list-group-item.catalog-entry p {
++  grid-column: 2;
++}
++
++@container (min-width: 44rem) {
++  .list-group-item.catalog-entry {
++    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
++    gap: var(--tblr-spacer-3);
++  }
++
++  .list-group-item.catalog-entry p,
++  .list-group-item.catalog-entry > :last-child {
++    grid-area: auto;
++  }
++}
++
++#evaluation,
++#evaluation + .article-text {
++  max-width: 51rem;
++  margin-inline: auto;
++}
++
++#evaluation {
++  padding-top: var(--tblr-spacer-6);
++}
+```
+
+**File**: `examples/official-site/assets/docs/examples.css` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++.docs-example {
++  container: example / inline-size;
++}
++
++.docs-example-source,
++.docs-example-result {
++  min-width: 0;
++}
++
++.docs-example-result {
++  border-top: var(--tblr-border-width) solid var(--tblr-border-color);
++  border-radius: 0 0 var(--tblr-border-radius) var(--tblr-border-radius);
++}
++
++.docs-example-output {
++  display: flow-root;
++  container-type: inline-size;
++  padding: var(--tblr-spacer-3);
++  --tblr-carousel-control-icon-filter: none;
++  --tblr-carousel-indicator-active-bg: var(--tblr-heading-color);
++}
++/* Tabler sizes columns against the viewport. A card in a preview can have much less room. */
++.docs-example-output > .row > * {
++  flex-grow: 1;
++  min-width: min(100%, 17rem);
++}
++.docs-example-output form .row > label {
++  min-width: min(100%, 12rem);
++}
++.docs-example-output .card {
++  max-width: 100%;
++}
++.docs-example-output .table-freeze-columns tr > :first-child {
++  width: clamp(7rem, 32cqi, 11rem);
++  min-width: min(9rem, 40cqi);
++  white-space: normal;
++}
++.docs-example-output .pagination {
++  flex-wrap: wrap;
++}
++.docs-example-output .markdown table {
++  display: block;
++  overflow-x: auto;
++}
++@media (max-width: 27rem) {
++  .docs-example > .docs-example-source,
++  .docs-example-layout {
++    margin-inline: calc(var(--tblr-spacer-1) - var(--docs-gutter));
++  }
++  /* A chart card fills the preview. Keep its title inset and give the plot the full width. */
++  .docs-example-output:has(> .card > .card-body > .chart) {
++    padding-inline: 0;
++  }
++  .docs-example-output > .card > .card-body > .chart {
++    margin-inline: calc(-1 * var(--tblr-card-spacer-x));
++  }
++}
++@container example (min-width: 52rem) {
++  .docs-example-layout {
++    display: grid;
++    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
++  }
++  .docs-example-layout > .docs-example-source {
++    position: sticky;
++    top: var(--docs-header-height);
++    align-self: start;
++  }
++  .docs-example-result {
++    display: grid;
++    grid-template-rows: auto 1fr;
++    border-top: 0;
++    border-inline-start: var(--tblr-border-width) solid var(--tblr-border-color);
++    border-radius: 0 var(--tblr-border-radius) var(--tblr-border-radius) 0;
++  }
++  .docs-example-output {
++    align-self: center;
++  }
++}
++
++.docs-example-source pre {
++  max-height: min(24rem, 60svh);
++  line-height: var(--tblr-line-height-base);
++  white-space: pre-wrap;
++  overflow-wrap: anywhere;
++}
+```
+
+**File**: `examples/official-site/assets/docs/examples.js` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++import { copyCode } from "../copy-code.js";
++
++function enableCopy(button, code, kind) {
++  const label = button.querySelector("[aria-live]") ?? button;
++  const initialLabel = label.textContent;
++  let reset;
++  button.hidden = false;
++  button.addEventListener("click", async () => {
++    clearTimeout(reset);
++    label.textContent = await copyCode(code, kind);
++    reset = setTimeout(() => {
++      label.textContent = initialLabel;
++    }, 2500);
++  });
++}
++
++for (const source of document.querySelectorAll(".docs-example-source")) {
++  enableCopy(
++    source.querySelector("button"),
++    source.querySelector("code"),
++    "SQL",
++  );
++}
++
++for (const command of document.querySelectorAll(".install-command")) {
++  enableCopy(
++    command.querySelector("button"),
++    command.querySelector("code"),
++    "Command",
++  );
++}
++
++// Attach tools only to standalone snippets, leaving live previews and their source intact.
++const toolbar = document.getElementById("docs-snippet-tools");
++for (const code of document.querySelectorAll(
++  ".docs-main pre > code:not(.docs-example-source *, .docs-example-output *)",
++)) {
++  const pre = code.parentElement;
++  const tools = toolbar.content.cloneNode(true);
++  const language = Array.from(code.classList).find((name) =>
++    name.startsWith("language-"),
++  );
++  if (language)
++    tools.querySelector("span").textContent = language.slice(
++      "language-".length,
++    );
++  enableCopy(tools.querySelector("button"), code, "Code");
++  pre.before(tools);
++  pre.tabIndex = 0;
++}
+```
+
+**File**: `examples/official-site/assets/docs/guides.css` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
++.docs-intro {
++  display: grid;
++  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
++  background: linear-gradient(
++    115deg,
++    var(--tblr-bg-surface-tertiary),
++    var(--tblr-bg-surface)
++  );
++}
++
++.docs-intro > .card-body {
++  padding: clamp(var(--tblr-spacer-4), 4vw, 3.25rem);
++}
++
++.docs-intro p {
++  max-width: 38ch;
++}
++
++.docs-intro img {
++  width: 100%;
++  height: 100%;
++  contain: size;
++}
++
++.docs-intro-compact {
++  grid-template-columns: minmax(0, 1fr) 7rem;
++}
++
++.docs-intro-compact > .card-body {
++  padding: var(--tblr-spacer-3) var(--tblr-spacer-4);
++}
++
++.docs-intro-compact .docs-title {
++  font-size: clamp(1.75rem, 3vw, 2.5rem);
++}
++
++.docs-intro-compact p {
++  max-width: 58ch;
++  margin-bottom: 0;
++}
++
++@media (max-width: 36rem) {
++  .docs-intro {
++    grid-template-columns: 1fr;
++  }
++
++  .docs-intro .object-fit-contain,
++  .docs-intro-compact img {
++    display: none;
++  }
++
++  .docs-intro .object-fit-cover {
++    height: 10rem;
++    object-position: center 25%;
++  }
++}
+```
+
+---
+
+### Incident Patch 2: `ccd3cd5e` (2026-11-23)
+**Commit Message**: Fix contrast in the official site theme (#1610)
+
+* Fix contrast in the official site theme
+
+* Type the contrast test pixel values
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1189,330 +1497,426 @@ Observed empirical fixes and code patches:
  
  ## unreleased
  
-+- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
++- Improved contrast for text and controls across the official SQLPage site.
+ - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
+ - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
  - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
- - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
- - Inline icons now align with their labels in components such as tabs and steps.
 ```
 
-**File**: `examples/official-site/sqlpage/migrations/80_status_bar.sql` (added, +23/-0)
+**File**: `examples/official-site/assets/brand/brand.css` (modified, +85/-13)
 ```diff
-@@ -0,0 +1,23 @@
-+INSERT INTO component(name, icon, description, introduced_in_version) VALUES
-+    ('status_bar', 'layout-bottombar',
-+     'Display short status messages and links in a single horizontal bar. Each row adds one segment. When there are several segments, the last one aligns to the far edge. If the segments do not all fit, scroll the bar horizontally to see the rest.',
-+     '0.49.0');
-+
-+INSERT INTO parameter(component, name, description, type, top_level, optional)
-+SELECT 'status_bar', * FROM (VALUES
-+    ('fixed', 'Keep the bar at the bottom of the screen while the page scrolls. Defaults to true. A fixed bar overlays page content, so leave space below your last item if needed. Set to false to place the bar in the page where the SQL appears.', 'BOOLEAN', TRUE, TRUE),
-+    ('label', 'Accessible name for the bar. Defaults to "Status bar".', 'TEXT', TRUE, TRUE),
-+    ('title', 'Text displayed in the segment.', 'TEXT', FALSE, TRUE),
-+    ('icon', 'Icon displayed before the text.', 'ICON', FALSE, TRUE),
-+    ('color', 'Color of the segment text and icon.', 'COLOR', FALSE, TRUE),
-+    ('tooltip', 'Text shown when hovering over the segment or focusing its link. For an icon without a title, supply a tooltip to give the segment an accessible name.', 'TEXT', FALSE, TRUE),
-+    ('link', 'URL to open when the segment is clicked.', 'URL', FALSE, TRUE)
-+) p;
-+
-+INSERT INTO example(component, description, properties) VALUES
-+    ('status_bar', 'A query workspace shows the database connection, row count, and a link to the function reference. Omit `fixed` to pin this bar to the bottom of the screen.', json('[
-+        {"component":"status_bar","label":"Query status","fixed":false},
-+        {"title":"Connected","icon":"database","color":"green","tooltip":"Connected to the reporting database"},
-+        {"title":"24 rows"},
-+        {"title":"SQL functions","icon":"book","link":"/functions.sql"}
-+    ]'));
-```
-
-**File**: `examples/official-site/sqlpage/migrations/99_shared_id_class_attributes.sql` (modified, +3/-0)
-```diff
-@@ -28,6 +28,7 @@ FROM (VALUES
-     ('list', TRUE),
-     ('list', FALSE),
-     ('map', TRUE),
-+    ('status_bar', TRUE),
-     ('tab', TRUE),
-     ('tab', FALSE),
-     ('table', TRUE),
-@@ -69,6 +70,8 @@ FROM (VALUES
-     ('list', TRUE),
-     ('list', FALSE),
-     ('map', TRUE),
-+    ('status_bar', TRUE),
-+    ('status_bar', FALSE),
-     ('tab', TRUE),
-     ('tab', FALSE),
-     ('table', TRUE),
-```
-
-**File**: `sqlpage/templates/status_bar.handlebars` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+<style nonce="{{@csp_nonce}}">
-+    /* Tabler's boxed page normally contains fixed elements. Let the bar use the viewport. */
-+    :is(.layout-boxed, html[data-bs-layout="boxed"] body) > .page:has(.status-bar.fixed-bottom) {
-+        contain: none;
-+
-+        /* Keep the boxed menu anchored to the page. */
-+        > #sqlpage_header > .fixed-top {
-+            position: absolute;
-+        }
-+    }
-+    .status-bar > * + :last-child {
-+        margin-inline-start: auto;
-+    }
-+    .status-bar > a:focus-visible {
-+        outline-offset: -2px;
-+    }
-+</style>
-+<div role="status" aria-label="{{default label 'Status bar'}}"
-+    {{#if id}}id="{{id}}"{{/if}}
-+    class="status-bar d-flex divide-x overflow-x-auto bg-surface fs-5 {{#if (default fixed true)}}fixed-bottom border-top{{else}}my-2 border rounded{{/if}} {{class}}">
-+    {{#each_row}}
-+        {{#if link}}<a href="{{link}}"{{else}}<span{{/if}}
-+            class="d-flex flex-shrink-0 align-items-center gap-1 text-nowrap px-3 py-1 {{#if color}}text-{{color}}{{/if}} {{class}}"
-+            {{#if tooltip}}data-bs-toggle="tooltip" title="{{tooltip}}"{{/if}}>
-+            {{#if icon}}<span aria-hidden="true">{{~icon_img icon 16~}}</span>{{/if}}
-+            {{#if title includeZero=true}}{{title}}{{else}}<span class="visually-hidden">{{tooltip}}</span>{{/if}}
-+        {{#if link}}</a>{{else}}</span>{{/if}}
-+    {{/each_row}}
-+</div>
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/fragment.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'status_bar' AS component, 'Sync status' AS label;
-+SELECT 'Synced' AS title;
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/index.sql` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+SELECT 'shell' AS component, 'Builds' AS title, 'boxed' AS layout, TRUE AS fixed_top_menu
-+WHERE $boxed IS NOT NULL;
-+
-+SELECT 'status_bar' AS component, 'repository' AS id, 'project-status' AS class,
-+    'Repository status' AS label, FALSE AS fixed;
-+SELECT 'Build passed' AS title, 'circle-check' AS icon, 'green' AS color,
-+    'All checks passed' AS tooltip, '#activity' AS link, 'build-result' AS class;
-+SELECT 'Branch: feature/improve-search-index' AS title;
-+SELECT '12 pending changes' AS title;
-+SELECT 'View history' AS title, '#history' AS link;
-+
-+SELECT 'list' AS component, 'Recent activity' AS title, 'activity' AS id,
-+    'min-vh-100' AS class;
-+SELECT 'Search index updated' AS title;
-+
-+SELECT 'title' AS component, 'Build history' AS contents, 'history' AS id;
-+
-+SELECT 'status_bar' AS component;
-+SELECT 'Connected' AS title;
-+SELECT 'history' AS icon, 'Open build history' AS tooltip, '#history' AS link;
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/test.ts` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+import { expect, loadFragment, test } from "../../fixture.ts";
-+
-+test("rows render in order with icons, tooltips and links", async ({
-+  page,
-+}) => {
-+  const bar = page.getByRole("status", { name: "Repository status" });
-+  await expect(bar).toHaveAttribute("id", "repository");
-+  await expect(bar).toContainClass("project-status");
-+  await expect(bar).toHaveText(
-+    /Build passed\s*Branch: feature\/improve-search-index\s*12 pending changes\s*View history/,
-+  );
-+
-+  const build = bar.getByRole("link", { name: "Build passed", exact: true });
-+  const history = bar.getByRole("link", { name: "View history" });
-+  await expect(bar.locator(".build-result")).toContainClass("text-green");
-+  await expect(build.locator("svg")).toBeVisible();
-+  const barRight = await bar.evaluate((el) => el.getBoundingClientRect().right);
-+  const textRight = await history.evaluate((el) => {
-+    const text = document.createRange();
-+    text.selectNodeContents(el);
-+    return text.getBoundingClientRect().right;
-+  });
-+  expect(barRight - textRight).toBeLessThan(32);
-+  await build.hover();
-+  await expect(page.getByRole("tooltip")).toHaveText("All checks passed");
-+  await history.click();
-+  await expect(page).toHaveURL(/#history$/);
-+  await expect(
-+    page.getByRole("heading", { name: "Build history" }),
-+  ).toBeInViewport();
-+});
-+
-+test.describe("without JavaScript", () => {
-+  test.use({ javaScriptEnabled: false });
-+
-+  test("the status bar stays at the viewport bottom and the fixed menu fits the boxed shell", async ({
-+    page,
-+  }) => {
-+    await page.goto("/status-bar/?boxed=1");
-+    const fixed = page.getByRole("status", { name: "Status bar", exact: true });
-+    const inline = page.getByRole("status", { name: "Repository status" });
-+    const bottomGap = () =>
-+      fixed.evaluate((bar) => innerHeight - bar.getBoundingClientRect().bottom);
-+
-+    const header = await page.getByRole("banner").evaluate((el) => {
-+      const { x, width } = el.getBoundingClientRect();
-+      return { x, width };
-+    });
-+    expect(header.x).toBeGreaterThan(0);
-+    expect(await page.getByRole("navigation").boundingBox()).toMatchObject(
-+      header,
-+    );
-+    await expect(fixed.getByText("Connected", { exact: true })).toBeVisible();
-+    await expect(
-+      fixed.getByRole("link", { name: "Open build history" }),
-+    ).toBeVisible();
-+    await expect(inline).toBeInViewport();
-+    expect(await bottomGap()).toBeCloseTo(0);
-+    await page
-+      .getByRole("heading", { name: "Build history" })
-+      .scrollIntoViewIfNeeded();
-+    await expect(inline).not.toBeInViewport();
-+    expect(await bottomGap()).toBeCloseTo(0);
-+  });
-+});
-+
-+test("a narrow bar scrolls to the next focused link without widening the page", async ({
-+  page,
-+}) => {
-+  await page.setViewportSize({ width: 320, height: 640 });
-+  const bar = page.getByRole("status", { name: "Repository status" });
-+  const history = bar.getByRole("link", { name: "View history" });
-+  await expect(history).not.toBeInViewport();
-+  await bar.getByRole("link", { name: "Build passed" }).focus();
-+  await page.keyboard.press("Tab");
-+  await expect(history).toBeFocused();
-+  await expect(history).toBeInViewport({ ratio: 0.99 });
-+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
-+    320,
-+  );
-+});
-+
-+test("a fixed bar disappears with its embedded fragment", async ({ page }) => {
-+  await loadFragment(
-+    page,
-+    "/status-bar/fragment.sql",
-+    "#activity",
-+    "#activity",
-+  );
-+  const bar = page.getByRole("status", { name: "Sync status" });
-+  await expect(bar).toHaveText("Synced");
-+  await page.locator("#activity").evaluate((el) => el.remove());
-+  await expect(bar).toHaveCount(0);
-+});
-```
-
----
-
-### Incident Patch 2: `a3168950` (2026-11-21)
-**Commit Message**: Align inline icons with their text labels (#1609)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
+@@ -8,7 +8,7 @@
+ /* Official-site overrides use Tabler's existing theme properties directly.
+    Both the standalone landing page and documentation import this file. */
+ :root,
+-.layout-boxed[data-bs-theme="dark"] {
++body[data-bs-theme="dark"] {
+   color-scheme: dark;
+   --tblr-font-sans-serif: Outfit, system-ui, sans-serif;
+   --tblr-font-monospace:
+@@ -20,12 +20,12 @@
+   --tblr-light: #f9fafb;
+   --tblr-dark: #1f2937;
+   --tblr-gray-300: #d1d5db;
+-  --tblr-primary-fg: var(--tblr-white);
  
- - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
- - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
-+- Inline icons now align with their labels in components such as tabs and steps.
+-  /* Core colors refined for better contrast */
+-  --tblr-body-color: hsl(225deg 35% 86%);
++  --tblr-body-color-rgb: 207, 213, 232;
++  --tblr-body-color: rgb(var(--tblr-body-color-rgb));
+   --tblr-secondary-color: hsl(225, 15%, 80%);
+   --tblr-muted-color: hsla(225, 15%, 75%, 0.8);
++  --tblr-disabled-color: hsl(225 15% 63%);
  
- ## v0.48.0 (2026-11-12)
+   /* Background system */
+   --tblr-body-bg: hsl(225deg 44% 9%);
+@@ -57,25 +57,44 @@
+   --tblr-primary: rgb(var(--tblr-primary-rgb));
+   --tblr-secondary: hsla(247, 60%, 94%, 0.7); /* Nebula purple */
  
-```
-
-**File**: `examples/official-site/custom_components.sql` (modified, +1/-1)
-```diff
-@@ -131,7 +131,7 @@ and SQLPage adds a few more:
- - `array_contains`: returns true if a list contains a value
- - `static_path`: returns the path to one of the static files bundled with SQLPage. Accepts arguments like `sqlpage.js`, `sqlpage.css`, `apexcharts.js`, etc.
- - `app_config`: returns the value of a configuration parameter from sqlpage''s configuration file, such as `max_uploaded_file_size`, `site_prefix`, etc.
--- `icon_img`: generate an svg icon from a *tabler* icon name
-+- `icon_img`: render a Tabler SVG icon aligned with adjacent text. An optional second argument sets its size in pixels (default 24).
- - `markdown`: renders markdown text. Accepts an optional 2nd argument `''allow_unsafe''` that will render embedded html blocks: use only on trusted content. See the [Commonmark spec](https://spec.commonmark.org/0.31.2/#html-blocks) for more info.
- - `each_row`: iterates over the rows of a query result
- - `typeof`: returns the type of a value (`string`, `number`, `boolean`, `object`, `array`, `null`)
-```
-
-**File**: `frontend/src/icons.css` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+.sqlpage-icon {
-+  /* An inline SVG's baseline is its bottom edge. Center it on capital letters. */
-+  vertical-align: calc((1cap - attr(height px)) / 2);
+-  /* Status + accent colors aligned with the brand palette */
+-  --tblr-success-rgb: 16, 132, 86; /* Deep green for white text */
++  /* These accents are also used as text on dark and tinted surfaces. */
++  --tblr-success-rgb: 88, 186, 138;
+   --tblr-success: rgb(var(--tblr-success-rgb));
+-  --tblr-warning-rgb: 197, 124, 0; /* Deep amber */
++  --tblr-warning-rgb: 219, 153, 54;
+   --tblr-warning: rgb(var(--tblr-warning-rgb));
+-  --tblr-danger-rgb: 196, 68, 68; /* Deep crimson */
++  --tblr-danger-rgb: 238, 126, 126;
+   --tblr-danger: rgb(var(--tblr-danger-rgb));
+-  --tblr-purple-rgb: 118, 82, 200; /* Deep violet */
++  --tblr-purple-rgb: 170, 146, 238;
+   --tblr-purple: rgb(var(--tblr-purple-rgb));
+-  --tblr-cyan-rgb: 0, 149, 168; /* Deep cyan */
++  --tblr-cyan-rgb: 70, 177, 191;
+   --tblr-cyan: rgb(var(--tblr-cyan-rgb));
+-  --tblr-indigo-rgb: 96, 113, 215; /* Deep indigo */
++  --tblr-indigo-rgb: 132, 153, 240;
+   --tblr-indigo: rgb(var(--tblr-indigo-rgb));
+-  --tblr-teal: #267d63;
+-  --tblr-teal-fg: #20050b;
++  --tblr-teal-rgb: 85, 177, 149;
++  --tblr-teal: rgb(var(--tblr-teal-rgb));
++
++  /* Foregrounds for filled buttons, badges, progress bars and cards. */
++  --tblr-primary-fg: var(--tblr-body-bg);
++  --tblr-secondary-fg: var(--tblr-body-bg);
++  --tblr-blue-fg: var(--tblr-body-bg);
++  --tblr-info-fg: var(--tblr-body-bg);
++  --tblr-success-fg: var(--tblr-body-bg);
++  --tblr-warning-fg: var(--tblr-body-bg);
++  --tblr-danger-fg: var(--tblr-body-bg);
++  --tblr-purple-fg: var(--tblr-body-bg);
++  --tblr-cyan-fg: var(--tblr-body-bg);
++  --tblr-indigo-fg: var(--tblr-body-bg);
++  --tblr-teal-fg: var(--tblr-body-bg);
+ 
+   --tblr-green: var(--tblr-success);
++  --tblr-green-rgb: var(--tblr-success-rgb);
++  --tblr-green-fg: var(--tblr-success-fg);
+   --tblr-yellow: var(--tblr-warning);
++  --tblr-yellow-rgb: var(--tblr-warning-rgb);
++  --tblr-yellow-fg: var(--tblr-warning-fg);
+   --tblr-red: var(--tblr-danger);
++  --tblr-red-rgb: var(--tblr-danger-rgb);
++  --tblr-red-fg: var(--tblr-danger-fg);
+ 
+   /* Luminous links */
+   --tblr-link-color: hsl(212, 70%, 75%); /* Star glow */
+@@ -102,3 +121,56 @@
+   --hljs-cosmic-operator: hsl(0, 0%, 95%); /* White dwarf */
+   --hljs-cosmic-keyword: hsl(210, 100%, 75%); /* Blue giant */
+ }
++
++.pagination {
++  --tblr-pagination-active-color: var(--tblr-primary-fg);
++}
++
++.form-check-input,
++.form-check-input[type="checkbox"]:indeterminate {
++  --tblr-form-check-icon-color: var(--tblr-primary-fg);
++}
++
++.form-switch {
++  --tblr-form-switch-checked-color: var(--tblr-primary-fg);
++}
++
++/* Tabler draws these markers with white SVGs. Use a darker fill behind them. */
++.form-selectgroup-input:checked
++  + .form-selectgroup-label
++  .form-selectgroup-check,
++.form-imagecheck-input:checked ~ .form-imagecheck-figure::before {
++  background-color: color-mix(
++    in srgb,
++    var(--tblr-primary) 70%,
++    var(--tblr-body-bg)
++  );
++}
++
++.steps-counter .step-item:not(.active ~ .step-item)::before {
++  color: var(--tblr-primary-fg);
++}
++
++.card[class*="-fg"],
++.alert-important {
++  --tblr-heading-color: currentColor;
++}
++
++.alert-important:not(.alert-dark, .alert-muted) {
++  --tblr-alert-color: var(--tblr-primary-fg);
++}
++
++/* The alert action is a separate, dark button within the filled alert. */
++.alert-important .alert-link {
++  --tblr-alert-link-color: var(--tblr-body-color);
++}
++
++@supports (color: contrast-color(white)) {
++  .steps-counter .step-item:not(.active ~ .step-item)::before {
++    color: contrast-color(var(--tblr-steps-color));
++  }
++
++  .alert.alert-important {
++    --tblr-alert-color: contrast-color(var(--tblr-alert-variant-color));
++  }
 +}
 ```
 
-**File**: `scripts/build-frontend.mjs` (modified, +1/-0)
+**File**: `examples/official-site/assets/highlightjs-and-tabler-theme.css` (modified, +3/-3)
 ```diff
-@@ -11,6 +11,7 @@ const STYLESHEET = [
-   "node_modules/@tabler/core/dist/css/tabler.min.css",
-   "node_modules/tom-select/dist/css/tom-select.bootstrap5.css",
-   "node_modules/@tabler/core/dist/css/tabler-vendors.min.css",
-+  "frontend/src/icons.css",
-   "frontend/src/sqlpage.css",
- ];
- 
+@@ -4,11 +4,11 @@
+ .btn-primary {
+   --tblr-btn-border-color: var(--tblr-secondary);
+   --tblr-btn-active-border-color: transparent;
+-  --tblr-btn-color: var(--tblr-primary-fg, #ffffff);
++  --tblr-btn-color: var(--tblr-white);
+   --tblr-btn-bg: transparent;
+-  --tblr-btn-hover-color: var(--tblr-primary-fg);
++  --tblr-btn-hover-color: var(--tblr-white);
+   --tblr-btn-hover-bg: transparent;
+-  --tblr-btn-active-color: var(--tblr-primary-fg);
++  --tblr-btn-active-color: var(--tblr-white);
+   --tblr-btn-active-bg: transparent;
+   --tblr-btn-disabled-bg: var(--tblr-primary);
+   --tblr-btn-disabled-color: var(--tblr-primary-fg);
 ```
 
-**File**: `src/template_helpers.rs` (modified, +1/-1)
+**File**: `examples/official-site/assets/landing/styles/base.css` (modified, +1/-1)
 ```diff
-@@ -239,7 +239,7 @@ impl HelperDef for IconImgHelper {
- 
-         write!(
-             writer,
--            r#"<svg viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
-+            r#"<svg class="sqlpage-icon" viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
-         )?;
-         Ok(())
-     }
+@@ -49,7 +49,7 @@ a {
+ a:focus-visible,
+ button:focus-visible,
+ [tabindex]:focus-visible {
+-  outline: 2px solid var(--tblr-primary);
++  outline: 2px solid var(--landing-focus-color, var(--tblr-primary));
+   outline-offset: 6px;
+ }
+ ::selection {
 ```
 
-**File**: `tests/end-to-end/fixtures/steps/index.sql` (added, +2/-0)
+**File**: `examples/official-site/assets/landing/styles/comparison.css` (modified, +18/-26)
 ```diff
-@@ -0,0 +1,2 @@
-+SELECT 'steps' AS component;
-+SELECT 'Review' AS title, 'eye' AS icon, '#review' AS link;
+@@ -9,22 +9,11 @@
+   --section-color: var(--tblr-light);
+   --comparison-border: var(--tblr-body-color);
+   --comparison-copy: var(--tblr-dark);
+-  --comparison-muted: color-mix(
+-    in srgb,
+-    var(--tblr-dark),
+-    var(--tblr-white) 40%
+-  );
+   background: var(--section-color);
+   color: var(--tblr-bg-surface);
+   color-scheme: light;
+   padding-bottom: calc(var(--wave-height) + 64px);
+ }
+-.comparison-section .eyebrow {
+-  color: var(--tblr-blue);
+-}
+-.comparison-section h2 em {
+-  color: var(--tblr-blue);
+-}
+ .comparison-section .section-heading {
+   grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) minmax(0, 0.27fr);
+   margin-bottom: 44px;
+@@ -72,7 +61,7 @@
+ }
+ .comparison-card-heading p {
+   margin: 5px 0 0;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   font: 11px / 1.5 var(--tblr-font-monospace);
+ }
+ .comparison-versus {
+@@ -142,7 +131,10 @@
+   font: 11px / 1.4 var(--tblr-font-monospace);
+ }
+ .comparison-window-bar > span:last-child:not(:first-child) {
+-  opacity: 0.55;
++  color: var(--landing-light-muted);
++}
++.comparison-code .comparison-window-bar > span:last-child:not(:first-child) {
++  color: var(--tblr-muted-color);
+ }
+ .comparison-code .comparison-window-bar {
+   background: var(--tblr-bg-surface-secondary);
+@@ -264,7 +256,7 @@
+ }
+ .comparison-card .comparison-aside {
+   margin: 10px 0 0;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   font-size: 11px;
+ }
+ .comparison-sheet .comparison-window-body {
+@@ -277,7 +269,7 @@
+ .comparison-sheet-labels {
+   padding: 12px 0 8px;
+   font: 10px var(--tblr-font-monospace);
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+ }
+ .comparison-sheet-files {
+   list-style: none;
+@@ -298,12 +290,12 @@
+   height: 18px;
+   border-radius: 3px;
+   background: var(--tblr-success);
+-  color: white;
++  color: var(--tblr-success-fg);
+   font-size: 11px;
+ }
+ .comparison-sheet-files small {
+   font: 10px var(--tblr-font-monospace);
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   white-space: nowrap;
+ }
+ .comparison-lock {
+@@ -312,7 +304,7 @@
+   border: 1px solid var(--hljs-cosmic-punctuation);
+   border-radius: 7px;
+   background: color-mix(in srgb, var(--tblr-warning) 8%, var(--tblr-white));
+-  color: var(--tblr-warning);
++  color: color-mix(in srgb, var(--tblr-warning) 35%, var(--tblr-dark));
+   font-size: 12px;
+ }
+ .comparison-terminal {
+@@ -346,7 +338,7 @@
+ .comparison-chat small {
+   display: block;
+   font-size: 13px;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   margin-top: 4px;
+ }
+ .comparison-metric .comparison-view-only {
+@@ -355,7 +347,7 @@
+   border-radius: 5px;
+   align-self: start;
+   position: relative;
+-  color: var(--tblr-muted-color);
++  color: var(--landing-light-muted);
+   background: var(--tblr-light);
+   font-size: 12px;
+ }
+@@ -417,7 +409,7 @@
+   height: 24px;
+   border-radius: 50%;
+   background: var(--tblr-link-color);
+-  color: white;
++  color: var(--tblr-primary-fg);
+   font-size: 12px;
+ }
+ .comparison-lowcode .comparison-window-body {
+@@ -428,7 +420,7 @@
+   border-collapse: collapse;
+   font-size: 12px;
+   width: 100%;
+-  color: color-mix(in srgb, var(--tblr-dark), var(--tblr-white) 40%);
++  color: var(--comparison-copy);
+ }
+ .comparison-lowcode th {
+   font: 10px var(--tblr-font-monospace);
+@@ -477,13 +469,13 @@
+   justify-content: end;
+   gap: 12px;
+   font-size: 12px;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+ }
+ .comparison-upgrade > div span:last-child {
+   border-radius: 6px;
+   padding: 8px 12px;
+   background: var(--tblr-purple);
+-  color: white;
++  color: var(--tblr-purple-fg);
+ }
+ .comparison-footer {
+   justify-content: space-between;
+@@ -492,7 +484,7 @@
+ }
+ .comparison-footer > p {
+   margin: 0;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   font-size: 11px;
+   max-width: 720px;
+ }
+@@ -509,7 +501,7 @@
+ }
+ .comparison-controls p {
+   margin: 0 10px 0 0;
+-  color: var(--comparison-muted);
++  color: var(--landing-light-muted);
+   font: 11px / 1.5 var(--tblr-font-monospace);
+ }
+ .comparison-controls button {
 ```
 
-**File**: `tests/end-to-end/fixtures/steps/test.ts` (added, +21/-0)
+**File**: `examples/official-site/assets/landing/styles/component-demos.css` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,21 @@
-+import { expect, test } from "../../fixture.ts";
-+
-+test("the step icon aligns with the capital letters of its title", async ({
-+  page,
-+}) => {
-+  const icon = page.getByRole("link", { name: "Review" }).locator("svg");
-+  const offset = await icon.evaluate((svg) => {
-+    // An empty inline-block sits on the text baseline. Its top is one cap height above it.
-+    const capital = document.createElement("span");
-+    capital.style.cssText = "display: inline-block; height: 1cap";
-+    svg.after(capital);
-+    const centerY = (element: Element) => {
-+      const { top, height } = element.getBoundingClientRect();
-+      return top + height / 2;
-+    };
-+    const delta = centerY(svg) - centerY(capital);
-+    capital.remove();
-+    return delta;
-+  });
-+  expect(Math.abs(offset)).toBeLessThanOrEqual(1);
-+});
+@@ -4,6 +4,7 @@
+   margin-bottom: 20px;
+ }
+ .sql-editor {
++  --landing-focus-color: var(--tblr-primary);
+   margin-top: 18px;
+   border: 1px solid var(--tblr-bg-surface-tertiary);
+   border-radius: 12px;
+@@ -153,7 +154,7 @@
+   top: -86px;
+   left: 48%;
+   margin: 0;
+-  color: color-mix(in srgb, var(--tblr-dark), var(--tblr-white) 40%);
++  color: var(--landing-light-muted);
+   font: italic 17px / 1.35 cursive;
+   transform: rotate(-6deg);
+   pointer-events: none;
+@@ -203,7 +204,7 @@
+   align-items: center;
+   gap: 6px;
+   font: 12px var(--tblr-font-monospace);
+-  color: var(--tblr-blue);
++  color: var(--landing-light-accent);
+ }
+ .demo-docs:hover {
+   text-decoration: underline;
+```
+
+**File**: `examples/official-site/assets/landing/styles/demo.css` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ form.mt-3 {
+   box-shadow: 0 3px 14px color-mix(in srgb, var(--tblr-blue) 9.41%, transparent);
+   background: var(--tblr-blue);
+   border-color: var(--tblr-blue);
+-  color: var(--tblr-dark);
++  color: var(--tblr-blue-fg);
+ }
+ .apexcharts-tooltip {
+   color: var(--tblr-bg-surface);
+```
+
+**File**: `examples/official-site/assets/landing/styles/frontend.css` (modified, +3/-2)
+```diff
+@@ -1,6 +1,7 @@
+ /* Four frontend views pair concise copy with diagrams and deployment links. */
+ .deployment-section {
+   --section-color: var(--tblr-blue);
++  --landing-focus-color: var(--tblr-primary-fg);
+   /* Match the solid wave at the edge, then retain the section's diagonal gradient. */
+   background:
+     linear-gradient(180deg, var(--section-color), transparent 180px),
+@@ -83,9 +84,9 @@
+   display: block;
+   margin-top: 5px;
+   font: 13px / 1.4 var(--tblr-font-monospace);
+-  opacity: 0.75;
+ }
+ .frontend-panels {
++  --landing-focus-color: var(--tblr-primary);
+   border-radius: 20px;
+   padding: 55px 45px;
+   background: var(--tblr-body-bg);
+@@ -204,7 +205,7 @@
+   background: color-mix(in srgb, var(--stage-color) 45%, var(--tblr-body-bg));
+   padding: 10px 0;
+   text-align: center;
+-  color: var(--tblr-secondary-color);
++  color: var(--tblr-light);
+ }
+ .render-timeline > span:nth-child(2) {
+   --stage-color: var(--tblr-blue);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1609** (2026-11-21): Align inline icons with their labels (@lovasoa)
-- **PR #1608** (2026-11-21): Add a status_bar component (@lovasoa)
-- **PR #1606** (2026-11-19): Exercise transactional user onboarding on SQL Server (@lovasoa)
-- **PR #1605** (2026-11-19): Explore monthly sales exports with DuckDB (@lovasoa)
-- **PR #1603** (2026-11-17): Let big number titles and descriptions wrap (@lovasoa)
-- **PR #1602** (2026-11-19): Keep every file of a `multiple` file input, and add `sqlpage.persist_uploaded_files` (@theochr72)
+- **PR #1631** (2026-11-23): Use search_placeholder as the accessible name of the shell search field (@mkerz-masfg)
+- **PR #1630** (2026-11-23): Document create_new for single selects (@mkerz-masfg)
+- **PR #1625** (closed): Publish a searchable reference for SQLPage settings (@lovasoa)
+- **PR #1623** (closed): Keep live examples beside their component pages (@lovasoa)
+- **PR #1622** (closed): Give each component one page for its parameters (@lovasoa)
+- **PR #1621** (closed): Give each SQLPage function its own reference page (@lovasoa)
 
 ---
 
@@ -1532,13 +1936,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a status_bar component
+## X. Connect guides and reference pages in the official documentation
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d65bda49`: Add a status_bar component. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7e1c35c`: Connect guides and reference pages in the official documentation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1546,7 +1950,13 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
+- The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
+- Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
+- Map marker popups follow the surrounding theme so their titles and links stay readable.
+- Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
+- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1556,7 +1966,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d65bda49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7e1c35c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

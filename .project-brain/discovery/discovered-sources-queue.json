@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T16:37:15.132Z",
+  "updated_at": "2026-11-23T16:53:49.579Z",
   "stats": {
-    "total_discovered": 7906,
-    "approved_pending_harvest": 7482,
+    "total_discovered": 7916,
+    "approved_pending_harvest": 7492,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7472,
+      "COMMUNITY_AND_EXPERT": 7482,
       "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -170987,6 +170987,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
         "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-494052CB5DDB": {
+      "id": "SRC-494052CB5DDB",
+      "url": "https://mise.en.dev/dev-tools/mise-lock.html",
+      "title": "https://mise.en.dev/dev-tools/mise-lock.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-6E6DCA32597A": {
+      "id": "SRC-6E6DCA32597A",
+      "url": "https://github.com/rbenv/ruby-build.git",
+      "title": "https://github.com/rbenv/ruby-build.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-A1FFEFC27277": {
+      "id": "SRC-A1FFEFC27277",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.arm64_linux.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.arm64_linux.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-437DCB5C6298": {
+      "id": "SRC-437DCB5C6298",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.arm64_linux.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.arm64_linux.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-74B661F025A5": {
+      "id": "SRC-74B661F025A5",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.x86_64_linux.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.x86_64_linux.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-DA1F76C55482": {
+      "id": "SRC-DA1F76C55482",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.x86_64_linux.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.x86_64_linux.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-1D2AD7A56AA0": {
+      "id": "SRC-1D2AD7A56AA0",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.macos.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.0/ruby-3.3.0.macos.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-D1D9E90CE4D0": {
+      "id": "SRC-D1D9E90CE4D0",
+      "url": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.macos.tar.gz",
+      "title": "https://github.com/jdx/ruby/releases/download/3.3.14-1/ruby-3.3.14.macos.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-DE83C59D4A83": {
+      "id": "SRC-DE83C59D4A83",
+      "url": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz",
+      "title": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-FA626CA94CAD": {
+      "id": "SRC-FA626CA94CAD",
+      "url": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.14.tar.gz",
+      "title": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.14.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:53:49.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
       }
     }
   }

@@ -12409,3 +12409,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T16:44:40.285Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `580a386f` | Multi-dimensional audit evidence | 2026-11-23T16:44:55.118Z |
 | `learn-dom-d-9a12e1c8` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-23T16:45:21.959Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-23T16:53:28.464Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `610575b9` | Multi-dimensional audit evidence | 2026-11-23T16:53:31.285Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `f3256c21` | Multi-dimensional audit evidence | 2026-11-23T16:53:37.268Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `c8c17e5c` | Multi-dimensional audit evidence | 2026-11-23T16:53:39.571Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `0eb2f794` | Multi-dimensional audit evidence | 2026-11-23T16:53:42.333Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `f0d8890e` | Multi-dimensional audit evidence | 2026-11-23T16:53:44.439Z |

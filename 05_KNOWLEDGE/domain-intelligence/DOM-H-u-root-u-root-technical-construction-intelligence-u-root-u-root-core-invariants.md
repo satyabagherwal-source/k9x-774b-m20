@@ -4,24 +4,24 @@
 {
   "source_repository": "u-root/u-root",
   "source_url": "https://github.com/u-root/u-root",
-  "source_version": "bd882c1a",
+  "source_version": "610575b9",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-20T18:16:54.702Z",
+  "timestamp": "2026-11-23T16:53:31.508Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-u-root-u-root",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `bd882c1a`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T18:16:54.702Z`  
+> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `610575b9`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T16:53:31.508Z`  
 > **Learning ID**: `learn-github-u-root-u-root`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from u-root/u-root:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T18:16:53.471Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:30.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1300,240 +1300,98 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd882c1a` (2026-11-19)
-**Commit Message**: gzip: don't overwrite or follow an existing output file
+### Incident Patch 1: `610575b9` (2026-11-21)
+**Commit Message**: fusermount: check the caller can write to the mountpoint
 
-CheckOutputPath is meant to stop gzip overwriting an existing output
-without -f, but it returns the error from os.Stat, which is nil when
-the output exists, so the check never fires. Process then opens the
-output with O_CREATE|O_TRUNC, which follows symlinks. Running gzip -d
-on x.gz in a shared directory such as /tmp, where another user has
-made x a symlink, writes the decompressed data to the link's target
-with the caller's privileges, creating it if the link dangles, and
-then removes x.gz.
+fusermount drops to the real uid while checking the mountpoint, so it
+is meant to run setuid root, but MountPointOK only checks that the
+caller can chdir into the mountpoint and doMount always passes
+user_id=0,group_id=0. A non-root user can mount a FUSE filesystem they
+serve over any directory they can traverse, such as /etc, and since
+the mount belongs to uid 0, root processes such as su read passwd and
+shadow from that user's daemon.
 
-Use Lstat in CheckOutputPath and report an existing output, and create
-the output with O_EXCL so nothing at its path is followed. With -f,
-remove an existing file or symlink first, as GNU gzip does. Also keep
-the input when Process fails instead of deleting it.
+Like fusermount(1), require a non-root caller to have write access to
+the mountpoint, and to own it if it is sticky, and pass the caller's
+uid and gid in the mount options.
 
 Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
-**File**: `cmds/core/gzip/gzip.go` (modified, +2/-0)
+**File**: `cmds/core/fusermount/fusermount.go` (modified, +15/-1)
 ```diff
-@@ -68,6 +68,8 @@ func run(args []string) error {
- 			if !opts.Quiet {
- 				fmt.Fprintf(os.Stderr, "%s\n", err)
- 			}
-+			// Don't remove the input if processing it failed.
-+			continue
- 		}
- 
- 		if err := f.Cleanup(); err != nil {
-```
-
-**File**: `cmds/core/gzip/gzip_test.go` (modified, +44/-0)
-```diff
-@@ -6,7 +6,9 @@ package main
- 
- import (
- 	"bytes"
-+	"errors"
- 	"os"
-+	"path/filepath"
- 	"testing"
- )
- 
-@@ -38,3 +40,45 @@ func TestGZIPSmoke(t *testing.T) {
- 		t.Errorf("os.ReadFile(%v) = %v, want %v", filePath, string(content), string(wantContent))
+@@ -93,6 +93,20 @@ func MountPointOK(mpt string) error {
+ 	if err := os.Chdir(mpt); err != nil {
+ 		return err
  	}
++	// As in fusermount(1), a non-root user may only mount on a directory
++	// they can write to, and must own it if it is sticky.
++	if uid := unix.Getuid(); uid != 0 {
++		var st unix.Stat_t
++		if err := unix.Stat(".", &st); err != nil {
++			return err
++		}
++		if st.Mode&unix.S_ISVTX != 0 && int(st.Uid) != uid {
++			return fmt.Errorf("mountpoint %q not owned by user", mpt)
++		}
++		if err := unix.Access(".", unix.W_OK); err != nil {
++			return fmt.Errorf("user has no write access to mountpoint %q: %w", mpt, err)
++		}
++	}
+ 
+ 	return nil
  }
-+
-+func TestGZIPExistingOutput(t *testing.T) {
-+	dir := t.TempDir()
-+	in := filepath.Join(dir, "file.txt")
-+	if err := os.WriteFile(in, []byte("content"), 0o644); err != nil {
-+		t.Fatalf("os.WriteFile(%v) = %v, want nil", in, err)
-+	}
-+	if err := run([]string{in}); err != nil {
-+		t.Fatalf("run(%v) = %v, want nil", []string{in}, err)
-+	}
-+
-+	// Someone else's symlink where the decompressed file would go.
-+	target := filepath.Join(t.TempDir(), "target")
-+	if err := os.Symlink(target, in); err != nil {
-+		t.Fatalf("os.Symlink(%v, %v) = %v, want nil", target, in, err)
-+	}
-+	args := []string{"-d", in + ".gz"}
-+	if err := run(args); err != nil {
-+		t.Fatalf("run(%v) = %v, want nil", args, err)
-+	}
-+	if _, err := os.Lstat(target); !errors.Is(err, os.ErrNotExist) {
-+		t.Errorf("after run(%v): os.Lstat(%v) = %v, want %v", args, target, err, os.ErrNotExist)
-+	}
-+	if _, err := os.Stat(in + ".gz"); err != nil {
-+		t.Errorf("after run(%v): os.Stat(%v) = %v, want nil", args, in+".gz", err)
-+	}
-+
-+	// If the output can't be created even with -f, the input stays.
-+	if err := os.Remove(in); err != nil {
-+		t.Fatalf("os.Remove(%v) = %v, want nil", in, err)
-+	}
-+	if err := os.Mkdir(in, 0o755); err != nil {
-+		t.Fatalf("os.Mkdir(%v) = %v, want nil", in, err)
-+	}
-+	args = []string{"-d", "-f", in + ".gz"}
-+	if err := run(args); err != nil {
-+		t.Fatalf("run(%v) = %v, want nil", args, err)
-+	}
-+	if _, err := os.Stat(in + ".gz"); err != nil {
-+		t.Errorf("after run(%v): os.Stat(%v) = %v, want nil", args, in+".gz", err)
-+	}
-+}
-```
-
-**File**: `pkg/gzip/file.go` (modified, +16/-2)
-```diff
-@@ -81,8 +81,12 @@ func (f *File) CheckPath() error {
- // stdout is a device. Also checks if output path already exists. Allow
- // override via force option.
- func (f *File) CheckOutputPath() error {
--	_, err := os.Stat(f.outputPath())
-+	// Lstat, so that a symlink at the output path counts as existing.
-+	_, err := os.Lstat(f.outputPath())
- 	if !os.IsNotExist(err) && !f.Options.Stdout && !f.Options.Test && !f.Options.Force {
-+		if err == nil {
-+			err = fmt.Errorf("%q: %w, use -f to overwrite", f.outputPath(), os.ErrExist)
-+		}
- 		return err
- 	} else if os.IsPermission(err) {
- 		return err
-@@ -142,8 +146,18 @@ func (f *File) Process() error {
- 		}
- 		// Give the output file the input file's permissions.
- 		perm := fi.Mode().Perm()
-+		// Create the output instead of opening whatever is at its path,
-+		// so a symlink there is never followed. With -f, replace an
-+		// existing file or symlink first, as gzip does.
-+		if f.Options.Force {
-+			if ofi, err := os.Lstat(f.outputPath()); err == nil && !ofi.IsDir() {
-+				if err := os.Remove(f.outputPath()); err != nil {
-+					return err
-+				}
-+			}
-+		}
- 		var out *os.File
--		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
-+		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm); err != nil {
- 			return err
- 		}
- 		if err = out.Chmod(perm); err != nil {
-```
-
-**File**: `pkg/gzip/file_test.go` (modified, +79/-0)
-```diff
-@@ -307,6 +307,11 @@ func TestFileProcess(t *testing.T) {
- 	if err := f.Process(); err != nil {
- 		t.Errorf("File.Process() compression error = %v", err)
- 	}
-+	// As gzip does, remove the input so the decompressed file can take
-+	// its place.
-+	if err := f.Cleanup(); err != nil {
-+		t.Fatalf("File.Cleanup() = %v, want nil", err)
-+	}
+@@ -126,7 +140,7 @@ func doMount(fd int) error {
+ 	//		return 0;
+ 	// Yeah. You get EINVAL if any one of these is not set.
+ 	// Docs? what? Docs?
+-	return unix.Mount("nodev", ".", "fuse", flags, fmt.Sprintf("rootmode=%o,user_id=0,group_id=0,fd=%d", unix.S_IFDIR, fd))
++	return unix.Mount("nodev", ".", "fuse", flags, fmt.Sprintf("rootmode=%o,user_id=%d,group_id=%d,fd=%d", unix.S_IFDIR, unix.Getuid(), unix.Getgid(), fd))
+ }
  
- 	f.Path = f.Path + f.Options.Suffix
- 	f.Options.Decompress = true
-@@ -362,6 +367,80 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ // returnResult returns the result from earlier operations.
+```
+
+**File**: `cmds/core/fusermount/fusermount_linux_test.go` (modified, +23/-0)
+```diff
+@@ -83,6 +83,29 @@ func TestArgs(t *testing.T) {
  	}
  }
  
-+func TestFileCheckOutputPathExists(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("creating symlinks needs privileges on windows")
++func TestMountPointOKNeedsWriteAccess(t *testing.T) {
++	if os.Getuid() == 0 {
++		t.Skip("root may mount on any directory")
 +	}
-+	dir := t.TempDir()
-+	in := filepath.Join(dir, "x")
-+	if err := os.WriteFile(in, []byte("x"), 0o644); err != nil {
-+		t.Fatalf("create %q: got %v, want nil", in, err)
++	dir, err := filepath.EvalSymlinks(t.TempDir())
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	f := &File{Path: in, Options: &Options{Suffix: ".gz"}}
++	ro := filepath.Join(dir, "ro")
++	if err := os.Mkdir(ro, 0o555); err != nil {
++		t.Fatal(err)
++	}
++	// MountPointOK changes into the mountpoint.
++	t.Chdir(dir)
 +
-+	if err := f.CheckOutputPath(); err != nil {
-+		t.Errorf("File.CheckOutputPath() with no output = %v, want nil", err)
++	if err := MountPointOK(ro); err == nil {
++		t.Errorf("MountPointOK(%q) = nil, want error for a directory the user cannot write", ro)
 +	}
-+	if err := os.WriteFile(in+".gz", nil, 0o644); err != nil {
-+		t.Fatalf("create %q: got %v, want nil", in+".gz", err)
-+	}
-+	if err := f.CheckOutputPath(); !errors.Is(err, os.ErrExist) {
-+		t.Errorf("File.CheckOutputPath() with existing output = %v, want %v", err, os.ErrExist)
-+	}
-+	// A symlink at the output path exists even if it dangles.
-+	if err := os.Remove(in + ".gz"); err != nil {
-+		t.Fatalf("remove %q: got %v, want nil", in+".gz", err)
-+	}
-+	if err := os.Symlink(filepath.Join(dir, "missing"), in+".gz"); err != nil {
-+		t.Fatalf("symlink %q: got %v, want nil", in+".gz", err)
-+	}
-+	if err := f.CheckOutputPath(); !errors.Is(err, os.ErrExist) {
-+		t.Errorf("File.CheckOutputPath() with dangling symlink output = %v, want %v", err, os.ErrExist)
-+	}
-+	f.Options.Force = true
-+	if err := f.CheckOutputPath(); err != nil {
-+		t.Errorf("File.CheckOutputPath() with existing output and Force = %v, want nil", err)
++	if err := MountPointOK(dir); err != nil {
++		t.Errorf("MountPointOK(%q) = %v, want nil", dir, err)
 +	}
 +}
 +
-+func TestFileProcessDoesNotFollowSymlink(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("creating symlinks needs privileges on windows")
-+	}
-+	in := filepath.Join(t.TempDir(), "x")
-+	if err := os.WriteFile(in, []byte("x"), 0o644); err != nil {
-+		t.Fatalf("create %q: got %v, want nil", in, err)
-+	}
-+	target := filepath.Join(t.TempDir(), "target")
-+	if err := os.Symlink(target, in+".gz"); err != nil {
-+		t.Fatalf("symlink %q: got %v, want nil", in+".gz", err)
-+	}
-+
-+	f := File{
-+		Path: in,
-+		Options: &Options{
-+			Blocksize: 128,
-+			Level:     -1,
-+			Processes: 1,
-+			Suffix:    ".gz",
-+		},
-+	}
-+	if err := f.Process(); !errors.Is(err, os.ErrExist) {
-+		t.Errorf("File.Process() with symlink output = %v, want %v", err, os.ErrExist)
-+	}
-+	// -f replaces the symlink itself.
-+	f.Options.Force = true
-+	if err := f.Process(); err != nil {
-+		t.Fatalf("File.Process() with symlink output and Force = %v, want nil", err)
-+	}
-+	if _, err := os.Lstat(target); !errors.Is(err, os.ErrNotExist) {
-+		t.Errorf("os.Lstat(%q) = %v, want %v", target, err, os.ErrNotExist)
-+	}
-+	if fi, err := os.Lstat(in + ".gz"); err != nil || !fi.Mode().IsRegular() {
-+		t.Errorf("os.Lstat(%q) = %v, %v, want a regular file", in+".gz", fi, err)
-+	}
-+}
-+
- func TestCheckPath(t *testing.T) {
- 	d := t.TempDir()
+ func TestMount(t *testing.T) {
+ 	guest.SkipIfNotInVM(t)
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3851** (2026-11-23): fusermount: check the caller can write to the mountpoint (@alhudz)
 - **PR #3848** (2026-11-20): gzip: don't overwrite or follow an existing output file (@alhudz)
 - **PR #3841** (2026-11-17): vendor: update compress (@binjip978)
 - **PR #3840** (2026-11-16): CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04 (@brho)
 - **PR #3839** (2026-11-16): vfile: skip revoked and non-signing keys in GetRSAKeysFromRing (@alhudz)
 - **PR #3837** (2026-11-16): mount9p: verify the server host key over ssh (@alhudz)
-- **PR #3836** (2026-11-17): go.mod: pick up cpu v0.2.0 and gobusybox v0.6.0 (@rminnich)
 
 ---
 
@@ -1553,32 +1411,45 @@ Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gzip: don't overwrite or follow an existing output file
+## X. fusermount: check the caller can write to the mountpoint
 
 **RULE**:
-When implementing operations in `cmds/core/gzip/gzip.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmds/core/fusermount/fusermount.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd882c1a`: gzip: don't overwrite or follow an existing output file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `610575b9`: fusermount: check the caller can write to the mountpoint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/core/gzip/gzip.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/core/fusermount/fusermount.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// Don't remove the input if processing it failed.
-			continue
+	// As in fusermount(1), a non-root user may only mount on a directory
+	// they can write to, and must own it if it is sticky.
+	if uid := unix.Getuid(); uid != 0 {
+		var st unix.Stat_t
+		if err := unix.Stat(".", &st); err != nil {
+			return err
+		}
+		if st.Mode&unix.S_ISVTX != 0 && int(st.Uid) != uid {
+			return fmt.Errorf("mountpoint %q not owned by user", mpt)
+		}
+		if err := unix.Access(".", unix.W_OK); err != nil {
+			return fmt.Errorf("user has no write access to mountpoint %q: %w", mpt, err)
+		}
+	}
+	return unix.Mount("nodev", ".", "fuse", flags, fmt.Sprintf("rootmode=%o,user_id=%d,group_id=%d,fd=%d", unix.S_IFDIR, unix.Getuid(), unix.Getgid(), fd))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	return unix.Mount("nodev", ".", "fuse", flags, fmt.Sprintf("rootmode=%o,user_id=0,group_id=0,fd=%d", unix.S_IFDIR, fd))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd882c1a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `610575b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

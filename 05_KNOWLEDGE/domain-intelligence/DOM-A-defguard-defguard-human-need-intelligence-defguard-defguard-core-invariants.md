@@ -4,24 +4,24 @@
 {
   "source_repository": "DefGuard/defguard",
   "source_url": "https://github.com/DefGuard/defguard",
-  "source_version": "9830b49b",
+  "source_version": "0eb2f794",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T19:12:06.544Z",
+  "timestamp": "2026-11-23T16:53:42.557Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-defguard-defguard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `9830b49b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T19:12:06.544Z`  
+> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `0eb2f794`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T16:53:42.557Z`  
 > **Learning ID**: `learn-github-defguard-defguard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from DefGuard/defguard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:12:05.274Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:41.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2920 stars
+- **Stars / Engagement**: 2922 stars
 
 ---
 
@@ -56,7 +56,7 @@ The following architectural invariants have been empirically discovered and reco
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use ipnetwork::IpNetwork;
-use serde::Serialize;
+use serde::{Deserialize, Deserializer, Serialize};
 use url::Url;
 
 /// Strip any `http://` or `https://` scheme prefix a user may have accidentally
@@ -207,6 +207,16 @@ pub fn split_ip(ip: &IpAddr, network: &IpNetwork) -> SplitIp {
         modifiable_part,
         network_prefix: network_prefix.to_string(),
     }
+}
+
+/// Wraps the value in Some so a patch can tell an explicit null (clear the field) from a
+/// missing key (keep it). See <https://github.com/serde-rs/serde/issues/1042>
+pub fn deserialize_optional_field<'de, T, D>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Ok(Some(Option::deserialize(deserializer)?))
 }
 
 #[cfg(test)]
@@ -1229,6 +1239,7 @@ pub struct NetworkDeviceModifiedMetadata {
     pub location: WireguardNetwork<Id>,
     pub before: Device<Id>,
     pub after: Device<Id>,
+    pub preshared_key: SecretFieldChange,
 }
 
 #[derive(Serialize)]
@@ -1497,8 +1508,7 @@ impl SettingsUpdateMetadata {
         let protected_fields = Settings::secret_changes(&before, &after);
 
         Self {
-            before: before.into(),
-       
+
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/models/activity_log/mod.rs`
@@ -2013,14 +2023,11 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4053** (2026-11-20): **Pasted comma-separated addresses aren’t split into chips**
+  *Symptoms*: Pasting a comma-separated list into "IPv4/IPv6 CIDR ranges or addresses" in Add new alias creates one long chip that overflows the form. After saving, the values are split correctly (Edit alias shows separate chips).  Steps 1. Firewall → Aliases → Add new alias 2. Paste `1.0.0.0-9.255.255.255,11.0.0.0-100.63.255.255,100.128.0.0-126.255.255.255,128.0.0.0-169.253.255.255,169.255.0.0-172.15.255.255,172.32.0.0-192.167.255.255,192.169.0.0-223.255.255.255,2000::/3` into the addresses field 3. Click outside the field  https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a   Fix this in:  - [x] Rules - [x] Destination - [x] Alias - [x] Location -> AllowedIPs
+
 - **Issue #4051** (2026-11-17): **Edge/proxy stops accepting new connections: idle client connections are never closed and exhaust the file descriptor limit**
   *Symptoms*: **Describe the bug** The edge (process `defguard-proxy`) accumulates established client connections on port 443 that are never closed. With roughly 50 active users it reached 1012 established connections within about three days, hit the container's default soft limit of 1024 open files and stopped accepting new connections.  Existing connections kept working, so the service looked healthy, but every new connection attempt timed out. For users this shows up as: - After entering the MFA code, the desktop client spins indefinitely and the tunnel is never established. - Occasionally the client reports that it cannot connect to the edge.  Nothing matching `too many open files` or `accept` appears in the edge container log at the configured log level.  **To Reproduce** Steps to reproduce the behavior: 1. Run the edge as a Docker container with the default `nofile` soft limit of 1024, published directly on 443/tcp (no reverse proxy in front). 2. Let about 50 users work normally with the desktop client for a few days. 3. Watch the number of established connections on port 443 inside the container: `ss -Htn state established 'sport = :443' | wc -l`. It grows continuously and far exceeds the number of clients. 4. Once the process holds 1024 file descriptors, new connections are no longer accepted: SYNs reach the container but get no SYN-ACK, and MFA / tunnel setup hangs in the client.  **Expected behavior** - Idle or dead client connections are closed by the edge (idle timeout and/or T
-
-- **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
-  *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
-  **Post-Mortem & Fix Analysis**:
-  >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
-  >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2037,92 +2044,30 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9830b49b` (2026-11-19)
-**Commit Message**: fix(CI): improve PR job cancellation (#4071)
+### Incident Patch 1: `08a37814` (2026-11-23)
+**Commit Message**: consistent UX around copy/download actions (#4090)
 
-* update nix flake
+* consistent UX around copy/download actions
 
-* fall back to default renovate base branch setup
+* fix audit
 
-* add job cancellation
+* enchance failure handling
 
-* clippy & cve fixes
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `Cargo.lock` (modified, +5/-5)
 ```diff
-@@ -19,6 +19,10 @@ on:
-       - "LICENSE"
-   workflow_dispatch:
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- permissions:
-   contents: read
-   packages: read
-```
-
-**File**: `.github/workflows/lint-e2e.yml` (modified, +4/-0)
-```diff
-@@ -14,6 +14,10 @@ on:
-     paths:
-       - "e2e/**"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   lint-e2e:
-     runs-on:
-```
-
-**File**: `.github/workflows/lint-web.yml` (modified, +4/-0)
-```diff
-@@ -16,6 +16,10 @@ on:
-       - "*.md"
-       - "LICENSE"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   lint-web:
-     runs-on:
-```
-
-**File**: `.github/workflows/test-web.yml` (modified, +4/-0)
-```diff
-@@ -10,6 +10,10 @@ on:
-       - "release/**"
-       - "stable/**"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- permissions:
-   contents: read
- jobs:
-```
-
-**File**: `Cargo.lock` (modified, +15/-15)
-```diff
-@@ -81,9 +81,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+@@ -1036,9 +1036,9 @@ dependencies = [
  
  [[package]]
- name = "ammonia"
--version = "4.2.4"
-+version = "4.2.5"
+ name = "cookie"
+-version = "0.18.2"
++version = "0.18.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
-+checksum = "b34ca49e407c06daac53f0c4debe8ff5df9cc2a4e9369d164a5d86ef8c219319"
+-checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
++checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
  dependencies = [
-  "cssparser",
-  "html5ever",
-@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+  "aes-gcm",
+  "base64 0.22.1",
+@@ -1279,7 +1279,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
  dependencies = [
   "quote",
@@ -2131,138 +2076,177 @@ Observed empirical fixes and code patches:
  ]
  
  [[package]]
-@@ -2310,9 +2310,9 @@ dependencies = [
- 
- [[package]]
- name = "email-encoding"
--version = "0.4.2"
-+version = "0.4.3"
+@@ -4183,7 +4183,7 @@ version = "5.0.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "420b9da095f052ea597503e39073b5b3c522f7db933fbac202d91d24492693fd"
-+checksum = "9f690ae2169f2ceb3f45b28b6fcd8fa16839f2f5c8818546774b9425f5f71004"
+ checksum = "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d"
  dependencies = [
-  "base64 0.23.1",
-  "memchr",
-@@ -2384,7 +2384,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3655,9 +3655,9 @@ dependencies = [
- 
- [[package]]
- name = "lettre"
--version = "0.11.23"
-+version = "0.11.24"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f2c646bd5cc763b1087b15493e29a64be6147ba8f19342004fa52048ee596eae"
-+checksum = "f294f3d7cdb313e578acef7d7727d4e8d897e0fcd0d6d58c19959cec95073f19"
- dependencies = [
-  "async-trait",
-  "base64 0.23.1",
-@@ -3722,9 +3722,9 @@ dependencies = [
- 
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
- dependencies = [
-  "cc",
-  "libc",
-@@ -5246,7 +5246,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5687,7 +5687,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5746,7 +5746,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6804,7 +6804,7 @@ dependencies = [
-  "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7833,7 +7833,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
+- "base64 0.22.1",
++ "base64 0.21.7",
+  "chrono",
+  "getrandom 0.2.17",
+  "http",
+@@ -4737,7 +4737,7 @@ dependencies = [
+  "aes-gcm",
+  "aes-kw",
+  "argon2 0.5.3",
+- "base64 0.22.1",
++ "base64 0.21.7",
+  "bitfields",
+  "block-padding 0.3.3",
+  "blowfish",
 ```
 
-**File**: `crates/defguard/Cargo.toml` (modified, +3/-0)
+**File**: `web/messages/en/components.json` (modified, +2/-0)
 ```diff
-@@ -36,3 +36,6 @@ default = ["openapi"]
- # Serve the OpenAPI specification and the Swagger UI. See the `openapi` feature of
- # `defguard_core`. Build with `--no-default-features` to leave it out.
- openapi = ["defguard_core/openapi", "defguard_common/openapi"]
-+
-+[lints]
-+workspace = true
+@@ -46,6 +46,8 @@
+   "cmp_sync_behavior_target_groups": "Groups",
+   "cmp_copy_button": "Copy to clipboard",
+   "cmp_copy_button_tooltip": "Content copied to clipboard.",
++  "cmp_copy_button_error": "Couldn't access the clipboard. Copy or download the content manually.",
++  "cmp_download_button_tooltip": "Download started.",
+   "cmp_video_support_launcher": "Video support",
+   "cmp_video_support_list_label": "Video support",
+   "cmp_video_tutorials_overlay_error": "Video unavailable",
 ```
 
-**File**: `crates/defguard_certs/Cargo.toml` (modified, +3/-0)
+**File**: `web/src/pages/EdgeSetupPage/steps/SetupEdgeAdoptionStep.tsx` (modified, +2/-0)
 ```diff
-@@ -15,3 +15,6 @@ rustls-pki-types.workspace = true
- thiserror.workspace = true
- time.workspace = true
- x509-parser.workspace = true
-+
-+[lints]
-+workspace = true
+@@ -155,7 +155,9 @@ export const SetupEdgeAdoptionStep = () => {
+                   title={m.edge_setup_adoption_error_log_title()}
+                   value={edgeAdoptionState.proxyLogs.join('\n')}
+                   copy
++                  copyTooltip={m.cmp_copy_button_tooltip()}
+                   download
++                  downloadTooltip={m.cmp_download_button_tooltip()}
+                 />
+                 <SizedBox height={ThemeSpacing.Xl} />
+               </>
 ```
 
-**File**: `crates/defguard_common/Cargo.toml` (modified, +3/-0)
+**File**: `web/src/pages/GatewaySetupPage/steps/SetupGatewayAdaptationStep.tsx` (modified, +2/-0)
 ```diff
-@@ -61,3 +61,6 @@ test-support = ["tokio/net", "tokio/io-util"]
- 
- [build-dependencies]
- vergen-git2 = "10.0"
-+
-+[lints]
-+workspace = true
+@@ -162,7 +162,9 @@ export const SetupGatewayAdoptionStep = () => {
+                 title={m.gateway_setup_adoption_error_log_title()}
+                 value={gatewayAdoptionState.gatewayLogs.join('\n')}
+                 copy
++                copyTooltip={m.cmp_copy_button_tooltip()}
+                 download
++                downloadTooltip={m.cmp_download_button_tooltip()}
+               />
+             ) : null}
+             <Controls>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardCASummaryStep.tsx` (modified, +3/-4)
+```diff
+@@ -4,6 +4,7 @@ import { m } from '../../../paraglide/messages';
+ import api from '../../../shared/api/api';
+ import { ActionCard } from '../../../shared/components/ActionCard/ActionCard';
+ import { Controls } from '../../../shared/components/Controls/Controls';
++import { DownloadButton } from '../../../shared/components/DownloadButton/DownloadButton';
+ import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
+ import { Button } from '../../../shared/defguard-ui/components/Button/Button';
+ import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
+@@ -34,13 +35,11 @@ export const MigrationWizardCASummaryStep = () => {
+         subtitle={m.migration_wizard_ca_generated_subtitle()}
+         imageSrc={caIcon}
+       >
+-        <Button
+-          iconLeft="download"
+-          variant="outlined"
++        <DownloadButton
+           text={m.migration_wizard_ca_download_button()}
+-          onClick={handleDownloadCA}
+           loading={isFetching}
+           disabled={!isPresent(caData?.ca_cert_pem) || isFetching}
++          onDownload={handleDownloadCA}
+         />
+       </ActionCard>
+       <Controls>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardEdgeAdoptionStep.tsx` (modified, +2/-0)
+```diff
+@@ -147,7 +147,9 @@ export const MigrationWizardEdgeAdoptionStep = () => {
+                   title={m.edge_setup_adoption_error_log_title()}
+                   value={edgeAdoptionState.proxyLogs.join('\n')}
+                   copy
++                  copyTooltip={m.cmp_copy_button_tooltip()}
+                   download
++                  downloadTooltip={m.cmp_download_button_tooltip()}
+                 />
+                 <SizedBox height={ThemeSpacing.Xl} />
+               </>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardExternalUrlSslConfigStep.tsx` (modified, +5/-4)
+```diff
+@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
+ import { m } from '../../../paraglide/messages';
+ import api from '../../../shared/api/api';
+ import { Controls } from '../../../shared/components/Controls/Controls';
++import { DownloadButton } from '../../../shared/components/DownloadButton/DownloadButton';
+ import { LoadingStep } from '../../../shared/components/LoadingStep/LoadingStep';
+ import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
+ import { Button } from '../../../shared/defguard-ui/components/Button/Button';
+@@ -203,7 +204,9 @@ export const MigrationWizardExternalUrlSslConfigStep = () => {
+                       title={m.initial_setup_auto_adoption_external_url_ssl_lets_encrypt_error_log_title()}
+                       value={acmeState.proxyLogs.join('\n')}
+                       copy
++                      copyTooltip={m.cmp_copy_button_tooltip()}
+                       download
++                      downloadTooltip={m.cmp_download_button_tooltip()}
+                     />
+                     <SizedBox height={ThemeSpacing.Xl} />
+                   </>
+@@ -240,12 +243,10 @@ export const MigrationWizardExternalUrlSslConfigStep = () => {
+               <p>{m.initial_setup_auto_adoption_external_url_ssl_ca_description()}</p>
+             </div>
+             <div>
+-              <Button
++              <DownloadButton
+                 text={m.initial_setup_auto_adoption_external_url_ssl_ca_download()}
+-                variant="outlined"
+-                iconLeft="download"
+-                onClick={handleDownloadCaCert}
+                 disabled={!sslInfoData?.ca_cert_pem}
++                onDownload={handleDownloadCaCert}
+               />
+             </div>
+           </div>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardLdapMigrationStep.tsx` (modified, +4/-0)
+```diff
+@@ -76,7 +76,9 @@ export const MigrationWizardLdapMigrationStep = () => {
+               title={m.migration_wizard_ldap_error_log_title()}
+               value={logValue}
+               copy
++              copyTooltip={m.cmp_copy_button_tooltip()}
+               download
++              downloadTooltip={m.cmp_download_button_tooltip()}
+             />
+             <SizedBox height={ThemeSpacing.Xl} />
+             <Button
+@@ -110,7 +112,9 @@ export const MigrationWizardLdapMigrationStep = () => {
+             title={m.migration_wizard_ldap_success_log_title()}
+             value={logValue}
+             copy
++            copyTooltip={m.cmp_copy_button_tooltip()}
+             download
++            downloadTooltip={m.cmp_download_button_tooltip()}
+           />
+           <SizedBox height={ThemeSpacing.Xl} />
+         </>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
+- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
+- **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
+- **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
+- **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
 - **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
-- **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
-- **PR #4068** (2026-11-19): Retire the worker (@moubctez)
-- **PR #4066** (2026-11-18): user devices table styling update (@filipslezaklab)
-- **PR #4065** (2026-11-18): Fix cargo deny issues (@j-chmielewski)
-- **PR #4064** (2026-11-18): user devices table styles corrections (@filipslezaklab)
 
 ---
 
@@ -2282,34 +2266,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI): improve PR job cancellation
+## X. consistent UX around copy/download actions
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9830b49b`: CI): improve PR job cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08a37814`: consistent UX around copy/download actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
+version = "0.18.3"
+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
+ "syn 3.0.9",
+ "base64 0.21.7",
+ "base64 0.21.7",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.18.2"
+checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
+ "syn 2.0.119",
+ "base64 0.22.1",
+ "base64 0.22.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9830b49b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08a37814` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

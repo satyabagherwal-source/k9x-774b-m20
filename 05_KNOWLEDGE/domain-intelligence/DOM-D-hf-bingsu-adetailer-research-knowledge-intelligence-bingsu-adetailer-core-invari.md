@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Bingsu/adetailer",
   "source_version": "hf-bingsu-adetailer",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:36:20.518Z",
+  "timestamp": "2026-11-23T16:53:28.669Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) (Revision: `hf-bingsu-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:36:20.518Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T16:53:28.669Z`  
 > **Learning ID**: `learn-huggingface-bingsu-adetailer`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:36:19.687Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:27.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8158309 downloads | 828 likes
+- **Stars / Engagement**: 8019631 downloads | 830 likes
 
 ---
 

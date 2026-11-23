@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:45:22.966Z",
-  "total_records": 2432,
+  "last_updated": "2026-11-23T16:53:49.970Z",
+  "total_records": 2433,
   "domains": {
     "A": {
       "total": 20,
@@ -1015,7 +1015,7 @@
       ]
     },
     "F": {
-      "total": 98,
+      "total": 99,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1114,7 +1114,8 @@
         "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants",
         "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
         "DOM-F-892076A7",
-        "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants"
+        "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+        "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants"
       ]
     },
     "G": {
@@ -10596,8 +10597,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "be37ebf580d2dadb780fce4d0706b7f31d30d61673133e61e9a972a4fa734604",
-      "created_at": "2026-11-20T08:34:43.435Z"
+      "content_hash": "223db7fa3f0af194a00ae13fb33f092d5dfc3619ed732f130097ba307469228a",
+      "created_at": "2026-11-23T16:53:39.991Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -11841,8 +11842,8 @@
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "repository": "u-root/u-root",
-      "content_hash": "6ac75699ced79b36b4c471ef6a4616412f38c62e14b70c33c3a353673b2bf7c2",
-      "created_at": "2026-11-20T18:16:54.830Z"
+      "content_hash": "ad5c8a6257f0443199832f3a12e7be374c5b7cd0f7dd8846b2c44417f6cea6c8",
+      "created_at": "2026-11-23T16:53:31.679Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
@@ -11868,8 +11869,8 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-learnings-technical-construction-intelligence-u-root-u-root-learni.md",
       "repository": "u-root-u-root-learnings",
-      "content_hash": "00a12b842f576debd8533e3900346616b5a8c7c6410a94bc50629b68ac71de16",
-      "created_at": "2026-11-20T18:17:03.267Z"
+      "content_hash": "253200db0ccf4bbd7ff6ebc8ed58ac3a267cfb89428539e0a22b72eb76293556",
+      "created_at": "2026-11-23T16:53:48.269Z"
     },
     "DOM-D-AB4CCCBB": {
       "record_id": "DOM-D-AB4CCCBB",
@@ -16291,8 +16292,8 @@
       "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-research-knowledge-intelligence-bingsu-adetailer-core-invari.md",
       "repository": "Bingsu/adetailer",
-      "content_hash": "fd44279ee81b2d20959f8d8285f92b154ee06a2e0c7dfe7d0d6cf8774888396c",
-      "created_at": "2026-11-19T04:36:20.519Z"
+      "content_hash": "54ba1e5d1d65f1853f7db1547b3c5aa821e1335ac9ead6b261b3c7c462e28776",
+      "created_at": "2026-11-23T16:53:28.669Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
@@ -16420,8 +16421,8 @@
       "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-learnings-research-knowledge-intelligence-hf-bingsu-adetaile.md",
       "repository": "hf-bingsu-adetailer-learnings",
-      "content_hash": "c658387937363fcb7d5a1caeba6a551ffeafd8f6841f1a1d0e9814edba220dc0",
-      "created_at": "2026-11-19T04:36:38.980Z"
+      "content_hash": "6d18f45724b3ce5d38c4a177372450eb559cfefdfdadf9a6b76fe52faca25755",
+      "created_at": "2026-11-23T16:53:48.806Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants",
@@ -24317,8 +24318,8 @@
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "repository": "RevenueCat/purchases-ios",
-      "content_hash": "fc27663a37855d4c69cbd74b38d9592fb3d5b9480b4f1fb848bd53a1143450f6",
-      "created_at": "2026-11-20T16:13:58.102Z"
+      "content_hash": "f6d7f9d2f8da8328104653825429bea028dfbb3ab870b31eb0c1457ecb3ee145",
+      "created_at": "2026-11-23T16:53:37.668Z"
     },
     "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
@@ -24335,8 +24336,8 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-learnings-architecture-intelligence-revenuecat-purchase.md",
       "repository": "revenuecat-purchases-ios-learnings",
-      "content_hash": "e2d3976728bab087e6636f3f67fa1cf74ab541bf8c9926ee295189cf0c0a72b8",
-      "created_at": "2026-11-20T16:14:34.347Z"
+      "content_hash": "84bae245cae0d283b9237cb7a4c549be1e6284992100844a98554af09763a77f",
+      "created_at": "2026-11-23T16:53:49.970Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -24975,8 +24976,8 @@
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "bb68f9284117f8830b77ea6d0a4d082f11af77408e2fce739793da55648cd96f",
-      "created_at": "2026-11-19T19:12:06.689Z"
+      "content_hash": "eda4e9d5708fb82a3b4ecec776e58314d86ec94b20571a5a1fd081796548e164",
+      "created_at": "2026-11-23T16:53:42.727Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -40846,6 +40847,15 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T16:45:21.935Z"
+    },
+    "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: sqlpage/SQLPage Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sqlpage-sqlpage-design-intelligence-sqlpage-sqlpage-core-invariants.md",
+      "repository": "sqlpage/SQLPage",
+      "content_hash": "6bcde7887ff2c29b93190bb72586d048a36ec008ac646a1b682e9af9a3aef3a7",
+      "created_at": "2026-11-23T16:53:44.840Z"
     }
   }
 }

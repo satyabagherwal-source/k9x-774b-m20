@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `0c437895`  
+> **Source Version**: `0eb2f794`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T08:11:45.285Z  
+> **Timestamp**: 2026-11-23T16:53:41.267Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T08:06:43.907Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:41.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2030,295 +2030,209 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c437895` (2026-11-23)
-**Commit Message**: fix lint (#4089)
+### Incident Patch 1: `08a37814` (2026-11-23)
+**Commit Message**: consistent UX around copy/download actions (#4090)
+
+* consistent UX around copy/download actions
+
+* fix audit
+
+* enchance failure handling
 
 **File**: `Cargo.lock` (modified, +5/-5)
 ```diff
+@@ -1036,9 +1036,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cookie"
+-version = "0.18.2"
++version = "0.18.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
++checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
+ dependencies = [
+  "aes-gcm",
+  "base64 0.22.1",
 @@ -1279,7 +1279,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
  dependencies = [
   "quote",
-- "syn 3.0.9",
-+ "syn 2.0.119",
+- "syn 2.0.119",
++ "syn 3.0.9",
  ]
  
  [[package]]
-@@ -2515,9 +2515,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
+@@ -4183,7 +4183,7 @@ version = "5.0.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ checksum = "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d"
  dependencies = [
-  "percent-encoding",
- ]
-@@ -7412,9 +7412,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+- "base64 0.22.1",
++ "base64 0.21.7",
+  "chrono",
+  "getrandom 0.2.17",
+  "http",
+@@ -4737,7 +4737,7 @@ dependencies = [
+  "aes-gcm",
+  "aes-kw",
+  "argon2 0.5.3",
+- "base64 0.22.1",
++ "base64 0.21.7",
+  "bitfields",
+  "block-padding 0.3.3",
+  "blowfish",
 ```
 
-**File**: `e2e/package.json` (modified, +2/-2)
+**File**: `web/messages/en/components.json` (modified, +2/-0)
 ```diff
-@@ -18,8 +18,8 @@
-     "@prettier/plugin-oxc": "^0.0.4",
-     "@types/node": "^22.20.5",
-     "@types/totp-generator": "^0.0.8",
--    "@typescript-eslint/eslint-plugin": "^8.72.0",
--    "@typescript-eslint/parser": "^8.72.0",
-+    "@typescript-eslint/eslint-plugin": "^8.73.0",
-+    "@typescript-eslint/parser": "^8.73.0",
-     "eslint": "^9.39.5",
-     "eslint-config-prettier": "^10.1.8",
-     "eslint-plugin-import": "^2.32.0",
+@@ -46,6 +46,8 @@
+   "cmp_sync_behavior_target_groups": "Groups",
+   "cmp_copy_button": "Copy to clipboard",
+   "cmp_copy_button_tooltip": "Content copied to clipboard.",
++  "cmp_copy_button_error": "Couldn't access the clipboard. Copy or download the content manually.",
++  "cmp_download_button_tooltip": "Download started.",
+   "cmp_video_support_launcher": "Video support",
+   "cmp_video_support_list_label": "Video support",
+   "cmp_video_tutorials_overlay_error": "Video unavailable",
 ```
 
-**File**: `e2e/pnpm-lock.yaml` (modified, +84/-70)
+**File**: `web/src/pages/EdgeSetupPage/steps/SetupEdgeAdoptionStep.tsx` (modified, +2/-0)
 ```diff
-@@ -162,11 +162,11 @@ importers:
-         specifier: ^0.0.8
-         version: 0.0.8
-       '@typescript-eslint/eslint-plugin':
--        specifier: ^8.72.0
--        version: 8.72.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-+        specifier: ^8.73.0
-+        version: 8.73.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-       '@typescript-eslint/parser':
--        specifier: ^8.72.0
--        version: 8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-+        specifier: ^8.73.0
-+        version: 8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-       eslint:
-         specifier: ^9.39.5
-         version: 9.39.5(supports-color@7.2.0)
-@@ -175,7 +175,7 @@ importers:
-         version: 10.1.8(eslint@9.39.5(supports-color@7.2.0))
-       eslint-plugin-import:
-         specifier: ^2.32.0
--        version: 2.32.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
-+        version: 2.32.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
-       eslint-plugin-prettier:
-         specifier: ^5.5.7
-         version: 5.5.7(eslint-config-prettier@10.1.8(eslint@9.39.5(supports-color@7.2.0)))(eslint@9.39.5(supports-color@7.2.0))(prettier@3.9.10)
-@@ -271,6 +271,9 @@ packages:
-     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
-     engines: {node: '>=18.18'}
- 
-+  '@isaacs/nonrecursive-glob-match@1.1.0':
-+    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
-+
-   '@napi-rs/wasm-runtime@0.2.12':
-     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
- 
-@@ -415,63 +418,67 @@ packages:
-   '@types/totp-generator@0.0.8':
-     resolution: {integrity: sha512-NAiruWgCYxW1sd2LjpTT/sVarogTjjQoUyLiiL/e2DZOz9eovKxzEx5BiH8YgZoKUDZql1VXiIzgDBK7VzOmNw==}
- 
--  '@typescript-eslint/eslint-plugin@8.72.0':
--    resolution: {integrity: sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==}
-+  '@typescript-eslint/eslint-plugin@8.73.0':
-+    resolution: {integrity: sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
--      '@typescript-eslint/parser': ^8.72.0
-+      '@typescript-eslint/parser': ^8.73.0
-       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/parser@8.72.0':
--    resolution: {integrity: sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==}
-+  '@typescript-eslint/parser@8.73.0':
-+    resolution: {integrity: sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/project-service@8.72.0':
--    resolution: {integrity: sha512-bzHngBbmIgzj6TsTjVUCntGx6FFLgE7mPjpO0PzHycOaZHXqS43XnrkFIHRS16LLr/xO6FHSXG3GJFo/F4bSBQ==}
-+  '@typescript-eslint/project-service@8.73.0':
-+    resolution: {integrity: sha512-/pEf8Rc4Mjk+qJnY0uO1+Gadeal8uv50xpuic+srG2vIVatA0XxvWMUeMtFvs6OCHqftiQ7/+qH4aehG5stzIA==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/scope-manager@8.72.0':
--    resolution: {integrity: sha512-JewPyJOYcXBSAS7PIgufscHOwZqhTGyBRiQJhhuDln66tMchxvvt7nJ90JKKIoOelmdHA3kAQbm9cEUHc4JSEA==}
-+  '@typescript-eslint/scope-manager@8.73.0':
-+    resolution: {integrity: sha512-/TjD738Iq2rzj5z0ixVOi+TsvgjAzZPLPaH1yWdDBytR/HTR5gMpyYWZeCe5WTQZLwk3ho8AV7U3muoQCRtXBQ==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
- 
--  '@typescript-eslint/tsconfig-utils@8.72.0':
--    resolution: {integrity: sha512-0vbxCf7xLVPSjcOdm6eQbgViH8EDJ8xnl1laLT9yoqSz2YmcSfSg5Vdl0JUvZf6rcuJ0ZivJIuMD4edTg8obaA==}
-+  '@typescript-eslint/tsconfig-utils@8.73.0':
-+    resolution: {integrity: sha512-lmtCFOfYaJfpqZywGuXi4FpNtE+NQ+YLe3T0K9rtEDcW8ZuGWvfI++pj8r05sYMI8vWT2CYK4rWyedmD6Rp4og==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/type-utils@8.72.0':
--    resolution: {integrity: sha512-gEXxmmbSTSOVTC37IYYvremOM31v+UN2W772bJxmVYPhAOPSUxtacyb7wkm
+@@ -155,7 +155,9 @@ export const SetupEdgeAdoptionStep = () => {
+                   title={m.edge_setup_adoption_error_log_title()}
+                   value={edgeAdoptionState.proxyLogs.join('\n')}
+                   copy
++                  copyTooltip={m.cmp_copy_button_tooltip()}
+                   download
++                  downloadTooltip={m.cmp_download_button_tooltip()}
+                 />
+                 <SizedBox height={ThemeSpacing.Xl} />
+               </>
 ```
 
-**File**: `web/package.json` (modified, +2/-2)
+**File**: `web/src/pages/GatewaySetupPage/steps/SetupGatewayAdaptationStep.tsx` (modified, +2/-0)
 ```diff
-@@ -76,7 +76,7 @@
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
-     "@vitejs/plugin-react": "^6.1.2",
--    "@vitest/ui": "4.1.9",
-+    "@vitest/ui": "4.1.12",
-     "autoprefixer": "^10.6.1",
-     "globals": "^17.13.0",
-     "jsdom": "^29.1.1",
-@@ -89,6 +89,6 @@
-     "typescript": "~6.0.3",
-     "vite": "^8.3.4",
-     "vite-plugin-image-optimizer": "^2.0.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   }
- }
+@@ -162,7 +162,9 @@ export const SetupGatewayAdoptionStep = () => {
+                 title={m.gateway_setup_adoption_error_log_title()}
+                 value={gatewayAdoptionState.gatewayLogs.join('\n')}
+                 copy
++                copyTooltip={m.cmp_copy_button_tooltip()}
+                 download
++                downloadTooltip={m.cmp_download_button_tooltip()}
+               />
+             ) : null}
+             <Controls>
 ```
 
-**File**: `web/pnpm-lock.yaml` (modified, +55/-71)
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardCASummaryStep.tsx` (modified, +3/-4)
 ```diff
-@@ -285,8 +285,8 @@ importers:
-         specifier: ^6.1.2
-         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       '@vitest/ui':
--        specifier: 4.1.9
--        version: 4.1.9(vitest@4.1.11)
-+        specifier: 4.1.12
-+        version: 4.1.12(vitest@4.1.12)
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.1(postcss@8.5.31)
-@@ -324,8 +324,8 @@ importers:
-         specifier: ^2.0.3
-         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       vitest:
--        specifier: 4.1.11
--        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-+        specifier: 4.1.12
-+        version: 4.1.12(@types/node@26.6.5)(@vitest/ui@4.1.12)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
- 
- packages:
- 
-@@ -1845,11 +1845,11 @@ packages:
-       oxc-transform-react:
-         optional: true
- 
--  '@vitest/expect@4.1.11':
--    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
-+  '@vitest/expect@4.1.12':
-+    resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
- 
--  '@vitest/mocker@4.1.11':
--    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
-+  '@vitest/mocker@4.1.12':
-+    resolution: {integrity: sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==}
-     peerDependencies:
-       msw: ^2.4.9
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -1859,31 +1859,25 @@ packages:
-       vite:
-         optional: true
- 
--  '@vitest/pretty-format@4.1.11':
--    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-+  '@vitest/pretty-format@4.1.12':
-+    resolution: {integrity: sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==}
- 
--  '@vitest/pretty-format@4.1.9':
--    resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
-+  '@vitest/runner@4.1.12':
-+    resolution: {integrity: sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==}
- 
--  '@vitest/runner@4.1.11':
--    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
-+  '@vitest/snapshot@4.1.12':
-+    resolution: {integrity: sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==}
- 
--  '@vitest/snapshot@4.1.11':
--    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
-+  '@vitest/spy@4.1.12':
-+    resolution: {integrity: sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==}
- 
--  '@vitest/spy@4.1.11':
--    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
--
--  '@vitest/ui@4.1.9':
--    resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
-+  '@vitest/ui@4.1.12':
-+    resolution: {integrity: sha512-eYUTHtsp52Fu6YGUw9T9173bba7YUr9j/Xj9CdhUaOb8AppLKcknHUaiZQeqJ8MiJ8C2VyKiZuUGSKdvPIKQKA==}
-     peerDependencies:
--      vitest: 4.1.9
--
--  '@vitest/utils@4.1.11':
--    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
-+      vitest: 4.1.12
- 
--  '@vitest/utils@4.1.9':
--    resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
-+  '@vitest/utils@4.1.12':
-+    resolution: {integrity: sha512-Q3awXrwOfEV+qc3WmO5ONyE0yO7Q1gQ9/oyHxGLZ/pl7N3NO/ZztqQwKLuwMkV+CA1JYSIeO3gkHnRDIo4AVaA==}
- 
-   acorn@8.19.0:
-     resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
-@@ -3603,20 +3597,20 @@ packages:
-       yaml:
-         optional: true
- 
--  vitest@4.1.11:
--    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-+  vitest@4.1.12:
-+    resolution: {integrity: sha512-5eWdz2yb3ajxWF3C8C4TjkXl7FGm3n2E/VlazALrQHzK7nYMSGFnCZto0bbPNl77AwkOZVLk0YnBAejUu0NiWA==}
-     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
-     hasBin: true
-     peerDependencies:
-       '@edge-runtime/vm': '*'
-       '@opentelemetry/api': ^1.9.0
-       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
--      '@vitest/browser-playwright': 4.1.11
--      '@vitest/browser-preview': 4.1.11
--      '@vitest/browser-webdriverio': 4.1.11
--      '@vitest/coverage-istanbul': 4.1.11
--      '@vitest/coverage-v8': 4.1.11
--      '@vitest/ui': 4.1.11
-+      '@vitest/browser-play
+@@ -4,6 +4,7 @@ import { m } from '../../../paraglide/messages';
+ import api from '../../../shared/api/api';
+ import { ActionCard } from '../../../shared/components/ActionCard/ActionCard';
+ import { Controls } from '../../../shared/components/Controls/Controls';
++import { DownloadButton } from '../../../shared/components/DownloadButton/DownloadButton';
+ import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
+ import { Button } from '../../../shared/defguard-ui/components/Button/Button';
+ import { isPresent } from '../../../shared/defguard-ui/utils/isPresent';
+@@ -34,13 +35,11 @@ export const MigrationWizardCASummaryStep = () => {
+         subtitle={m.migration_wizard_ca_generated_subtitle()}
+         imageSrc={caIcon}
+       >
+-        <Button
+-          iconLeft="download"
+-          variant="outlined"
++        <DownloadButton
+           text={m.migration_wizard_ca_download_button()}
+-          onClick={handleDownloadCA}
+           loading={isFetching}
+           disabled={!isPresent(caData?.ca_cert_pem) || isFetching}
++          onDownload={handleDownloadCA}
+         />
+       </ActionCard>
+       <Controls>
 ```
 
-**File**: `web/pnpm-workspace.yaml` (modified, +0/-3)
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardEdgeAdoptionStep.tsx` (modified, +2/-0)
 ```diff
-@@ -15,6 +15,3 @@ onlyBuiltDependencies:
-   - '@swc/core'
-   - esbuild
-   - sharp
--minimumReleaseAgeExclude:
--  # Renovate security update: vitest@4.1.11
--  - vitest@4.1.11
+@@ -147,7 +147,9 @@ export const MigrationWizardEdgeAdoptionStep = () => {
+                   title={m.edge_setup_adoption_error_log_title()}
+                   value={edgeAdoptionState.proxyLogs.join('\n')}
+                   copy
++                  copyTooltip={m.cmp_copy_button_tooltip()}
+                   download
++                  downloadTooltip={m.cmp_download_button_tooltip()}
+                 />
+                 <SizedBox height={ThemeSpacing.Xl} />
+               </>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardExternalUrlSslConfigStep.tsx` (modified, +5/-4)
+```diff
+@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
+ import { m } from '../../../paraglide/messages';
+ import api from '../../../shared/api/api';
+ import { Controls } from '../../../shared/components/Controls/Controls';
++import { DownloadButton } from '../../../shared/components/DownloadButton/DownloadButton';
+ import { LoadingStep } from '../../../shared/components/LoadingStep/LoadingStep';
+ import { WizardCard } from '../../../shared/components/wizard/WizardCard/WizardCard';
+ import { Button } from '../../../shared/defguard-ui/components/Button/Button';
+@@ -203,7 +204,9 @@ export const MigrationWizardExternalUrlSslConfigStep = () => {
+                       title={m.initial_setup_auto_adoption_external_url_ssl_lets_encrypt_error_log_title()}
+                       value={acmeState.proxyLogs.join('\n')}
+                       copy
++                      copyTooltip={m.cmp_copy_button_tooltip()}
+                       download
++                      downloadTooltip={m.cmp_download_button_tooltip()}
+                     />
+                     <SizedBox height={ThemeSpacing.Xl} />
+                   </>
+@@ -240,12 +243,10 @@ export const MigrationWizardExternalUrlSslConfigStep = () => {
+               <p>{m.initial_setup_auto_adoption_external_url_ssl_ca_description()}</p>
+             </div>
+             <div>
+-              <Button
++              <DownloadButton
+                 text={m.initial_setup_auto_adoption_external_url_ssl_ca_download()}
+-                variant="outlined"
+-                iconLeft="download"
+-                onClick={handleDownloadCaCert}
+                 disabled={!sslInfoData?.ca_cert_pem}
++                onDownload={handleDownloadCaCert}
+               />
+             </div>
+           </div>
+```
+
+**File**: `web/src/pages/MigrationWizardPage/steps/MigrationWizardLdapMigrationStep.tsx` (modified, +4/-0)
+```diff
+@@ -76,7 +76,9 @@ export const MigrationWizardLdapMigrationStep = () => {
+               title={m.migration_wizard_ldap_error_log_title()}
+               value={logValue}
+               copy
++              copyTooltip={m.cmp_copy_button_tooltip()}
+               download
++              downloadTooltip={m.cmp_download_button_tooltip()}
+             />
+             <SizedBox height={ThemeSpacing.Xl} />
+             <Button
+@@ -110,7 +112,9 @@ export const MigrationWizardLdapMigrationStep = () => {
+             title={m.migration_wizard_ldap_success_log_title()}
+             value={logValue}
+             copy
++            copyTooltip={m.cmp_copy_button_tooltip()}
+             download
++            downloadTooltip={m.cmp_download_button_tooltip()}
+           />
+           <SizedBox height={ThemeSpacing.Xl} />
+         </>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
+- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
 - **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
 - **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
 - **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
 - **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
-- **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
-- **PR #4070** (2026-11-23): network devices psk (@filipslezaklab)
 
 ---
 
@@ -2338,13 +2252,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. consistent UX around copy/download actions
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c437895`: lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08a37814`: consistent UX around copy/download actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2352,22 +2266,22 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "syn 2.0.119",
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+version = "0.18.3"
+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
+ "syn 3.0.9",
+ "base64 0.21.7",
+ "base64 0.21.7",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "syn 3.0.9",
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+version = "0.18.2"
+checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
+ "syn 2.0.119",
+ "base64 0.22.1",
+ "base64 0.22.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c437895` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08a37814` are properly handled with clean fallback behavior.

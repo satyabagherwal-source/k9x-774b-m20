@@ -12376,3 +12376,9 @@
 | `CYCLE-20261123-XHWA` | `2026-11-23T16:44:40.282Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`f3871d0b...`) |
 | `CYCLE-20261123-XTC8` | `2026-11-23T16:44:55.112Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`14785e23...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T16:45:21.959Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A12E1C8` [Domain D] | Yes (`0b0ce833...`) |
+| `CYCLE-20261123-8TFW` | `2026-11-23T16:53:28.460Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`b12d212d...`) |
+| `CYCLE-20261123-8VM8` | `2026-11-23T16:53:31.280Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10069` | Yes (`4475e702...`) |
+| `CYCLE-20261123-908F` | `2026-11-23T16:53:37.263Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10070` | Yes (`d82c9174...`) |
+| `CYCLE-20261123-920E` | `2026-11-23T16:53:39.566Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10071` | Yes (`d22b1173...`) |
+| `CYCLE-20261123-9455` | `2026-11-23T16:53:42.329Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10072` | Yes (`0d643bae...`) |
+| `CYCLE-20261123-95RM` | `2026-11-23T16:53:44.434Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10073` | Yes (`c7cbc84c...`) |

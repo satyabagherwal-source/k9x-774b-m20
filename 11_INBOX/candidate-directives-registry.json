@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:45:22.805Z",
+  "last_updated": "2026-11-23T16:53:49.795Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49860,6 +49860,81 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9CF9CF-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-8VSK",
+      "directive_title": "check the caller can write to the mountpoint",
+      "source_repo": "u-root/u-root",
+      "source_commit": "610575b9",
+      "staged_file": "11_INBOX/candidate-directives/CD-8VSK-check-the-caller-can-write-to-the-mountpoint.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-99WJ",
+      "directive_title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
+      "source_repo": "revenuecat-purchases-ios-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-99WJ-bump-ruby-to-3-3-14-for-the-regexp-string-security-advisory-revenuecat-purchase.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9279",
+      "directive_title": "add k8s level warning for malformed ports on annotation",
+      "source_repo": "linkerd/linkerd2",
+      "source_commit": "c8c17e5c",
+      "staged_file": "11_INBOX/candidate-directives/CD-9279-add-k8s-level-warning-for-malformed-ports-on-annotation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-94BH",
+      "directive_title": "consistent UX around copy/download actions",
+      "source_repo": "DefGuard/defguard",
+      "source_commit": "0eb2f794",
+      "staged_file": "11_INBOX/candidate-directives/CD-94BH-consistent-ux-around-copy-download-actions.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-95XZ",
+      "directive_title": "Connect guides and reference pages in the official documentation",
+      "source_repo": "sqlpage/SQLPage",
+      "source_commit": "f0d8890e",
+      "staged_file": "11_INBOX/candidate-directives/CD-95XZ-connect-guides-and-reference-pages-in-the-official-documentation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-98L3",
+      "directive_title": "fusermount: check the caller can write to the mountpoint",
+      "source_repo": "u-root-u-root-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-98L3-fusermount-check-the-caller-can-write-to-the-mountpoint.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-EE916F",
+      "directive_title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "revenuecat-purchases-ios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EE916F-bump-ruby-to-3-3-14-for-the-regexp-strin.md",
       "staged_date": "2026-11-23"
     }
   ]

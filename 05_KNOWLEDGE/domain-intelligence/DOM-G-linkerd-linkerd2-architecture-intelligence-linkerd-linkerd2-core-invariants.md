@@ -4,24 +4,24 @@
 {
   "source_repository": "linkerd/linkerd2",
   "source_url": "https://github.com/linkerd/linkerd2",
-  "source_version": "762af53b",
+  "source_version": "c8c17e5c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T08:34:43.298Z",
+  "timestamp": "2026-11-23T16:53:39.813Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-linkerd-linkerd2",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `762af53b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T08:34:43.298Z`  
+> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `c8c17e5c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T16:53:39.813Z`  
 > **Learning ID**: `learn-github-linkerd-linkerd2`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from linkerd/linkerd2:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:28:33.272Z  
+> **Harvest Timestamp**: 2026-11-23T16:53:38.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11548 stars
+- **Stars / Engagement**: 11545 stars
 
 ---
 
@@ -881,8 +881,9 @@ import (
 )
 
 const (
-	eventTypeSkipped  = "InjectionSkipped"
-	eventTypeInjected = "Injected"
+	eventTypeSkipped           = "InjectionSkipped"
+	eventTypeInjected          = "Injected"
+	eventTypeInvalidAnnotation = "InvalidAnnotation"
 )
 
 // Inject returns the function that produces an AdmissionResponse containing
@@ -990,6 +991,7 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			if parent != nil {
 				recorder.Event(parent, v1.EventTypeNormal, eventTypeInjected, "Linkerd sidecar proxy injected")
 			}
+			recordInvalidAnnotationEvents(recorder, parent, resourceConfig.OverrideWarnings())
 			log.Infof("injection patch generated for: %s", report.ResName())
 			log.Debugf("injection patch: %s", patchJSON)
 
@@ -1073,6 +1075,15 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			UID:     request.UID,
 			Allowed: true,
 		}, nil
+	}
+}
+
+func recordInvalidAnnotationEvents(recorder record.EventRecorder, parent *metav1.PartialObjectMetadata, warnings []string) {
+	if parent == nil {
+		return
+	}
+	for _, warning := range warnings {
+		recorder.Event(parent, v1.EventTypeWarning, eventTypeInvalidAnnotation, warning)
 	}
 }
 
@@ -1635,185 +1646,548 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `762af53b` (2026-11-19)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0 (#15759)
+### Incident Patch 1: `c8c17e5c` (2026-11-23)
+**Commit Message**: chore: add k8s level warning for malformed ports on annotation (#15785)
 
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.71.0 to 0.73.0.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.71.0...v0.73.0)
+* chore: add k8s level warning for malformed ports on annotation
 
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+* use %q for showing invalid ports; do not append new override warnings to old ones
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +7/-2)
+**File**: `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml` (added, +17/-0)
 ```diff
-@@ -28,7 +28,7 @@ require (
- 	github.com/pkg/browser v0.0.0-20170505125900-c90ca0c84f15
- 	github.com/prometheus/client_golang v1.24.1
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.71.0
-+	github.com/prometheus/common v0.73.0
- 	github.com/sergi/go-diff v1.4.0
- 	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
- 	github.com/sirupsen/logrus v1.10.2
-@@ -54,6 +54,11 @@ require (
- 	sigs.k8s.io/yaml v1.6.0
+@@ -0,0 +1,17 @@
++kind: Pod
++apiVersion: apps/v1
++metadata:
++  name: nginx
++  namespace: kube-public
++  annotations:
++    config.linkerd.io/proxy-require-identity-inbound-ports: "8888,70000,9999"
++    linkerd.io/inject: enabled
++  labels:
++    app: nginx
++spec:
++  containers:
++  - name: nginx
++    image: nginx
++    ports:
++    - name: http
++      containerPort: 80
+```
+
+**File**: `controller/proxy-injector/fake/data/pod-with-invalid-require-identity-ports.patch.json` (added, +443/-0)
+```diff
+@@ -0,0 +1,443 @@
++[
++  {
++    "op": "add",
++    "path": "/metadata/annotations/linkerd.io~1proxy-version",
++    "value": "dev-undefined"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/annotations/linkerd.io~1trust-root-sha256",
++    "value": "5090806bcf2daff5d54739ba02a8e7b919f7e62b2a46757e11089c916ec97fc2"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1control-plane-ns",
++    "value": "linkerd"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1proxy-deployment",
++    "value": "owner-deployment"
++  },
++  {
++    "op": "add",
++    "path": "/metadata/labels/linkerd.io~1workload-ns",
++    "value": "kube-public"
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes",
++    "value": []
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers",
++    "value": []
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "emptyDir": {},
++      "name": "linkerd-proxy-init-xtables-lock"
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers/0",
++    "value": {
++      "args": [
++        "--firewall-bin-path",
++        "iptables-nft",
++        "--firewall-save-bin-path",
++        "iptables-nft-save",
++        "--ipv6=false",
++        "--incoming-proxy-port",
++        "4143",
++        "--outgoing-proxy-port",
++        "4140",
++        "--proxy-uid",
++        "2102",
++        "--inbound-ports-to-ignore",
++        "4190,4191,4567,4568",
++        "--outbound-ports-to-ignore",
++        "4567,4568"
++      ],
++      "command": [
++        "/usr/lib/linkerd/linkerd2-proxy-init"
++      ],
++      "image": "cr.l5d.io/linkerd/proxy:dev-undefined",
++      "imagePullPolicy": "IfNotPresent",
++      "name": "linkerd-init",
++      "resources": null,
++      "securityContext": {
++        "allowPrivilegeEscalation": false,
++        "capabilities": {
++          "add": [
++            "NET_ADMIN",
++            "NET_RAW"
++          ]
++        },
++        "privileged": false,
++        "readOnlyRootFilesystem": true,
++        "runAsGroup": 65534,
++        "runAsNonRoot": true,
++        "runAsUser": 65534,
++        "seccompProfile": {
++          "type": "RuntimeDefault"
++        }
++      },
++      "terminationMessagePolicy": "FallbackToLogsOnError",
++      "volumeMounts": [
++        {
++          "mountPath": "/run",
++          "name": "linkerd-proxy-init-xtables-lock"
++        }
++      ]
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "name": "linkerd-identity-end-entity",
++      "emptyDir": {
++        "medium": "Memory"
++      }
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/volumes/-",
++    "value": {
++      "name": "linkerd-identity-token",
++      "projected": {
++        "sources": [
++          {
++            "serviceAccountToken": {
++              "audience": "identity.l5d.io",
++              "expirationSeconds": 86400,
++              "path": "linkerd-identity-token"
++            }
++          }
++        ]
++      }
++    }
++  },
++  {
++    "op": "add",
++    "path": "/spec/initContainers/1",
++    "value": {
++      "env": [
++        {
++          "name": "_pod_name",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.name"
++            }
++          }
++        },
++        {
++          "name": "_pod_ns",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.namespace"
++            }
++          }
++        },
++        {
++          "name": "_pod_uid",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "metadata.uid"
++            }
++          }
++        },
++        {
++          "name": "_pod_ip",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "status.podIP"
++            }
++          }
++        },
++        {
++          "name": "_pod_nodeName",
++          "valueFrom": {
++            "fieldRef": {
++              "fieldPath": "spec.nodeName"
++            }
++          }
++        },
++        {
++          "name": "_pod_containerName",
++          "value": "linkerd-proxy"
++        },
++        {
++          "name": "LINKERD2_PROXY_CORES",
++          "value": "1"
++        },
++        {
++          "name": "LINKERD2_PROXY_CORES_MIN",
++          "value": "1"
++        },
++        {
++          "name": "LINKERD2_PROXY_INBOUND_PORTS_REQUIRE_IDENTITY",
++          "value": "8888,70000,9999"
++        },
++        {
++          "name": "LINKERD2_PROXY_SHUTDOWN_ENDPOINT_ENABLED",
++          "value": "false"
++        },
++        {
++          "name": "LINKERD2_PROXY_LOG",
++          "value": "warn,linkerd=info,hickory=error,[{headers}]=off,[{request}]=off"
++        },
++        {
++          "name": "LINKERD2_PROXY_LOG_FORMAT",
++          "value": "plain"
++        },
++        {
++          "name": "LINKERD2_PROXY_DESTINATION_SVC_ADDR",
++          "value": "linkerd-dst-headless.linkerd.svc.cluster.local.:8086"
++        },
++        {
++          "name": "LINKERD2_PROXY_DESTINATION_PROFILE_NETWORKS
+```
+
+**File**: `controller/proxy-injector/webhook.go` (modified, +13/-2)
+```diff
+@@ -21,8 +21,9 @@ import (
  )
  
-+require (
-+	github.com/hashicorp/go-uuid v1.0.3 // indirect
-+	github.com/pandatix/go-abnf v0.5.1 // indirect
-+)
+ const (
+-	eventTypeSkipped  = "InjectionSkipped"
+-	eventTypeInjected = "Injected"
++	eventTypeSkipped           = "InjectionSkipped"
++	eventTypeInjected          = "Injected"
++	eventTypeInvalidAnnotation = "InvalidAnnotation"
+ )
+ 
+ // Inject returns the function that produces an AdmissionResponse containing
+@@ -130,6 +131,7 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
+ 			if parent != nil {
+ 				recorder.Event(parent, v1.EventTypeNormal, eventTypeInjected, "Linkerd sidecar proxy injected")
+ 			}
++			recordInvalidAnnotationEvents(recorder, parent, resourceConfig.OverrideWarnings())
+ 			log.Infof("injection patch generated for: %s", report.ResName())
+ 			log.Debugf("injection patch: %s", patchJSON)
+ 
+@@ -216,6 +218,15 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
+ 	}
+ }
+ 
++func recordInvalidAnnotationEvents(recorder record.EventRecorder, parent *metav1.PartialObjectMetadata, warnings []string) {
++	if parent == nil {
++		return
++	}
++	for _, warning := range warnings {
++		recorder.Event(parent, v1.EventTypeWarning, eventTypeInvalidAnnotation, warning)
++	}
++}
 +
- require (
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
- 	github.com/BurntSushi/toml v1.6.0 // indirect
-@@ -134,7 +139,7 @@ require (
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/oauth2 v0.36.0 // indirect
-+	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
+ func ownerRetriever(ctx context.Context, api *k8s.MetadataAPI, ns string) inject.OwnerRetrieverFunc {
+ 	return func(p *v1.Pod) (string, string, error) {
+ 		p.SetNamespace(ns)
 ```
 
-**File**: `go.sum` (modified, +8/-4)
+**File**: `controller/proxy-injector/webhook_test.go` (modified, +81/-0)
 ```diff
-@@ -251,6 +251,8 @@ github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY
- github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
- github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
- github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
-+github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
-+github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
- github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
-@@ -327,6 +329,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
- github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
- github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
-+github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
-+github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
- github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
- github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
- github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
-@@ -343,8 +347,8 @@ github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/h
- github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.71.0 h1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=
--github.com/prometheus/common v0.71.0/go.mod h1:CLJ5H8TEsGX8bl31BdMkfhIZ+QmZ9tBPPotUxUbfcmk=
-+github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
-+github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
- github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
- github.com/prometheus/otlptranslator v1.0.0/go.mod h1:vRYWnXvI6aWGpsdY/mOT/cbeVRBlPWtBNDb7kGR3uKM=
- github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
-@@ -523,8 +527,8 @@ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4Iltr
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
--golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
--golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-+golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
-+golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -3,6 +3,7 @@ package injector
+ import (
+ 	"encoding/json"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/go-test/deep"
+@@ -14,6 +15,7 @@ import (
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/tools/record"
+ )
+ 
+ type unmarshalledPatch []map[string]interface{}
+@@ -285,6 +287,85 @@ func TestGetPodPatch(t *testing.T) {
+ 			t.Fatalf("The actual patch didn't match what was expected.\n%+v", diff)
+ 		}
+ 	})
++
++	t.Run("by injecting a pod with a malformed require-identity-inbound-ports annotation", func(t *testing.T) {
++		_, expectedPatch := loadPatch(factory, t, "pod-with-invalid-require-identity-ports.patch.json")
++
++		pod := fileContents(factory, t, "pod-inject-enabled-invalid-require-identity-ports.yaml")
++		fakeReq := getFakePodReq(pod)
++		fullConf := confNsEnabled().
++			WithKind(fakeReq.Kind.Kind).
++			WithOwnerRetriever(ownerRetrieverFake)
++		_, err = fullConf.ParseMetaAndYAML(fakeReq.Object.Raw)
++		if err != nil {
++			t.Fatal(err)
++		}
++
++		patchJSON, err := fullConf.GetPodPatch(true, inject.GetOverriddenValues)
++		if err != nil {
++			t.Fatalf("Unexpected PatchForAdmissionRequest error: %s", err)
++		}
++		actualPatch := unmarshalPatch(t, patchJSON)
++		if diff := deep.Equal(expectedPatch, actualPatch); diff != nil {
++			t.Fatalf("The actual patch didn't match what was expected.\n%+v", diff)
++		}
++
++		warnings := fullConf.OverrideWarnings()
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning to be recorded, got %v", warnings)
++		}
++		if !strings.Contains(warnings[0], "70000") {
++			t.Fatalf("expected warning to mention the invalid port, got %q", warnings[0])
++		}
++	})
++}
++
++func TestRecordInvalidAnnotationEvents(t *testing.T) {
++	parent := &metav1.PartialObjectMetadata{
++		TypeMeta:   metav1.TypeMeta{Kind: "Deployment"},
++		ObjectMeta: metav1.ObjectMeta{Name: "owner-deployment", Namespace: "linkerd"},
++	}
++
++	t.Run("emits one Warning event per warning", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		warnings := []string{
++			`invalid port(s) 70000 in annotation "config.linkerd.io/proxy-require-identity-inbound-ports"`,
++		}
++
++		recordInvalidAnnotationEvents(recorder, parent, warnings)
++		close(recorder.Events)
++
++		var got []string
++		for e := range recorder.Events {
++			got = append(got, e)
++		}
++		if len(got) != 1 {
++			t.Fatalf("expected exactly one event, got %v", got)
++		}
++		if !strings.Contains(got[0], "Warning") || !strings.Contains(got[0], eventTypeInvalidAnnotation) || !strings.Contains(got[0], "70000") {
++			t.Fatalf("unexpected event content: %q", got[0])
++		}
++	})
++
++	t.Run("no owner means no event", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		recordInvalidAnnotationEvents(recorder, nil, []string{"some warning"})
++		close(recorder.Events)
++
++		for e := range recorder.Events {
++			t.Fatalf("expected no events for a workload with no owner, got %q", e)
++		}
++	})
++
++	t.Run("no warnings means no event", func(t *testing.T) {
++		recorder := record.NewFakeRecorder(10)
++		recordInvalidAnnotationEvents(recorder, parent, nil)
++		close(recorder.Events)
++
++		for e := range recorder.Events {
++			t.Fatalf("expected no events when there are no warnings, got %q", e)
++		}
++	})
+ }
+ 
+ func TestGetAnnotationPatch(t *testing.T) {
 ```
 
----
-
-### Incident Patch 2: `2af200d8` (2026-11-19)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (#15788)
-
-Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.47.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/trace
-  dependency-version: 1.47.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `pkg/inject/inject.go` (modified, +37/-2)
 ```diff
-@@ -127,8 +127,8 @@ require (
- 	github.com/spf13/cast v1.7.0 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
+@@ -155,6 +155,15 @@ type ResourceConfig struct {
+ 		annotations map[string]string
+ 		spec        *corev1.PodSpec
+ 	}
++
++	// overrideWarnings is kept on the struct, rather than just logged, so a
++	// caller with access to a Kubernetes recorder (the proxy-injector
++	// webhook) can also surface these as events on the workload.
++	overrideWarnings []string
++}
++
++func (conf *ResourceConfig) OverrideWarnings() []string {
++	return conf.overrideWarnings
+ }
+ 
+ type podPatch struct {
+@@ -206,7 +215,7 @@ func GetOverriddenValues(rc *ResourceConfig) (*l5dcharts.Values, error) {
+ 		namedPorts = util.GetNamedPorts(append(rc.pod.spec.InitContainers, rc.pod.spec.Containers...))
+ 	}
+ 
+-	ApplyAnnotationOverrides(copyValues, rc.GetAnnotationOverrides(), rc.GetLabelOverrides(), namedPorts)
++	rc.overrideWarnings = ApplyAnnotationOverrides(copyValues, rc.GetAnnotationOverrides(), rc.GetLabelOverrides(), namedPorts)
+ 	MergeAdditionalEnv(copyValues, rc.GetNsAnnotations(), rc.GetWorkloadAnnotations())
+ 	return copyValues, nil
+ }
+@@ -268,7 +277,9 @@ func MergeAdditionalEnv(values *l5dcharts.Values, nsAnnotations map[string]strin
+ 	}
+ }
+ 
+-func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]string, labels map[string]string, namedPorts map[string]int32) {
++func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]string, labels map[string]string, namedPorts map[string]int32) []string {
++	var warnings []string
++
+ 	if override, ok := annotations[k8s.ProxyInjectAnnotation]; ok {
+ 		if override == k8s.ProxyInjectIngress {
+ 			values.Proxy.IsIngress = true
+@@ -341,6 +352,10 @@ func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]s
+ 
+ 	if override, ok := annotations[k8s.ProxyRequireIdentityOnInboundPortsAnnotation]; ok {
+ 		values.Proxy.RequireIdentityOnInboundPorts = override
++		if warning := invalidPortsWarning(override, k8s.ProxyRequireIdentityOnInboundPortsAnnotation); warning != "" {
++			log.Warn(warning)
++			warnings = append(warnings, warning)
++		}
+ 	}
+ 
+ 	if override, ok := annotations[k8s.ProxyEnableHostnameLabels]; ok {
+@@ -627,6 +642,26 @@ func ApplyAnnotationOverrides(values *l5dcharts.Values, annotations map[string]s
+ 			}
+ 		}
+ 	}
++
++	return warnings
++}
++
++func invalidPortsWarning(override, annotation string) string {
++	var invalid []string
++	for _, tok := range util.GetPortRanges(override) {
++		if _, err := util.ParsePortRange(tok); err != nil {
++			invalid = append(invalid, tok)
++		}
++	}
++
++	if len(invalid) == 0 {
++		return ""
++	}
++
++	return fmt.Sprintf(
++		"invalid port(s) %q in annotation %q",
++		strings.Join(invalid, ","), annotation,
++	)
+ }
+ 
+ // NewResourceConfig creates and initializes a ResourceConfig
 ```
 
-**File**: `go.sum` (modified, +8/-8)
+**File**: `pkg/inject/inject_test.go` (modified, +61/-0)
 ```diff
-@@ -413,8 +413,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
- go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
-@@ -437,18 +437,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:TC+BewnDpeiAmc
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0/go.mod h1:J/ZyF4vfPwsSr9xJSPyQ4LqtcTPULFR64KwTikGLe+A=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4vtp+84kuGSFZHTyxtXIN269vChY0=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
--go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
--go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
--go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
--go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
- go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
- go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
- go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
- go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
- go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
--go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
--go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -434,6 +434,67 @@ func TestApplyAnnotationOverridesInitializesTracingLabels(t *testing.T) {
+ 	}
+ }
+ 
++func TestApplyAnnotationOverridesRequireIdentityOnInboundPorts(t *testing.T) {
++	newValues := func() *l5dcharts.Values {
++		return &l5dcharts.Values{
++			Proxy: &l5dcharts.Proxy{
++				Image:   &l5dcharts.Image{},
++				Ports:   &l5dcharts.Ports{},
++				Metrics: &l5dcharts.ProxyMetrics{},
++			},
++			ProxyInit: &l5dcharts.ProxyInit{},
++		}
++	}
++
++	t.Run("valid value is passed through without warning", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "8888,9999",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "8888,9999" {
++			t.Fatalf("expected ports to be set, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 0 {
++			t.Fatalf("expected no warnings, got %v", warnings)
++		}
++	})
++
++	t.Run("malformed token is passed through unchanged and warned about", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "8888,70000,9999",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "8888,70000,9999" {
++			t.Fatalf("expected annotation value to be passed through unchanged, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning, got %v", warnings)
++		}
++	})
++
++	t.Run("malformed range is passed through unchanged and warned about, valid range is not", func(t *testing.T) {
++		values := newValues()
++		annotations := map[string]string{
++			k8s.ProxyRequireIdentityOnInboundPortsAnnotation: "3000-4000,5000-",
++		}
++
++		warnings := ApplyAnnotationOverrides(values, annotations, nil, nil)
++
++		if values.Proxy.RequireIdentityOnInboundPorts != "3000-4000,5000-" {
++			t.Fatalf("expected annotation value to be passed through unchanged, got %q", values.Proxy.RequireIdentityOnInboundPorts)
++		}
++		if len(warnings) != 1 {
++			t.Fatalf("expected exactly one warning, got %v", warnings)
++		}
++	})
++}
++
+ func TestMergeAdditionalEnv(t *testing.T) {
+ 	testCases := []struct {
+ 		id                  string
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
+- **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
+- **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 - **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
-- **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
-- **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
 
 ---
 
@@ -1833,38 +2207,47 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0
+## X. add k8s level warning for malformed ports on annotation
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `762af53b`: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8c17e5c`: add k8s level warning for malformed ports on annotation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controller/proxy-injector/fake/data/pod-inject-enabled-invalid-require-identity-ports.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/prometheus/common v0.73.0
-require (
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
-)
-
-	golang.org/x/oauth2 v0.37.0 // indirect
+kind: Pod
+apiVersion: apps/v1
+metadata:
+  name: nginx
+  namespace: kube-public
+  annotations:
+    config.linkerd.io/proxy-require-identity-inbound-ports: "8888,70000,9999"
+    linkerd.io/inject: enabled
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - name: http
+      containerPort: 80
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/prometheus/common v0.71.0
-	golang.org/x/oauth2 v0.36.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `762af53b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8c17e5c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

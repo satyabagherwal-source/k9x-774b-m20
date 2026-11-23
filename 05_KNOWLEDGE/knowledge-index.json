@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T16:45:23.137Z",
+  "last_updated": "2026-11-23T16:53:50.147Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24044,
+  "total_items": 24056,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214816,8 +214816,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "e64ff8dd",
-      "content_hash": "c1fbe7f3f07ab59255289c392fedd8eb2af0687159e751dab2b108f2cde9e811",
+      "source_version": "c8c17e5c",
+      "content_hash": "d22b11734688df2cfbd931a1d91a647e540b5c6e47f643f3d20eac29ab3a4465",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -214840,6 +214840,11 @@
           "number": 9784,
           "title": "keep federated endpoints when a stream is torn down",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10071,
+          "title": "add k8s level warning for malformed ports on annotation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214847,7 +214852,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T13:05:26.006Z",
+      "verified_at": "2026-11-23T16:53:39.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214889,10 +214894,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "repository": "linkerd/linkerd2",
-      "source_version": "762af53b",
-      "content_hash": "be37ebf580d2dadb780fce4d0706b7f31d30d61673133e61e9a972a4fa734604",
+      "source_version": "c8c17e5c",
+      "content_hash": "223db7fa3f0af194a00ae13fb33f092d5dfc3619ed732f130097ba307469228a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T08:34:43.435Z"
+      "persisted_at": "2026-11-23T16:53:39.991Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2",
@@ -214901,10 +214906,10 @@
       "relative_path": "08_VERIFICATION/linkerd-linkerd2-verification-protocol-empirical-defect-shield-for-linkerd-linke.md",
       "title": "Verification Protocol: Empirical Defect Shield for linkerd/linkerd2",
       "repository": "linkerd/linkerd2",
-      "source_version": "e64ff8dd",
-      "content_hash": "58327bdec1b370a8170a36e08c9792c577201d0445aa69c18a84a5b970629e2f",
+      "source_version": "c8c17e5c",
+      "content_hash": "c261ab879987797a3816469e74c300fadb6c68a6c61f432c3b8e410853c07d31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:05:27.072Z"
+      "persisted_at": "2026-11-23T16:53:40.180Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
@@ -219115,8 +219120,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "bd882c1a",
-      "content_hash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
+      "source_version": "610575b9",
+      "content_hash": "4475e702a205ec7b43f7e292598bab78492662f018b2fe211a5b9aacd8a5f005",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -219139,6 +219144,11 @@
           "number": 9616,
           "title": "don't overwrite or follow an existing output file",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10069,
+          "title": "check the caller can write to the mountpoint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219146,7 +219156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T18:16:54.356Z",
+      "verified_at": "2026-11-23T16:53:31.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219188,10 +219198,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "repository": "u-root/u-root",
-      "source_version": "bd882c1a",
-      "content_hash": "6ac75699ced79b36b4c471ef6a4616412f38c62e14b70c33c3a353673b2bf7c2",
+      "source_version": "610575b9",
+      "content_hash": "ad5c8a6257f0443199832f3a12e7be374c5b7cd0f7dd8846b2c44417f6cea6c8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T18:16:54.830Z"
+      "persisted_at": "2026-11-23T16:53:31.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root",
@@ -219200,10 +219210,10 @@
       "relative_path": "08_VERIFICATION/u-root-u-root-verification-protocol-empirical-defect-shield-for-u-root-u-root.md",
       "title": "Verification Protocol: Empirical Defect Shield for u-root/u-root",
       "repository": "u-root/u-root",
-      "source_version": "bd882c1a",
-      "content_hash": "caddc455186ba30823315a50572a219f29269a9553377e2a17d68fea4a37d973",
+      "source_version": "610575b9",
+      "content_hash": "ded82d5154dd716810960cd6f2840ad9eafbae566dd8eaed159d093bdf648888",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T18:16:54.950Z"
+      "persisted_at": "2026-11-23T16:53:31.866Z"
     },
     "learn-github-openreplay-openreplay": {
       "learning_id": "learn-github-openreplay-openreplay",
@@ -219426,9 +219436,9 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "00a12b842f576debd8533e3900346616b5a8c7c6410a94bc50629b68ac71de16",
+      "content_hash": "253200db0ccf4bbd7ff6ebc8ed58ac3a267cfb89428539e0a22b72eb76293556",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T18:17:03.267Z"
+      "persisted_at": "2026-11-23T16:53:48.269Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings",
@@ -219438,9 +219448,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for u-root-u-root-learnings",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "58765e62c9dd6d98637ac09e96894278a72f64553b325f8df750802784c39a0b",
+      "content_hash": "14908c2ff07564ec2c0ea00370120e1e964c8ab816c45fcfecc1af051ee5885c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T18:17:03.404Z"
+      "persisted_at": "2026-11-23T16:53:48.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
@@ -232109,7 +232119,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "45d41e96ef29b646fe39f9f16e249b7c4ef962bb114ded78b5088f7d8eb008e3",
+      "content_hash": "b12d212d293a5e8d1479d8732e7b1fcfacde67b21a151738d6daa8d86b829a36",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [],
@@ -232118,7 +232128,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:36:20.081Z",
+      "verified_at": "2026-11-23T16:53:28.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232135,9 +232145,9 @@
       "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
       "repository": "Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "e765e6b8f2a188dce049665c25f4c83b897b60c585736bf4339cb655d5ef9be2",
+      "content_hash": "54ba1e5d1d65f1853f7db1547b3c5aa821e1335ac9ead6b261b3c7c462e28776",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:03:42.449Z"
+      "persisted_at": "2026-11-23T16:53:28.669Z"
     },
     "learn-github-argoproj-argo-events": {
       "learning_id": "learn-github-argoproj-argo-events",
@@ -232435,9 +232445,9 @@
       "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
       "repository": "hf-bingsu-adetailer-learnings",
       "source_version": "HEAD",
-      "content_hash": "c658387937363fcb7d5a1caeba6a551ffeafd8f6841f1a1d0e9814edba220dc0",
+      "content_hash": "6d18f45724b3ce5d38c4a177372450eb559cfefdfdadf9a6b76fe52faca25755",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T04:36:38.980Z"
+      "persisted_at": "2026-11-23T16:53:48.806Z"
     },
     "candidate_directive-deps-update-go-and-crypto-security-baseline": {
       "item_id": "candidate_directive-deps-update-go-and-crypto-security-baseline",
@@ -258927,8 +258937,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "aa9fb54b",
-      "content_hash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
+      "source_version": "f3256c21",
+      "content_hash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -258941,6 +258951,11 @@
           "number": 9597,
           "title": "avoid decoding cached customer info on the main thread",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10070,
+          "title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258948,7 +258963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:13:57.481Z",
+      "verified_at": "2026-11-23T16:53:37.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258990,10 +259005,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "aa9fb54b",
-      "content_hash": "fc27663a37855d4c69cbd74b38d9592fb3d5b9480b4f1fb848bd53a1143450f6",
+      "source_version": "f3256c21",
+      "content_hash": "f6d7f9d2f8da8328104653825429bea028dfbb3ab870b31eb0c1457ecb3ee145",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T16:13:58.102Z"
+      "persisted_at": "2026-11-23T16:53:37.668Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios",
@@ -259002,10 +259017,10 @@
       "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-verification-protocol-empirical-defect-shield-for-reven.md",
       "title": "Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "aa9fb54b",
-      "content_hash": "9d876c8705eced91bf901c7db3e0eb121a17198f73e5a8d3b118593df7810885",
+      "source_version": "f3256c21",
+      "content_hash": "0fb89ee02aef3b5e79c560f3fa412b69f41a10dea0e055ff8cafdd6e7c9f2b5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:13:58.260Z"
+      "persisted_at": "2026-11-23T16:53:37.858Z"
     },
     "learn-github-qdrant-qdrant": {
       "learning_id": "learn-github-qdrant-qdrant",
@@ -259098,9 +259113,9 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2d3976728bab087e6636f3f67fa1cf74ab541bf8c9926ee295189cf0c0a72b8",
+      "content_hash": "84bae245cae0d283b9237cb7a4c549be1e6284992100844a98554af09763a77f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T16:14:34.347Z"
+      "persisted_at": "2026-11-23T16:53:49.970Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn",
@@ -259110,9 +259125,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for revenuecat-purchases-ios-learnings",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "deb6aeb7d5e24bb1cbc37d7e2d1e0389f4cd3ebc71b885b5b9db9455258f3fe7",
+      "content_hash": "25dff90110071fc8f86222a5a50add212c36dfa196da6eb932a15011c6519ea0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:14:34.537Z"
+      "persisted_at": "2026-11-23T16:53:50.147Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -262596,8 +262611,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "0c437895",
-      "content_hash": "764035fdcd12d7994646abbda81486689a439eba6cacce72f969ee64a961aca4",
+      "source_version": "0eb2f794",
+      "content_hash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -262620,6 +262635,11 @@
           "number": 9594,
           "title": "close idle HTTP connections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10072,
+          "title": "consistent UX around copy/download actions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262627,7 +262647,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T08:11:45.877Z",
+      "verified_at": "2026-11-23T16:53:42.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262669,10 +262689,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "9830b49b",
-      "content_hash": "bb68f9284117f8830b77ea6d0a4d082f11af77408e2fce739793da55648cd96f",
+      "source_version": "0eb2f794",
+      "content_hash": "eda4e9d5708fb82a3b4ecec776e58314d86ec94b20571a5a1fd081796548e164",
       "domain_letter": "A",
-      "persisted_at": "2026-11-19T19:12:06.689Z"
+      "persisted_at": "2026-11-23T16:53:42.727Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -262681,10 +262701,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "0c437895",
-      "content_hash": "92d4ae9e041233fec3db8fef6f5ef769756e71bc5bd82a9e39101db95cbe1da1",
+      "source_version": "0eb2f794",
+      "content_hash": "c67f9802b4a05d1d116928e0c7a308ac10d652cad5b7e90535df4b947900d4cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:11:46.721Z"
+      "persisted_at": "2026-11-23T16:53:42.902Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -286717,8 +286737,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "d65bda49",
-      "content_hash": "b38ef501836b54f8d9f5ba73dfd1fa7d23606205ffd3916f5d3ca9f924f3e275",
+      "source_version": "f0d8890e",
+      "content_hash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -286736,6 +286756,11 @@
           "number": 9927,
           "title": "Add a status_bar component",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10073,
+          "title": "Connect guides and reference pages in the official documentation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -286743,7 +286768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:47:58.131Z",
+      "verified_at": "2026-11-23T16:53:44.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286797,10 +286822,10 @@
       "relative_path": "08_VERIFICATION/sqlpage-sqlpage-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpag.md",
       "title": "Verification Protocol: Empirical Defect Shield for sqlpage/SQLPage",
       "repository": "sqlpage/SQLPage",
-      "source_version": "d65bda49",
-      "content_hash": "9afc0da36fc2d005d28e3fbc89036df31946d164a22145f36c1543d2af00e54d",
+      "source_version": "f0d8890e",
+      "content_hash": "f1b7670292c22013e732a0e529a46746615bf5023642cde567ff7e351e2d7bd5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:47:59.012Z"
+      "persisted_at": "2026-11-23T16:53:45.015Z"
     },
     "rule-9143": {
       "learning_id": "rule-9143",
@@ -327593,6 +327618,160 @@
       "content_hash": "a7201f0e675edad1612b89f8d4058a345bb9737692e2a4a8e1230df1271d9ab1",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T16:37:14.477Z"
+    },
+    "rule-10069": {
+      "learning_id": "rule-10069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10069,
+      "title": "check the caller can write to the mountpoint",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "610575b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:53:31.072Z"
+    },
+    "candidate_directive-check-the-caller-can-write-to-the-mountpoint": {
+      "item_id": "candidate_directive-check-the-caller-can-write-to-the-mountpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8VSK-check-the-caller-can-write-to-the-mountpoint.md",
+      "title": "check the caller can write to the mountpoint",
+      "repository": "u-root/u-root",
+      "source_version": "610575b9",
+      "content_hash": "4e90b687fc910d57cb46e23b0f366f671d7556c027d334a897acb3073fc4125b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T16:53:31.509Z"
+    },
+    "rule-10070": {
+      "learning_id": "rule-10070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10070,
+      "title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "f3256c21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:53:37.029Z"
+    },
+    "candidate_directive-bump-ruby-to-3-3-14-for-the-regexp-string-security-advisory-revenuecat-purchase": {
+      "item_id": "candidate_directive-bump-ruby-to-3-3-14-for-the-regexp-string-security-advisory-revenuecat-purchase",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-99WJ-bump-ruby-to-3-3-14-for-the-regexp-string-security-advisory-revenuecat-purchase.md",
+      "title": "bump Ruby to 3.3.14 for the Regexp/String security advisory (RevenueCat/purchase",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "596a8d3039e76871c46a9c5bcc434b9a6b1bcb8384334c5a39ad5c32721de0ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:53:49.795Z"
+    },
+    "rule-10071": {
+      "learning_id": "rule-10071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10071,
+      "title": "add k8s level warning for malformed ports on annotation",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "c8c17e5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:53:39.348Z"
+    },
+    "candidate_directive-add-k8s-level-warning-for-malformed-ports-on-annotation": {
+      "item_id": "candidate_directive-add-k8s-level-warning-for-malformed-ports-on-annotation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9279-add-k8s-level-warning-for-malformed-ports-on-annotation.md",
+      "title": "add k8s level warning for malformed ports on annotation",
+      "repository": "linkerd/linkerd2",
+      "source_version": "c8c17e5c",
+      "content_hash": "a81f10284ead099152086816326a0f289483f3d69d19eaa60295763082128987",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:53:39.816Z"
+    },
+    "rule-10072": {
+      "learning_id": "rule-10072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10072,
+      "title": "consistent UX around copy/download actions",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "0eb2f794",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:53:42.127Z"
+    },
+    "candidate_directive-consistent-ux-around-copy-download-actions": {
+      "item_id": "candidate_directive-consistent-ux-around-copy-download-actions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-94BH-consistent-ux-around-copy-download-actions.md",
+      "title": "consistent UX around copy/download actions",
+      "repository": "DefGuard/defguard",
+      "source_version": "0eb2f794",
+      "content_hash": "83e22eeafe14609c3736921a11b909f138543c9f797432b06bdf5f9bfdc3f029",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T16:53:42.560Z"
+    },
+    "rule-10073": {
+      "learning_id": "rule-10073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10073,
+      "title": "Connect guides and reference pages in the official documentation",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "f0d8890e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:53:44.223Z"
+    },
+    "candidate_directive-connect-guides-and-reference-pages-in-the-official-documentation": {
+      "item_id": "candidate_directive-connect-guides-and-reference-pages-in-the-official-documentation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-95XZ-connect-guides-and-reference-pages-in-the-official-documentation.md",
+      "title": "Connect guides and reference pages in the official documentation",
+      "repository": "sqlpage/SQLPage",
+      "source_version": "f0d8890e",
+      "content_hash": "14a961bd300c363c8ba23eab03edfa28c86c10fd02dd6d1d0ea924b0208b8c2b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T16:53:44.667Z"
+    },
+    "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sqlpage-sqlpage-design-intelligence-sqlpage-sqlpage-core-invariants.md",
+      "title": "Design Intelligence: sqlpage/SQLPage Core Invariants",
+      "repository": "sqlpage/SQLPage",
+      "source_version": "f0d8890e",
+      "content_hash": "6bcde7887ff2c29b93190bb72586d048a36ec008ac646a1b682e9af9a3aef3a7",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T16:53:44.840Z"
+    },
+    "candidate_directive-fusermount-check-the-caller-can-write-to-the-mountpoint": {
+      "item_id": "candidate_directive-fusermount-check-the-caller-can-write-to-the-mountpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-98L3-fusermount-check-the-caller-can-write-to-the-mountpoint.md",
+      "title": "fusermount: check the caller can write to the mountpoint",
+      "repository": "u-root-u-root-learnings",
+      "source_version": "HEAD",
+      "content_hash": "004bd54d574d9130e0aa39898c7e1fcc3ee88fa889d661c10dcc850c5d4f941a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T16:53:48.088Z"
     }
   },
   "ai-builder-brain": {
