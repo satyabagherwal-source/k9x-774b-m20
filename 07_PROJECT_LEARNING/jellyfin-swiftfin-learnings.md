@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `6f8c16de`  
+> **Source Version**: `db3ae5c9`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:58:28.469Z  
+> **Timestamp**: 2026-11-23T03:27:46.579Z  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:58:28.286Z  
+> **Harvest Timestamp**: 2026-11-23T03:27:46.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4292 stars
+- **Stars / Engagement**: 4299 stars
 
 ---
 
@@ -639,10 +639,8 @@ extension MediaPlayerQueue {
 - **Issue #2455** (2026-11-19): **Update collections**
   *Symptoms*: Update collections packages with RTL fixes and proxies updates.  Closes #2453
 
-- **Issue #2446** (2026-11-17): **Season text needs padding**
-  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  The text on the season number buttons is the same size as the button. This makes it look strange.   <img width="4032" height="3024" alt="IMG_5441" src="https://github.com/user-attachments/assets/bee30a1d-04f0-40b2-8654-c75711d60138" />  <img width="790" height="371" alt="IMG_5441" src="https://github.com/user-attachments/assets/a9f08931-ebd3-4e2c-95ec-bd27e1453eac" />  ### Reproduction steps  Open swiftfin, select a tv show. In the series view the season buttons are like this.  ### Platform  tvOS  ### Application version  1.7.1  ### Where did you install the app from?  None  ### Device information  Apple TV 4k 
-  **Post-Mortem & Fix Analysis**:
-  > This is resolved via: https://github.com/jellyfin/Swiftfin/pull/2425 and will be included in our next release.
+- **Issue #2450** (2026-11-20): **Playback timestamps are not centered in their pills when not scrubbing**
+  *Symptoms*: Fixes #2449  In the player overlay, the elapsed and remaining time labels are not centered in their pills when not scrubbing: the elapsed time sticks to the left edge of its pill, and the remaining time sticks to the right edge.  Root cause: in `SplitTimeStamp`, the "/ total" part of each timestamp is hidden with `.isVisible(isScrubbing)`, which only sets opacity to 0 — the hidden text still takes up layout space, so each pill is sized for the full scrubbing string while showing only part of it.  This PR renders the scrub-only "/ total" part conditionally (`if isScrubbing`), so it takes no space when not scrubbing. Note the pill width now changes when scrubbing starts/ends.  **Before** <img width="600" alt="Before" src="https://github.com/user-attachments/assets/af37f7e9-9178-4f1c-a721-0913b485cc4e" />  **After** <img width="600" alt="After" src="https://github.com/user-attachments/assets/c8f03813-953d-491d-89c2-8215413a1620" />
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -659,419 +657,152 @@ extension MediaPlayerQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `543a7da5` (2026-11-18)
-**Commit Message**: Fix iOS Video Screenshot (#2454)
+### Incident Patch 1: `d8df9924` (2026-11-20)
+**Commit Message**: Fix various minor Swift 6 issues (#2439)
 
-**File**: `Tools/Screenshots/Tests/Robots/Robot+Playback.swift` (modified, +3/-1)
+**File**: `Shared/Components/BulletedList.swift` (modified, +1/-0)
 ```diff
-@@ -67,7 +67,9 @@ extension Robot {
-             sleep(1)
-         }
- 
--        tap(button(L10n.aspectFill))
-+        if UIDevice.isPad {
-+            tap(button(L10n.aspectFill))
-+        }
- 
-         let remaining = waitFor(app.staticTexts["playbackRemainingTime"])
-         let right = remaining.frame.maxX
-```
-
-**File**: `Tools/Screenshots/Tests/ScreenshotTests.swift` (modified, +0/-13)
-```diff
-@@ -43,25 +43,12 @@ final class ScreenshotTests: XCTestCase {
- 
-         guard !robot.isDuo else { return }
- 
--        setPhoneLandscape(true)
--
-         robot.play()
-             .preparePlayback(at: 0.5)
-             .screenshot("Playback", waitForIdle: false)
- 
--        setPhoneLandscape(false)
--
-         app.terminate()
-         app.launch()
-         robot.switchUser().screenshot("UserSelection")
-     }
--
--    @MainActor
--    private func setPhoneLandscape(_ isLandscape: Bool) {
--        #if os(iOS)
--        if UIDevice.isPhone {
--            XCUIDevice.shared.orientation = isLandscape ? .landscapeLeft : .portrait
--        }
--        #endif
--    }
- }
-```
-
----
-
-### Incident Patch 2: `8d5db759` (2026-11-17)
-**Commit Message**: Fix search and layout (#2444)
-
-**File**: `Shared/Coordinators/Navigation/NavigationRoute/NavigationRoute+Settings.swift` (modified, +2/-3)
-```diff
-@@ -248,9 +248,8 @@ extension NavigationRoute {
-         NavigationRoute(
-             id: "localUserSecurity"
-         ) {
--            WithLocalUserAuthentication {
--                LocalUserSecurityView()
--            }
-+            LocalUserSecurityView()
-+                .modifier(LocalUserAuthenticationModifier())
-         }
-     }
- 
-```
-
-**File**: `Shared/Coordinators/Navigation/NavigationRoute/NavigationRoute+User.swift` (modified, +2/-3)
-```diff
-@@ -49,9 +49,8 @@ extension NavigationRoute {
-             id: "userSignIn",
-             style: .sheet
-         ) {
--            WithLocalUserAuthentication {
--                UserSignInView(server: server, user: user)
--            }
-+            UserSignInView(server: server, user: user)
-+                .modifier(LocalUserAuthenticationModifier())
-         }
-     }
- }
-```
-
-**File**: `Shared/Coordinators/Root/RootView.swift` (modified, +25/-1)
-```diff
-@@ -6,7 +6,6 @@
- // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
- //
- 
--import FactoryKit
+@@ -9,6 +9,7 @@
  import SwiftUI
  
- struct RootView: View {
-@@ -30,5 +29,30 @@ struct RootView: View {
-         .task {
-             rootCoordinator.start()
-         }
-+        .modifier(RootContainerModifier())
-+    }
-+}
-+
-+private struct RootContainerModifier: ViewModifier {
-+
-+    @ContentBuilder
-+    func body(content: Content) -> some View {
-+        Group {
-+            #if os(iOS)
-+            PreferencesView {
-+                content
-+                    .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
-+                    .modifier(LocalUserAuthenticationModifier())
-+            }
-+            .ignoresSafeArea()
-+            .modifier(OverlayToastModifier())
-+            .trackingFrame(for: .layoutContainer)
-+            #else
-+            content
-+                .modifier(LocalUserAuthenticationModifier())
-+                .modifier(OverlayToastModifier())
-+            #endif
-+        }
-+        .modifier(ThemePreferencesModifier())
-     }
- }
+ @ContentBuilder
++@MainActor
+ func BulletedList(
+     spacing: CGFloat = 8,
+     @ContentBuilder content: @escaping () -> some View
 ```
 
-**File**: `Shared/Coordinators/Tabs/MainTabView.swift` (modified, +1/-4)
+**File**: `Shared/Components/EasedGradient.swift` (modified, +1/-1)
 ```diff
-@@ -91,10 +91,7 @@ struct MainTabView: View {
-     private func tabView() -> some View {
-         TabView(selection: $tabCoordinator.selectedTabID) {
-             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
--                Tab(
--                    value: tab.item.id,
--                    role: tab.item.id == TabItem.search.id ? .search : nil
--                ) {
-+                Tab(value: tab.item.id) {
-                     #if os(tvOS)
-                     GeometryReader { _ in
-                         tabRoot(tab)
-```
-
-**File**: `Shared/Extensions/ViewExtensions/Modifiers/LocalUserAuthenticationModifier.swift` (renamed, +2/-8)
-```diff
-@@ -30,7 +30,7 @@ extension EnvironmentValues {
-     var localUserAuthenticationAction: LocalUserAuthenticationAction? = nil
- }
+@@ -8,7 +8,7 @@
  
--struct WithLocalUserAuthentication<Content: View>: View {
-+struct LocalUserAuthenticationModifier: ViewModifier {
- 
-     private struct PinRequest: Identifiable {
- 
-@@ -42,12 +42,6 @@ struct WithLocalUserAuthentication<Content: View>: View {
-     @State
-     private var pinRequest: PinRequest?
- 
--    private let content: Content
--
--    init(@ContentBuilder content: () -> Content) {
--        self.content = content()
--    }
--
-     private func handlePinAuthentication(reason: String?) async throws -> String {
-         try Task.checkCancellation()
-         let requestID = UUID()
-@@ -110,7 +104,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
-     }
- 
-     @ContentBuilder
--    var body: some View {
-+    func body(content: Content) -> some View {
-         content
-             .environment(
-                 \.localUserAuthenticationAction,
-```
-
-**File**: `Shared/Extensions/ViewExtensions/Modifiers/OverlayToastModifier.swift` (renamed, +4/-15)
-```diff
-@@ -17,39 +17,28 @@ import SwiftUI
- // TODO: fix rapid fire animations
- //       - have one that's presentation based, one just basic overlay?
- 
--/// A basic toasting container view that will present
--/// given toasts on top of the given content.
--struct OverlayToastView<Content: View>: View {
-+struct OverlayToastModifier: ViewModifier {
- 
-     @AdaptiveLayout
-     private var viewLayout
- 
-     @StateObject
-     private var toastProxy: ToastProxy
- 
--    private let content: Content
--
-     private var topPadding: CGFloat {
-         viewLayout.value(standard: 10, large: 60)
-     }
- 
--    init(
--        @ContentBuilder content: () -> Content
--    ) {
-+    init() {
-         self._toastProxy = StateObject(wrappedValue: .init())
--        self.content = content()
-     }
- 
--    init(
--        proxy: ToastProxy,
--        @ContentBuilder content: () -> Content
--    ) {
-+    init(proxy: ToastProxy) {
-         self._toastProxy = StateObject(wrappedValue: proxy)
--        self.content = content()
-     }
- 
-     @ContentBuilder
--    var body: some View {
-+    func body(content: Content) -> some View {
-         ZStack(alignment: .top) {
-             content
-                 .environmentObject(toastProxy)
-```
-
-**File**: `Shared/Extensions/ViewExtensions/Modifiers/ThemePreferencesModifier.swift` (renamed, +2/-8)
-```diff
-@@ -10,19 +10,13 @@ import Defaults
- import FactoryKit
  import SwiftUI
  
--struct ThemePreferencesEnvironment<Content: View>: View {
-+struct ThemePreferencesModifier: ViewModifier {
+-struct EasedGradient: View, ShapeStyle {
++nonisolated struct EasedGradient: View, ShapeStyle {
  
-     @InjectedObject(\.userSessionManager)
-     private var userSessionManager
+     enum Curve {
  
--    private let content: Content
--
--    init(@ContentBuilder content: () -> Content) {
--        self.content = content()
--    }
--
-     @ContentBuilder
--    var body: some View {
-+    func body(content: Content) -> some View {
-         content
-             .modifier(StoredThemePreferencesModifier(userID: userSessionManager.currentSession?.user.id))
-     }
 ```
 
-**File**: `Shared/Views/SearchView.swift` (modified, +28/-20)
+**File**: `Shared/Components/FadeContentTransitionView.swift` (modified, +1/-0)
 ```diff
-@@ -53,7 +53,7 @@ struct SearchView: View {
+@@ -60,6 +60,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
+         Coordinator()
      }
  
-     @ContentBuilder
--    var body: some View {
-+    private var contentView: some View {
-         ScrollView {
-             VStack(spacing: 0) {
-                 #if os(tvOS)
-@@ -78,26 +78,17 @@ struct SearchView: View {
-                 }
-                 #endif
++    @MainActor
+     final class Coordinator {
  
--                ZStack {
--                    switch viewModel.state {
--                    case .error:
--                        viewModel.error.map(ErrorView.init)
--
--                    case .initial:
--                        if viewModel.canSearch {
--                            if viewModel.isEmpty {
--                                Text(L10n.noResults)
--                            } else {
--                                ContentGroupVStack(
--                                    groups: viewModel.itemContentGroupViewModel.groups
--                                )
--                            }
-+                Group {
-+                    if viewModel.canSearch {
-+                        if viewModel.isEmpty {
-+                            Text(L10n.noResults)
-                         } else {
--                            suggestionsView
-+                            ContentGroupVStack(
-+                                groups: viewModel.itemContentGroupViewModel.groups
-+                            )
-                         }
--
--                    case .searching:
--                        ProgressView()
-+                    } else {
-+                        suggestionsView
-                     }
-                 }
-                 .frame(maxWidth: .infinity)
-@@ -107,11 +98,27 @@ struct SearchView: View {
-         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
-         .defaultScrollAnchor(viewLayout.isLarge || viewModel.canSearch ? .top : .center, for: .alignment)
-         .scrollIndicators(.hidden)
-+    }
-+
-+    @ContentBuilder
-+    var body: some View {
-+        ZStack {
-+            switch viewModel.state {
-+            case .error:
-+                viewModel.error.map(ErrorView.init)
-+
-+            case .initial:
-+                contentView
-+
-+            case .searching:
-+                ProgressView()
-+            }
-+        }
-+        .frame(maxWidth: .infinity, maxHeight: .infinity)
-         .animation(.linear(duration: 0.2), value: viewModel.state)
-         .ignoresSafeArea(.keyboard)
-         .navigationTitle(L10n.search)
-         .toolbarTitleDisplayMode(.inline)
--        .searchFocused($isSearchFocused)
-         .onReceive(tabItemSelected) { event in
-             if event.isRepeat, event.isRoot {
-                 isSearchFocused = true
-@@ -127,6 +134,7 @@ struct SearchView: View {
-             text: $searchQuery,
-             prompt: L10n.search
-         )
-+        .searchFocused($isSearchFocused)
-         .environmentObject(focusCoordinator)
-         #if os(tvOS)
-         .modifier(SearchSafeAreaModifier())
+         private var currentContentID: AnyHashable?
 ```
 
----
-
-### Incident Patch 3: `5816f3db` (2026-11-16)
-**Commit Message**: Fix `Always` subtitle selection (#2440)
-
-**File**: `Documentation/players.md` (modified, +21/-4)
+**File**: `Shared/Components/Layouts/AdaptiveLayout.swift` (modified, +1/-0)
 ```diff
-@@ -143,12 +143,29 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
+@@ -172,6 +172,7 @@ struct ViewLayout: Equatable {
+ }
  
- ## Captions & Accessibility
+ @propertyWrapper
++@MainActor
+ struct AdaptiveLayout: DynamicProperty {
  
--Both players follow your system caption and audible-media preferences (system *Settings > Accessibility*):
-+Jellyfin chooses subtitles first. Your device's caption settings can adjust that choice. Manual choices, including Off, take priority.
-+
-+On iOS, find **Closed Captions + SDH** and **Automatic Subtitles → When Languages Don’t Match** under **Settings → Accessibility → Subtitles & Captioning**.
-+
-+These examples assume English language preferences, available tracks, and no remembered or manual choice. Full subtitles cover all dialogue and forced subtitles usually translate short sections.
-+
-+| Jellyfin account setting  | Both options off                       | When Languages Don’t Match      | Closed Captions + SDH    |
-+| ------------------------- | -------------------------------------- | ------------------------------- | ------------------------ |
-+| **Always**                | Full English subtitles                 | Full English subtitles          | Full English captions    |
-+| **None**                  | Off                                    | Off                             | Full English captions    |
-+| **Only Forced**           | English forced subtitles               | English forced subtitles        | Full English captions    |
-+| **Smart**, English audio  | English forced subtitles               | English forced subtitles        | Full English captions    |
-+| **Smart**, Japanese audio | English subtitles                      | English subtitles               | Full English captions    |
-+| **Default**               | Jellyfin's choice based on track flags | Same Jellyfin choice            | Full English captions    |
-+
-+- Jellyfin **Always** prefers full subtitles in your account's language, then suitable forced subtitles, then Off.
-+- With **Closed Captions + SDH** on, Swiftfin prefers your caption languages and captions with sound descriptions. If no full subtitles exist, tries forced subtitles matching the audio language, then Off.
-+- With **Closed Captions + SDH** off, Swiftfin keeps Jellyfin's choice, including Off.
-+- **When Languages Don’t Match** only tries another suitable track when Jellyfin's chosen track is unavailable.
- 
--- **Captions** can be set to *Always On*, *Forced Only*, or *Automatic*. Swiftfin prefers captions in your system's preferred languages, favoring SDH captions when available.
- - **Audio Descriptions** are selected automatically when a track is clearly labeled as described audio.
--- **Caption style** (font, size, and color) comes from your system caption styles.
--- **Show on Skip Back** follows the system setting. When captions are off, skipping or scrubbing back briefly turns captions on so you can catch missed dialogue, then turns them off again. This works with text subtitles in MPV and with captions AVPlayer can switch locally. It is unavailable if your OS version doesn't provide the setting.
-+- **Caption styles** come from your device's caption styles.
-+- **Show on Skip Back** briefly shows compatible captions after you skip backward, then turns them off again.
- 
- ---
- 
+     @Environment(\.horizontalSizeClass)
 ```
 
-**File**: `Shared/Objects/MediaPlayerManager/MediaPlaybackPreferences.swift` (modified, +4/-3)
+**File**: `Shared/Components/LetterPickerBar/Components/LetterPickerCallout.swift` (modified, +1/-1)
 ```diff
-@@ -86,15 +86,16 @@ struct MediaPlaybackPreferences {
+@@ -10,7 +10,7 @@ import SwiftUI
  
-         switch captions.displayType {
-         case .forcedOnly:
--            return forcedIndex
-+            return defaultIndex
+ struct LetterPickerActiveLetterKey: PreferenceKey {
  
-         case .alwaysOn:
-             return best(in: streams.filter { $0.isForced != true }, languages: preferredLanguages, defaultIndex: defaultIndex)?.index
-                 ?? forcedIndex
+-    static var defaultValue: ItemLetter?
++    static let defaultValue: ItemLetter? = nil
  
-         case .automatic:
--            // Honor the account's subtitle mode and remembered selections when it provides a track.
--            if let defaultIndex, streams.contains(where: { $0.index == defaultIndex }) {
-+            guard let defaultIndex else { return nil }
-+
-+            if defaultIndex == -1 || streams.contains(where: { $0.index == defaultIndex }) {
-                 return defaultIndex
-             }
+     static func reduce(value: inout ItemLetter?, nextValue: () -> ItemLetter?) {
+         value = nextValue() ?? value
+```
+
+**File**: `Shared/Components/PreferencesView/KeyCommandAction.swift` (modified, +2/-2)
+```diff
+@@ -14,14 +14,14 @@ struct KeyCommandAction {
+     let subtitle: String?
+     let input: String
+     let modifierFlags: UIKeyModifierFlags
+-    let action: () -> Void
++    let action: @MainActor () -> Void
  
+     init(
+         title: String,
+         subtitle: String? = nil,
+         input: String,
+         modifierFlags: UIKeyModifierFlags = [],
+-        action: @escaping () -> Void
++        action: @escaping @MainActor () -> Void
+     ) {
+         self.title = title
+         self.subtitle = subtitle
+```
+
+**File**: `Shared/Components/PreferencesView/PreferenceKeys.swift` (modified, +4/-4)
+```diff
+@@ -11,7 +11,7 @@ import SwiftUI
+ #if os(iOS)
+ struct KeyCommandsPreferenceKey: PreferenceKey {
+ 
+-    static var defaultValue: [KeyCommandAction] = []
++    static let defaultValue: [KeyCommandAction] = []
+ 
+     static func reduce(value: inout [KeyCommandAction], nextValue: () -> [KeyCommandAction]) {
+         value.append(contentsOf: nextValue())
+@@ -20,7 +20,7 @@ struct KeyCommandsPreferenceKey: PreferenceKey {
+ 
+ struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
+ 
+-    static var defaultValue: UIRectEdge = [.left, .right]
++    static let defaultValue: UIRectEdge = [.left, .right]
+ 
+     static func reduce(value: inout UIRectEdge, nextValue: () -> UIRectEdge) {
+         value = nextValue()
+@@ -29,7 +29,7 @@ struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
+ 
+ struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
+ 
+-    static var defaultValue: Bool = false
++    static let defaultValue: Bool = false
+ 
+     static func reduce(value: inout Bool, nextValue: () -> Bool) {
+         value = nextValue()
+@@ -38,7 +38,7 @@ struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
+ 
+ struct SupportedOrientationsPreferenceKey: PreferenceKey {
+ 
+-    static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
++    static let defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
+ 
+     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
+         value = nextValue()
+```
+
+**File**: `Shared/Components/PreferencesView/PressCommandAction.swift` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ struct PressCommandAction {
+ 
+     let title: String
+     let press: UIPress.PressType
+-    let action: () -> Void
++    let action: @MainActor () -> Void
+ }
+ 
+ extension PressCommandAction: Equatable {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2460** (closed): PosterGroup Follows User Preference (@chickdan)
 - **PR #2455** (2026-11-19): Update collections (@LePips)
 - **PR #2454** (2026-11-18): Fix iOS Video Screenshot (@JPKribs)
 - **PR #2452** (2026-11-18): Some `Observable` migration (@LePips)
+- **PR #2450** (2026-11-20): Playback timestamps are not centered in their pills when not scrubbing (@lzgh0102)
 - **PR #2444** (2026-11-17): Fix search and layout (@LePips)
-- **PR #2440** (2026-11-16): Fix `Always` subtitle selection (@LePips)
-- **PR #2437** (2026-11-14): Map mpv tracks past external Jellyfin streams (@Miista)
 
 ---
 
@@ -1091,30 +822,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS Video Screenshot
+## X. various minor Swift 6 issues
 
 **RULE**:
-When implementing operations in `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Shared/Components/BulletedList.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `543a7da5`: iOS Video Screenshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8df9924`: various minor Swift 6 issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Components/BulletedList.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        if UIDevice.isPad {
-            tap(button(L10n.aspectFill))
-        }
+@MainActor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        tap(button(L10n.aspectFill))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `543a7da5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8df9924` are properly handled with clean fallback behavior.

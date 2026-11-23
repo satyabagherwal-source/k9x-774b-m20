@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:56:36.735Z",
+  "last_updated": "2026-11-23T03:27:59.419Z",
   "directives": [
     {
       "id": "CD-001",
@@ -47895,14 +47895,14 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-U7H4",
+      "id": "CD-GYIF",
       "directive_title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
-      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_repo": "provablehq-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U7H4-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-GYIF-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-23",
       "domain_letter": "G"
     },
     {
@@ -48276,6 +48276,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-GXVI",
+      "directive_title": "various minor Swift 6 issues",
+      "source_repo": "jellyfin-swiftfin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GXVI-various-minor-swift-6-issues.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-91E5E3",
+      "directive_title": "various minor Swift 6 issues",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jellyfin-swiftfin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-91E5E3-various-minor-swift-6-issues.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-FFEBA4",
+      "directive_title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFEBA4-merge-branch-staging-into-fix-4587-bound.md",
+      "staged_date": "2026-11-23"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:56:37.186Z",
+  "last_updated": "2026-11-23T03:28:00.070Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T00:39:39.892Z",
@@ -1068,7 +1068,7 @@
       "staged_for_review": 1
     },
     "jellyfin-swiftfin-learnings.md": {
-      "processed_at": "2026-11-20T03:02:46.061Z",
+      "processed_at": "2026-11-23T03:27:58.219Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-22T20:27:50.206Z",
+      "processed_at": "2026-11-23T03:27:59.108Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2188,7 +2188,7 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen3-0.6b-learnings.md": {
-      "processed_at": "2026-11-18T17:41:32.742Z",
+      "processed_at": "2026-11-23T03:27:57.800Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3291,
+  "total_dossiers_evaluated": 3294,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2486
+  "total_staged_for_review": 2488
 }

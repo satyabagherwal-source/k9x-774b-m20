@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-58L4",
-    "timestamp": "2026-11-21T03:15:32.152Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5ATN",
-    "timestamp": "2026-11-21T03:15:35.051Z",
-    "repository": "faker-js/faker",
-    "learningId": "learn-github-faker-js-faker",
-    "contentHash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5BWH",
-    "timestamp": "2026-11-21T03:15:36.449Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5E0U",
     "timestamp": "2026-11-21T03:15:39.198Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7445,51 @@
     "repository": "dosco/deeporg",
     "learningId": "learn-github-dosco-deeporg",
     "contentHash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GK2Q",
+    "timestamp": "2026-11-23T03:27:40.706Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GPH0",
+    "timestamp": "2026-11-23T03:27:47.700Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GUJ9",
+    "timestamp": "2026-11-23T03:27:54.261Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

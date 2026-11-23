@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T00:56:36.893Z",
+  "last_updated": "2026-11-23T03:27:59.589Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -8493,10 +8493,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "4705fde538dccadd78784fca3c86de81556bcf8962fdcc74b2c49b907d542eef",
-      "created_at": "2026-11-22T22:58:17.037Z"
+      "content_hash": "927a52ae296f250d51962e38104a2cc9c42da16571941fc8c66d9f63f583da79",
+      "created_at": "2026-11-23T03:27:54.665Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9728,8 +9728,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "21affbe325103189689d3c4940193fb1a974cae13c9cc114406462c4c57cd64e",
-      "created_at": "2026-11-22T02:29:38.458Z"
+      "content_hash": "e040ad62f476b993ceffca589814eb83bce0e1715acedd4ff923aaee3a264187",
+      "created_at": "2026-11-23T03:27:59.589Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -11222,8 +11222,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invarian.md",
       "repository": "Qwen/Qwen3-0.6B",
-      "content_hash": "95da7a6804d239f1063743d9e31f23676c602dd0786429aceb156fa625597a27",
-      "created_at": "2026-11-18T17:41:29.010Z"
+      "content_hash": "5205155f9fb6ee01f74b304216b1964c245041ad75817dc8058c7626e4a4397a",
+      "created_at": "2026-11-23T03:27:40.925Z"
     },
     "DOM-D-7BD861BF": {
       "record_id": "DOM-D-7BD861BF",
@@ -11273,8 +11273,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-.md",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
-      "content_hash": "94817c8a657e8b5cbc4f6b35fd617cc97e2567935d280399db67d89188b79d1d",
-      "created_at": "2026-11-18T17:41:32.964Z"
+      "content_hash": "232513a37874d9fce391fef398de8180263b81a20441e26e9ef04f85efc99682",
+      "created_at": "2026-11-23T03:27:58.014Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
@@ -22865,8 +22865,8 @@
       "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
       "repository": "jellyfin/Swiftfin",
-      "content_hash": "4653f7dccbd8d921250fc257180e9ea3004d5bdd8417f5ab2db4f47ab4741f67",
-      "created_at": "2026-11-15T22:58:41.505Z"
+      "content_hash": "b6d5c4537c692f1b74bd388aee217d2f53c89b1824dc38cb1c808d170a4e0831",
+      "created_at": "2026-11-23T03:27:48.094Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
@@ -22883,8 +22883,8 @@
       "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-learnings-technical-construction-intelligence-jellyfin-swiftfi.md",
       "repository": "jellyfin-swiftfin-learnings",
-      "content_hash": "a040a06cd1fe8ae22f51c3ee4a8d2db9a85ee83e0852cf3086de40c6620b4640",
-      "created_at": "2026-11-15T22:58:50.737Z"
+      "content_hash": "3966735e8b853da25eedf10d986585382149ae33e38776baf5ed3ab363ef799f",
+      "created_at": "2026-11-23T03:27:58.765Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants",

@@ -12281,3 +12281,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T00:56:20.854Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `a3552b0d` | Multi-dimensional audit evidence | 2026-11-23T00:56:22.588Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `5b9451b6` | Multi-dimensional audit evidence | 2026-11-23T00:56:31.435Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T03:27:40.711Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `db3ae5c9` | Multi-dimensional audit evidence | 2026-11-23T03:27:47.704Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `82e8fb92` | Multi-dimensional audit evidence | 2026-11-23T03:27:54.265Z |

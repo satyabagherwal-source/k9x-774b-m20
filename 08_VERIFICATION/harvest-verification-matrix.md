@@ -12248,3 +12248,6 @@
 | `CYCLE-20261123-1Y0H` | `2026-11-23T00:56:20.849Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`ff394461...`) |
 | `CYCLE-20261123-1ZCO` | `2026-11-23T00:56:22.584Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10012` | Yes (`2a92260a...`) |
 | `CYCLE-20261123-266F` | `2026-11-23T00:56:31.431Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10013` | Yes (`12e165f2...`) |
+| `CYCLE-20261123-GK2Q` | `2026-11-23T03:27:40.706Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`c5e2da68...`) |
+| `CYCLE-20261123-GPH0` | `2026-11-23T03:27:47.700Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10014` | Yes (`d1fd612d...`) |
+| `CYCLE-20261123-GUJ9` | `2026-11-23T03:27:54.261Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10002` | Yes (`95ad8933...`) |

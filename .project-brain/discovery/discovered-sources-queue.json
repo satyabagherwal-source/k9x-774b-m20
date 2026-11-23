@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T00:56:36.501Z",
+  "updated_at": "2026-11-23T03:27:58.377Z",
   "stats": {
-    "total_discovered": 7737,
-    "approved_pending_harvest": 7321,
+    "total_discovered": 7739,
+    "approved_pending_harvest": 7323,
     "harvested_count": 0,
     "rejected_count": 416,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7308,
+      "COMMUNITY_AND_EXPERT": 7310,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167325,6 +167325,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
         "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-D309F078BF14": {
+      "id": "SRC-D309F078BF14",
+      "url": "https://github.com/user-attachments/assets/af37f7e9-9178-4f1c-a721-0913b485cc4e",
+      "title": "https://github.com/user-attachments/assets/af37f7e9-9178-4f1c-a721-0913b485cc4e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T03:27:58.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-F72365DB3E7C": {
+      "id": "SRC-F72365DB3E7C",
+      "url": "https://github.com/user-attachments/assets/c8f03813-953d-491d-89c2-8215413a1620",
+      "title": "https://github.com/user-attachments/assets/c8f03813-953d-491d-89c2-8215413a1620",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T03:27:58.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
       }
     }
   }

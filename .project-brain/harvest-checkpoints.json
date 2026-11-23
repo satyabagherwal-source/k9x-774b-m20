@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T00:56:31.445Z",
+  "last_updated": "2026-11-23T03:27:54.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
-      "verified_at": "2026-11-18T17:41:28.776Z",
+      "content_hash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
+      "verified_at": "2026-11-23T03:27:40.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:41:28.776Z"
+      "last_updated": "2026-11-23T03:27:40.719Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
-      "verified_at": "2026-11-22T22:58:16.501Z",
+      "content_hash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
+      "verified_at": "2026-11-23T03:27:54.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:58:16.501Z"
+      "last_updated": "2026-11-23T03:27:54.273Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
-      "verified_at": "2026-11-20T02:58:29.322Z",
+      "content_hash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
+      "verified_at": "2026-11-23T03:27:47.712Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:58:29.322Z"
+      "last_updated": "2026-11-23T03:27:47.712Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

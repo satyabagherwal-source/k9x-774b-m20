@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T00:56:37.056Z",
+  "last_updated": "2026-11-23T03:27:59.921Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23838,
+  "total_items": 23840,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "82e8fb92",
-      "content_hash": "4705fde538dccadd78784fca3c86de81556bcf8962fdcc74b2c49b907d542eef",
+      "content_hash": "927a52ae296f250d51962e38104a2cc9c42da16571941fc8c66d9f63f583da79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T22:58:17.037Z"
+      "persisted_at": "2026-11-23T03:27:54.665Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "82e8fb92",
-      "content_hash": "f16ac272e69fca0b3f102cbf30cb7ea6a139a4fc8ea37621573ea1905c776680",
+      "content_hash": "d24af8f326a96b70652d446453b114bb0c8aefd6fe8195a484d14549e59a5d27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:58:17.461Z"
+      "persisted_at": "2026-11-23T03:27:54.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "21affbe325103189689d3c4940193fb1a974cae13c9cc114406462c4c57cd64e",
+      "content_hash": "e040ad62f476b993ceffca589814eb83bce0e1715acedd4ff923aaee3a264187",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:29:38.458Z"
+      "persisted_at": "2026-11-23T03:27:59.589Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215898,13 +215898,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "82e8fb92",
-      "content_hash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -216004,7 +216004,7 @@
         {
           "number": 10002,
           "title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216012,7 +216012,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:58:16.219Z",
+      "verified_at": "2026-11-23T03:27:54.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217085,7 +217085,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
+      "content_hash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -217110,7 +217110,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:41:28.509Z",
+      "verified_at": "2026-11-23T03:27:40.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217127,9 +217127,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "repository": "Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "95da7a6804d239f1063743d9e31f23676c602dd0786429aceb156fa625597a27",
+      "content_hash": "5205155f9fb6ee01f74b304216b1964c245041ad75817dc8058c7626e4a4397a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:41:29.010Z"
+      "persisted_at": "2026-11-23T03:27:40.925Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
@@ -217139,9 +217139,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
       "source_version": "HEAD",
-      "content_hash": "94817c8a657e8b5cbc4f6b35fd617cc97e2567935d280399db67d89188b79d1d",
+      "content_hash": "232513a37874d9fce391fef398de8180263b81a20441e26e9ef04f85efc99682",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:41:32.964Z"
+      "persisted_at": "2026-11-23T03:27:58.014Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
@@ -220207,9 +220207,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "0da262e782c81ebded4aa9a76936bcfef261e6a5ad52aae8a0353d4cbdfe5ebd",
+      "content_hash": "50befb3874637eeecd8bc36127431073e40d00f294243fce15c7750e4c6f0bea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:27:51.242Z"
+      "persisted_at": "2026-11-23T03:27:59.921Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -252360,8 +252360,8 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "6f8c16de",
-      "content_hash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
+      "source_version": "db3ae5c9",
+      "content_hash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [
@@ -252374,6 +252374,11 @@
           "number": 9499,
           "title": "iOS Video Screenshot",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10014,
+          "title": "various minor Swift 6 issues",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252381,7 +252386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:58:29.135Z",
+      "verified_at": "2026-11-23T03:27:47.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252423,10 +252428,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
       "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
       "repository": "jellyfin/Swiftfin",
-      "source_version": "e956be4a",
-      "content_hash": "4653f7dccbd8d921250fc257180e9ea3004d5bdd8417f5ab2db4f47ab4741f67",
+      "source_version": "db3ae5c9",
+      "content_hash": "b6d5c4537c692f1b74bd388aee217d2f53c89b1824dc38cb1c808d170a4e0831",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:58:41.505Z"
+      "persisted_at": "2026-11-23T03:27:48.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin",
@@ -252435,10 +252440,10 @@
       "relative_path": "08_VERIFICATION/jellyfin-swiftfin-verification-protocol-empirical-defect-shield-for-jellyfin-swi.md",
       "title": "Verification Protocol: Empirical Defect Shield for jellyfin/Swiftfin",
       "repository": "jellyfin/Swiftfin",
-      "source_version": "6f8c16de",
-      "content_hash": "539afcb980eb16912d284813f9d5c54e7b7105520d52b8a8a2b6be63a8082122",
+      "source_version": "db3ae5c9",
+      "content_hash": "dcf8af57d61c333c2ff5354b03e86512512500a93d392584bf115653f1398b13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:58:29.756Z"
+      "persisted_at": "2026-11-23T03:27:48.271Z"
     },
     "rule-8664": {
       "learning_id": "rule-8664",
@@ -252486,9 +252491,9 @@
       "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
       "repository": "jellyfin-swiftfin-learnings",
       "source_version": "HEAD",
-      "content_hash": "a040a06cd1fe8ae22f51c3ee4a8d2db9a85ee83e0852cf3086de40c6620b4640",
+      "content_hash": "3966735e8b853da25eedf10d986585382149ae33e38776baf5ed3ab363ef799f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:58:50.737Z"
+      "persisted_at": "2026-11-23T03:27:58.765Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings",
@@ -252498,9 +252503,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jellyfin-swiftfin-learnings",
       "repository": "jellyfin-swiftfin-learnings",
       "source_version": "HEAD",
-      "content_hash": "e848b7f88dfdee1d5ce11227c424b13caab9ae8d1c96608d662cccfb544a96b5",
+      "content_hash": "5f7b981fa0069583780fe29763c0773d3c0227b7360c42ef26a5694db708a8c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:02:46.893Z"
+      "persisted_at": "2026-11-23T03:27:58.939Z"
     },
     "learn-github-ataraxy-labs-sem": {
       "learning_id": "learn-github-ataraxy-labs-sem",
@@ -265205,13 +265210,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "82e8fb92",
-      "content_hash": "4b07786b83f8b15521e1f78073c626a1d23c7b83ccce69798479ed61cdf2c430",
+      "content_hash": "4cdcedfaa3b6886af8d94d36347e123cb65a876971f41abdb9c5f67416ba2239",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T22:58:17.271Z"
+      "persisted_at": "2026-11-23T03:27:54.838Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -307494,9 +307499,9 @@
       "title": "Agent Contract: provablehq-snarkos-learnings Autonomous Specialist Persona",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "37598e0da305b8cc0b51fd0c3f2cbd7bb7eff7f4e0f824e868f35ec0a7867ca7",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:27:51.060Z"
+      "content_hash": "6f6401fa7b953a17bf8a0554d2340df40f65d2019a54b559891bba7ff6790fc3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T03:27:59.762Z"
     },
     "candidate_directive-reduce-handshake-future-sizes-the-handshake-timeout-and-connect-wrappers-and-r": {
       "item_id": "candidate_directive-reduce-handshake-future-sizes-the-handshake-timeout-and-connect-wrappers-and-r",
@@ -324140,26 +324145,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10002,
       "title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "82e8fb92",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T22:58:16.219Z"
+      "verified_at": "2026-11-23T03:27:54.054Z"
     },
     "candidate_directive-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker": {
       "item_id": "candidate_directive-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U7H4-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GYIF-merge-branch-staging-into-fix-4587-bound-transmission-latency-tracker.md",
       "title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e32e16af915123dad86de218685005da8db8b8604ddeb51a5aa633462c0c26fd",
+      "content_hash": "aa7fc944333f7e2f26eae10bdeca6562d3ef30ade616406ab3ae8e05edce995c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T22:58:21.406Z"
+      "persisted_at": "2026-11-23T03:27:59.419Z"
     },
     "rule-10003": {
       "learning_id": "rule-10003",
@@ -324601,6 +324606,32 @@
       "content_hash": "14cffe2d8fc5aa531a3506e8bc7ffe097b652611c417ae6d2463cb4a12b64022",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T00:56:36.735Z"
+    },
+    "rule-10014": {
+      "learning_id": "rule-10014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10014,
+      "title": "various minor Swift 6 issues",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "db3ae5c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T03:27:47.485Z"
+    },
+    "candidate_directive-various-minor-swift-6-issues": {
+      "item_id": "candidate_directive-various-minor-swift-6-issues",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GXVI-various-minor-swift-6-issues.md",
+      "title": "various minor Swift 6 issues",
+      "repository": "jellyfin-swiftfin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40409b71b3173702d96fcbff29a39126899c81b80222540adcc265ee91d9a89e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T03:27:58.590Z"
     }
   },
   "ai-builder-brain": {
