@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T16:37:10.184Z",
+  "last_updated": "2026-11-23T16:44:55.126Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
-      "verified_at": "2026-11-19T04:08:17.264Z",
+      "content_hash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
+      "verified_at": "2026-11-23T16:44:40.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T04:08:17.264Z"
+      "last_updated": "2026-11-23T16:44:40.292Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
-      "verified_at": "2026-11-22T11:35:11.586Z",
+      "content_hash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
+      "verified_at": "2026-11-23T16:44:55.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:35:11.586Z"
+      "last_updated": "2026-11-23T16:44:55.125Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",

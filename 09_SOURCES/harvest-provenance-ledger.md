@@ -12406,3 +12406,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T16:36:55.918Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `c24e1d8f` | Multi-dimensional audit evidence | 2026-11-23T16:37:07.324Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `2011f567` | Multi-dimensional audit evidence | 2026-11-23T16:37:10.175Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T16:44:40.285Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `580a386f` | Multi-dimensional audit evidence | 2026-11-23T16:44:55.118Z |
+| `learn-dom-d-9a12e1c8` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-23T16:45:21.959Z |

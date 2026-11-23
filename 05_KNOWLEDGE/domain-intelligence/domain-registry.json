@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:37:15.639Z",
-  "total_records": 2431,
+  "last_updated": "2026-11-23T16:45:22.966Z",
+  "total_records": 2432,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 936,
+      "total": 937,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1002,7 +1002,8 @@
         "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants",
         "DOM-D-864519D2",
         "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants",
-        "DOM-D-5695D6C2"
+        "DOM-D-5695D6C2",
+        "DOM-D-9A12E1C8"
       ]
     },
     "E": {
@@ -9164,8 +9165,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c4e8205740deec31f531199431f3efea8b5182740a0c699865ea4a5da1a98b9e",
-      "created_at": "2026-11-23T16:11:55.890Z"
+      "content_hash": "65a194e7ff3a93e914817f09ae079101e5b3da2eee10c818bcbc3314d85570d9",
+      "created_at": "2026-11-23T16:45:22.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10835,11 +10836,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
-      "content_hash": "bc5e3e30511634bf3235025eae645581536037318c9036d3f2050d20b9be0d23",
-      "created_at": "2026-11-23T00:31:37.422Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
+      "content_hash": "73de42d2bc127f938bd9e4a3f20fef0bc85c428951840e99555e4df7c44ad905",
+      "created_at": "2026-11-23T16:44:58.312Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -16263,8 +16264,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "7b1e4ee6a34f96b3068f6480e81870e592b7ce32b88fc106753cc82ee9441c68",
-      "created_at": "2026-11-19T04:08:17.425Z"
+      "content_hash": "117801a89f6b3f6df6fff99b15e20bf9d93515f2eb914f845cc5c7755cd20c57",
+      "created_at": "2026-11-23T16:44:40.483Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
@@ -22970,8 +22971,8 @@
       "title": "Technical Construction Intelligence: sfu-db/connector-x Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sfu-db-connector-x-technical-construction-intelligence-sfu-db-connector-x-core-i.md",
       "repository": "sfu-db/connector-x",
-      "content_hash": "5971c2a0d84eb5e2882dd74306334377d2ea40491dc462510a4d044fe525067a",
-      "created_at": "2026-11-15T23:39:59.059Z"
+      "content_hash": "def7a2ca9ab699081bd6dcb5965b3e7745ae12fe97d41fa3f3357f2db6f976cf",
+      "created_at": "2026-11-23T16:44:55.318Z"
     },
     "DOM-D-9A5A6C46": {
       "record_id": "DOM-D-9A5A6C46",
@@ -23047,8 +23048,8 @@
       "title": "Technical Construction Intelligence: sfu-db-connector-x-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sfu-db-connector-x-learnings-technical-construction-intelligence-sfu-db-connecto.md",
       "repository": "sfu-db-connector-x-learnings",
-      "content_hash": "3f1d6a92a8a30818b58b917e2e1e3ca27834fe6b1beab09811123772a3dccd2e",
-      "created_at": "2026-11-15T23:41:17.626Z"
+      "content_hash": "18b7ed82b787756280246837f2b469aad4c5a414ff1b3ad802ae89790d7bbc30",
+      "created_at": "2026-11-23T16:45:22.291Z"
     },
     "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-webai-official-twil-8b-core-invariants",
@@ -40803,6 +40804,48 @@
       "repository": "duongductrong-snapzy-learnings",
       "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
       "created_at": "2026-11-23T16:28:51.932Z"
+    },
+    "DOM-D-9A12E1C8": {
+      "record_id": "DOM-D-9A12E1C8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sfu-db/connector-x",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  \n> **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  \n> **Source Version**: `580a386f`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synth",
+      "content_hash": "0b0ce833627c56e37fbf5d708c14a3ede853c01f5981f1fb3c2b4bc909e2b05d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  \n> **Source**: github ([https://github.com/sfu-db/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  \n> **Source**: github ([https://github.com/sfu-db/",
+      "provenance": {
+        "source_uri": "project://sfu-db-connector-x/sfu-db-connector-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T16:44:58.448Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sfu-db-connector-x)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of sfu-db-connector-x"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T16:45:21.935Z"
     }
   }
 }

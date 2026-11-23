@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
-    "lastHarvestedAt": "2026-11-19T04:08:17.256Z",
+    "contentHash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
+    "lastHarvestedAt": "2026-11-23T16:44:40.285Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "4a7baf31",
+    "sourceVersion": "580a386f",
     "license": "MIT",
-    "contentHash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
-    "lastHarvestedAt": "2026-11-22T11:35:11.574Z",
+    "contentHash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
+    "lastHarvestedAt": "2026-11-23T16:44:55.118Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {

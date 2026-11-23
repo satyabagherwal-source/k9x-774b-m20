@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `4a7baf31`  
+> **Source Version**: `580a386f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T11:35:10.240Z  
+> **Timestamp**: 2026-11-23T16:44:54.668Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:34:33.239Z  
+> **Harvest Timestamp**: 2026-11-23T16:44:54.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -91,6 +91,142 @@ impl<T> Deref for DummyBox<T> {
 impl<T> DerefMut for DummyBox<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+// Only the SQLite, Oracle and Tiberius MSSQL sources need `OwningHandle`.
+#[cfg(any(
+    feature = "src_sqlite",
+    feature = "src_oracle",
+    feature = "src_mssql_tiberius"
+))]
+pub(crate) use owning_handle::OwningHandle;
+
+#[cfg(any(
+    feature = "src_sqlite",
+    feature = "src_oracle",
+    feature = "src_mssql_tiberius"
+))]
+mod owning_handle {
+    use std::mem::ManuallyDrop;
+    use std::ops::{Deref, DerefMut};
+    use std::ptr::NonNull;
+
+    /// A heap-allocated owner together with a handle that borrows from it, such as a
+    /// prepared statement and the row stream reading from it.
+    ///
+    /// Replaces `owning_ref::OwningHandle` (RUSTSEC-2022-0040). That type keeps the
+    /// owner in a `Box` while the handle borrows from it, which violates Rust's
+    /// aliasing rules whenever the `Box` is moved. Here the owner is turned into a
+    /// raw pointer with `Box::leak` for as long as the handle exists, so no
+    /// `Box` claims unique access to it, and `Drop` frees the handle before the owner.
+    ///
+    /// Like the original, it dereferences through the handle (`H::Target`).
+    pub(crate) struct OwningHandle<O, H> {
+        handle: ManuallyDrop<H>,
+        owner: NonNull<O>,
+    }
+
+    impl<O, H> OwningHandle<O, H> {
+        /// Move `owner` to a stable heap address and build the handle from a pointer to it.
+        ///
+        /// `f` may turn the pointer into `&O` or `&mut O`; the owner stays alive, and
+        /// at the same address, until the returned value is dropped. If `f` panics, the
+        /// owner is leaked rather than freed.
+        pub(crate) fn new_with_fn<F>(owner: Box<O>, f: F) -> Self
+        where
+            F: FnOnce(*const O) -> H,
+        {
+            // Give up the `Box` so nothing claims unique access while `H` borrows the
+            // owner; `Drop` turns the pointer back into a `Box` to free it.
+            let owner = NonNull::from(Box::leak(owner));
+            let handle = f(owner.as_ptr());
+            Self {
+                handle: ManuallyDrop::new(handle),
+                owner,
+            }
+        }
+    }
+
+    impl<O, H: Deref> Deref for OwningHandle<O, H> {
+        type Target = H::Target;
+
+        fn deref(&self) -> &Self::Target {
+            &self.handle
+        }
+    }
+
+    impl<O, H: DerefMut> DerefMut for OwningHandle<O, H> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.handle
+        }
+    }
+
+    impl<O, H> Drop for OwningHandle<O, H> {
+        fn drop(&mut self) {
+            // SAFETY: the handle may borrow from the owner, so drop it first. `owner`
+            // came from `Box::leak` in `new_with_fn` and is freed exactly once, here.
+            unsafe {
+                ManuallyDrop::drop(&mut self.handle);
+                drop(Box::from_raw(self.owner.as_ptr()));
+            }
+        }
+    }
+
+    // SAFETY: the value owns both the owner and the handle outright, as
+    // `(Box<O>, H)` would; `NonNull` only opts out of these impls by default.
+    unsafe impl<O: Send, H: Send> Send for OwningHandle<O, H> {}
+    unsafe impl<O: Sync, H: Sync> Sync for OwningHandle<O, H> {}
+
+    #[cfg(test)]
+    mod tests {
+        use super::OwningHandle;
+        use crate::utils::DummyBox;
+        use std::cell::RefCell;
+        use std::rc::Rc;
+
+        /// Records its name in `log` when dropped.
+        struct Noisy {
+            name: &'static str,
+            log: Rc<RefCell<Vec<&'static str>>>,
+        }
+
+        impl Drop for Noisy {
+            fn drop(&mut self) {
+                self.log.borrow_mut().push(self.name);
+            }
+        }
+
+        #[test]
+        fn owning_handle_borrows_owner_across_moves() {
+            let owner = Box::new(vec![1, 2, 3]);
+            let handle = OwningHandle::new_with_fn(owner, |v: *const Vec<i32>| unsafe {
+                DummyBox((*v).iter())
+            });
+            // Moving the handle must not invalidate the borrow of the owner.
+            let mut moved = handle;
+            assert_eq!(moved.next(), Some(&1));
+            let mut moved_again = moved;
+            assert_eq!(moved_again.next(), Some(&2));
+        }
+
+        #[test]
+        fn owning_handle_drops_handle_before_owner() {
+            let log = Rc::new(RefCell::new(Vec::new()));
+            let owner = Box::new(Noisy {
+                name: "owner",
+                log: log.clone(),
+            });
+            let handle_log = log.clone();
+            let handle = OwningHandle::new_with_fn(owner, move |_| {
+                DummyBox(Noisy {
+                    name: "handle",
+                    log: handle_log,
+                })
+            });
+            drop(handle);
+            assert_eq!(*log.borrow(), ["handle", "owner"]);
+        }
     }
 }
 
@@ -787,502 +923,522 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbfaeb99` (2026-11-22)
-**Commit Message**: fix: return an error instead of panicking on an unsupported protocol
+### Incident Patch 1: `03ac5a84` (2026-11-22)
+**Commit Message**: fix(rust): replace owning_ref with an internal OwningHandle
 
-An unsupported protocol (e.g. protocol="text" for Postgres) or a source
-without partition support reached unimplemented!(), so Python users got a
-PanicException. These match arms now return errors:
+owning_ref has unfixed soundness issues (RUSTSEC-2022-0040) and no
+patched release, which leaves a Dependabot alert open on both
+lockfiles. The SQLite, Oracle and MSSQL sources only used its
+OwningHandle to keep a statement or connection alive next to the row
+stream that borrows from it.
 
-- connectorx get_arrow / new_record_batch_iter: the new
-  ConnectorXOutError::ProtocolNotSupported, which names the protocol, the
-  source and the protocols it accepts.
-- connectorx partition (get_col_range, get_part_query) and the Python
-  pandas path (write_pandas, get_meta): ProtocolNotSupported for protocols,
-  the existing SourceNotSupport for sources.
-
-Python raises a RuntimeError such as:
-  Protocol "text" is not supported for Postgres; supported protocols:
-  binary, csv, cursor, simple.
-
-Closes #1050
+Add a small crate-private OwningHandle in utils.rs with the same
+new_with_fn/Deref API. It holds the owner through Box::into_raw rather
+than a Box, so moving the handle doesn't assert unique access to
+memory that is still borrowed, and Drop frees the handle before the
+owner. Call sites only change their import and the owner type
+parameter. DummyBox stays, as utils is a public module.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `connectorx-python/connectorx/tests/test_errors.py` (added, +35/-0)
+**File**: `Cargo.lock` (modified, +0/-10)
 ```diff
-@@ -0,0 +1,35 @@
-+"""Errors raised for bad arguments, before any database is contacted."""
-+
-+import pytest
-+
-+import connectorx as cx
-+
-+# Nothing listens on port 1: the protocol is rejected before connecting.
-+POSTGRES_URL = "postgresql://user:pass@127.0.0.1:1/db"
-+MYSQL_URL = "mysql://user:pass@127.0.0.1:1/db"
-+
-+
-+@pytest.mark.parametrize("return_type", ["pandas", "arrow", "polars", "arrow_stream"])
-+def test_unsupported_postgres_protocol_raises(return_type: str) -> None:
-+    if return_type == "polars":
-+        pytest.importorskip("polars")
-+    with pytest.raises(
-+        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
-+    ):
-+        cx.read_sql(POSTGRES_URL, "SELECT 1", protocol="text", return_type=return_type)
-+
-+
-+@pytest.mark.parametrize("return_type", ["pandas", "arrow"])
-+def test_unsupported_mysql_protocol_raises(return_type: str) -> None:
-+    with pytest.raises(
-+        RuntimeError,
-+        match=r'Protocol "cursor" is not supported for MySQL; supported protocols: binary, text',
-+    ):
-+        cx.read_sql(MYSQL_URL, "SELECT 1", protocol="cursor", return_type=return_type)
-+
-+
-+def test_unsupported_protocol_in_get_meta_raises() -> None:
-+    with pytest.raises(
-+        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
-+    ):
-+        cx.get_meta(POSTGRES_URL, "SELECT 1", protocol="text")
+@@ -1926,7 +1926,6 @@ dependencies = [
+  "num-traits",
+  "openssl",
+  "oracle",
+- "owning_ref",
+  "pgvector",
+  "polars",
+  "polars-arrow",
+@@ -5821,15 +5820,6 @@ version = "0.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
+ 
+-[[package]]
+-name = "owning_ref"
+-version = "0.4.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6ff55baddef9e4ad00f88b6c743a2a8062d4c6ade126c2a528644b8e444d52ce"
+-dependencies = [
+- "stable_deref_trait",
+-]
+-
+ [[package]]
+ name = "p256"
+ version = "0.13.2"
 ```
 
-**File**: `connectorx-python/src/pandas/get_meta.rs` (modified, +16/-4)
+**File**: `connectorx-python/Cargo.lock` (modified, +0/-10)
 ```diff
-@@ -8,6 +8,7 @@ use super::{
-     },
- };
- use crate::errors::ConnectorXPythonError;
-+use connectorx::errors::ConnectorXOutError;
- use connectorx::source_router::{SourceConn, SourceType};
- use connectorx::{
-     prelude::*,
-@@ -25,7 +26,7 @@ use connectorx::{
-     },
-     sql::CXQuery,
- };
--use fehler::throws;
-+use fehler::{throw, throws};
+@@ -1577,7 +1577,6 @@ dependencies = [
+  "num-traits",
+  "openssl",
+  "oracle",
+- "owning_ref",
+  "pgvector",
+  "postgres",
+  "postgres-native-tls",
+@@ -4822,15 +4821,6 @@ version = "0.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
+ 
+-[[package]]
+-name = "owning_ref"
+-version = "0.4.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6ff55baddef9e4ad00f88b6c743a2a8062d4c6ade126c2a528644b8e444d52ce"
+-dependencies = [
+- "stable_deref_trait",
+-]
+-
+ [[package]]
+ name = "page_size"
+ version = "0.6.0"
+```
+
+**File**: `connectorx/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -18,7 +18,6 @@ rayon = "1"
+ sqlparser = "0.64"
+ thiserror = "2"
+ url = "2"
+-owning_ref = "0.4"
+ serde_json = "1"
+ chrono = "0.4"
+ 
+```
+
+**File**: `connectorx/src/sources/mssql/tiberius_impl.rs` (modified, +4/-4)
+```diff
+@@ -8,6 +8,7 @@ use super::driver;
+ use super::errors::MsSQLSourceError;
+ use super::typesystem::{FloatN, IntN, MsSQLTypeSystem};
+ use crate::constants::DB_BUFFER_SIZE;
++use crate::utils::OwningHandle;
+ use crate::{
+     data_order::DataOrder,
+     errors::ConnectorXError,
+@@ -23,7 +24,6 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+ use fehler::{throw, throws};
+ use futures::StreamExt;
  use log::debug;
- use postgres::NoTls;
- use postgres_openssl::MakeTlsConnector;
-@@ -128,7 +129,11 @@ pub fn get_meta<'py>(
-                     debug!("Running dispatcher");
-                     dispatcher.get_meta(py)?
-                 }
--                _ => unimplemented!("{} protocol not supported", protocol),
-+                _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                    protocol,
-+                    SourceType::Postgres,
-+                    &["binary", "csv", "cursor", "simple"]
-+                )),
-             }
-         }
-         SourceType::SQLite => {
-@@ -170,7 +175,11 @@ pub fn get_meta<'py>(
-                     debug!("Running dispatcher");
-                     dispatcher.get_meta(py)?
-                 }
--                _ => unimplemented!("{} protocol not supported", protocol),
-+                _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                    protocol,
-+                    SourceType::MySQL,
-+                    &["binary", "text"]
-+                )),
-             }
-         }
-         SourceType::MsSQL => {
-@@ -230,6 +239,9 @@ pub fn get_meta<'py>(
-             );
-             dispatcher.get_meta(py)?
-         }
--        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
-+        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
-+            "{:?}",
-+            source_conn.ty
-+        ))),
+-use owning_ref::OwningHandle;
+ use rust_decimal::Decimal;
+ use sqlparser::dialect::MsSqlDialect;
+ use std::collections::HashMap;
+@@ -292,7 +292,7 @@ impl SourcePartition for MsSQLSourcePartition {
+     #[throws(MsSQLSourceError)]
+     fn parser<'a>(&'a mut self) -> Self::Parser<'a> {
+         let conn = self.rt.block_on(self.pool.get())?;
+-        let rows: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>> =
++        let rows: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>> =
+             OwningHandle::new_with_fn(Box::new(conn), |conn: *const Conn<'a>| unsafe {
+                 let conn = &mut *(conn as *mut Conn<'a>);
+ 
+@@ -317,7 +317,7 @@ impl SourcePartition for MsSQLSourcePartition {
+ 
+ pub struct MsSQLSourceParser<'a> {
+     rt: &'a Handle,
+-    iter: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>>,
++    iter: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>>,
+     rowbuf: Vec<Row>,
+     ncols: usize,
+     current_col: usize,
+@@ -328,7 +328,7 @@ pub struct MsSQLSourceParser<'a> {
+ impl<'a> MsSQLSourceParser<'a> {
+     fn new(
+         rt: &'a Handle,
+-        iter: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>>,
++        iter: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>>,
+         schema: &[MsSQLTypeSystem],
+     ) -> Self {
+         Self {
+```
+
+**File**: `connectorx/src/sources/oracle/mod.rs` (modified, +3/-3)
+```diff
+@@ -6,6 +6,7 @@ use std::collections::HashMap;
+ pub use self::errors::OracleSourceError;
+ pub use self::typesystem::OracleTypeSystem;
+ use crate::constants::{DB_BUFFER_SIZE, ORACLE_ARRAY_SIZE};
++use crate::utils::OwningHandle;
+ use crate::{
+     data_order::DataOrder,
+     errors::ConnectorXError,
+@@ -16,7 +17,6 @@ use crate::{
+ use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
+ use fehler::{throw, throws};
+ use log::debug;
+-use owning_ref::OwningHandle;
+ use r2d2::{Pool, PooledConnection};
+ use r2d2_oracle::oracle::ResultSet;
+ use r2d2_oracle::{
+@@ -302,7 +302,7 @@ unsafe impl<'a> Send for OracleTextSourceParser<'a> {}
+ 
+ /// Row parser for an Oracle partition.
+ pub struct OracleTextSourceParser<'a> {
+-    rows: OwningHandle<Box<Statement>, DummyBox<ResultSet<'a, Row>>>,
++    rows: OwningHandle<Statement, DummyBox<ResultSet<'a, Row>>>,
+     rowbuf: Vec<Row>,
+     ncols: usize,
+     current_col: usize,
+@@ -319,7 +319,7 @@ impl<'a> OracleTextSourceParser<'a> {
+             .prefetch_rows(ORACLE_ARRAY_SIZE)
+             .fetch_array_size(ORACLE_ARRAY_SIZE)
+             .build()?;
+-        let rows: OwningHandle<Box<Statement>, DummyBox<ResultSet<'a, Row>>> =
++        let rows: OwningHandle<Statement, DummyBox<ResultSet<'a, Row>>> =
+             OwningHandle::new_with_fn(Box::new(stmt), |stmt: *const Statement| unsafe {
+                 DummyBox((*(stmt as *mut Statement)).query(&[]).unwrap())
+             });
+```
+
+**File**: `connectorx/src/sources/sqlite/mod.rs` (modified, +3/-3)
+```diff
+@@ -4,6 +4,7 @@ mod errors;
+ mod typesystem;
+ 
+ pub use self::errors::SQLiteSourceError;
++use crate::utils::OwningHandle;
+ use crate::{
+     data_order::DataOrder,
+     errors::ConnectorXError,
+@@ -16,7 +17,6 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+ use fallible_streaming_iterator::FallibleStreamingIterator;
+ use fehler::{throw, throws};
+ use log::debug;
+-use owning_ref::OwningHandle;
+ use r2d2::{Pool, PooledConnection};
+ use r2d2_sqlite::SqliteConnectionManager;
+ use rusqlite::{Row, Rows, Statement};
+@@ -260,7 +260,7 @@ unsafe impl<'a> Send for SQLiteSourcePartitionParser<'a> {}
+ 
+ /// Row parser for a SQLite partition.
+ pub struct SQLiteSourcePartitionParser<'a> {
+-    rows: OwningHandle<Box<Statement<'a>>, DummyBox<Rows<'a>>>,
++    rows: OwningHandle<Statement<'a>, DummyBox<Rows<'a>>>,
+     ncols: usize,
+     current_col: usize,
+     current_consumed: bool,
+@@ -280,7 +280,7 @@ impl<'a> SQLiteSourcePartitionParser<'a> {
+         // Safety: DummyBox borrows the on-heap stmt, which is owned by the OwningHandle.
+         // No matter how we move the owning handle (thus the Box<Statment>), the Statement
+         // keeps its address static on the heap, thus the borrow of MyRows keeps valid.
+-        let rows: OwningHandle<Box<Statement<'a>>, DummyBox<Rows<'a>>> =
++        let rows: OwningHandle<Statement<'a>, DummyBox<Rows<'a>>> =
+             OwningHandle::new_with_fn(Box::new(stmt), |stmt: *const Statement<'a>| unsafe {
+                 DummyBox((*(stmt as *mut Statement<'_>)).query([]).unwrap())
+             });
+```
+
+**File**: `connectorx/src/utils.rs` (modified, +112/-1)
+```diff
+@@ -1,4 +1,6 @@
++use std::mem::ManuallyDrop;
+ use std::ops::{Deref, DerefMut};
++use std::ptr::NonNull;
+ use url::{form_urlencoded, Url};
+ 
+ /// Remove the given parameters from a URL query, leaving every other parameter
+@@ -53,6 +55,71 @@ impl<T> DerefMut for DummyBox<T> {
      }
  }
-```
-
-**File**: `connectorx-python/src/pandas/mod.rs` (modified, +16/-4)
-```diff
-@@ -14,6 +14,7 @@ pub use self::transports::{
- };
- pub use self::typesystem::{PandasDType, PandasTypeSystem};
- use crate::errors::ConnectorXPythonError;
-+use connectorx::errors::ConnectorXOutError;
- use connectorx::source_router::{SourceConn, SourceType};
- use connectorx::sources::clickhouse::ClickHouseSource;
- use connectorx::sources::oracle::OracleSource;
-@@ -28,7 +29,7 @@ use connectorx::{
-     },
-     sql::CXQuery,
- };
--use fehler::throws;
-+use fehler::{throw, throws};
- use log::debug;
- use postgres::NoTls;
- use postgres_openssl::MakeTlsConnector;
-@@ -159,7 +160,11 @@ pub fn write_pandas<'a, 'py: 'a>(
-                     dispatcher.set_pre_execution_queries(pre_execution_queries);
-                     dispatcher.run(py)?
-                 }
--                _ => unimplemented!("{} protocol not supported", protocol),
-+                _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                    protocol,
-+                    SourceType::Postgres,
-+                    &["binary", "csv", "cursor", "simple"]
-+                )),
-             }
-         }
-         SourceType::SQLite => {
-@@ -200,7 +205,11 @@ pub fn write_pandas<'a, 'py: 'a>(
-                 dispatcher.set_pre_execution_queries(pre_execution_queries);
-                 dispatcher.run(py)?
-             }
--            _ => unimplemented!("{} protocol not supported", protocol),
-+            _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                protocol,
-+                SourceType::MySQL,
-+                &["binary", "text"]
-+            )),
-         },
-         SourceType::MsSQL => {
-             let rt = Arc::new(tokio::runtime::Runtime::new().expect("Failed to create runtime"));
-@@ -256,6 +265,9 @@ pub fn write_pandas<'a, 'py: 'a>(
-             );
-             dispatcher.run(py)?
-         }
--        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
-+        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
-+            "{:?}",
-+            source_conn.ty
-+        ))),
-     }
- }
-```
-
-**File**: `connectorx/src/errors.rs` (modified, +23/-0)
-```diff
-@@ -19,6 +19,17 @@ pub enum ConnectorXOutError {
-     #[error("Source {0} not supported.")]
-     SourceNotSupport(String),
  
-+    /// The source does not support the requested `protocol`.
-+    #[error("Protocol {protocol:?} is not supported for {db}; supported protocols: {supported}.")]
-+    ProtocolNotSupported {
-+        /// The protocol that was asked for.
-+        protocol: String,
-+        /// The source, e.g. `Postgres`.
-+        db: String,
-+        /// The protocols the source accepts, comma-separated.
-+        supported: String,
-+    },
++/// A heap-allocated owner together with a handle that borrows from it, such as a
++/// prepared statement and the row stream reading from it.
++///
++/// Replaces `owning_ref::OwningHandle` (RUSTSEC-2022-0040). That type keeps the
++/// owner in a `Box` while the handle borrows from it, which violates Rust's
++/// aliasing rules whenever the `Box` is moved. Here the owner is turned into a
++/// raw pointer with `Box::into_raw` for as long as the handle exists, so no
++/// `Box` claims unique access to it, and `Drop` frees the handle before the owner.
++///
++/// Like the original, it dereferences through the handle (`H::Target`).
++pub(crate) struct OwningHandle<O, H> {
++    handle: ManuallyDrop<H>,
++    owner: NonNull<O>,
++}
 +
-     /// I/O error.
-     #[error(transparent)]
-     IOError(#[from] std::io::Error),
-@@ -260,6 +271,18 @@ pub enum ConnectorXError {
-     Other(#[from] anyhow::Error),
- }
- 
-+impl ConnectorXOutError {
-+    /// The error for a `protocol` that source `db` (e.g. `SourceType::Postgres`)
-+    /// does not accept; `supported` lists the protocols it does.
-+    pub fn protocol_not_supported(protocol: &str, db: impl fmt::Debug, supported: &[&str]) -> Self {
-+        ConnectorXOutError::ProtocolNotSupported {
-+            protocol: protocol.to_string(),
-+            db: format!("{db:?}"),
-+            supported: supported.join(", "),
++impl<O, H> OwningHandle<O, H> {
++    /// Move `owner` to a stable heap address and build the handle from a pointer to it.
++    ///
++    /// `f` may turn the pointer into `&O` or `&mut O`; the owner stays alive, and
++    /// at the same address, until the returned value is dropped. If `f` panics, the
++    /// owner is leaked rather than freed.
++    pub(crate) fn new_with_fn<F>(owner: Box<O>, f: F) -> Self
++    where
++        F: FnOnce(*const O) -> H,
++    {
++        // SAFETY: `Box::into_raw` never returns null.
++        let owner = unsafe { NonNull::new_unchecked(Box::into_raw(owner)) };
++        let handle = f(owner.as_ptr());
++        Self {
++            handle: ManuallyDrop::new(handle),
++            owner,
 +        }
 +    }
 +}
 +
- impl ConnectorXError {
-     /// Build a [`ConnectorXError::CannotProduce`] for type `T`.
-     pub fn cannot_produce<T>(context: Option<String>) -> Self {
-```
-
-**File**: `connectorx/src/get_arrow.rs` (modified, +90/-4)
-```diff
-@@ -158,7 +158,11 @@ pub fn get_arrow(
-                     dispatcher.set_pre_execution_queries(pre_execution_queries);
-                     dispatcher.run()?;
-                 }
--                _ => unimplemented!("{} protocol not supported", protocol),
-+                _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                    protocol,
-+                    SourceType::Postgres,
-+                    &["binary", "csv", "cursor", "simple"]
-+                )),
-             }
-         }
-         #[cfg(feature = "src_mysql")]
-@@ -188,7 +192,11 @@ pub fn get_arrow(
-                 dispatcher.set_pre_execution_queries(pre_execution_queries);
-                 dispatcher.run()?;
-             }
--            _ => unimplemented!("{} protocol not supported", protocol),
-+            _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                protocol,
-+                SourceType::MySQL,
-+                &["binary", "text"]
-+            )),
-         },
-         #[cfg(feature = "src_sqlite")]
-         SourceType::SQLite => {
-@@ -389,7 +397,11 @@ pub fn new_record_batch_iter(
-                     let iter: Box<dyn RecordBatchIterator> = Box::new(batch_iter);
-                     return iter;
-                 }
--                _ => unimplemented!("{} protocol not supported", protocol),
-+                _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                    protocol,
-+                    SourceType::Postgres,
-+                    &["binary", "csv", "cursor"]
-+                )),
-             }
-         }
-         #[cfg(feature = "src_mysql")]
-@@ -425,7 +437,11 @@ pub fn new_record_batch_iter(
-                 let iter: Box<dyn RecordBatchIterator> = Box::new(batch_iter);
-                 return iter;
-             }
--            _ => unimplemented!("{} protocol not supported", protocol),
-+            _ => throw!(ConnectorXOutError::protocol_not_supported(
-+                protocol,
-+                SourceType::MySQL,
-+                &["binary", "text"]
-+            )),
-         },
-         #[cfg(feature = "src_sqlite")]
-         SourceType::SQLite => {
-@@ -498,3 +514,73 @@ pub fn new_record_batch_iter(
-         ))),
-     }
- }
++impl<O, H: Deref> Deref for OwningHandle<O, H> {
++    type Target = H::Target;
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::source_router::SourceConn;
-+
-+    /// Fails with the error for an unsupported `protocol`, before any
-+    /// connection is attempted (nothing listens on port 1).
-+    fn assert_protocol_rejected(url: &str, protocol: &str, db: &str, supported: &str) {
-+        let mut conn = SourceConn::try_from(url).unwrap();
-+        conn.set_protocol(protocol);
-+        let queries = [CXQuery::naked("SELECT 1")];
-+        let expected = format!(
-+            "Protocol \"{protocol}\" is not supported for {db}; supported protocols: {supported}."
-+        );
-+
-+        let err = get_arrow(&conn, None, &queries, None).err().unwrap();
-+        assert!(matches!(
-+            err,
-+            ConnectorXOutError::ProtocolNotSupported { .. }
-+        ));
-+        assert_eq!(err.to_string(), expected);
-+
-+        let err = new_record_batch_iter(&conn, None, &queries, 1024, None)
-+            .err()
-+            .unwrap();
-+        assert!(matches!(
-+            err,
-+            ConnectorXOutError::ProtocolNotSupported { .. }
-+        ));
-+        // The record batch iterator has no `simple` protocol for Postgres.
-+        assert!(err
-+            .to_string()
-+            .starts_with(&format!("Protocol \"{protocol}\"")));
-+    }
-+
-+    #[cfg(feature = "src_postgres")]
-+    #[test]
-+    fn unsupported_postgres_protocol_is_an_error() {
-+        assert_protocol_rejected(
-+            "postgresql://u:p@127.0.0.1:1/db",
-+            "text",
-+            "Postgres",
-+            "binary, csv, cursor, simple",
-+        );
-+    }
-+
-+    #[cfg(feature = "src_mysql")]
-+    #[test]
-+    fn unsupported_mysql_protocol_is_an_error() {
-+        assert_protocol_rejected(
-+            "mysql://u:p@127.0.0.1:1/db",
-+            "cursor",
-+            "MySQL",
-+            "binary, text",
-+        );
-+    }
-+
-+    #[test]
-+    fn unsupported_source_is_an_error() {
-+        let conn = SourceConn::try_from("nosuchdb://127.0.0.1:1/db").unwrap();
-+        let queries = [CXQuery::naked("SELECT 1")];
-+        let err = get_arrow(&conn, None, &queries, None).err().unwrap();
-+        assert_eq!(err.to_string(), "Source Unknown not supported.");
-+        let err = new_record_batch_iter(&conn, None, &queries, 1024, None)
-+            .err()
-+            .unwrap();
-+        assert_eq!(err.to_string(), "Source Unknown not supported.");
++    fn deref(&self) -> &Self::Target {
++        &self.handle
 +    }
 +}
-```
-
-**File**: `connectorx/src/partition.rs` (modified, +22/-2)
-```diff
-@@ -200,7 +200,10 @@ pub fn get_col_range(source_conn: &SourceConn, query: &str, col: &str) -> OutRes
-         SourceType::Trino => trino_get_partition_range(&source_conn.conn, query, col),
-         #[cfg(feature = "src_clickhouse")]
-         SourceType::ClickHouse => clickhouse_get_partition_range(&source_conn.conn, query, col),
--        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
-+        _ => Err(ConnectorXOutError::SourceNotSupport(format!(
-+            "{:?}",
-+            source_conn.ty
-+        ))),
-     }
- }
- 
-@@ -246,7 +249,10 @@ pub fn get_part_query(
-         SourceType::ClickHouse => {
-             single_col_partition_query(query, col, lower, upper, &ClickHouseDialect {})?
-         }
--        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
-+        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
-+            "{:?}",
-+            source_conn.ty
-+        ))),
-     };
-     CXQuery::Wrapped(query)
- }
-@@ -894,4 +900,18 @@ mod tests {
-             err
-         );
-     }
 +
-+    /// A source without partition support is an error, not a panic, both when
-+    /// the range has to be queried and when it is given.
-+    #[test]
-+    fn unsupported_source_is_an_error() {
-+        let conn = SourceConn::try_from("nosuchdb://127.0.0.1:1/db").unwrap();
-+
-+        let err = get_col_range(&conn, "SELECT * FROM t", "id").unwrap_err();
-+        assert_eq!(err.to_string(), "Source Unknown not supported.");
-+
-+        let part = PartitionQuery::new("SELECT * FROM t", "id", Some(0), Some(9), 2);
-+        let err = partition(&part, &conn).unwrap_err();
-+        assert_eq!(err.to_string(), "Source Unknown not supported.");
++impl<O, H: DerefMut> DerefMut for OwningHandle<O, H> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        &mut self.handle
 +    }
- }
++}
++
++impl<O, H> Drop for OwningHandle<O, H> {
++    fn drop(&mut self) {
++        // SAFETY: the handle may borrow from the owner, so drop it first. `owner`
++        // came from `Box::into_raw` in `new_with_fn` and is freed exactly once, here.
++        unsafe {
++            ManuallyDrop::drop(&mut self.handle);
++            drop(Box::from_raw(self.owner.as_ptr()));
++        }
++    }
++}
++
++// SAFETY: the value owns both the owner and the handle outright, as
++// `(Box<O>, H)` would; `NonNull` only opts out of these impls by default.
++unsafe impl<O: Send, H: Send> Send for OwningHandle<O, H> {}
++unsafe impl<O: Sync, H: Sync> Sync for OwningHandle<O, H> {}
++
+ #[cfg(feature = "dst_arrow")]
+ pub fn decimal_to_i128(mut v: rust_decimal::Decimal, scale: u32) -> anyhow::Result<i128> {
+     v.rescale(scale);
+@@ -71,9 +138,53 @@ pub fn decimal_to_i128(mut v: rust_decimal::Decimal, scale: u32) -> anyhow::Resu
+ 
+ #[cfg(test)]
+ mod tests {
+-    use super::remove_query_params;
++    use super::{remove_query_params, DummyBox, OwningHandle};
++    use std::cell::RefCell;
++    use std::rc::Rc;
+     use url::Url;
+ 
++    /// Records its name in `log` when dropped.
++    struct Noisy {
++        name: &'static str,
++        log: Rc<RefCell<Vec<&'static str>>>,
++    }
++
++    impl Drop for Noisy {
++        fn drop(&mut self) {
++            self.log.borrow_mut().push(self.name);
++        }
++    }
++
++    #[test]
++    fn owning_handle_borrows_owner_across_moves() {
++        let owner = Box::new(vec![1, 2, 3]);
++        let handle =
++            OwningHandle::new_with_fn(owner, |v: *const Vec<i32>| unsafe { DummyBox((*v).iter()) });
++        // Moving the handle must not invalidate the borrow of the owner.
++        let mut moved = handle;
++        assert_eq!(moved.next(), Some(&1));
++        let mut moved_again = moved;
++        assert_eq!(moved_again.next(), Some(&2));
++    }
++
++    #[test]
++    fn owning_handle_drops_handle_before_owner() {
++        let log = Rc::new(RefCell::new(Vec::new()));
++        let owner = Box::new(Noisy {
++            name: "owner",
++            log: log.clone(),
++        });
++        let handle_log = log.clone();
++        let handle = OwningHandle::new_with_fn(owner, move |_| {
++            DummyBox(Noisy {
++                name: "handle",
++                log: handle_log,
++            })
++        });
++        drop(handle);
++        assert_eq!(*log.borrow(), ["handle", "owner"]);
++    }
++
+     fn strip(uri: &str, params: &[&str]) -> String {
+         remove_query_params(&Url::parse(uri).unwrap(), params).to_string()
+     }
 ```
 
 ---
 
-### Incident Patch 2: `09860071` (2026-11-22)
-**Commit Message**: build(python): bump msgpack from 1.1.2 to 1.2.3 in /connectorx-python
+### Incident Patch 2: `afeac9ef` (2026-11-22)
+**Commit Message**: build(python): bump mssql-tds to 0.4.0 in connectorx-python/Cargo.lock
 
-Bumps [msgpack](https://github.com/msgpack/msgpack-python) from 1.1.2 to 1.2.3.
-- [Release notes](https://github.com/msgpack/msgpack-python/releases)
-- [Changelog](https://github.com/msgpack/msgpack-python/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/msgpack/msgpack-python/compare/v1.1.2...v1.2.3)
+connectorx-python has its own lockfile, so it has to follow the
+connectorx bump.
 
----
-updated-dependencies:
-- dependency-name: msgpack
-  dependency-version: 1.2.3
-  dependency-type: indirect
-...
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `connectorx-python/uv.lock` (modified, +84/-49)
+**File**: `connectorx-python/Cargo.lock` (modified, +30/-5)
 ```diff
-@@ -1309,55 +1309,90 @@ wheels = [
+@@ -1129,6 +1129,15 @@ dependencies = [
+  "hybrid-array",
+ ]
+ 
++[[package]]
++name = "block2"
++version = "0.6.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cdeb9d870516001442e364c5220d3574d2da8dc765554b4a617230d33fa58ef5"
++dependencies = [
++ "objc2",
++]
++
+ [[package]]
+ name = "bnum"
+ version = "0.13.0"
+@@ -4516,13 +4525,14 @@ dependencies = [
  
  [[package]]
- name = "msgpack"
--version = "1.1.2"
--source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/4d/f2/bfb55a6236ed8725a96b0aa3acbd0ec17588e6a2c3b62a93eb513ed8783f/msgpack-1.1.2.tar.gz", hash = "sha256:3b60763c1373dd60f398488069bcdc703cd08a711477b5d480eecc9f9626f47e", size = 173581, upload-time = "2025-10-08T09:15:56.596Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/2c/97/560d11202bcd537abca693fd85d81cebe2107ba17301de42b01ac1677b69/msgpack-1.1.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:2e86a607e558d22985d856948c12a3fa7b42efad264dca8a3ebbcfa2735d786c", size = 82271, upload-time = "2025-10-08T09:14:49.967Z" },
--    { url = "https://files.pythonhosted.org/packages/83/04/28a41024ccbd67467380b6fb440ae916c1e4f25e2cd4c63abe6835ac566e/msgpack-1.1.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:283ae72fc89da59aa004ba147e8fc2f766647b1251500182fac0350d8af299c0", size = 84914, upload-time = "2025-10-08T09:14:50.958Z" },
--    { url = "https://files.pythonhosted.org/packages/71/46/b817349db6886d79e57a966346cf0902a426375aadc1e8e7a86a75e22f19/msgpack-1.1.2-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:61c8aa3bd513d87c72ed0b37b53dd5c5a0f58f2ff9f26e1555d3bd7948fb7296", size = 416962, upload-time = "2025-10-08T09:14:51.997Z" },
--    { url = "https://files.pythonhosted.org/packages/da/e0/6cc2e852837cd6086fe7d8406af4294e66827a60a4cf60b86575a4a65ca8/msgpack-1.1.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:454e29e186285d2ebe65be34629fa0e8605202c60fbc7c4c650ccd41870896ef", size = 426183, upload-time = "2025-10-08T09:14:53.477Z" },
--    { url = "https://files.pythonhosted.org/packages/25/98/6a19f030b3d2ea906696cedd1eb251708e50a5891d0978b012cb6107234c/msgpack-1.1.2-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:7bc8813f88417599564fafa59fd6f95be417179f76b40325b500b3c98409757c", size = 411454, upload-time = "2025-10-08T09:14:54.648Z" },
--    { url = "https://files.pythonhosted.org/packages/b7/cd/9098fcb6adb32187a70b7ecaabf6339da50553351558f37600e53a4a2a23/msgpack-1.1.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:bafca952dc13907bdfdedfc6a5f579bf4f292bdd506fadb38389afa3ac5b208e", size = 422341, upload-time = "2025-10-08T09:14:56.328Z" },
--    { url = "https://files.pythonhosted.org/packages/e6/ae/270cecbcf36c1dc85ec086b33a51a4d7d08fc4f404bdbc15b582255d05ff/msgpack-1.1.2-cp311-cp311-win32.whl", hash = "sha256:602b6740e95ffc55bfb078172d279de3773d7b7db1f703b2f1323566b878b90e", size = 64747, upload-time = "2025-10-08T09:14:57.882Z" },
--    { url = "https://files.pythonhosted.org/packages/2a/79/309d0e637f6f37e83c711f547308b91af02b72d2326ddd860b966080ef29/msgpack-1.1.2-cp311-cp311-win_amd64.whl", hash = "sha256:d198d275222dc54244bf3327eb8cbe00307d220241d9cec4d306d49a44e85f68", size = 71633, upload-time = "2025-10-08T09:14:59.177Z" },
--    { url = "https://files.pythonhosted.org/packages/73/4d/7c4e2b3d9b1106cd0aa6cb56cc57c6267f59fa8bfab7d91df5adc802c847/msgpack-1.1.2-cp311-cp311-win_arm64.whl", hash = "sha256:86f8136dfa5c116365a8a651a7d7484b65b13339731dd6faebb9a0242151c406", size = 64755, upload-time = "2025-10-08T09:15:00.48Z" },
--    { url = "https://files.pythonhosted.org/packages/ad/bd/8b0d01c756203fbab65d265859749860682ccd2a59594609aeec3a144efa/msgpack-1.1.2-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:70a0dff9d1f8da25179ffcf880e10cf1aad55fdb63cd59c9a49a1b82290062aa", size = 81939, upload-time = "2025-10-08T09:15:01.472Z" },
--    { url = "https://files.pythonhosted.org/packages/34/68/ba4f155f793a74c1483d4bdef136e1023f7bcba557f0db4ef3db3c665cf1/msgpack-1.1.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:446abdd8b94b55c800ac34b102dffd2f6aa0ce643c55dfc017ad89347db3dbdb", size = 85064, upload-time = "2025-10-08T09:15:03.764Z" },
--    { url = "https://files.pythonhosted.org/packages/f2/60/a064b0345fc36c4c3d2c743c82d9100c40388d77f0b48b2f04d6041dbec1/msgpack-1.1.2-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:c63eea553c69ab05b6747901b97d620bb2a690633c77f23feb0c6a947a8a7b8f", size = 417131, upload-time = "2025-10-08T09:15:05.136Z" },
--    { url = "https://files.pythonhosted.org/packages/65/92/a5100f7185a800a5d29f8d14041f61475b9de465ffcc0f3b9fba606e4505/msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:372839311ccf6bdaf39b00b61288e0557916c3729529b301c52c2d88842add42", size = 427556, upload-time = "2025-10-08T09:15:06.837Z" },
--    { url = "https://files.pythonhosted.org/packages/f5/87/ffe21d1bf7d9991354ad93949286f643b2bb6ddbeab66373922b44c3b8cc/msgpack-1.1.2-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:2929af52106ca73fcb28576218476ffbb531a036c2adbcf54a3664de124303e9", size = 404920, upload-time = "2025-10-08T09:15:08.179Z" },
--    { url = "https://
+ name = "mssql-tds"
+-version = "0.3.0"
++version = "0.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
++checksum = "812c3993a5f6d98e14da9d8ab0bf9f9f536e49c18240f34af9bae301e4d35ae8"
+ dependencies = [
+  "async-trait",
+  "bigdecimal 0.4.11",
+  "bitflags 2.13.2",
++ "block2",
+  "byteorder",
+  "bytes",
+  "core-foundation 0.10.1",
+@@ -4792,6 +4802,15 @@ dependencies = [
+  "rustc-hash 2.1.3",
+ ]
+ 
++[[package]]
++name = "objc2"
++version = "0.6.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "08849bbd4767dfae9457696856ae1c84fe4e0281bbe4a7abff2d0e06fb7981f8"
++dependencies = [
++ "objc2-encode",
++]
++
+ [[package]]
+ name = "objc2-core-foundation"
+ version = "0.3.2"
+@@ -4801,6 +4820,12 @@ dependencies = [
+  "bitflags 2.13.2",
+ ]
+ 
++[[package]]
++name = "objc2-encode"
++version = "4.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ef25abbcd74fb2609453eb695bd2f860d389e457f67dc17cafc8b8cbc89d0c33"
++
+ [[package]]
+ name = "objc2-system-configuration"
+ version = "0.3.2"
+@@ -7114,7 +7139,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+ dependencies = [
+  "fastrand",
+- "getrandom 0.4.3",
++ "getrandom 0.3.4",
+  "once_cell",
+  "rustix 1.1.6",
+  "windows-sys 0.61.2",
+@@ -7641,7 +7666,7 @@ version = "2.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "86a801b3cea342a06d468c8710662aa29e5e05e4f5c0d62f00bbb7f2ad7941c2"
+ dependencies = [
+- "rand 0.10.4",
++ "rand 0.9.5",
+ ]
+ 
+ [[package]]
+@@ -7991,7 +8016,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 3: `3da1da57` (2026-11-22)
-**Commit Message**: build(python): bump tornado from 6.5.4 to 6.6.1 in /connectorx-python
+### Incident Patch 3: `1fc2ced4` (2026-11-22)
+**Commit Message**: Merge remote-tracking branch 'upstream/main' into fix/remove-owning-ref
 
-Bumps [tornado](https://github.com/tornadoweb/tornado) from 6.5.4 to 6.6.1.
-- [Changelog](https://github.com/tornadoweb/tornado/blob/master/docs/releases.rst)
-- [Commits](https://github.com/tornadoweb/tornado/compare/v6.5.4...v6.6.1)
+# Conflicts:
+#	connectorx-python/Cargo.lock
 
----
-updated-dependencies:
-- dependency-name: tornado
-  dependency-version: 6.6.1
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `connectorx-python/uv.lock` (modified, +46/-15)
+**File**: `connectorx-python/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -2611,21 +2611,52 @@ wheels = [
+@@ -24,7 +24,7 @@ itertools = "0.15"
+ lazy_static = "1.4"
+ libc = "0.2"
+ log = "0.4"
+-ndarray = "0.16"
++ndarray = "0.17"
+ numpy = {version = "0.29"}
+ openssl = {version = "0.10", features = ["vendored"]}
+ postgres = {version = "0.19", features = ["with-chrono-0_4", "with-uuid-1", "with-serde_json-1"]}
+```
+
+**File**: `connectorx-python/connectorx/tests/test_postgres.py` (modified, +3/-1)
+```diff
+@@ -1022,8 +1022,10 @@ def test_postgres_arrow_stream_invalid_url_raises() -> None:
+     # An invalid sslmode fails while parsing the connection string, before any
+     # network access, so this exercises the error path of new_record_batch_iter
+     # without a database. Before the fix this surfaced as a PanicException.
++    # tokio-postgres >= 0.7.18 reports "invalid connection string" without
++    # naming the parameter, so accept either wording.
+     bad_url = "postgresql://user:pass@127.0.0.1:1/db?sslmode=bogus"
+-    with pytest.raises(RuntimeError, match="sslmode"):
++    with pytest.raises(RuntimeError, match="sslmode|invalid connection string"):
+         read_sql(bad_url, "SELECT 1", return_type="arrow_stream")
  
- [[package]]
- name = "tornado"
--version = "6.5.4"
--source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/37/1d/0a336abf618272d53f62ebe274f712e213f5a03c0b2339575430b8362ef2/tornado-6.5.4.tar.gz", hash = "sha256:a22fa9047405d03260b483980635f0b041989d8bcc9a313f8fe18b411d84b1d7", size = 513632, upload-time = "2025-12-15T19:21:03.836Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/ab/a9/e94a9d5224107d7ce3cc1fab8d5dc97f5ea351ccc6322ee4fb661da94e35/tornado-6.5.4-cp39-abi3-macosx_10_9_universal2.whl", hash = "sha256:d6241c1a16b1c9e4cc28148b1cda97dd1c6cb4fb7068ac1bedc610768dff0ba9", size = 443909, upload-time = "2025-12-15T19:20:48.382Z" },
--    { url = "https://files.pythonhosted.org/packages/db/7e/f7b8d8c4453f305a51f80dbb49014257bb7d28ccb4bbb8dd328ea995ecad/tornado-6.5.4-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:2d50f63dda1d2cac3ae1fa23d254e16b5e38153758470e9956cbc3d813d40843", size = 442163, upload-time = "2025-12-15T19:20:49.791Z" },
--    { url = "https://files.pythonhosted.org/packages/ba/b5/206f82d51e1bfa940ba366a8d2f83904b15942c45a78dd978b599870ab44/tornado-6.5.4-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d1cf66105dc6acb5af613c054955b8137e34a03698aa53272dbda4afe252be17", size = 445746, upload-time = "2025-12-15T19:20:51.491Z" },
--    { url = "https://files.pythonhosted.org/packages/8e/9d/1a3338e0bd30ada6ad4356c13a0a6c35fbc859063fa7eddb309183364ac1/tornado-6.5.4-cp39-abi3-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:50ff0a58b0dc97939d29da29cd624da010e7f804746621c78d14b80238669335", size = 445083, upload-time = "2025-12-15T19:20:52.778Z" },
--    { url = "https://files.pythonhosted.org/packages/50/d4/e51d52047e7eb9a582da59f32125d17c0482d065afd5d3bc435ff2120dc5/tornado-6.5.4-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e5fb5e04efa54cf0baabdd10061eb4148e0be137166146fff835745f59ab9f7f", size = 445315, upload-time = "2025-12-15T19:20:53.996Z" },
--    { url = "https://files.pythonhosted.org/packages/27/07/2273972f69ca63dbc139694a3fc4684edec3ea3f9efabf77ed32483b875c/tornado-6.5.4-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:9c86b1643b33a4cd415f8d0fe53045f913bf07b4a3ef646b735a6a86047dda84", size = 446003, upload-time = "2025-12-15T19:20:56.101Z" },
--    { url = "https://files.pythonhosted.org/packages/d1/83/41c52e47502bf7260044413b6770d1a48dda2f0246f95ee1384a3cd9c44a/tornado-6.5.4-cp39-abi3-musllinux_1_2_i686.whl", hash = "sha256:6eb82872335a53dd063a4f10917b3efd28270b56a33db69009606a0312660a6f", size = 445412, upload-time = "2025-12-15T19:20:57.398Z" },
--    { url = "https://files.pythonhosted.org/packages/10/c7/bc96917f06cbee182d44735d4ecde9c432e25b84f4c2086143013e7b9e52/tornado-6.5.4-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:6076d5dda368c9328ff41ab5d9dd3608e695e8225d1cd0fd1e006f05da3635a8", size = 445392, upload-time = "2025-12-15T19:20:58.692Z" },
--    { url = "https://files.pythonhosted.org/packages/0c/1a/d7592328d037d36f2d2462f4bc1fbb383eec9278bc786c1b111cbbd44cfa/tornado-6.5.4-cp39-abi3-win32.whl", hash = "sha256:1768110f2411d5cd281bac0a090f707223ce77fd110424361092859e089b38d1", size = 446481, upload-time = "2025-12-15T19:21:00.008Z" },
--    { url = "https://files.pythonhosted.org/packages/d6/6d/c69be695a0a64fd37a97db12355a035a6d90f79067a3cf936ec2b1dc38cd/tornado-6.5.4-cp39-abi3-win_amd64.whl", hash = "sha256:fa07d31e0cd85c60713f2b995da613588aa03e1303d75705dca6af8babc18ddc", size = 446886, upload-time = "2025-12-15T19:21:01.287Z" },
--    { url = "https://files.pythonhosted.org/packages/50/49/8dc3fd90902f70084bd2cd059d576ddb4f8bb44c2c7c0e33a11422acb17e/tornado-6.5.4-cp39-abi3-win_arm64.whl", hash = "sha256:053e6e16701eb6cbe641f308f4c1a9541f91b6261991160391bfc342e8a551a1", size = 445910, upload-time = "2025-12-15T19:21:02.571Z" },
-+version = "6.6.1"
-+source = { registry = "https://pypi.org/simple" }
-+sdist = { url = "https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz", hash = "sha256:28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a", size = 623388, upload-time = "2026-11-09T21:09:22.71Z" }
-+wheels = [
-+    { url = "https://files.pythonhosted.org/packages/77/d3/ef3a4d38d1a72c52ad07483ed760dbb93027d28f19c3a2d98148abdd63e1/tornado-6.6.1-cp311-abi3-macosx_10_9_universal2.whl", hash = "sha256:a8d3e6acde5a80d13b13b5e4c7c226ca682f31d0a62b6c33cea038714bc2de1b", size = 533249, upload-time = "2026-11-09T21:08:22.475Z" },
-+    { url = "https://files.pythonhosted.org/packages/38/4d/c65ea949a3cdc185f1afac8c337074d4f2d029b48293d2db4d2c3dea4849/tornado-6.6.1-cp311-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:1b6ff57cc69b339f8feb9e7b567b0e0eacb16bfaf234159496623ef7a67ba640", size = 534470, upload-time = "2026-11-0
+ 
+```
+
+**File**: `connectorx/src/partition.rs` (modified, +1/-0)
+```diff
+@@ -1,4 +1,5 @@
+ use std::convert::TryFrom;
++#[cfg(feature = "src_clickhouse")]
+ use std::sync::Arc;
+ 
+ use crate::errors::{ConnectorXOutError, OutResult};
+```
+
+**File**: `connectorx/tests/test_db.rs` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++// Shared by every integration test binary via `mod test_db;`. Each binary only
++// uses the helpers for its own database, so the rest look unused per binary.
++#![allow(dead_code, unused_imports)]
++
+ use std::{
+     env, fs,
+     net::{SocketAddr, TcpStream, ToSocketAddrs},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1101** (2026-11-22): ci: speed up CI by fixing cache keys and parallelising the rust job (@tschm)
-- **PR #1099** (2026-11-22): build(python): combine dependabot bumps (#1094, #1095, #1097, #1098) (@tschm)
-- **PR #1098** (closed): build(python): bump fsspec from 2026.2.0 to 2026.6.0 in /connectorx-python (@dependabot[bot])
-- **PR #1097** (closed): build(python): bump msgpack from 1.1.2 to 1.2.3 in /connectorx-python (@dependabot[bot])
-- **PR #1096** (2026-11-22): build(python): bump tornado from 6.5.4 to 6.6.1 in /connectorx-python (@dependabot[bot])
-- **PR #1095** (closed): chore(python): bump black from 21.12b0 to 26.10.1 in /connectorx-python (@dependabot[bot])
+- **PR #1122** (2026-11-22): fix(build): target macOS 10.15 so mssql-tds 0.4 builds on Intel Macs (@tschm)
+- **PR #1121** (2026-11-22): fix(rust): silence warnings in single-source connectorx builds (@tschm)
+- **PR #1119** (2026-11-22): fix(rust): replace owning_ref with an internal OwningHandle (@tschm)
+- **PR #1118** (2026-11-22): fix(rust): silence unused-code warnings in connectorx builds (@tschm)
+- **PR #1115** (2026-11-22): build(rust): bump ndarray to 0.17 in connectorx-python (@tschm)
+- **PR #1114** (closed): build(rust): update connectorx-python Cargo.lock (@tschm)
 
 ---
 
@@ -1296,66 +1452,3 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. return an error instead of panicking on an unsupported protocol
-
-**RULE**:
-When implementing operations in `connectorx-python/connectorx/tests/test_errors.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `fbfaeb99`: return an error instead of panicking on an unsupported protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/connectorx/tests/test_errors.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-"""Errors raised for bad arguments, before any database is contacted."""
-
-import pytest
-
-import connectorx as cx
-
-# Nothing listens on port 1: the protocol is rejected before connecting.
-POSTGRES_URL = "postgresql://user:pass@127.0.0.1:1/db"
-MYSQL_URL = "mysql://user:pass@127.0.0.1:1/db"
-
-
-@pytest.mark.parametrize("return_type", ["pandas", "arrow", "polars", "arrow_stream"])
-def test_unsupported_postgres_protocol_raises(return_type: str) -> None:
-    if return_type == "polars":
-        pytest.importorskip("polars")
-    with pytest.raises(
-        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
-    ):
-        cx.read_sql(POSTGRES_URL, "SELECT 1", protocol="text", return_type=return_type)
-
-
-@pytest.mark.parametrize("return_type", ["pandas", "arrow"])
-def test_unsupported_mysql_protocol_raises(return_type: str) -> None:
-    with pytest.raises(
-        RuntimeError,
-        match=r'Protocol "cursor" is not supported for MySQL; supported protocols: binary, text',
-    ):
-        cx.read_sql(MYSQL_URL, "SELECT 1", protocol="cursor", return_type=return_type)
-
-
-def test_unsupported_protocol_in_get_meta_raises() -> None:
-    with pytest.raises(
-        RuntimeError, matc
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbfaeb99` are properly handled with clean fallback behavior.

@@ -12373,3 +12373,6 @@
 | `CYCLE-20261123-NJL6` | `2026-11-23T16:36:55.914Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`ba60c8bb...`) |
 | `CYCLE-20261123-NSE0` | `2026-11-23T16:37:07.320Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10067` | Yes (`f7994762...`) |
 | `CYCLE-20261123-NUL6` | `2026-11-23T16:37:10.170Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10068` | Yes (`70b959fd...`) |
+| `CYCLE-20261123-XHWA` | `2026-11-23T16:44:40.282Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`f3871d0b...`) |
+| `CYCLE-20261123-XTC8` | `2026-11-23T16:44:55.112Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`14785e23...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T16:45:21.959Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A12E1C8` [Domain D] | Yes (`0b0ce833...`) |

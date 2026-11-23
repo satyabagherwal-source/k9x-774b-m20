@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:37:16.114Z",
+  "last_updated": "2026-11-23T16:45:23.280Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T16:28:52.270Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-23T16:11:55.311Z",
+      "processed_at": "2026-11-23T16:45:22.511Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2613,7 +2613,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md": {
-      "processed_at": "2026-11-19T04:13:33.232Z",
+      "processed_at": "2026-11-23T16:44:58.122Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3088,9 +3088,9 @@
       "staged_for_review": 0
     },
     "sfu-db-connector-x-learnings.md": {
-      "processed_at": "2026-11-22T11:35:15.824Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-23T16:45:21.959Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "metrolistgroup-metrolist-learnings.md": {
       "processed_at": "2026-11-21T07:59:01.205Z",
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3435,
-  "total_canonical_promoted": 486,
-  "total_staged_for_review": 2578
+  "total_dossiers_evaluated": 3438,
+  "total_canonical_promoted": 487,
+  "total_staged_for_review": 2580
 }

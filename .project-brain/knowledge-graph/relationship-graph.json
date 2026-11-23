@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-23T15:38:08.303Z",
+  "updated_at": "2026-11-23T16:45:21.957Z",
   "statistics": {
-    "total_nodes": 484,
+    "total_nodes": 485,
     "total_edges": 203,
     "domain_distribution": {
-      "D": 296,
+      "D": 297,
       "M": 1,
       "H": 86,
       "J": 22,
@@ -10813,6 +10813,28 @@
       ],
       "created_at": "2026-11-23T15:38:08.303Z",
       "updated_at": "2026-11-23T15:38:08.303Z"
+    },
+    "DOM-D-9A12E1C8": {
+      "id": "DOM-D-9A12E1C8",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): sfu-db/connector-x",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  \n> **Source**: github ([https://github.com/sfu-db/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  \n> **Source**: github ([https://github.com/sfu-db/",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://sfu-db-connector-x/sfu-db-connector-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T16:44:58.448Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sfu-db-connector-x)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-23T16:45:21.957Z",
+      "updated_at": "2026-11-23T16:45:21.957Z"
     }
   },
   "edges": [

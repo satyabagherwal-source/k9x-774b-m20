@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T16:37:15.967Z",
+  "last_updated": "2026-11-23T16:45:23.137Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4e8205740deec31f531199431f3efea8b5182740a0c699865ea4a5da1a98b9e",
+      "content_hash": "65a194e7ff3a93e914817f09ae079101e5b3da2eee10c818bcbc3314d85570d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T16:11:55.890Z"
+      "persisted_at": "2026-11-23T16:45:22.966Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5b30422972618e569c06564f633ef8ca7b8b38c7f0c658b36de16d201ee5cc5",
+      "content_hash": "fb9247afa3f41aeb974ce842d220bf16318fcb913c5b1a3bb31c041d0dfd74bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:11:56.114Z"
+      "persisted_at": "2026-11-23T16:45:23.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215610,13 +215610,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc5e3e30511634bf3235025eae645581536037318c9036d3f2050d20b9be0d23",
+      "content_hash": "73de42d2bc127f938bd9e4a3f20fef0bc85c428951840e99555e4df7c44ad905",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:31:37.422Z"
+      "persisted_at": "2026-11-23T16:44:58.312Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -231867,7 +231867,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
+      "content_hash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [],
@@ -231876,7 +231876,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:08:17.052Z",
+      "verified_at": "2026-11-23T16:44:40.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231893,9 +231893,9 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 Core Invariants",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "7b1e4ee6a34f96b3068f6480e81870e592b7ce32b88fc106753cc82ee9441c68",
+      "content_hash": "117801a89f6b3f6df6fff99b15e20bf9d93515f2eb914f845cc5c7755cd20c57",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T04:08:17.425Z"
+      "persisted_at": "2026-11-23T16:44:40.483Z"
     },
     "learn-github-codewhale-hq-codewhale": {
       "learning_id": "learn-github-codewhale-hq-codewhale",
@@ -252895,8 +252895,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "4a7baf31",
-      "content_hash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
+      "source_version": "580a386f",
+      "content_hash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -252926,7 +252926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:35:11.314Z",
+      "verified_at": "2026-11-23T16:44:54.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252994,10 +252994,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sfu-db-connector-x-technical-construction-intelligence-sfu-db-connector-x-core-i.md",
       "title": "Technical Construction Intelligence: sfu-db/connector-x Core Invariants",
       "repository": "sfu-db/connector-x",
-      "source_version": "ac243a1b",
-      "content_hash": "5971c2a0d84eb5e2882dd74306334377d2ea40491dc462510a4d044fe525067a",
+      "source_version": "580a386f",
+      "content_hash": "def7a2ca9ab699081bd6dcb5965b3e7745ae12fe97d41fa3f3357f2db6f976cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:39:59.059Z"
+      "persisted_at": "2026-11-23T16:44:55.318Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-sfu-db-connector-x": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-sfu-db-connector-x",
@@ -253043,9 +253043,9 @@
       "title": "Technical Construction Intelligence: sfu-db-connector-x-learnings Core Invariants",
       "repository": "sfu-db-connector-x-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f1d6a92a8a30818b58b917e2e1e3ca27834fe6b1beab09811123772a3dccd2e",
+      "content_hash": "18b7ed82b787756280246837f2b469aad4c5a414ff1b3ad802ae89790d7bbc30",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:41:17.626Z"
+      "persisted_at": "2026-11-23T16:45:22.291Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-sfu-db-connector-x-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-sfu-db-connector-x-learnings",
@@ -319042,13 +319042,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RDZJ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YEP4-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "179a631b72319cf581e74ad0d69a71f0b11fb9ca166653ba190af13136b02dbf",
+      "content_hash": "e1fd34e12ba14c76f714ba9343472b80d43533bc7bde76a5b6e4817e46988d0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:11:55.669Z"
+      "persisted_at": "2026-11-23T16:45:22.805Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

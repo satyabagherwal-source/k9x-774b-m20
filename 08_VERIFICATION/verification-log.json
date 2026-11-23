@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-4GHM",
-    "timestamp": "2026-11-21T16:18:44.986Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4RSK",
-    "timestamp": "2026-11-21T16:18:59.636Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-KQVT",
     "timestamp": "2026-11-21T16:31:24.953Z",
     "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -7492,6 +7462,36 @@
     "contentHash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-XHWA",
+    "timestamp": "2026-11-23T16:44:40.282Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-XTC8",
+    "timestamp": "2026-11-23T16:44:55.112Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
