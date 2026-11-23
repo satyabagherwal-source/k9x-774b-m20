@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T18:50:49.782Z",
+  "last_updated": "2026-11-23T19:01:02.253Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
-      "verified_at": "2026-11-19T08:28:38.997Z",
+      "content_hash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
+      "verified_at": "2026-11-23T19:00:45.205Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T08:28:38.997Z"
+      "last_updated": "2026-11-23T19:00:45.205Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
-      "verified_at": "2026-11-23T15:04:35.796Z",
+      "content_hash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
+      "verified_at": "2026-11-23T19:00:59.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:04:35.796Z"
+      "last_updated": "2026-11-23T19:00:59.599Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
-      "verified_at": "2026-11-22T16:48:20.954Z",
+      "content_hash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
+      "verified_at": "2026-11-23T19:01:02.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:48:20.954Z"
+      "last_updated": "2026-11-23T19:01:02.252Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T18:50:56.207Z",
-  "total_records": 2439,
+  "last_updated": "2026-11-23T19:01:44.468Z",
+  "total_records": 2442,
   "domains": {
     "A": {
       "total": 20,
@@ -1119,7 +1119,7 @@
       ]
     },
     "G": {
-      "total": 425,
+      "total": 427,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1545,7 +1545,9 @@
         "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
         "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants",
+        "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -2135,7 +2137,7 @@
       ]
     },
     "I": {
-      "total": 136,
+      "total": 137,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2272,7 +2274,8 @@
         "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",
         "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants",
-        "DOM-I-981FC0DE"
+        "DOM-I-981FC0DE",
+        "DOM-I-B48272D1"
       ]
     },
     "J": {
@@ -8182,8 +8185,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "16dd3631c0c25823cbed0f74e919a1268c2786a39a8e50bc87db8a52ace343ff",
-      "created_at": "2026-11-23T15:04:36.355Z"
+      "content_hash": "5eb4f4d02b70d4bd9b5b3e265aa7362d035000ed194d59636f5b386d4fec1198",
+      "created_at": "2026-11-23T19:01:00.105Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8200,8 +8203,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "03d381200cbc646cf38b2538b187914b92e4023cab1d0cbbfdeac74127ce9121",
-      "created_at": "2026-11-23T15:04:40.972Z"
+      "content_hash": "9beeed964738780776bd082d209ddd1c868ef2774509e4643923f408503dbb8e",
+      "created_at": "2026-11-23T19:01:43.402Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -17705,8 +17708,8 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-research-knowledge-intelligence-cactus-compute-whistle.md",
       "repository": "Cactus-Compute/whistle",
-      "content_hash": "d7c2b2ecdb212bc7238886194a360aff7f328224a1414007ef12eea52ade752d",
-      "created_at": "2026-11-19T08:28:39.242Z"
+      "content_hash": "d6d13c48e5ce294fa41a09142803c71e8453aa43ec46214d6a1a29364194e32d",
+      "created_at": "2026-11-23T19:00:45.490Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
@@ -17765,8 +17768,8 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-learnings-research-knowledge-intelligence-hf-cactus-co.md",
       "repository": "hf-cactus-compute-whistle-learnings",
-      "content_hash": "0d6cc096327601a95ec5f587f6e64da807c923b596682a0c8bccbf9f0b008f89",
-      "created_at": "2026-11-19T08:37:48.381Z"
+      "content_hash": "40bfd51ef4d46a8e77056a43766f5b766d940117072d61c5aae11d5579af1178",
+      "created_at": "2026-11-23T19:01:06.224Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -40941,6 +40944,58 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T18:41:37.232Z"
+    },
+    "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ydb-platform/ydb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ydb-platform-ydb-architecture-intelligence-ydb-platform-ydb-core-invariants.md",
+      "repository": "ydb-platform/ydb",
+      "content_hash": "3550c73c3bdf0ad2c9619816d3531ddc6870a9f7ebd85f2bb698bd152ea2dde9",
+      "created_at": "2026-11-23T19:01:02.785Z"
+    },
+    "DOM-I-B48272D1": {
+      "record_id": "DOM-I-B48272D1",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "`0`: Configure the IP tracing option type This option is used to specify the IP opti",
+      "content": "Configure the IP tracing option type. This option is used to specify the IP option type to use for tracing. The value must be an integer between 0 and 255. @schema type: [null, integer] minimum: 0 maximum: 255 @schema",
+      "content_hash": "6c51491f08949e425e9d7aa2723df6d4aad869e36349480258e04da6481e7acb",
+      "summary": "Configure the IP tracing option type. This option is used to specify the IP option type to use for tracing. The value must be an integer bet -> Configure the IP tracing option type. This option is used to specify the IP option type to use for tracing. The value must be an integer bet",
+      "provenance": {
+        "source_uri": "project://cilium-cilium/cilium-cilium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "bpf.monitorTraceIPOption",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cilium-cilium)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of cilium-cilium"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T19:01:42.772Z"
+    },
+    "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ydb-platform-ydb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ydb-platform-ydb-learnings-architecture-intelligence-ydb-platform-ydb-learnings-.md",
+      "repository": "ydb-platform-ydb-learnings",
+      "content_hash": "6fdc975f69dc8e9b2530a57b5ea99ac2b4924340ced8989e4d4ebfcff31b60f4",
+      "created_at": "2026-11-23T19:01:44.468Z"
     }
   }
 }

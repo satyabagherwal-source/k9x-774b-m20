@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
-    "lastHarvestedAt": "2026-11-19T08:28:38.987Z",
+    "contentHash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
+    "lastHarvestedAt": "2026-11-23T19:00:45.194Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "ed48557d",
+    "sourceVersion": "1e538a99",
     "license": "Apache-2.0",
-    "contentHash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
-    "lastHarvestedAt": "2026-11-23T15:04:35.784Z",
+    "contentHash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
+    "lastHarvestedAt": "2026-11-23T19:00:59.589Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "ac73d368",
+    "sourceVersion": "4f5b8781",
     "license": "Apache-2.0",
-    "contentHash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
-    "lastHarvestedAt": "2026-11-22T16:48:20.946Z",
+    "contentHash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
+    "lastHarvestedAt": "2026-11-23T19:01:02.242Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

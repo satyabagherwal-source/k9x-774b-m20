@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:50:56.636Z",
+  "last_updated": "2026-11-23T19:01:44.921Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T18:32:33.917Z",
@@ -398,8 +398,8 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-23T15:04:40.319Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-23T19:01:42.819Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
@@ -843,7 +843,7 @@
       "staged_for_review": 1
     },
     "ydb-platform-ydb-learnings.md": {
-      "processed_at": "2026-11-20T07:15:04.852Z",
+      "processed_at": "2026-11-23T19:01:43.882Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2703,7 +2703,7 @@
       "staged_for_review": 1
     },
     "hf-cactus-compute-whistle-learnings.md": {
-      "processed_at": "2026-11-19T08:37:48.122Z",
+      "processed_at": "2026-11-23T19:01:05.934Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3480,
-  "total_canonical_promoted": 488,
-  "total_staged_for_review": 2609
+  "total_dossiers_evaluated": 3483,
+  "total_canonical_promoted": 489,
+  "total_staged_for_review": 2611
 }

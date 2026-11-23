@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Cactus-Compute/whistle",
   "source_version": "hf-cactus-compute-whistle",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T08:28:39.241Z",
+  "timestamp": "2026-11-23T19:00:45.489Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-cactus-compute-whistle",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T08:28:39.241Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T19:00:45.489Z`  
 > **Learning ID**: `learn-huggingface-cactus-compute-whistle`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T08:27:31.990Z  
+> **Harvest Timestamp**: 2026-11-23T19:00:43.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 92625 downloads | 582 likes
+- **Stars / Engagement**: 84798 downloads | 586 likes
 
 ---
 

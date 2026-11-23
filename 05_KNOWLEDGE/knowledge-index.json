@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T18:50:56.439Z",
+  "last_updated": "2026-11-23T19:01:44.718Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24111,
+  "total_items": 24118,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "ed48557d",
-      "content_hash": "16dd3631c0c25823cbed0f74e919a1268c2786a39a8e50bc87db8a52ace343ff",
+      "source_version": "1e538a99",
+      "content_hash": "5eb4f4d02b70d4bd9b5b3e265aa7362d035000ed194d59636f5b386d4fec1198",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T15:04:36.355Z"
+      "persisted_at": "2026-11-23T19:01:00.105Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "ed48557d",
-      "content_hash": "f1cb8efc8efe944c52230064c79ddeab8625a873eec57cfef9f56d21b6d10929",
+      "source_version": "1e538a99",
+      "content_hash": "ea36a3e197b1c26629f4d2851d7b7aa1fbf028ee9dc849b94884c7d2782f6a7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:04:36.636Z"
+      "persisted_at": "2026-11-23T19:01:00.328Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "03d381200cbc646cf38b2538b187914b92e4023cab1d0cbbfdeac74127ce9121",
+      "content_hash": "9beeed964738780776bd082d209ddd1c868ef2774509e4643923f408503dbb8e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T15:04:40.972Z"
+      "persisted_at": "2026-11-23T19:01:43.402Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc0b68c7d0a5b71e139e62b4d19bc73fcdca148956c85a542c2030a67a1ab1da",
+      "content_hash": "676df483489d9e331fd431c8a2b12b514b69e9f1ee6bc0244c10bb6c4890b38b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:04:41.221Z"
+      "persisted_at": "2026-11-23T19:01:43.645Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214272,8 +214272,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "ed48557d",
-      "content_hash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
+      "source_version": "1e538a99",
+      "content_hash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214376,6 +214376,11 @@
           "number": 10057,
           "title": "linux/node: reconcile encapsulation change",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10096,
+          "title": "Introduce netdevTracing value for trace-netdev flag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214383,7 +214388,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:04:35.484Z",
+      "verified_at": "2026-11-23T19:00:59.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236063,8 +236068,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "ac73d368",
-      "content_hash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
+      "source_version": "4f5b8781",
+      "content_hash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -236097,6 +236102,11 @@
           "number": 9956,
           "title": "[Disable PG] Opt the replication writer PostgreSQL fixture into compatibility",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10097,
+          "title": "durable cleanup of stale incremental restore records",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236104,7 +236114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:48:20.739Z",
+      "verified_at": "2026-11-23T19:01:01.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236158,10 +236168,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "ac73d368",
-      "content_hash": "e7df26eca8509c3a35d717c1c1d533a37f174eb8f801a64f3be2266cf826f36e",
+      "source_version": "4f5b8781",
+      "content_hash": "4ce71d206e8182aa81f457161b9879d4415220be49be51241f81f8973e8d8c8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:48:21.487Z"
+      "persisted_at": "2026-11-23T19:01:03.006Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -236556,7 +236566,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
+      "content_hash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [],
@@ -236565,7 +236575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T08:28:38.730Z",
+      "verified_at": "2026-11-23T19:00:44.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236582,9 +236592,9 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "repository": "Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "d7c2b2ecdb212bc7238886194a360aff7f328224a1414007ef12eea52ade752d",
+      "content_hash": "d6d13c48e5ce294fa41a09142803c71e8453aa43ec46214d6a1a29364194e32d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T08:28:39.242Z"
+      "persisted_at": "2026-11-23T19:00:45.490Z"
     },
     "learn-github-hashicorp-terraform": {
       "learning_id": "learn-github-hashicorp-terraform",
@@ -236712,9 +236722,9 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "repository": "hf-cactus-compute-whistle-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d6cc096327601a95ec5f587f6e64da807c923b596682a0c8bccbf9f0b008f89",
+      "content_hash": "40bfd51ef4d46a8e77056a43766f5b766d940117072d61c5aae11d5579af1178",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T08:37:48.381Z"
+      "persisted_at": "2026-11-23T19:01:06.224Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -255473,9 +255483,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d42d662cdc9bc8de5d21b53427f5c2f816e5a9fedb2fcb22ab18364cd62577e2",
+      "content_hash": "b192d1043eaf5951d7859bee031bc7cfce129e466209f58bf5badd802567156d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:15:05.320Z"
+      "persisted_at": "2026-11-23T19:01:44.718Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -328597,6 +328607,94 @@
       "content_hash": "9b7b0f22c5ff14ac0119d34f37f7b2177dacd95053001f73953188b853b60fae",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T18:50:54.889Z"
+    },
+    "rule-10096": {
+      "learning_id": "rule-10096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10096,
+      "title": "Introduce netdevTracing value for trace-netdev flag",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "1e538a99",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:00:59.307Z"
+    },
+    "candidate_directive-introduce-netdevtracing-value-for-trace-netdev-flag": {
+      "item_id": "candidate_directive-introduce-netdevtracing-value-for-trace-netdev-flag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-STBC-introduce-netdevtracing-value-for-trace-netdev-flag.md",
+      "title": "Introduce netdevTracing value for trace-netdev flag",
+      "repository": "cilium/cilium",
+      "source_version": "1e538a99",
+      "content_hash": "409c51782b614e1d612112a56f384c3bc918127fb564cdd4e52a24d01a1ebcbb",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-23T19:00:59.882Z"
+    },
+    "rule-10097": {
+      "learning_id": "rule-10097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10097,
+      "title": "durable cleanup of stale incremental restore records",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "4f5b8781",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:01:01.965Z"
+    },
+    "candidate_directive-durable-cleanup-of-stale-incremental-restore-records": {
+      "item_id": "candidate_directive-durable-cleanup-of-stale-incremental-restore-records",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TRIQ-durable-cleanup-of-stale-incremental-restore-records.md",
+      "title": "durable cleanup of stale incremental restore records",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8068617c8484c99762f73cc2e0d28bec3057505afe5f748130d56348ae24c16a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T19:01:44.221Z"
+    },
+    "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ydb-platform-ydb-architecture-intelligence-ydb-platform-ydb-core-invariants.md",
+      "title": "Architecture Intelligence: ydb-platform/ydb Core Invariants",
+      "repository": "ydb-platform/ydb",
+      "source_version": "4f5b8781",
+      "content_hash": "3550c73c3bdf0ad2c9619816d3531ddc6870a9f7ebd85f2bb698bd152ea2dde9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T19:01:02.785Z"
+    },
+    "candidate_directive-helm-introduce-netdevtracing-value-for-trace-netdev-flag": {
+      "item_id": "candidate_directive-helm-introduce-netdevtracing-value-for-trace-netdev-flag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TQP8-helm-introduce-netdevtracing-value-for-trace-netdev-flag.md",
+      "title": "helm: Introduce netdevTracing value for trace-netdev flag",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d7ec0bb5b4ace09142a3426ad3d46fc4a8cb6f42538495d052cc714e38c12a1",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-23T19:01:43.148Z"
+    },
+    "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ydb-platform-ydb-learnings-architecture-intelligence-ydb-platform-ydb-learnings-.md",
+      "title": "Architecture Intelligence: ydb-platform-ydb-learnings Core Invariants",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6fdc975f69dc8e9b2530a57b5ea99ac2b4924340ced8989e4d4ebfcff31b60f4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T19:01:44.468Z"
     }
   },
   "ai-builder-brain": {

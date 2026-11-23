@@ -12423,3 +12423,7 @@
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T18:41:37.261Z` | `nginx-kubernetes-ingress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-981FC0DE` [Domain I] | Yes (`db407240...`) |
 | `CYCLE-20261123-FAVS` | `2026-11-23T18:50:29.464Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`ec981d46...`) |
 | `CYCLE-20261123-FQJQ` | `2026-11-23T18:50:49.766Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10095` | Yes (`b978da91...`) |
+| `CYCLE-20261123-SHZ9` | `2026-11-23T19:00:45.189Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`15111f8c...`) |
+| `CYCLE-20261123-ST34` | `2026-11-23T19:00:59.584Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10096` | Yes (`093f93d7...`) |
+| `CYCLE-20261123-SV4T` | `2026-11-23T19:01:02.237Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10097` | Yes (`ea29664a...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T19:01:42.819Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-B48272D1` [Domain I] | Yes (`6c51491f...`) |

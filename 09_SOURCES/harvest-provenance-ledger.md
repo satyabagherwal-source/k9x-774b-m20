@@ -12456,3 +12456,7 @@ Every entry in this ledger must capture:
 | `learn-dom-i-981fc0de` | `project://nginx-kubernetes-ingress` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | 2026-11-23T18:41:37.261Z |
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-23T18:50:29.469Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `b26b87f9` | Multi-dimensional audit evidence | 2026-11-23T18:50:49.771Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-23T19:00:45.194Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1e538a99` | Multi-dimensional audit evidence | 2026-11-23T19:00:59.589Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `4f5b8781` | Multi-dimensional audit evidence | 2026-11-23T19:01:02.242Z |
+| `learn-dom-i-b48272d1` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-23T19:01:42.819Z |

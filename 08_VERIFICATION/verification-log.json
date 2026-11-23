@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-X3FX",
-    "timestamp": "2026-11-21T20:24:58.029Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-X93A",
-    "timestamp": "2026-11-21T20:25:05.351Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-BVGN",
-    "timestamp": "2026-11-21T20:36:27.527Z",
-    "repository": "LiquidAI/LFM3-VL-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-C6EG",
     "timestamp": "2026-11-21T20:36:41.704Z",
     "repository": "Mintplex-Labs/anything-llm",
@@ -7490,6 +7445,51 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-SHZ9",
+    "timestamp": "2026-11-23T19:00:45.189Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ST34",
+    "timestamp": "2026-11-23T19:00:59.584Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "093f93d763f2dd3cf4d7e2a3a16aea0367ce1edc6a2aba9b78276de48ed3be26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-SV4T",
+    "timestamp": "2026-11-23T19:01:02.237Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
