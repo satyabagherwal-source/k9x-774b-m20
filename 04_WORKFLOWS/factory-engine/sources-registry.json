@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T19:51:26.317Z",
-    "lastVerified": "2026-11-23T19:51:26.317Z",
+    "lastChecked": "2026-11-23T20:00:22.781Z",
+    "lastVerified": "2026-11-23T20:00:22.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -160,9 +160,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-23T16:02:56.499Z",
+    "lastChecked": "2026-11-23T19:59:35.259Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-23T16:02:56.499Z"
+    "lastVerified": "2026-11-23T19:59:35.259Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -187,8 +187,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T19:26:16.999Z",
-    "lastVerified": "2026-11-23T19:26:16.999Z",
+    "lastChecked": "2026-11-23T19:59:40.252Z",
+    "lastVerified": "2026-11-23T19:59:40.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1227,8 +1227,8 @@
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-22T19:01:38.273Z",
-    "lastVerified": "2026-11-22T19:01:38.273Z",
+    "lastChecked": "2026-11-23T19:59:32.748Z",
+    "lastVerified": "2026-11-23T19:59:32.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -6683,9 +6683,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-22T18:00:26.549Z",
+    "lastChecked": "2026-11-23T19:59:37.824Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-22T18:00:26.549Z"
+    "lastVerified": "2026-11-23T19:59:37.824Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -7538,22 +7538,21 @@
     "lastVerified": "2026-11-22T20:09:06.469Z"
   },
   "jhspetersson-fselect": {
-    "name": "fselect",
+    "name": "jhspetersson/fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:22:31.505Z",
-    "lastVerified": "2026-11-22T08:22:31.505Z",
+    "lastChecked": "2026-11-23T19:59:28.589Z",
+    "lastVerified": "2026-11-23T19:59:28.589Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "233f776a37987403468addf159b8d0eb51bd2dfab8bbd543de82b21c7239bca8",
+    "contentHash": "3d6e2921e64843afba526910b44b5294b602163272e8edeb1f1900634f2962ad",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "234f8b7b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -7870,12 +7869,12 @@
     "lastVerified": "2026-11-22T09:47:23.945Z"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
-    "name": "Qwen/Qwen-Image-2.1-Turbo",
+    "name": "Qwen-Image-2.1-Turbo",
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T11:50:26.094Z",
-    "lastVerified": "2026-11-19T11:50:26.094Z",
+    "lastChecked": "2026-11-23T19:59:27.683Z",
+    "lastVerified": "2026-11-23T19:59:27.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
@@ -7884,7 +7883,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "hf-qwen-qwen"
   },
   "linkwarden-linkwarden": {
     "name": "linkwarden",
@@ -11188,9 +11188,9 @@
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",
     "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
-    "lastChecked": "2026-11-20T20:57:44.794Z",
+    "lastChecked": "2026-11-23T19:59:30.251Z",
     "revisionIdentifier": "0ced68b2",
-    "lastVerified": "2026-11-20T20:57:44.794Z"
+    "lastVerified": "2026-11-23T19:59:30.251Z"
   },
   "rdfjs-n3.js": {
     "name": "N3.js",

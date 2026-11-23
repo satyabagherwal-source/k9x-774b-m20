@@ -12478,3 +12478,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-23T19:51:12.477Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `ac734972` | Multi-dimensional audit evidence | 2026-11-23T19:51:15.444Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `23cefad9` | Multi-dimensional audit evidence | 2026-11-23T19:51:23.132Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `42d1f169` | Multi-dimensional audit evidence | 2026-11-23T20:00:19.584Z |

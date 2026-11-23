@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:51:23.137Z",
-  "total_cycles_completed": 11834,
-  "total_learnings_persisted": 11834,
-  "total_rules_promoted": 10949,
+  "last_updated": "2026-11-23T20:00:19.589Z",
+  "total_cycles_completed": 11835,
+  "total_learnings_persisted": 11835,
+  "total_rules_promoted": 10950,
   "history": [
-    {
-      "timestamp": "2026-11-22T23:57:22.926Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T23:57:25.528Z",
       "repository": "skyhook-io/radar",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-23T19:51:23.137Z",
       "repository": "flux-iac/tofu-controller",
       "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:00:19.589Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

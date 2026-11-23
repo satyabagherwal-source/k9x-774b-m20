@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:57:29.048Z",
+  "timestamp": "2026-11-23T20:00:23.073Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-jhspetersson-fselect-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jhspetersson-fselect-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:57:29.048Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:00:23.073Z`  
 > **Learning ID**: `LEARN-EVO-jhspetersson-fselect-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `234f8b7b`  
+> **Source Version**: `42d1f169`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:57:13.824Z  
+> **Timestamp**: 2026-11-23T20:00:18.570Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:57:13.583Z  
+> **Harvest Timestamp**: 2026-11-23T19:59:28.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4476 stars
+- **Stars / Engagement**: 4478 stars
 
 ---
 
@@ -598,64 +598,49 @@ mod tests {
 
 ### Core Architecture Module: `src/util/capabilities.rs`
 ```
-macro_rules! check_cap {
-    ($cap_name: ident, $code: expr, $permitted: ident, $inherited: ident, $effective: ident, $result: ident) => {
-        if let Some(str_result) = check_capability($permitted, $inherited, 1 << $code) {
-            $result.push(stringify!($cap_name).to_owned() + "=" + &$effective + &str_result);
-        }
-    };
-}
-
-macro_rules! check_caps_word_0 {
-    ($permitted: ident, $inherited: ident, $effective: ident, $result: ident) => {
-        check_cap!(cap_chown, 0, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_dac_override, 1, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_dac_read_search, 2, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_fowner, 3, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_fsetid, 4, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_kill, 5, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_setgid, 6, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_setuid, 7, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_setpcap, 8, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_linux_immutable, 9, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_net_bind_service, 10, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_net_broadcast, 11, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_net_admin, 12, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_net_raw, 13, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_ipc_lock, 14, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_ipc_owner, 15, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_module, 16, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_rawio, 17, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_chroot, 18, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_ptrace, 19, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_pacct, 20, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_admin, 21, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_boot, 22, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_nice, 23, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_resource, 24, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_time, 25, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_sys_tty_config, 26, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_mknod, 27, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_lease, 28, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_audit_write, 29, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_audit_control, 30, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_setfcap, 31, $permitted, $inherited, $effective, $result);
-    };
-}
-
-macro_rules! check_caps_word_1 {
-    ($permitted: ident, $inherited: ident, $effective: ident, $result: ident) => {
-        check_cap!(cap_mac_override, 0, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_mac_admin, 1, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_syslog, 2, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_wake_alarm, 3, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_block_suspend, 4, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_audit_read, 5, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_perfmon, 6, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_bpf, 7, $permitted, $inherited, $effective, $result);
-        check_cap!(cap_checkpoint_restore, 8, $permitted, $inherited, $effective, $result);
-    };
-}
+const CAP_NAMES: [&str; 41] = [
+    "cap_chown",
+    "cap_dac_override",
+    "cap_dac_read_search",
+    "cap_fowner",
+    "cap_fsetid",
+    "cap_kill",
+    "cap_setgid",
+    "cap_setuid",
+    "cap_setpcap",
+    "cap_linux_immutable",
+    "cap_net_bind_service",
+    "cap_net_broadcast",
+    "cap_net_admin",
+    "cap_net_raw",
+    "cap_ipc_lock",
+    "cap_ipc_owner",
+    "cap_sys_module",
+    "cap_sys_rawio",
+    "cap_sys_chroot",
+    "cap_sys_ptrace",
+    "cap_sys_pacct",
+    "cap_sys_admin",
+    "cap_sys_boot",
+    "cap_sys_nice",
+    "cap_sys_resource",
+    "cap_sys_time",
+    "cap_sys_tty_config",
+    "cap_mknod",
+    "cap_lease",
+    "cap_audit_write",
+    "cap_audit_control",
+    "cap_setfcap",
+    "cap_mac_override",
+    "cap_mac_admin",
+    "cap_syslog",
+    "cap_wake_alarm",
+    "cap_block_suspend",
+    "cap_audit_read",
+    "cap_perfmon",
+    "cap_bpf",
+    "cap_checkpoint_restore",
+];
 
 const VFS_CAP_REVISION_MASK: u32 = 0xFF000000;
 const VFS_CAP_REVISION_1: u32 = 0x01000000;
@@ -666,84 +651,64 @@ const XATTR_CAPS_SZ_1: usize = 12; // 4 (magic) + 4 (permitted) + 4 (inherited)
 const XATTR_CAPS_SZ_2: usize = 20; // 4 (magic) + 2 * (4 (permitted) + 4 (inherited))
 const XATTR_CAPS_SZ_3: usize = 24; // v2 + 4 (rootid)
 
+pub fn read_capabilities(path: &std::path::Path) -> Result<Option<Vec<u8>>, std::io::Error> {
+    xattr::get(path, "security.capability")
+}
+
 pub fn parse_capabilities(caps: Vec<u8>) -> String {
     if caps.len() < 4 {
         return String::new();
     }
 
-    let magic_etc = u32::from_le_bytes(caps[0..4].try_into().unwrap());
-    let revision = magic_etc & VFS_CAP_REVISION_MASK;
+    let word = |index: usize| u32::from_le_bytes(caps[index * 4..index * 4 + 4].try_into().unwrap());
+    let magic_etc = word(0);
+    let effective = if magic_etc & VFS_CAP_FLAGS_EFFECTIVE != 0 { "e" } else { "" };
 
-    let effective = if magic_etc & VFS_CAP_FLAGS_EFFECTIVE != 0 {
-        String::from("e")
-    } else {
-        String::new()
+    let (permitted, inherited, rootid) = match magic_etc & VFS_CAP_REVISION_MASK {
+        VFS_CAP_REVISION_1 if caps.len() >= XATTR_CAPS_SZ_1 => (word(1) as u64, word(2) as u64, 0),
+        VFS_CAP_REVISION_2 | VFS_CAP_REVISION_3 if caps.len() >= XATTR_CAPS_SZ_2 => (
+            word(1) as u64 | (word(3) as u64) << 32,
+            word(2) as u64 | (word(4) as u64) << 32,
+            if caps.len() >= XATTR_CAPS_SZ_3 { word(5) } else { 0 },
+        ),
+        _ => return String::new(),
     };
 
     let mut result: Vec<String> = vec![];
 
-    match revision {
-        VFS_CAP_REVISION_1 => {
-            if caps.len() < XATTR_CAPS_SZ_1 {
-                return String::new();
-            }
-
-            let permitted = u32::from_le_bytes(caps[4..8].try_into().unwrap());
-            let inherited = u32::from_le_bytes(caps[8..12].try_into().unwrap());
-
-            check_caps_word_0!(permitted, inherited, effective, result);
+    for bit in 0..64 {
+        let flags = match (permitted >> bit & 1, inherited >> bit & 1) {
+            (1, 1) => "ip",
+            (1, 0) => "p",
+            (0, 1) => "i",
+            _ => continue,
+        };
+        match CAP_NAMES.get(bit) {
+            Some(name) => result.push(format!("{}={}{}", name, effective, flags)),
+            None => result.push(format!("{}={}{}", bit, effective, flags)),
         }
-        VFS_CAP_REVISION_2 | VFS_CAP_REVISION_3 => {
-            // v2 (20 bytes) and v3 (24 bytes with rootid) share the data layout
-            if caps.len() < XATTR_CAPS_SZ_2 {
-                return String::new();
-            }
+    }
 
-            let permitted = u32::from_le_bytes(caps[4..8].try_into().unwrap());
-            let inherited = u32::from_le_bytes(caps[8..12].try_into().unwrap());
+    if result.is_empty() {
+        result.push(String::from("="));
+    }
 
-            check_caps_word_0!(permitted, inherited, effective, result);
-
-            let permitted = u32::from_le_bytes(caps[12..16].try_into().unwrap());
-            let inherited = u32::from_le_bytes(caps[16..20].try_into().unwrap());
-
-            check_caps_word_1!(permitted, inherited, effective, result);
-
-            // v3 has a rootid (namespace owner UID) appended
-            if caps.len() >= XATTR_CAPS_SZ_3 {
-                let rootid = u32::from_le_bytes(caps[20..24].try_into().unwrap());
-                if rootid != 0 {
-                    result.push(format!("[rootid={}]", rootid));
-                }
-            }
-        }
-        _ => return String::new(),
+    if rootid != 0 {
+        result.push(format!("[rootid={}]", rootid));
     }
 
     result.join(" ")
 }
 
-fn check_capability(perm: u32, inh: u32, cap: u32) -> Option<String> {
-    if inh & cap == cap && perm & cap == cap {
-        Some(String::from("ip"))
-    } else if perm & cap == cap {
-        Some(String::from("p"))
-    } else if inh & cap == cap {
-        Some(String::from("i"))
-    } else {
-        None
-    }
-}
-
-/// Check if a capabilities string contains a specific capability by exact name match.
-/// The capabilities string is space-separated entries like "cap_net_bind_service=ep cap_net_admin=ep".
 pub fn has_capability(caps_string: &str, cap_name: &str) -> bool {
-    caps_string.split_whitespace().any(|entry| {
-        match entry.find('=') {
-            Some(idx) => &entry[..idx] == cap_name,
-            None => entry == cap_name,
-        }
-    })
+    !cap_name.is_empty()
+        && caps_string.split_whitespace().any(|entry| {
+            entry.split('=').next().is_some_and(|name| {
+                name.eq_ignore_ascii_case(cap_name)
+                    || name.get(..4).is_some_and(|prefix| prefix.eq_ignore_ascii_case("cap_"))
+                        && name[4..].eq_ignore_ascii_case(cap_name)
+            })
+        })
 }
 
 #[cfg(test)]
@@ -813,6 +778,54 @@ mod tests {
     fn test_has_capability_single() {
         assert!(has_capability("cap_sys_admin=ep", "cap_sys_admin"));
         assert!(!has_capability("cap_sys_admin=ep", "cap_sys"));
+    }
+
+    #[test]
+    fn test_parse_reports_unknown_bits_by_number() {
+        let mut blob = v2_blob(VFS_CAP_FLAGS_EFFECTIVE, 1 << 13, 0);
+        blob[12..16].copy_from_slice(&(1u32 << 20).to_le_bytes());
+        assert_eq!(parse_capabilities(blob), "cap_net_raw=ep 52=ep");
+    }
+
+    #[test]
+    fn test_parse_empty_set_like_libcap() {
+        assert_eq!(parse_capabilities(v2_blob(0, 0, 0)), "=");
+        assert_eq!(parse_capabilities(v2_blob(VFS_CAP_FLAGS_EFFECTIVE, 0, 0)), "=");
+        assert!(!has_capability("=", ""));
+        assert!(!has_capability("=", "cap_chown"));
+    }
+
+    #[test]
+    fn test_parse_mixed_flags_and_second_word() {
+        let mut blob = v2_blob(VFS_CAP_FLAGS_EFFECTIVE, 1 << 5 | 1 << 13, 1 | 1 << 5);
+        blob[12..16].copy_from_slice(&(1u32 << 8).to_le_bytes());
+        assert_eq!(
+            parse_capabilities(blob),
+            "cap_chown=ei cap_kill=eip cap_net_raw=ep cap_checkpoint_restore=ep"
+        );
+    }
+
+    #[test]
+    fn test_parse_v1_blob() {
+        let mut blob = Vec::new();
+        blob.extend_from_slice(&(VFS_CAP_REVISION_1 | VFS_CAP_FLAGS_EFFECTIVE).to_le_bytes());
+        blob.extend_from_slice(&(1u32 << 13).to_le_bytes());
+        blob.extend_from_slice(&0u32.to_le_bytes());
+        assert_eq!(parse_capabilities(blob), "cap_net_raw=ep");
+    }
+
+    #[test]
+    fn test_has_capability_ignores_case() {
+        assert!(has_capability("cap_net_raw=ep 52=ep", "CAP_NET_RAW"));
+        assert!(has_capability("cap_net_raw=ep 52=ep", "52"));
+    }
+
+    #[test]
+    fn test_has_capability_accepts_names_without_prefix() {
+        assert!(has_capability("cap_net_raw=ep cap_chown=p", "net_raw"));
+        assert!(has_capability("cap_net_raw=ep cap_chown=p", "CHOWN"));
+        assert!(!has_capability("cap_net_raw=ep", "net"));
+        assert!(!has_capability("cap_net_raw=ep", "raw"));
     }
 }
 
@@ -1427,36 +1440,22 @@ mod test {
 
 ### Core Architecture Module: `src/util/dimensions/mp4.rs`
 ```
-use std::fs::File;
 use std::io;
-use std::io::BufReader;
 use std::path::Path;
 
 use crate::util::dimensions::DimensionsExtractor;
+use crate::util::mp4::{is_mp4_ext, read_mp4_info};
 use crate::util::Dimensions;
 
 pub struct Mp4DimensionsExtractor;
 
 impl DimensionsExtractor for Mp4DimensionsExtractor {
     fn supports_ext(&self, ext_lowercase: &str) -> bool {
-        // All ISO-BMFF containers mp4parse reads.
-        matches!(ext_lowercase, "mp4" | "m4v" | "mov" | "3gp")
+        is_mp4_ext(ext_lowercase)
     }
 
     fn try_read_dimensions(&self, path: &Path) -> io::Result<Option<Dimensions>> {
-        let fd = File::open(path)?;
-        let mut reader = BufReader::new(fd);
-        let context = mp4parse::read_mp4(&mut reader)?;
-        Ok(context
-            .tracks
-            .iter()
-            .find(|track| track.track_type == mp4parse::TrackType::Video)
-            .and_then(|track| {
-                track.tkhd.as_ref().map(|tkhd| Dimensions {
-                    width: (tkhd.width / 65536) as usize,
-                    height: (tkhd.height / 65536) as usize,
-                })
-            }))
+        read_mp4_info(path).map(|info| info.dimensions)
     }
 }
 
@@ -1508,117 +1507,148 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `234f8b7b` (2026-11-20)
-**Commit Message**: fix boolean comparisons and HAVING parsing
+### Incident Patch 1: `c51c84d3` (2026-11-22)
+**Commit Message**: fix stale absolute paths after cd and skip unused fallback hashes
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `src/field/mod.rs` (modified, +1/-1)
 ```diff
-@@ -42,6 +42,8 @@
- - A relative date such as `1 year ago` no longer fails when it lands in January
- - A date with non-ASCII letters (`2024é`) is rejected instead of crashing
- - `2 days ago` and similar day offsets keep the time of day across a daylight saving change
-+- Comparing a boolean with a number gives the same result in either order (`is_file = size` and `size = is_file`); the boolean counts as 1 or 0
-+- `HAVING` reads a computed right-hand operand as a number, date or boolean the same way `WHERE` does
+@@ -11,7 +11,7 @@ mod metadata_handlers;
+ mod mode_handlers;
+ mod path_handlers;
  
- ## [0.10.4] - 2026-10-23
+-pub use path_handlers::own_absolute_path;
++pub use path_handlers::{forget_canonical_dir, own_absolute_path};
  
+ use std::fmt::Display;
+ use std::fmt::Error;
 ```
 
-**File**: `src/searcher.rs` (modified, +34/-2)
+**File**: `src/field/path_handlers.rs` (modified, +24/-0)
 ```diff
-@@ -3225,8 +3225,10 @@ impl<'a> Searcher<'a> {
-     }
+@@ -85,6 +85,10 @@ fn canonical_dir(dir: &Path) -> Result<PathBuf, String> {
+     })
+ }
  
-     fn compare_variants(&mut self, op: &Op, field_value: &Variant, value: &Variant) -> Result<bool, SearchError> {
--        if *field_value.get_type() == VariantType::String
--            && *value.get_type() != VariantType::String
-+        let numeric_against_bool = *field_value.get_type() == VariantType::Bool
-+            && matches!(value.get_type(), VariantType::Int | VariantType::Float);
-+        if ((*field_value.get_type() == VariantType::String && *value.get_type() != VariantType::String)
-+            || numeric_against_bool)
-             && let Some(mirrored) = op.mirrored()
-         {
-             return self.compare_variants(&mirrored, value, field_value);
-@@ -3422,6 +3424,7 @@ impl<'a> Searcher<'a> {
-                 row, right_expr,
-             )?;
-             let field_value = Self::retype_value(left_expr, right_expr, field_value);
-+            let value = if right_expr.is_literal() { value } else { Self::retype_value(left_expr, right_expr, value) };
-             if op.is_relational()
-                 && (Self::is_null_operand(left_expr, &field_value) || Self::is_null_operand(right_expr, &value))
-             {
-@@ -8032,6 +8035,35 @@ mod tests {
-         assert!(searcher.compare_variants(&Op::Gt, &two, &Variant::from_string(&String::from("10"))).unwrap());
++pub fn forget_canonical_dir() {
++    CANONICAL_DIR.with(|cache| cache.borrow_mut().take());
++}
++
+ pub fn own_absolute_path(entry: &std::fs::DirEntry) -> Result<PathBuf, String> {
+     let path = entry.path();
+     match path.parent() {
+@@ -231,6 +235,26 @@ mod tests {
+         let _ = fs::remove_dir_all(&tmp);
      }
  
 +    #[test]
-+    fn compare_variants_treats_a_boolean_as_a_number_on_either_side() {
-+        let mut searcher = create_test_searcher();
-+        let yes = Variant::from_bool(true);
-+        let no = Variant::from_bool(false);
-+        let ops = [Op::Eq, Op::Ne, Op::Eeq, Op::Ene, Op::Gt, Op::Gte, Op::Lt, Op::Lte];
++    fn forgetting_the_canonical_dir_forces_a_fresh_canonicalization() {
++        let tmp = std::env::temp_dir().join("fselect_test_abspath_forget");
++        let _ = fs::remove_dir_all(&tmp);
++        fs::create_dir_all(&tmp).unwrap();
++        fs::write(tmp.join("f.txt"), "x").unwrap();
++        let entry = fs::read_dir(&tmp).unwrap().next().unwrap().unwrap();
 +
-+        for number in [Variant::from_int(0), Variant::from_int(1), Variant::from_int(2), Variant::from_float(1.0), Variant::from_float(0.5)] {
-+            for flag in [&yes, &no] {
-+                for op in ops {
-+                    let mirrored = op.mirrored().unwrap();
-+                    assert_eq!(
-+                        searcher.compare_variants(&op, flag, &number).unwrap(),
-+                        searcher.compare_variants(&mirrored, &number, flag).unwrap(),
-+                        "{:?} {:?} {:?}",
-+                        flag.to_string(),
-+                        op,
-+                        number.to_string()
-+                    );
-+                }
-+            }
++        let before = super::canonicalize_calls();
++        field_value(&entry, None, &tmp, &Field::AbsPath);
++        field_value(&entry, None, &tmp, &Field::AbsPath);
++        assert_eq!(super::canonicalize_calls() - before, 1);
++
++        super::forget_canonical_dir();
++        field_value(&entry, None, &tmp, &Field::AbsPath);
++        assert_eq!(super::canonicalize_calls() - before, 2);
++
++        let _ = fs::remove_dir_all(&tmp);
++    }
++
+     #[cfg(unix)]
+     #[test]
+     fn abspath_of_a_symlink_still_resolves_to_its_target() {
+```
+
+**File**: `src/main.rs` (modified, +1/-1)
+```diff
+@@ -189,7 +189,7 @@ fn main() -> ExitCode {
+                                     Some(new_path) => {
+                                         let _ = rl.add_history_entry(&cmd);
+                                         match env::set_current_dir(new_path) {
+-                                            Ok(()) => {}
++                                            Ok(()) => crate::field::forget_canonical_dir(),
+                                             Err(err) => error_message("cd", &err.to_string()),
+                                         }
+                                     }
+```
+
+**File**: `src/searcher.rs` (modified, +42/-7)
+```diff
+@@ -590,19 +590,37 @@ impl<'a> Searcher<'a> {
+     fn hashes_computed_together(query: &Query) -> Vec<HashAlgorithm> {
+         let filtered: HashSet<Field> = query.expr.as_ref().map(|expr| expr.get_required_fields()).unwrap_or_default();
+         let mut planned = vec![];
++        let mut fields = vec![];
+         for column_expr in &query.fields {
+-            for field in column_expr.get_required_fields() {
+-                if let Some(algorithm) = HashAlgorithm::of_field(&field)
+-                    && !filtered.contains(&field)
+-                    && !planned.contains(&algorithm)
+-                {
+-                    planned.push(algorithm);
+-                }
++            Self::collect_always_evaluated_fields(column_expr, &mut fields);
 +        }
-+        assert!(searcher.compare_variants(&Op::Eq, &yes, &Variant::from_int(1)).unwrap());
-+        assert!(!searcher.compare_variants(&Op::Eq, &yes, &Variant::from_int(2)).unwrap());
-+        assert!(searcher.compare_variants(&Op::Lt, &yes, &Variant::from_int(2)).unwrap());
-+        assert!(searcher.compare_variants(&Op::Eq, &no, &Variant::from_float(0.0)).unwrap());
-+        assert!(!searcher.compare_variants(&Op::Eq, &yes, &no).unwrap());
++        for field in fields {
++            if let Some(algorithm) = HashAlgorithm::of_field(&field)
++                && !filtered.contains(&field)
++                && !planned.contains(&algorithm)
++            {
++                planned.push(algorithm);
+             }
+         }
+         planned
+     }
+ 
++    fn collect_always_evaluated_fields(expr: &Expr, fields: &mut Vec<Field>) {
++        if expr.op.is_some() || expr.logical_op.is_some() {
++            return;
++        }
++        fields.extend(expr.field);
++        if expr.function == Some(function::Function::Coalesce) {
++            if let Some(ref first) = expr.left {
++                Self::collect_always_evaluated_fields(first, fields);
++            }
++            return;
++        }
++        for child in expr.children() {
++            Self::collect_always_evaluated_fields(child, fields);
++        }
++    }
++
+     fn unsortable_grouped_ordering(&self) -> Option<&Expr> {
+         if !self.query.is_aggregated() || self.query.grouping_fields.is_empty() {
+             return None;
+@@ -4440,6 +4458,23 @@ mod tests {
+         assert_eq!(rows, vec![String::from("-3\t-3\t5\t-5\t1")]);
+     }
+ 
++    #[test]
++    fn only_hashes_certain_to_be_evaluated_are_computed_together() {
++        use crate::lexer::Lexer;
++        use crate::parser::Parser;
++
++        let planned = |query: &str| {
++            let mut lexer = Lexer::new(vec![query.to_string()]);
++            let parsed = Parser::new(&mut lexer).parse(false).expect("parse failed");
++            Searcher::hashes_computed_together(&parsed)
++        };
++        assert_eq!(planned("select sha1, sha3 from /test"), vec![HashAlgorithm::Sha1, HashAlgorithm::Sha3]);
++        assert_eq!(planned("select coalesce(sha1, sha3) from /test"), vec![HashAlgorithm::Sha1]);
++        assert_eq!(planned("select coalesce(sha1, sha3), upper(sha3) from /test"), vec![HashAlgorithm::Sha1, HashAlgorithm::Sha3]);
++        assert_eq!(planned("select coalesce(name, sha1), sha256 from /test"), vec![HashAlgorithm::Sha256]);
++        assert_eq!(planned("select sha1, sha3 from /test where sha1 like 'a%'"), vec![HashAlgorithm::Sha3]);
 +    }
 +
      #[test]
-     fn outer_fields_used_only_in_an_inner_select_list_are_captured() {
+     fn subquery_with_correlated_from_subselect_is_not_cacheable() {
          use crate::lexer::Lexer;
-```
-
-**File**: `tests/grouping.rs` (modified, +28/-0)
-```diff
-@@ -549,3 +549,31 @@ fn grouping_reuses_compound_alias_values_where_already_evaluated() {
-         assert!(result.1.starts_with("true\t"), "{}", result.1);
-     }
- }
-+
-+#[test]
-+fn boolean_and_numeric_operands_compare_the_same_in_either_order() {
-+    let dir = std::env::temp_dir().join("fselect_it_grouping_boolean_numeric_order");
-+    let _ = fs::remove_dir_all(&dir);
-+    fs::create_dir_all(&dir).unwrap();
-+    for (name, size) in [("a.txt", 2), ("b.txt", 1), ("c.txt", 0)] {
-+        fs::write(dir.join(name), "x".repeat(size)).unwrap();
-+    }
-+    let root = dir.display();
-+
-+    let columns = fselect(&format!("select name, is_file = size, size = is_file from {root} order by name"));
-+    let left = fselect(&format!("select name from {root} where is_file = size order by name"));
-+    let right = fselect(&format!("select name from {root} where size = is_file order by name"));
-+    let having_left = fselect(&format!(
-+        "select is_file, count(*) from {root} group by is_file having is_file = coalesce(max(width), '1.0')"
-+    ));
-+    let having_right = fselect(&format!(
-+        "select is_file, count(*) from {root} group by is_file having coalesce(max(width), '1.0') = is_file"
-+    ));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    assert_eq!(columns.1, "a.txt\tfalse\tfalse\nb.txt\ttrue\ttrue\nc.txt\tfalse\tfalse\n", "{}", columns.2);
-+    assert_eq!(left.1, "b.txt\n", "{}", left.2);
-+    assert_eq!(right.1, "b.txt\n", "{}", right.2);
-+    assert_eq!(having_left.1, "true\t3\n", "{}", having_left.2);
-+    assert_eq!(having_right.1, "true\t3\n", "{}", having_right.2);
-+}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1647,32 +1677,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. boolean comparisons and HAVING parsing
+## X. stale absolute paths after cd and skip unused fallback hashes
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/field/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `234f8b7b`: boolean comparisons and HAVING parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c51c84d3`: stale absolute paths after cd and skip unused fallback hashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/field/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Comparing a boolean with a number gives the same result in either order (`is_file = size` and `size = is_file`); the boolean counts as 1 or 0
-- `HAVING` reads a computed right-hand operand as a number, date or boolean the same way `WHERE` does
+pub use path_handlers::{forget_canonical_dir, own_absolute_path};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+pub use path_handlers::own_absolute_path;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `234f8b7b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c51c84d3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

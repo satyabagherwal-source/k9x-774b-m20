@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-11-23T19:51:19.309Z",
+  "lastUpdated": "2026-11-23T19:59:27.723Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:06.459Z",
+        "lastActiveAt": "2026-11-23T19:59:22.725Z",
         "lastHarvestedAt": "2026-11-23T14:21:03.629Z",
         "totalHarvested": 1169,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:09.025Z",
+        "lastActiveAt": "2026-11-23T19:59:25.335Z",
         "lastHarvestedAt": "2026-11-18T05:10:32.382Z",
         "totalHarvested": 1437,
         "lastError": null
@@ -208,27 +208,27 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:18.614Z",
-        "lastHarvestedAt": "2026-11-23T19:51:18.614Z",
-        "totalHarvested": 2593,
+        "lastActiveAt": "2026-11-23T20:00:22.778Z",
+        "lastHarvestedAt": "2026-11-23T20:00:22.778Z",
+        "totalHarvested": 2594,
         "lastError": null
       },
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:15.365Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-11-23T20:14:27.726Z",
+        "lastActiveAt": "2026-11-23T19:59:27.536Z",
         "lastHarvestedAt": "2026-11-23T19:51:15.365Z",
         "totalHarvested": 7007,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:14.162Z",
+        "lastActiveAt": "2026-11-23T19:59:30.255Z",
         "lastHarvestedAt": "2026-11-23T17:29:42.081Z",
         "totalHarvested": 2301,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:26.314Z",
+        "lastActiveAt": "2026-11-23T19:59:32.752Z",
         "lastHarvestedAt": "2026-11-23T19:51:26.314Z",
         "totalHarvested": 2364,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:19.109Z",
+        "lastActiveAt": "2026-11-23T19:59:35.264Z",
         "lastHarvestedAt": "2026-11-23T19:43:06.660Z",
         "totalHarvested": 1819,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:21.631Z",
+        "lastActiveAt": "2026-11-23T19:59:37.829Z",
         "lastHarvestedAt": "2026-11-23T19:34:46.382Z",
         "totalHarvested": 2529,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-23T19:51:24.238Z",
+        "lastActiveAt": "2026-11-23T19:59:40.256Z",
         "lastHarvestedAt": "2026-11-23T18:32:32.346Z",
         "totalHarvested": 1507,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4923,
+      "remaining": 4914,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -321,11 +321,12 @@
     },
     "HUGGINGFACE_API": {
       "service": "HUGGINGFACE_API",
-      "status": "HEALTHY",
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": null,
-      "reason": null
+      "status": "COOLING_DOWN",
+      "resetEpoch": 1795464047722,
+      "resetAt": "2026-11-23T20:00:47.722Z",
+      "trippedAt": "2026-11-23T19:59:27.722Z",
+      "reason": "Secondary rate limit or HTTP 429 backoff (Remaining: N/A | Resource: unknown | URL: https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo/raw/main/README.md)",
+      "isSecondaryRateLimit": true
     }
   }
 }

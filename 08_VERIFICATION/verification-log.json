@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-8JLB",
-    "timestamp": "2026-11-21T21:57:51.023Z",
-    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-JH49",
     "timestamp": "2026-11-21T22:06:21.033Z",
     "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "flux-iac/tofu-controller",
     "learningId": "learn-github-flux-iac-tofu-controller",
     "contentHash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-X3ZW",
+    "timestamp": "2026-11-23T20:00:19.580Z",
+    "repository": "jhspetersson/fselect",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "3d6e2921e64843afba526910b44b5294b602163272e8edeb1f1900634f2962ad",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

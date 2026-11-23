@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "234f8b7b",
+    "sourceVersion": "42d1f169",
     "license": "Apache-2.0",
-    "contentHash": "233f776a37987403468addf159b8d0eb51bd2dfab8bbd543de82b21c7239bca8",
-    "lastHarvestedAt": "2026-11-20T22:57:14.796Z",
+    "contentHash": "3d6e2921e64843afba526910b44b5294b602163272e8edeb1f1900634f2962ad",
+    "lastHarvestedAt": "2026-11-23T20:00:19.584Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

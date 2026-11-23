@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:51:28.466Z",
+  "last_updated": "2026-11-23T20:00:25.081Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -8259,8 +8259,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5620c7ffaed295a2b087fbfe2320bf7becadc81997c4419b957349964a9e8b85",
-      "created_at": "2026-11-23T18:32:34.674Z"
+      "content_hash": "12e62605cff77e14856d3e08758df63670665e94f20784ab6694004f8068758c",
+      "created_at": "2026-11-23T20:00:25.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9177,8 +9177,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "dcb9361e37e82fed259d43c95ef75b57ef95a696a5f9a6fa282df130382c368c",
-      "created_at": "2026-11-23T18:50:56.207Z"
+      "content_hash": "8c99774419fc9ce58e0146d9e6b32b0b598803f748252889cf121ddfa6ded83a",
+      "created_at": "2026-11-23T20:00:24.056Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -37059,8 +37059,8 @@
       "title": "Quality & Verification Intelligence: jhspetersson/fselect Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-quality-verification-intelligence-jhspetersson-fselect-core.md",
       "repository": "jhspetersson/fselect",
-      "content_hash": "314af34891740fd01e93c8abf79186f01d1b3cd936d0ba19436f86f55843067f",
-      "created_at": "2026-11-20T22:57:15.122Z"
+      "content_hash": "2a74520c81636924a87ca60eb249e98ef5d802407aa0dd49b49ed5f299185d86",
+      "created_at": "2026-11-23T20:00:19.951Z"
     },
     "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
@@ -37068,8 +37068,8 @@
       "title": "Quality & Verification Intelligence: jhspetersson-fselect-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-learnings-quality-verification-intelligence-jhspetersson-fs.md",
       "repository": "jhspetersson-fselect-learnings",
-      "content_hash": "f3c5068e550af34f58b74882ba72616d8d44bf934dae3af6152fecfb331d1dd2",
-      "created_at": "2026-11-20T22:57:29.302Z"
+      "content_hash": "5b04bd8a87f3dac089a54e5bbda0d55bfa3f556ebbc26cbd5d368d8d4b6ecff3",
+      "created_at": "2026-11-23T20:00:23.344Z"
     },
     "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants",
