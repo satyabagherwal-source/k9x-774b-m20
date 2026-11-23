@@ -12301,3 +12301,5 @@ Every entry in this ledger must capture:
 | `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `0d2f52d4` | Multi-dimensional audit evidence | 2026-11-23T05:06:39.955Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `198e6e89` | Multi-dimensional audit evidence | 2026-11-23T05:06:41.940Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `90197327` | Multi-dimensional audit evidence | 2026-11-23T05:06:47.909Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `d7bc0dc4` | Multi-dimensional audit evidence | 2026-11-23T05:24:22.977Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-23T05:27:26.560Z |

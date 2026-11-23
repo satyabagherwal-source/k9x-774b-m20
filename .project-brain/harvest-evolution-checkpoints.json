@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:06:53.640Z",
+  "last_updated": "2026-11-23T05:27:33.062Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T04:50:32.955Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-23T04:58:35.258Z",
+      "processed_at": "2026-11-23T05:27:32.091Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2283,7 +2283,7 @@
       "staged_for_review": 1
     },
     "hf-black-forest-labs-flux.1-schnell-learnings.md": {
-      "processed_at": "2026-11-18T19:44:31.914Z",
+      "processed_at": "2026-11-23T05:27:30.291Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     },
     "giancarloerra-socraticode-learnings.md": {
-      "processed_at": "2026-11-22T03:11:44.579Z",
+      "processed_at": "2026-11-23T05:27:31.381Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3738,7 +3738,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3315,
+  "total_dossiers_evaluated": 3318,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2502
+  "total_staged_for_review": 2504
 }

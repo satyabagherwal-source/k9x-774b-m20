@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:06:47.914Z",
-  "total_cycles_completed": 11666,
-  "total_learnings_persisted": 11666,
-  "total_rules_promoted": 10852,
+  "last_updated": "2026-11-23T05:27:26.565Z",
+  "total_cycles_completed": 11668,
+  "total_learnings_persisted": 11668,
+  "total_rules_promoted": 10856,
   "history": [
-    {
-      "timestamp": "2026-11-22T09:26:05.687Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T09:35:10.050Z",
-      "repository": "higurashi-ai/Haru-4B",
-      "learningId": "learn-huggingface-higurashi-ai-haru-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T09:47:27.488Z",
       "repository": "ConceptCountry/qwen-concept-27b",
@@ -1403,6 +1389,20 @@
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:24:22.982Z",
+      "repository": "giancarloerra/SocratiCode",
+      "learningId": "learn-github-giancarloerra-socraticode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:27:26.565Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

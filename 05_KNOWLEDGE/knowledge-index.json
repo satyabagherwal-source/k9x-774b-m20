@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T05:06:53.488Z",
+  "last_updated": "2026-11-23T05:27:32.947Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23869,
+  "total_items": 23881,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e68ff7cc43939b67402367cc69e7cdf1e4c59d150418bffb8586a1ca8a566d8b",
+      "content_hash": "1215848fde2a85abcd7453c123be6870d07210a67cc28803f85217ea77a24a07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:58:35.918Z"
+      "persisted_at": "2026-11-23T05:27:32.677Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4260a646e89517bbbc2e132df4c2a8ffe8a790e638574612372dc045e6129c95",
+      "content_hash": "4bdadb4a775ee5ed39c440ad6b8f45eb5cba1cdbe9a3efcac26a208fcca6b30f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:58:36.076Z"
+      "persisted_at": "2026-11-23T05:27:32.827Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d63c073b525fa7c21f3a65619756fa2725c7442eabd0249e3da5a8e036b32fec",
+      "content_hash": "be0ce740fd8e5b890b62c2c1ec83e3fc7088e40e92ea17c977e01867acbff04c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:58:36.202Z"
+      "persisted_at": "2026-11-23T05:27:32.947Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -220696,16 +220696,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
+      "content_hash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 10025,
+          "title": "Invariant Coordinate Alignment in Multimodal 3D RoPE",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10026,
+          "title": "Strict Boundary Preservation in Trajectory-Distilled ODE Flow Integration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10027,
+          "title": "Asymmetric Sequence Packing and Unpadding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:44:19.801Z",
+      "verified_at": "2026-11-23T05:27:26.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310044,13 +310060,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PH7Q-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QPBL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "335ce431dd3b89c9a2e2845b8da5f546e2feaa1c1891227b1a161026203ed800",
+      "content_hash": "642e4680c705396182e2a0e5743d0900243226e995174f1a3333ce1e669f1a8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:58:35.753Z"
+      "persisted_at": "2026-11-23T05:27:32.533Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -319275,14 +319291,19 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "7d277196",
-      "content_hash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
+      "source_version": "d7bc0dc4",
+      "content_hash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
         {
           "number": 9890,
           "title": "keep @ast-grep/napi below 0.51.3, which requires Node 20",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10024,
+          "title": "docs(graph): describe failed-build cleanup of the staged generation as best effo",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -319291,7 +319312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:11:38.291Z",
+      "verified_at": "2026-11-23T05:24:22.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -319333,10 +319354,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
       "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
       "repository": "giancarloerra/SocratiCode",
-      "source_version": "7d277196",
-      "content_hash": "2a49b45abd2730dddb971cb113c4eac35bcb3d7b2cd6e5ae55714d2c16c75b90",
+      "source_version": "d7bc0dc4",
+      "content_hash": "2f3677fd9c1a5c0ac45416f43c65cdf1496119be65f0ab4345a92aef9a50f7db",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:11:38.880Z"
+      "persisted_at": "2026-11-23T05:24:23.355Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode",
@@ -319345,10 +319366,10 @@
       "relative_path": "08_VERIFICATION/giancarloerra-socraticode-verification-protocol-empirical-defect-shield-for-gian.md",
       "title": "Verification Protocol: Empirical Defect Shield for giancarloerra/SocratiCode",
       "repository": "giancarloerra/SocratiCode",
-      "source_version": "7d277196",
-      "content_hash": "c5e749943e7995984a4e1a9133e7eba47b7c8bb7739a8643518de0d6503b219b",
+      "source_version": "d7bc0dc4",
+      "content_hash": "1ca038d45f290217bf1c57ad4d5bfc646bfc6b8edff498f5fafb20bc15865b02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:11:39.048Z"
+      "persisted_at": "2026-11-23T05:24:23.517Z"
     },
     "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a": {
       "item_id": "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a",
@@ -319382,9 +319403,9 @@
       "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
       "repository": "giancarloerra-socraticode-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d305b57fc7a0ac9db29deaadc66152201b9d2a1d07161603c43b63e1812ef64",
+      "content_hash": "3da8b14605fd840fd61d6fd3c27b2861a621d7fdd1919440cbca763f99255ec9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:11:44.980Z"
+      "persisted_at": "2026-11-23T05:27:31.777Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear",
@@ -319394,9 +319415,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for giancarloerra-socraticode-learnings",
       "repository": "giancarloerra-socraticode-learnings",
       "source_version": "HEAD",
-      "content_hash": "5df776162059e808c76bfc0747c38198b35d0eab0ade34969eb2c37096673e09",
+      "content_hash": "9c1f618dfa872cf385e0d0a2ab8610b39d95486b2ba97f6355f478f6bf6679fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:11:45.151Z"
+      "persisted_at": "2026-11-23T05:27:31.944Z"
     },
     "learn-github-lingodotdev-lingo-dev": {
       "learning_id": "learn-github-lingodotdev-lingo-dev",
@@ -325052,6 +325073,158 @@
       "content_hash": "cc67ea616dbe90b323fd71c8bf7ed2b2ec5d8b59c72f8c23a74e100cf77605fa",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T05:06:52.469Z"
+    },
+    "rule-10024": {
+      "learning_id": "rule-10024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10024,
+      "title": "docs(graph): describe failed-build cleanup of the staged generation as best effo",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "d7bc0dc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:24:22.772Z"
+    },
+    "candidate_directive-docs-graph-describe-failed-build-cleanup-of-the-staged-generation-as-best-effo": {
+      "item_id": "candidate_directive-docs-graph-describe-failed-build-cleanup-of-the-staged-generation-as-best-effo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QOLY-docs-graph-describe-failed-build-cleanup-of-the-staged-generation-as-best-effo.md",
+      "title": "docs(graph): describe failed-build cleanup of the staged generation as best effo",
+      "repository": "giancarloerra-socraticode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c08d9d11b6d42e84a8c639c62f737a0d8f21f0247b78accf9309062f82d790d8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T05:27:31.606Z"
+    },
+    "rule-10025": {
+      "learning_id": "rule-10025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10025,
+      "title": "Invariant Coordinate Alignment in Multimodal 3D RoPE",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:27:26.352Z"
+    },
+    "rule-10026": {
+      "learning_id": "rule-10026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10026,
+      "title": "Strict Boundary Preservation in Trajectory-Distilled ODE Flow Integration",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:27:26.352Z"
+    },
+    "rule-10027": {
+      "learning_id": "rule-10027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10027,
+      "title": "Asymmetric Sequence Packing and Unpadding Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:27:26.352Z"
+    },
+    "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-black-forest-labs-flux-1-schnell-design-intelligence-black-forest-labs-flux-1.md",
+      "title": "Design Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "1b5ccd6b7ad135cfafa97cbd9519a9cb62d5052dc5984c06c4dd24440697d56e",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T05:27:27.028Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-black-forest-labs-flux-1-schne": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-black-forest-labs-flux-1-schne",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-black-forest-labs-flux-1-schnell-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "288388487d55e93d98d61c7204a280fb11618a069914effc5b0dc410b770343b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:27:27.214Z"
+    },
+    "candidate_directive-invariant-coordinate-alignment-in-multimodal-3d-rope": {
+      "item_id": "candidate_directive-invariant-coordinate-alignment-in-multimodal-3d-rope",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QNR9-invariant-coordinate-alignment-in-multimodal-3d-rope.md",
+      "title": "Invariant Coordinate Alignment in Multimodal 3D RoPE",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b6ba2e128161a3534c7a59bac472411e65b979acf811c8a5c24510ba40fc1fe",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:27:30.503Z"
+    },
+    "candidate_directive-strict-boundary-preservation-in-trajectory-distilled-ode-flow-integration": {
+      "item_id": "candidate_directive-strict-boundary-preservation-in-trajectory-distilled-ode-flow-integration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QNRA-strict-boundary-preservation-in-trajectory-distilled-ode-flow-integration.md",
+      "title": "Strict Boundary Preservation in Trajectory-Distilled ODE Flow Integration",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd28abd56c1dbb02e24e42ba0371aea45a69bab1c3b84f82d405620b659732f3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T05:27:30.682Z"
+    },
+    "candidate_directive-asymmetric-sequence-packing-and-unpadding-invariant": {
+      "item_id": "candidate_directive-asymmetric-sequence-packing-and-unpadding-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QNRA-asymmetric-sequence-packing-and-unpadding-invariant.md",
+      "title": "Asymmetric Sequence Packing and Unpadding Invariant",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e4dfc6cc2eb96a667a02b9bae0faaad319ca93b1dd500d9c7e17a658221a9bce",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:27:30.869Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-black-forest-labs-flux-1-schnell-learnings-quality-verification-intelligence-.md",
+      "title": "Quality & Verification Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a42c360d93f28906759fa7e9567c12ce1ab53b1540861487fce830fb456c9c0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:27:31.040Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-black-forest-labs-flux-1-sc": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-black-forest-labs-flux-1-sc",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-black-forest-labs-flux-1-schnell-learnings-verification-protocol-empirical-de.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-black-forest-labs-flux.1-schnell-learnings",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c4c54715a7e805f49f05cf80db06d7750fc1180379b7892c1f7e741e5a550fd4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:27:31.214Z"
     }
   },
   "ai-builder-brain": {

@@ -12268,3 +12268,5 @@
 | `CYCLE-20261123-ZUTR` | `2026-11-23T05:06:39.951Z` | `EhPanda-Team/EhPanda` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10021` | Yes (`5784b2dc...`) |
 | `CYCLE-20261123-ZWCW` | `2026-11-23T05:06:41.936Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10022` | Yes (`52beac98...`) |
 | `CYCLE-20261123-00YP` | `2026-11-23T05:06:47.905Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10023` | Yes (`4df84ffe...`) |
+| `CYCLE-20261123-MN24` | `2026-11-23T05:24:22.972Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10024` | Yes (`5db88b5e...`) |
+| `CYCLE-20261123-QKPO` | `2026-11-23T05:27:26.556Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10025, Rule 10026, Rule 10027` | Yes (`f20faf0a...`) |

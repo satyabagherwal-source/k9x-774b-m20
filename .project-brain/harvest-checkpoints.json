@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T05:06:47.917Z",
+  "last_updated": "2026-11-23T05:27:26.568Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1100,14 +1100,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
-      "verified_at": "2026-11-18T19:44:20.017Z",
+      "content_hash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
+      "verified_at": "2026-11-23T05:27:26.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:44:20.017Z"
+      "last_updated": "2026-11-23T05:27:26.568Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
-      "verified_at": "2026-11-22T03:11:38.509Z",
+      "content_hash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
+      "verified_at": "2026-11-23T05:24:22.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:11:38.509Z"
+      "last_updated": "2026-11-23T05:24:22.984Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",

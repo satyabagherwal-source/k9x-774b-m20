@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T05:06:53.320Z",
-  "total_records": 2391,
+  "last_updated": "2026-11-23T05:27:32.677Z",
+  "total_records": 2393,
   "domains": {
     "A": {
       "total": 20,
@@ -1003,7 +1003,7 @@
       ]
     },
     "F": {
-      "total": 97,
+      "total": 98,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1101,7 +1101,8 @@
         "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
         "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants",
         "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
-        "DOM-F-892076A7"
+        "DOM-F-892076A7",
+        "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants"
       ]
     },
     "G": {
@@ -2278,7 +2279,7 @@
       ]
     },
     "K": {
-      "total": 143,
+      "total": 144,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2422,7 +2423,8 @@
         "domain_intelligence-quality-verification-intelligence-convaiinnovations-laya-core-invariants",
         "domain_intelligence-quality-verification-intelligence-hf-convaiinnovations-laya-learnings-core-invar",
         "domain_intelligence-quality-verification-intelligence-siteline-swiftui-introspect-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-siteline-swiftui-introspect-learnings-core-inv"
+        "domain_intelligence-quality-verification-intelligence-siteline-swiftui-introspect-learnings-core-inv",
+        "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-"
       ]
     },
     "L": {
@@ -8161,8 +8163,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e68ff7cc43939b67402367cc69e7cdf1e4c59d150418bffb8586a1ca8a566d8b",
-      "created_at": "2026-11-23T04:58:35.918Z"
+      "content_hash": "1215848fde2a85abcd7453c123be6870d07210a67cc28803f85217ea77a24a07",
+      "created_at": "2026-11-23T05:27:32.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -39174,8 +39176,8 @@
       "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
       "repository": "giancarloerra/SocratiCode",
-      "content_hash": "2a49b45abd2730dddb971cb113c4eac35bcb3d7b2cd6e5ae55714d2c16c75b90",
-      "created_at": "2026-11-22T03:11:38.880Z"
+      "content_hash": "2f3677fd9c1a5c0ac45416f43c65cdf1496119be65f0ab4345a92aef9a50f7db",
+      "created_at": "2026-11-23T05:24:23.355Z"
     },
     "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv",
@@ -39183,8 +39185,8 @@
       "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-learnings-technical-construction-intelligence-giancarl.md",
       "repository": "giancarloerra-socraticode-learnings",
-      "content_hash": "6d305b57fc7a0ac9db29deaadc66152201b9d2a1d07161603c43b63e1812ef64",
-      "created_at": "2026-11-22T03:11:44.980Z"
+      "content_hash": "3da8b14605fd840fd61d6fd3c27b2861a621d7fdd1919440cbca763f99255ec9",
+      "created_at": "2026-11-23T05:27:31.777Z"
     },
     "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants",
@@ -40205,6 +40207,24 @@
       "repository": "kuberwastaken-claurst-learnings",
       "content_hash": "074c6d164694516c9b3161cc76daa6fa1eec467e41730d86a96d53ceac69a634",
       "created_at": "2026-11-23T04:58:34.407Z"
+    },
+    "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-black-forest-labs-flux-1-schnell-design-intelligence-black-forest-labs-flux-1.md",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "content_hash": "1b5ccd6b7ad135cfafa97cbd9519a9cb62d5052dc5984c06c4dd24440697d56e",
+      "created_at": "2026-11-23T05:27:27.028Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-black-forest-labs-flux-1-schnell-learnings-quality-verification-intelligence-.md",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "content_hash": "8a42c360d93f28906759fa7e9567c12ce1ab53b1540861487fce830fb456c9c0",
+      "created_at": "2026-11-23T05:27:31.040Z"
     }
   }
 }

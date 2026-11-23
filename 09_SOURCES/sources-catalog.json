@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
-    "lastHarvestedAt": "2026-11-18T19:44:20.010Z",
+    "contentHash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
+    "lastHarvestedAt": "2026-11-23T05:27:26.560Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "7d277196",
+    "sourceVersion": "d7bc0dc4",
     "license": "AGPL-3.0",
-    "contentHash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
-    "lastHarvestedAt": "2026-11-22T03:11:38.501Z",
+    "contentHash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
+    "lastHarvestedAt": "2026-11-23T05:24:22.977Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
