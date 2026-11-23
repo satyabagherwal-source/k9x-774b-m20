@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:45:59.603Z",
+  "last_updated": "2026-11-23T15:54:54.770Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-U1BI",
+      "id": "CD-5I9B",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U1BI-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5I9B-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -49616,6 +49616,37 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EA1A82-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-59EK",
+      "directive_title": "harden #[verify] contracts, MIR translation, and macro hygiene",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "5e5c77b1",
+      "staged_file": "11_INBOX/candidate-directives/CD-59EK-harden-verify-contracts-mir-translation-and-macro-hygiene.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5H1A",
+      "directive_title": "cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5H1A-cuda-oxide-harden-verify-contracts-mir-translation-and-macro-hygiene.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-BC9B03",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC9B03-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-23"
     }
   ]

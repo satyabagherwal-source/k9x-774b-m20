@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
   "source_version": "hf-argmaxinc-whisperkit-coreml",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T02:11:21.926Z",
+  "timestamp": "2026-11-23T15:54:41.780Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T02:11:21.926Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:54:41.780Z`  
 > **Learning ID**: `learn-huggingface-argmaxinc-whisperkit-coreml`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T02:11:21.225Z  
+> **Harvest Timestamp**: 2026-11-23T15:54:40.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 81160291 downloads | 275 likes
+- **Stars / Engagement**: 98106994 downloads | 277 likes
 
 ---
 

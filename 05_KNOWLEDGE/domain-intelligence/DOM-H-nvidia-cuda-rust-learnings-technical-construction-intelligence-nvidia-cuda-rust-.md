@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:11:43.534Z",
+  "timestamp": "2026-11-23T15:54:53.042Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nvidia-cuda-rust-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia-cuda-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:11:43.534Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:54:53.042Z`  
 > **Learning ID**: `LEARN-EVO-nvidia-cuda-rust-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 89%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 91%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nvidia-cuda-rust-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `754b6d10`  
+> **Source Version**: `5e5c77b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:11:24.705Z  
+> **Timestamp**: 2026-11-23T15:54:41.613Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:11:24.699Z  
+> **Harvest Timestamp**: 2026-11-23T15:54:41.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4079 stars
+- **Stars / Engagement**: 4081 stars
 
 ---
 
@@ -2283,11 +2283,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1857** (2026-11-23): **fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene**
+  *Symptoms*: ## Summary  Closes 11 post-#1851 verification audit gaps across `oxide-proofs-preview`, `lean-exporter`, `cuda-oxide-codegen`, and `cuda-macros`.  | Area                  | Hardening Fix                                                   | |:----------------------|:----------------------------------------------------------------| | `writes_all_elems`    | Proves `Program.MirWritesAllElems` from entry block `0`         | | `SharedArray` init    | Seals `VerifiedSharedElement` + checks prior write dominance    | | `mbarrier` lifecycle  | Models `CfgOp.mbarInval` + checks 1-CTA arrival counts          | | Leader & `tcgen05`    | Rejects multi-warp `lane == 0` leaders; checks warp convergence | | `tcgen05_dealloc`     | Proves freed `TMEM` address has zero relative offset            | | 2D `laneId` & integer | Uses `(ty * blockDimX + tx) % 32` + real `Rhs.checkedOvf`       | | Pointer & call safety | Rejects element-size pointer casts and uninlined `mir.call`s    | | Enforcement & hygiene | Rejects `--device-debug` on `#[verify]` + isolates `unsafe`     |  ### Highlights (Before vs. After)  1. **Output coverage & `SharedArray` initialization**    ```text    Before: `if idx == 0 { return; }` passed `writes_all_elems`; uninitialized `TILE[i]` read passed    After:  `MirWritesAllElems` checks from block 0 (`out[0]` missing -> FAIL); `.sharedRead` requires prior write    ```  2. **Barriers, single-thread leaders & `tcgen05` collectives**    ```text    Before: `lane_id() == 0` treated 
+
 - **Issue #1838** (2026-11-19): **[BUG]: Tierras JIT compilation is stuck and memory usage continues to grow to 42GB.**
   *Symptoms*: ### Description  The kernel code can pass Rust compilation normally, but during the JIT phase at first launch, the tileiras process does not exit, and CPU/memory usage continues to rise, peaking at about 42 GB, yet compilation ultimately never completes.  The Tile IR output by print_ir = true is relatively long, and I will paste it below.  #### Comparison - `ALL_VALID = 1`: The same kernel skips the score mask and compiles normally. - `ALL_VALID = 0`: Enabling the score mask causes the `tileiras` behavior above.   I observed this with both `select` and an arithmetic 0/1 mask. - Rewriting the computation to group query heads into three groups and use   `mma` instead of the `reduce_sum` QK path allows compilation to finish,   but runtime performance is significantly worse than the `ALL_VALID = 1`   path. This is a workaround, not an equivalent performance result.    ### Error / actual behavior <details> <summary>IR 和 kernel  code here</summary>  ```text NVIDIA GeForce RTX 5080 GENERATED ENTRY POINT: sca_module::sca #[cutile::entry(print_ir = true)] fn sca_entry<     const DV: i32,     const DK: i32,     const TQ: i32,     const TOPK: i32,     const HQ: i32,     const H: i32,     const BLOCK_SIZE: i32,     const BN: i32,     const BNT: i32,     const TAIL_BLOCKS: i32,     const TAIL: i32,     const OPENTAIL: i32,     const CAUSUAL: i32,     const ALL_VALID: i32, >(     out_ptr: PointerTile<*mut f32, { [] }>,     out_dim_0: i32,     out_dim_1: i32,     out_stride_0: i32,     out_
-
-- **Issue #1830** (2026-11-17): **fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target**
-  *Symptoms*: ## What This PR Does  Fixes `scripts/smoketest.sh` on **GB10 (`sm_121`)** for the `blackwell-mma` category (`mma_mxf8f6f4`), resolving **NVBug 7101256**:  ```text BEFORE (in `scripts/smoketest.sh` on GB10, compute capability 12.1):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4 --arch=sm_120a                      └─► sets CUDA_OXIDE_TARGET=sm_120a (overrides hint sm_121a)                      └─► emits .target sm_120a ──► DriverError(218) on sm_121 [X]  AFTER (matches `tcgen05` and `wgmma`):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4                      ├─► on sm_121 (GB10): hint sm_121a ──► .target sm_121a ──► executes & passes [OK]                      ├─► on sm_120 (50xx): hint sm_120a ──► .target sm_120a ──► executes & passes [OK]                      └─► elsewhere / build:             ──► .target sm_120a ──► PTX check & passes [OK] ```  ---  ### 1. Drop Forced `--arch=sm_120a` Override in `smoketest.sh`  * `cuda-oxide-codegen` (`v1:i0876` in `intrinsics/catalog.json`: `sm_120a|sm_120f|sm_121a|sm_121f`) and `cargo-oxide` (`format_sm_arch((12, 1)) == "sm_121a"`) already select `sm_121a` from `CUDA_OXIDE_DEVICE_ARCH` on GB10, `sm_120a` on `sm_120`, and fall back to `sm_120a` on every other GPU and in `cargo oxide build`. * Appending `--arch=sm_120a` in `smoketest.sh` promoted that fallback to an explicit `CUDA_OXIDE_TARGET=sm_120a` override; because the `a` suffix is architecture-locked to exact `sm_120`, loading `.target sm_120a` PTX on `sm_121` failed PTX JIT with 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2304,410 +2304,532 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `754b6d10` (2026-11-21)
-**Commit Message**: feat(cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a) (#1849)
+### Incident Patch 1: `5e5c77b1` (2026-11-23)
+**Commit Message**: fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene (#1857)
 
-## What This PR Does
+## Summary
 
-Upgrades `cute-rs-preview`'s pinned CUTLASS MLIR compiler from `4.7.0`
-to `4.8.1` (`x86_64-cu13` and `aarch64-cu13`), absorbs all 4.8.1
-NVVM/CuTe MLIR schema changes inside `cuda-oxide-mlir-export` with
-**zero edits to existing Rust kernels**, opens the **Vera Rubin
-(`sm_107a`)** target gate, and adds 1-to-1 CuTeDSL 4.8 Rubin atoms,
-examples, and `cuda-oxide-book` updates:
+Closes 11 post-#1851 verification audit gaps across
+`oxide-proofs-preview`, `lean-exporter`, `cuda-oxide-codegen`, and
+`cuda-macros`.
 
-```text
-AXIS 1: Toolchain & Exporter Profile Bump (CUTLASS 4.7.0 -> 4.8.1)
-  Rust Kernels (all 15 existing examples + 3 models)   [0 source edits]
-    ──► Pliron Semantic IR (`dialect-cute` + `dialect-nvvm`)
-    ──► Exporter Profile (`cuda-oxide-mlir-export`: `kind`, `blockScale`,
-        `mbarrier` segments, `isCTAOnly`, shared `addrspace(3)` TMA)
-    ──► SHA-Pinned `libCutlassCompiler.so` 4.8.1 (`x86_64` + `aarch64`)
-    ──► Validated Targets: `sm_100a`, `sm_103a`, `sm_107a` (Vera Rubin), `sm_120a`
+| Area | Hardening Fix |
 
-AXIS 2: 1-to-1 CuTeDSL 4.8 Rubin Atoms & Examples
-  • `cute_rs::arch::{griddepcontrol_wait, griddepcontrol_launch_dependents}` (PDL)
-  • `MmaSs`, `TmaCopy`, `SharedTile`, `SharedTileArray` extended to `BF
+|:----------------------|:----------------------------------------------------------------|
+| `writes_all_elems` | Proves `Program.MirWritesAllElems` from entry
+block `0` |
+| `SharedArray` init | Seals `VerifiedSharedElement` + checks prior
+write dominance |
+| `mbarrier` lifecycle | Models `CfgOp.mbarInval` + checks 1-CTA arrival
+counts |
+| Leader & `tcgen05` | Rejects multi-warp `lane == 0` leaders; checks
+warp convergence |
+| `tcgen05_dealloc` | Proves freed `TMEM` address has zero relative
+offset |
+| 2D `laneId` & integer | Uses `(ty * blockDimX + tx) % 32` + real
+`Rhs.checkedOvf` |
+| Pointer & call safety | Rejects element-size pointer casts and
+uninlined `mir.call`s |
+| Enforcement & hygiene | Rejects `--device-debug` on `#[verify]` +
+isolates `unsafe` |
 
-**File**: `cuda-oxide/README.md` (modified, +2/-0)
+### Highlights (Before vs. After)
+
+1. **Output coverage & `SharedArray` initialization**
+   ```text
+Before: `if idx == 0 { return; }` passed `writes_all_elems`;
+uninit
+
+**File**: `cuda-oxide/crates/cuda-device/src/shared.rs` (modified, +47/-0)
 ```diff
-@@ -277,6 +277,8 @@ compiles a Rust kernel to PTX, launches it on the GPU, and prints
- | `nemotron3_moe`           | Nemotron-3 NVFP4 ReLU² MoE (`models/`): native SIMT + 5th-gen `tcgen05`  |
- | `nemotron3_moe_cute`      | Nemotron-3 NVFP4 ReLU² MoE (`cute-rs-preview/models/`): typed `cute-rs`  |
- | `sm100_qkv_epilogue_cute` | Fused QKV + RMSNorm + FP8 quant + paged KV scatter (`cute-rs-preview/`)  |
-+| `sm107_bf16_gemm_cute`    | Rubin (`sm_107a`) & Blackwell two-CTA persistent BF16 GEMM + PDL         |
-+| `sm107_mxfp8_gemm_cute`   | Rubin (`sm_107a`) persistent MXFP8 (`E4M3 + UE8M0`) GEMM + B-reuse + PDL |
- | `qwen3_8b_cute`           | End-to-end 36-layer `Qwen/Qwen3-8B` in BF16 and NVFP4 (`cute-rs-preview`)|
- | `qwen_decoder_cute`       | End-to-end `Qwen3-TTS 1.7B` neural audio codec & speech decoder          |
- | `host_closure`            | Generic kernels with closures passed from host                           |
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/cutlass_toolchain.rs` (modified, +81/-54)
-```diff
-@@ -23,13 +23,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
- 
- pub const CUTLASS_COMPILER_ENV: &str = "CUDA_OXIDE_CUTLASS_COMPILER";
- 
--const CUTLASS_VERSION: &str = "4.7.0";
--const CUTLASS_PLATFORM: &str = "x86_64-cu13";
--const ARCHIVE_NAME: &str = "cutlass-install-x86_64-cu13-4.7.0.tar.gz";
--const ARCHIVE_URL: &str = "https://github.com/NVIDIA/cutlass/releases/download/v4.7.0/cutlass-install-x86_64-cu13-4.7.0.tar.gz";
--const ARCHIVE_SHA256: &str = "32f0786c26ede0a5647fa25fc1b4a1429938f181ff28fd57b5632c0b00f0e24f";
--const COMPILER_LIBRARY_SHA256: &str =
--    "57df017e3585a10443c74c8b4cd99bda854242fb2f4c9534cf56d58c2c741628";
-+const CUTLASS_VERSION: &str = "4.8.1";
- const INSTALL_MANIFEST: &str = ".cuda-oxide-cutlass-toolchain";
- const INSTALL_MANIFEST_FORMAT: &str = "2";
- const LEGACY_INSTALL_MANIFEST_FORMAT: &str = "1";
-@@ -46,15 +40,39 @@ struct InstallSpec {
-     compiler_library_sha256: &'static str,
+@@ -598,3 +598,50 @@ pub unsafe fn cvta_generic_to_shared_u32(ptr: *const u8) -> u32 {
  }
  
--const OFFICIAL: InstallSpec = InstallSpec {
-+const OFFICIAL_X86_64: InstallSpec = InstallSpec {
-     version: CUTLASS_VERSION,
--    platform: CUTLASS_PLATFORM,
--    archive_name: ARCHIVE_NAME,
--    archive_url: ARCHIVE_URL,
--    archive_sha256: ARCHIVE_SHA256,
--    compiler_library_sha256: COMPILER_LIBRARY_SHA256,
-+    platform: "x86_64-cu13",
-+    archive_name: "cutlass-install-x86_64-cu13-4.8.1.tar.gz",
-+    archive_url: "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-x86_64-cu13-4.8.1.tar.gz",
-+    archive_sha256: "29d63cc94c4888f773190a75f4dbcd12b8624fb87560437b989c1fe95dea485b",
-+    compiler_library_sha256: "36a4314dddcc9082448720530d49bc112cf88a9f45f43a3f27d8df8d7791d8fa",
- };
- 
-+const OFFICIAL_AARCH64: InstallSpec = InstallSpec {
-+    version: CUTLASS_VERSION,
-+    platform: "aarch64-cu13",
-+    archive_name: "cutlass-install-aarch64-cu13-4.8.1.tar.gz",
-+    archive_url: "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-aarch64-cu13-4.8.1.tar.gz",
-+    archive_sha256: "f49a346f32deda4612f0c328f0e0cd14663060a335c2e34ec3bc3633d1f9cf",
-+    compiler_library_sha256: "2b5585de761ee91d1b170d2b7f6b98da573e2165c46dfc7232ae339467120b1f",
-+};
+ include!("generated/shared_sreg.rs");
 +
-+fn official_spec_for(os: &str, arch: &str) -> Option<InstallSpec> {
-+    if os != "linux" {
-+        return None;
-+    }
-+    match arch {
-+        "x86_64" => Some(OFFICIAL_X86_64),
-+        "aarch64" => Some(OFFICIAL_AARCH64),
-+        _ => None,
-+    }
++/// Private sealing module ensuring [`VerifiedSharedElement`] can only be
++/// implemented within `cuda-device` for bit-valid element types.
++mod verified_shared_sealed {
++    /// Supertrait sealing [`super::VerifiedSharedElement`] against external impls.
++    pub trait Sealed {}
 +}
 +
-+fn official_spec() -> Option<InstallSpec> {
-+    official_spec_for(std::env::consts::OS, std::env::consts::ARCH)
++/// Sealed marker trait for element types of [`SharedArray`] statics proved safe
++/// by `#[verify(...)]`.
++///
++/// # Safety
++///
++/// Every possible bit pattern of `Self` (including arbitrary SRAM power-on
++/// bytes) must be a valid inhabited value of `Self` with no padding/niche
++/// validity invariants (`bool`, `char`, references, and `NonZero*` are
++/// excluded).
++pub unsafe trait VerifiedSharedElement: verified_shared_sealed::Sealed {}
++
++/// Implement [`VerifiedSharedElement`] for primitive integer and float scalars
++/// whose every bit pattern represents a valid value.
++macro_rules! impl_verified_shared_element {
++    ($($ty:ty),* $(,)?) => {
++        $(
++            impl verified_shared_sealed::Sealed for $ty {}
++            // SAFETY: primitive integer/floating-point bit patterns are all valid.
++            unsafe impl VerifiedSharedElement for $ty {}
++        )*
++    };
 +}
 +
- /// Paths exported to compiler-backed builds after a verified installation.
- #[derive(Clone, Debug, Eq, PartialEq)]
- pub struct ResolvedCutlass {
-@@ -72,11 +90,11 @@ pub struct InstallOutcome {
++impl_verified_shared_element!(
++    u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f16, f32, f64,
++);
++
++impl verified_shared_sealed::Sealed for crate::barrier::Barrier {}
++// SAFETY: `Barrier` wraps an `UnsafeCell<u64>` whose raw storage accepts any 64-bit pattern
++// while its state-machine lifecycle (`mbarrier_init` before use) is enforced by `ControlFlowCfg`.
++unsafe impl VerifiedSharedElement for crate::barrier::Barrier {}
++
++impl<T> verified_shared_sealed::Sealed for core::mem::MaybeUninit<T> {}
++// SAFETY: `MaybeUninit<T>` imposes no bit-validity requirement on `T`.
++unsafe impl<T> VerifiedSharedElement for core::mem::MaybeUninit<T> {}
++
++impl<T: VerifiedSharedElement, const N: usize> verified_shared_sealed::Sealed for [T; N] {}
++// SAFETY: Fixed-size arrays `[T; N]` have identical layout to `N` contiguous `T` values.
++unsafe impl<T: VerifiedSharedElement, const N: usize> VerifiedSharedElement for [T; N] {}
+```
+
+**File**: `cuda-oxide/crates/cuda-macros/src/verify.rs` (modified, +197/-55)
+```diff
+@@ -220,6 +220,16 @@ fn expr_targets_static(expr: &Expr, allowed: &[Ident]) -> bool {
+         Expr::Reference(refer) => expr_targets_static(&refer.expr, allowed),
+         Expr::Paren(paren) => expr_targets_static(&paren.expr, allowed),
+         Expr::Group(group) => expr_targets_static(&group.expr, allowed),
++        Expr::Unsafe(u) => {
++            u.block.stmts.last().is_some_and(
++                |s| matches!(s, Stmt::Expr(e, None) if expr_targets_static(e, allowed)),
++            )
++        }
++        Expr::Block(b) => {
++            b.block.stmts.last().is_some_and(
++                |s| matches!(s, Stmt::Expr(e, None) if expr_targets_static(e, allowed)),
++            )
++        }
+         Expr::MethodCall(mc)
+             if (mc.args.is_empty()
+                 && (mc.method == "as_ptr"
+@@ -256,13 +266,31 @@ fn expr_targets_static(expr: &Expr, allowed: &[Ident]) -> bool {
+     }
+ }
  
- /// Install the one CUTLASS compiler release supported by this cargo-oxide.
- pub fn install_official() -> Result<InstallOutcome, String> {
--    ensure_supported_host()?;
-+    let spec = ensure_supported_host()?;
-     let managed_root = managed_root()?;
--    let install_dir = install_dir(&managed_root, OFFICIAL);
-+    let install_dir = install_dir(&managed_root, spec);
++/// Peel transparent `Delimiter::None` [`Expr::Group`] wrappers introduced by
++/// outer attribute macros (`#[cuda_module]`, `#[kernel]`) around an expression.
++fn peel_group(mut expr: &Expr) -> &Expr {
++    while let Expr::Group(g) = expr {
++        expr = &g.expr;
++    }
++    expr
++}
++
++/// Mutable counterpart to [`peel_group`] for in-place AST rewriting across
++/// macro-injected [`Expr::Group`] wrappers.
++fn peel_group_mut(mut expr: &mut Expr) -> &mut Expr {
++    while let Expr::Group(g) = expr {
++        expr = &mut g.expr;
++    }
++    expr
++}
++
+ impl VerifiedSharedArrayRewriter {
+     /// Return true when `expr` indexes a `SharedArray` static in `self.verified_shared`.
+     fn is_verified_shared_index(&self, expr: &Expr) -> bool {
+-        let Expr::Index(index_expr) = expr else {
++        let Expr::Index(index_expr) = peel_group(expr) else {
+             return false;
+         };
+-        let Expr::Path(path_expr) = &*index_expr.expr else {
++        let Expr::Path(path_expr) = peel_group(&index_expr.expr) else {
+             return false;
+         };
+         path_expr
+@@ -275,10 +303,10 @@ impl VerifiedSharedArrayRewriter {
+     /// a `g2s` TMA bulk copy targeting `self.verified_shared` + `self.barrier_statics`,
+     /// or (under `tmem_lifecycle`) a scoped `tcgen05` / `cvta_generic_to_shared_offset` call.
+     fn is_verified_async_barrier_call(&self, expr: &Expr) -> bool {
+-        let Expr::Call(call_expr) = expr else {
++        let Expr::Call(call_expr) = peel_group(expr) else {
+             return false;
+         };
+-        let Expr::Path(path_expr) = &*call_expr.func else {
++        let Expr::Path(path_expr) = peel_group(&call_expr.func) else {
+             return false;
+         };
+         let Some(last) = path_expr.path.segments.last() else {
+@@ -383,6 +411,10 @@ impl VerifiedSharedArrayRewriter {
  
--    match resolve_at(&install_dir, OFFICIAL) {
-+    match resolve_at(&install_dir, spec) {
-         Ok(Some(paths)) => {
-             return Ok(InstallOutcome {
-                 paths,
-@@ -105,12 +123,11 @@ pub fn install_official() -> Result<InstallOutcome, String> {
-         )
-     })?;
- 
--    let _lock =
--        InstallLock::acquire(version_dir.join(format!(".{}.install.lock", OFFICIAL.platform)))?;
-+    let _lock = InstallLock::acquire(version_dir.join(format!(".{}.install.lock", spec.platform)))?;
- 
-     // A cooperating installer may have completed while this process waited
-     // for directory creation and lock acquisition.
--    match resolve_at(&install_dir, OFFICIAL) {
-+    match resolve_at(&install_dir, spec) {
-         Ok(Some(paths)) => {
-             return Ok(InstallOutcome {
-                 paths,
-@@ -126,20 +143,20 @@ pub fn install_official() -> Result<InstallOutcome, String> {
+ impl VisitMut for VerifiedSharedArrayRewriter {
+     fn visit_expr_mut(&mut self, expr: &mut Expr) {
++        if let Expr::Group(group) = expr {
++            self.visit_expr_mut(&mut group.expr);
++            return;
++        }
+         if let Expr::Unsafe(expr_unsafe) = expr {
+             let prev = self.in_unsafe;
+             self.in_unsafe = true;
+@@ -392,50 +424,100 @@ impl VisitMut for VerifiedSharedArrayRewriter {
          }
+ 
+         if !self.in_unsafe {
+-            if let Expr::Assign(assign) = expr
+-                && self.is_verified_shared_index(&assign.left)
+-            {
+-                self.in_unsafe = true;
+-                visit_mut::visit_expr_mut(self, &mut assign.right);
+-                if let Expr::Index(idx) = &mut *assign.left {
+-                    visit_mut::visit_expr_mut(self, &mut idx.index);
++            if let Expr::Assign(assign) = expr {
++                if self.is_verified_shared_index(&assign.left) {
++                    self.visit_expr_mut(&mut assign.right);
++                    if let Expr::Index(idx) = peel_group_mut(&mut assign.left) {
++                        self.visit_expr_mut(&mut idx.index);
++                        let arr = &idx.expr;
++                        let index_expr = &idx.index;
++                        let rhs_expr = &assign.right;
++                        *expr = parse_quote! {
++                            {
++                                let __cuda_verify_val = #rhs_expr;
++                                let __cuda_verify_idx = #index_expr;
++                                unsafe { #arr[__cuda_verify_idx] = __cuda_verify_val; }
++                            }
++                        };
++                        return;
++                    }
++                }
++                if let Expr::Unary(unary) = peel_group_mut(&mut assign.left)
++                    && matches!(unary.op, syn::UnOp::Deref(_))
++                    && expr_targets_static(&unary.expr, &self.verified_shared)
++                {
++                    self.visit_expr_mut(&mut assign.right);
++                    self.visit_expr_mut(&mut unary.expr);
++                    let ptr_expr = &unary.expr;
++                    let rhs_expr = &assign.right;
++                    *expr = p
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/prep.rs` (modified, +44/-0)
+```diff
+@@ -98,6 +98,12 @@ pub fn prepare_mir_module(
+                     .to_string(),
+             ));
+         }
++        if lean_exporter::has_verified_kernels(ctx, module) {
++            return Err(PipelineError::Lowering(
++                "#[verify] kernels require MIR variable promotion (mem2reg); full variable debug information (--device-debug) is not supported, use --lineinfo instead"
++                    .to_string(),
++            ));
++        }
+         if has_wgmma_mma_operations(ctx, module) {
+             let mut analyses = pliron::pass::AnalysisManager::default();
+             pliron::opts::mem2reg::mem2reg(module, ctx, &mut analyses).map_err(|error| {
+@@ -606,6 +612,44 @@ mod tests {
+         assert!(matches!(error, PipelineError::InvalidMirPassPipeline(_)));
      }
  
--    let download_dir = TemporaryDirectory::create(version_dir, "download")?;
--    let archive = download_dir.path.join(OFFICIAL.archive_name);
-+    let download_dir = TemporaryDirectory::create(version_dir, spec.platform, "download")?;
-+    let archive = download_dir.path.join(spec.archive_name);
-     eprintln!(
-         "NVIDIA's CUTLASS compiler bundle is proprietary software governed by the NVIDIA EULA:"
-     );
-     eprintln!("  https://docs.nvidia.com/cutlass/media/docs/pythonDSL/license.html");
-     eprintln!(
-         "Downloading NVIDIA CUTLASS compiler {} ({})...",
--        OFFICIAL.version, OFFICIAL.platform
-+        spec.version, spec.platform
-     );
--    download_archive(OFFICIAL.archive_url, &archive)?;
-+    download_archive(spec.archive_url, &archive)?;
- 
--    eprintln!("Verifying SHA-256 {}...", OFFICIAL.archive_sha256);
--    let paths = install_verified_archive(OFFICIAL, &archive, &install_dir)?;
-+    eprintln!("Verifying SHA-256 {}...", spec.a
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/main.rs` (modified, +1/-1)
-```diff
-@@ -546,7 +546,7 @@ enum ToolchainCommand {
- 
- #[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
- enum ManagedToolchain {
--    /// NVIDIA CUTLASS compiler 4.7.0 for Linux x86_64 and CUDA 13
-+    /// NVIDIA CUTLASS compiler 4.8.1 for Linux (x86_64, aarch64) and CUDA 13
-     Cutlass,
- }
- 
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/cutlass_backend.rs` (modified, +27/-12)
-```diff
-@@ -18,11 +18,17 @@ use std::path::{Path, PathBuf};
- pub const CUTLASS_FULL_CUTE_MLIR22_PROFILE: &str = "cutlass-full-cute-mlir22";
- 
- /// Official CUTLASS release providing the compiler-library ABI.
--pub const CUTLASS_COMPILER_VERSION: &str = "4.7.0";
-+pub const CUTLASS_COMPILER_VERSION: &str = "4.8.1";
- 
--/// SHA-256 of the official x86_64/CUDA-13 CUTLASS 4.7 compiler library.
-+/// SHA-256 of the official Linux/CUDA-13 CUTLASS 4.8.1 compiler library for the host architecture.
-+#[cfg(target_arch = "aarch64")]
- pub const CUTLASS_COMPILER_LIBRARY_SHA256: &str =
--    "57df017e3585a10443c74c8b4cd99bda854242fb2f4c9534cf56d58c2c741628";
-+    "2b5585de761ee91d1b170d2b7f6b98da573e2165c46dfc7232ae339467120b1f";
++    #[test]
++    fn debug_mode_rejects_verified_kernels_instead_of_bypassing_lean() {
++        let mut ctx = Context::new();
++        dialect_mir::register(&mut ctx);
++        let module = ModuleOp::new(&mut ctx, "test".try_into().unwrap());
++        let function_type = FunctionType::get(&ctx, vec![], vec![]);
++        let function = Operation::new(
++            &mut ctx,
++            MirFuncOp::get_concrete_op_info(),
++            vec![],
++            vec![],
++            vec![],
++            1,
++        );
++        let function_op = MirFuncOp::new(&mut ctx, function, TypeAttr::new(function_type.into()));
++        function_op.set_symbol_name(&mut ctx, "verified_k".try_into().unwrap());
++        function.deref_mut(&ctx).attributes.set(
++            pliron::identifier::Identifier::try_from("verify_uniform_barriers").unwrap(),
++            pliron::builtin::attributes::UnitAttr::new(),
++        );
++        module.append_operation(&mut ctx, function, 0);
 +
-+/// SHA-256 of the official Linux/CUDA-13 CUTLASS 4.8.1 compiler library for the host architecture.
-+#[cfg(not(target_arch = "aarch64"))]
-+pub const CUTLASS_COMPILER_LIBRARY_SHA256: &str =
-+    "36a4314dddcc9082448720530d49bc112cf88a9f45f43a3f27d8df8d7791d8fa";
- 
- /// Version-pinned ABI mode for external `gpu.module` device images. Concrete
- /// CUTLASS wrapper ABIs require FunctionMetadata and cannot represent this
-@@ -35,9 +41,9 @@ const CUTLASS_EXTERNAL_MODULE_ABI: &str =
- /// The C API pass manager is already anchored on `builtin.module`; adding a
- /// second `builtin.module(...)` wrapper changes the pass nesting and does not
- /// lower this input. The leading canonicalization is also part of the pinned
--/// contract: CUTLASS 4.7's default first stage does not accept the generic
-+/// contract: CUTLASS 4.8.1's default first stage does not accept the generic
- /// operation form emitted by the profile.
--const CUTLASS_PRECOMPILED_PIPELINE: &str = "canonicalize,cute-to-nvvm{check-inline-asm=false cubin-format=bin opt-level=3 use-software-pipeline-pass=true use-fold-static-pass=true use-insert-range-information-pass=true use-loop-invariant-pass=true use-strength-reduction-pass=true use-eliminate-unnecessary-sync-pass=true use-infer-loop-attrs-pass=true enable-cuda-dialect=true cuda-dialect-external-module=true}";
-+const CUTLASS_PRECOMPILED_PIPELINE: &str = "canonicalize,cute-to-nvvm{check-inline-asm=false cubin-format=bin opt-level=3 use-software-pipeline-pass=true use-fold-static-pass=true use-insert-range-information-pass=true use-loop-invariant-pass=true use-strength-reduction-pass=true use-eliminate-unnecessary-sync-pass=true enable-cuda-dialect=true cuda-dialect-external-module=true}";
- 
- #[cfg(test)]
- #[path = "tests/cutlass/sm100.rs"]
-@@ -149,7 +155,7 @@ type ExpectedKernelAbis = BTreeMap<String, Vec<KernelParameterKind>>;
- /// Compile one rendered profile module and atomically publish a verified CUDA
- /// image suitable for `cuModuleLoadData`.
- ///
--/// CUTLASS 4.7 returns a host relocatable object. Its exact, fingerprint-pinned
-+/// CUTLASS 4.8.1 returns a host relocatable object. Its exact, fingerprint-pinned
- /// contract contains one local data symbol named `kernels_binary`; that symbol
- /// is either a raw CUDA ELF image or a CUDA fatbinary. A fatbinary must contain
- /// exactly one matching, uncompressed cubin, which is extracted so the public
-@@ -459,14 +465,23 @@ fn split_abi_items(input: &str) -> Result<Vec<&str>, String> {
-     Ok(items)
- }
- 
-+fn expected_host_elf_architecture() -> object::Architecture {
-+    if cfg!(target_arch = "aarch64") {
-+        object::Architecture::Aarch64
-+    } else {
-+        object::Architecture::X86_64
++        let error = prepare_mir_module(
++            &mut ctx,
++            module.get_operation(),
++            MirPreparation {
++                promote_and_unroll: false,
++                verbose: false,
++                mir_pass_pipeline: None,
++            },
++        )
++        .unwrap_err();
++        assert!(
++            matches!(&error, PipelineError::Lowering(msg) if msg.contains("--lineinfo")),
++            "expected --device-debug to fail closed on #[verify] kernels, got: {error}"
++        );
 +    }
-+}
 +
- fn extract_kernels_binary(object_bytes: &[u8]) -> Result<Vec<u8>, String> {
-     let file = object::File::parse(object_bytes).map_err(|error| error.to_string())?;
-+    let expected_arch = expected_host_elf_architecture();
-     if file.format() != object::BinaryFormat::Elf
-         || file.kind() != object::ObjectKind::Relocatable
--        || file.architecture() != object::Architecture::X86_64
-+        || file.architecture() != expected_arch
-     {
-         return Err(format!(
--            "expected an x86-64 ELF relocatable, got {:?}/{:?}/{:?}",
-+            "expected a {expected_arch:?} ELF relocatable, got {:?}/{:?}/{:?}",
-             file.format(),
-             file.kind(),
-             file.architecture()
-@@ -752,7 +767,7 @@ fn validate_cuda_cubin(
- /// Check each cubin's launch argument layout against the exported MLIR.
- ///
- /// CUDA records parameter sizes and offsets in each kernel's `.nv.info` section.
--/// We support the record format emitted by the pinned CUTLASS 4.7 / CUDA 13.x
-+/// We support the record format emitted by the pinned CUTLASS 4.8.1 / CUDA 13.x
- /// toolchain and reject unknown or malformed records.
- fn validate_kernel_parameter_abi(
-     kernel: &str,
-@@ -1466,7 +1481,7 @@ mod tests {
-     }
- 
      #[test]
--    #[ignore = "requires the installed official CUTLASS 4.7 compiler; does not require a GPU"]
-+    #[ignore = "requires the installed official CUTLASS 4.8.1 compiler; does not require a GPU"]
-     fn cutlass_f32_direct_launch_abi_compiles() {
-         let compiler_path = std::env::var_os("CUDA_OXIDE_TEST_CUTLASS_COMP
+     fn invalid_staged_pipeline_is_rejected_before_preparation() {
+         let mut ctx = Context::new();
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/copy/sm100_attention.rs` (modified, +31/-15)
+**File**: `cuda-oxide/crates/lean-exporter/src/codegen.rs` (modified, +14/-18)
 ```diff
-@@ -17,11 +17,13 @@ use pliron::{
-     operation::Operation,
- };
+@@ -11,7 +11,7 @@
+ //!     └── MirProgram ──► emits `CudaOxide.Mir.Program.MirFunc` + `ControlFlowCfg`
+ //!                        + `MirNoOobGlobal`, `MirNoOobShared`, `MirDisjointWrites`,
+ //!                          `MirNoSharedRace`, `MirAssertRedundant`, `MirNoOobTmem`,
+-//!                          `UniformBarriers`, `TmemLifecycle`, `WritesOnAllActivePaths`
++//!                          `UniformBarriers`, `TmemLifecycle`, `MirWritesAllElems`
+ //! ```
  
--/// Emit independent SM100 attention loads or stores using the verified descriptor plan.
--pub(in crate::cute) struct Tma(
--    #[doc = "True selects shared-to-global stores; false selects global-to-shared loads."]
--    pub(in crate::cute) bool,
--);
-+/// Emit independent SM100 16-bit (`f16` or `bf16`) TMA loads or stores using the verified descriptor plan.
-+pub(in crate::cute) struct Tma {
-+    /// True selects shared-to-global stores; false selects global-to-shared loads.
-+    pub(in crate::cute) store: bool,
-+    /// True selects `bf16` shared pointer metadata; false selects `f16`.
-+    pub(in crate::cute) bf16: bool,
-+}
- impl OperationTranslation for Tma {
-     fn translate(
-         &self,
-@@ -30,14 +32,27 @@ impl OperationTranslation for Tma {
-         input: OperationInput,
-         session: &mut TranslationSession<'_>,
-     ) -> Result<Vec<MlirOperation>, String> {
--        let p = if self.0 {
--            let o = CuteSm100TmaStoreOp::wrap(source);
--            o.verify(ctx).map_err(|e| e.to_string())?;
--            o.plan(ctx)
--        } else {
--            let o = CuteSm100TmaLoadOp::wrap(source);
--            o.verify(ctx).map_err(|e| e.to_string())?;
--            o.plan(ctx)
-+        let p = match (self.store, self.bf16) {
-+            (true, false) => {
-+                let o = CuteSm100TmaStoreOp::wrap(source);
-+                o.verify(ctx).map_err(|e| e.to_string())?;
-+                o.plan(ctx)
-+            }
-+            (true, true) => {
-+                let o = CuteSm100Bf16TmaStoreOp::wrap(source);
-+                o.verify(ctx).map_err(|e| e.to_string())?;
-+                o.plan(ctx)
-+            }
-+            (false, false) => {
-+                let o = CuteSm100TmaLoadOp::wrap(source);
-+                o.verify(ctx).map_err(|e| e.to_string())?;
-+                o.plan(ctx)
-+            }
-+            (false, true) => {
-+                let o = CuteSm100Bf16TmaLoadOp::wrap(source);
-+                o.verify(ctx).map_err(|e| e.to_string())?;
-+                o.plan(ctx)
-+            }
-         }
-         .ok_or("missing SM100 TMA plan")?;
-         contract(&input)?;
-@@ -54,8 +69,9 @@ impl OperationTranslation for Tma {
-             64,
-             None,
-         )?;
--        let data = e.cute_ptr(a[1].clone(), "f16", "smem", 128, None)?;
--        if self.0 {
-+        let elem = if self.bf16 { "bf16" } else { "f16" };
-+        let data = e.cute_ptr(a[1].clone(), elem, "smem", 128, None)?;
-+        if self.store {
-             let mut op = e.operation(
-                 "cute_nvgpu.arch.copy.SM100.tma_store",
-                 vec![desc, data, a[2].clone(), a[3].clone(), a[4].clone()],
+ use crate::{
+@@ -75,7 +75,7 @@ pub fn proved_obligation_descriptions(spec: &KernelVerificationSpec) -> Vec<Stri
+     }
+     if !spec.writes_all_elems.is_empty() {
+         items.push(format!(
+-            "writes_all_elems({}) -> CudaOxide.Contracts.ControlFlow.WritesOnAllActivePaths",
++            "writes_all_elems({}) -> CudaOxide.Contracts.Program.MirWritesAllElems",
+             fmt_ids("param", &spec.writes_all_elems)
+         ));
+     }
+@@ -142,6 +142,7 @@ fn format_cfg_branch_cond(cond: &CfgBranchCond) -> String {
+         CfgBranchCond::MbarSpin(b) => format!("(.mbarSpin {b})"),
+         CfgBranchCond::PosLoopExit(body) => format!("(.posLoopExit {body})"),
+         CfgBranchCond::Uniform => ".uniform".to_string(),
++        CfgBranchCond::WarpUniform => ".warpUniform".to_string(),
+         CfgBranchCond::Unknown => ".unknown".to_string(),
+     }
+ }
+@@ -155,6 +156,7 @@ fn format_cfg_op(op: &CfgOpItem) -> String {
+         CfgOpItem::SharedWrite { shared_id } => format!("(.sharedWrite {shared_id})"),
+         CfgOpItem::DsmemAccess { shared_id } => format!("(.dsmemAccess {shared_id})"),
+         CfgOpItem::MbarInit { bar_id, count } => format!("(.mbarInit {bar_id} {count})"),
++        CfgOpItem::MbarInval { bar_id } => format!("(.mbarInval {bar_id})"),
+         CfgOpItem::ProxyFenceAsyncShared => ".proxyFenceAsyncShared".to_string(),
+         CfgOpItem::MbarArrive { bar_id } => format!("(.mbarArrive {bar_id})"),
+         CfgOpItem::MbarArriveExpectTx { bar_id, tx_bytes } => {
+@@ -191,6 +193,9 @@ fn format_cfg_op(op: &CfgOpItem) -> String {
+         CfgOpItem::TmemLoad { ld_id } => format!("(.tmemLoad {ld_id})"),
+         CfgOpItem::TmemLoadWait => ".tmemLoadWait".to_string(),
+         CfgOpItem::TmemLoadUse { ld_id } => format!("(.tmemLoadUse {ld_id})"),
++        CfgOpItem::TmemStoreWait => ".tmemStoreWait".to_string(),
++        CfgOpItem::TmemFenceBeforeSync => ".tmemFenceBeforeSync".to_string(),
++        CfgOpItem::TmemFenceAfterSync => ".tmemFenceAfterSync".to_string(),
+     }
+ }
+ 
+@@ -249,6 +254,7 @@ fn format_mir_rhs(rhs: &MirRhs) -> String {
+         MirRhs::SliceLen(p) => format!("(.sliceLen {p})"),
+         MirRhs::SharedBase(s) => format!("(.sharedBase {s})"),
+         MirRhs::BinOp(op, w, l, r) => format!("(.binOp .{op} {w} {l} {r})"),
++        MirRhs::CheckedOvf(op, w, l, r) => format!("(.checkedOvf .{op} {w} {l} {r})"),
+         MirRhs::CmpOp(op, l, r) => format!("(.cmpOp .{op} {l} {r})"),
+         MirRhs::NotBool(s) => format!("(.notBool {s})"),
+         MirRhs::IntCast(dw, s) => format!("(.intCast {dw} {s})"),
+@@ -265,7 +271,7 @@ fn format_mir_rhs(rhs: &MirRhs) -> String {
+ /// Render a line-by-line [`MirProgramData`] (`CudaOxide.Mir.Program.MirFunc`) and its
+ /// declarative safety obligations (`MirNoOobGlobal`, `MirNoOobShared`, `MirDisjointWrites`,
+ /// `MirNoSharedRace`, `MirAssertRedundant`, `MirNoOobTmem`, `UniformBarriers`, `TmemLifecycle`,
+-/// and `WritesOnAllActivePaths`).
++/// and `MirWritesAllElems`).
+ fn render_mir_program_module(
+     spec: &KernelVerificationSpec,
+     program: &MirProgramData,
+@@ -359,8 +365,7 @@ fn render_mir_program_module(
+ 
+     let need_uniform_barriers = spec.uniform_barriers
+         || (program.control_flow_cfg.num_barriers > 0 && !spec.tmem_lifecycle);
+-    let need_cfg =
+-        need_uniform_barriers || spec.tmem_lifecycle || !spec.writes_all_elems.is_empty();
++    let need_cfg = need_uniform_barriers || spec.tmem_lifecycle;
+     let cfg_section = if need_cfg {
+         format!(
+             "{}\n\ncfg_def_state_map controlFlowCfg\n\n",
+@@ -426,22 +431,13 @@ fn render_mir_program_module(
+         ));
+         axiom_prints.push(format!("#print axioms {thm}"));
+     }
+-    for &(p, ref ge, ref wb) in &program.write_path_obligations {
++    for &p in &spec.writes_all_elems {
+         let thm = format!("verify_writes_all_elems_param{p}");
+-        let ge_s = ge
+-            .iter()
+-            .map(usize::to_string)
+-            .collect::<Vec<_>>()
+-            .join(", ");
+-        let wb_s = wb
+-            .iter()
+-            .map(usize::to_string)
+-            .collect::<Vec<_>>()
+-            .join(", ");
+         theorems.push(format!(
+             "theorem {thm} :\n    \
+-             CudaOxide.Contracts.ControlFlow.WritesOnAllActivePaths controlFlowCfg [{ge_s}] [{wb_s}] := by\n  \
+-             exact CudaOxide.Proofs.ControlFlow.writes_on_active_paths_sound (by decide)"
++             CudaOxide.Contracts.Program.MirWritesAllElems mirFunc {p} := by\n  \
++             apply vcWritesAll
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/copy/tma.rs` (modified, +1/-1)
+**File**: `cuda-oxide/crates/lean-exporter/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -107,7 +107,7 @@ impl OperationTranslation for TmaLoadTranslation {
-             "operandSegmentSizes".into(),
-             MlirAttribute::DenseI32Array(vec![1, 1, 2, 1, 0, 0, 0, 0]),
-         );
--        copy.attributes
-+        copy.properties
-             .insert("isCTAOnly".into(), MlirAttribute::Bool(true));
-         operations.push(copy);
-         Ok(operations)
+@@ -25,7 +25,7 @@ pub mod spec;
+ pub mod ssa;
+ pub mod translate;
+ 
+-pub use runner::verify_module_kernels;
++pub use runner::{has_verified_kernels, verify_module_kernels};
+ 
+ use std::collections::HashSet;
+ 
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/independent_sm100.rs` (modified, +28/-4)
+**File**: `cuda-oxide/crates/lean-exporter/src/runner.rs` (modified, +17/-0)
 ```diff
-@@ -15,9 +15,33 @@ pub(crate) fn register_cute_sm100_attention_pack(
- ) -> Result<(), TranslationError> {
-     r.register_attribute::<CuteSm100MmaAttr>(DropAttribute)?;
-     r.register_attribute::<CuteSm100TmaAttr>(DropAttribute)?;
--    r.register_operation::<CuteSm100MmaSsOp>(Mma(false))?;
--    r.register_operation::<CuteSm100MmaTsOp>(Mma(true))?;
--    r.register_operation::<CuteSm100TmaLoadOp>(Tma(false))?;
--    r.register_operation::<CuteSm100TmaStoreOp>(Tma(true))?;
-+    r.register_operation::<CuteSm100MmaSsOp>(Mma {
-+        ts: false,
-+        bf16: false,
-+    })?;
-+    r.register_operation::<CuteSm100Bf16MmaSsOp>(Mma {
-+        ts: false,
-+        bf16: true,
-+    })?;
-+    r.register_operation::<CuteSm100MmaTsOp>(Mma {
-+        ts: true,
-+        bf16: false,
-+    })?;
-+    r.register_operation::<CuteSm100TmaLoadOp>(Tma {
-+        store: false,
-+        bf16: false,
-+    })?;
-+    r.register_operation::<CuteSm100Bf16TmaLoadOp>(Tma {
-+        store: false,
-+        bf16: true,
-+    })?;
-+    r.register_operation::<CuteSm100TmaStoreOp>(Tma {
-+        store: true,
-+        bf16: false,
-+    })?;
-+    r.register_operation::<CuteSm100Bf16TmaStoreOp>(Tma {
-+        store: true,
-+        bf16: true,
-+    })?;
+@@ -313,6 +313,23 @@ pub fn check_generated_lean_in_cache(
      Ok(())
  }
+ 
++/// Return `true` when `module` contains at least one `mir.func` carrying
++/// `#[verify(...)]` obligations.
++pub fn has_verified_kernels(ctx: &Context, module: Ptr<Operation>) -> bool {
++    let module_ref = module.deref(ctx);
++    if module_ref.num_regions() != 1 {
++        return false;
++    }
++    let region = module_ref.get_region(0).deref(ctx);
++    let Some(block) = region.get_head() else {
++        return false;
++    };
++    block
++        .deref(ctx)
++        .iter(ctx)
++        .any(|op| MirFuncOp::wrap(ctx, op).is_some() && has_verification_attributes(ctx, op))
++}
++
+ /// Verify every `mir.func` in `module` that carries `#[verify(...)]` attributes,
+ /// and elide `mir.assert` bounds checks proven redundant by Lean 4.
+ ///
 ```
 
-**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/mma/sm100.rs` (modified, +1/-1)
+**File**: `cuda-oxide/crates/lean-exporter/src/ssa.rs` (modified, +13/-0)
 ```diff
-@@ -45,7 +45,7 @@ pub(in crate::cute) fn emit_mma(
-                 "nvvm.tcgen05.mma",
-                 vec![dest, av.clone(), b, desc, accumulate.clone()],
-             )?;
--            property(&mut op, "mmaKind", "#nvvm.tcgen05_mma_kind<f16>")?;
-+            property(&mut op, "kind", "#nvvm.tcgen05_mma_kind<f16>")?;
-             property(&mut op, "ctaGroup", "#nvvm.cta_group<cta_2>")?;
-             property(
-                 &mut op,
+@@ -132,6 +132,8 @@ pub enum CfgBranchCond {
+     PosLoopExit(usize),
+     /// CTA-uniform loop bound condition (`tile < k`, `col < 128`).
+     Uniform,
++    /// Warp-convergent runtime condition (all 32 lanes of each active warp take the same branch).
++    WarpUniform,
+     /// Data-dependent or unmodeled runtime condition (`if flag`, `if data[tid] > 0.0`).
+     Unknown,
+ }
+@@ -166,6 +168,11 @@ pub enum CfgOpItem {
+         /// Expected thread arrival count.
+         count: u64,
+     },
++    /// `mbarrier_inval(&BAR)` resetting `bar_id` back to `.uninit`.
++    MbarInval {
++        /// Index of the `Barrier` static (`0..num_barriers`).
++        bar_id: usize,
++    },
+     /// `fence_proxy_async_shared_cta()` flushing generic writes to the async proxy.
+     ProxyFenceAsyncShared,
+     /// Plain arrival `mbarrier_arrive(&BAR)`.
+@@ -243,6 +250,12 @@ pub enum CfgOpItem {
+         /// Identifier of the consumed `TmemLoad` result.
+         ld_id: usize,
+     },
++    /// Warp-convergent `tcgen05_store_wait()` retiring async `tcgen05.st` operations.
++    TmemStoreWait,
++    /// `tcgen05_fence_before_thread_sync()` ordering `tcgen05` prior to thread synchronization.
++    TmemFenceBeforeSync,
++    /// `tcgen05_fence_after_thread_sync()` ordering `tcgen05` after thread synchronization.
++    TmemFenceAfterSync,
+ }
+ 
+ /// One basic block transcribed into `CudaOxide.Mir.ControlFlow.CfgBlock`.
+```
+
+**File**: `cuda-oxide/crates/lean-exporter/src/translate/ir_utils.rs` (modified, +31/-16)
+```diff
+@@ -8,7 +8,7 @@
+ 
+ use std::collections::BTreeSet;
+ 
+-use dialect_mir::types::MirStructType;
++use dialect_mir::types::{MirPtrType, MirStructType};
+ use pliron::{
+     attribute::AttributeDict,
+     basic_block::BasicBlock,
+@@ -172,6 +172,35 @@ fn peel_single_field_structs(ctx: &Context, mut ty: TypeHandle) -> TypeHandle {
+     ty
+ }
+ 
++/// Compute the byte width of a `dialect-mir` element `TypeHandle` (`0` if unknown).
++/// Resolves integer bit widths (`u8..u128`), floats, and 1-field wrapper structs.
++pub(super) fn mir_type_elem_bytes(ctx: &Context, ty: TypeHandle) -> u64 {
++    let ty_handle = peel_single_field_structs(ctx, ty);
++    let ty_ref = ty_handle.deref(ctx);
++    if let Some(int_ty) = ty_ref.downcast_ref::<IntegerType>() {
++        u64::from(int_ty.width()).div_ceil(8)
++    } else if let Some(st) = ty_ref.downcast_ref::<MirStructType>()
++        && st.total_size > 0
++    {
++        st.total_size
++    } else {
++        match ty_handle.disp(ctx).to_string().trim() {
++            "builtin.fp16" | "builtin.bf16" | "mir.fp16" => 2,
++            "builtin.fp32" => 4,
++            "builtin.fp64" => 8,
++            _ => 0,
++        }
++    }
++}
++
++/// Extract the pointee byte width of a `MirPtrType` (`0` if not a `MirPtrType` or unknown).
++pub(super) fn ptr_pointee_elem_bytes(ctx: &Context, ptr_ty: TypeHandle) -> u64 {
++    ptr_ty
++        .deref(ctx)
++        .downcast_ref::<MirPtrType>()
++        .map_or(0, |pt| mir_type_elem_bytes(ctx, pt.pointee))
++}
++
+ /// Compute the byte width of one element in a `mir.shared_alloc` operation (`0` if unknown).
+ /// Resolves integer bit widths (`u8`, `u16`, `u32`, `u64`), floats, and 1-field wrapper structs.
+ pub(super) fn shared_alloc_elem_bytes(ctx: &Context, op: &Operation) -> u64 {
+@@ -180,21 +209,7 @@ pub(super) fn shared_alloc_elem_bytes(ctx: &Context, op: &Operation) -> u64 {
+         .iter()
+         .find(|(k, _)| k.to_string() == "elem_type")
+         .and_then(|(_, v)| v.downcast_ref::<TypeAttr>())
+-        .map(|ta| {
+-            let ty_handle = peel_single_field_structs(ctx, ta.get_type(ctx));
+-            let ty_ref = ty_handle.deref(ctx);
+-            if let Some(int_ty) = ty_ref.downcast_ref::<IntegerType>() {
+-                u64::from(int_ty.width()).div_ceil(8)
+-            } else {
+-                match ty_handle.disp(ctx).to_string().trim() {
+-                    "builtin.fp16" | "builtin.bf16" => 2,
+-                    "builtin.fp32" => 4,
+-                    "builtin.fp64" => 8,
+-                    _ => 0,
+-                }
+-            }
+-        })
+-        .unwrap_or(0)
++        .map_or(0, |ta| mir_type_elem_bytes(ctx, ta.get_type(ctx)))
+ }
+ 
+ /// Return true if `op` is a `mir.shared_alloc` for a scalar `static mut BAR: Barrier`.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1857** (2026-11-23): fix(cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene (@nihalpasham)
+- **PR #1851** (2026-11-23): feat(cuda-oxide): compile-time Lean 4 kernel verification (#[verify], preview) and safe Blackwell GEMM (@nihalpasham)
 - **PR #1849** (2026-11-21): feat(cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a) (@nihalpasham)
 - **PR #1835** (2026-11-19): ci: move the cutile-rs setup action to the root .github/actions (@roivanov)
 - **PR #1833** (2026-11-18): fix(cutile-kernels): add strided prefill and improve FP16 GEMM (@elibol)
 - **PR #1830** (2026-11-17): fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (@nihalpasham)
-- **PR #1829** (2026-11-17): fix(cutile): correct masked padding and add FP16 kernel variants (@elibol)
-- **PR #1817** (2026-11-17): feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (@Code4me2)
 
 ---
 
@@ -2727,22 +2849,53 @@ AXIS 2: 1-to-1 CuTeDSL 4.8 Rubin Atoms & Examples
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)
+## X. cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene
 
 **RULE**:
-When implementing operations in `cuda-oxide/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/cuda-device/src/shared.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `754b6d10`: cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e5c77b1`: cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-device/src/shared.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `sm107_bf16_gemm_cute`    | Rubin (`sm_107a`) & Blackwell two-CTA persistent BF16 GEMM + PDL         |
-| `sm107_mxfp8_gemm_cute`   | Rubin (`sm_107a`) persistent MXFP8 (`E4M3 + UE8M0`) GEMM + B-reuse + PDL |
+
+/// Private sealing module ensuring [`VerifiedSharedElement`] can only be
+/// implemented within `cuda-device` for bit-valid element types.
+mod verified_shared_sealed {
+    /// Supertrait sealing [`super::VerifiedSharedElement`] against external impls.
+    pub trait Sealed {}
+}
+
+/// Sealed marker trait for element types of [`SharedArray`] statics proved safe
+/// by `#[verify(...)]`.
+///
+/// # Safety
+///
+/// Every possible bit pattern of `Self` (including arbitrary SRAM power-on
+/// bytes) must be a valid inhabited value of `Self` with no padding/niche
+/// validity invariants (`bool`, `char`, references, and `NonZero*` are
+/// excluded).
+pub unsafe trait VerifiedSharedElement: verified_shared_sealed::Sealed {}
+
+/// Implement [`VerifiedSharedElement`] for primitive integer and float scalars
+/// whose every bit pattern represents a valid value.
+macro_rules! impl_verified_shared_element {
+    ($($ty:ty),* $(,)?) => {
+        $(
+            impl verified_shared_sealed::Sealed for $ty {}
+            // SAFETY: primitive integer/floating-point bit patterns are all valid.
+            unsafe impl VerifiedSharedElement for $ty {}
+        )*
+    };
+}
+
+impl_verified_shared_element!(
+    u8, u
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2752,7 +2905,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `754b6d10` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e5c77b1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

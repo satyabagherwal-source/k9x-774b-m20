@@ -3,7 +3,7 @@
 > **Source Version**: `hf-argmaxinc`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T02:11:21.357Z  
+> **Timestamp**: 2026-11-23T15:54:40.800Z  
 > **Learning ID**: `learn-huggingface-argmaxinc-whisperkit-coreml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T02:11:21.225Z  
+> **Harvest Timestamp**: 2026-11-23T15:54:40.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 81160291 downloads | 275 likes
+- **Stars / Engagement**: 98106994 downloads | 277 likes
 
 ---
 

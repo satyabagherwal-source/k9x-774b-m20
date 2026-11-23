@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:45:54.939Z",
-  "total_cycles_completed": 11750,
-  "total_learnings_persisted": 11750,
-  "total_rules_promoted": 10898,
+  "last_updated": "2026-11-23T15:54:43.031Z",
+  "total_cycles_completed": 11752,
+  "total_learnings_persisted": 11752,
+  "total_rules_promoted": 10899,
   "history": [
-    {
-      "timestamp": "2026-11-22T18:21:32.483Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:21:34.092Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T18:35:17.057Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T15:45:54.939Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:54:41.501Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:54:43.031Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

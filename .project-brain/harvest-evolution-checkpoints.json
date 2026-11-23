@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:46:00.065Z",
+  "last_updated": "2026-11-23T15:54:55.499Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T14:55:32.525Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-23T15:45:59.366Z",
+      "processed_at": "2026-11-23T15:54:54.429Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-22T03:11:43.176Z",
+      "processed_at": "2026-11-23T15:54:52.867Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2578,7 +2578,7 @@
       "staged_for_review": 0
     },
     "hf-argmaxinc-whisperkit-coreml-learnings.md": {
-      "processed_at": "2026-11-19T02:11:33.564Z",
+      "processed_at": "2026-11-23T15:54:53.910Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3417,
+  "total_dossiers_evaluated": 3420,
   "total_canonical_promoted": 486,
-  "total_staged_for_review": 2566
+  "total_staged_for_review": 2568
 }

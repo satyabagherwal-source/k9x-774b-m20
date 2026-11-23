@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T15:45:54.943Z",
+  "last_updated": "2026-11-23T15:54:43.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1595,14 +1595,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "a3e803011225106ea4d967c5de04470922dfa29ca5e0f28b258a1a7226f7da50",
-      "verified_at": "2026-11-19T02:11:21.770Z",
+      "content_hash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
+      "verified_at": "2026-11-23T15:54:41.505Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T02:11:21.770Z"
+      "last_updated": "2026-11-23T15:54:41.505Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
-      "verified_at": "2026-11-22T03:11:25.789Z",
+      "content_hash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
+      "verified_at": "2026-11-23T15:54:43.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:11:25.789Z"
+      "last_updated": "2026-11-23T15:54:43.035Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

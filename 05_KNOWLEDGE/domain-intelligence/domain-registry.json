@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T15:45:59.747Z",
+  "last_updated": "2026-11-23T15:54:55.051Z",
   "total_records": 2427,
   "domains": {
     "A": {
@@ -9160,8 +9160,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "15b4b6d02261231f6d58734725261f4431bd4fe333049ffb7a3ddc05a943824a",
-      "created_at": "2026-11-23T15:45:59.747Z"
+      "content_hash": "adb088a62ccd1ad8d5b47b42c2b5bd8788e7bda11295e3eca5cecf8282b59763",
+      "created_at": "2026-11-23T15:54:55.051Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11155,8 +11155,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "18bb9fc5f0ba9b1bbc1f6464abc838f0d3719f6d3882671dc79a7dbab5c21c33",
-      "created_at": "2026-11-22T03:11:26.163Z"
+      "content_hash": "620d4681aa8c4304e453a2742f07aebf0f5201faf3e6ba412901556eb5b7d3d8",
+      "created_at": "2026-11-23T15:54:43.532Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -11191,8 +11191,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "07a53ca1bed526732bc204b6bffdf2e40391f0311abb69bc6ef07f0fd7d5fb75",
-      "created_at": "2026-11-22T03:11:43.822Z"
+      "content_hash": "40886a2055a9401c349df5d78c79871b3dcf9157d3ccf665351ad1b040f5d415",
+      "created_at": "2026-11-23T15:54:53.431Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -15854,8 +15854,8 @@
       "title": "Research & Knowledge Intelligence: argmaxinc/whisperkit-coreml Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-argmaxinc-whisperkit-coreml-research-knowledge-intelligence-argmaxinc-whisper.md",
       "repository": "argmaxinc/whisperkit-coreml",
-      "content_hash": "734b2bec61556709bf9c36d45c1545b8ec80677ac3b741121d8cc37b360a1d1b",
-      "created_at": "2026-11-19T02:11:21.927Z"
+      "content_hash": "416d44ee7f117b628fb7b50fd5ace087221fce8c99bbe12eb4f2f7e24e1056c0",
+      "created_at": "2026-11-23T15:54:41.781Z"
     },
     "DOM-D-53B3E45E": {
       "record_id": "DOM-D-53B3E45E",
@@ -15905,8 +15905,8 @@
       "title": "Research & Knowledge Intelligence: hf-argmaxinc-whisperkit-coreml-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-argmaxinc-whisperkit-coreml-learnings-research-knowledge-intelligence-hf-argm.md",
       "repository": "hf-argmaxinc-whisperkit-coreml-learnings",
-      "content_hash": "ad47d773ee557dd9e8b4ee017f0b0653b793f80b6f5ba17fbc93562b38810a67",
-      "created_at": "2026-11-19T02:11:33.733Z"
+      "content_hash": "9ee9b8cd3205f3c603193c1c51b63577e56beb10befefb0a083f39f172cbd04a",
+      "created_at": "2026-11-23T15:54:54.157Z"
     },
     "DOM-D-8A33F79B": {
       "record_id": "DOM-D-8A33F79B",

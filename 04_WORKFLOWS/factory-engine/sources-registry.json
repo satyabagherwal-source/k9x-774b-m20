@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-23T06:45:46.676Z",
+    "lastChecked": "2026-11-23T15:54:47.700Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-23T06:45:46.676Z"
+    "lastVerified": "2026-11-23T15:54:47.700Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T15:45:58.131Z",
-    "lastVerified": "2026-11-23T15:45:58.131Z",
+    "lastChecked": "2026-11-23T15:54:52.686Z",
+    "lastVerified": "2026-11-23T15:54:52.686Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,8 +177,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T15:20:57.244Z",
-    "lastVerified": "2026-11-23T15:20:57.244Z",
+    "lastChecked": "2026-11-23T15:54:52.674Z",
+    "lastVerified": "2026-11-23T15:54:52.674Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -4866,9 +4866,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-22T09:47:36.429Z",
+    "lastChecked": "2026-11-23T15:54:50.153Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-22T09:47:36.429Z"
+    "lastVerified": "2026-11-23T15:54:50.153Z"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -5589,14 +5589,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T03:11:24.699Z",
-    "lastVerified": "2026-11-22T03:11:24.699Z",
+    "lastChecked": "2026-11-23T15:54:41.603Z",
+    "lastVerified": "2026-11-23T15:54:41.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
+    "contentHash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6378,12 +6378,12 @@
     "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T02:11:21.225Z",
-    "lastVerified": "2026-11-19T02:11:21.225Z",
+    "lastChecked": "2026-11-23T15:54:40.259Z",
+    "lastVerified": "2026-11-23T15:54:40.259Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "a3e803011225106ea4d967c5de04470922dfa29ca5e0f28b258a1a7226f7da50",
+    "contentHash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6400,9 +6400,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-22T11:34:23.453Z",
+    "lastChecked": "2026-11-23T15:54:45.295Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-22T11:34:23.453Z"
+    "lastVerified": "2026-11-23T15:54:45.295Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -10523,9 +10523,9 @@
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",
     "officialUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
-    "lastChecked": "2026-11-20T13:48:10.208Z",
+    "lastChecked": "2026-11-23T15:54:42.845Z",
     "revisionIdentifier": "494a3635",
-    "lastVerified": "2026-11-20T13:48:10.208Z"
+    "lastVerified": "2026-11-23T15:54:42.845Z"
   },
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",

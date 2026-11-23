@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T15:45:59.900Z",
+  "last_updated": "2026-11-23T15:54:55.304Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24020,
+  "total_items": 24023,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "15b4b6d02261231f6d58734725261f4431bd4fe333049ffb7a3ddc05a943824a",
+      "content_hash": "adb088a62ccd1ad8d5b47b42c2b5bd8788e7bda11295e3eca5cecf8282b59763",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:45:59.747Z"
+      "persisted_at": "2026-11-23T15:54:55.051Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7875d8f04fcd2ce238bb263d264d364a320299ed31033fd1b34c4f92e78c3fa6",
+      "content_hash": "61123a0889e729a864f178eb3b67bfff3de32a6036fe564aae412464c3a15348",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:45:59.900Z"
+      "persisted_at": "2026-11-23T15:54:55.304Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216612,8 +216612,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "754b6d10",
-      "content_hash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
+      "source_version": "5e5c77b1",
+      "content_hash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -216646,6 +216646,11 @@
           "number": 9889,
           "title": "upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10062,
+          "title": "harden #[verify] contracts, MIR translation, and macro hygiene",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216653,7 +216658,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:11:25.572Z",
+      "verified_at": "2026-11-23T15:54:42.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216695,10 +216700,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "754b6d10",
-      "content_hash": "18bb9fc5f0ba9b1bbc1f6464abc838f0d3719f6d3882671dc79a7dbab5c21c33",
+      "source_version": "5e5c77b1",
+      "content_hash": "620d4681aa8c4304e453a2742f07aebf0f5201faf3e6ba412901556eb5b7d3d8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:11:26.163Z"
+      "persisted_at": "2026-11-23T15:54:43.532Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -216707,10 +216712,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "754b6d10",
-      "content_hash": "d12107f738e3e9325e6138319412c7090107d988ca1f072351fb6d960677325f",
+      "source_version": "5e5c77b1",
+      "content_hash": "83c572ae2c129f7c68aa67da0b3822856300da598ecf2e12f6445f0b0faf2095",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:11:26.349Z"
+      "persisted_at": "2026-11-23T15:54:43.767Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -217044,9 +217049,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "07a53ca1bed526732bc204b6bffdf2e40391f0311abb69bc6ef07f0fd7d5fb75",
+      "content_hash": "40886a2055a9401c349df5d78c79871b3dcf9157d3ccf665351ad1b040f5d415",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:11:43.822Z"
+      "persisted_at": "2026-11-23T15:54:53.431Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -217056,9 +217061,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "e91590fe64d6a03c2e811245567348a3aa9185333be9392cd68704ade676e03c",
+      "content_hash": "cca4e5870977b2ced34001a8bb504d6c65e72fd96c9d3a2bda4ff477df31b4ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:11:43.998Z"
+      "persisted_at": "2026-11-23T15:54:53.686Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -231190,7 +231195,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "a3e803011225106ea4d967c5de04470922dfa29ca5e0f28b258a1a7226f7da50",
+      "content_hash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [],
@@ -231199,7 +231204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T02:11:21.580Z",
+      "verified_at": "2026-11-23T15:54:41.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231216,9 +231221,9 @@
       "title": "Research & Knowledge Intelligence: argmaxinc/whisperkit-coreml Core Invariants",
       "repository": "argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "734b2bec61556709bf9c36d45c1545b8ec80677ac3b741121d8cc37b360a1d1b",
+      "content_hash": "416d44ee7f117b628fb7b50fd5ace087221fce8c99bbe12eb4f2f7e24e1056c0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:11:21.927Z"
+      "persisted_at": "2026-11-23T15:54:41.781Z"
     },
     "candidate_directive-clean-up-json-enumerator-source-logging-for-per-source-debug": {
       "item_id": "candidate_directive-clean-up-json-enumerator-source-logging-for-per-source-debug",
@@ -231264,9 +231269,9 @@
       "title": "Research & Knowledge Intelligence: hf-argmaxinc-whisperkit-coreml-learnings Core Invariants",
       "repository": "hf-argmaxinc-whisperkit-coreml-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad47d773ee557dd9e8b4ee017f0b0653b793f80b6f5ba17fbc93562b38810a67",
+      "content_hash": "9ee9b8cd3205f3c603193c1c51b63577e56beb10befefb0a083f39f172cbd04a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:11:33.733Z"
+      "persisted_at": "2026-11-23T15:54:54.157Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
@@ -319007,13 +319012,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U1BI-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5I9B-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c058bff7d341eea7cf611a30afe6b31ad53c6e0dd0244a386e786af220dbee99",
+      "content_hash": "a23d7b195eeaa96ace167fed394fa6aa4664d5d43da8559dbd0d242e1ad597dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:45:59.603Z"
+      "persisted_at": "2026-11-23T15:54:54.770Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -327256,6 +327261,44 @@
       "content_hash": "471fb4f8ffaffc4a6cb841d18f518ed1d4c8b828335877efc2b70d27788051b7",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T15:37:37.235Z"
+    },
+    "rule-10062": {
+      "learning_id": "rule-10062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10062,
+      "title": "harden #[verify] contracts, MIR translation, and macro hygiene",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "5e5c77b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T15:54:42.706Z"
+    },
+    "candidate_directive-harden-verify-contracts-mir-translation-and-macro-hygiene": {
+      "item_id": "candidate_directive-harden-verify-contracts-mir-translation-and-macro-hygiene",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-59EK-harden-verify-contracts-mir-translation-and-macro-hygiene.md",
+      "title": "harden #[verify] contracts, MIR translation, and macro hygiene",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "5e5c77b1",
+      "content_hash": "2d53ec62f5c3c57a9be70e7f6a9f7672d514847cc76c7c4b1db691cbee910859",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T15:54:43.296Z"
+    },
+    "candidate_directive-cuda-oxide-harden-verify-contracts-mir-translation-and-macro-hygiene": {
+      "item_id": "candidate_directive-cuda-oxide-harden-verify-contracts-mir-translation-and-macro-hygiene",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5H1A-cuda-oxide-harden-verify-contracts-mir-translation-and-macro-hygiene.md",
+      "title": "cuda-oxide): harden #[verify] contracts, MIR translation, and macro hygiene",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0fcfdc6058d08db3de21663164babdddf478f0f9fd6554d66cde9b1a6bceda36",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T15:54:53.186Z"
     }
   },
   "ai-builder-brain": {
