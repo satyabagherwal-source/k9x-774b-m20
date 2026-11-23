@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T23:18:24.872Z",
+  "last_updated": "2026-11-23T23:31:35.943Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "f2d87d9fe2a55d18ce7fa71d38edcb3f00e7ddf470e1e0d108cef39ed6aa444f",
-      "verified_at": "2026-11-19T17:23:14.987Z",
+      "content_hash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
+      "verified_at": "2026-11-23T23:31:24.540Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:23:14.987Z"
+      "last_updated": "2026-11-23T23:31:24.540Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "e08d4e590e85554f2459059e8241c649344343d6272cfa8423b6a9193300eae6",
-      "verified_at": "2026-11-20T20:02:28.695Z",
+      "content_hash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
+      "verified_at": "2026-11-23T23:31:35.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:02:28.695Z"
+      "last_updated": "2026-11-23T23:31:35.943Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
-      "verified_at": "2026-11-22T15:42:07.226Z",
+      "content_hash": "b50b6d380f162f73c5b48071542cc8ac9ba8aab477f166c773f4c03c216fe549",
+      "verified_at": "2026-11-23T23:31:27.326Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:42:07.226Z"
+      "last_updated": "2026-11-23T23:31:27.326Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "31609fdb7c5b9372541a0fc4a7eabe62729d83c58c955e2b7e40f98db2c07091",
-      "verified_at": "2026-11-21T00:43:48.780Z",
+      "content_hash": "d71906c581f3f27c02df7663108e0526c838f19b8fc09910a35932bee48377f3",
+      "verified_at": "2026-11-23T23:31:31.663Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:43:48.780Z"
+      "last_updated": "2026-11-23T23:31:31.663Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",

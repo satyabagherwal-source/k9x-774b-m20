@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-SCX7",
-    "timestamp": "2026-11-22T02:53:11.659Z",
-    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-    "contentHash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-58T1",
-    "timestamp": "2026-11-22T03:03:12.853Z",
-    "repository": "ricursiveAI/Ripple-65B-Preview",
-    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
-    "contentHash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-5DAP",
-    "timestamp": "2026-11-22T03:03:18.673Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-5K1L",
-    "timestamp": "2026-11-22T03:03:27.417Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-FSB0",
     "timestamp": "2026-11-22T03:11:24.684Z",
     "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
@@ -7490,6 +7430,66 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GKBT",
+    "timestamp": "2026-11-23T23:31:24.521Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GMHD",
+    "timestamp": "2026-11-23T23:31:27.313Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "b50b6d380f162f73c5b48071542cc8ac9ba8aab477f166c773f4c03c216fe549",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GPTU",
+    "timestamp": "2026-11-23T23:31:31.650Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "d71906c581f3f27c02df7663108e0526c838f19b8fc09910a35932bee48377f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GT4Q",
+    "timestamp": "2026-11-23T23:31:35.930Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

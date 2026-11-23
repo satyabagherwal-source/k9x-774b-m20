@@ -4,22 +4,22 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "4ef51f69",
+  "source_version": "22e51338",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-20T20:02:28.862Z",
+  "timestamp": "2026-11-23T23:31:36.159Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `4ef51f69`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-20T20:02:28.862Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `22e51338`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-23T23:31:36.159Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `4ef51f69`)
+- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `22e51338`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:02:27.857Z  
+> **Harvest Timestamp**: 2026-11-23T23:31:34.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29551 stars
+- **Stars / Engagement**: 29599 stars
 
 ---
 
@@ -1151,329 +1151,212 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ef51f69` (2026-11-20)
-**Commit Message**: Make PrivateKey passphrase cracking respect its context timeout (#5558)
+### Incident Patch 1: `22e51338` (2026-11-23)
+**Commit Message**: Update dependency golangci/golangci-lint to v2.15.0 (#5536)
 
-Passphrase-protected keys reach Crack, which walks a built-in list of
-249 common passphrases. A wrong guess costs a full KDF run whose cost
-is set by the key's author, so one hardened key could pin a detector
-goroutine at full CPU long past the engine's per-match timeout, which
-logs but never stops the goroutine.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Crack now takes the caller's context and stops between attempts once it
-is done, wrapped with the attempt count; the in-flight attempt still
-completes because ssh.ParseRawPrivateKeyWithPassphrase takes no context.
-For OpenSSH keys, the bcrypt round count is read from the plaintext
-header and keys above 256 rounds are refused before any attempt
-(ErrKDFTooExpensive) - the header is parsed with the same ssh.Unmarshal
-calls x/crypto's own parse uses, so the count the detector checks is the
-count the KDF will run at. Callers pass their contexts through. Keys
-that can no longer be cracked are still reported, as unverified findings
-with the reason in the verification error.
-
-[authored by OpenCode]
-
-**File**: `pkg/analyzer/analyzers/privatekey/privatekey.go` (modified, +1/-1)
+**File**: `.github/workflows/lint.yml` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ func AnalyzePermissions(ctx context.Context, cfg *config.Config, token string) (
- 	parsedKey, err = ssh.ParseRawPrivateKey([]byte(token))
- 	if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
- 		// key is password protected
--		parsedKey, _, err = privatekey.Crack([]byte(token))
-+		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
- 		if err != nil {
- 			return nil, err
- 		}
+@@ -23,7 +23,7 @@ jobs:
+         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9
+         with:
+           # NOTE: Version and args must match scripts/lint.sh
+-          version: v2.14.0
++          version: v2.15.0
+           args: --enable bodyclose,copyloopvar,misspell --timeout 10m
+   man-page-staleness:
+     name: man-page-staleness
 ```
 
-**File**: `pkg/detectors/privatekey/cracker.go` (modified, +28/-2)
+**File**: `scripts/lint.sh` (modified, +1/-1)
 ```diff
-@@ -2,9 +2,11 @@ package privatekey
+@@ -2,7 +2,7 @@
+ set -euo pipefail
  
- import (
- 	"bytes"
-+	"context"
- 	"crypto/x509"
- 	_ "embed"
- 	"errors"
-+	"fmt"
+ # NOTE: Version and args must match .github/workflows/lint.yml
+-GOLANGCI_LINT_VERSION="v2.14.0"
++GOLANGCI_LINT_VERSION="v2.15.0"
  
- 	"golang.org/x/crypto/ssh"
- )
-@@ -19,10 +21,34 @@ func init() {
+ LINT_ARGS="--enable bodyclose,copyloopvar,misspell --timeout 10m"
  
- var (
- 	ErrUncrackable = errors.New("unable to crack encryption")
-+	// ErrKDFTooExpensive is returned without attempting any passphrase when a
-+	// key's KDF is more expensive than the crack budget allows.
-+	ErrKDFTooExpensive = errors.New("key KDF is too expensive to crack")
- )
- 
--func Crack(in []byte) (any, string, error) {
--	for _, passphrase := range passphrases {
-+// maxCrackRounds caps the bcrypt KDF round count this detector will attempt
-+// to crack. The round count is chosen by whoever created the key and the KDF
-+// cost is linear in rounds; OpenSSH's default is 16. 256 is 16x that default:
-+// a single wrong guess on a key at the cap costs on the order of a second of
-+// CPU, so a wordlist crack is hopeless within any bounded budget. x/crypto
-+// refuses round counts above 2048 on its own; this lower cap keeps
-+// hardened-but-legal keys from making each attempt that expensive. Division
-+// of labor: the cap bounds what one attempt can cost, and the context check
-+// below bounds the total, where the caller sets a deadline at all.
-+const maxCrackRounds = 256
-+
-+func Crack(ctx context.Context, in []byte) (any, string, error) {
-+	if rounds, ok := opensshBcryptRounds(in); ok && rounds > maxCrackRounds {
-+		return nil, "", fmt.Errorf("%w: %d rounds exceeds cap of %d", ErrKDFTooExpensive, rounds, maxCrackRounds)
-+	}
-+	for i, passphrase := range passphrases {
-+		// A wrong passphrase costs a full KDF run whose cost is set by the
-+		// key's author, so stop between attempts once the caller's context is
-+		// done. The in-flight attempt cannot be interrupted:
-+		// ssh.ParseRawPrivateKeyWithPassphrase takes no context.
-+		if err := ctx.Err(); err != nil {
-+			return nil, "", fmt.Errorf("stopped cracking after %d of %d passphrase attempts: %w", i, len(passphrases), err)
-+		}
- 		parsed, err := ssh.ParseRawPrivateKeyWithPassphrase(in, passphrase)
- 		if err != nil {
- 			if errors.Is(err, x509.IncorrectPasswordError) {
 ```
 
-**File**: `pkg/detectors/privatekey/cracker_test.go` (modified, +201/-2)
+---
+
+### Incident Patch 2: `5c3387cb` (2026-11-23)
+**Commit Message**: Update github-actions (#5593)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,13 @@
- package privatekey
- 
- import (
-+	"bytes"
-+	"context"
-+	"crypto/ed25519"
-+	"crypto/rand"
- 	_ "embed"
-+	"encoding/pem"
-+	"errors"
- 	"testing"
- 
- 	"golang.org/x/crypto/ssh"
-@@ -51,6 +57,51 @@ muIjvl6G7Hoj1hObM2t/ZheN1EShS11z868hhS6Mx7GvIdtkXuvdiBYMiBLOshJQxB8Mzx
- iug9W+Di3upLf0UMC1TqADGphsIHRU7RbmHQ8Rwp7dogswmDfpRSapPt9p0D+6Ad5VBzi3
- f3BPXj76UBLMEJCrZR1P28vnAA7AyNHaLvMPlWDMG5v3V/UV+ugyFcoBAOyjiQgYST8F3e
- Hx7UPVlTK8dyvk1Z+Yw0nrfNClI=
-+-----END OPENSSH PRIVATE KEY-----`))
-+
-+	// testDefaultKDFKey and testExpensiveKDFKey are ed25519 keys protected
-+	// with the same passphrase as testEncryptedKeyCorrectPassword at bcrypt
-+	// round counts of 16 (OpenSSH's default) and 300, generated with
-+	// ssh-keygen -a.
-+	testDefaultKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDGWhRIOR
-+LWaktgbL8r3S5jAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIHqefEc52RY6n1ej
-+6vEPvbPvprG0m5OT5BAFtdFLdyJQAAAAwFsqIS4QNeZJOQTxTDpQBXYvb3bI+PXmTHlaak
-+BXlCR0Qxk/mmAbL4GheuqnqHxJCGGDU9n5+aaK9ZEgJv+fpv5ahanIm/wgRjn8q9mZSk2r
-+QhGklYrkJV6zkXYVBH7VdP3rHSlCjuziQeKDhxiCTlfeyUfb5O5Tx12TBAo6ADTk76L7+0
-+Y+NPIDr2X5m+fWBMI4XFuQPmmSEm28gV5IERrMUc9zGnS7fJ4xHbtySJoF3wWUlEBrTGDb
-+HCRHIpLSoA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+	testExpensiveKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDiegbnWk
-+wjBR6lL750YpD8AAABLAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIFPdyzxAY2IvJCsy
-+RSK0vvQAM+Ow+zdR+U0tf5jJWpdsAAAAwBrWAmdHm4xKSeMsj+rXp+LWgXMpYj9ZYWNJnC
-+VGMvU81m8gj78dNmjB8U+J3Ns6jmKXNicnwGHHZ9BVCimlnsiGgpp44ZhxSAYqNJV+CoUY
-+FphHKrN68miEiSWFRuZsKB2Xjz3B3a+ApdCrgK9/+0k1finNMzOEpTdmSvkQTP/fLeiqoC
-+m/aSusJwO1NAZDcuyty6pMCKygw6ENqGZf1uyMf+KQwJq3JXwgbRAprb3tBrIEAEEkD4mA
-+ppGpPzMyWA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+
-+	// testKeyAtCap and testKeyPastCap are ed25519 keys with the same
-+	// passphrase at bcrypt round counts of exactly 256 (maxCrackRounds) and
-+	// 257 (one past it), generated with ssh-keygen -a.
-+	testKeyAtCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDLe9Hn5/
-+Qgs+VcI7Z2oHt0AAABAAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIJ14+tRTYMsqi2CF
-+AEETEztjC3N8MwGDhDtcJ9ER4f6pAAAAwPwxz4us6d80EoZeKaAGdqhdK5g1yOLuTFiemC
-+ECwotCzi2W+lk7m9tHgyvbKUyg+dldDP5dlnwberSmmy+OMrJkVVw2PeX5yr6lCcuHZXHq
-+Eqoo7oSlsmlaBpIC/I12JkGQxg6Pv13iIhIyPigUWA3myzAoAc+0Wtluta/qAK+nf5B6ar
-+f57dBJ3uVeU8E3U/UDiJhwVdJnCslkGGWgM65ECvcFZu65DNhoVnFWtsBe2Uom48hG46Cf
-+3NkF0FXQpA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+	testKeyPastCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABANsc+iFh
-+yaFTnsMn8tAEn4AAABAQAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAINIGnk11f1Mup1Bh
-+oMiwh/wisUHuDWOygxhq0PSz+HTSAAAAwOcoRpUbj4YGrNVTvE6Ve5913vgQkAZ8pCBHgk
-+AMjTSVXykiRgK2/7t8k7gPmb1F7QUaiLS0W5X49QeuwYQVihmCSKlupZTWmqozipWlkXSG
-+ACFqnWvE0jURRZd76qBwrtFfyZb24V6LVws/nz0RARXYG+tn8KW3xsjqhvpfLY5KUwLN1j
-+uWqgiel/xeC/UZZiPt9egS6AS9Orn2yaGP882HzMXAsWPIUcslgYxEEjE1FRCaf8YtvCw+
-+rZea5gQDRQ==
- -----END OPENSSH PRIVATE KEY-----`))
- )
- 
-@@ -70,7 +121,7 @@ func Test_crack(t *testing.T) {
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
--			_, passphrase, err := Crack(tt.in)
-+			_, passphrase, err := Crack(context.Background(), tt.in)
- 			if (err != nil) != tt.wantErr {
- 				t.Errorf("crack() error = %v, wantErr %v", err, tt.wantErr)
- 				return
-@@ -83,6 +134,154 @@ func Test_crack(t *testing.T) {
- 	}
- }
- 
-+// Test_crack_stops_when_context_done asserts that a done context stops the
-+// passphrase list instead of running it to completion: a wrong passphrase
-+// costs a full KDF run, so the list walk must check between attempts.
-+func Test_crack_stops_when_context_done(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+
-+	_, _, err := Crack(ctx, testEncryptedKey)
-+	if !errors.Is(err, context.Canceled) {
-+		t.Errorf("expected context.Canceled, got %v", err)
-+	}
-+	if errors.Is(err, ErrUncrackable) {
-+		t.Error("expected the done context to stop the passphrase list, not run it to completion")
-+	}
-+}
-+
-+// Test_crack_skips_kdf_above_cap asserts that a key whose KDF is harder than
-+// the crack budget is refused without attempting any passphrase. The key is
-+// legal for x/crypto, whose own ceiling is 2048 rounds, so an error here comes
-+// from the detector's cap rather than the library.
-+func Test_crack_skips_kdf_above_cap(t *testing.T) {
-+	_, _, err := Crack(context.Background(), testExpensiveKDFKey)
-+	if !errors.Is(err, ErrKDFTooExpensive) {
-+		t.Errorf("expected ErrKDFTooExpensive, got %v", err)
-+	}
-+}
-+
-+// Test_crack_malformed_kdf_options_fail_closed crafts a key whose bcrypt
-+// options blob is salt || rounds || trailing bytes. ssh.Unmarshal rejects
-+// trailing bytes, so x/crypto could not decrypt the key at any round count;
-+// the fail-closed read returns the maximum round co
+@@ -40,12 +40,12 @@ jobs:
+       - name: Checkout repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       # Initializes the CodeQL tools for scanning.
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
++        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4
+         with:
+           languages: ${{ matrix.language }}
+           # If you wish to specify custom queries, you can do so here or in a config file.
+@@ -56,4 +56,4 @@ jobs:
+         run: |
+           go build .
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
++        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4
 ```
 
-**File**: `pkg/detectors/privatekey/openssh.go` (added, +83/-0)
+**File**: `.github/workflows/detector-corpora-test.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,83 @@
-+package privatekey
-+
-+import (
-+	"encoding/pem"
-+	"math"
-+
-+	"golang.org/x/crypto/ssh"
-+)
-+
-+// privateKeyAuthMagic starts the decoded body of every key in the OpenSSH
-+// private key format (see PROTOCOL.key in the OpenSSH source distribution).
-+const privateKeyAuthMagic = "openssh-key-v1\x00"
-+
-+// openSSHEncryptedPrivateKey and kdfOpts mirror the wire structs x/crypto
-+// parses the same bytes with in ssh/keys.go, so the round count read here is
-+// the round count the KDF will actually run at. Keep them in sync with
-+// x/crypto's private structs: if the parses ever diverge, the count read
-+// here silently stops matching the KDF's cost and keys are over- or
-+// under-refused. x/crypto exports no way to read the KDF options, so the
-+// header is read in the detector.
-+type openSSHEncryptedPrivateKey struct {
-+	CipherName   string
-+	KdfName      string
-+	KdfOpts      string
-+	NumKeys      uint32
-+	PubKey       []byte
-+	PrivKeyBlock []byte
-+	// Rest swallows trailing bytes the way x/crypto's copy of this struct
-+	// does. Without the tag, a key with bytes after PrivKeyBlock would fail
-+	// to parse here, read as ok=false, and skip the cap check that
-+	// x/crypto would still apply.
-+	Rest []byte `ssh:"rest"`
-+}
-+
-+// kdfOpts deliberately has no ssh:"rest" field: that is what makes
-+// ssh.Unmarshal reject options blobs carrying trailing bytes, which is the
-+// fail-closed path below. Adding one for forward compatibility would
-+// silently disarm it.
-+type kdfOpts struct {
-+	Salt   string
-+	Rounds uint32
-+}
-+
-+// opensshBcryptRounds reads the bcrypt round count from an OpenSSH key's
-+// header. The decoded key stores the cipher name, KDF name, and KDF options
-+// before the encrypted section, so the round count is readable without the
-+// passphrase; Crack uses it to refuse keys whose KDF exceeds maxCrackRounds
-+// before spending any passphrase attempt.
-+//
-+// ok=false means the key is not an OpenSSH bcrypt key, and it should be
-+// cracked exactly as before. ok=true means the round count is binding,
-+// including fail-closed: a bcrypt key whose options blob does not parse
-+// returns the maximum round count rather than ok=false, because the key is
-+// a bcrypt key and should be refused, not silently cracked. ssh.Unmarshal
-+// rejects such a blob as well, so the key could not have been decrypted at
-+// any round count.
-+func opensshBcryptRounds(pemBytes []byte) (rounds uint32, ok bool) {
-+	block, _ := pem.Decode(pemBytes)
-+	if block == nil || block.Type != "OPENSSH PRIVATE KEY" ||
-+		len(block.Bytes) < len(privateKeyAuthMagic) ||
-+		string(block.Bytes[:len(privateKeyAuthMagic)]) != privateKeyAuthMagic {
-+		return 0, false
-+	}
-+
-+	var w openSSHEncryptedPrivateKey
-+	if err := ssh.Unmarshal(block.Bytes[len(privateKeyAuthMagic):], &w); err != nil {
-+		return 0, false
-+	}
-+	if w.KdfName != "bcrypt" {
-+		return 0, false
-+	}
-+
-+	ok = true
-+
-+	var opts kdfOpts
-+	if err := ssh.Unmarshal([]byte(w.KdfOpts), &opts); err != nil {
-+		rounds = math.MaxUint32
-+	} else {
-+		rounds = opts.Rounds
-+	}
-+
-+	return rounds, ok
-+}
+@@ -31,7 +31,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+ 
 ```
 
-**File**: `pkg/detectors/privatekey/privatekey.go` (modified, +8/-6)
+**File**: `.github/workflows/detector-tests.yml` (modified, +1/-1)
 ```diff
-@@ -79,13 +79,15 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
- 		parsedKey, err := ssh.ParseRawPrivateKey([]byte(token))
- 		if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
- 			s1.ExtraData["encrypted"] = "true"
--			parsedKey, passphrase, err = Crack([]byte(token))
-+			parsedKey, passphrase, err = Crack(ctx, []byte(token))
- 			if err != nil {
--				// The key is encrypted and the passphrase could not be
--				// recovered from the wordlist. It still represents a real
--				// exposure (offline-crackable, weak/legacy KDFs, passphrase
--				// often reused or committed nearby), so surface it as an
--				// unverified finding instead of dropping it silently.
-+				// The key is encrypted but could not be cracked: the
-+				// passphrase is not in the wordlist, the key's KDF exceeded
-+				// the crack budget, or the scan context ended first. It still
-+				// represents a real exposure (offline-crackable, weak/legacy
-+				// KDFs, passphrase often reused or committed nearby), so
-+				// surface it as an unverified finding instead of dropping it
-+				// silently.
- 				s1.SetVerificationError(err, token)
- 				results = append(results, s1)
- 				continue
+@@ -15,7 +15,7 @@ jobs:
+       id-token: "write"
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+       - name: Install gotestsum
+         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
+         with:
+```
+
+**File**: `.github/workflows/lint.yml` (modified, +4/-4)
+```diff
+@@ -16,7 +16,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: golangci-lint
+@@ -30,7 +30,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: Regenerate man page
+@@ -45,7 +45,7 @@ jobs:
+     name: semgrep
+     runs-on: ubuntu-latest
+     container:
+-      image: returntocorp/semgrep:1.184.0@sha256:cc1b68266f267878b39739373ea9985b9a78e5d64497dd875c8de100b22695ed
++      image: returntocorp/semgrep:1.186.0@sha256:6e1b04340e60e910fbb4ddbf3c857ab0918f064417ad5ac530014ccb3cf8c8f1
+     if: (github.actor != 'dependabot[bot]')
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+@@ -59,7 +59,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+           # hack/checksecretparts only needs the standard library, so this job
+```
+
+**File**: `.github/workflows/performance.yml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ jobs:
+           ref: ${{ github.head_ref }}
+ 
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+ 
+```
+
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ jobs:
+           username: ${{ github.repository_owner }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+       - name: Set up Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: Cosign install
+```
+
+**File**: `.github/workflows/smoke.yml` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ jobs:
+       - name: Checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: Build
+@@ -32,7 +32,7 @@ jobs:
+       - name: Checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: Build
+```
+
+**File**: `.github/workflows/test.yml` (modified, +2/-2)
+```diff
+@@ -20,7 +20,7 @@ jobs:
+       - name: Checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - id: "auth"
+@@ -62,7 +62,7 @@ jobs:
+       - name: Checkout code
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - name: Install Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: "1.27"
+       - name: Test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5593** (2026-11-23): Update github-actions (@renovate[bot])
 - **PR #5582** (2026-11-19): only treat HubSpot MISSING_SCOPES 403s as live tokens (@jordanTunstill)
 - **PR #5581** (2026-11-19): Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (@jordanTunstill)
 - **PR #5566** (2026-11-16): Add upsert_error to AWSSecretsManager source metadata (@Ahmer-Zuberi)
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
-- **PR #5558** (2026-11-20): Make PrivateKey passphrase cracking respect its context timeout (@martinlocklear)
 
 ---
 
@@ -1493,31 +1376,31 @@ with the reason in the verification error.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make PrivateKey passphrase cracking respect its context timeout
+## X. Update dependency golangci/golangci-lint to v2.15.0
 
 **RULE**:
-When implementing operations in `pkg/analyzer/analyzers/privatekey/privatekey.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ef51f69`: Make PrivateKey passphrase cracking respect its context timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22e51338`: Update dependency golangci/golangci-lint to v2.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/analyzer/analyzers/privatekey/privatekey.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
+          version: v2.15.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		parsedKey, _, err = privatekey.Crack([]byte(token))
+          version: v2.14.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ef51f69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22e51338` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `dffb1c01`  
+> **Source Version**: `c2a50c31`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:42:05.980Z  
+> **Timestamp**: 2026-11-23T23:31:26.221Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:37:05.177Z  
+> **Harvest Timestamp**: 2026-11-23T23:31:26.214Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51427 stars
+- **Stars / Engagement**: 51398 stars
 
 ---
 
@@ -1537,6 +1537,8 @@ impl<'a> ResolvedDiagnostic<'a> {
 
 ### Core Architecture Module: `crates/ruff_db/src/diagnostic/render/azure.rs`
 ```
+use std::fmt::{self, Display, Write};
+
 use ruff_source_file::LineColumn;
 
 use crate::diagnostic::{Diagnostic, DisplayDiagnosticConfig, Severity};
@@ -1558,16 +1560,16 @@ impl<'a> AzureRenderer<'a> {
 }
 
 impl Renderer for AzureRenderer<'_> {
-    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
+    fn render(&self, f: &mut fmt::Formatter, diagnostics: &[Diagnostic]) -> fmt::Result {
         for diag in diagnostics {
             let severity = match diag.severity() {
                 Severity::Hint | Severity::Info | Severity::Warning => "warning",
                 Severity::Error | Severity::Fatal => "error",
             };
             write!(f, "##vso[task.logissue type={severity};")?;
-            if let Some(span) = diag.primary_span() {
+            if let Some(span) = diag.primary_span_ref() {
                 let filename = span.file().path(self.resolver);
-                write!(f, "sourcepath={filename};")?;
+                write!(f, "sourcepath={};", escape_property(filename))?;
                 if let Some(range) = span.range() {
                     let location = if self.resolver.notebook_index(span.file()).is_some() {
                         // We can't give a reasonable location for the structured formats,
@@ -1592,18 +1594,91 @@ impl Renderer for AzureRenderer<'_> {
             } else {
                 diag.secondary_code_or_id()
             };
-            writeln!(f, "code={code};]{body}", body = diag.concise_message(),)?;
+            writeln!(
+                f,
+                "code={};]{}",
+                escape_property(code),
+                escape_message(diag.concise_message()),
+            )?;
         }
 
         Ok(())
     }
 }
 
+/// Escape command data as in the [Azure Pipelines task library].
+///
+/// [Azure Pipelines task library]: https://github.com/microsoft/azure-pipelines-task-lib/blob/43673c958dc5fb40b898c5c7b5b7b5bf0ebd14bd/node/taskcommand.ts#L93-L110
+fn escape_message(message: impl Display) -> impl Display {
+    fmt::from_fn(move |f| write!(MessageWriter(f), "{message}"))
+}
+
+/// Property values must also escape the delimiters in the command header.
+fn escape_property(text: &str) -> impl Display + '_ {
+    fmt::from_fn(move |f| {
+        let mut start = 0;
+        for i in memchr::memchr2_iter(b';', b']', text.as_bytes()) {
+            MessageWriter(f).write_str(&text[start..i])?;
+            f.write_str(if text.as_bytes()[i] == b';' {
+                "%3B"
+            } else {
+                "%5D"
+            })?;
+            start = i + 1;
+        }
+        MessageWriter(f).write_str(&text[start..])
+    })
+}
+
+/// Escape each fragment of a formatted message without buffering it.
+struct MessageWriter<'a, 'b>(&'a mut fmt::Formatter<'b>);
+
+impl Write for MessageWriter<'_, '_> {
+    fn write_str(&mut self, text: &str) -> fmt::Result {
+        let mut start = 0;
+        for i in memchr::memchr3_iter(b'%', b'\r', b'\n', text.as_bytes()) {
+            self.0.write_str(&text[start..i])?;
+            self.0.write_str(match text.as_bytes()[i] {
+                b'%' => "%AZP25",
+                b'\r' => "%0D",
+                _ => "%0A",
+            })?;
+            start = i + 1;
+        }
+        self.0.write_str(&text[start..])
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::diagnostic::Severity;
     use crate::diagnostic::render::tests::{
-        DiagnosticFormat, create_diagnostics, create_syntax_error_diagnostics,
+        DiagnosticFormat, TestEnvironment, create_diagnostics, create_syntax_error_diagnostics,
     };
+
+    #[test]
+    fn escapes_command_properties_and_messages() {
+        let mut env = TestEnvironment::new();
+        env.format(DiagnosticFormat::Azure);
+        let path = "café;part]%0A.py";
+        env.add(path, "x");
+        let diag = env
+            .builder(
+                "test",
+                Severity::Error,
+                "expected operator:\r\nbad;]%0A\n^^^^^^^^",
+            )
+            .primary(path, "1:0", "1:1", "")
+            .build();
+
+        assert_eq!(
+            env.render(&diag),
+            concat!(
+                "##vso[task.logissue type=error;sourcepath=/café%3Bpart%5D%AZP250A.py;linenumber=1;columnnumber=1;code=test;]",
+                "expected operator:%0D%0Abad;]%AZP250A%0A^^^^^^^^\n",
+            )
+        );
+    }
 
     #[test]
     fn output() {
@@ -2114,16 +2189,17 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30649** (2026-11-20): **Respect each configuration's namespace packages during package discovery**
-  *Symptoms*: ## Summary  Today, a nested `ruff.toml` that marks its parent as a namespace package can change the package root Ruff discovers for a sibling directory. This can cause `TID252` to write the wrong absolute import depending on discovery order.  This PR caches whether each directory contains an `__init__.py` and applies the file’s own `namespace-packages` setting when walking its ancestors. Files with different configurations can then share filesystem lookups.  Added CLI regression coverage and ran the Ruff tests. 
+- **Issue #30850** (2026-11-23): **[ty] Exclude `init=False` dataclass fields from `__replace__`**
+  *Symptoms*: ## Summary  Passing a dataclass field with `init=False` to `copy.replace` raises a `TypeError` at runtime. ty now excludes these fields from the signature of the synthesized `__replace__` method.  ```py from copy import replace from dataclasses import dataclass, field  @dataclass class User:     name: str     id: int = field(init=False, default=0)  user = User(name="Alice") replace(user, name="Bob")  # ok replace(user, id=42)  # ty now reports an unknown argument here ```  This also applies to attrs classes, Pydantic dataclasses and other classes that use `dataclass_transform`. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment ruff-ecosystem --> <!-- report-run:44776975720:1 -->  ## `ruff-ecosystem` results  ### Linter (stable) ✅ ecosystem check detected no linter changes.  ### Linter (preview) ✅ ecosystem check detected no linter changes.  [Linter (stable)](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/30649/ruff-ecosystem/44776975720/1/check-stable.html) · [Linter (preview)](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/30649/ruff-ecosystem/44776975720/1/check-preview.html)  ---  Results for [d28dfe7](https://github.com/astral-sh/ruff/commit/d28dfe74e90cbb2c444860737b45ff63810b3628) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44776975720/attempts/1) 
+  > <!-- generated-comment typing-conformance --> <!-- report-run:45263261392:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [912aea0](https://github.com/astral-sh/ruff/commit/912aea05f45920e072e5a98809b7c13b1a55bd23) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45263261392/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:45263261315:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [912aea0](https://github.com/astral-sh/ruff/commit/912aea05f45920e072e5a98809b7c13b1a55bd23) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45263261315/attempts/1) 
 
-- **Issue #30630** (2026-11-20): **[ty] Fix a panic when reporting invalid type parameter order in unpacked class bases**
-  *Symptoms*: ## Summary  Today, ty panics on `class C(*(int, Generic[T, U]))` when `T` has a default and `U` is required. To locate the error, ty looks for the second base in the class header. The header contains a single starred expression that expands to two bases.  This PR changes the diagnostic to use the source expression ty recorded for each base during expansion, following #24695 and #24699. The diagnostic now underlines `T, U` and reports that a required type parameter cannot follow one with a default.  Added an mdtest that checks the diagnostic on the unpacked generic base. 
+- **Issue #30831** (2026-11-23): **Escape diagnostic messages and paths in GitHub Actions and Azure Pipelines output**
+  *Symptoms*: ## Summary  Today, a line break in a diagnostic message ends the annotation in GitHub Actions and Azure Pipelines. For example, an [invalid `requires-python` value and the caret pointing to it](https://github.com/astral-sh/ruff/pull/29768#discussion_r4665837003) appear on separate log lines outside the annotation. A comma in a filename can also truncate the path in GitHub Actions.  This PR updates Ruff and ty to escape line breaks and percent signs in diagnostic messages and command properties. It also escapes delimiters in property values such as file paths, following the rules in the [GitHub Actions toolkit](https://github.com/actions/toolkit/blob/0c3a9c332b678ff1e776f93d728a4ad279803abe/packages/core/src/command.ts#L103-L117) and [Azure Pipelines task library](https://github.com/microsoft/azure-pipelines-task-lib/blob/43673c958dc5fb40b898c5c7b5b7b5bf0ebd14bd/node/taskcommand.ts#L93-L110). This keeps the full message in one annotation and preserves literal text like `%0A`.  ## Notes to reviewers  Escaping adds about 14–27 ns per short diagnostic in a local rendering benchmark. I measured median wall time in ns per diagnostic over 24 runs per variant in alternating order on an M5 Max with the profiling profile. Each run rendered 2,048 prebuilt diagnostics into a reusable string 64 times, excluding analysis and I/O.  | Message | GitHub main | GitHub PR | Azure main | Azure PR | |---|---:|---:|---:|---:| | Short | 147 | 174 | 68 | 82 | | Headline and primary label | 157 | 185 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:44753363963:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [fac82a6](https://github.com/astral-sh/ruff/commit/fac82a63a9598e4677c208166189187f6253da6c) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44753363963/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:44753363950:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [fac82a6](https://github.com/astral-sh/ruff/commit/fac82a63a9598e4677c208166189187f6253da6c) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44753363950/attempts/1) 
+  > <!-- generated-comment typing-conformance --> <!-- report-run:45195527541:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [541d74e](https://github.com/astral-sh/ruff/commit/541d74e1800b0cdf998a1093c52d335ff9e764e5) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45195527541/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:45195527336:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [541d74e](https://github.com/astral-sh/ruff/commit/541d74e1800b0cdf998a1093c52d335ff9e764e5) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/45195527336/attempts/1) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2140,350 +2216,1501 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7be385f2` (2026-11-22)
-**Commit Message**: [ty] Defer rebuilding intersections during equality narrowing (#30723)
+### Incident Patch 1: `a2f9cda2` (2026-11-23)
+**Commit Message**: Rename 17 rules for library and builtin usage (#30482)
 
-## Summary
+| Code | Old name | New name |
+|---|---|---|
+| [`ASYNC105`](https://docs.astral.sh/ruff/rules/ASYNC105/) |
+`trio-sync-call` | `trio-call-not-awaited` |
+| [`ASYNC240`](https://docs.astral.sh/ruff/rules/ASYNC240/) |
+`blocking-path-method-in-async-function` |
+`blocking-path-call-in-async-function` |
+| [`B005`](https://docs.astral.sh/ruff/rules/B005/) |
+`strip-with-multi-characters` | `strip-with-duplicate-characters` |
+| [`FLY002`](https://docs.astral.sh/ruff/rules/FLY002/) |
+`static-join-to-f-string` | `unnecessary-str-join` |
+| [`FURB101`](https://docs.astral.sh/ruff/rules/FURB101/) |
+`read-whole-file` | `manual-path-read` |
+| [`FURB103`](https://docs.astral.sh/ruff/rules/FURB103/) |
+`write-whole-file` | `manual-path-write` |
+| [`FURB116`](https://docs.astral.sh/ruff/rules/FURB116/) |
+`f-string-number-format` | `sliced-integer-base-conversion` |
+| [`FURB152`](https://docs.astral.sh/ruff/rules/FURB152/) |
+`math-constant` | `hardcoded-math-constant` |
+| [`PLE1507`](https://docs.astral.sh/ruff/rules/PLE1507/) |
+`invalid-envvar-value` | `invalid-getenv-key` |
+| [`RUF061`](https://docs.astral.sh/ruff/rules/RUF061/) |
+`legacy-form-py
 
-In [PyBoy’s opcode
-dispatch](https://github.com/Baekalfen/PyBoy/blob/350e96fff43ae8bff076c0f90a364b410cb4b930/pyboy/core/opcodes.py#L5731),
-each failed equality check excludes another literal from the type of
-`opcode`. At the next comparison, ty rebuilds that intersection even if
-the comparison is ambiguous and we discard the result.
-
-We now collect the narrowed types first and rebuild the intersection
-only if we can narrow the original type.
-
-A cold check of the full PyBoy 2.9.0 project with its runtime and test
-dependencies used 15.2–16.7% fewer instructions in opposite-order
-Cachegrind runs. Two baseline runs differed by 1.0%. Both versions
-reported the same 486 diagnostics. Median native peak RSS was 268 MiB
-before and 265 MiB after. The savings overlap with #30736. With both
-changes, PyBoy used 33.9% fewer instructions in both orders.
-
-<!-- ty-pinned-project-instructions:start -->
-| Project | [Base
-instructions](https://github.com/astral-sh/ruff/commit/943f623f55c9aa625b0b1b21af731e451819accc)
-| [PR
-instructions](https://github.com/astral-sh/ruff/commit/1c84cd75a51d6a8f32ffed8898f82ae2c638bead)
-
-**File**: `crates/ty_python_semantic/src/types/equality.rs` (modified, +10/-6)
+**File**: `crates/ruff/tests/cli/lint.rs` (modified, +10/-10)
 ```diff
-@@ -8,6 +8,7 @@ use std::collections::hash_map::Entry;
- use std::ops::ControlFlow;
+@@ -5070,7 +5070,7 @@ fn default_rules() -> Result<()> {
+     	sys-version-cmp-str10 (YTT302),
+     	sys-version-slice1 (YTT303),
+     	cancel-scope-no-checkpoint (ASYNC100),
+-    	trio-sync-call (ASYNC105),
++    	trio-call-not-awaited (ASYNC105),
+     	async-zero-sleep (ASYNC115),
+     	long-sleep-not-forever (ASYNC116),
+     	blocking-http-call-in-async-function (ASYNC210),
+@@ -5086,7 +5086,7 @@ fn default_rules() -> Result<()> {
+     	unary-prefix-increment-decrement (B002),
+     	assignment-to-os-environ (B003),
+     	unreliable-callable-check (B004),
+-    	strip-with-multi-characters (B005),
++    	strip-with-duplicate-characters (B005),
+     	mutable-argument-default (B006),
+     	function-call-in-default-argument (B008),
+     	getattr-with-constant (B009),
+@@ -5220,7 +5220,7 @@ fn default_rules() -> Result<()> {
+     	return-in-try-except-finally (SIM107),
+     	manual-loop-counter (SIM113),
+     	if-with-identical-branches (SIM114),
+-    	open-file-with-context-handler (SIM115),
++    	open-file-without-context-manager (SIM115),
+     	multiple-with-statements (SIM117),
+     	in-dict-keys (SIM118),
+     	negate-equal-op (SIM201),
+@@ -5241,7 +5241,7 @@ fn default_rules() -> Result<()> {
+     	runtime-string-union (TC010),
+     	py-path (PTH124),
+     	invalid-pathlib-with-suffix (PTH210),
+-    	static-join-to-f-string (FLY002),
++    	unnecessary-str-join (FLY002),
+     	unsorted-imports (I001),
+     	invalid-module-name (N999),
+     	unnecessary-list-cast (PERF101),
+@@ -5323,7 +5323,7 @@ fn default_rules() -> Result<()> {
+     	bad-string-format-character (PLE1300),
+     	bad-string-format-type (PLE1307),
+     	bad-str-strip-call (PLE1310),
+-    	invalid-envvar-value (PLE1507),
++    	invalid-getenv-key (PLE1507),
+     	singledispatch-method (PLE1519),
+     	singledispatchmethod-function (PLE1520),
+     	yield-from-in-async-function (PLE1700),
+@@ -5379,20 +5379,20 @@ fn default_rules() -> Result<()> {
+     	unnecessary-encode-utf8 (UP012),
+     	functional-named-tuple (UP014),
+     	datetime-timezone-utc (UP017),
+-    	native-literals (UP018),
++    	unnecessary-literal-constructor (UP018),
+     	typing-text-str-alias (UP019),
+     	open-alias (UP020),
+-    	replace-universal-newlines (UP021),
+-    	replace-stdout-stderr (UP022),
++    	subprocess-run-with-universal-newlines (UP021),
++    	subprocess-run-with-piped-stdout-and-stderr (UP022),
+     	deprecated-c-element-tree (UP023),
+     	os-error-alias (UP024),
+     	unicode-kind-prefix (UP025),
+     	deprecated-mock-import (UP026),
+     	yield-in-for-loop (UP028),
+     	unnecessary-builtin-import (UP029),
+-    	format-literals (UP030),
++    	unnecessary-positional-str-format-indices (UP030),
+     	printf-string-formatting (UP031),
+-    	f-string (UP032),
++    	str-format (UP032),
+     	lru-cache-with-maxsize-none (UP033),
+     	extraneous-parentheses (UP034),
+     	deprecated-import (UP035),
+```
+
+**File**: `crates/ruff/tests/cli/snapshots/cli__show_settings__display_default_settings.snap` (modified, +20/-20)
+```diff
+@@ -81,7 +81,7 @@ linter.rules.enabled = [
+ 	sys-version-cmp-str10 (YTT302),
+ 	sys-version-slice1 (YTT303),
+ 	cancel-scope-no-checkpoint (ASYNC100),
+-	trio-sync-call (ASYNC105),
++	trio-call-not-awaited (ASYNC105),
+ 	async-zero-sleep (ASYNC115),
+ 	long-sleep-not-forever (ASYNC116),
+ 	blocking-http-call-in-async-function (ASYNC210),
+@@ -97,7 +97,7 @@ linter.rules.enabled = [
+ 	unary-prefix-increment-decrement (B002),
+ 	assignment-to-os-environ (B003),
+ 	unreliable-callable-check (B004),
+-	strip-with-multi-characters (B005),
++	strip-with-duplicate-characters (B005),
+ 	mutable-argument-default (B006),
+ 	function-call-in-default-argument (B008),
+ 	getattr-with-constant (B009),
+@@ -231,7 +231,7 @@ linter.rules.enabled = [
+ 	return-in-try-except-finally (SIM107),
+ 	manual-loop-counter (SIM113),
+ 	if-with-identical-branches (SIM114),
+-	open-file-with-context-handler (SIM115),
++	open-file-without-context-manager (SIM115),
+ 	multiple-with-statements (SIM117),
+ 	in-dict-keys (SIM118),
+ 	negate-equal-op (SIM201),
+@@ -252,7 +252,7 @@ linter.rules.enabled = [
+ 	runtime-string-union (TC010),
+ 	py-path (PTH124),
+ 	invalid-pathlib-with-suffix (PTH210),
+-	static-join-to-f-string (FLY002),
++	unnecessary-str-join (FLY002),
+ 	unsorted-imports (I001),
+ 	invalid-module-name (N999),
+ 	unnecessary-list-cast (PERF101),
+@@ -334,7 +334,7 @@ linter.rules.enabled = [
+ 	bad-string-format-character (PLE1300),
+ 	bad-string-format-type (PLE1307),
+ 	bad-str-strip-call (PLE1310),
+-	invalid-envvar-value (PLE1507),
++	invalid-getenv-key (PLE1507),
+ 	singledispatch-method (PLE1519),
+ 	singledispatchmethod-function (PLE1520),
+ 	yield-from-in-async-function (PLE1700),
+@@ -390,20 +390,20 @@ linter.rules.enabled = [
+ 	unnecessary-encode-utf8 (UP012),
+ 	functional-named-tuple (UP014),
+ 	datetime-timezone-utc (UP017),
+-	native-literals (UP018),
++	unnecessary-literal-constructor (UP018),
+ 	typing-text-str-alias (UP019),
+ 	open-alias (UP020),
+-	replace-universal-newlines (UP021),
+-	replace-stdout-stderr (UP022),
++	subprocess-run-with-universal-newlines (UP021),
++	subprocess-run-with-piped-stdout-and-stderr (UP022),
+ 	deprecated-c-element-tree (UP023),
+ 	os-error-alias (UP024),
+ 	unicode-kind-prefix (UP025),
+ 	deprecated-mock-import (UP026),
+ 	yield-in-for-loop (UP028),
+ 	unnecessary-builtin-import (UP029),
+-	format-literals (UP030),
++	unnecessary-positional-str-format-indices (UP030),
+ 	printf-string-formatting (UP031),
+-	f-string (UP032),
++	str-format (UP032),
+ 	lru-cache-with-maxsize-none (UP033),
+ 	extraneous-parentheses (UP034),
+ 	deprecated-import (UP035),
+@@ -490,7 +490,7 @@ linter.rules.should_fix = [
+ 	sys-version-cmp-str10 (YTT302),
+ 	sys-version-slice1 (YTT303),
+ 	cancel-scope-no-checkpoint (ASYNC100),
+-	trio-sync-call (ASYNC105),
++	trio-call-not-awaited (ASYNC105),
+ 	async-zero-sleep (ASYNC115),
+ 	long-sleep-not-forever (ASYNC116),
+ 	blocking-http-call-in-async-function (ASYNC210),
+@@ -506,7 +506,7 @@ linter.rules.should_fix = [
+ 	unary-prefix-increment-decrement (B002),
+ 	assignment-to-os-environ (B003),
+ 	unreliable-callable-check (B004),
+-	strip-with-multi-characters (B005),
++	strip-with-duplicate-characters (B005),
+ 	mutable-argument-default (B006),
+ 	function-call-in-default-argument (B008),
+ 	getattr-with-constant (B009),
+@@ -640,7 +640,7 @@ linter.rules.should_fix = [
+ 	return-in-try-except-finally (SIM107),
+ 	manual-loop-counter (SIM113),
+ 	if-with-identical-branches (SIM114),
+-	open-file-with-context-handler (SIM115),
++	open-file-without-context-manager (SIM115),
+ 	multiple-with-statements (SIM117),
+ 	in-dict-keys (SIM118),
+ 	negate-equal-op (SIM201),
+@@ -661,7 +661,7 @@ linter.rules.should_fix = [
+ 	runtime-string-union (TC010),
+ 	py-path (PTH124),
+ 	invalid-pathlib-with-suffix (PTH210),
+-	static-join-to-f-string (FLY002),
++	unnecessary-str-join (FLY002),
+ 	unsorted-imports (I001),
+ 	invalid-module-name (N999),
+ 	unnecessary-list-cast (PERF101),
+@@ -743,7 +743,7 @@ linter.rules.should_fix = [
+ 	bad-string-format-character (PLE1300),
+ 	bad-string-format-type (PLE1307),
+ 	bad-str-strip-call (PLE1310),
+-	invalid-envvar-value (PLE1507),
++	invalid-getenv-key (PLE1507),
+ 	singledispatch-method (PLE1519),
+ 	singledispatchmethod-function (PLE1520),
+ 	yield-from-in-async-function (PLE1700),
+@@ -799,20 +799,20 @@ linter.rules.should_fix = [
+ 	unnecessary-encode-utf8 (UP012),
+ 	functional-named-tuple (UP014),
+ 	datetime-timezone-utc (UP017),
+-	native-literals (UP018),
++	unnecessary-literal-constructor (UP018),
+ 	typing-text-str-alias (UP019),
+ 	open-alias (UP020),
+-	replace-universal-newlines (UP021),
+-	replace-stdout-stderr (UP022),
++	subprocess-run-with-universal-newlines (UP021),
++	subprocess-run-with-piped-stdout-and-stderr (UP022),
+ 	deprecated-c-element-tree (UP023),
+ 	os-error-alias (UP024),
+ 	unicode-kind-prefix (UP025),
+ 	deprecated-mock-import (UP026),
+ 	yield-in-for-loop (UP028),
+ 	unnecessary-builtin-import (UP029),
+-	format-literals (UP030),
++	unnecessary-positional-str-format-indices (UP030),
+ 	printf-string-formatting (UP031),
+-	
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/str-format.md` (renamed, +35/-35)
+```diff
+@@ -1,4 +1,4 @@
+-# `f-string` (`UP032`)
++# `str-format` (`UP032`)
  
- use rustc_hash::FxHashMap;
-+use smallvec::SmallVec;
- use ty_python_core::definition::Definition;
+ ```toml
+ lint.select = ["UP032"]
+@@ -32,20 +32,20 @@ When the argument is interpolated once, the side effect runs once either way, so
+ def foo(): ...
  
- use crate::{AnalysisSettings, Db, Program, ProgramEnvironment, place::PlaceAndQualifiers};
-@@ -1454,8 +1455,7 @@ fn evaluate_intersection_left<'db>(
-     let mut any_true = false;
-     let mut any_false = false;
-     let mut any_ambiguous = false;
--    let mut any_narrowing = false;
--    let mut builder = IntersectionBuilder::new(db, &evaluator.env).add_positive(original);
-+    let mut narrowed_types = SmallVec::<[_; 1]>::new();
  
-     for element in positive {
-         match evaluator.evaluate(*element, other, branch, operator) {
-@@ -1474,22 +1474,26 @@ fn evaluate_intersection_left<'db>(
-                     return ComparisonResult::Ambiguous;
-                 }
+-"{x}".format(x=foo())  # snapshot: f-string
++"{x}".format(x=foo())  # snapshot: str-format
+ ```
  
--                any_narrowing = true;
--                builder.add_positive_in_place(narrowed);
-+                narrowed_types.push(narrowed);
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:4:1
+   |
+-4 | "{x}".format(x=foo())  # snapshot: f-string
++4 | "{x}".format(x=foo())  # snapshot: str-format
+   | ^^^^^^^^^^^^^^^^^^^^^
+ help: Convert to f-string
+   |
+ 3 |
+-  - "{x}".format(x=foo())  # snapshot: f-string
+-4 + f"{foo()}"  # snapshot: f-string
++  - "{x}".format(x=foo())  # snapshot: str-format
++4 + f"{foo()}"  # snapshot: str-format
+   |
+ ```
+ 
+@@ -56,60 +56,60 @@ dropping a leading one would orphan whatever precedes the first kept segment, su
+ an opening parenthesis, or a comment. A leading empty literal is left in place instead.
+ 
+ ```py
+-"" "{}".format(x)  # snapshot: f-string
++"" "{}".format(x)  # snapshot: str-format
+ ```
+ 
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:1:1
+   |
+-1 | "" "{}".format(x)  # snapshot: f-string
++1 | "" "{}".format(x)  # snapshot: str-format
+   | ^^^^^^^^^^^^^^^^^
+ help: Convert to f-string
+   |
+-  - "" "{}".format(x)  # snapshot: f-string
+-1 + "" f"{x}"  # snapshot: f-string
+-2 | "a" "" "{}".format(x)  # snapshot: f-string
++  - "" "{}".format(x)  # snapshot: str-format
++1 + "" f"{x}"  # snapshot: str-format
++2 | "a" "" "{}".format(x)  # snapshot: str-format
+   |
+ ```
+ 
+ ```py
+-"a" "" "{}".format(x)  # snapshot: f-string
++"a" "" "{}".format(x)  # snapshot: str-format
+ ```
+ 
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:2:1
+   |
+-2 | "a" "" "{}".format(x)  # snapshot: f-string
++2 | "a" "" "{}".format(x)  # snapshot: str-format
+   | ^^^^^^^^^^^^^^^^^^^^^
+ help: Convert to f-string
+   |
+-1 | "" "{}".format(x)  # snapshot: f-string
+-  - "a" "" "{}".format(x)  # snapshot: f-string
+-2 + "a" f"{x}"  # snapshot: f-string
+-3 | x = ("" "{}").format(value)  # snapshot: f-string
++1 | "" "{}".format(x)  # snapshot: str-format
++  - "a" "" "{}".format(x)  # snapshot: str-format
++2 + "a" f"{x}"  # snapshot: str-format
++3 | x = ("" "{}").format(value)  # snapshot: str-format
+   |
+ ```
+ 
+ A leading empty literal inside parentheses must keep the opening parenthesis, otherwise the fix would
+ introduce a syntax error by leaving the closing one unbalanced.
+ 
+ ```py
+-x = ("" "{}").format(value)  # snapshot: f-string
++x = ("" "{}").format(value)  # snapshot: str-format
+ ```
+ 
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:3:5
+   |
+-3 | x = ("" "{}").format(value)  # snapshot: f-string
++3 | x = ("" "{}").format(value)  # snapshot: str-format
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+ help: Convert to f-string
+   |
+-2 | "a" "" "{}".format(x)  # snapshot: f-string
+-  - x = ("" "{}").format(value)  # snapshot: f-string
+-3 + x = ("" f"{value}")  # snapshot: f-string
++2 | "a" "" "{}".format(x)  # snapshot: str-format
++  - x = ("" "{}").format(value)  # snapshot: str-format
++3 + x = ("" f"{value}")  # snapshot: str-format
+ 4 | foo(
+   |
+ ```
+@@ -118,7 +118,7 @@ A comment between a leading empty literal and the f-string must not be dropped b
+ 
+ ```py
+ foo(
+-    ""  # snapshot: f-string
++    ""  # snapshot: str-format
+     # comment
+     "{}".format(value)
+ )
+@@ -128,7 +128,7 @@ foo(
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:5:5
+   |
+-5 | /     ""  # snapshot: f-string
++5 | /     ""  # snapshot: str-format
+ 6 | |     # comment
+ 7 | |     "{}".format(value)
+   | |______________________^
+@@ -145,20 +145,20 @@ When every segment is an empty literal, the leading one is still preserved, keep
+ and its parentheses balanced.
+ 
+ ```py
+-y = ("" "").format(value)  # snapshot: f-string
++y = ("" "").format(value)  # snapshot: str-format
+ ```
+ 
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:9:5
+   |
+-9 | y = ("" "").format(value)  # snapshot: f-string
++9 | y = ("" "").format(value)  # snapshot: str-format
+   |     ^^^^^^^^^^^^^^^^^^^^^
+ help: Convert to f-string
+   |
+ 8 | )
+-  - y = ("" "").format(value)  # snapshot: f-string
+-9 + y = ("" "")  # snapshot: f-string
++  - y = ("" "").format(value)  # snapshot: str-format
++9 + y = ("" "")  # snapshot: str-format
+   |
+ ```
+ 
+@@ -215,37 +215,37 @@ Inside brackets, `str.format` only reads an all-digit index as an integer. A sig
+ key, so it converts to a quoted subscript rather than an integer one:
+ 
+ ```py
+-"{0[+1]}".format(d)  # snapshot: f-string
++"{0[+1]}".format(d)  # snapshot: str-format
+ ```
+ 
+ ```snapshot
+ error[UP032]: Use f-string instead of `format` call
+  --> src/mdtest_snippet.py:1:1
+   |
+-1 | "{0[+1]}".format(d)  # snapshot: f-string
++1 | "{0[+1]}".format(d)  # snapshot: str-format
+   | ^^^^^^^^^^^^^^^^^^^
+ help: Convert to f-
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/ruff/pytest-legacy-callable-form.md` (renamed, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-# `legacy-form-pytest-raises` (`RUF061`)
++# `pytest-legacy-callable-form` (`RUF061`)
+ 
+ ```toml
+ lint.select = ["RUF061"]
+@@ -21,7 +21,7 @@ def func(a, b):
+ 
+ def test_error_nested_in_with():
+     with pytest.raises(ValueError, "oops"):  # ok
+-        pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [legacy-form-pytest-raises]
++        pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [pytest-legacy-callable-form]
+ ```
+ 
+ ## `pytest.warns`
+```
+
+**File**: `crates/ruff_linter/src/checkers/ast/analyze/deferred_with_statements.rs` (modified, +2/-2)
+```diff
+@@ -13,10 +13,10 @@ pub(crate) fn deferred_with_statements(checker: &mut Checker) {
+         let Stmt::With(stmt_with) = checker.semantic.current_statement() else {
+             unreachable!("Expected Stmt::With");
+         };
+-        if checker.is_rule_enabled(Rule::ReadWholeFile) {
++        if checker.is_rule_enabled(Rule::ManualPathRead) {
+             refurb::rules::read_whole_file(checker, stmt_with);
+         }
+-        if checker.is_rule_enabled(Rule::WriteWholeFile) {
++        if checker.is_rule_enabled(Rule::ManualPathWrite) {
+             refurb::rules::write_whole_file(checker, stmt_with);
+         }
+     }
+```
+
+**File**: `crates/ruff_linter/src/checkers/ast/analyze/expression.rs` (modified, +25/-23)
+```diff
+@@ -180,7 +180,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+             if checker.is_rule_enabled(Rule::SortedMinMax) {
+                 refurb::rules::sorted_min_max(checker, subscript);
              }
-             ComparisonResult::Ambiguous => any_ambiguous = true,
-         }
-     }
+-            if checker.is_rule_enabled(Rule::FStringNumberFormat) {
++            if checker.is_rule_enabled(Rule::SlicedIntegerBaseConversion) {
+                 refurb::rules::fstring_number_format(checker, subscript);
+             }
+             if checker.is_rule_enabled(Rule::IncorrectlyParenthesizedTupleInSubscript) {
+@@ -558,10 +558,10 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+                 Rule::StringDotFormatMissingArguments,
+                 Rule::StringDotFormatMixingAutomatic,
+                 // pyupgrade
+-                Rule::FormatLiterals,
+-                Rule::FString,
++                Rule::UnnecessaryPositionalStrFormatIndices,
++                Rule::StrFormat,
+                 // flynt
+-                Rule::StaticJoinToFString,
++                Rule::UnnecessaryStrJoin,
+                 // refurb
+                 Rule::HashlibDigestHex,
+                 // flake8-simplify
+@@ -576,7 +576,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+                     {
+                         if attr == "join" {
+                             // "...".join(...) call
+-                            if checker.is_rule_enabled(Rule::StaticJoinToFString) {
++                            if checker.is_rule_enabled(Rule::UnnecessaryStrJoin) {
+                                 flynt::rules::static_join_to_fstring(
+                                     checker,
+                                     expr,
+@@ -634,10 +634,12 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+                                             checker, call, &summary,
+                                         );
+                                     }
+-                                    if checker.is_rule_enabled(Rule::FormatLiterals) {
++                                    if checker.is_rule_enabled(
++                                        Rule::UnnecessaryPositionalStrFormatIndices,
++                                    ) {
+                                         pyupgrade::rules::format_literals(checker, call, &summary);
+                                     }
+-                                    if checker.is_rule_enabled(Rule::FString) {
++                                    if checker.is_rule_enabled(Rule::StrFormat) {
+                                         pyupgrade::rules::f_strings(checker, call, &summary);
+                                     }
+                                 }
+@@ -675,17 +677,17 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+             if checker.is_rule_enabled(Rule::UnnecessaryEncodeUTF8) {
+                 pyupgrade::rules::unnecessary_encode_utf8(checker, call);
+             }
+-            if checker.is_rule_enabled(Rule::NativeLiterals) {
++            if checker.is_rule_enabled(Rule::UnnecessaryLiteralConstructor) {
+                 pyupgrade::rules::native_literals(
+                     checker,
+                     call,
+                     checker.semantic().current_expression_parent(),
+                 );
+             }
+-            if checker.is_rule_enabled(Rule::ReplaceUniversalNewlines) {
++            if checker.is_rule_enabled(Rule::SubprocessRunWithUniversalNewlines) {
+                 pyupgrade::rules::replace_universal_newlines(checker, call);
+             }
+-            if checker.is_rule_enabled(Rule::ReplaceStdoutStderr) {
++            if checker.is_rule_enabled(Rule::SubprocessRunWithPipedStdoutAndStderr) {
+                 pyupgrade::rules::replace_stdout_stderr(checker, call);
+             }
+             if checker.is_rule_enabled(Rule::NonPEP604Isinstance) {
+@@ -702,7 +704,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+             if checker.is_rule_enabled(Rule::BlockingOpenCallInAsyncFunction) {
+                 flake8_async::rules::blocking_open_call(checker, call);
+             }
+-            if checker.is_rule_enabled(Rule::BlockingPathMethodInAsyncFunction) {
++            if checker.is_rule_enabled(Rule::BlockingPathCallInAsyncFunction) {
+                 flake8_async::rules::blocking_os_path(checker, call);
+             }
+             if checker.any_rule_enabled(&[
+@@ -754,7 +756,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+                     checker, expr, func, args, keywords,
+                 );
+             }
+-            if checker.is_rule_enabled(Rule::StripWithMultiCharacters) {
++            if checker.is_rule_enabled(Rule::StripWithDuplicateCharacters) {
+                 flake8_bugbear::rules::strip_with_multi_characters(checker, expr, func, args);
+             }
+             if keywords.is_empty() {
+@@ -798,7 +800,7 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
+             if checker.is_rule_enabled(Rule::HardcodedPasswordFuncArg) 
+```
+
+**File**: `crates/ruff_linter/src/checkers/ast/analyze/statement.rs` (modified, +1/-1)
+```diff
+@@ -1213,7 +1213,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
+             if checker.is_rule_enabled(Rule::RedefinedForOrWithTarget) {
+                 pylint::rules::redefined_loop_name(checker, stmt);
+             }
+-            if checker.any_rule_enabled(&[Rule::ReadWholeFile, Rule::WriteWholeFile]) {
++            if checker.any_rule_enabled(&[Rule::ManualPathRead, Rule::ManualPathWrite]) {
+                 checker
+                     .analyze
+                     .with_statements
+```
+
+**File**: `crates/ruff_linter/src/codes.rs` (modified, +17/-17)
+```diff
+@@ -403,7 +403,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
+         (Pylint, "E1300") => rules::pylint::rules::BadStringFormatCharacter,
+         (Pylint, "E1307") => rules::pylint::rules::BadStringFormatType,
+         (Pylint, "E1310") => rules::pylint::rules::BadStrStripCall,
+-        (Pylint, "E1507") => rules::pylint::rules::InvalidEnvvarValue,
++        (Pylint, "E1507") => rules::pylint::rules::InvalidGetenvKey,
+         (Pylint, "E1519") => rules::pylint::rules::SingledispatchMethod,
+         (Pylint, "E1520") => rules::pylint::rules::SingledispatchmethodFunction,
+         (Pylint, "E1700") => rules::pylint::rules::YieldFromInAsyncFunction,
+@@ -481,7 +481,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
  
--    if any_ambiguous || (any_narrowing && (any_true || any_false)) {
-+    if any_ambiguous || (!narrowed_types.is_empty() && (any_true || any_false)) {
-         return ComparisonResult::Ambiguous;
-     }
- 
-     match (any_true, any_false) {
-         (true, false) => ComparisonResult::AlwaysTrue,
-         (false, true) => ComparisonResult::AlwaysFalse,
-         (true, true) => ComparisonResult::Ambiguous,
--        (false, false) => ComparisonResult::CanNarrow(builder.build()),
-+        (false, false) => ComparisonResult::CanNarrow(
-+            IntersectionBuilder::new(db, &evaluator.env)
-+                .add_positive(original)
-+                .positive_elements(narrowed_types)
-+                .build(),
-+        ),
-     }
- }
- 
+         // flake8-async
+         (Flake8Async, "100") => rules::flake8_async::rules::CancelScopeNoCheckpoint,
+-        (Flake8Async, "105") => rules::flake8_async::rules::TrioSyncCall,
++        (Flake8Async, "105") => rules::flake8_async::rules::TrioCallNotAwaited,
+         (Flake8Async, "109") => rules::flake8_async::rules::AsyncFunctionWithTimeout,
+         (Flake8Async, "110") => rules::flake8_async::rules::AsyncBusyWait,
+         (Flake8Async, "115") => rules::flake8_async::rules::AsyncZeroSleep,
+@@ -493,7 +493,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
+         (Flake8Async, "221") => rules::flake8_async::rules::RunProcessInAsyncFunction,
+         (Flake8Async, "222") => rules::flake8_async::rules::WaitForProcessInAsyncFunction,
+         (Flake8Async, "230") => rules::flake8_async::rules::BlockingOpenCallInAsyncFunction,
+-        (Flake8Async, "240") => rules::flake8_async::rules::BlockingPathMethodInAsyncFunction,
++        (Flake8Async, "240") => rules::flake8_async::rules::BlockingPathCallInAsyncFunction,
+         (Flake8Async, "250") => rules::flake8_async::rules::BlockingInputInAsyncFunction,
+         (Flake8Async, "251") => rules::flake8_async::rules::BlockingSleepInAsyncFunction,
+         (Flake8Async, "401") => rules::flake8_async::rules::PytestRaisesExceptionGroup,
+@@ -510,7 +510,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
+         (Flake8Bugbear, "002") => rules::flake8_bugbear::rules::UnaryPrefixIncrementDecrement,
+         (Flake8Bugbear, "003") => rules::flake8_bugbear::rules::AssignmentToOsEnviron,
+         (Flake8Bugbear, "004") => rules::flake8_bugbear::rules::UnreliableCallableCheck,
+-        (Flake8Bugbear, "005") => rules::flake8_bugbear::rules::StripWithMultiCharacters,
++        (Flake8Bugbear, "005") => rules::flake8_bugbear::rules::StripWithDuplicateCharacters,
+         (Flake8Bugbear, "006") => rules::flake8_bugbear::rules::MutableArgumentDefault,
+         (Flake8Bugbear, "007") => rules::flake8_bugbear::rules::UnusedLoopControlVariable,
+         (Flake8Bugbear, "008") => rules::flake8_bugbear::rules::FunctionCallInDefaultArgument,
+@@ -663,7 +663,7 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
+         (Flake8Simplify, "112") => rules::flake8_simplify::rules::UncapitalizedEnvironmentVariables,
+         (Flake8Simplify, "113") => rules::flake8_simplify::rules::ManualLoopCounter,
+         (Flake8Simplify, "114") => rules::flake8_simplify::rules::IfWithIdenticalBranches,
+-        (Flake8Simplify, "115") => rules::flake8_simplify::rules::OpenFileWithContextHandler,
++        (Flake8Simplify, "115") => rules::flake8_simplify::rules::OpenFileWithoutContextManager,
+         (Flake8Simplify, "116") => rules::flake8_simplify::rules::IfElseBlockInsteadOfDictLookup,
+         (Flake8Simplify, "117") => rules::flake8_simplify::rules::MultipleWithStatements,
+         (Flake8Simplify, "118") => rules::flake8_simplify::rules::InDictKeys,
+@@ -702,21 +702,21 @@ pub fn code_to_rule(linter: Linter, code: &str) -> Option<(RuleStatus, Rule)> {
+         (Pyupgrade, "014") => rules::pyupgrade::rules::FunctionalNamedTuple,
+         (Pyupgrade, "015") => rules::pyupgrade::rules::RedundantOpenModes,
+         (Pyupgrade, "017") => rules::pyupgrade::rules::DatetimeTimezoneUTC,
+-        (Pyupgrade, "018") => rules::pyupgrade::rules::NativeLiterals,
++        (Pyupgrade, "018") => rules::pyupgrade::rules::UnnecessaryLiteralConstructor,
+         (Pyupgrade, "019") => rules::pyupgrade::rules::TypingTextStrAlias,
+         (Pyupgrade, "020") => rules::pyupgrade::rules::OpenAlias,
+-        (Pyupgrade, "021") => rules::pyupgrade::rules::ReplaceUniversalNewlines,
+-        (Pyupgrade, "022") => rules::pyupgrade::rules::ReplaceStdoutStderr,
++        (Pyupgrade, "021") => rules::pyupgrade::rules::SubprocessRunWithUniversalNewlines,
++        (Pyupgrade, "022") => rules::pyupgrade::rules::SubprocessRunWithPipedStdoutAndStderr,
+         (Pyupgrade, "023") => rules::pyupgrade::rules::DeprecatedCElementTree,
+         (Pyupgrade, "024") => rules::pyupgrade::rules::OSErrorAlias,
+         (Pyupgrade, "025") => rules::pyupgrade::r
 ```
 
 ---
 
-### Incident Patch 2: `5dfd0f64` (2026-11-22)
-**Commit Message**: [ty] Reuse unchanged fixed-length tuples during cycle recovery (#30690)
+### Incident Patch 2: `2c98e831` (2026-11-23)
+**Commit Message**: [ty] Treat caller-fixed type variables as concrete during inference (#30423)
 
-## Summary
+Consider this example of a generic call within another generic function
+(the last line):
 
-Given `self.x = (other.x, 1)` where `other` is an instance of the same
-class, ty could infer another layer of nested tuples on each pass. We
-normalize recursive types to stop that growth. Today, we allocate a new
-slice of element types and intern the tuple again even if none of the
-elements changed.
+```python
+from typing import Any
 
-We now reuse an unchanged fixed-length tuple if it belongs to the same
-program. We still normalize each element and copy the slice on the first
-change. This adds a comparison per element, but avoids repeated
-allocations and interner lookups for large unions of nested tuples like
-those in [Pygments’ lexer
-registry](https://github.com/pygments/pygments/blob/cfca62e6e95136e48a255e8cbffb0bbe1d98456c/pygments/lexers/_mapping.py).
+def keep[L: list[Any]](items: L) -> L:
+    return items
 
-Before the rebase, `ty check` used 4.2% fewer instructions across
-Pygments and 17% fewer on its Sphinx extension alone. Opening the
-extension and hovering over `data` used 9.2% fewer instructions.
-Diagnostics and hover results were unchanged. Median peak RSS for the
-full check rose by 2.5 MiB, to 189.7 MiB.
+def forward[T](items: list[T]) -> list[T]:
+    return keep(items)
+```
 
-<!-- ty-pinned-project-instructions:start -->
+The type variables for the call we are currently inferring (`L`) are
+"inferable", and we can pick any solution for them that fits the
+constraints: the goal of constraint solving is to pick a valid solution
+for inferable type variables.
 
-Across 28 projects, the me
+Type variables from the outer scope (`T`) are "fixed" or "non-inferable"
+-- they could take on any type within their bounds/constraints, and our
+solution has to work for all their possible specializations; we aren't
+allowed to pick a solution for them.
 
-**File**: `crates/ty_python_semantic/src/types/tuple.rs` (modified, +28/-41)
+Today on main, our solver largely internally treats non-inferable type
+variables as inferable. This can cause us to wrongly report "solutions"
+that are only valid for some specializations of the non-inferable
+typevars. It can also cause us to wrongly substitute occurrences of the
+fixed typevar with some other type.
+
+For example, in the above snippet we get the constraint `list
+
+**File**: `crates/ruff_benchmark/benches/ty_constraint_set.rs` (modified, +146/-0)
 ```diff
-@@ -15,6 +15,7 @@
- 
- use crate::types::typevar::TypeVarSet;
- use crate::{Program, ProgramEnvironment};
-+use std::borrow::Cow;
- use std::cmp::Ordering;
- use std::hash::Hash;
- use std::num::{NonZeroI32, NonZeroUsize};
-@@ -294,12 +295,20 @@ impl<'db> TupleType<'db> {
-         div: Type<'db>,
-         nested: bool,
-     ) -> Option<Self> {
--        Some(Self::new_internal(
--            db,
--            env.program(db),
--            self.tuple(db)
--                .recursive_type_normalized_impl(db, env, div, nested)?,
--        ))
-+        let program = env.program(db);
-+        let normalized = match self.tuple(db) {
-+            Tuple::Fixed(tuple) => {
-+                let normalized = tuple.recursive_type_normalized_impl(db, env, div, nested)?;
-+                if matches!(normalized, Cow::Borrowed(_)) && self.program(db) == program {
-+                    return Some(self);
-+                }
-+                Tuple::Fixed(normalized.into_owned())
-+            }
-+            Tuple::Variable(tuple) => {
-+                Tuple::Variable(tuple.recursive_type_normalized_impl(db, env, div, nested)?)
-+            }
-+        };
-+        Some(Self::new_internal(db, program, normalized))
+@@ -270,6 +270,40 @@ fn benchmark_constructor_literal_alias(criterion: &mut Criterion) {
      }
+ }
  
-     pub(crate) fn apply_type_mapping_impl<'a>(
-@@ -1020,25 +1029,20 @@ impl<'db> FixedLengthTuple<Type<'db>> {
-         env: &ProgramEnvironment<'db>,
-         div: Type<'db>,
-         nested: bool,
--    ) -> Option<Self> {
--        if nested {
--            Some(Self::from_elements(
--                self.0
--                    .iter()
--                    .map(|ty| ty.recursive_type_normalized_impl(db, env, div, true))
--                    .collect::<Option<Box<[_]>>>()?,
--            ))
--        } else {
--            Some(Self::from_elements(
--                self.0
--                    .iter()
--                    .map(|ty| {
--                        ty.recursive_type_normalized_impl(db, env, div, true)
--                            .unwrap_or(div)
--                    })
--                    .collect::<Box<[_]>>(),
--            ))
-+    ) -> Option<Cow<'_, Self>> {
-+        let mut tuple = Cow::Borrowed(self);
-+        for (index, element) in self.0.iter().enumerate() {
-+            let normalized = element.recursive_type_normalized_impl(db, env, div, true);
-+            let normalized = if nested {
-+                normalized?
-+            } else {
-+                normalized.unwrap_or(div)
-+            };
-+            if normalized != *element {
-+                tuple.to_mut().0[index] = normalized;
-+            }
-         }
-+        Some(tuple)
-     }
++/// Bokeh calls `super().__init__()` on a receiver with a large union of literals (ty#5063).
++/// We specialize the overloads before filtering by arity. Two ways to partition the literals
++/// between `A` and `B` already rule out a unique receiver specialization.
++fn benchmark_overloaded_constructor_receiver(criterion: &mut Criterion) {
++    setup_rayon();
++
++    let code = r#"
++        from typing import Literal, overload
++
++        type Pattern = Literal["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
++
++        class Either[T]:
++            value: T
++
++            @overload
++            def __init__[A, B](self: "Either[A | B]", value: A) -> None: ...
++            @overload
++            def __init__(self) -> None: ...
++            def __init__(self, *args: object) -> None: ...
++
++        class HatchPattern(Either[Pattern]):
++            def __init__(self) -> None:
++                super().__init__()
++    "#;
++
++    criterion.bench_function("ty_micro[overloaded_constructor_receiver]", |b| {
++        b.iter_batched_ref(
++            || setup_micro_case(code),
++            |Case { db }| assert_eq!(db.check().len(), 0),
++            BatchSize::SmallInput,
++        );
++    });
++}
++
+ /// These constructors used to hang because recursive substitution kept reordering union
+ /// members in their inferred type arguments (ty#5057).
+ fn benchmark_constructor_union_specialization(criterion: &mut Criterion) {
+@@ -931,6 +965,114 @@ fn benchmark_pydantic_core_schema_dict(criterion: &mut Criterion) {
+     });
+ }
  
-     fn apply_type_mapping_impl<'a>(
-@@ -2682,23 +2686,6 @@ impl<'db> Tuple<Type<'db>, VariableSegment<'db>> {
-             }))
-     }
++/// Each overload brings its own `T` into the scope of `P`. Interning the growing set of
++/// binders after each overload retains a quadratic number of entries. Passing `first` keeps
++/// the final argument check from comparing the whole overload set against itself.
++fn benchmark_paramspec_capture_many_overloads(criterion: &mut Criterion) {
++    setup_rayon();
++
++    let mut code = String::from("from typing import Callable, Literal, overload\n\n");
++    for tag in 0..256 {
++        writeln!(
++            &mut code,
++            "@overload\ndef select[T](tag: Literal[{tag}], value: T) -> T: ..."
++        )
++        .ok();
++    }
++    code.push_str(
++        "\
++def select(tag: int, value: object) -> object:
++    return value
++
++def register[**P](f: Callable[P, object], g: Callable[P, object]) -> None: ...
++
++def first(tag: Literal[0], value: int) -> int:
++    return value
++
++register(first, select)
++",
++    );
++
++    criterion.bench_function("ty_micro[paramspec_capture_many_overloads]", |b| {
++        b.iter_batched_ref(
++            || setup_micro_case(&code),
++            |Case { db }| assert_eq!(db.check().len(), 0),
++            BatchSize::SmallInput,
++        );
++    });
++}
++
++/// An overloaded `__call__` can refer to the protocol itself in each receiver annotation. Checking
++/// the receiver can therefore encounter the same overloads again.
++fn benchmark_overloaded_protocol_receivers(criterion: &mut Criterion) {
++    setup_rayon();
++
++    let code = r#"
++        from __future__ import annotations
++
++        from collections.abc import Callable
++        from os import PathLike
++        from typing import Generic, ParamSpec, Protocol, TypeVar, overload
++
++        V = TypeVar("V", covariant=True)
++        A = TypeVar("A", contravariant=True)
++        P = ParamSpec("P")
++        T = TypeVar("T")
++        C = TypeVar("C", bound=type)
++
++        class Wrapper(Protocol, Generic[V, A]):
++            @overload
++            def __call__(
++                self: Wrapper[Callable[P, T], A], f: Callable[P, T], arg: A, /
++            ) -> Callable[P, T]: ...
++            @overload
++            def __call__(
++                self: Wrapper[classmethod[C, P, T], A], f: classmethod[C, P, T], arg: A, /
++            ) -> classmethod[C, P, T]: ...
++            @overload
++            def __call__(
++                self: Wrapper[staticmethod[P, T], A], f: staticmethod[P, T], arg: A, /
++            ) -> staticmethod[P, T]: ...
++            def __call__(self, f, arg, /): ...
++
++        def check(wrapper: Wrapper[object, str | PathLike[str]], f: Callable[P, T]) -> Callable[P, T]:
++            return wrapper(f, "arg")
++    "#;
++
++    criterion.bench_function("ty_micro[overloaded_protocol_receivers]", |b| {
++        b.iter_batched_ref(
++            || setup_micro_case(code),
++            |Case { db }| assert_eq!(db.check().len(), 0),
++            BatchSize::SmallInput,
++        );
++    });
++}
++
++/// Inferring the element type of this list checks whether a recursive alias and the type variables
++/// from `product` can satisfy both endpoints of an inference bound.
++fn benchmark_recursive_alias_product(criterion: &mut Criterion) {
++    setup_rayon();
++
++    let code = r#"
++        from collections.abc import Hashable, Sequence
++        from itertools import product
++        from typing import Union
++
++        Label = Union[Ha
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/annotations/callable.md` (modified, +19/-0)
+```diff
+@@ -366,6 +366,25 @@ def expects_str_return(c: Callable[[int | str], str]) -> None:
+ expects_str_return(wide_return_converter)
+ ```
  
--    fn recursive_type_normalized_impl(
--        &self,
--        db: &'db dyn Db,
--        env: &ProgramEnvironment<'db>,
--        div: Type<'db>,
--        nested: bool,
--    ) -> Option<Self> {
--        match self {
--            Tuple::Fixed(tuple) => Some(Tuple::Fixed(
--                tuple.recursive_type_normalized_impl(db, env, div, nested)?,
--            )),
--            Tuple::Variable(tuple) => Some(Tuple::Variable(
--                tuple.recursive_type_normalized_impl(db, env, div, nested)?,
--            )),
--        }
--    }
--
-     fn apply_type_mapping_impl<'a>(
-         &self,
-         db: &'db dyn Db,
++## Overloaded bound method assignability
++
++When both overloads accept any receiver, their parameter types together cover the callable's input
++union.
++
++```py
++from typing import Callable, overload
++
++class Parser:
++    @overload
++    def parse(self: object, x: int, /) -> int: ...
++    @overload
++    def parse(self: object, x: str, /) -> str: ...
++    def parse(self: object, x: int | str, /) -> int | str:
++        return x
++
++parse: Callable[[int | str], int | str] = Parser().parse  # ok
++```
++
+ ## Union
+ 
+ ```py
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/call/builtins.md` (modified, +3/-7)
+```diff
+@@ -697,8 +697,8 @@ OrderedDict(zip(["name"], items))
+ 
+ ## Contextual inference for `next`
+ 
+-An incompatible return context does not make an invalid iterator argument valid. An optional context
+-also preserves the concrete return type of a valid iterator.
++The iterator determines the result type of `next`. Returning that `int` from a method annotated with
++`str` is an error.
+ 
+ ```toml
+ [rules]
+@@ -711,11 +711,7 @@ class Counter:
+         return 1
+ 
+     def text(self) -> str:
+-        # TODO: Infer `int` for `next(self)` and report a single `invalid-explicit-return` error
+-        # for returning `int` where `str` is expected.
+-        # error: [invalid-argument-type] "Expected `SupportsNext[str]`, found `Self@text`"
+-        # error: [unsound-return] "`Unknown`"
+-        return next(self)
++        return next(self)  # error: [invalid-explicit-return]
+ 
+     def read(self) -> int | None:
+         return reveal_type(next(self))  # revealed: int
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/cycle/basic.md` (modified, +4/-3)
+```diff
+@@ -783,16 +783,17 @@ while value:
+ python-version = "3.12"
+ ```
+ 
+-A list passed to a generic function retains the type inferred from its elements, even when the
+-call's return type supplies an incompatible context for that list.
++An unannotated list receives element types from both its initializer and its later uses. Here the
++return annotation supplies `T` through `keep`, but the list also contains an `int`. Returning it as
++`list[T]` would be unsafe.
+ 
+ ```py
+ def keep[U](values: list[U]) -> list[U]:
+     return values
+ 
+ def make[T](arg: T) -> list[T]:
+     values = [42]
+-    reveal_type(values)  # revealed: list[int]
++    reveal_type(values)  # revealed: list[T@make | int]
+     return keep(values)  # error: [invalid-explicit-return]
+ ```
+ 
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/diagnostics/error_context.md` (modified, +15/-16)
+```diff
+@@ -962,9 +962,8 @@ help: A subclass of `Empty` could validly add a new field of an arbitrary type,
+ 
+ ## Generic `TypedDict` field conflicts in overload diagnostics
+ 
+-A generic `TypedDict` relation can be unsatisfiable without being the `never` terminal. Capturing
+-its type variable from an enclosing function keeps the overload non-generic while retaining the
+-conflicting constraints. The resulting diagnostic should explain which field introduced them.
++A non-generic overload can refer to a type variable from its enclosing function. That variable is
++fixed when checking the overload, so the diagnostic explains why the first field is incompatible.
+ 
+ ```py
+ from typing import Generic, TypeVar, TypedDict, overload
+@@ -1000,15 +999,15 @@ error[inconsistent-overload-implementation]: Implementation does not accept all
+ info: Implementation signature `(value: Pair[T@outer] | str) -> None` is not assignable to overload signature `(value: Fixed) -> None`
+ info: parameter `value` has an incompatible type: `Fixed` is not assignable to `Pair[T@outer] | str`
+ info: └── type `Fixed` is not assignable to any element of the union `Pair[T@outer] | str`
+-info:     ├── field "second" on TypedDict `Fixed` has type `str` which is not assignable to type `T@outer` expected by TypedDict `Pair`
++info:     ├── field "first" on TypedDict `Fixed` has type `int` which is not assignable to type `T@outer` expected by TypedDict `Pair`
+ info:     └── ... omitted 1 union element without additional context
+ ```
+ 
+-## Stop checking callable parameters after incompatible generic constraints
++## Stop checking callable parameters after an incompatibility
+ 
+-Once earlier parameters produce an unsatisfiable nonterminal constraint set, continuing to a later
+-parameter must not replace the diagnostic context that explains the original incompatibility. The
+-type variable belongs to the enclosing function, so the overload itself remains non-generic.
++An incompatibility in a later parameter does not replace the diagnostic context from the first
++incompatible parameter. The type variable belongs to the enclosing function, so the overload itself
++remains non-generic.
+ 
+ ```py
+ from typing import Generic, TypeVar, TypedDict, overload
+@@ -1044,7 +1043,7 @@ error[inconsistent-overload-implementation]: Implementation does not accept all
+ info: Implementation signature `(value: Pair[T@outer] | str, later: str) -> None` is not assignable to overload signature `(value: Fixed, later: int) -> None`
+ info: parameter `value` has an incompatible type: `Fixed` is not assignable to `Pair[T@outer] | str`
+ info: └── type `Fixed` is not assignable to any element of the union `Pair[T@outer] | str`
+-info:     ├── field "second" on TypedDict `Fixed` has type `str` which is not assignable to type `T@outer` expected by TypedDict `Pair`
++info:     ├── field "first" on TypedDict `Fixed` has type `int` which is not assignable to type `T@outer` expected by TypedDict `Pair`
+ info:     └── ... omitted 1 union element without additional context
+ ```
+ 
+@@ -1356,8 +1355,8 @@ info:     └── parameter `y` has an incompatible type: `str` is not assigna
+ ## Recursive protocol diagnostic context
+ 
+ A value-constrained type parameter makes the recursive `child` override valid for each permitted
+-specialization. The explicit receiver on `Outer.expose` preserves unresolved type variables while
+-diagnostic context is collected, including the incompatible recursive member and its return type.
++specialization. When checking `Outer[int]`, the diagnostic follows the return type of `expose` to
++the incompatible `value` method. Its return type is the caller's `T`, which need not be `int`.
+ 
+ ```py
+ from __future__ import annotations
+@@ -1390,12 +1389,12 @@ error[invalid-assignment]: Object of type `Concrete[T@diagnose]` is not assignab
+    |              ----------   ^^^^^ Incompatible value of type `Concrete[T@diagnose]`
+    |              |
+    |              Declared type
+-info: type `Concrete[T@diagnose]` is not assignable to protocol `Chain[int]`
+-info: └── protocol member `child` is incompatible
+-info:     └── incompatible return types: `Concrete[str]` is not assignable to `Chain[int]`
+-info:         └── type `Concrete[str]` is not assignable to protocol `Chain[int]`
++info: type `Concrete[T@diagnose]` is not assignable to protocol `Outer[int]`
++info: └── protocol member `expose` is incompatible
++info:     └── incompatible return types: `Concrete[T@diagnose]` is not assignable to `Chain[int]`
++info:         └── type `Concrete[T@diagnose]` is not assignable to protocol `Chain[int]`
+ info:             └── protocol member `value` is incompatible
+-info:                 └── incompatible return types: `str` is not assignable to `int`
++info:                 └── incompatible return types: `T@diagnose` is not assignable to `int`
+ ```
+ 
+ ## Recursive protocols in a union after overload comparison
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/callables.md` (modified, +111/-3)
+```diff
+@@ -1135,7 +1135,7 @@ def _(callback: Restricted[str]):
+ F = TypeVar("F", bound=Restricted[str])
+ 
+ def _(callback: F):
+-    consume(callback)  # TODO: This should error.
++    consume(callback)  # error: [invalid-argument-type]
+     x: Callable[[int], str] = callback  # error: [invalid-assignment]
+ ```
+ 
+@@ -1150,8 +1150,7 @@ G = TypeVar("G", bound=Restricted[int])
+ 
+ def _(callback: G):
+     consume(callback)
+-    # TODO: This should not error.
+-    x: Callable[[int], str] = callback  # error: [invalid-assignment]
++    x: Callable[[int], str] = callback  # ok
+ ```
+ 
+ Note that a compatible receiver bound does not satisfy an incompatible return type:
+@@ -1161,6 +1160,33 @@ def _(callback: G):
+     wrong: Callable[[int], bytes] = callback  # error: [invalid-assignment]
+ ```
+ 
++## Overloaded methods on a bounded type variable
++
++Both overloads accept any receiver, so together they cover the protocol's input union even when the
++receiver is `T`. The bound method's return type must account for both overloads.
++
++```py
++from typing import Callable, Protocol, TypeVar, overload
++
++class Parser:
++    @overload
++    def parse(self: object, value: int, /) -> int: ...
++    @overload
++    def parse(self: object, value: str, /) -> str: ...
++    def parse(self: object, value: int | str, /) -> int | str:
++        return value
++
++class SupportsParse(Protocol):
++    def parse(self, value: int | str, /) -> int | str: ...
++
++T = TypeVar("T", bound=Parser)
++
++def check(parser: T):
++    impl: SupportsParse = parser  # ok
++    parse: Callable[[int | str], int | str] = parser.parse  # ok
++    wrong: Callable[[int | str], int] = parser.parse  # error: [invalid-assignment]
++```
++
+ ## Constructor bounds in callable inference
+ 
+ The signature of a class constructor can be inferred from a type variable with an upper bound of
+@@ -1394,6 +1420,61 @@ class Closed:
+     def method(cls, value: int) -> None: ...
+ ```
+ 
++## Decorating a binary method with a bounded receiver
++
++Both `self` and `abs(self)` satisfy the bound on `M`. The decorated method accepts another matrix,
++even though the decorator's signature doesn't tell us whether the result keeps the receiver's type.
++
++```py
++from typing import Callable, TypeVar
++from typing_extensions import Self
++
++A = TypeVar("A")
++B = TypeVar("B")
++R = TypeVar("R")
++M = TypeVar("M", bound="Matrix")
++
++def decorate(fn: Callable[[A, B], R]) -> Callable[[A, B], R]:
++    return fn
++
++class Matrix:
++    def __abs__(self) -> Self:
++        return self
++
++    @decorate
++    def __add__(self: M, other: M) -> M:
++        return self
++
++    def check(self):
++        reveal_type(abs(self))  # revealed: Self@check
++        reveal_type(self + self)  # revealed: Unknown
++        reveal_type(abs(self) + self)  # revealed: Unknown
++        abs(self) + 1  # error: [unsupported-operator]
++```
++
++## Decorating a generic function with a bounded decorator
++
++`identity` accepts any value, but the decorator limits the wrapped function to integers.
++
++```py
++from typing import Callable, TypeVar
++
++A = TypeVar("A", bound=int)
++R = TypeVar("R", bound=int)
++T = TypeVar("T")
++
++def integers(fn: Callable[[A], R]) -> Callable[[A], R]:
++    return fn
++
++@integers
++def identity(value: T) -> T:
++    return value
++
++identity("x")  # error: [invalid-argument-type]
++# TODO: Solve for the decorator's bounded variables and accept this call.
++identity(1)  # error: [invalid-argument-type]
++```
++
+ ## Gradual class parameters
+ 
+ A callback that accepts `type[Any]` or `type[Unknown]` can accept any class object.
+@@ -1764,6 +1845,33 @@ class Box(Generic[C]):
+             reveal_type(Box[C](arg))
+ ```
+ 
++## Inferring a callback parameter through a protocol member
++
++`Box` has no type arguments, but its `value` attribute carries the type variable from `put`.
++Comparing the result of `put` with `HasValue` supplies the upper bound of `int` for `X`.
++
++```py
++from typing import Callable, Protocol, TypeVar
++
++T = TypeVar("T", bound=int)
++X = TypeVar("X")
++
++class HasValue(Protocol):
++    @property
++    def value(self) -> int: ...
++
++class Box:
++    def put(self, x: T) -> "Box":
++        self.value = x
++        return self
++
++def argument(f: Callable[[X], HasValue]) -> X:
++    raise NotImplementedError
++
++def check(box: Box):
++    reveal_type(argument(box.put))  # revealed: int
++```
++
+ ## Specializing generic protocol methods
+ 
+ A method can use its own type parameter as the class argument of another instance of its protocol.
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +148/-2)
+```diff
+@@ -1441,7 +1441,7 @@ class C(Generic[T]):
+     def __init__(self, value: T) -> None:
+         reveal_type(C(value))  # revealed: C[T@C]
+ 
+-        # error: [invalid-argument-type] "Expected `int`, found `T@C`"
++        # error: [invalid-assignment] "Object of type `C[T@C]` is not assignable to `C[int]`"
+         invalid: C[int] = C(value)
+ ```
+ 
+@@ -1983,6 +1983,36 @@ reveal_type(C(1, True))  # revealed: C[int]
+ wrong_innards: C[int] = C("five", 1)
+ ```
+ 
++### Inferring a union from the initializer's receiver
++
++The arguments fix `A` to `bool` and `B` to `int`. The initializer's `self` annotation then gives the
++new box the element type `int`, since `bool` is a subtype of `int`.
++
++```py
++from typing import Generic, TypeVar
++
++T = TypeVar("T")
++A = TypeVar("A")
++B = TypeVar("B")
++
++class Box(Generic[T]):
++    value: T
++
++    def __init__(self: "Box[A | B]", left: "Box[A]", right: "Box[B]") -> None: ...
++
++def combine(left: Box[bool], right: Box[int]):
++    reveal_type(Box(left, right))  # revealed: Box[int]
++```
++
++If the left box carries a caller's type variable, the result keeps it in the union.
++
++```py
++U = TypeVar("U")
++
++def forward(left: Box[U], right: Box[int]):
++    reveal_type(Box(left, right))  # revealed: Box[U@forward | int]
++```
++
+ ### Calling a generic initializer on an existing instance
+ 
+ An inherited initializer can infer its own type parameters from the arguments. Its explicit `self`
+@@ -2020,7 +2050,7 @@ could be `str` alone, so the initializer cannot assume it accepts both types.
+ class Child(Either[T]):
+     def initialize(self, cls: type[T], default: T | Callable[[], T]) -> None:
+         super().__init__(cls, cls, default)  # ok
+-        super().__init__(str, int, default)  # error: [invalid-argument-type] "Expected `Either[str | int]`"
++        super().__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
+ ```
+ 
+ For `Either[bytes]`, the receiver is incompatible whether it is bound implicitly or passed
+@@ -2587,6 +2617,122 @@ as_specialized: Base[list[int]] = GenericChild[int]()
+ incompatible_specialization: Base[list[str]] = GenericChild[int]()  # error: [unsound-assignment]
+ ```
+ 
++Both `Child` and `Reversed` inherit `Base[int]`, so a value stored in either must be assignable to
++`int`, even though they both also inherit `Base[Any]`.
++
++```py
++U = TypeVar("U")
++
++def store(value: T, box: Base[T]) -> None:
++    box.value = value
++
++def check(value: U, child: Child, reversed_child: Reversed, concrete: Concrete):
++    # TODO: error: [invalid-argument-type]
++    store("wrong", child)
++    # TODO: error: [invalid-argument-type]
++    store(value, child)
++
++    # TODO: error: [invalid-argument-type]
++    store("wrong", reversed_child)
++    # TODO: error: [invalid-argument-type]
++    store(value, reversed_child)
++
++    store("wrong", concrete)  # error: [invalid-argument-type]
++    store(value, concrete)  # error: [invalid-argument-type]
++```
++
++## Overriding a method that returns its receiver type
++
++The base method promises a `Base` at minimum. An override that can return `None` violates that
++promise even when the receiver satisfies the bound on `T`.
++
++```pyi
++from typing import TypeVar
++
++T = TypeVar("T", bound="Base")
++
++class Base:
++    def clone(self: T) -> T: ...
++
++class Child(Base):
++    def clone(self) -> Child: ...
++
++class OptionalChild(Base):
++    def clone(self) -> OptionalChild | None: ...  # error: [incompatible-method-override]
++
++class Sibling(Base):
++    # TODO: Reject this override. The bound permits a Child, but the receiver is a Sibling.
++    def clone(self) -> Child: ...
++```
++
++## Invariant parameter and return types with a bounded receiver type variable
++
++The override of `get` returns `list[int]` where the base method promises `list[T]`. The override of
++`put` accepts `list[T]` where the base method accepts `list[int]`. Since `list` is invariant, both
++overrides would require `T` to be `int`, which exceeds its bound of `bool`.
++
++```pyi
++from typing import Generic, TypeVar
++
++K = TypeVar("K", bound=bool, covariant=True)
++T = TypeVar("T", bound=bool)
++
++class Buffer(Generic[K]):
++    def get(self: Buffer[T]) -> list[T]: ...
++    def put(self, values: list[int]) -> None: ...
++
++class Child(Buffer[K]):
++    def get(self) -> list[int]: ...  # error: [incompatible-method-override]
++    # error: [incompatible-method-override]
++    def put(self: Child[T], values: list[T]) -> None: ...
++```
++
++## Parameter and return types with a constrained receiver type variable
++
++The base methods restrict the receiver's key type to `bool` or `str`. Neither choice allows
++`first_key` to return an arbitrary `int` or `remove` to narrow its parameter from `int` to `T`.
++Returning `K` is valid for every receiver the base method accepts, even though `K` is unbounded.
++
++```pyi
++from typing import Any, Generic, TypeVar
++
++K = TypeVar("K", covariant=True)
++V = TypeVar("V")
++T = TypeVar("T", bool, str)
++
++class Map(Generic[K, V]):
++    def first_key(self: 
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +407/-16)
+```diff
+@@ -533,6 +533,70 @@ def invalid_argument_with_context(value: Callable[[], S]) -> list[str]:
+     return box_callable(value)  # error: [invalid-argument-type]
+ ```
+ 
++`consume` expects to read a `str` from `source.value`. We can't assume a compatible specialization
++of `Source[T]`: a caller of `wrapper` could pass a `Source[object]` whose `value` is `42`.
++
++```py
++from typing import Protocol, TypeVar
++
++Element = TypeVar("Element")
++
++class Source(Protocol[Element]):
++    value: Element
++
++SourceT = TypeVar("SourceT", bound=Source[object])
++Text = TypeVar("Text", bound=str)
++
++def consume(source: Source[Text]) -> str:
++    return source.value
++
++def wrapper(source: SourceT) -> None:
++    consume(source)  # error: [invalid-argument-type]
++```
++
++## Preserving the caller's type variable with an aliased union bound
++
++The invariant list and the callback's input and output both require `T` to match `U`. Every
++specialization of `U` satisfies the shared `Scalar` bound.
++
++```py
++from collections.abc import Callable
++from typing import TypeVar
++from typing_extensions import TypeAliasType
++
++Scalar = TypeAliasType("Scalar", int | str)
++T = TypeVar("T", bound=Scalar)
++U = TypeVar("U", bound=Scalar)
++
++def first(items: list[T] | None) -> T | None:
++    return items[0] if items is not None and items else None
++
++def apply(fn: Callable[[T], T], value: T) -> T:
++    return fn(value)
++
++def forward(items: list[U], fn: Callable[[U], U], value: U) -> None:
++    reveal_type(first(items))  # revealed: U@forward | None
++    reveal_type(apply(fn, value))  # revealed: U@forward
++```
++
++## Preserving an argument through a gradual upper bound
++
++In the call on the last line of this example, we should infer `list[T]`, not substitute `Any` for
++`T` (due to the `list[Any]` upper bound) and infer `list[Any]`:
++
++```py
++from typing import Any, TypeVar
++
++L = TypeVar("L", bound=list[Any])
++T = TypeVar("T")
++
++def keep(items: L) -> L:
++    return items
++
++def forward(items: list[T]) -> list[T]:
++    return reveal_type(keep(items))  # revealed: list[T@forward]
++```
++
+ ## Inferring a bound from a narrowed protocol
+ 
+ Narrowing to `Text` supplies a `str` return type that satisfies the bound, even when the original
+@@ -647,6 +711,31 @@ def extend(values: list[T], other: list[T]) -> None:
+     values.extend([1])
+ ```
+ 
++## Passing bound methods with a specialized receiver
++
++A method restricted to `Box[int]` is a valid callback when the receiver has that specialization. A
++caller with a `Box[T]` cannot assume its element type is `int`.
++
++```py
++from collections.abc import Callable
++from typing import Generic, TypeVar
++
++T = TypeVar("T")
++
++class Box(Generic[T]):
++    value: T
++
++    def get_int(self: "Box[int]") -> int:
++        return self.value
++
++def invoke(callback: Callable[[], T]) -> T:
++    return callback()
++
++def forward(box: Box[T], ints: Box[int]) -> None:
++    invoke(box.get_int)  # error: [invalid-argument-type]
++    reveal_type(invoke(ints.get_int))  # revealed: int
++```
++
+ ## Generic callbacks in bound method calls
+ 
+ A callback registered for an arbitrary `T` must return that `T` for every input. The identity
+@@ -1377,6 +1466,54 @@ def f(value: T):
+     reveal_type(value + value)  # revealed: Unknown
+ ```
+ 
++## A bounded receiver implementing an operator protocol
++
++The bound defines the available operators. Their generic receiver is the caller's `R`, so the
++products and their sum retain that type.
++
++```py
++from operator import mul
++from typing import Protocol, TypeVar
++
++T = TypeVar("T")
++
++class Ring(Protocol):
++    def __mul__(self: T, other: T, /) -> T: ...
++    def __add__(self: T, other: T, /) -> T: ...
++
++R = TypeVar("R", bound=Ring)
++
++def dot(left: list[R], right: list[R], start: R) -> R:
++    reveal_type(mul(start, start))  # revealed: R@dot
++    result = sum(map(mul, left, right), start)
++    reveal_type(result)  # revealed: R@dot
++    return result
++```
++
++An alias for a nominal bound also preserves the receiver type, even when the protocol parameter is
++optional. The bound still restricts the other operand to `int`.
++
++```py
++from _typeshed import SupportsMul
++from typing_extensions import TypeAliasType
++
++class Scalable:
++    def __mul__(self: T, factor: int, /) -> T:
++        return self
++
++ScalableAlias = TypeAliasType("ScalableAlias", Scalable)
++S = TypeVar("S", bound=ScalableAlias)
++
++def twice(value: SupportsMul[int, T] | None) -> T:
++    assert value is not None
++    return value * 2
++
++def scale(value: S) -> S:
++    mul(value, "bad")  # error: [no-matching-overload]
++    reveal_type(twice(value))  # revealed: S@scale
++    return mul(value, 2)
++```
++
+ ## Unary operators on bounded type variables
+ 
+ When a unary method returns `Self`, the operator preserves the operand's type variable.
+@@ -2617,6 +2754,30 @@ reveal_type(f(g("a")))  # revealed: tuple[Literal["a"] | None, int]
+ reveal_type(g(f("a")))  # revealed: tuple[Literal["a"], int] | None
+ ```
+ 
++Inside `find`, `wrap(value)` has type `list[T]` for 
 ```
 
 ---
 
-### Incident Patch 3: `73cf4d13` (2026-11-22)
-**Commit Message**: [ty] Check for complementary truthiness guards before rebuilding intersections (#30731)
+### Incident Patch 3: `ab236150` (2026-11-23)
+**Commit Message**: [`pyupgrade`] Clarify `UP006` fix safety (#30843)
 
 ## Summary
 
-After an `if x`, ty can combine `T & ~AlwaysFalsy` and `T &
-~AlwaysTruthy` back into `T`. When building a union, we construct both
-negated guards for each intersection we consider, even if it has no
-truthiness guard or both sides exclude the same values.
+改了 Ruff 的 **UP006 文档里【Fix safety】这一节**，让它和实际行为一致。
 
-We now read the exclusions first. Only a complementary pair needs the
-guards removed, and we can reuse the existing helper for removing
-exclusions. The check that the merged type reproduces both original
-types stays the same.
+旧文档可能让人以为：项目目标设为 Python 3.9 时，`ruff check --fix` 会自动把 `typing.List[int]`
+改成 `list[int]`。
 
-With #30721 on main, checking [Telethon
-1.42.0](https://pypi.org/project/Telethon/1.42.0/) used 6.75–6.91% fewer
-instructions. [Telethon
-1.45.0](https://pypi.org/project/Telethon/1.45.0/) used 7.20–7.33%
-fewer. Diagnostics matched.
+实际情况是，Ruff 在 Python 3.9 下也把这项修复标为 `unsafe`。默认的 `--fix` 会跳过它，加上
+`--unsafe-fixes` 才会应用。
 
-<!-- ty-pinned-project-instructions:start -->
-| Project | [Base
-instructions](https://github.com/astral-sh/ruff/commit/7be385f21d0848e58668b75cd90d0927637c84b6)
-| [PR
-instructions](https://github.com/astral-sh/ruff/commit/29585dbc87405c80820f70920558a07fde597aae)
-| Change | Paired range |
-| --- | ---: | ---: | ---: | ---: |
-|
-[Black](https://github.com/psf/black/tree/55996d1fb8342
+这次提交只改了文档，一共改写了6行
 
-**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +19/-42)
+### English translation (AI-assisted)
+
+> This updates the **Fix safety** section of Ruff's UP006 documentation
+to match the rule's behavior.
+>
+> The old wording could lead readers to expect `ruff check --fix` to
+rewrite `typing.List[int]` as `list[int]` when targeting Python 3.9.
+>
+> Ruff marks this fix as `unsafe` when targeting Python 3.9. With the
+default settings, `--fix` skips it unless `--unsafe-fixes` is enabled.
+>
+> The patch rewrites six lines of documentation.
+
+Fixes #30822.
+
+## Notes to reviewers
+
+AI assisted with the patch, the checks below, and the wording of this
+description.
+
+> Verified with Ruff 0.17.6 and `--isolated --select UP006`. With a
+Python 3.9 target, `--fix` skipped the rewrite and `--fix
+--unsafe-fixes` applied it. With a Python 3.10 target, `--fix` applied
+it.
+
+---------
+
+Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
+
+**File**: `crates/ruff_linter/src/rules/pyupgrade/rules/use_pep585_annotation.rs` (modified, +3/-3)
 ```diff
-@@ -58,48 +58,21 @@ use itertools::Itertools;
- use rustc_hash::FxHashSet;
- use smallvec::SmallVec;
- 
--/// Extract `(core, guard)` from truthiness-guarded intersections.
--///
--/// e.g.
--/// - `A & ~AlwaysTruthy` -> `Some((A, ~AlwaysTruthy))`
--/// - `A & ~AlwaysFalsy` -> `Some((A, ~AlwaysFalsy))`
--/// - `A` -> `None`
--/// - `A & ~AlwaysTruthy & ~AlwaysFalsy` -> `None` (not a single-guard shape)
--///
--/// This only recognizes the "single truthiness guard" forms used by truthiness narrowing.
--fn split_truthiness_guarded_intersection<'db>(
--    db: &'db dyn Db,
--    env: &ProgramEnvironment<'db>,
--    ty: Type<'db>,
--) -> Option<(Type<'db>, Type<'db>)> {
-+/// The truthiness excluded by a single guard, e.g. `AlwaysFalsy` in `A & ~AlwaysFalsy`.
-+/// Intersections that exclude both truthy and falsy values have no single guard.
-+fn excluded_truthiness<'db>(db: &'db dyn Db, ty: Type<'db>) -> Option<Type<'db>> {
-     let Type::Intersection(intersection) = ty else {
-         return None;
-     };
--    let falsy = Type::AlwaysTruthy.negate(db, env);
--    let truthy = Type::AlwaysFalsy.negate(db, env);
--
-     let negative = intersection.negative(db);
--    let has_not_truthy = negative.contains(&Type::AlwaysTruthy);
--    let has_not_falsy = negative.contains(&Type::AlwaysFalsy);
--    let guard = match (has_not_truthy, has_not_falsy) {
--        (true, false) => falsy,
--        (false, true) => truthy,
--        _ => return None,
--    };
--
--    let mut core = IntersectionBuilder::new(db, env);
--    for positive in intersection.positive(db) {
--        core.add_positive_in_place(*positive);
--    }
--    for negative in negative {
--        if (guard == falsy && *negative == Type::AlwaysTruthy)
--            || (guard == truthy && *negative == Type::AlwaysFalsy)
--        {
--            continue;
--        }
--        core.add_negative_in_place(*negative);
-+    match (
-+        negative.contains(&Type::AlwaysTruthy),
-+        negative.contains(&Type::AlwaysFalsy),
-+    ) {
-+        (true, false) => Some(Type::AlwaysTruthy),
-+        (false, true) => Some(Type::AlwaysFalsy),
-+        _ => None,
-     }
--    Some((core.build(), guard))
- }
- 
- /// Try to merge a complementary guarded pair into an unguarded core.
-@@ -122,19 +95,23 @@ fn merge_truthiness_guarded_pair<'db>(
-     left: Type<'db>,
-     right: Type<'db>,
- ) -> Option<Type<'db>> {
--    let (left_core, left_guard) = split_truthiness_guarded_intersection(db, env, left)?;
--    let (right_core, right_guard) = split_truthiness_guarded_intersection(db, env, right)?;
--    if left_guard == right_guard {
-+    let left_excluded = excluded_truthiness(db, left)?;
-+    let right_excluded = excluded_truthiness(db, right)?;
-+    if left_excluded == right_excluded {
-         return None;
-     }
- 
-+    let left_core = remove_covered_exclusions(db, env, left, |ty| ty == left_excluded)?;
-+    let right_core = remove_covered_exclusions(db, env, right, |ty| ty == right_excluded)?;
-     if left_core.is_equivalent_to(db, env, right_core) {
-         return Some(left_core);
-     }
- 
-     let candidate = UnionType::from_elements(db, env, [left_core, right_core]);
--    let left_reconstructed = IntersectionType::from_two_elements(db, env, candidate, left_guard);
--    let right_reconstructed = IntersectionType::from_two_elements(db, env, candidate, right_guard);
-+    let left_reconstructed =
-+        IntersectionType::from_two_elements(db, env, candidate, left_excluded.negate(db, env));
-+    let right_reconstructed =
-+        IntersectionType::from_two_elements(db, env, candidate, right_excluded.negate(db, env));
-     if left_reconstructed == left && right_reconstructed == right {
-         Some(candidate)
-     } else {
+@@ -47,9 +47,9 @@ use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
+ /// ```
+ ///
+ /// ## Fix safety
+-/// This rule's fix is marked as unsafe, as it may lead to runtime errors when
+-/// alongside libraries that rely on runtime type annotations, like Pydantic,
+-/// on Python versions prior to Python 3.9.
++/// This rule's fix is marked as unsafe on Python versions prior to Python 3.9,
++/// as the newer syntax may lead to runtime errors in libraries that rely on
++/// runtime type annotations, like Pydantic.
+ ///
+ /// In [preview], this rule can also add its own `__future__` import on Python
+ /// 3.9 and earlier, if the [`lint.future-annotations`] setting is enabled. This
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30757** (2026-11-22): [ty] Update Salsa to 0.28.6 (@MichaReiser)
-- **PR #30753** (2026-11-22): [ty] Confirm new py-fuzzer timeouts against the baseline runtime (@AlexWaygood)
-- **PR #30752** (2026-11-21): Fix unused-dependency warnings (@AlexWaygood)
-- **PR #30750** (2026-11-22): [ty] Skip source-order traversal when solving a single bound (@charliermarsh)
-- **PR #30749** (2026-11-22): [ty] Reuse the decision to infer from a whole union (@charliermarsh)
-- **PR #30746** (2026-11-22): [ty] Reuse the inferred value in augmented assignments to unions (@charliermarsh)
+- **PR #30850** (2026-11-23): [ty] Exclude `init=False` dataclass fields from `__replace__` (@sharkdp)
+- **PR #30844** (2026-11-23): Use the shared upload-r2 action for release mirrors (@ewdurbin)
+- **PR #30843** (2026-11-23): [`pyupgrade`] Clarify `UP006` fix safety (@Wimpykid1a)
+- **PR #30839** (2026-11-23): [ty] attrs: Support field validator decorators (@sharkdp)
+- **PR #30838** (2026-11-23): [ty] Bump ecosystem-analyzer to include jsonschema and cattrs (@sharkdp)
+- **PR #30832** (2026-11-23): [ty] attrs: Bump to 26.1.0 in external mdtests (@sharkdp)
 
 ---
 
@@ -2503,42 +3730,46 @@ instructions](https://github.com/astral-sh/ruff/commit/29585dbc87405c80820f70920
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Defer rebuilding intersections during equality narrowing
+## X. Rename 17 rules for library and builtin usage
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/src/types/equality.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ruff/tests/cli/lint.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7be385f2`: [ty] Defer rebuilding intersections during equality narrowing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2f9cda2`: Rename 17 rules for library and builtin usage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/src/types/equality.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff/tests/cli/lint.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use smallvec::SmallVec;
-    let mut narrowed_types = SmallVec::<[_; 1]>::new();
-                narrowed_types.push(narrowed);
-    if any_ambiguous || (!narrowed_types.is_empty() && (any_true || any_false)) {
-        (false, false) => ComparisonResult::CanNarrow(
-            IntersectionBuilder::new(db, &evaluator.env)
-                .add_positive(original)
-                .positive_elements(narrowed_types)
-                .build(),
-        ),
+    	trio-call-not-awaited (ASYNC105),
+    	strip-with-duplicate-characters (B005),
+    	open-file-without-context-manager (SIM115),
+    	unnecessary-str-join (FLY002),
+    	invalid-getenv-key (PLE1507),
+    	unnecessary-literal-constructor (UP018),
+    	subprocess-run-with-universal-newlines (UP021),
+    	subprocess-run-with-piped-stdout-and-stderr (UP022),
+    	unnecessary-positional-str-format-indices (UP030),
+    	str-format (UP032),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let mut any_narrowing = false;
-    let mut builder = IntersectionBuilder::new(db, &evaluator.env).add_positive(original);
-                any_narrowing = true;
-                builder.add_positive_in_place(narrowed);
-    if any_ambiguous || (any_narrowing && (any_true || any_false)) {
-        (false, false) => ComparisonResult::CanNarrow(builder.build()),
+    	trio-sync-call (ASYNC105),
+    	strip-with-multi-characters (B005),
+    	open-file-with-context-handler (SIM115),
+    	static-join-to-f-string (FLY002),
+    	invalid-envvar-value (PLE1507),
+    	native-literals (UP018),
+    	replace-universal-newlines (UP021),
+    	replace-stdout-stderr (UP022),
+    	format-literals (UP030),
+    	f-string (UP032),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7be385f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2f9cda2` are properly handled with clean fallback behavior.

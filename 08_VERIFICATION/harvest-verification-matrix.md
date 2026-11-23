@@ -12509,3 +12509,7 @@
 | `CYCLE-20261123-ZL72` | `2026-11-23T23:18:12.494Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10142` | Yes (`4038f429...`) |
 | `CYCLE-20261123-ZRR8` | `2026-11-23T23:18:20.996Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10143` | Yes (`158ee86c...`) |
 | `CYCLE-20261123-ZUQL` | `2026-11-23T23:18:24.861Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10144` | Yes (`a10c808a...`) |
+| `CYCLE-20261123-GKBT` | `2026-11-23T23:31:24.521Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`a03fb243...`) |
+| `CYCLE-20261123-GMHD` | `2026-11-23T23:31:27.313Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10145` | Yes (`b50b6d38...`) |
+| `CYCLE-20261123-GPTU` | `2026-11-23T23:31:31.650Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10146` | Yes (`d71906c5...`) |
+| `CYCLE-20261123-GT4Q` | `2026-11-23T23:31:35.930Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10147` | Yes (`358cedec...`) |

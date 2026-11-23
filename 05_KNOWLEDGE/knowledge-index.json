@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T23:18:30.009Z",
+  "last_updated": "2026-11-23T23:31:42.442Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24266,
+  "total_items": 24272,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223001,8 +223001,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "4ef51f69",
-      "content_hash": "e08d4e590e85554f2459059e8241c649344343d6272cfa8423b6a9193300eae6",
+      "source_version": "22e51338",
+      "content_hash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -223035,6 +223035,11 @@
           "number": 9633,
           "title": "Make PrivateKey passphrase cracking respect its context timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10147,
+          "title": "Update dependency golangci/golangci-lint to v2.15.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223042,7 +223047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:02:28.519Z",
+      "verified_at": "2026-11-23T23:31:35.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223084,10 +223089,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "4ef51f69",
-      "content_hash": "a159906ac251fafbd43363ea36aab3423cbb6a19227298f9be1ca2047b43e8cd",
+      "source_version": "22e51338",
+      "content_hash": "04d6d491f0f161236c970d67e3eb736263c7c057b3e14cf253f958c6ed42b4f5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:02:29.001Z"
+      "persisted_at": "2026-11-23T23:31:36.347Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog",
@@ -223096,10 +223101,10 @@
       "relative_path": "08_VERIFICATION/trufflesecurity-trufflehog-verification-protocol-empirical-defect-shield-for-tru.md",
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity/trufflehog",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "4ef51f69",
-      "content_hash": "794f5df5a63cc2c7d3e775d331375442159a5a0487116fb2d2f380f62900a7c9",
+      "source_version": "22e51338",
+      "content_hash": "703547a8ff0ab671000a0b50d614bbcc37a3065ef57bcd85f824e0720b9b5eaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:02:29.123Z"
+      "persisted_at": "2026-11-23T23:31:36.537Z"
     },
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
@@ -234072,8 +234077,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "dffb1c01",
-      "content_hash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
+      "source_version": "c2a50c31",
+      "content_hash": "b50b6d380f162f73c5b48071542cc8ac9ba8aab477f166c773f4c03c216fe549",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -234096,6 +234101,11 @@
           "number": 9945,
           "title": "[ty] Defer rebuilding intersections during equality narrowing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10145,
+          "title": "Rename 17 rules for library and builtin usage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234103,7 +234113,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:42:06.943Z",
+      "verified_at": "2026-11-23T23:31:27.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234157,10 +234167,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-ruff-verification-protocol-empirical-defect-shield-for-astral-sh-ruff.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/ruff",
       "repository": "astral-sh/ruff",
-      "source_version": "dffb1c01",
-      "content_hash": "4cce5e6103e30d8445b62fd080fac0e6dfe91af68f2c98421846583c7853f7e1",
+      "source_version": "c2a50c31",
+      "content_hash": "ad4ff26969e3c74d848d9fe3ce2e9bd7c2a6edcb004e04275a7b9d407faa13b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:42:07.833Z"
+      "persisted_at": "2026-11-23T23:31:27.890Z"
     },
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
@@ -234265,9 +234275,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-ruff-learnings",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "6aac0df6904995c8993b28c8ce696ac8fd9b5bf29757435802fee0774eaa2338",
+      "content_hash": "b959352e68ae25041e7b54906bd31fae03fa5144f93ffaf3e7bcd0a73c918320",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:42:12.197Z"
+      "persisted_at": "2026-11-23T23:31:41.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
@@ -243962,7 +243972,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "f2d87d9fe2a55d18ce7fa71d38edcb3f00e7ddf470e1e0d108cef39ed6aa444f",
+      "content_hash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [],
@@ -243971,7 +243981,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:23:14.733Z",
+      "verified_at": "2026-11-23T23:31:24.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243988,9 +243998,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein-comfy Core Invariants",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "878e4668456b011384ed615055e721237532fc32c3c5ba4b88195a81193881fc",
+      "content_hash": "5a20e292a8b0d61e31a8eb5d20f459539435f52bf7c967739ae69cc1ee4aeccc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:23:15.235Z"
+      "persisted_at": "2026-11-23T23:31:24.727Z"
     },
     "learn-github-kuddev-pebrel": {
       "learning_id": "learn-github-kuddev-pebrel",
@@ -244108,9 +244118,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-comfy-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
       "source_version": "HEAD",
-      "content_hash": "a16f10c879dee590cd90e11d9320ac462f1e2e76d08ec2a1fdf9e2b21f48ea07",
+      "content_hash": "95b0867ea5558eb61ba725f95889f0c5fbcd1acb7bb77b7feea9b6f2436b30e9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:23:35.935Z"
+      "persisted_at": "2026-11-23T23:31:41.452Z"
     },
     "learn-github-zeronsh-zeron": {
       "learning_id": "learn-github-zeronsh-zeron",
@@ -258213,10 +258223,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "repository": "astral-sh/ruff",
-      "source_version": "dffb1c01",
-      "content_hash": "56339681ea55cb62e327bc23b2e21eba4b51ebec526e3b9b83effb319816c799",
+      "source_version": "c2a50c31",
+      "content_hash": "f20dd78b619d2f0de6f854705eb6938bbd16757d539fcacf8005a3a499c75bd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:42:07.660Z"
+      "persisted_at": "2026-11-23T23:31:27.716Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -258226,9 +258236,9 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "6124f0194f238f6031a543ae5afc62ceb036c2c26df61ee1e1c85c16a5f549dc",
+      "content_hash": "e5aed7cabf31bd3fb71e72d4efefe98bcf58ca9609ebdd552a982064a75da2c7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:42:12.013Z"
+      "persisted_at": "2026-11-23T23:31:40.937Z"
     },
     "rule-8730": {
       "learning_id": "rule-8730",
@@ -266814,8 +266824,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "5162fe87",
-      "content_hash": "31609fdb7c5b9372541a0fc4a7eabe62729d83c58c955e2b7e40f98db2c07091",
+      "source_version": "a389daa1",
+      "content_hash": "d71906c581f3f27c02df7663108e0526c838f19b8fc09910a35932bee48377f3",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -266828,6 +266838,11 @@
           "number": 9682,
           "title": "(bug) Let an API dictation start replace a feedback banner",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10146,
+          "title": "(bug) Stop the Recorder from crashing when an accessibility client reads a faile",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -266835,7 +266850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:43:48.570Z",
+      "verified_at": "2026-11-23T23:31:31.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266877,10 +266892,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "5162fe87",
-      "content_hash": "672fcde01d36f59ac8ead37c2c68aeac522f13095d3e09577c0ad956d6617392",
+      "source_version": "a389daa1",
+      "content_hash": "0cac76b3c71bb8e45e2eb741a39ffc3cad3039b58fb73b60a6f04678a61174d2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:43:49.171Z"
+      "persisted_at": "2026-11-23T23:31:32.069Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac",
@@ -266889,10 +266904,10 @@
       "relative_path": "12_DECISIONS/ADR-typewhisper-typewhisper-mac-adr-subsystem-boundary-modular-decoupling-in-typewhi.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "5162fe87",
-      "content_hash": "2578292baa601bcf02ac663bb218eecbadde18603b84f9320c6bd46bc366e4fe",
+      "source_version": "a389daa1",
+      "content_hash": "b14dc3a56a7173df6a34b960df640b39834d6b34af8caa4efa9c19a516bbb756",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:43:49.366Z"
+      "persisted_at": "2026-11-23T23:31:32.242Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac",
@@ -266901,10 +266916,10 @@
       "relative_path": "08_VERIFICATION/typewhisper-typewhisper-mac-verification-protocol-empirical-defect-shield-for-ty.md",
       "title": "Verification Protocol: Empirical Defect Shield for TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "5162fe87",
-      "content_hash": "b253801e51da7b9eb0fb5ee797c725bfe7267a3341612e9ad3e02a0c8cab21d2",
+      "source_version": "a389daa1",
+      "content_hash": "c5ac129aa5f5b995b6ff6f7447ff579e0cb1f8c44d8d75e48346349b2856093f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:43:49.505Z"
+      "persisted_at": "2026-11-23T23:31:32.387Z"
     },
     "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds": {
       "item_id": "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds",
@@ -266938,9 +266953,9 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "7197f6cfb3970a7e2ecbc0e136d3a9034ab518505194dceccd75a80e0d1b217b",
+      "content_hash": "079d17569c49ee23de2946ed9be8e6154012ba3c073b73b2d1268673e2c796d9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:44:01.659Z"
+      "persisted_at": "2026-11-23T23:31:42.119Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin",
@@ -266950,9 +266965,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a657c928465c3e48d6014c8370dcf2d0457add7715647e416c2cc46c69d23ae",
+      "content_hash": "31c4c3288f0767c3b91933ad5414928d3629f8015e4090e392e0a3a8973dab06",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:44:01.834Z"
+      "persisted_at": "2026-11-23T23:31:42.286Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le",
@@ -266962,9 +266977,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "8484257350e561a20aa1c501e1326490f508dee6895596d546355384bff5235f",
+      "content_hash": "820fc138519686a0f921de12437abc7d667cee15d67ae8f22db528ffb4374eb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:44:01.964Z"
+      "persisted_at": "2026-11-23T23:31:42.442Z"
     },
     "rule-8839": {
       "learning_id": "rule-8839",
@@ -330866,6 +330881,84 @@
       "content_hash": "ac222de17153a1dcaff07f96c36e28d48caeb1ab2504d6ef76564cef31fc7d5a",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T23:18:29.697Z"
+    },
+    "rule-10145": {
+      "learning_id": "rule-10145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10145,
+      "title": "Rename 17 rules for library and builtin usage",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "c2a50c31",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:31:27.112Z"
+    },
+    "candidate_directive-rename-17-rules-for-library-and-builtin-usage": {
+      "item_id": "candidate_directive-rename-17-rules-for-library-and-builtin-usage",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GWUZ-rename-17-rules-for-library-and-builtin-usage.md",
+      "title": "Rename 17 rules for library and builtin usage",
+      "repository": "astral-sh-ruff-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e7568b914db85b8ac75e85eeca864fc78908b7811523ac54bcb1d02bb981f88",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:31:40.767Z"
+    },
+    "rule-10146": {
+      "learning_id": "rule-10146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10146,
+      "title": "(bug) Stop the Recorder from crashing when an accessibility client reads a faile",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "a389daa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:31:31.443Z"
+    },
+    "candidate_directive-bug-stop-the-recorder-from-crashing-when-an-accessibility-client-reads-a-faile": {
+      "item_id": "candidate_directive-bug-stop-the-recorder-from-crashing-when-an-accessibility-client-reads-a-faile",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GXRZ-bug-stop-the-recorder-from-crashing-when-an-accessibility-client-reads-a-faile.md",
+      "title": "(bug) Stop the Recorder from crashing when an accessibility client reads a faile",
+      "repository": "typewhisper-typewhisper-mac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ad0bbbed8046c0edf8609ce44800f55ec48c8a6009036f42346f60683c78a42",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-23T23:31:41.954Z"
+    },
+    "rule-10147": {
+      "learning_id": "rule-10147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10147,
+      "title": "Update dependency golangci/golangci-lint to v2.15.0",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "22e51338",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:31:35.722Z"
+    },
+    "candidate_directive-update-dependency-golangci-golangci-lint-to-v2-15-0": {
+      "item_id": "candidate_directive-update-dependency-golangci-golangci-lint-to-v2-15-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GTB3-update-dependency-golangci-golangci-lint-to-v2-15-0.md",
+      "title": "Update dependency golangci/golangci-lint to v2.15.0",
+      "repository": "trufflesecurity/trufflehog",
+      "source_version": "22e51338",
+      "content_hash": "2fa5695cef49b2c442770221efb69210e377882f6b75f5dfc9e1b8f0b1312e76",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T23:31:36.162Z"
     }
   },
   "ai-builder-brain": {

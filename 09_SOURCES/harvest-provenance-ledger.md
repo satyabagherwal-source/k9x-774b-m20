@@ -12542,3 +12542,7 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `e224d55b` | Multi-dimensional audit evidence | 2026-11-23T23:18:12.498Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `1a44dc2c` | Multi-dimensional audit evidence | 2026-11-23T23:18:20.999Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `72e14334` | Multi-dimensional audit evidence | 2026-11-23T23:18:24.864Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-23T23:31:24.526Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `c2a50c31` | Multi-dimensional audit evidence | 2026-11-23T23:31:27.318Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `a389daa1` | Multi-dimensional audit evidence | 2026-11-23T23:31:31.655Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `22e51338` | Multi-dimensional audit evidence | 2026-11-23T23:31:35.935Z |

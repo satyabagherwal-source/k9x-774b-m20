@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T23:18:29.697Z",
+  "last_updated": "2026-11-23T23:31:41.954Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51610,6 +51610,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-GWUZ",
+      "directive_title": "Rename 17 rules for library and builtin usage",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GWUZ-rename-17-rules-for-library-and-builtin-usage.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GXRZ",
+      "directive_title": "(bug) Stop the Recorder from crashing when an accessibility client reads a faile",
+      "source_repo": "typewhisper-typewhisper-mac-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GXRZ-bug-stop-the-recorder-from-crashing-when-an-accessibility-client-reads-a-faile.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-GTB3",
+      "directive_title": "Update dependency golangci/golangci-lint to v2.15.0",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "22e51338",
+      "staged_file": "11_INBOX/candidate-directives/CD-GTB3-update-dependency-golangci-golangci-lint-to-v2-15-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-42DE60",
+      "directive_title": "Rename 17 rules for library and builtin usage",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42DE60-rename-17-rules-for-library-and-builtin-.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-4495E6",
+      "directive_title": "(bug) Stop the Recorder from crashing when an accessibility client reads a faile",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typewhisper-typewhisper-mac",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4495E6--bug-stop-the-recorder-from-crashing-whe.md",
+      "staged_date": "2026-11-23"
     }
   ]
 }

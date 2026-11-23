@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `5162fe87`  
+> **Source Version**: `a389daa1`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:43:47.702Z  
+> **Timestamp**: 2026-11-23T23:31:30.590Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:43:47.695Z  
+> **Harvest Timestamp**: 2026-11-23T23:31:30.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1938 stars
+- **Stars / Engagement**: 1943 stars
 
 ---
 
@@ -1925,642 +1925,900 @@ final class ExampleWebhookS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e9d0620` (2026-11-18)
-**Commit Message**: (bug) Let an API dictation start replace a feedback banner (#1961)
+### Incident Patch 1: `d733f820` (2026-11-23)
+**Commit Message**: (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript (#2009)
 
-* Let an API dictation start replace a feedback banner
+* (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript
 
-POST /v1/dictation/start returned 409 while a feedback banner such as
-"No speech recognized" was visible, so the Stream Deck could not start
-the next dictation until the banner expired. The API now ends a
-dismissible banner and starts the recording, as the dictation hotkey
-does. Processing, a running Insert and a running standalone workflow
-still block the start.
+A recording whose transcript failed shows its error as selectable text with a VoiceOver label in
+the same modifier chain. Selectable text is backed by an AppKit element, so SwiftUI resolves the
+label through that element, which asks SwiftUI for the label again. When an accessibility client
+such as VoiceOver reads the Recorder page, the recursion overflows the main thread's stack.
 
-Fixes #1959
+The label now sits on a plain container around the selectable text, through the new
+selectableTextAccessibilityLabel(_:value:) modifier. The History metadata rows, the managed
+settings list and the vocabulary import sheet had the same pattern and use it too. A test scans
+the app's sources for accessibility modifiers in the modifier chain of selectable text.
 
-* Keep a queued hotkey start ahead of an API start
+Fixes #2004
 
-An API start no longer replaces a feedback banner while a hotkey start
-is queued, so the queued start and its workflow are not dropped. The
-new tests wait for the second dictation to finish before teardown and
-check that the original recovery recording is kept.
+* Read selectable text once in VoiceOver and scan multi-line modifiers above it
 
-* Block every API start while a hotkey start is queued
+The container around selectable text now replaces the text for VoiceOver as one static text, so a
+History metadata row or an error line is not read a second time f
 
-The queued start also wins once the reset has set the state to idle and
-while the Insert offer is shown. The banner tests now fail when the
-second dictation does not finish before teardown.
-
-* Test the queued hotkey start against a real no-speech banner
-
-The test now queues a hotkey start during processing and checks that
-t
-
-**File**: `TypeWhisper/ViewModels/DictationViewModel.swift` (modified, +11/-2)
+**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +4/-0)
 ```diff
-@@ -1217,7 +1217,11 @@ final class DictationViewModel: ObservableObject {
-     }
- 
-     var canStartAPIRecording: Bool {
--        HistoryRetranscriptionActivity.recordID == nil && (state == .idle || canReplaceUndeliveredTranscriptOffer)
-+        // A queued hotkey start runs first, even after the reset has already set the state to
-+        // idle, so an API start cannot drop it and its workflow.
-+        HistoryRetranscriptionActivity.recordID == nil
-+            && pendingHotkeyDictationStart == nil
-+            && (state == .idle || canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback)
-     }
- 
-     /// The Insert offer stays up for a while, so a new dictation replaces it, as the dictation
-@@ -1256,8 +1260,13 @@ final class DictationViewModel: ObservableObject {
-     }
- 
-     func apiStartRecording(forcedWorkflowId: UUID? = nil) -> UUID {
--        if canReplaceUndeliveredTranscriptOffer {
-+        // A new API dictation replaces a passive feedback banner, such as "No speech
-+        // recognized", as the dictation hotkey does (#1959).
-+        if canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback {
-             indicatorFeedbackLifetime.finishImmediately()
-+            if state == .inserting {
-+                resetDictationState()
-+            }
-         }
-         let sessionID = UUID()
-         startRecording(
+@@ -180,6 +180,7 @@
+ 		133200000000000000000002 /* SetupWizardEngineRecommendationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */; };
+ 		545000000000000000000004 /* SetupWizardTrialSignalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545000000000000000000003 /* SetupWizardTrialSignalTests.swift */; };
+ 		AA00000000000000000367 /* AccessibilityPermissionPaneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */; };
++		AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */; };
+ 		91B4D7E2C5A809F1632E4B7E /* StreamingHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B4D7E2C5A809F1632E4B7F /* StreamingHandlerTests.swift */; };
+ 		9A584149706C7567496E0100 /* XAIPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A584149706C7567496E0101 /* XAIPluginTests.swift */; };
+ 		9A584149706C7567496E0200 /* XAIPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A584149706C7567496E0210 /* XAIPlugin.swift */; };
+@@ -1488,6 +1489,7 @@
+ 		133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardEngineRecommendationTests.swift; sourceTree = "<group>"; };
+ 		545000000000000000000003 /* SetupWizardTrialSignalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardTrialSignalTests.swift; sourceTree = "<group>"; };
+ 		BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionPaneTests.swift; sourceTree = "<group>"; };
++		BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelectableTextAccessibilityTests.swift; sourceTree = "<group>"; };
+ 		D4A100000000000000000004 /* RecorderTranscriptionBufferTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecorderTranscriptionBufferTests.swift; sourceTree = "<group>"; };
+ 		91B4D7E2C5A809F1632E4B7F /* StreamingHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StreamingHandlerTests.swift; sourceTree = "<group>"; };
+ 		9A584149706C7567496E0101 /* XAIPluginTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = XAIPluginTests.swift; sourceTree = "<group>"; };
+@@ -3580,6 +3582,7 @@
+ 				133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */,
+ 				545000000000000000000003 /* SetupWizardTrialSignalTests.swift */,
+ 				BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */,
++				BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */,
+ 				B2D4F6A8C0E2143F9B7D5C1A /* PromptActionTemperaturePersistenceTests.swift */,
+ 				FEEDFACE00000000000000B1 /* PromptProcessingModelResolutionTests.swift */,
+ 				F41BD305007A3A158038C75C /* ProfileServiceTests.swift */,
+@@ -5768,6 +5771,7 @@
+ 				133200000000000000000002 /* SetupWizardEngineRecommendationTests.swift in Sources */,
+ 				545000000000000000000004 /* SetupWizardTrialSignalTests.swift in Sources */,
+ 				AA00000000000000000367 /* AccessibilityPermissionPaneTests.swift in Sources */,
++				AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */,
+ 				A1C3E59B7D1042F9A8C6E2B1 /* PromptActionTemperaturePersistenceTests.swift in Sources */,
+ 				FEEDFACE00000000000000A1 /* PromptProcessingModelResolutionTests.swift in Sources */,
+ 				86F4253D3CDE30E859D0F219 /* ProfileServiceTests.swift in Sources */,
 ```
 
-**File**: `TypeWhisperTests/TypeWhisperIntegrationTests.swift` (modified, +249/-0)
+**File**: `TypeWhisper/Views/AppVocabularyImportSheet.swift` (modified, +2/-2)
 ```diff
-@@ -5092,6 +5092,102 @@ final class TypeWhisperIntegrationTests: XCTestCase {
-         XCTAssertEqual(inserting.status, 409)
+@@ -83,7 +83,7 @@ struct AppVocabularyImportSheet: View {
+                                     .lineLimit(3)
+                                     .help(row.entry.replacement ?? row.entry.original)
+                                     .textSelection(.enabled)
+-                                    .accessibilityLabel(row.entry.replacement ?? String(localized: "None"))
++                                    .selectableTextAccessibilityLabel(row.entry.replacement ?? String(localized: "None"))
+                             }
+                             TableColumn(String(localized: "Status")) { row in
+                                 Text(status(row.outcome))
+@@ -108,7 +108,7 @@ struct AppVocabularyImportSheet: View {
+ 
+             if let error = model.error {
+                 Text(error).foregroundStyle(.red).textSelection(.enabled)
+-                    .accessibilityLabel(String(localized: "Error: \(error)"))
++                    .selectableTextAccessibilityLabel(String(localized: "Error: \(error)"))
+             }
+             Spacer(minLength: 0)
+             HStack {
+```
+
+**File**: `TypeWhisper/Views/AudioRecorderView.swift` (modified, +1/-1)
+```diff
+@@ -778,7 +778,7 @@ private struct RecordingRow: View {
+                     .foregroundStyle(.red)
+                     .textSelection(.enabled)
+                     .fixedSize(horizontal: false, vertical: true)
+-                    .accessibilityLabel(String(localized: "Error: \(failureSummary)"))
++                    .selectableTextAccessibilityLabel(String(localized: "Error: \(failureSummary)"))
+             }
+ 
+             // Expandable transcript
+```
+
+**File**: `TypeWhisper/Views/HistoryRecordViews.swift` (modified, +1/-2)
+```diff
+@@ -608,8 +608,7 @@ struct HistoryRecordDetailView: View {
+                 .accessibilityHidden(true)
+             // Read as one "label, value" pair instead of two unrelated texts.
+             Text(value).textSelection(.enabled)
+-                .accessibilityLabel(label)
+-                .accessibilityValue(spokenValue ?? value)
++                .selectableTextAccessibilityLabel(label, value: spokenValue ?? value)
+         }
      }
  
-+    /// The Stream Deck toggles dictation through the API. A "No speech recognized" banner must
-+    /// not block the next start, as it does not block the dictation hotkey (#1959).
-+    func testDictationStartReplacesNoSpeechFeedbackBanner() async throws {
-+        let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
-+        var context: APIContext?
-+        defer {
-+            context = nil
-+            MockTranscriptionPlugin.reset()
-+            TestSupport.remove(appSupportDirectory)
-+        }
+```
+
+**File**: `TypeWhisper/Views/ManagedSettingsView.swift` (modified, +2/-6)
+```diff
+@@ -83,9 +83,7 @@ struct ManagedSettingsSection: View {
+                             Text(row.name)
+                                 .font(.callout.monospaced())
+                                 .textSelection(.enabled)
+-                                .accessibilityElement(children: .ignore)
+-                                .accessibilityLabel(Self.accessibilityLabel(for: row))
+-                                .accessibilityAddTraits(.isStaticText)
++                                .selectableTextAccessibilityLabel(Self.accessibilityLabel(for: row))
+                             Text(row.scope)
+                                 .accessibilityHidden(true)
+                             Text(row.value)
+@@ -113,9 +111,7 @@ struct ManagedSettingsSection: View {
+                         .font(.caption)
+                         .foregroundStyle(.secondary)
+                         .textSelection(.enabled)
+-                        .accessibilityElement(children: .ignore)
+-                        .accessibilityLabel(problem)
+-                        .accessibilityAddTraits(.isStaticText)
++                        .selectableTextAccessibilityLabel(problem)
+                     }
+                 }
+             }
+```
+
+**File**: `TypeWhisper/Views/SettingsVisualComponents.swift` (modified, +24/-0)
+```diff
+@@ -200,6 +200,30 @@ extension View {
+     ) -> some View {
+         modifier(KeyboardActivatableCard(cornerRadius: cornerRadius, isEnabled: isEnabled, action: action))
+     }
 +
-+        MockTranscriptionPlugin.reset()
-+        MockTranscriptionPlugin.setResponseText("")
-+        context = await MainActor.run {
-+            let context = Self.makeAPIContext(appSupportDirectory: appSupportDirectory, withMockTranscriptionPlugin: true)
-+            context.dictationViewModel.soundFeedbackEnabled = false
-+            context.dictationViewModel.spokenFeedbackEnabled = false
-+            context.audioRecordingService.hasMicrophonePermissionOverride = true
-+            context.audioRecordingService.inputAvailabilityOverride = { _ in true }
-+            context.audioRecordingService.startRecordingOverride = {}
-+            context.audioRecordingService.stopRecordingOverride = { _ in
-+                Array(repeating: 0.25, count: Int(AudioRecordingService.targetSampleRate))
++    /// Gives selectable text a VoiceOver label without crashing.
++    ///
++    /// `.textSelection(.enabled)` backs the text with an AppKit element. An accessibility modifier
++    /// in the same chain makes SwiftUI read the label through that element, and the element asks
++    /// SwiftUI for the label again. When an accessibility client such as VoiceOver reads the text,
++    /// this repeats until the main thread's stack overflows (#2004). The label therefore sits on a
++    /// plain container around the text, and the text itself keeps no accessibility modifiers.
++    /// The container replaces the text for VoiceOver, so the text is read once, as static text.
++    @ViewBuilder
++    func selectableTextAccessibilityLabel(_ label: String, value: String? = nil) -> some View {
++        let container = HStack(spacing: 0) {
++            self
++        }
++        .accessibilityElement(children: .ignore)
++        .accessibilityAddTraits(.isStaticText)
++        .accessibilityLabel(label)
++
++        if let value {
++            container.accessibilityValue(value)
++        } else {
++            container
++        }
++    }
+ }
+ 
+ /// A short, visible confirmation for an action that otherwise changes nothing on
+```
+
+**File**: `TypeWhisperTests/SelectableTextAccessibilityTests.swift` (added, +139/-0)
+```diff
+@@ -0,0 +1,139 @@
++import Foundation
++import XCTest
++
++/// `.textSelection(.enabled)` backs a text with an AppKit element. An accessibility label or value
++/// in the same modifier chain makes SwiftUI resolve the label through that element, which asks
++/// SwiftUI for it again, so an accessibility client reading the text overflows the main thread's
++/// stack (#2004, the Recorder's line for a failed transcript). Such text takes its label through
++/// `selectableTextAccessibilityLabel(_:value:)`, which puts it on a container instead.
++final class SelectableTextAccessibilityTests: XCTestCase {
++    private static let forbiddenModifiers = [
++        ".accessibilityLabel(",
++        ".accessibilityValue(",
++        ".accessibilityElement(",
++        ".accessibilityAddTraits(",
++        ".accessibilityHint(",
++        ".accessibilityLabeledPair(",
++        ".accessibilityRepresentation",
++    ]
++
++    func testSelectableTextKeepsAccessibilityModifiersOffItsModifierChain() throws {
++        let sourceRoot = repositoryRoot.appendingPathComponent("TypeWhisper")
++        var findings: [String] = []
++        var checkedChains = 0
++
++        let enumerator = try XCTUnwrap(FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil))
++        for case let url as URL in enumerator where url.pathExtension == "swift" {
++            let lines = try String(contentsOf: url, encoding: .utf8).components(separatedBy: "\n")
++            for (index, line) in lines.enumerated() where line.contains(".textSelection(.enabled)") {
++                checkedChains += 1
++                for modifier in Self.modifiers(inChainAround: index, of: lines)
++                where Self.forbiddenModifiers.contains(where: modifier.hasPrefix) {
++                    findings.append("\(url.lastPathComponent):\(index + 1): \(modifier)")
++                }
 +            }
-+            context.textInsertionService.captureActiveAppOverride = { ("Notes", "com.apple.Notes", nil) }
-+            context.textInsertionService.selectedTextOverride = { nil }
-+            return context
 +        }
-+        let apiContext = try XCTUnwrap(context)
-+        let router = apiContext.router
 +
-+        let firstStart = await router.route(HTTPRequest(
-+            method: "POST", path: "/v1/dictation/start", queryParams: [:], headers: [:], body: Data()
-+        ))
-+        XCTAssertEqual(firstStart.status, 200)
-+        await apiContext.dictationViewModel.testingWaitForRecordingStart()
-+        let stop = await router.route(HTTPRequest(
-+            method: "POST", path: "/v1/dictation/stop", queryParams: [:], headers: [:], body: Data()
-+        ))
-+        XCTAssertEqual(stop.status, 200)
++        XCTAssertGreaterThan(checkedChains, 0, "The scan found no selectable text; check the source path.")
++        XCTAssertEqual(findings, [], "Give this text its label with selectableTextAccessibilityLabel(_:value:).")
++    }
 +
-+        let noSpeechMessage = try TestSupport.localizedCatalogValueForCurrentLocale(for: "No speech recognized")
-+        for _ in 0..<80 {
-+            let feedback = await MainActor.run { apiContext.dictationViewModel.actionFeedbackMessage }
-+            if feedback?.hasPrefix(noSpeechMessage) == true {
-+                break
++    func testChainScanSeesModifiersOnTheSameAndTheFollowingLines() {
++        let lines = [
++            "Label(summary, systemImage: \"exclamationmark.triangle.fill\")",
++            "    .foregroundStyle(.red)",
++            "    .textSelection(.enabled)",
++            "    .accessibilityLabel(localizedAppText(",
++            "        \"Error\",",
++            "        de: \"Fehler\"",
++            "    ))",
++            "    .accessibilityValue(value)",
++            "Text(error).font(.caption).textSelection(.enabled)",
++        ]
++
++        XCTAssertEqual(Self.modifiers(inChainAround: 2, of: lines), [
++            ".foregroundStyle(.red)",
++            ".textSelection(.enabled)",
++            ".accessibilityLabel(localizedAppText(\"Error\",de: \"Fehler\"))",
++            ".accessibilityValue(value)",
++        ])
++        XCTAssertEqual(Self.modifiers(inChainAround: 8, of: lines), [
++            ".font(.caption)",
++            ".textSelection(.enabled)",
++        ])
++    }
++
++    func testChainScanSeesAMultiLineModifierAboveTheSelection() {
++        let lines = [
++            "if let failure {",
++            "    Text(failure)",
++            "        .accessibilityLabel(localizedAppText(",
++            "            \"Error\",",
++            "            de: \"Fehler\"",
++            "        ))",
++            "        .font(.caption)",
++            "        .textSelection(.enabled)",
++            "}",
++        ]
++
++        XCTAssertEqual(Self.modifiers(inChainAround: 7, of: lines), [
++            ".accessibilityLabel(localizedAppText(\"Error\",de: \"Fehler\"))",
++            ".font(.caption)",
++            ".textSelection(.enabled)",
++        ])
++    }
++
++    /// The top-level modifiers of the expression that line `index` belongs to. The expression starts
++    /// at the nearest line above that does not begin with `.` and ends before the first later line
++    /// that neither begins with `.` nor continues an open argument list.
++    private static func modifiers(inChainAround index: Int, of lines: [String]) -> [String] {
++        let trimmed = lines.map { $0.trimmingCharacters(in: .whitespaces) }
++
++        // Walk up through modifier lines and through argument lines of a multi-line modifier,
++        // which close parentheses that a line further up opened.
++        var first = index
++        var unclosedAbove = 0
++        while first > 0, trimmed[first].hasPrefix(".") || unclosedAbove > 0 {
++            first -= 1
++            for character in trimmed[first] {
++                if character == ")" { unclosedAbove += 1 } else if character == "(" { unclosedAbove -= 1 }
 +            }
-+            try? await Task.sleep(for: .milliseconds(25))
++            unclosedAbove = max(0, unclosedAbove)
 +        }
-+        let bannerState = await MainActor.run {
-+            (
-+                state: apiContext.dictationViewModel.state,
-+                feedback: apiContext.dictationViewModel.actionFeedbackMessage
-+            )
-+        }
-+        XCTAssertEqual(bannerState.state, .inserting)
-+        XCTAssertTrue(bannerState.feedback?.hasPrefix(noSpeechMessage) == true)
 +
-+        let secondStart = await router.route(HTTPRequest(
-+            method: "POST", path: "/v1/dictation/start", queryParams: [:], headers: [:], body: Data()
-+        ))
-+        let secondJSON = try Self.jsonObject(secondStart)
-+        XCTAssertEqual(secondStart.status, 200)
-+        XCTAssertEqual(secondJSON["status"] as? String, "recording")
-+        await apiContext.dictationViewModel.testingWaitForRecordingStart()
-+        // The banner's lifetime ended with the start, so it cannot reset the new recording later.
-+        try? await Task.sleep(for: .milliseconds(100))
-+        let recordingState = await MainActor.run {
-+            (
-+                state: apiContext.dictationViewModel.state,
-+                feedback: apiContext.dictationViewModel.actionFeedbackMessage
-+            )
-+        }
-+        XCTAssertEqual(recordingState.state, .recording)
-+        XCTAssertNil(recordingState.feedback)
-+
-+        // Let the second dictation finish before the mock transcription is reset.
-+        let secondID = try XCTUnwrap((secondJSON["id"] as? String).flatMap(UUID.init(uuidString:)))
-+        await MainActor.run {
-+            _ = apiContext.dictationViewModel.apiStopRecording()
-+        }
-+        var secondStatus: DictationSessionSnapshot.Status?
-+        for _ in 0..<80 {
-+            secondStatus = await MainActor.run { apiContext.dictationViewModel.apiDictationSession(id: secondID)?.status }
-+            if secondStatus == .failed || secondStatus == .completed {
-+                break
-+            }
-+            try? await Task.sleep(for: .milliseconds(25))
-+        }
-+        secondStatus = await MainActor.run { apiContext.dictationViewModel.apiDictationSession(id: secondID)?.status }
-+        XCTAssertTrue(
-+            secondStatus == .failed || secondStatus == .completed,
-+            "Second dictation status: \(String(describing: secondStatus))"
-+        )
-+        await ap
++        var chain = ""
++        var depth = 0
++        var lineIndex = first
++        while lineIndex < trimmed.count {
++            let line = trimmed[lineIndex]
++            if li
 ```
 
 ---
 
-### Incident Patch 2: `d6cdb09f` (2026-11-19)
-**Commit Message**: (bug) Judge the spoken language from the first speech, not the first loud sound (#1972)
+### Incident Patch 2: `43ca4e75` (2026-11-21)
+**Commit Message**: (bug) Speak OpenAI text through the Realtime API before the speech models shut down (#1985)
 
-* (bug) Judge the spoken language from the first speech, not the first loud sound
+* (bug) Speak OpenAI text through the Realtime API before the speech models shut down
 
-Language Detection started its 30 s window at the first frame within 35 dB of the loudest one, so
-a recording that opens with ringing, clicks or room noise was judged on that noise. The model hears
-English in non-speech with a margin near 1, and the host accepted any margin for a selection of
-several languages, so the engine got English for a Dutch file.
+OpenAI shuts down every /v1/audio/speech model (gpt-4o-mini-tts, tts-1,
+tts-1-hd) on 6 January 2027 and names gpt-realtime-2.1-mini, a Realtime
+API model, as the replacement. Speech now runs through that model with
+instructions to read the text aloud word for word; the user's voice
+instructions only change the delivery. The Realtime API rejects Fable,
+Nova and Onyx, so 10 voices remain. A saved retired voice stays selected,
+shows as not available in the plugin settings and fails with a message to
+choose another voice.
 
-The plugin now finds the first second that holds speech with the system's sound classifier
-(SoundAnalysis) and starts the window there; without speech it returns nil. The host needs a
-margin of 0.25 for a multi-language selection and otherwise uses the first selected language, and
-the language picker says so. Language Detection 1.0.2.
+The built-in LLM fallback list drops GPT-4.1 Nano and o4-mini, which
+OpenAI shut down on 23 October 2026.
 
-Closes #1970
+* Read OpenAI's speech error while the text is still being sent
 
-* Keep the language window on quiet speech when louder sounds come elsewhere
+With an invalid key the Realtime API accepts the connection, sends an
+error event and closes the socket. Speech sent its three events before
+reading anything, so the next send failed and the error event was never
+read: an invalid key ended in a generic network error, or in the 120 s
+timeout when a send on the closed socke
 
-The window refinement took its 35 dB threshold from the loudest frame of the whole recording, so
-quiet speech in the second the classifier found could be skipped for a louder click later on. With
-a detected speech second, the loudest and th
-
-**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +5/-5)
+**File**: `TypeWhisper/Services/ModelManagerService.swift` (modified, +2/-1)
 ```diff
-@@ -51926,30 +51926,30 @@
-         }
-       }
-     },
--    "This engine takes one language. The Language Detection plugin picks the one you speak from this list." : {
-+    "This engine takes one language. The Language Detection plugin picks the one you speak from this list. When the plugin is unsure or hears no speech, the engine uses #1." : {
-       "localizations" : {
-         "de" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Diese Engine nimmt nur eine Sprache. Das Plugin „Language Detection“ wählt daraus die Sprache, die du sprichst."
-+            "value" : "Diese Engine nimmt nur eine Sprache. Das Plugin „Language Detection“ wählt daraus die Sprache, die du sprichst. Ist das Plugin unsicher oder hört es keine Sprache, verwendet die Engine Nr. 1."
-           }
-         },
-         "es" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Este motor admite un solo idioma. El plugin Language Detection elige de esta lista el idioma que hablas."
-+            "value" : "Este motor admite un solo idioma. El plugin Language Detection elige de esta lista el idioma que hablas. Si el plugin no está seguro o no oye voz, el motor usa el n.º 1."
-           }
-         },
-         "ja" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "このエンジンは1つの言語しか受け付けません。Language Detection プラグインがこのリストから話している言語を選びます。"
-+            "value" : "このエンジンは1つの言語しか受け付けません。Language Detection プラグインがこのリストから話している言語を選びます。プラグインが判断できない場合や音声が聞き取れない場合は、1番目を使います。"
-           }
-         },
-         "zh-Hans" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "此引擎只接受一种语言。Language Detection 插件会从此列表中选择你正在说的语言。"
-+            "value" : "此引擎只接受一种语言。Language Detection 插件会从此列表中选择你正在说的语言。插件无法确定或未听到语音时，引擎会使用第一种语言。"
-           }
-         }
-       }
+@@ -2488,7 +2488,8 @@ final class ModelManagerService: ObservableObject {
+                 } else {
+                     // If selection was rejected and the old ID remained unchanged, keep
+                     // checking the requested ID so a different loaded model is not accepted.
+-                    expectedModelId = cloudModelOverride
++                    // A replaced model counts as its replacement, which may already be selected.
++                    expectedModelId = plugin.currentModelId(for: cloudModelOverride)
+                 }
+ 
+                 if pluginConfiguredState(
 ```
 
-**File**: `TypeWhisper/Services/ModelManagerService.swift` (modified, +15/-5)
+**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/Localizable.xcstrings` (modified, +56/-0)
 ```diff
-@@ -1978,6 +1978,16 @@ final class ModelManagerService: ObservableObject {
-     /// and keeps its old behavior.
-     static let hostLanguageDetectionMinimumMargin = 0.25
- 
-+    /// The smallest probability gap to the runner-up for which an engine without language hints
-+    /// gets the detected one of the user's selected languages; below it the engine gets the first
-+    /// selected language, as without a detector. Measured on held-out speech for all pairs of 20
-+    /// common languages: overall accuracy stays the same when both languages are spoken equally
-+    /// often (1 s clips 82.6 % to 82.5 %, 2 s and longer unchanged) and rises when the first is
-+    /// spoken more often; speech in the second language gets it 2.9 points less often in 1 s
-+    /// clips and 0.2 points less often from 5 s on. Unclear answers, such as speech in loud
-+    /// noise, then follow the order the user chose.
-+    static let selectedLanguagesDetectionMinimumMargin = 0.25
-+
-     private static let allLanguageCodes = Locale.LanguageCode.isoLanguageCodes.map(\.identifier)
- 
-     /// Whether an engine that cannot detect languages gets the user's preferred macOS language
-@@ -2012,10 +2022,10 @@ final class ModelManagerService: ObservableObject {
- 
-     /// A language detection plugin, when enabled, picks the spoken language for engines that would
-     /// otherwise get the wrong one or none: among the user's selected languages for engines without
--    /// language hints (they used the first one), and among the engine's languages when the user asked
--    /// for automatic detection but the engine cannot detect languages itself. When nothing picks a
--    /// language for such an engine, it gets the first of the user's preferred macOS languages it
--    /// supports.
-+    /// language hints (they get the first one when the answer is unclear or the plugin hears no
-+    /// speech), and among the engine's languages when the user asked for automatic detection but the
-+    /// engine cannot detect languages itself. When nothing picks a language for such an engine, it
-+    /// gets the first of the user's preferred macOS languages it supports.
-     private func spokenLanguageSelection(
-         for languageSelection: LanguageSelection,
-         plugin: TranscriptionEnginePlugin,
-@@ -2029,7 +2039,7 @@ final class ModelManagerService: ObservableObject {
-         case .hints(let codes) where !plugin.acceptsLanguageHints:
-             accepted = codes
-             candidates = codes
--            minimumMargin = 0
-+            minimumMargin = Self.selectedLanguagesDetectionMinimumMargin
-         case .auto, .inheritGlobal:
-             guard let engine = plugin as? HostLanguageDetectionEnginePlugin else { return languageSelection }
-             let supported = Set(plugin.supportedLanguages)
-```
-
-**File**: `TypeWhisper/Views/LanguageSelectionEditor.swift` (modified, +1/-1)
-```diff
-@@ -140,7 +140,7 @@ struct LanguageSelectionEditor: View {
-         case .acceptsHints:
-             return localizedAppText("This engine uses the ordered list as language hints.", de: "Diese Engine verwendet die sortierte Liste als Sprachhinweise.")
-         case .detectsSpokenLanguage:
--            return localizedAppText("This engine takes one language. The Language Detection plugin picks the one you speak from this list.", de: "Diese Engine nimmt nur eine Sprache. Das Plugin „Language Detection“ wählt daraus die Sprache, die du sprichst.")
-+            return localizedAppText("This engine takes one language. The Language Detection plugin picks the one you speak from this list. When the plugin is unsure or hears no speech, the engine uses #1.", de: "Diese Engine nimmt nur eine Sprache. Das Plugin „Language Detection“ wählt daraus die Sprache, die du sprichst. Ist das Plugin unsicher oder hört es keine Sprache, verwendet die Engine Nr. 1.")
-         case .firstSelectedFallback:
-             return localizedAppText("This engine does not support multiple language hints. It will use #1 as the spoken language. The Language Detection plugin can pick the one you speak instead.", de: "Diese Engine unterstützt nicht mehrere Sprachhinweise. Sie verwendet Nr. 1 als gesprochene Sprache. Das Plugin „Language Detection“ kann stattdessen die Sprache wählen, die du sprichst.")
-         case .unknown:
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/LanguageDetectionPlugin/LanguageDetectionPlugin.swift` (modified, +143/-12)
-```diff
-@@ -1,5 +1,7 @@
-+import AVFoundation
- import CoreML
- import Foundation
-+import SoundAnalysis
- import TypeWhisperPluginSDK
- import os
- 
-@@ -48,17 +50,45 @@ actor EarModel {
- 
-     private var model: MLModel?
-     private var labels: EarLabels?
-+    private var speechRequest: SNClassifySoundRequest?
- 
-     func unload() {
-         model = nil
-+        speechRequest = nil
-     }
- 
-     func identify(samples: [Float], among candidates: [String]) throws -> PluginSpokenLanguageIdentification? {
-+        let (_, labels) = try loaded()
-+        guard EarScoring.columns(for: candidates, labels: labels.languages).count >= 2 else { return nil }
-+
-+        // The model hears English in ringing, clicks, room noise and silence with a margin near 1,
-+        // so it only judges audio from the first speech on, and nothing when there is none.
-+        let speechSecond: Range<Int>?
-+        do {
-+            guard let start = try SpeechOnset.firstSpeech(in: samples, request: loadedSpeechRequest()) else {
-+                Self.logger.info("No speech in \(samples.count / EarScoring.sampleRate) s of audio")
-+                return nil
-+            }
-+            speechSecond = start ..< min(samples.count, start + SpeechOnset.windowSamples)
-+        } catch {
-+            Self.logger.error("Speech search failed, judging from the first loud sound: \(error.localizedDescription, privacy: .public)")
-+            speechSecond = nil
+@@ -1,6 +1,62 @@
+ {
+   "sourceLanguage": "en",
+   "strings": {
++    "%@ (not available)": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@ (nicht verfügbar)"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@ (no disponible)"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@（利用不可）"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@（不可用）"
++          }
 +        }
-+        return try identify(samples: samples, among: candidates, speechSecond: speechSecond)
++      }
++    },
++    "OpenAI no longer offers this voice. Choose another voice.": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "OpenAI bietet diese Stimme nicht mehr an. Wähle eine andere Stimme."
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "OpenAI ya no ofrece esta voz. Elige otra voz."
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "OpenAIはこの音声の提供を終了しました。別の音声を選んでください。"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "OpenAI 已不再提供此语音。请选择其他语音。"
++          }
++        }
++      }
++    },
+     "Hide API key": {
+       "localizations": {
+         "de": {
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/OpenAIPlugin.swift` (modified, +434/-99)
+```diff
+@@ -677,6 +677,13 @@ private struct OpenAITranscriptionModelCapability: Sendable {
+     let modelInfo: PluginModelInfo
+     let transport: Transport
+     let supportsTranslation: Bool
++    /// The day OpenAI shuts the model down. From then on the list leaves it out and a saved
++    /// selection uses GPT Transcribe.
++    var shutdownDate: Date? = nil
++
++    func isShutDown(at date: Date) -> Bool {
++        shutdownDate.map { date >= $0 } ?? false
++    }
+ 
+     var usesContextAwareHints: Bool {
+         switch transport {
+@@ -700,6 +707,10 @@ private struct OpenAITranscriptionModelCapability: Sendable {
+     static let gptLiveTranscribeModelID = "gpt-live-transcribe"
+     static let legacyRealtimeModelID = "gpt-realtime-whisper"
+ 
++    /// 26 February 2027, 00:00 UTC. OpenAI shuts down Whisper 1, GPT-4o Transcribe and
++    /// GPT-4o Mini Transcribe that day and names GPT Transcribe or GPT Live Transcribe as replacements.
++    static let legacyFileModelsShutdownDate = Date(timeIntervalSince1970: 1_803_600_000)
++
+     static let all: [OpenAITranscriptionModelCapability] = [
+         OpenAITranscriptionModelCapability(
+             modelInfo: PluginModelInfo(id: gptTranscribeModelID, displayName: "GPT Transcribe"),
+@@ -714,17 +725,20 @@ private struct OpenAITranscriptionModelCapability: Sendable {
+         OpenAITranscriptionModelCapability(
+             modelInfo: PluginModelInfo(id: "whisper-1", displayName: "Whisper 1"),
+             transport: .legacyFile(responseFormat: "verbose_json"),
+-            supportsTranslation: true
++            supportsTranslation: true,
++            shutdownDate: legacyFileModelsShutdownDate
+         ),
+         OpenAITranscriptionModelCapability(
+             modelInfo: PluginModelInfo(id: "gpt-4o-transcribe", displayName: "GPT-4o Transcribe"),
+             transport: .legacyFile(responseFormat: "json"),
+-            supportsTranslation: false
++            supportsTranslation: false,
++            shutdownDate: legacyFileModelsShutdownDate
+         ),
+         OpenAITranscriptionModelCapability(
+             modelInfo: PluginModelInfo(id: "gpt-4o-mini-transcribe", displayName: "GPT-4o Mini Transcribe"),
+             transport: .legacyFile(responseFormat: "json"),
+-            supportsTranslation: false
++            supportsTranslation: false,
++            shutdownDate: legacyFileModelsShutdownDate
+         ),
+         OpenAITranscriptionModelCapability(
+             modelInfo: PluginModelInfo(id: legacyRealtimeModelID, displayName: "GPT Realtime Whisper"),
+@@ -736,6 +750,18 @@ private struct OpenAITranscriptionModelCapability: Sendable {
+     static func capability(for modelID: String) -> OpenAITranscriptionModelCapability? {
+         all.first { $0.modelInfo.id == modelID }
+     }
++
++    static func available(at date: Date) -> [OpenAITranscriptionModelCapability] {
++        all.filter { !$0.isShutDown(at: date) }
 +    }
 +
-+    /// The model's answer for the window at `speechSecond`, or from the first loud sound when it
-+    /// is nil, without looking for speech.
-+    func identify(
-+        samples: [Float],
-+        among candidates: [String],
-+        speechSecond: Range<Int>?
-+    ) throws -> PluginSpokenLanguageIdentification? {
-         let (model, labels) = try loaded()
-         let columns = EarScoring.columns(for: candidates, labels: labels.languages)
-         guard columns.count >= 2 else { return nil }
- 
--        let window = EarScoring.speechWindow(samples)
-+        let window = EarScoring.speechWindow(samples, speechSecond: speechSecond)
-         guard !window.isEmpty else { return nil }
- 
-         let audio = try MLMultiArray(shape: [1, NSNumber(value: EarScoring.windowSamples)], dataType: .float32)
-@@ -92,11 +122,21 @@ actor EarModel {
-         )
-         let milliseconds = Int((CFAbsoluteTimeGetCurrent() - start) * 1000)
-         Self.logger.info(
--            "Spoken language \(result.language, privacy: .public) among \(columns.count) known of \(candidates.count) candidates: p=\(result.confidence, format: .fixed(precision: 2)) margin=\(result.margin, format: .fixed(precision: 2)) in \(milliseconds) ms"
-+            "Spoken language \(result.language, privacy: .public) among \(columns.count) known of \(candidates.count) candidates: p=\(result.confidence, format: .fixed(precision: 2)) margin=\(result.margin, format: .fixed(precision: 2)) from \((speechSecond?.lowerBound ?? 0) / EarScoring.sampleRate) s in \(milliseconds) ms"
-         )
-         return result
-     }
- 
-+    /// Creating the request loads the classifier (about 65 ms), so it is kept.
-+    private func loadedSpeechRequest() throws -> SNClassifySoundRequest {
-+        if let speechRequest {
-+            return speechRequest
-+        }
-+        let request = try SpeechOnset.makeRequest()
-+        speechRequest = request
-+        return request
++    /// The model a saved ID uses at `date`: the model itself until OpenAI shuts it down,
++    /// GPT Transcribe afterwards, and nil for an ID OpenAI never offered here.
++    static func current(for modelID: String, at date: Date) -> OpenAITranscriptionModelCapability? {
++        guard let saved = capability(for: modelID) else { return nil }
++        guard saved.isShutDown(at: date) else { return saved }
++        return capability(for: gptTranscribeModelID)
 +    }
-+
-     private func loaded() throws -> (MLModel, EarLabels) {
-         if let model, let labels {
-             return (model, labels)
-@@ -115,6 +155,92 @@ actor EarModel {
-     }
  }
  
-+/// Finds the first speech with the system's sound classifier, which tells speech from ringing,
-+/// clicks and noise that are as loud.
-+enum SpeechOnset {
-+    /// Classifier windows of one second; shorter audio is padded with silence to one window.
-+    static let windowSamples = EarScoring.sampleRate
-+    /// Speech scores 0.8 to 0.95 per second in clean and telephone recordings and above 0.3 in
-+    /// most seconds of quiet or noisy speech; ring tones, clicks and room noise score 0.01 to 0.02.
-+    static let minimumConfidence = 0.3
-+    static let speechLabels = ["speech", "whispering", "shout", "yell"]
-+
-+    static func makeRequest() throws -> SNClassifySoundRequest {
-+        let request = try SNClassifySoundRequest(classifierIdentifier: .version1)
-+        request.windowDuration = CMTime(value: CMTimeValue(windowSamples), timescale: CMTimeScale(EarScoring.sampleRate))
-+        request.overlapFactor = 0
-+        return request
-+    }
-+
-+    /// The first sample of the first second that holds speech, or nil when none does. Stops at
-+    /// the first speech, so a long recording costs only the time until someone speaks.
-+    static func firstSpeech(in samples: [Float], request: SNClassifySoundRequest) throws -> Int? {
-+        guard !samples.isEmpty,
-+              let format = AVAudioFormat(
-+        
+ struct OpenAIRealtimeTranscriptionConfiguration: Sendable {
+@@ -1028,21 +1054,27 @@ final class OpenAIRealtimeWebSocketOpenWaiter: @unchecked Sendable {
+ 
+     private let state = OSAllocatedUnfairLock(initialState: State())
+ 
++    /// Returns once the socket opens. A cancelled wait, such as the open timeout or a stopped
++    /// readback, ends right away instead of waiting for URLSession's own timeout.
+     func waitForOpen() async throws {
+-        try await withCheckedThrowingContinuation { continuation in
+-            let result = state.withLock { state -> Result<Void, Error>? in
+-                if state.opened {
+-                    return .success(())
++        try await withTaskCancellationHandler {
++            try await withCheckedThrowingContinuation { continuation in
++                let result = state.withLock { state -> Result<Void, Error>? in
++                    if state.opened {
++                        return .success(())
++                    }
++                    if let failure = state.failure {
++                        return .failure(failure)
++                    }
++                    state.continuations.append(continuation)
++                    return nil
+                 }
+-                if let failure = state.failure {
+-                    return .failure(failure)
++                if let result {
++                    continuation.resume(with: result)
+                 }
+-                state.continuations.append(continuation)
+-                return nil
+-            }
+-            if let result {
+-                continuation.resume(with: result)
+             }
++  
 ```
 
-**File**: `TypeWhisperPluginSDK/Plugins/LanguageDetectionPlugin/MODEL.md` (modified, +5/-0)
+**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/Tests/OpenAIPluginTests.swift` (modified, +419/-40)
 ```diff
-@@ -18,6 +18,11 @@ the plugin the engine gets the first selected language.
-   117 languages in the `languages` metadata
- - the plugin adds `fusion_beta` times Whisper's log-probs to its own only when Whisper knows every
-   candidate (`whisper_languages` metadata)
-+- the model hears English in non-speech (ring tones, clicks, room noise, mains hum, silence) with a
-+  margin near 1, so the plugin first finds the first second that holds speech with the system's
-+  sound classifier (SoundAnalysis, speech score of at least 0.3) and starts the window 0.1 s
-+  before the first frame within 35 dB of the loudest frame of that second; without speech it gives
-+  no answer
+@@ -4,6 +4,20 @@ import TypeWhisperPluginSDK
+ @testable import OpenAIPlugin
+ import os
  
- ## Training data
- 
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/LanguageDetectionPlugin/Tests/LanguageDetectionPluginTests.swift` (modified, +49/-3)
-```diff
-@@ -4,20 +4,66 @@ import XCTest
- 
- final class LanguageDetectionPluginTests: XCTestCase {
-     func testBundledModelAnswersWithOneOfTheCandidates() async throws {
--        let plugin = LanguageDetectionPlugin()
-         // Two seconds of a quiet tone: the answer is meaningless, but the model must load from
-         // the plugin bundle and pick a candidate as the host passed it.
-         let samples = (0 ..< 32_000).map { Float(sin(Double($0) * 0.05) * 0.1) }
- 
--        let result = try await plugin.identifySpokenLanguage(samples: samples, among: ["de-DE", "en"])
-+        let result = try await EarModel().identify(samples: samples, among: ["de-DE", "en"], speechSecond: nil)
-         let pairResult = try XCTUnwrap(result)
-         XCTAssertTrue(["de-DE", "en"].contains(pairResult.language))
-         XCTAssertGreaterThanOrEqual(pairResult.confidence, 0.5)
- 
--        let unknown = try await plugin.identifySpokenLanguage(samples: samples, among: ["en", "tlh"])
-+        let unknown = try await LanguageDetectionPlugin().identifySpokenLanguage(samples: samples, among: ["en", "tlh"])
-         XCTAssertNil(unknown, "One known candidate leaves the choice to the host")
++enum OpenAITestDates {
++    /// OpenAI shuts down Whisper 1, GPT-4o Transcribe and GPT-4o Mini Transcribe on this day.
++    static let legacyShutdown = Date(timeIntervalSince1970: 1_803_600_000)
++    /// A fixed day before that, so tests that use those models keep passing afterwards.
++    static let beforeLegacyShutdown = legacyShutdown.addingTimeInterval(-86_400)
++}
++
++/// A plugin with a fixed clock, so the tests do not depend on today's date.
++func makeOpenAIPlugin(at date: Date = OpenAITestDates.beforeLegacyShutdown) -> OpenAIPlugin {
++    let plugin = OpenAIPlugin()
++    plugin.currentDate = { date }
++    return plugin
++}
++
+ final class OpenAIPluginTests: XCTestCase {
+     override func tearDown() {
+         PluginHTTPClientTestHarness.reset()
+@@ -59,7 +73,7 @@ final class OpenAIPluginTests: XCTestCase {
      }
  
-+    func testAudioWithoutSpeechLeavesTheChoiceToTheHost() async throws {
-+        // Ring-back tone, clicks and room noise, as before a call: the model would hear English
-+        // in it with a margin near 1 (issue #1970).
-+        var generator = SystemRandomNumberGenerator()
-+        let samples = (0 ..< 40 * 16_000).map { index -> Float in
-+            let seconds = Double(index) / 16_000
-+            let ring = seconds.truncatingRemainder(dividingBy: 5) < 1.5 ? sin(2 * .pi * 425 * seconds) * 0.2 : 0
-+            let click: Double = index % 16_000 < 80 ? 0.5 : 0
-+            return Float(ring + click + Double.random(in: -0.003 ... 0.003, using: &generator))
-+        }
-+        let plugin = LanguageDetectionPlugin()
+     func testOpenAIPluginAdvertisesLiveSTTAndTTSProtocols() {
+-        let plugin: Any = OpenAIPlugin()
++        let plugin: Any = makeOpenAIPlugin()
+ 
+         XCTAssertTrue(plugin is any LiveTranscriptionCapablePlugin)
+         XCTAssertTrue(plugin is any LanguageHintDictionaryTermHintTranscriptionEnginePlugin)
+@@ -69,7 +83,7 @@ final class OpenAIPluginTests: XCTestCase {
+ 
+     func testOpenAINewInstallDefaultsToGPTTranscribeAndKeepsLegacyModels() throws {
+         let host = try PluginTestHostServices()
+-        let plugin = OpenAIPlugin()
++        let plugin = makeOpenAIPlugin()
+ 
+         plugin.activate(host: host)
+ 
+@@ -90,17 +104,76 @@ final class OpenAIPluginTests: XCTestCase {
+ 
+     func testOpenAIActivationPreservesPersistedLegacyModelSelection() throws {
+         let host = try PluginTestHostServices(defaults: ["selectedModel": "gpt-4o-mini-transcribe"])
+-        let plugin = OpenAIPlugin()
++        let plugin = makeOpenAIPlugin()
+ 
+         plugin.activate(host: host)
+ 
+         XCTAssertEqual(plugin.selectedModelId, "gpt-4o-mini-transcribe")
+         XCTAssertEqual(host.userDefault(forKey: "selectedModel") as? String, "gpt-4o-mini-transcribe")
+     }
+ 
++    func testOpenAILeavesOutLegacyFileModelsFromTheirShutdownDate() throws {
++        let host = try PluginTestHostServices()
++        let plugin = makeOpenAIPlugin(at: OpenAITestDates.legacyShutdown)
 +
-+        let speechStart = try SpeechOnset.firstSpeech(in: samples, request: SpeechOnset.makeRequest())
-+        XCTAssertNil(speechStart)
-+        let result = try await plugin.identifySpokenLanguage(samples: samples, among: ["nl", "en"])
-+        XCTAssertNil(result, "Without speech the host uses the first selected language")
-+        let silence = try await plugin.identifySpokenLanguage(samples: [Float](repeating: 0, count: 8_000), among: ["nl", "en"])
-+        XCTAssertNil(silence, "A second call reuses the classifier request")
-+    }
++        plugin.activate(host: host)
 +
-+    func testWindowStartsShortlyBeforeTheLoudSoundWhereSpeechStarts() {
-+        var samples = [Float](repeating: 0, count: 10 * 16_000)
-+        // A loud click at 0.2 s, then sound from 3.5 s on.
-+        for index in 3_200 ..< 3_520 { samples[index] = 0.9 }
-+        for index in 56_000 ..< samples.count { samples[index] = index.isMultiple(of: 2) ? 0.1 : -0.1 }
-+
-+        XCTAssertEqual(EarScoring.speechWindow(samples).count, samples.count - 1_600, "From 0.1 s before the click")
-+        let window = EarScoring.speechWindow(samples, speechSecond: 48_000 ..< 64_000)
-+        XCTAssertEqual(window.count, samples.count - 54_400, "From 0.1 s before the sound in the speech second")
-+        XCTAssertEqual(EarScoring.speechWindow(samples, speechSecond: samples.count ..< samples.count).count, 0)
-+    }
-+
-+    func testQuietSpeechKeepsTheWindowAgainstLouderSoundsElsewhere() {
-+        var samples = [Float](repeating: 0, count: 100 * 16_000)
-+        // Speech at about -46 dB from 3 to 8 s, clicks at 1 s and 90 s more than 35 dB louder.
-+        for index in 48_000 ..< 128_000 { samples[index] = index.isMultiple(of: 2) ? 0.005 : -0.005 }
-+        for click in [16_000, 1_440_000] {
-+            for index in click ..< click + 320 { samples[index] = 0.9 }
-+        }
-+
-+        let window = EarScoring.speechWindow(samples, speechSecond: 48_000 ..< 64_000)
 +        XCTAssertEqual(
-+            window, Array(samples[46_400 ..< 46_400 + EarScoring.windowSamples]),
-+            "From 0.1 s before the speech, not before the click at 90 s"
++            plugin.transcriptionModels.map(\.id),
++            ["gpt-transcribe", "gpt-live-transcribe", "gpt-realtime-whisper"]
 +        )
++        XCTAssertFalse(plugin.supportsTranslation)
++
++        plugin.currentDate = { OpenAITestDates.beforeLegacyShutdown }
++        XCTAssertTrue(plugin.transcriptionModels.contains { $0.id == "whisper-1" })
++        XCTAssertTrue(plugin.supportsTranslation)
 +    }
 +
-     func testWhisperGuessOnlyJoinsWhenItKnowsEveryCandidate() {
-         let labels = EarLabels(languages: ["de", "en", "zu"], whisperLanguages: ["de", "en"], whisperWeight: 1)
-         let own: [Float] = [log(0.4), log(0.3), log(0.3)]
++    func testOpenAIUsesGPTTranscribeForASavedModelAfterItsShutdownAndKeepsTheSetting() async throws {
++        let host = try PluginTestHostServices(
++            defaults: ["selectedModel": "whisper-1"],
++            secrets: ["api-key": "sk-live"]
++        )
++        let plugin = makeOpenAIPlugin(at: OpenAITestDates.legacyShutdown)
++        plugin.activate(host: host)
++
++        XCTAssertEqual(plugin.selectedModelId, "gpt-transcribe")
++        XCTAssertEqual(host.userDefault(forKey: "selectedModel") as? String, "whisper-1")
++        XCTAssertEqual(plugin.currentModelId(forModelId: "whisper-1"), "gpt-transcribe")
++        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-4o-transcribe"), "gpt-transcribe")
++        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-4o-mini-transcribe"), "gpt-transcribe")
++        XCTAssertEqual(plugin.currentModelId(forModelId: "gpt-live-transcribe"), "gpt-live-transcribe")
++        XCTAssertNil(plugin.currentModelId(forModelId: "unknown-model"))
++
++        let store = PluginHTTPClientSessionStore()
++        PluginHTTPClientTestHarness.configure { _ in
++            store.makeSession(outcomes: [
++                .success(
++                    Data(#"{"text":"Hallo"}"#.utf8),
++                    Self.httpResponse(url: "https://api.openai.com/v1/audio/transcriptions", statusCode: 200)
++                ),
++            ])
++        }
++
++        let result = try await plugin.transcribe(
++            audio: Self.testAudio(),
++            language: nil,
++            translate: false,
++            prompt: nil
++        )
++
++        XCTAssertEqual(result.text, "Hallo")
++        let request = try XCTUnwrap(store.sessions.first?.requestedRequests.first)
++        let body = String(decoding: try XCTUnwrap(request.httpBody), as: UTF8.self)
++        XCTAssertTrue(body.contains("name=\"model\"\r\n\r\ngpt-transcribe"))
++
++        plugin.currentDate = { OpenAITestDates.beforeLegacyShutdown }
++        XCTAssertEqual(plugin.selectedModelId, "whisper-1")
++    }
++
+     func testOpenAIContextAndLiveDelayPersistWithLowAsDefault() throws {
+         let host = try PluginTestHostServices()
+-        let plugin = OpenAIPlugin()
++        let plugin = makeOpenAIPlug
 ```
 
-**File**: `TypeWhisperPluginSDK/Plugins/LanguageDetectionPlugin/manifest.json` (modified, +1/-1)
+**File**: `TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json` (modified, +1/-1)
 ```diff
 @@ -1,7 +1,7 @@
  {
-     "id": "com.typewhisper.language-detection",
-     "name": "Language Detection",
--    "version": "1.0.1",
-+    "version": "1.0.2",
-     "minHostVersion": "1.8.1",
+     "id": "com.typewhisper.openai",
+     "name": "OpenAI / ChatGPT",
+-    "version": "1.4.0",
++    "version": "1.5.0",
+     "minHostVersion": "1.8.0",
      "sdkCompatibilityVersion": "v1",
      "minOSVersion": "14.0",
 ```
 
-**File**: `TypeWhisperPluginSDK/README.md` (modified, +3/-2)
+**File**: `TypeWhisperTests/ModelManagerLiveSessionModelOverrideTests.swift` (modified, +35/-1)
 ```diff
-@@ -420,8 +420,9 @@ final class MyAction: NSObject, ActionPlugin, @unchecked Sendable {
- ### SpokenLanguageIdentificationProviderPlugin
+@@ -89,6 +89,34 @@ final class ModelManagerLiveSessionModelOverrideTests: XCTestCase {
+         XCTAssertEqual(plugin.selectedModelId, "alpha")
+     }
  
- Tell which of the user's selected languages is spoken. The host asks before a transcription when
--the user selected several languages and the engine accepts only one; without a provider the engine
--gets the first selected language. Audio must stay on the Mac.
-+the user selected several languages and the engine accepts only one; without a provider, or when
-+the answer's `margin` is below 0.25, the engine gets the first selected language. Return nil when
-+the audio holds no speech. Audio must stay on the Mac.
++    func testOverrideWithAReplacedModelUsesItsReplacementWhenThatIsAlreadySelected() async throws {
++        let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
++        defer { TestSupport.remove(appSupportDirectory) }
++
++        let plugin = LiveModelOverrideTranscriptionPlugin(modelAliases: ["legacy-beta": "beta"])
++        plugin.selectModel("beta")
++        let modelManager = installLivePlugin(plugin, appSupportDirectory: appSupportDirectory)
++        modelManager.setPluginRestoreWaitConfigurationForTesting(
++            initialAttempts: 1,
++            busyAttempts: 0,
++            pollInterval: .milliseconds(10)
++        )
++
++        // A workflow saved with a model the plugin has since replaced, while the
++        // replacement is already the selected model.
++        let sessionHandle = try await modelManager.createLiveTranscriptionSession(
++            languageSelection: .auto,
++            task: .transcribe,
++            cloudModelOverride: "legacy-beta",
++            onProgress: { _ in true }
++        )
++        let handle = try XCTUnwrap(sessionHandle)
++
++        XCTAssertEqual(plugin.selectedModelId, "beta")
++        await modelManager.cancelLiveTranscriptionSession(handle)
++        XCTAssertEqual(plugin.selectedModelId, "beta")
++    }
++
+     func testLiveSessionNormalizesLanguageForOverrideModel() async throws {
+         let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
+         defer { TestSupport.remove(appSupportDirectory) }
+@@ -1176,8 +1204,14 @@ private final class LiveModelOverrideTranscriptionPlugin: NSObject, Transcriptio
+     func deactivate() {}
  
- ```swift
- var spokenLanguageIdentificationProviderId: String { "my-language-id" }
+     func selectModel(_ modelId: String) {
++        currentModelId = resolvedModelId(forModelId: modelId)
++    }
++
++    /// The model an alias stands for now, like a plugin that renamed or replaced a model.
++    @objc(currentModelIdForModelId:)
++    func resolvedModelId(forModelId modelId: String) -> String? {
+         let resolvedModelId = modelAliases[modelId] ?? modelId
+-        currentModelId = models.contains { $0.id == resolvedModelId } ? resolvedModelId : nil
++        return models.contains { $0.id == resolvedModelId } ? resolvedModelId : nil
+     }
+ 
+     func transcribe(
+```
+
+**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +2/-2)
+```diff
+@@ -224,12 +224,12 @@ final class PluginManifestValidationTests: XCTestCase {
+         XCTAssertEqual(manifest.supportedArchitectures, ["arm64"])
+     }
+ 
+-    func testOpenAIPlugin140RequiresCompatibleHost18AndDeclaresCloudHosting() throws {
++    func testOpenAIPlugin150RequiresCompatibleHost18AndDeclaresCloudHosting() throws {
+         let manifestURL = TestSupport.repoRoot.appendingPathComponent("TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json")
+         let data = try Data(contentsOf: manifestURL)
+         let manifest = try JSONDecoder().decode(PluginManifest.self, from: data)
+ 
+-        XCTAssertEqual(manifest.version, "1.4.0")
++        XCTAssertEqual(manifest.version, "1.5.0")
+         XCTAssertEqual(manifest.minHostVersion, "1.8.0")
+         XCTAssertEqual(manifest.sdkCompatibilityVersion, PluginSDKCompatibility.currentVersion)
+         XCTAssertEqual(manifest.hosting, .cloud)
+```
+
+**File**: `docs/release-notes/unreleased.md` (modified, +1/-0)
+```diff
+@@ -1,5 +1,6 @@
+ # Unreleased
+ 
++- OpenAI 1.5.0: Text-to-speech now runs through OpenAI's Realtime API with `gpt-realtime-2.1-mini`, because OpenAI shuts down `gpt-4o-mini-tts` and the other speech models on January 6, 2027. The model is told to read the text aloud word for word, and the voice instructions change only how it speaks. The Realtime API does not offer Fable, Nova and Onyx, so 10 voices remain. A saved one stays selected, shows as not available in the plugin settings and fails with a message to choose another voice instead of switching to one on its own. Without a fetched model list, prompts no longer offer GPT-4.1 Nano and o4-mini, which OpenAI shut down on October 23, 2026. From February 26, 2027, when OpenAI shuts them down, Whisper 1, GPT-4o Transcribe and GPT-4o Mini Transcribe leave the transcription model list and translation is no longer offered. A saved one then transcribes with GPT Transcribe, also in workflows saved with one, which show GPT Transcribe.
+ - Dictating into the agterm terminal no longer ends with "No text field detected" while the text arrives, and with **Preserve clipboard content** on, the text is no longer inserted twice. agterm now gets the paste that Terminal, iTerm2, Ghostty and the other built-in terminals get, and a terminal that shows the pasted text only once the shell echoes it no longer counts as a missed text field. A new **Terminal Apps** section in the Dictation settings adds other terminals, picked like the apps of a workflow.
+ - Qwen3 ASR 1.2.0: The model list offers Rumble-2-Flash (8-bit), Reson8's open speech model in the Qwen3-ASR architecture, as a 0.7 GB download that runs on Macs with 8 GB of memory. In the TypeWhisper benchmark it made fewer errors than Qwen3 0.6B (6.8 % against 10.1 % WER on 38 suites), about as few as Qwen3 1.7B, and transcribed at 94 times real time, against 61 for Qwen3 0.6B and 30 for Qwen3 1.7B. It covers the same 30 languages and detects the language itself when none is set.
+ - AssemblyAI 1.4.0 (requires TypeWhisper 1.9.0): AssemblyAI-STT-3.7 replaces Universal-3.5 Pro, which AssemblyAI deprecated when it released the new model on November 17, 2026. A saved Universal-3.5 Pro or Universal-3 Pro selection switches to it. The async API transcribes 32 languages with it instead of 18, at the same $0.21/h, and sends a language it does not support to Universal-2. Filler words stay out of the transcript, as with Universal-3.5 Pro; AssemblyAI-STT-3.7 would keep them by default. Live dictations stream to AssemblyAI-STT-3.7-Realtime-Agent at $0.45/h, the price of the Universal-3.5 Pro realtime model, which AssemblyAI retires on February 1, 2027. A new Live model setting offers AssemblyAI-STT-3.7-Realtime at $0.30/h instead: in our tests both wrote the same final text, but its live preview changed more while speaking and showed half words in German. Live dictations can be steered to all 32 languages. The Sync API runs Universal-3.6 Pro, to which AssemblyAI already routes requests for Universal-3.5 Pro.
 ```
 
 ---
 
-### Incident Patch 3: `3f0915ea` (2026-11-20)
-**Commit Message**: (bug) Stop dictation from hanging on "Preparing microphone" after a failed microphone switch (#1979)
+### Incident Patch 3: `a389daa1` (2026-11-23)
+**Commit Message**: (bug) Offer Cohere's 14 languages and stop sending English without a language (#2011)
 
-Keep engines with a failed input device switch alive
+* List Cohere Transcribe's 14 languages in the Cohere plugin
 
-A failed kAudioOutputUnitProperty_CurrentDevice switch can leave the AUHAL's
-listeners registered on the device it was leaving, keyed by the AUHAL's
-address. Once that engine was freed, the next AUHAL allocated at the same
-address could not connect to the default aggregate ('nope', "listener was
-already added"), and AVAudioEngine then looped forever reading its input
-format. Every later recording start hung on "Preparing microphone" until the
-app was restarted.
+The plugin offered Bengali, Hindi, Russian, Swahili and Turkish, which Cohere Transcribe does not support, and left out Greek, Italian, Dutch, Polish and Vietnamese. Use the 14 languages from Cohere's documentation, as the Cohere Transcribe (Local) plugin does, and bump the plugin to 1.0.9.
 
-Since #1962 the idle prewarm makes this switch after every recording, so the
-failure became reachable in normal use. Engines whose switch fails are now
-kept for the rest of the process, which keeps their address taken; the
-recording still falls back to a cold start.
+* Let the host pick Cohere's language instead of sending English
 
-**File**: `TypeWhisper/Services/AudioDeviceService.swift` (modified, +12/-0)
+Adopt HostLanguageDetectionEnginePlugin like Cohere Transcribe (Local) 1.1.0: for automatic detection the host picks one of the 14 languages. Without a supported language the plugin fails with an explanation instead of sending en, for example for a saved language the list no longer offers. Bump the plugin to 1.1.0, which requires TypeWhisper 1.8.1.
+
+**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/CoherePlugin.swift` (modified, +47/-3)
 ```diff
-@@ -3789,6 +3789,16 @@ final class AudioInputDeviceActivationGuard: AudioInputDeviceActivating, @unchec
-     }
- }
+@@ -4,9 +4,11 @@ import TypeWhisperPluginSDK
  
-+/// Engines whose input device switch failed; they are never released.
-+///
-+/// A switch can fail after the AUHAL has already left its previous device (for example
-+/// AVAudioEngine's default aggregate) without removing its listeners there. CoreAudio
-+/// identifies those listeners by the AUHAL's address. Once the engine is freed, the next
-+/// AUHAL allocated at that address cannot connect to the same device ("listener was already
-+/// added", 'nope'), and AVAudioEngine then loops forever reading its input format, so every
-+/// later recording start hangs. Keeping the engine alive keeps that address taken.
-+let failedInputDeviceSwitchEngines = ProcessLifetimeRetainer<AVAudioEngine>()
-+
- /// Sets the CoreAudio input device on an AVAudioEngine's input node AUHAL.
- /// Checks the return status and verifies the device was actually set.
- /// Returns true if the device was set successfully.
-@@ -3809,6 +3819,8 @@ func setInputDevice(_ deviceID: AudioDeviceID, on engine: AVAudioEngine, label:
+ // MARK: - Supported Languages
  
-     if setStatus != noErr {
-         deviceHelperLogger.error("[\(label)] AudioUnitSetProperty failed: status=\(setStatus) (\(audioStatusString(setStatus))), deviceID=\(deviceID)")
-+        let retainedCount = failedInputDeviceSwitchEngines.retain(engine)
-+        deviceHelperLogger.warning("[\(label)] Keeping the engine of the failed device switch alive (\(retainedCount) kept)")
-         return false
-     }
++// The 14 languages of Cohere Transcribe (docs.cohere.com/docs/transcribe), as in the
++// Cohere Transcribe (Local) plugin.
+ private let cohereSupportedLanguages = [
+-    "ar", "bn", "de", "en", "es", "fr", "hi", "ja", "ko", "pt",
+-    "ru", "sw", "tr", "zh",
++    "ar", "de", "el", "en", "es", "fr", "it", "ja", "ko", "nl",
++    "pl", "pt", "vi", "zh",
+ ]
  
-```
-
-**File**: `TypeWhisper/Services/AudioEngineRecoverySupport.swift` (modified, +21/-0)
-```diff
-@@ -406,6 +406,27 @@ final class DelayedReleaseRetainer<Object: AnyObject>: @unchecked Sendable {
-     }
- }
+ // MARK: - Plugin Entry Point
+@@ -68,7 +70,11 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
+         }
  
-+/// Keeps objects alive until the process exits.
-+final class ProcessLifetimeRetainer<Object: AnyObject>: @unchecked Sendable {
-+    private let lock = NSLock()
-+    private var objects: [Object] = []
-+
-+    /// Returns how many objects are retained, including this one.
-+    @discardableResult
-+    func retain(_ object: Object) -> Int {
-+        lock.withLock {
-+            if !objects.contains(where: { $0 === object }) {
-+                objects.append(object)
-+            }
-+            return objects.count
+         let model = "cohere-transcribe-03-2026"
+-        let lang = language ?? "en"
++        // Cohere Transcribe has no language detection. For automatic detection the host picks one of
++        // `languagesForHostDetection`; without one of them the request fails here instead of sending English.
++        guard let lang = Self.cohereLanguage(for: language) else {
++            throw CoherePluginError.explicitLanguageRequired(supportedLanguages: cohereSupportedLanguages)
 +        }
+ 
+         guard let url = URL(string: "https://api.cohere.com/v2/audio/transcriptions") else {
+             throw PluginTranscriptionError.apiError("Invalid Cohere API URL")
+@@ -144,6 +150,20 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
+         }
+     }
+ 
++    /// The base ISO 639-1 code Cohere accepts for a host language code, or nil when there is none.
++    static func cohereLanguage(for language: String?) -> String? {
++        guard let language else { return nil }
++        let normalized = language
++            .trimmingCharacters(in: .whitespacesAndNewlines)
++            .lowercased()
++            .replacingOccurrences(of: "_", with: "-")
++        guard !normalized.isEmpty, normalized != "auto", normalized != "und" else { return nil }
++        let baseCode = normalized.split(separator: "-", omittingEmptySubsequences: true).first.map(String.init)
++        let canonicalCode = baseCode == "cmn" ? "zh" : baseCode
++        guard let canonicalCode, cohereSupportedLanguages.contains(canonicalCode) else { return nil }
++        return canonicalCode
 +    }
 +
-+    var count: Int {
-+        lock.withLock { objects.count }
+     // MARK: - API Key Validation
+ 
+     fileprivate func validateApiKey(_ key: String) async -> Bool {
+@@ -194,6 +214,30 @@ final class CoherePlugin: NSObject, TranscriptionEnginePlugin, DictionaryTermsCa
+     }
+ }
+ 
++// MARK: - Host Language Detection
++
++extension CoherePlugin: HostLanguageDetectionEnginePlugin {
++    var languagesForHostDetection: [String] { cohereSupportedLanguages }
++}
++
++// MARK: - Errors
++
++enum CoherePluginError: LocalizedError {
++    case explicitLanguageRequired(supportedLanguages: [String])
++
++    var errorDescription: String? {
++        switch self {
++        case .explicitLanguageRequired(let supportedLanguages):
++            let message = Bundle(for: CoherePlugin.self).localizedString(
++                forKey: "Cohere Transcribe requires an explicitly selected supported language. Automatic language detection is not available. Supported languages:",
++                value: nil,
++                table: nil
++            )
++            return "\(message) \(supportedLanguages.joined(separator: ", "))."
++        }
 +    }
 +}
 +
- final class AudioEngineRecoveryCoordinator: @unchecked Sendable {
-     private enum LifecycleState {
-         case idle
+ // MARK: - Settings View
+ 
+ private struct CohereSettingsView: View {
 ```
 
-**File**: `TypeWhisperTests/DictationShortSpeechTests.swift` (modified, +19/-0)
+**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/Localizable.xcstrings` (modified, +28/-0)
 ```diff
-@@ -365,6 +365,25 @@ final class DictationShortSpeechTests: XCTestCase {
-         wait(for: [released], timeout: 0.5)
+@@ -336,6 +336,34 @@
+           }
+         }
+       }
++    },
++    "Cohere Transcribe requires an explicitly selected supported language. Automatic language detection is not available. Supported languages:": {
++      "localizations": {
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cohere Transcribe requiere un idioma compatible seleccionado explícitamente. La detección automática de idioma no está disponible. Idiomas compatibles:"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cohere Transcribeでは対応言語を明示的に選択する必要があります。言語の自動検出は利用できません。対応言語："
++          }
++        },
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cohere Transcribe benötigt eine explizit ausgewählte unterstützte Sprache. Automatische Spracherkennung ist nicht verfügbar. Unterstützte Sprachen:"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cohere Transcribe 需要明确选择支持的语言。不支持自动语言检测。支持的语言："
++          }
++        }
++      }
+     }
+   },
+   "version": "1.0"
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/CoherePlugin/manifest.json` (modified, +2/-2)
+```diff
+@@ -1,8 +1,8 @@
+ {
+     "id": "com.typewhisper.cohere",
+     "name": "Cohere",
+-    "version": "1.0.8",
+-    "minHostVersion": "1.8.0",
++    "version": "1.1.0",
++    "minHostVersion": "1.8.1",
+     "sdkCompatibilityVersion": "v1",
+     "minOSVersion": "14.0",
+     "author": "TypeWhisper",
+```
+
+**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +12/-0)
+```diff
+@@ -224,6 +224,18 @@ final class PluginManifestValidationTests: XCTestCase {
+         XCTAssertEqual(manifest.supportedArchitectures, ["arm64"])
      }
  
-+    func testProcessLifetimeRetainer_neverReleasesAndCountsEachObjectOnce() throws {
-+        let retainer = ProcessLifetimeRetainer<ReleaseProbe>()
-+        let releaseLock = NSLock()
-+        var didRelease = false
-+        var probe: ReleaseProbe? = ReleaseProbe {
-+            releaseLock.withLock {
-+                didRelease = true
-+            }
-+        }
++    func testCoherePlugin110RequiresHost181ForHostLanguageDetection() throws {
++        let manifestURL = TestSupport.repoRoot.appendingPathComponent(
++            "TypeWhisperPluginSDK/Plugins/CoherePlugin/manifest.json"
++        )
++        let data = try Data(contentsOf: manifestURL)
++        let manifest = try JSONDecoder().decode(PluginManifest.self, from: data)
 +
-+        XCTAssertEqual(retainer.retain(try XCTUnwrap(probe)), 1)
-+        XCTAssertEqual(retainer.retain(try XCTUnwrap(probe)), 1)
-+        probe = nil
-+
-+        Thread.sleep(forTimeInterval: 0.05)
-+        XCTAssertFalse(releaseLock.withLock { didRelease })
-+        XCTAssertEqual(retainer.count, 1)
++        XCTAssertEqual(manifest.version, "1.1.0")
++        XCTAssertEqual(manifest.minHostVersion, "1.8.1")
++        XCTAssertEqual(manifest.sdkCompatibilityVersion, PluginSDKCompatibility.currentVersion)
 +    }
 +
-     private func makeSamples(duration: TimeInterval) -> [Float] {
-         let count = Int(duration * AudioRecordingService.targetSampleRate)
-         return [Float](repeating: 0.1, count: count)
+     func testOpenAIPlugin150RequiresHost183AndDeclaresCloudHosting() throws {
+         let manifestURL = TestSupport.repoRoot.appendingPathComponent("TypeWhisperPluginSDK/Plugins/OpenAIPlugin/manifest.json")
+         let data = try Data(contentsOf: manifestURL)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1982** (2026-11-20): (chore) Give modules the signed Premium account entitlement and refresh it daily (@SeoFood)
-- **PR #1981** (2026-11-20): (bug) Keep word timing and speakers when a promoted version syncs back (@SeoFood)
-- **PR #1979** (2026-11-20): (bug) Stop dictation from hanging on "Preparing microphone" after a failed microphone switch (@SeoFood)
-- **PR #1978** (2026-11-20): (feature) Add a Zoom Scribe plugin with live dictation (@SeoFood)
-- **PR #1977** (2026-11-19): (bug) Stop reporting a missed text field in agterm and let users add terminal apps (@SeoFood)
-- **PR #1976** (2026-11-19): (feature) Label subtitle exports as subtitles with timecodes (@SeoFood)
+- **PR #2011** (2026-11-23): (bug) Offer Cohere's 14 languages and stop sending English without a language (@SeoFood)
+- **PR #2010** (2026-11-23): (bug) Require TypeWhisper 1.8.1 for OpenRouter 1.3.0 (@SeoFood)
+- **PR #2009** (2026-11-23): (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript (@SeoFood)
+- **PR #2008** (2026-11-23): (feature) Add a manual microphone gain slider next to Whisper Mode (@SeoFood)
+- **PR #2007** (2026-11-23): (feature) Pick the reasoning effort for Groq and OpenRouter models (@SeoFood)
+- **PR #2006** (2026-11-23): (feature) Pick the reasoning effort for Cerebras models (@SeoFood)
 
 ---
 
@@ -2580,39 +2838,31 @@ recording still falls back to a cold start.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (bug) Let an API dictation start replace a feedback banner
+## X. (bug) Stop the Recorder from crashing when an accessibility client reads a faile
 
 **RULE**:
-When implementing operations in `TypeWhisper/ViewModels/DictationViewModel.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TypeWhisper.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e9d0620`: (bug) Let an API dictation start replace a feedback banner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d733f820`: (bug) Stop the Recorder from crashing when an accessibility client reads a failed transcript. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/ViewModels/DictationViewModel.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // A queued hotkey start runs first, even after the reset has already set the state to
-        // idle, so an API start cannot drop it and its workflow.
-        HistoryRetranscriptionActivity.recordID == nil
-            && pendingHotkeyDictationStart == nil
-            && (state == .idle || canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback)
-        // A new API dictation replaces a passive feedback banner, such as "No speech
-        // recognized", as the dictation hotkey does (#1959).
-        if canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback {
-            if state == .inserting {
-                resetDictationState()
-            }
+		AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */; };
+		BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelectableTextAccessibilityTests.swift; sourceTree = "<group>"; };
+				BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */,
+				AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        HistoryRetranscriptionActivity.recordID == nil && (state == .idle || canReplaceUndeliveredTranscriptOffer)
-        if canReplaceUndeliveredTranscriptOffer {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e9d0620` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d733f820` are properly handled with clean fallback behavior.
