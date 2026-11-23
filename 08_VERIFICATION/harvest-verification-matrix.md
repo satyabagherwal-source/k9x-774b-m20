@@ -12337,3 +12337,7 @@
 | `CYCLE-20261123-EN3O` | `2026-11-23T14:38:02.100Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`1a288967...`) |
 | `CYCLE-20261123-ES7B` | `2026-11-23T14:38:08.711Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10052` | Yes (`37cdb031...`) |
 | `CYCLE-20261123-EZDH` | `2026-11-23T14:38:18.005Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10053` | Yes (`ec4bf6fa...`) |
+| `CYCLE-20261123-PEE9` | `2026-11-23T14:46:24.033Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`3d86d05b...`) |
+| `CYCLE-20261123-PNXP` | `2026-11-23T14:46:36.397Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10054` | Yes (`2dd68008...`) |
+| `CYCLE-20261123-PR44` | `2026-11-23T14:46:40.516Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10055` | Yes (`d097f1a1...`) |
+| `CYCLE-20261123-PSFC` | `2026-11-23T14:46:42.216Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10056` | Yes (`793b3f5c...`) |

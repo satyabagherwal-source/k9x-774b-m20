@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T01:31:36.599Z",
+  "timestamp": "2026-11-23T14:46:46.874Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-helixdb-helix-db-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [helixdb-helix-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T01:31:36.599Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:46:46.874Z`  
 > **Learning ID**: `LEARN-EVO-helixdb-helix-db-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from helixdb-helix-db-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `b943942d`  
+> **Source Version**: `8947fa71`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T01:31:32.198Z  
+> **Timestamp**: 2026-11-23T14:46:39.489Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T01:31:31.991Z  
+> **Harvest Timestamp**: 2026-11-23T14:46:39.484Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6304 stars
+- **Stars / Engagement**: 6310 stars
 
 ---
 
@@ -2113,1080 +2113,287 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b943942d` (2026-11-19)
-**Commit Message**: Build indexes without waiting on S3 per step or rescanning applied deltas (#1310)
+### Incident Patch 1: `ce6bcc9c` (2026-11-22)
+**Commit Message**: fix(go): convert time.Time to millis without UnixNano overflow (#1292)
 
-Building a new index on an existing label took about 400 s on 1M rows on
-S3. With 1,000 writes/s running, it took 25 min to over an hour, or
-never finished. This PR cuts those builds to 20-50 s. **No stored format
-changes.**
+dateTimeFromTime computed t.UnixNano() / int64(time.Millisecond).
+UnixNano is undefined outside 1677-09-21..2262-04-11, so any time.Time
+outside that window (ParamDateTime, PropertyValueOf,
+ParseDateTimeRFC3339) was silently stored as a different instant:
+year 2300 became 1715-06-13T00:25:26.291Z and year 1 became 1754.
+The division also truncated toward zero, so 1969-12-31T23:59:59.9995Z
+rounded up to the epoch instead of down to ...59.999Z.
 
-## Why it was slow
+Use t.UnixMilli(), which is defined for the full range and floors
+sub-millisecond precision, matching the Python SDK since #1126.
 
-1. **Each step waited for the S3 upload twice.** A step made two
-commits, the claim and the step, and each waited about 100 ms for the
-WAL upload. That wait was about 95% of a clean build.
-2. **Catch-up re-read every delta from the start.** Applied deltas leave
-deleted markers behind, and each check scanned the whole delta range
-again, markers included. With writes running, that cost grew with every
-step.
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
 
-## What changed
-
-**1. Pending-delta ledger** (`secondary/delta_ledger.rs`, used by
-equality, unique and range indexes)
-
+**File**: `sdks/go/dsl.go` (modified, +1/-1)
 ```diff
- observe pending deltas
--  scan the whole delta range from the start
-+  point-read the keys already in the ledger
-+  scan only the part not seen yet
-```
-
-- Writers add their keys to the ledger as they commit.
-- After a restart, or if the ledger grows past its cap (4×65,536 keys
-per DB handle), the build falls back to one full scan.
-
-**File**: `crates/db/src/execution/interpreter/mutation/index_context.rs` (modified, +8/-3)
-```diff
-@@ -324,7 +324,7 @@ impl MutationIndexContext {
-     pub(crate) fn into_prepared(self) -> Result<PreparedMutationIndexContext, crate::HelixDbError> {
-         let Self {
-             property_writes,
--            _scope_permit,
-+            _scope_permit: mut scope_permit,
-             active,
-             secondary,
-             secondary_runtime,
-@@ -339,10 +339,15 @@ impl MutationIndexContext {
-                 transitions: _,
-         } = self;
-         topology_runtime.consume_prepared()?;
--        secondary_runtime.consume_prepared()?;
-+        let staged = secondary_runtime.consume_prepared()?;
-+        // The permit records them once dropped, after the commit applies;
-+        // only focused tests run without one.
-+        if let Some(permit) = scope_permit.as_mut() {
-+            permit.stage_build_deltas(staged);
-+        }
-         Ok(PreparedMutationIndexContext {
-             _property_writes: property_writes,
--            _scope_permit,
-+            _scope_permit: scope_permit,
-             active_generations: active.into_generations(),
-             _secondary: secondary,
-             _vector: vector,
-```
-
-**File**: `crates/db/src/index_lifecycle/failpoints.rs` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ pub enum IndexOutboxFailpoint {
-     DdlEnqueueAfterStaging,
-     /// Immediately before an eligible pointer is claimed.
-     ClaimBefore,
--    /// Immediately after the claim commit is durable.
-+    /// Immediately after the claim commit is applied.
-     ClaimAfter,
-     /// Immediately before a claimed operation's bounded read.
-     BatchReadBefore,
-```
-
-**File**: `crates/db/src/index_lifecycle/operation.rs` (modified, +60/-10)
-```diff
-@@ -997,6 +997,15 @@ impl IndexOperationQueueSchedule {
-     }
+@@ -159,7 +159,7 @@ func (d DateTime) RFC3339() (string, error) {
  }
  
-+/// What a progressed step does with the claim it ran under.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+pub(crate) enum ClaimContinuation {
-+    /// Requeue the operation, so any worker may claim its next step.
-+    Release,
-+    /// Keep the claim, so the worker holding it runs the next step directly.
-+    Retain,
+ func dateTimeFromTime(t time.Time) DateTime {
+-	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
++	return DateTime{millis: t.UnixMilli()}
+ }
+ 
+ type PropertyValue struct {
+```
+
+**File**: `sdks/go/dsl_test.go` (modified, +60/-0)
+```diff
+@@ -1501,6 +1501,66 @@ func TestIndexLifecycleResponseDecoders(t *testing.T) {
+ 	}
+ }
+ 
++func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
++	// time.Time.UnixNano is undefined outside 1677-09-21..2262-04-11, and
++	// integer division truncates toward zero. Both used to corrupt the stored
++	// instant silently; conversion must keep the exact (floored) millisecond.
++	cases := []struct {
++		input string
++		want  string
++	}{
++		{"0001-01-01T00:00:00.000Z", "0001-01-01T00:00:00.000Z"},
++		{"1677-01-01T00:00:00.000Z", "1677-01-01T00:00:00.000Z"},
++		{"2262-12-31T23:59:59.999Z", "2262-12-31T23:59:59.999Z"},
++		{"2300-01-01T00:00:00.000Z", "2300-01-01T00:00:00.000Z"},
++		{"9999-12-31T23:59:59.999Z", "9999-12-31T23:59:59.999Z"},
++		{"1969-12-31T23:59:59.9995Z", "1969-12-31T23:59:59.999Z"},
++	}
++	for _, tc := range cases {
++		parsed, err := ParseDateTimeRFC3339(tc.input)
++		if err != nil {
++			t.Fatalf("%s: %v", tc.input, err)
++		}
++		got, err := parsed.RFC3339()
++		if err != nil {
++			t.Fatalf("%s: %v", tc.input, err)
++		}
++		if got != tc.want {
++			t.Fatalf("%s: got %s want %s", tc.input, got, tc.want)
++		}
++	}
++
++	instant := time.Date(2300, time.January, 1, 0, 0, 0, 0, time.UTC)
++	gotValue, err := PropertyValueOf(instant)
++	if err != nil {
++		t.Fatal(err)
++	}
++	wantValue, err := PropertyValueOf(DateTimeFromMillis(instant.Unix() * 1000))
++	if err != nil {
++		t.Fatal(err)
++	}
++	gotProperty, err := json.Marshal(gotValue)
++	if err != nil {
++		t.Fatal(err)
++	}
++	wantProperty, err := json.Marshal(wantValue)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(gotProperty) != string(wantProperty) {
++		t.Fatalf("time.Time property value: got %s want %s", gotProperty, wantProperty)
++	}
++	request := NewReadQueryRequest(Read())
++	request.ParamDateTime("t", instant)
++	body, err := MarshalRequest(request)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(string(body), `"t":"2300-01-01T00:00:00.000Z"`) {
++		t.Fatalf("time.Time parameter serialized to the wrong instant: %s", body)
++	}
 +}
 +
- /// Canonical durable index operation.
- #[derive(Debug, Clone, PartialEq, Eq, Hash)]
- pub struct IndexOperationRecord {
-@@ -1207,7 +1216,13 @@ impl IndexOperationRecord {
-         &self.progress
-     }
- 
--    /// Returns the persisted transient-failure attempt counter.
-+    /// Returns how many claims have tried the current checkpoint.
-+    ///
-+    /// A claim adds one. A committed step that advances the checkpoint resets
-+    /// the count: to zero when it releases its claim, or to one when the
-+    /// claim it keeps carries on with the next step. Failures, blockers, and
-+    /// retries leave it unchanged, so it counts consecutive attempts that
-+    /// made no progress, which is what transient-failure backoff scales by.
-     pub const fn attempt(&self) -> u32 {
-         self.attempt
-     }
-@@ -1254,10 +1269,17 @@ impl IndexOperationRecord {
-         )
-     }
- 
--    /// Persists a successful bounded checkpoint and releases its claim.
-+    /// Persists a successful bounded checkpoint, then requeues the operation
-+    /// or keeps its claim as `claim` asks.
-+    ///
-+    /// A kept claim is the exact claim the step ran under, so the worker that
-+    /// holds it can run the next step without claiming again. Progress resets
-+    /// the attempt counter: a released checkpoint has had no attempt yet, and
-+    /// a kept claim is the one attempt at its new checkpoint.
-     pub(crate) fn progressed(
-         &self,
-         progress: IndexOperationProgress,
-+        claim: ClaimContinuation,
-     ) -> Result<Self, IndexOperationModelError> {
-         if !matches!(
-             self.execution_state,
-@@ -1268,13 +1290,20 @@ impl IndexOperationRecord {
-                 transition: "progress",
-             });
-         }
-+        let (attempt, execution_state) = match claim {
-+            ClaimContinuation::Release => (
-+                0,
-+                IndexOperationExecutionState::Queued {
-+                    not_before_unix_millis: None,
-+                },
-+            ),
-+            ClaimContinuation::Retain => (1, self.execution_state.clone()),
-+        };
-         self.next(
-             self.index_record_revision,
-             progress,
--            self.attempt,
--            IndexOperationExecutionState::Queued {
--                not_before_unix_millis: None,
--            },
-+            attempt,
-+            execution_state,
-         )
-     }
- 
-@@ -1397,7 +1426,8 @@ impl IndexOperationRecord {
-     }
- 
-     /// Converts a constructing BUILD into the family's initial cleanup
--    /// checkpoint while invalidating any queued delay or worker claim.
-+    /// checkpoint while invalidating any queued delay or worker claim. The
-+    /// cleanup checkpoint has had no attempt, so the attempt counter resets.
-     pub(crate) fn begin_abort(
-         &self,
-         index_record_revision: IndexRevision,
-@@ -1448,7 +1478,7 @@ impl IndexOperationRecord {
-         self.next(
-             index_record_revision,
-             progress,
--            self.attempt,
-+            0,
-             IndexOperationExecutionState::Queued {
-                 not_before_unix_millis: None,
-             },
-@@ -2397,14 +2427,30 @@ mod tests {
-         let replaced = claimed.claim(claim(2, 2)).unwrap();
-         assert_eq!(replaced.attempt(), 8);
- 
--        let progressed = claimed.progressed(secondary_constructing()).unwrap();
-+        let progressed = claimed
-+            .progressed(secondary_constructing(), ClaimContinuation::Release)
-+            .unwrap();
-         assert!(matches!(
-             progressed.execution_state(),
-             IndexOperationExecutionState::Queued {
-                 not_before_unix_millis: None
-             }
-         ));
-+        assert_eq!(progressed.attempt(), 0, "progress resets the attempts");
-+        let retained = claimed
-+            .progressed(secondary_constructing(), ClaimContinuation::Retain)
-+            .unwrap();
-+        assert_eq!(retained.execution_state(), claimed.execution_state());
-+        assert_eq!(retained.attempt(), 1, "a kept claim is one attempt");
-+        assert_eq!(retained.claim(claim(1, 3)).unwrap().attempt(), 2);
-+        assert_eq!(progressed.claim(claim(1, 3)).unwrap().attempt(), 1);
-+        assert_eq!(
-+            retained.operation_revision(),
-+            claimed.operation_revision().checked_next().unwrap()
-+        );
-+        assert_eq!(retained.queue_schedule(), None);
-         let failed = claimed.transient_failure(30).unwrap();
-+        assert_eq!(failed.attempt(), claimed.attempt(), "failures accumulate");
-         assert!(failed
-             .queue_schedule()
-```
-
-**File**: `crates/db/src/index_lifecycle/outbox.rs` (modified, +916/-116)
-```diff
-@@ -29,19 +29,19 @@ use crate::encoding::v2::values::{
- };
- use crate::error::{HelixDbError, Result};
- use crate::execution_control;
--use crate::transaction::Mutation;
-+use crate::transaction::{CommitDurability, Mutation};
- 
- mod failure;
- #[cfg(test)]
- pub(crate) mod step_pause;
- 
- use super::failpoints::{self, IndexOutboxFailpoint};
- use super::{
--    BuildOperationOutcome, ClaimSequence, IndexOperationBlocker, IndexOperationExecutionState,
--    IndexOperationFamily, IndexOperationId, IndexOperationOutcome, IndexOperationProgress,
--    IndexOperationRecord, IndexOperationRevision, IndexOperationStage, IndexOperationStatus,
--    IndexRecordV2, IndexRevision, IndexStateTransition, IndexStateV2, IndexV2MetadataValue,
--    OperationClaim, OperationQueuePointerValue, WriterEpoch,
-+    BuildOperationOutcome, ClaimContinuation, ClaimSequence, IndexOperationBlocker,
-+    IndexOperationExecutionState, IndexOperationFamily, IndexOperationId, IndexOperationOutcome,
-+    IndexOperationProgress, IndexOperationRecord, IndexOperationRevision, IndexOperationStage,
-+    IndexOperationStatus, IndexRecordV2, IndexRevision, IndexStateTransition, IndexStateV2,
-+    IndexV2MetadataValue, OperationClaim, OperationQueuePointerValue, WriterEpoch,
- };
- 
- /// Maximum scheduling delay used for one observation of a persisted deadline.
-@@ -131,7 +131,8 @@ pub(crate) enum ClaimPermission {
-     SameEpochRecovery(SameEpochRecoveryProof),
- }
- 
--/// Exact claimed operation returned after its claim transaction commits.
-+/// Exact claimed operation returned after its claim transaction commits, or
-+/// after a step that kept its claim committed.
- #[derive(Debug, Clone)]
- pub(crate) struct ClaimedOperation {
-     pub(crate) scope: DataScope,
-@@ -141,7 +142,8 @@ pub(crate) struct ClaimedOperation {
- /// Closed family-driver result for one bounded claimed step.
- #[derive(Debug, Clone)]
- pub(crate) enum IndexOperationStepResult {
--    /// Physical work and the supplied next checkpoint commit together.
-+    /// Physical work and the supplied next checkpoint commit together,
-+    /// without waiting for the WAL upload (see [`execute_claimed_step_with_evidence`]).
-     Progressed(IndexOperationProgress),
-     /// No physical work commits; the exact checkpoint is durably backed off.
-     TransientFailure,
-@@ -150,9 +152,10 @@ pub(crate) enum IndexOperationStepResult {
-     /// The step's transaction commits the blocker beside the operation's
-     /// unchanged checkpoint, so anything the driver staged commits too and a
-     /// retry rescans it: a driver stages before blocking only work that a
--    /// rescan from that checkpoint reconciles.
-+    /// rescan from that checkpoint reconciles. The commit is durable.
-     Blocked(IndexOperationBlocker),
--    /// The canonical lifecycle state and terminal operation commit together.
-+    /// The canonical lifecycle state and terminal operation commit together,
-+    /// durably.
-     Completed(IndexOperationOutcome),
- }
- 
-@@ -454,7 +457,10 @@ impl PreparedIndexOperationStep {
-         }
-     }
- 
--    /// Performs post-commit external work only after durability is proven.
-+    /// Performs post-commit external work once the step's commit is applied.
-+    ///
-+    /// A progressed step's commit is not yet durable here, so this work must
-+    /// stay sound if a crash loses that commit.
-     async fn after_commit(self) {
-         if let Self::Text(step) = self {
-             (*step).after_commit().await;
-@@ -490,6 +496,7 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
-     /// permit supplied by this default implementation.
-     async fn acquire_step_permit(
-         &self,
-+        _db: &Db,
-         _scope: DataScope,
-         _operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -503,12 +510,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
-     /// all other stages on the ordinary path.
-     async fn prepare_step(
-         &self,
--        _db: &Db,
-+        db: &Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-         _limits: SearchIndexBatchLimits,
-     ) -> Result<PreparedIndexOperationStep> {
--        let permit = self.acquire_step_permit(scope, operation).await?;
-+        let permit = self.acquire_step_permit(db, scope, operation).await?;
-         Ok(PreparedIndexOperationStep::driver_owned(
-             self.family(),
-             permit,
-@@ -525,9 +532,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
-         limits: SearchIndexBatchLimits,
-     ) -> Result<IndexOperationStepExecution>;
- 
--    /// Applies disposable runtime cleanup only after the staged step is durable.
-+    /// Applies disposable runtime cleanup once the staged step committed.
-     ///
--    /// This hook must not write database state. Its default is intentionally a
-+    /// It runs after every progressed, blocked or completed step, including a
-+    /// driver failure recorded as a blocker; a progressed step's commit is
-+    /// applied but ma
-```
-
-**File**: `crates/db/src/index_lifecycle/public.rs` (modified, +17/-4)
-```diff
-@@ -116,10 +116,20 @@ pub enum IndexOperationBlockerCode {
-     InvalidLegacyPhysical,
- }
- 
--/// Monotonic bounded-work counters safe for public progress reporting.
-+/// Bounded-work counters safe for public progress reporting.
-+///
-+/// They grow while one writer runs the operation. A writer reports the steps
-+/// it has applied, and progressed steps do not wait for their WAL upload, so
-+/// after a crash or failover the counters can fall back to the last durable
-+/// step, which the build then redoes. Readers report only durable steps.
- #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
- pub struct IndexOperationPublicProgress {
--    /// Authoritative entities visited.
-+    /// Source entities read. A build counts each entity its source scan
-+    /// reads and each entity it re-reads to apply a write made during the
-+    /// build; validation and other passes over entities already counted add
-+    /// bytes and operations, never entities, so a build over `N` entities
-+    /// with no concurrent writes reports `N`. Cleanup counts the rows it
-+    /// removes.
-     #[serde(with = "u64_string")]
-     pub entities: u64,
-     /// Source bytes consumed.
-@@ -201,9 +211,12 @@ pub struct IndexOperationStatusCommon {
-     pub family: PublicIndexFamily,
-     /// Frozen family stage serialized in snake case.
-     pub stage: IndexOperationStage,
--    /// Number of claims attempted.
-+    /// Claims that have tried the current checkpoint: `1` while a healthy
-+    /// operation runs. Every step that makes progress resets it, so it grows only
-+    /// while consecutive attempts fail to make progress.
-     pub attempt: u32,
--    /// Monotonic bounded-work progress.
-+    /// Bounded-work progress; see [`IndexOperationPublicProgress`] for when
-+    /// it can fall back.
-     pub progress: IndexOperationPublicProgress,
- }
- 
-```
-
-**File**: `crates/db/src/index_lifecycle/queue/lifecycle_tests.rs` (modified, +175/-37)
-```diff
-@@ -154,17 +154,56 @@ pub(super) async fn wait_terminal(db: &HelixDB, operation: &str) -> String {
-     }
- }
- 
--/// Lets the build take steps one ownership handoff at a time until `ready`
--/// holds, then returns with ownership held so no further step runs.
-+/// Creates `spec`'s index, the `index_id`th of a fresh database, while
-+/// holding its first generation's ownership, so no build step runs until
-+/// [`pause_when`] hands it over. Unheld, a build runs its first steps while
-+/// the DDL still waits for its WAL upload.
-+pub(super) async fn create_held(
-+    db: &HelixDB,
-+    spec: IndexSpec,
-+    family: QueueFamily,
-+    index_id: u64,
-+) -> (String, QueueTarget, IndexGenerationPublicationPermit) {
-+    let predicted = QueueTarget::new(
-+        DataScope::LegacyUnscoped,
-+        crate::index_lifecycle::IndexId::new(index_id).unwrap(),
-+        crate::index_lifecycle::IndexGenerationId::initial(),
-+    );
-+    let held = db
-+        .inner
-+        .index_scope_gates
-+        .publication_permit(predicted)
-+        .await;
-+    let operation = create(db, spec).await;
-+    assert_eq!(
-+        target(db, family).await,
-+        predicted,
-+        "the held target is the build's"
-+    );
-+    (operation, predicted, held)
-+}
-+
-+/// Lets the build take steps one ownership handoff at a time, starting from
-+/// the `held` ownership of its generation, until `ready` holds, then returns
-+/// with ownership held so no further step runs.
-+///
-+/// Ownership is a fair lock: it is handed over only once the build queues
-+/// for it, and taken back by queueing right behind the build, so exactly one
-+/// step runs per handoff however fast steps are.
- pub(super) async fn pause_when(
-     db: &HelixDB,
-     operation: &str,
--    target: QueueTarget,
-+    held: IndexGenerationPublicationPermit,
-     ready: impl Fn(&serde_json::Value) -> bool,
- ) -> IndexGenerationPublicationPermit {
-     let deadline = Instant::now() + Duration::from_secs(60);
-+    let target = held.target();
-+    let mut held = Some(held);
-     loop {
--        let permit = db.inner.index_scope_gates.publication_permit(target).await;
-+        let permit = match held.take() {
-+            Some(permit) => permit,
-+            None => db.inner.index_scope_gates.publication_permit(target).await,
-+        };
-         let current = status(db, operation).await;
-         if ready(&current) {
-             return permit;
-@@ -173,12 +212,19 @@ pub(super) async fn pause_when(
-             matches!(current["status"].as_str(), Some("queued" | "running")),
-             "build finished before pausing: {current}"
-         );
--        assert!(
--            Instant::now() < deadline,
--            "build did not progress: {current}"
--        );
-+        while db
-+            .inner
-+            .index_scope_gates
-+            .publication_permit_holders(target)
-+            < 2
-+        {
-+            assert!(
-+                Instant::now() < deadline,
-+                "build did not progress: {current}"
-+            );
-+            tokio::time::sleep(Duration::from_millis(1)).await;
-+        }
-         drop(permit);
--        tokio::time::sleep(Duration::from_millis(2)).await;
-     }
- }
- 
-@@ -267,10 +313,9 @@ async fn concurrent_vector_writes(db: &HelixDB, ids: &[u64], state: &mut VectorS
- async fn vector_build_with_concurrent_writes_matches_exact_search_through_publication() {
-     let db = open("build-vector", Arc::new(InMemory::new()), config()).await;
-     let (ids, mut state) = seed_vectors(&db, 120).await;
--    let operation = create(&db, vector_spec()).await;
--    let target = target(&db, QueueFamily::Vector).await;
-+    let (operation, target, held) = create_held(&db, vector_spec(), QueueFamily::Vector, 1).await;
- 
--    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 40).await;
-+    let paused = pause_when(&db, &operation, held, |status| scanned(status) >= 40).await;
-     assert!(
-         scanned(&status(&db, &operation).await) < 120,
-         "paused mid-scan"
-@@ -309,7 +354,13 @@ async fn vector_build_with_concurrent_writes_matches_exact_search_through_public
-     assert_eq!(db.index_operation_queue_stats().deferred_attempts, 1);
-     drop(paused);
- 
--    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 110).await;
-+    let paused = pause_when(
-+        &db,
-+        &operation,
-+        db.inner.index_scope_gates.publication_permit(target).await,
-+        |status| scanned(status) >= 110,
-+    )
-+    .await;
-     concurrent_vector_writes(&db, &ids, &mut state, 1).await;
-     set_tenant(&db, ids[101], "c").await;
-     state.get_mut(&ids[101]).unwrap().0 = "c";
-@@ -338,9 +389,8 @@ async fn restart_during_a_build_and_after_activation_recovers_queued_operations(
-     let store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
-     let db = open("build-restart", Arc::clone(&store), config()).await;
-     let (ids, mut state) = seed_vectors(&db, 120).await;
--    let operation = create(&db, vector_spec()).awai
-```
-
-**File**: `crates/db/src/index_lifecycle/queue/vector_graph_tests.rs` (modified, +4/-5)
-```diff
-@@ -49,13 +49,13 @@ use std::sync::Arc;
- 
- use slatedb::IsolationLevel;
- 
--use super::lifecycle_tests::{create, pause_when, scanned, set_tenant, wait_terminal};
-+use super::lifecycle_tests::{create_held, pause_when, scanned, set_tenant, wait_terminal};
- use super::overlay_tests::{add, delete, update, vector_search, write};
- use super::publication::{PublicationOutcome, QueuePublisher};
- use super::soak_tests::{
-     assert_vector_graph, env_or, partition, vector_namespaces, History, Namespace, Rng,
- };
--use super::tests::{open, publisher_with_limits, queue, queued, target};
-+use super::tests::{open, publisher_with_limits, queue, queued};
- use super::QueueTarget;
- use crate::config::{
-     DbConfig, IndexOperationQueueTuning, SearchIndexBackfillLimits, SearchIndexBatchLimits,
-@@ -390,9 +390,8 @@ async fn run(
-         metric,
-         Some("tenant"),
-     );
--    let operation = create(&db, spec).await;
--    let target = target(&db, QueueFamily::Vector).await;
--    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 6).await;
-+    let (operation, target, held) = create_held(&db, spec, QueueFamily::Vector, 1).await;
-+    let paused = pause_when(&db, &operation, held, |status| scanned(status) >= 6).await;
-     for _ in 0..6 {
-         model.apply(&db, &mut rng).await;
-     }
-```
-
-**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +65/-6)
-```diff
-@@ -30,14 +30,37 @@ use tokio::sync::{
-     Mutex as AsyncMutex, OwnedMutexGuard, OwnedRwLockReadGuard, OwnedRwLockWriteGuard, RwLock,
- };
- 
-+use super::secondary::delta_ledger::{DeltaLedgers, StagedBuildDeltas};
- use crate::encoding::v2::keys::scope::DataScope;
- 
- /// Shared authority retained by one graph mutation transaction.
-+///
-+/// It also carries the build deltas the transaction staged, and records them
-+/// in their generations' ledgers when dropped, before the gate unlocks: the
-+/// holder keeps it until its commit has applied or failed, so a delta is
-+/// recorded after it can be read and before a fenced step can run (see
-+/// [`DeltaLedgers`]).
- #[derive(Debug)]
- pub(crate) struct IndexScopeMutationPermit {
-+    staged: StagedBuildDeltas,
-+    ledgers: Arc<DeltaLedgers>,
-     _guard: OwnedRwLockReadGuard<()>,
- }
- 
-+impl IndexScopeMutationPermit {
-+    /// Adds deltas this permit's transaction staged, recorded once it is
-+    /// dropped.
-+    pub(crate) fn stage_build_deltas(&mut self, staged: StagedBuildDeltas) {
-+        self.staged.append(staged);
-+    }
-+}
-+
-+impl Drop for IndexScopeMutationPermit {
-+    fn drop(&mut self) {
-+        self.ledgers.record(std::mem::take(&mut self.staged));
-+    }
-+}
-+
- /// Version of one scope's planner-visible canonical catalog.
- ///
- /// Every canonical change that can alter a scope's Active index set commits
-@@ -175,16 +198,24 @@ pub(crate) struct IndexScopeGates {
-     catalog_refreshes: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
-     publications: Mutex<HashMap<super::queue::QueueTarget, Weak<AsyncMutex<()>>>>,
-     build_steps: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
-+    delta_ledgers: Arc<DeltaLedgers>,
- }
- 
- impl IndexScopeGates {
-     /// Acquires shared scope authority before a graph transaction takes its snapshot.
-     pub(crate) async fn mutation_permit(&self, scope: DataScope) -> IndexScopeMutationPermit {
-         IndexScopeMutationPermit {
-+            staged: StagedBuildDeltas::default(),
-+            ledgers: Arc::clone(&self.delta_ledgers),
-             _guard: self.mutation_gate(scope).read_owned().await,
-         }
-     }
- 
-+    /// Every building secondary generation's pending-delta ledger.
-+    pub(crate) fn delta_ledgers(&self) -> &DeltaLedgers {
-+        &self.delta_ledgers
-+    }
-+
-     /// Acquires shared authority before refreshing the catalog used for planning.
-     ///
-     /// The version is read after the gate is held, so it is the version every
-@@ -240,22 +271,33 @@ impl IndexScopeGates {
-     /// wait however many of the scope's builds run. Nothing waits for the
-     /// build-step gate while holding a scope gate, so it adds no lock cycle.
-     /// The tuple drops the scope permit before the build-step gate.
-+    ///
-+    /// Once queued, a gated step uploads every commit applied so far before
-+    /// it fences anyone. Build steps commit without waiting for their WAL
-+    /// upload, and a durable commit under the gate (an activation, a
-+    /// blocker, a cleanup's completion) waits for every lower sequence: it
-+    /// would otherwise hold writers, and for activation planning, through
-+    /// the upload of the build's whole unflushed tail instead of only what
-+    /// committed while the gate was held. A failed upload fails the step.
-     pub(crate) async fn step_permit(
-         &self,
-+        db: &slatedb::Db,
-         scope: DataScope,
-         gate: StepGate,
--    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
--        match gate {
-+    ) -> crate::error::Result<Box<dyn super::outbox::IndexOperationStepPermit>> {
-+        Ok(match gate {
-             StepGate::None => Box::new(()),
-             StepGate::WriteFence => {
-                 let queued = self.build_step_gate(scope).lock_owned().await;
-+                db.flush().await?;
-                 Box::new((self.write_fence_permit(scope).await, queued))
-             }
-             StepGate::Lifecycle => {
-                 let queued = self.build_step_gate(scope).lock_owned().await;
-+                db.flush().await?;
-                 Box::new((self.lifecycle_permit(scope).await, queued))
-             }
--        }
-+        })
-     }
- 
-     /// Serializes persisted-catalog refreshes for one handle and scope.
-@@ -371,6 +413,15 @@ mod tests {
- 
-     use super::*;
- 
-+    async fn test_db(name: &str) -> slatedb::Db {
-+        slatedb::Db::open(
-+            name,
-+            Arc::new(slatedb::object_store::memory::InMemory::new()),
-+        )
-+        .await
-+        .expect("scope gate test database opens")
-+    }
-+
-     #[tokio::test]
-     async fn lifecycle_scope_waits_for_catalog_and_mutations_but_not_other_scopes() {
-         let gates = Arc::new(IndexScopeGates::default());
-@@ -422,6 +473,7 @@ mod tests {
-     #[tokio::test]
-     async fn graph_writes_wait_behind_one_queued_build_step() {
-         let gates = Arc::new(IndexScopeGates::default());
-+        let db = Arc::new(test_db("graph-writes-wait-behind-one-step").await);
-         let scop
+ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 2: `d21b349e` (2026-11-18)
-**Commit Message**: Upload a build's applied tail before a step fences writers
+### Incident Patch 2: `13345cd6` (2026-11-22)
+**Commit Message**: fix(go): accept every integer width in datetime parameters (#1293)
 
-Claims and progressed steps commit without waiting for their WAL upload,
-and a durable commit under a gate (activation, a blocker, a cleanup's
-completion) waits for every lower sequence. Taking the write fence or the
-lifecycle permit first held writers, and for activation planning, through
-the upload of the build's whole unflushed tail. A gated step now flushes
-once it is queued on the scope's build-step gate and before it waits for
-the mutation gate, so the fenced window covers only what commits under it.
+ParamDateTime and WithTypedParameter(ParamTypeDateTime()) treated an
+integer as epoch milliseconds only when it was int or int64, so
+ParamDateTime("t", int32(5)) failed with "invalid datetime parameter"
+even though ParamI64 and ParamF64 accept every integer width since #1032.
 
-**File**: `crates/db/src/index_lifecycle/outbox.rs` (modified, +5/-2)
+Route all integer kinds through queryI64, the same conversion ParamI64
+uses. uint values above math.MaxInt64 still fail with
+ErrInvalidDateTimeParameter, and booleans and floats are still rejected.
+
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
+
+**File**: `sdks/go/dsl.go` (modified, +6/-4)
 ```diff
-@@ -496,6 +496,7 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
-     /// permit supplied by this default implementation.
-     async fn acquire_step_permit(
-         &self,
-+        _db: &Db,
-         _scope: DataScope,
-         _operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -509,12 +510,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
-     /// all other stages on the ordinary path.
-     async fn prepare_step(
-         &self,
--        _db: &Db,
-+        db: &Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-         _limits: SearchIndexBatchLimits,
-     ) -> Result<PreparedIndexOperationStep> {
--        let permit = self.acquire_step_permit(scope, operation).await?;
-+        let permit = self.acquire_step_permit(db, scope, operation).await?;
-         Ok(PreparedIndexOperationStep::driver_owned(
-             self.family(),
-             permit,
-@@ -2245,6 +2246,7 @@ mod tests {
- 
-         async fn acquire_step_permit(
-             &self,
-+            _db: &Db,
-             _scope: DataScope,
-             _operation: &IndexOperationRecord,
-         ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -2293,6 +2295,7 @@ mod tests {
- 
-         async fn acquire_step_permit(
-             &self,
-+            _db: &Db,
-             _scope: DataScope,
-             _operation: &IndexOperationRecord,
-         ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -3176,10 +3176,12 @@ func queryDateTime(value any) (string, error) {
+ 			return "", ErrInvalidDateTimeParameter
+ 		}
+ 		return dt.RFC3339()
+-	case int64:
+-		return DateTimeFromMillis(v).RFC3339()
+-	case int:
+-		return DateTimeFromMillis(int64(v)).RFC3339()
++	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
++		millis, err := queryI64(v)
++		if err != nil {
++			return "", ErrInvalidDateTimeParameter
++		}
++		return DateTimeFromMillis(millis).RFC3339()
+ 	default:
+ 		return "", ErrInvalidDateTimeParameter
+ 	}
 ```
 
-**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +34/-6)
+**File**: `sdks/go/dsl_test.go` (modified, +34/-0)
 ```diff
-@@ -271,22 +271,33 @@ impl IndexScopeGates {
-     /// wait however many of the scope's builds run. Nothing waits for the
-     /// build-step gate while holding a scope gate, so it adds no lock cycle.
-     /// The tuple drops the scope permit before the build-step gate.
-+    ///
-+    /// Once queued, a gated step uploads every commit applied so far before
-+    /// it fences anyone. Build steps commit without waiting for their WAL
-+    /// upload, and a durable commit under the gate (an activation, a
-+    /// blocker, a cleanup's completion) waits for every lower sequence: it
-+    /// would otherwise hold writers, and for activation planning, through
-+    /// the upload of the build's whole unflushed tail instead of only what
-+    /// committed while the gate was held. A failed upload fails the step.
-     pub(crate) async fn step_permit(
-         &self,
-+        db: &slatedb::Db,
-         scope: DataScope,
-         gate: StepGate,
--    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
--        match gate {
-+    ) -> crate::error::Result<Box<dyn super::outbox::IndexOperationStepPermit>> {
-+        Ok(match gate {
-             StepGate::None => Box::new(()),
-             StepGate::WriteFence => {
-                 let queued = self.build_step_gate(scope).lock_owned().await;
-+                db.flush().await?;
-                 Box::new((self.write_fence_permit(scope).await, queued))
-             }
-             StepGate::Lifecycle => {
-                 let queued = self.build_step_gate(scope).lock_owned().await;
-+                db.flush().await?;
-                 Box::new((self.lifecycle_permit(scope).await, queued))
-             }
--        }
-+        })
-     }
+@@ -1561,6 +1561,40 @@ func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
+ 	}
+ }
  
-     /// Serializes persisted-catalog refreshes for one handle and scope.
-@@ -402,6 +413,15 @@ mod tests {
- 
-     use super::*;
- 
-+    async fn test_db(name: &str) -> slatedb::Db {
-+        slatedb::Db::open(
-+            name,
-+            Arc::new(slatedb::object_store::memory::InMemory::new()),
-+        )
-+        .await
-+        .expect("scope gate test database opens")
-+    }
++func TestDateTimeParameterAcceptsEveryIntegerWidth(t *testing.T) {
++	// ParamI64 and ParamF64 accept every Go integer width (#1032); epoch-millis
++	// datetime parameters must too, through both insertion paths.
++	const want = "1970-01-01T00:00:00.005Z"
++	values := []any{int(5), int8(5), int16(5), int32(5), int64(5), uint(5), uint8(5), uint16(5), uint32(5), uint64(5)}
++	for _, value := range values {
++		convenience := NewReadQueryRequest(Read())
++		convenience.ParamDateTime("t", value)
++		typed := NewReadQueryRequest(Read())
++		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
++		for _, request := range []*QueryRequest{convenience, typed} {
++			body, err := MarshalRequest(request)
++			if err != nil {
++				t.Fatalf("%T: %v", value, err)
++			}
++			if !strings.Contains(string(body), `"t":"`+want+`"`) {
++				t.Fatalf("%T: unexpected body %s", value, body)
++			}
++		}
++	}
 +
-     #[tokio::test]
-     async fn lifecycle_scope_waits_for_catalog_and_mutations_but_not_other_scopes() {
-         let gates = Arc::new(IndexScopeGates::default());
-@@ -453,6 +473,7 @@ mod tests {
-     #[tokio::test]
-     async fn graph_writes_wait_behind_one_queued_build_step() {
-         let gates = Arc::new(IndexScopeGates::default());
-+        let db = Arc::new(test_db("graph-writes-wait-behind-one-step").await);
-         let scope = DataScope::LegacyUnscoped;
-         let settle = Duration::from_millis(20);
-         let writing = gates.mutation_permit(scope).await;
-@@ -461,9 +482,12 @@ mod tests {
-         for step in 0..3 {
-             let (release, released) = tokio::sync::oneshot::channel::<()>();
-             releases.push(release);
--            let (gates, acquired) = (Arc::clone(&gates), acquired.clone());
-+            let (gates, db, acquired) = (Arc::clone(&gates), Arc::clone(&db), acquired.clone());
-             tokio::spawn(async move {
--                let permit = gates.step_permit(scope, StepGate::WriteFence).await;
-+                let permit = gates
-+                    .step_permit(&db, scope, StepGate::WriteFence)
-+                    .await
-+                    .expect("the step uploads nothing");
-                 acquired.send(step).expect("the test awaits acquisitions");
-                 let _ = released.await;
-                 drop(permit);
-@@ -506,6 +530,7 @@ mod tests {
-     #[tokio::test]
-     async fn step_gates_exclude_only_what_their_step_needs() {
-         let gates = Arc::new(IndexScopeGates::default());
-+        let db = test_db("step-gates-exclude-only-their-needs").await;
-         let scope = DataScope::LegacyUnscoped;
-         let wait = Duration::from_millis(50);
-         for (gate, fences_writers, gates_planning) in [
-@@ -514,7 +539,10 @@ mod tests {
-             (StepGate::Lifecycle, true, true),
-         ] {
-             let before = gates.catalog_permit(scope).await.version();
--            let held = gates.step_permit(scope, gate).await;
-+            let held = gates
-+                .step_permit(&db, scope, gate)
-+                .await
-+                .expect("the step uploads nothing");
-             let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
-             assert_eq!(
-                 mutation.is_err(),
-```
-
-**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +84/-12)
-```diff
-@@ -1166,6 +1166,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
- 
-     async fn acquire_step_permit(
-         &self,
-+        db: &slatedb::Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -1187,7 +1188,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-                 ));
-             }
-         };
--        Ok(self.scope_gates.step_permit(scope, gate).await)
-+        self.scope_gates.step_permit(db, scope, gate).await
-     }
- 
-     /// Prepares one build step with the narrowest coordination it needs.
-@@ -1234,7 +1235,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-         else {
-             self.reset_stalled_preparations(operation);
-             ledgers.forget(generation);
--            let permit = self.acquire_step_permit(scope, operation).await?;
-+            let permit = self.acquire_step_permit(db, scope, operation).await?;
-             return Ok(PreparedIndexOperationStep::driver_owned(
-                 self.family(),
-                 permit,
-@@ -1269,7 +1270,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-                 };
-                 return Ok(PreparedIndexOperationStep::driver_owned(
-                     self.family(),
--                    self.scope_gates.step_permit(scope, gate).await,
-+                    self.scope_gates.step_permit(db, scope, gate).await?,
-                 ));
-             }
-             SecondaryBuildStage::CatchUp(progress) => {
-@@ -1337,7 +1338,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-                 )
-             }
-         };
--        let permit = self.scope_gates.step_permit(scope, gate).await;
-+        let permit = self.scope_gates.step_permit(db, scope, gate).await?;
-         // Writes that committed while the permit was awaited may have taken
-         // a catch-up backlog past the gated reach. A stalled validation and
-         // activation drain it regardless: they fence writers to finish.
-@@ -9322,13 +9323,6 @@ mod tests {
-             ] {
-                 durable_rows.push(generation_rows(&db, scope, kind, index_id, generation).await);
-             }
--            let durable_operation = read_operation(&db, scope, operation_id)
--                .await
--                .expect("operation is readable");
--            if tail_lost {
--                store.uploads.send_replace(WalUploads::Held);
--            }
--
-             let pause =
-                 crate::index_lifecycle::outbox::step_pause::StepPause::arm(&db, |progress| {
-                     matches!(
-@@ -9361,6 +9355,15 @@ mod tests {
-             .expect("the crashing claim succeeds")
-             .expect("exact queued revision is claimable");
-             claim_sequence += 1;
-+            // A gated step uploads everything applied before it takes its
-+            // gate, so only what it commits under the gate can be lost.
-+            db.flush().await.expect("the claim uploads");
-+            let durable_operation = read_operation(&db, scope, operation_id)
-+                .await
-+                .expect("operation is readable");
-+            if tail_lost {
-+                store.uploads.send_replace(WalUploads::Held);
-+            }
-             let lifecycle_rows = {
-                 let crashing = execute_claimed_step(
-                     &db,
-@@ -9424,7 +9427,7 @@ mod tests {
-                         .await
-                         .expect("operation is readable"),
-                     durable_operation,
--                    "a lost WAL tail takes the crashed claim too"
-+                    "a lost WAL tail leaves the operation at its uploaded claim"
-                 );
-             } else {
-                 assert_eq!(
-@@ -9451,6 +9454,75 @@ mod tests {
-         db.close().await.expect("crash test database closes");
-     }
- 
-+    /// A gated step uploads the build's unflushed tail before it fences
-+    /// anyone. Progressed steps and claims commit without waiting for their
-+    /// WAL upload, and activation's completion waits for every lower
-+    /// sequence; taking the lifecycle permit first would hold writers and
-+    /// planning through that whole upload. Here the upload is held while the
-+    /// activation's claim is unflushed: writers and planning still get their
-+    /// permits, and the activation completes once the upload lands.
-+    #[tokio::test]
-+    async fn activation_fences_nobody_while_earlier_commits_upload() {
-+        use crate::search::vector::gated_wal::{GatedWalStore, WalUploads};
++	for _, value := range []any{uint64(math.MaxUint64), true, 1.5} {
++		convenience := NewReadQueryRequest(Read())
++		convenience.ParamDateTime("t", value)
++		typed := NewReadQueryRequest(Read())
++		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
++		for _, request := range []*QueryRequest{convenience, typed} {
++			if err := request.Validate(); !errors.Is(err, ErrInvalidDateTimeParameter) {
++				t.Fatalf("%T(%v): expected ErrInvalidDateTimeParameter, got %v", value, value, err)
++			}
++		}
++	}
++}
 +
-+        let store = Arc::new(GatedWalStore::new());
-+        let db = Db::builder(
-+            "secondary-activation-tail-upload",
-+            Arc::clone(&store) as Arc<dyn slatedb::object_store::ObjectStore>,
-+        )
-+        .with_merge_operator(Arc::new(crate::merge_operator::HelixMergeOperator::new()))
-+        .build()
-+        .await
-+        .expect("activation test database opens");
-+        bootstrap_writer(&db)
-+            .await
-+   
-```
-
-**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +4/-3)
-```diff
-@@ -638,6 +638,7 @@ impl IndexOperationDriver for TextIndexDriver {
- 
-     async fn acquire_step_permit(
-         &self,
-+        db: &Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -663,7 +664,7 @@ impl IndexOperationDriver for TextIndexDriver {
-                 return Err(corruption("text driver received another family progress"));
-             }
-         };
--        Ok(self.scope_gates.step_permit(scope, gate).await)
-+        self.scope_gates.step_permit(db, scope, gate).await
-     }
- 
-     async fn prepare_step(
-@@ -676,7 +677,7 @@ impl IndexOperationDriver for TextIndexDriver {
-         let progress = operation.progress();
-         let IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) = progress
-         else {
--            let permit = self.acquire_step_permit(scope, operation).await?;
-+            let permit = self.acquire_step_permit(db, scope, operation).await?;
-             return Ok(PreparedIndexOperationStep::driver_owned(
-                 IndexOperationFamily::Text,
-                 permit,
-@@ -768,7 +769,7 @@ impl IndexOperationDriver for TextIndexDriver {
-             // also advances the scope's catalog version as it is released.
-             TextBuildStage::Activate(_) => Ok(PreparedIndexOperationStep::driver_owned(
-                 IndexOperationFamily::Text,
--                self.acquire_step_permit(scope, operation).await?,
-+                self.acquire_step_permit(db, scope, operation).await?,
-             )),
-         }
-     }
-```
-
-**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +4/-3)
-```diff
-@@ -1062,6 +1062,7 @@ impl IndexOperationDriver for VectorIndexDriver {
- 
-     async fn acquire_step_permit(
-         &self,
-+        db: &Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
-@@ -1087,17 +1088,17 @@ impl IndexOperationDriver for VectorIndexDriver {
-                 return Err(corruption("vector driver received another family progress"));
-             }
-         };
--        Ok(self.scope_gates.step_permit(scope, gate).await)
-+        self.scope_gates.step_permit(db, scope, gate).await
-     }
- 
-     async fn prepare_step(
-         &self,
--        _db: &Db,
-+        db: &Db,
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-         _limits: SearchIndexBatchLimits,
-     ) -> Result<PreparedIndexOperationStep> {
--        let permit = self.acquire_step_permit(scope, operation).await?;
-+        let permit = self.acquire_step_permit(db, scope, operation).await?;
-         Ok(PreparedIndexOperationStep::driver_owned(
-             self.family(),
-             permit,
+ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 3: `b0f8bb39` (2026-11-19)
-**Commit Message**: Pace the sustained-writes contract's writer by build steps
+### Incident Patch 3: `e0ebb886` (2026-11-22)
+**Commit Message**: fix(go): reject non-finite floats in float slices during Validate (#1296)
 
-The automatic sustained-writes contract builds with one-row batches while
-a writer commits batches as fast as its WAL uploads. Catch-up fences no one
-until its backlog is within reach, so it ends only while the build
-reconciles deltas faster than writes add them. On a slow host the writer
-outran the one-row steps and the build sat in catch-up until the test's
-120 s bound.
+F64/F32 reject NaN and +/-Inf when the value is built, so
+ParamValue("v", math.NaN()).Validate() returns "v: helix: non-finite float".
+F64Array/F32Array (and PropertyValueOf for []float64 / []float32) did no such
+check, so ParamValue("v", []float64{1, math.NaN()}) passed Validate and
+only failed later inside encoding/json with "json: unsupported value: NaN",
+without the parameter path.
 
-Until the build activates, the writer now waits for twice as many
-automatic build steps as a batch adds deltas before its next batch, so the
-inflow stays below the drain whatever the host's speed. It runs freely
-against the Active generation.
+Check every element in F64Array/F32Array the same way propertyFloat does.
 
-**File**: `crates/db/src/index_lifecycle_testing/contracts/sustained_secondary_writes.rs` (modified, +26/-3)
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
+
+**File**: `sdks/go/dsl.go` (modified, +11/-2)
 ```diff
-@@ -42,6 +42,14 @@ const MAXIMUM_EXPLICIT_ADVANCES: u64 = 16;
- /// writes never does, so any finite bound detects it, and this one leaves
- /// room for slow and loaded CI hosts.
- const AUTOMATIC_ACTIVATION_BOUND: Duration = Duration::from_secs(120);
-+/// Build steps the automatic worker takes for each batch the writer commits
-+/// while the build runs: twice the deltas one batch adds.
-+///
-+/// Catch-up fences no one until its backlog is within reach, so it ends only
-+/// while the build reconciles deltas faster than writes add them, and a
-+/// one-row step reconciles one. A writer paced only by its WAL upload outruns
-+/// one-row steps on a slow host, and the build then never leaves catch-up.
-+const AUTOMATIC_STEPS_PER_BATCH: u64 = 2 * (INSERTS_PER_BATCH + 1);
+@@ -182,10 +182,10 @@ func I64Array(v ...int64) PropertyValue {
+ 	return PropertyValue{kind: "I64Array", value: append([]int64(nil), v...)}
+ }
+ func F64Array(v ...float64) PropertyValue {
+-	return PropertyValue{kind: "F64Array", value: append([]float64(nil), v...)}
++	return propertyFloatArray("F64Array", append([]float64(nil), v...))
+ }
+ func F32Array(v ...float32) PropertyValue {
+-	return PropertyValue{kind: "F32Array", value: append([]float32(nil), v...)}
++	return propertyFloatArray("F32Array", append([]float32(nil), v...))
+ }
+ func StringArray(v ...string) PropertyValue {
+ 	return PropertyValue{kind: "StringArray", value: append([]string(nil), v...)}
+@@ -226,6 +226,15 @@ func propertyFloat[T ~float32 | ~float64](kind string, v T) PropertyValue {
+ 	return PropertyValue{kind: kind, value: v}
+ }
  
- /// Every key ever written, mapped to the nodes that hold it now.
- type ExpectedKeys = BTreeMap<String, BTreeSet<u64>>;
-@@ -139,7 +147,7 @@ async fn run_automatic_worker_under_a_writer_loop() {
-         // One-row batches spread the scan and validation over hundreds of
-         // steps, each racing the writer. Build steps do not wait for their
-         // WAL upload but every public write does, so a short flush interval
--        // keeps the writer's batches as quick as a handful of steps.
-+        // lets a batch land within the steps the writer waits for.
-         DbConfig::new()
-             .with_secondary_index_lifecycle_tuning(
-                 SecondaryIndexLifecycleTuning::default().with_batch_rows(
-@@ -171,7 +179,14 @@ async fn run_automatic_worker_under_a_writer_loop() {
-     };
++func propertyFloatArray[T ~float32 | ~float64](kind string, v []T) PropertyValue {
++	for _, f := range v {
++		if math.IsNaN(float64(f)) || math.IsInf(float64(f), 0) {
++			return PropertyValue{kind: kind, err: errors.New("helix: non-finite float")}
++		}
++	}
++	return PropertyValue{kind: kind, value: v}
++}
++
+ func MustPropertyValue(value any) PropertyValue {
+ 	v, err := PropertyValueOf(value)
+ 	if err != nil {
+```
+
+**File**: `sdks/go/dsl_test.go` (modified, +29/-0)
+```diff
+@@ -1656,6 +1656,35 @@ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	}
+ }
  
-     let stop = AtomicBool::new(false);
-+    let activated = AtomicBool::new(false);
-     let committed = AtomicU64::new(0);
-+    let steps = || {
-+        controller
-+            .automatic_metrics(&db)
-+            .expect("sustained automatic metrics are readable")
-+            .operation_steps
-+    };
-     let writer = async {
-         let mut keys = keys;
-         let mut batch = 0;
-@@ -183,7 +198,12 @@ async fn run_automatic_worker_under_a_writer_loop() {
-             commit_batch(&db, batch, moved, &mut keys).await;
-             batch += 1;
-             committed.store(batch, Ordering::Release);
--            tokio::task::yield_now().await;
-+            // See [`AUTOMATIC_STEPS_PER_BATCH`]. The Active generation takes
-+            // no steps, so the writer runs freely against it.
-+            let resume = steps() + AUTOMATIC_STEPS_PER_BATCH;
-+            while !activated.load(Ordering::Acquire) && steps() < resume {
-+                tokio::time::sleep(Duration::from_millis(1)).await;
-+            }
-         }
-         keys
-     };
-@@ -195,7 +215,10 @@ async fn run_automatic_worker_under_a_writer_loop() {
-                 .await
-                 .expect("sustained automatic operation remains readable");
-             match status {
--                IndexOperationStatus::Succeeded { .. } => break,
-+                IndexOperationStatus::Succeeded { .. } => {
-+                    activated.store(true, Ordering::Release);
-+                    break;
-+                }
-                 IndexOperationStatus::Blocked { .. } | IndexOperationStatus::Aborted { .. } => {
-                     panic!("sustained writes must not stop the build: {status:?}")
-                 }
++func TestNonFiniteFloatArraysFailLikeScalars(t *testing.T) {
++	// A NaN or ±Inf inside a float slice must be rejected the same way a scalar
++	// one is: at Validate() with the parameter path, not later inside
++	// encoding/json with "json: unsupported value".
++	values := []any{
++		[]float64{1, math.NaN()},
++		[]float64{math.Inf(-1)},
++		[]float32{1, float32(math.Inf(1))},
++		F64Array(math.NaN()),
++		F32Array(float32(math.NaN())),
++	}
++	for _, value := range values {
++		request := NewReadQueryRequest(Read())
++		request.ParamValue("v", value)
++		err := request.Validate()
++		var pathErr *PathError
++		if !errors.As(err, &pathErr) || !strings.Contains(err.Error(), "non-finite float") {
++			t.Fatalf("%#v: expected a non-finite float PathError from Validate, got %v", value, err)
++		}
++		if _, err := json.Marshal(MustPropertyValue(value)); err == nil {
++			t.Fatalf("%#v: expected property serialization to fail", value)
++		}
++	}
++
++	if _, err := json.Marshal(F64Array(1, 2.5)); err != nil {
++		t.Fatalf("finite float slice failed: %v", err)
++	}
++}
++
+ func TestExpressionReferenceAndPredicateConversions(t *testing.T) {
+ 	marshaled := []any{
+ 		ExprInput(ExprID()),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1311** (2026-11-19): Compare datetimes with text as unknown on every plan (@xav-db)
-- **PR #1310** (2026-11-19): Build indexes without waiting on S3 per step or rescanning applied deltas (@xav-db)
-- **PR #1309** (2026-11-19): Use datetime() and timestamp() as index bounds (@xav-db)
-- **PR #1307** (2026-11-19): Declare typed fields on object parameters (@xav-db)
-- **PR #1306** (2026-11-19): Read and write datetimes in Cypher and SQL (@xav-db)
-- **PR #1305** (2026-11-19): Store typed date_time parameters as datetimes (@xav-db)
+- **PR #1322** (2026-11-23): Default the CLI to Docker v0.0.18 (@xav-db)
+- **PR #1321** (2026-11-23): Datetime string migration: leave text- and vector-indexed properties as stored (@xav-db)
+- **PR #1320** (2026-11-23): docs: Helix Foundry first, Cloud inside HelixDB, Foundry pages brought up to date with prod (@xav-db)
+- **PR #1319** (2026-11-23): Default the CLI to Docker v0.0.17 (@xav-db)
+- **PR #1318** (2026-11-22): docs: Helix Foundry agent memory with helix_foundry_recall (@xav-db)
+- **PR #1317** (2026-11-22): Point the README to Helix Foundry (@xav-db)
 
 ---
 
@@ -3206,40 +2413,31 @@ against the Active generation.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build indexes without waiting on S3 per step or rescanning applied deltas
+## X. go): convert time.Time to millis without UnixNano overflow
 
 **RULE**:
-When implementing operations in `crates/db/src/execution/interpreter/mutation/index_context.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/go/dsl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b943942d`: Build indexes without waiting on S3 per step or rescanning applied deltas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce6bcc9c`: go): convert time.Time to millis without UnixNano overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/execution/interpreter/mutation/index_context.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/go/dsl.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            _scope_permit: mut scope_permit,
-        let staged = secondary_runtime.consume_prepared()?;
-        // The permit records them once dropped, after the commit applies;
-        // only focused tests run without one.
-        if let Some(permit) = scope_permit.as_mut() {
-            permit.stage_build_deltas(staged);
-        }
-            _scope_permit: scope_permit,
+	return DateTime{millis: t.UnixMilli()}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            _scope_permit,
-        secondary_runtime.consume_prepared()?;
-            _scope_permit,
+	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b943942d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce6bcc9c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "54f0eb95",
+  "source_version": "ecf1cb0e",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T05:51:48.352Z",
+  "timestamp": "2026-11-23T14:46:42.445Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `54f0eb95`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T05:51:48.352Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ecf1cb0e`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T14:46:42.445Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T05:51:46.777Z  
+> **Harvest Timestamp**: 2026-11-23T14:46:41.154Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3843 stars
+- **Stars / Engagement**: 3846 stars
 
 ---
 
@@ -465,8 +465,14 @@ export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<Spaw
  * Shared utility functions for QSV MCP Server
  */
 
+import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
+import {
+  SENSITIVE_HOME_DIRS,
+  SENSITIVE_HOME_FILES,
+  normalizeForCaseFs,
+} from "./tool-constants.js";
 
 /**
  * Expand tilde (~) in paths to the user's home directory
@@ -720,6 +726,55 @@ export function reservedCachePathError(outputPath: string): string {
   );
 }
 
+/**
+ * Return the SENSITIVE_HOME_DIRS / SENSITIVE_HOME_FILES entry that `target`
+ * falls under, or undefined if it is not protected. `target` must already be
+ * realpath'd.
+ *
+ * Each protected path is compared in BOTH its logical home-relative form and
+ * its realpath'd form: a symlinked `~/.ssh -> /private/secret` would otherwise
+ * slip through, since `target` resolves to /private/secret while the
+ * unresolved blocked path stays ~/.ssh. (roborev commit 49361f5 review)
+ */
+export function findSensitiveHomeEntry(target: string): string | undefined {
+  const home = homedir();
+  let canonHome: string;
+  try {
+    canonHome = realpathSync.native(home);
+  } catch {
+    canonHome = home;
+  }
+  const normTarget = normalizeForCaseFs(target);
+  const sep = process.platform === "win32" ? "\\" : "/";
+  const blockedForms = (entry: string): Set<string> => {
+    const logical = resolve(canonHome, entry);
+    // A missing entry still has a canonical form via its nearest existing
+    // ancestor: with ~/.config -> /dotfiles/config and no ~/.config/autostart
+    // yet, a write lands in /dotfiles/config/autostart.
+    let ancestor = logical;
+    const missing: string[] = [];
+    let canonical = logical;
+    for (;;) {
+      try {
+        canonical = join(realpathSync.native(ancestor), ...missing);
+        break;
+      } catch {
+        const parent = dirname(ancestor);
+        if (parent === ancestor) break;
+        missing.unshift(basename(ancestor));
+        ancestor = parent;
+      }
+    }
+    return new Set([normalizeForCaseFs(logical), normalizeForCaseFs(canonical)]);
+  };
+  for (const dir of SENSITIVE_HOME_DIRS) {
+    for (const blocked of blockedForms(dir)) {
+      if (normTarget === blocked || normTarget.startsWith(blocked + sep)) {
+        return dir;
+      }
+    }
+  }
+  for 
 ```
 
 ### Core Architecture Module: `.claude/skills/src/wink-nlp-utils.d.ts`
@@ -2238,78 +2293,197 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54f0eb95` (2026-11-23)
-**Commit Message**: deps: move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)
+### Incident Patch 1: `ecf1cb0e` (2026-11-23)
+**Commit Message**: docs: report vulnerabilities via GitHub private reporting
 
-The previous pin b652677 was orphaned when plotly/plotly.rs#442's
-release/0.15.0 branch was rebased onto upstream main; GitHub can garbage-
-collect unreachable commits, which would break fresh builds. 7907bd2 is the
-new branch tip; source delta vs b652677 is comment reflows plus the additive
-`color::qualitative` module. Build, clippy and viz tests pass, and viz output
-is byte-identical across 18 chart types.
+The qsv-severe@ address bounces, and public issues were the default
+channel for non-severe vulnerabilities. Route all of them through private
+vulnerability reporting instead.
+
+[skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `SECURITY.md` (modified, +2/-2)
 ```diff
-@@ -5946,7 +5946,7 @@ dependencies = [
- [[package]]
- name = "plotly"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
-+source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
- dependencies = [
-  "askama",
-  "async-trait",
-@@ -5968,7 +5968,7 @@ dependencies = [
- [[package]]
- name = "plotly_derive"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
-+source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
- dependencies = [
-  "darling 0.24.1",
-  "proc-macro2",
-@@ -5979,7 +5979,7 @@ dependencies = [
- [[package]]
- name = "plotly_static"
- version = "0.2.0"
--source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
-+source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -9093,7 +9093,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
+@@ -13,8 +13,8 @@ It has a built-in self-update engine that makes it very convenient to upgrade to
+ 
+ ## Reporting a Vulnerability
+ 
+-If you've found a vulnerability, please [create an issue](https://github.com/dathere/qsv/issues/new/choose) in GitHub.
++Please report vulnerabilities privately through GitHub's [private vulnerability reporting](https://github.com/dathere/qsv/security/advisories/new) (Security tab → "Report a vulnerability"). This applies to the qsv binaries and to the qsv MCP server / Claude plugin in `.claude/skills`.
+ 
+-However, if a vulnerability is severe and could lead to zero-day exploits, please send an email to [qsv-severe@datHere.com](mailto:qsv-severe@datHere.com) instead.
++Please do **not** open a public issue for a vulnerability. Public [issues](https://github.com/dathere/qsv/issues/new/choose) are for ordinary bugs.
+ 
+ The vulnerability report will be addressed within one business day. A  mitigation/workaround, if available, will be included in the next release and mentioned in the changelog, with zero-day mitigations only being mentioned only when it's been fully fixed.
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `faf40911` (2026-11-23)
+**Commit Message**: chore(mcp): v29.0.2 patch release of MCP Server and Claude Cowork plugin
+
+[skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -593,7 +593,7 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
- # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
- # until 0.15.0 is on crates.io. This rev also moves plotly_static's build-dep to
- # webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
--plotly = { git = "https://github.com/dathere/plotly", rev = "b652677502d667edb2caa09dc930a6fe294ce3f4" }
-+plotly = { git = "https://github.com/dathere/plotly", rev = "7907bd296aa3d3aaeeb544370893c9277d2b8c99" }
+@@ -6,14 +6,14 @@
+   },
+   "metadata": {
+     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-    "version": "29.0.1"
++    "version": "29.0.2"
+   },
+   "plugins": [
+     {
+       "name": "qsv-data-wrangling",
+       "source": "./.claude/skills",
+       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-      "version": "29.0.1",
++      "version": "29.0.2",
+       "author": {
+         "name": "datHere, Inc.",
+         "email": "qsv@dathere.com",
+```
+
+**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-data-wrangling",
+-  "version": "29.0.1",
++  "version": "29.0.2",
+   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+   "author": {
+     "name": "datHere, Inc.",
+```
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +7/-4)
+```diff
+@@ -23,16 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
+ - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
  
- # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
- # https://github.com/thscharler/spreadsheet-ods/pull/77
+-### Fixed
+-- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
+-- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
+-- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
++## [29.0.2] - 2026-11-23
++Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-5763-32xg-7rh3](https://github.com/dathere/qsv/security/advisories/GHSA-5763-32xg-7rh3); update now. As in 29.0.1, the bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
+ 
+ ### Security
+ - **Input and output paths can no longer reach credential directories or shell startup files.** The protected home directories (`~/.ssh`, `~/.aws`, `~/.gnupg`, `~/.kube`, ...) were enforced only for `qsv_set_working_dir` and directory browsing, not for the paths a tool call names (`input_file`, `output_file`, path options). With the home directory allowed (the default when `QSV_MCP_ALLOWED_DIRS` is unset) or in plugin mode, a tool call could write to `~/.ssh/authorized_keys`. Every path now gets the same check, applied before plugin mode adds a directory to the allowed list, including output directories a command creates. Also newly protected: `~/.config/gh`; places where a written file runs code at login or in the next agent session (`~/Library/LaunchAgents`, `~/.config/systemd`, `~/.config/autostart`, `~/.config/fish`, the Windows Startup folder, `~/.claude`); and home dotfiles that run code or hold credentials (`.bashrc`, `.zshrc`, `.profile` and the other bash/zsh startup files, `.gitconfig`, `.git-credentials`, `.netrc`, `.npmrc`, `.pypirc`). This is a denylist, not a sandbox: other locations under the home directory (for example `~/bin`) stay writable. To confine the server, set `QSV_MCP_ALLOWED_DIRS` (and `QSV_MCP_WORKING_DIR`, which is always allowed). (#5102)
+ - **`QSV_MCP_ALLOWED_DIRS` now confines plugin mode too.** In plugin mode (Claude Code, Cowork) the server added the directory of any path outside its allowed list to that list, so setting `QSV_MCP_ALLOWED_DIRS` had no effect there. When it is set, paths outside it are now refused, as in other modes. With it unset (the default), plugin mode still adds directories as before. `qsv_config` reports which applies. (#5102)
+ - **On Linux, a directory whose name starts with `..` (e.g. `..archive`) inside an allowed directory is no longer refused** as a parent-directory escape. (#5102)
+ 
++### Fixed
++- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` f
+```
+
+**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+```diff
+@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
+ 
+ The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
+ 
+-1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
++1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.2.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
+ 2. Open Claude Desktop Settings → Extensions
+ 3. Click "Install from file" and select the `.mcpb` file
+ 4. Configure your allowed directories when prompted
+@@ -622,8 +622,8 @@ For issues or questions:
+ 
+ ---
+ 
+-**Updated**: 2026-11-21
+-**Version**: 29.0.1
++**Updated**: 2026-11-23
++**Version**: 29.0.2
+ **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
+ **Skills**: 57 qsv commands
+ **Status**: Production Ready
+```
+
+**File**: `.claude/skills/README.md` (modified, +3/-3)
+```diff
+@@ -49,7 +49,7 @@ Each skill file provides:
+ 
+ **Installation**:
+ 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
+-2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from releases
++2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.2.mcpb`) from releases
+ 3. Double-click the `.mcpb` file (opens with Claude Desktop)
+ 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
+ 5. Restart Claude Desktop
+@@ -467,8 +467,8 @@ MIT
+ 
+ ---
+ 
+-**Updated**: 2026-11-21
+-**Version**: 29.0.1
++**Updated**: 2026-11-23
++**Version**: 29.0.2
+ **Generator**: `qsv --update-mcp-skills`
+ **Skills**: 57 commands
+ **Usage Examples**: 263 from documentation
+```
+
+**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+```diff
+@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ 
+ ---
+ 
+-**Updated**: 2026-11-21
+-**Version**: 29.0.1
++**Updated**: 2026-11-23
++**Version**: 29.0.2
+ **Format**: MCP Bundle (MCPB) v0.3
+ **Compatibility**: Claude Desktop 1.0+
+```
+
+**File**: `.claude/skills/manifest.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "manifest_version": "0.3",
+   "name": "qsv",
+-  "version": "29.0.1",
++  "version": "29.0.2",
+   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
+   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
+   "author": {
+```
+
+**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "@qsv/agent-skills",
+-  "version": "29.0.1",
++  "version": "29.0.2",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@qsv/agent-skills",
+-      "version": "29.0.1",
++      "version": "29.0.2",
+       "license": "MIT",
+       "dependencies": {
+         "@modelcontextprotocol/ext-apps": "^1.7.2",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5093** (2026-11-22): feat(synthesize): correlated relationships take categorical members as strata (@jqnatividad)
-- **PR #5092** (2026-11-21): fix(mcp): ignore output_file with a note for commands that can't write one (@jqnatividad)
-- **PR #5091** (2026-11-21): fix(synthesize): cap ordered members only by the members a row leaves filled (@jqnatividad)
-- **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
-- **PR #5089** (2026-11-21): fix(mcp): don't report an error for commands that write only their own files (@jqnatividad)
-- **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
+- **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
+- **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
+- **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
+- **PR #5099** (2026-11-23): build(deps): bump datasketches from 0.6.0 to 0.7.0 (@dependabot[bot])
+- **PR #5098** (2026-11-23): build(deps): bump flexi_logger from 0.31.10 to 0.32.0 (@dependabot[bot])
+- **PR #5097** (2026-11-23): build(deps): bump anthropics/claude-code-action from 1.0.278 to 1.0.284 (@dependabot[bot])
 
 ---
 
@@ -2329,37 +2503,33 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)
+## X. docs: report vulnerabilities via GitHub private reporting
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54f0eb95`: deps: move plotly pin to 7907bd2 (release/0.15.0 tip after rebase). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf1cb0e`: docs: report vulnerabilities via GitHub private reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
-source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
-source = "git+https://github.com/dathere/plotly?rev=7907bd296aa3d3aaeeb544370893c9277d2b8c99#7907bd296aa3d3aaeeb544370893c9277d2b8c99"
- "getrandom 0.3.4",
+Please report vulnerabilities privately through GitHub's [private vulnerability reporting](https://github.com/dathere/qsv/security/advisories/new) (Security tab → "Report a vulnerability"). This applies to the qsv binaries and to the qsv MCP server / Claude plugin in `.claude/skills`.
+Please do **not** open a public issue for a vulnerability. Public [issues](https://github.com/dathere/qsv/issues/new/choose) are for ordinary bugs.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
-source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
-source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
- "getrandom 0.4.3",
+If you've found a vulnerability, please [create an issue](https://github.com/dathere/qsv/issues/new/choose) in GitHub.
+However, if a vulnerability is severe and could lead to zero-day exploits, please send an email to [qsv-severe@datHere.com](mailto:qsv-severe@datHere.com) instead.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54f0eb95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf1cb0e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

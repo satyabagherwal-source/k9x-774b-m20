@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T14:38:25.303Z",
+  "last_updated": "2026-11-23T14:46:47.166Z",
   "total_records": 2421,
   "domains": {
     "A": {
@@ -10270,8 +10270,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "f6324bf5ba69365686a5640bf0ee3ed9310253ac498ae73f0c2d4e0629ec7b7d",
-      "created_at": "2026-11-20T18:41:42.813Z"
+      "content_hash": "4162873fa10a814fe89454741947fd38fb5339496bd033239efb1391da49972b",
+      "created_at": "2026-11-23T14:46:36.791Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -12478,8 +12478,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "9d7646df745642cf763a7e78c9a5f6e680973a6ce0d471466d359863e13cdb1e",
-      "created_at": "2026-11-23T05:51:48.570Z"
+      "content_hash": "eb2b33dfa97a07b70f265446354a893d80ba043f8fae0ad97f17e7f893b88ba0",
+      "created_at": "2026-11-23T14:46:42.608Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -14657,8 +14657,8 @@
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "repository": "HelixDB/helix-db",
-      "content_hash": "e60c5ecf0e01c9e6ae7d02a401430bfff13ff84ac0d300466592eb45477db5fb",
-      "created_at": "2026-11-21T03:36:50.649Z"
+      "content_hash": "c30044e020cf725e8977df98fbf5f00cd5bd240ebc12ef3874b53c578c7cc3bb",
+      "created_at": "2026-11-23T14:46:40.916Z"
     },
     "DOM-D-C8957CC0": {
       "record_id": "DOM-D-C8957CC0",
@@ -14717,8 +14717,8 @@
       "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-learnings-architecture-intelligence-helixdb-helix-db-learnings-.md",
       "repository": "helixdb-helix-db-learnings",
-      "content_hash": "3f2d68dde7891151f376665285e0aeef9716c386a89962c47a9c6cb6b3285b91",
-      "created_at": "2026-11-20T01:31:36.862Z"
+      "content_hash": "c42173e3f47c6fba346e1a1328c8675c5841c1b8580af0b50e34c17ce69e45f7",
+      "created_at": "2026-11-23T14:46:47.166Z"
     },
     "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
@@ -15074,8 +15074,8 @@
       "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-research-knowledge-intelligenc.md",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "c887e7e14bfcb762d559191ab14ff4d78a8dcd17f8d71ab55f79029cdb014f75",
-      "created_at": "2026-11-19T00:58:07.247Z"
+      "content_hash": "9cd2b0b8707ba79f848350c41a2aef76467d6e821adccaf1bf6cfc26a3f55acf",
+      "created_at": "2026-11-23T14:46:24.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants",
@@ -15143,8 +15143,8 @@
       "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings-research-knowledge-i.md",
       "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
-      "content_hash": "9f1946e3cf1eadb91b1ecf2caced79e3a6aa256343d6e660ec02a7ff538a68df",
-      "created_at": "2026-11-19T00:58:26.339Z"
+      "content_hash": "eb7540f15c227b5ef4b8848d8ef802e3354640db8f76aa6419e3febde0a19d61",
+      "created_at": "2026-11-23T14:46:45.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants",
@@ -27417,8 +27417,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "c852cd739c4ab9c4245da3953eb67fffc3a813f32be24c87d1e409ac66802555",
-      "created_at": "2026-11-20T18:41:54.526Z"
+      "content_hash": "cc681a305f3be2be380bde1e7d11dc9e8dc7a748cca62cfab10aa3d90a60a490",
+      "created_at": "2026-11-23T14:46:46.426Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",

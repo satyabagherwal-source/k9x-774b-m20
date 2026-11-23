@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
-    "lastHarvestedAt": "2026-11-19T00:58:07.069Z",
+    "contentHash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
+    "lastHarvestedAt": "2026-11-23T14:46:24.038Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "0311b3bf",
+    "sourceVersion": "ecf1cb0e",
     "license": "NOASSERTION",
-    "contentHash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
-    "lastHarvestedAt": "2026-11-23T14:12:56.061Z",
+    "contentHash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
+    "lastHarvestedAt": "2026-11-23T14:46:42.220Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "dcfe7e6d",
+    "sourceVersion": "0383d4d1",
     "license": "NOASSERTION",
-    "contentHash": "2f852be4b5f8f056a321be7c7ccf8ca1fd55f2d3478ca1044370c17cd8e9da8f",
-    "lastHarvestedAt": "2026-11-20T18:41:42.353Z",
+    "contentHash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
+    "lastHarvestedAt": "2026-11-23T14:46:36.402Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "a29a8d49",
+    "sourceVersion": "8947fa71",
     "license": "Apache-2.0",
-    "contentHash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
-    "lastHarvestedAt": "2026-11-21T03:36:50.294Z",
+    "contentHash": "d097f1a1e57cfcc5b7e510d0d4eeb0aa0240075bcbe59a1ae1060eee256663d5",
+    "lastHarvestedAt": "2026-11-23T14:46:40.520Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {

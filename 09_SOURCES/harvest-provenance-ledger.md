@@ -12370,3 +12370,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T14:38:02.106Z |
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `4491acd8` | Multi-dimensional audit evidence | 2026-11-23T14:38:08.716Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `d9c983d5` | Multi-dimensional audit evidence | 2026-11-23T14:38:18.010Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-23T14:46:24.038Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0383d4d1` | Multi-dimensional audit evidence | 2026-11-23T14:46:36.402Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `8947fa71` | Multi-dimensional audit evidence | 2026-11-23T14:46:40.520Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ecf1cb0e` | Multi-dimensional audit evidence | 2026-11-23T14:46:42.220Z |

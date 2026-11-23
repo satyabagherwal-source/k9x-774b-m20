@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T14:38:25.729Z",
+  "last_updated": "2026-11-23T14:46:47.330Z",
   "total_verified_learnings": 9082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23993,
+  "total_items": 24001,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "0311b3bf",
-      "content_hash": "f4b4cdc334c31ada3fe9e6f360803edcd2caa93ec212faadd7329b540deefe08",
+      "source_version": "ecf1cb0e",
+      "content_hash": "b0154bd43ff41c886128421f9f8ceb0f5deec17f69f5cc066ed4ed9e3191854a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:12:56.660Z"
+      "persisted_at": "2026-11-23T14:46:42.772Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -213476,8 +213476,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "dcfe7e6d",
-      "content_hash": "2f852be4b5f8f056a321be7c7ccf8ca1fd55f2d3478ca1044370c17cd8e9da8f",
+      "source_version": "0383d4d1",
+      "content_hash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213535,6 +213535,11 @@
           "number": 9619,
           "title": "HPU backend moves to use ZHC 0.12.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10054,
+          "title": "keep the CPU copy when moving a ciphertext back to the CPU",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213542,7 +213547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T18:41:42.095Z",
+      "verified_at": "2026-11-23T14:46:36.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213584,10 +213589,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "dcfe7e6d",
-      "content_hash": "f6324bf5ba69365686a5640bf0ee3ed9310253ac498ae73f0c2d4e0629ec7b7d",
+      "source_version": "0383d4d1",
+      "content_hash": "4162873fa10a814fe89454741947fd38fb5339496bd033239efb1391da49972b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T18:41:42.813Z"
+      "persisted_at": "2026-11-23T14:46:36.791Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213596,10 +213601,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "dcfe7e6d",
-      "content_hash": "8dab753c8916c63fec6398a070ca5b01a9e6345cf5f778f36d2fd75856586e1f",
+      "source_version": "0383d4d1",
+      "content_hash": "4713a38ffff41b83cdac717066604edeb77d7c8fa24134217b2f919f563dfa30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T18:41:43.007Z"
+      "persisted_at": "2026-11-23T14:46:36.958Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -219984,8 +219989,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "0311b3bf",
-      "content_hash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
+      "source_version": "ecf1cb0e",
+      "content_hash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220163,6 +220168,11 @@
           "number": 10028,
           "title": "move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10056,
+          "title": "report vulnerabilities via GitHub private reporting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220170,7 +220180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:12:55.860Z",
+      "verified_at": "2026-11-23T14:46:42.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221182,10 +221192,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "54f0eb95",
-      "content_hash": "9d7646df745642cf763a7e78c9a5f6e680973a6ce0d471466d359863e13cdb1e",
+      "source_version": "ecf1cb0e",
+      "content_hash": "eb2b33dfa97a07b70f265446354a893d80ba043f8fae0ad97f17e7f893b88ba0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T05:51:48.570Z"
+      "persisted_at": "2026-11-23T14:46:42.608Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -227437,8 +227447,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "a29a8d49",
-      "content_hash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
+      "source_version": "8947fa71",
+      "content_hash": "d097f1a1e57cfcc5b7e510d0d4eeb0aa0240075bcbe59a1ae1060eee256663d5",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -227466,6 +227476,11 @@
           "number": 9719,
           "title": "Isolate, pace and back off background migrations independently",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10055,
+          "title": "convert time.Time to millis without UnixNano overflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227473,7 +227488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:36:50.092Z",
+      "verified_at": "2026-11-23T14:46:40.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227515,10 +227530,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "repository": "HelixDB/helix-db",
-      "source_version": "a29a8d49",
-      "content_hash": "e60c5ecf0e01c9e6ae7d02a401430bfff13ff84ac0d300466592eb45477db5fb",
+      "source_version": "8947fa71",
+      "content_hash": "c30044e020cf725e8977df98fbf5f00cd5bd240ebc12ef3874b53c578c7cc3bb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T03:36:50.649Z"
+      "persisted_at": "2026-11-23T14:46:40.916Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db",
@@ -227527,10 +227542,10 @@
       "relative_path": "08_VERIFICATION/helixdb-helix-db-verification-protocol-empirical-defect-shield-for-helixdb-helix.md",
       "title": "Verification Protocol: Empirical Defect Shield for HelixDB/helix-db",
       "repository": "HelixDB/helix-db",
-      "source_version": "a29a8d49",
-      "content_hash": "68a2a1159496895ea46a8e30284850accc80c6f466cce3164948a2d20c7b34ab",
+      "source_version": "8947fa71",
+      "content_hash": "014b9694c05da5b761d0d4f36a9b2e8039f2f3e6d3defe4fca588cea6fe65576",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:36:50.795Z"
+      "persisted_at": "2026-11-23T14:46:41.085Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn",
@@ -227564,9 +227579,9 @@
       "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
       "repository": "helixdb-helix-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f2d68dde7891151f376665285e0aeef9716c386a89962c47a9c6cb6b3285b91",
+      "content_hash": "c42173e3f47c6fba346e1a1328c8675c5841c1b8580af0b50e34c17ce69e45f7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T01:31:36.862Z"
+      "persisted_at": "2026-11-23T14:46:47.166Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db-learnings",
@@ -227576,9 +227591,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for helixdb-helix-db-learnings",
       "repository": "helixdb-helix-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "491bba202dcad78aed9337a5572f44a047ab4e06a3f1f3984c78599bdf47c84f",
+      "content_hash": "e4feb458f6946243193b6d964a759c278a5334434ef8888033e368214b16ed3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:31:37.027Z"
+      "persisted_at": "2026-11-23T14:46:47.330Z"
     },
     "learn-github-lingyired-status-trio": {
       "learning_id": "learn-github-lingyired-status-trio",
@@ -228727,7 +228742,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
+      "content_hash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [],
@@ -228736,7 +228751,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:58:06.858Z",
+      "verified_at": "2026-11-23T14:46:23.811Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228753,9 +228768,9 @@
       "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "c887e7e14bfcb762d559191ab14ff4d78a8dcd17f8d71ab55f79029cdb014f75",
+      "content_hash": "9cd2b0b8707ba79f848350c41a2aef76467d6e821adccaf1bf6cfc26a3f55acf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:58:07.247Z"
+      "persisted_at": "2026-11-23T14:46:24.242Z"
     },
     "learn-huggingface-laion-clap-htsat-fused": {
       "learning_id": "learn-huggingface-laion-clap-htsat-fused",
@@ -228816,9 +228831,9 @@
       "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
       "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f1946e3cf1eadb91b1ecf2caced79e3a6aa256343d6e660ec02a7ff538a68df",
+      "content_hash": "eb7540f15c227b5ef4b8848d8ef802e3354640db8f76aa6419e3febde0a19d61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:58:26.339Z"
+      "persisted_at": "2026-11-23T14:46:45.798Z"
     },
     "learn-huggingface-facebookai-xlm-roberta-base": {
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
@@ -274033,9 +274048,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "c852cd739c4ab9c4245da3953eb67fffc3a813f32be24c87d1e409ac66802555",
+      "content_hash": "cc681a305f3be2be380bde1e7d11dc9e8dc7a748cca62cfab10aa3d90a60a490",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T18:41:54.526Z"
+      "persisted_at": "2026-11-23T14:46:46.426Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -274045,9 +274060,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "196f1bd872f880919bbfffb97dec3c5f820f283fd67100700de9dea4685df57c",
+      "content_hash": "49e2c2716fcd814663672ddf54beb44c1862dbde0ac0b042eab6490c481e2812",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T18:41:54.719Z"
+      "persisted_at": "2026-11-23T14:46:46.599Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -326845,6 +326860,108 @@
       "content_hash": "0d06a716488996009110d47f0a5589b2df2a206ae6e4608da19a60342bb4704c",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T14:38:25.074Z"
+    },
+    "rule-10054": {
+      "learning_id": "rule-10054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10054,
+      "title": "keep the CPU copy when moving a ciphertext back to the CPU",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "0383d4d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T14:46:36.194Z"
+    },
+    "candidate_directive-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu": {
+      "item_id": "candidate_directive-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PO41-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu.md",
+      "title": "keep the CPU copy when moving a ciphertext back to the CPU",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "0383d4d1",
+      "content_hash": "931b5d6321c5032035068d389be91696b3bbfd0cbf1bccd3e53867fd688e1cf1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T14:46:36.626Z"
+    },
+    "rule-10055": {
+      "learning_id": "rule-10055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10055,
+      "title": "convert time.Time to millis without UnixNano overflow",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "8947fa71",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T14:46:40.312Z"
+    },
+    "candidate_directive-convert-time-time-to-millis-without-unixnano-overflow": {
+      "item_id": "candidate_directive-convert-time-time-to-millis-without-unixnano-overflow",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PRAG-convert-time-time-to-millis-without-unixnano-overflow.md",
+      "title": "convert time.Time to millis without UnixNano overflow",
+      "repository": "HelixDB/helix-db",
+      "source_version": "8947fa71",
+      "content_hash": "3d12ea5ec27f27a8695b2a4df1bd83ea9eeda938dec5df85323a59253bb84ea7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T14:46:40.748Z"
+    },
+    "rule-10056": {
+      "learning_id": "rule-10056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10056,
+      "title": "report vulnerabilities via GitHub private reporting",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "ecf1cb0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T14:46:42.015Z"
+    },
+    "candidate_directive-report-vulnerabilities-via-github-private-reporting": {
+      "item_id": "candidate_directive-report-vulnerabilities-via-github-private-reporting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PSLP-report-vulnerabilities-via-github-private-reporting.md",
+      "title": "report vulnerabilities via GitHub private reporting",
+      "repository": "dathere/qsv",
+      "source_version": "ecf1cb0e",
+      "content_hash": "637615fb0e88ecacd885a33e00e9c81249ae163a31f5e739a6fb11ea1be657ee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T14:46:42.448Z"
+    },
+    "candidate_directive-gpu-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu": {
+      "item_id": "candidate_directive-gpu-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVJD-gpu-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu.md",
+      "title": "gpu): keep the CPU copy when moving a ciphertext back to the CPU",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d06757d0ddd0195bdf3c9052404b371304ada72e0a7454717ac0d2e127f3c4fe",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T14:46:46.252Z"
+    },
+    "candidate_directive-go-convert-time-time-to-millis-without-unixnano-overflow": {
+      "item_id": "candidate_directive-go-convert-time-time-to-millis-without-unixnano-overflow",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PW3Z-go-convert-time-time-to-millis-without-unixnano-overflow.md",
+      "title": "go): convert time.Time to millis without UnixNano overflow",
+      "repository": "helixdb-helix-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17c86fe5fdfb213e8d24ba455c96b5fb3fd85481d965229377e4099573cf587f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T14:46:46.994Z"
     }
   },
   "ai-builder-brain": {

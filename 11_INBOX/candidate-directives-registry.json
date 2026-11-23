@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:38:25.074Z",
+  "last_updated": "2026-11-23T14:46:46.994Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49388,6 +49388,70 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-PO41",
+      "directive_title": "keep the CPU copy when moving a ciphertext back to the CPU",
+      "source_repo": "zama-ai/tfhe-rs",
+      "source_commit": "0383d4d1",
+      "staged_file": "11_INBOX/candidate-directives/CD-PO41-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-PRAG",
+      "directive_title": "convert time.Time to millis without UnixNano overflow",
+      "source_repo": "HelixDB/helix-db",
+      "source_commit": "8947fa71",
+      "staged_file": "11_INBOX/candidate-directives/CD-PRAG-convert-time-time-to-millis-without-unixnano-overflow.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PSLP",
+      "directive_title": "report vulnerabilities via GitHub private reporting",
+      "source_repo": "dathere/qsv",
+      "source_commit": "ecf1cb0e",
+      "staged_file": "11_INBOX/candidate-directives/CD-PSLP-report-vulnerabilities-via-github-private-reporting.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-AF8AD6",
+      "directive_title": "Forensic Learning Record (Deep Inspection): jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AF8AD6-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-PVJD",
+      "directive_title": "gpu): keep the CPU copy when moving a ciphertext back to the CPU",
+      "source_repo": "zama-ai-tfhe-rs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PVJD-gpu-keep-the-cpu-copy-when-moving-a-ciphertext-back-to-the-cpu.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-PW3Z",
+      "directive_title": "go): convert time.Time to millis without UnixNano overflow",
+      "source_repo": "helixdb-helix-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PW3Z-go-convert-time-time-to-millis-without-unixnano-overflow.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
     }
   ]
 }

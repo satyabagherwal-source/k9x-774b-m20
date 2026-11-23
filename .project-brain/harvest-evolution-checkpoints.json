@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:38:25.917Z",
+  "last_updated": "2026-11-23T14:46:47.470Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T09:29:54.071Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-20T18:41:53.948Z",
+      "processed_at": "2026-11-23T14:46:45.993Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2473,7 +2473,7 @@
       "staged_for_review": 0
     },
     "helixdb-helix-db-learnings.md": {
-      "processed_at": "2026-11-20T01:31:36.505Z",
+      "processed_at": "2026-11-23T14:46:46.760Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2518,7 +2518,7 @@
       "staged_for_review": 0
     },
     "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md": {
-      "processed_at": "2026-11-19T00:58:26.152Z",
+      "processed_at": "2026-11-23T14:46:45.586Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3768,7 +3768,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3393,
+  "total_dossiers_evaluated": 3396,
   "total_canonical_promoted": 484,
-  "total_staged_for_review": 2551
+  "total_staged_for_review": 2554
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "HelixDB/helix-db",
   "source_url": "https://github.com/HelixDB/helix-db",
-  "source_version": "a29a8d49",
+  "source_version": "8947fa71",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T03:36:50.496Z",
+  "timestamp": "2026-11-23T14:46:40.744Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-helixdb-helix-db",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [HelixDB/helix-db](https://github.com/HelixDB/helix-db) (Revision: `a29a8d49`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:36:50.496Z`  
+> **Provenance**: Harvested from [HelixDB/helix-db](https://github.com/HelixDB/helix-db) (Revision: `8947fa71`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:46:40.744Z`  
 > **Learning ID**: `learn-github-helixdb-helix-db`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from HelixDB/helix-db:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:36:49.270Z  
+> **Harvest Timestamp**: 2026-11-23T14:46:39.484Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6304 stars
+- **Stars / Engagement**: 6310 stars
 
 ---
 
@@ -2099,1086 +2099,287 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a29a8d49` (2026-11-20)
-**Commit Message**: Isolate, pace and back off background migrations independently (#1314)
+### Incident Patch 1: `ce6bcc9c` (2026-11-22)
+**Commit Message**: fix(go): convert time.Time to millis without UnixNano overflow (#1292)
 
-This fixes three problems in the background migration worker that runs
-the datetime string conversion from #1305:
-- **A failing label step blocked the conversion.** If the label copy
-failed (for example, it fails closed on a label hash collision), the
-step returned early. The datetime conversion never ran and the worker
-retried forever.
-- **The conversion wasn't paced.** It wrote through the query path on
-every step, even while the writer's flush backlog was high.
-- **One shared backoff slowed everything down.** Any single failure
-pushed every migration back to one batch per 60 s, which is about 7 days
-for 10M rows.
+dateTimeFromTime computed t.UnixNano() / int64(time.Millisecond).
+UnixNano is undefined outside 1677-09-21..2262-04-11, so any time.Time
+outside that window (ParamDateTime, PropertyValueOf,
+ParseDateTimeRFC3339) was silently stored as a different instant:
+year 2300 became 1715-06-13T00:25:26.291Z and year 1 became 1754.
+The division also truncated toward zero, so 1969-12-31T23:59:59.9995Z
+rounded up to the epoch instead of down to ...59.999Z.
 
-No stored format changes: keys, values and the progress row are all
-unchanged.
+Use t.UnixMilli(), which is defined for the full range and floors
+sub-millisecond precision, matching the Python SDK since #1126.
 
-## Worker step
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
 
+**File**: `sdks/go/dsl.go` (modified, +1/-1)
 ```diff
- each background step
--  KV job            → error returns early
--  label copy/cleanup → error returns early
--  datetime conversion (only if nothing above failed)
--  any error → whole worker backs off (up to 60 s)
-+  each migration runs unless its own retry time hasn't come:
-+    KV job, backlog check, label copy, label cleanup, datetime conversion
-+  datetime conversion: only once the KV job rep
-
-**File**: `crates/db/src/lib.rs` (modified, +19/-2)
-```diff
-@@ -4288,15 +4288,32 @@ impl HelixDB {
-             return Err(HelixDbError::MigrationSteppingRequiresDisabledMode);
-         }
-         // No database handle: the datetime string conversion keeps its own
--        // stepping surface, so a step here takes the jobs it took before.
--        migrations::background::process_background_step(
-+        // stepping surface, so a step here takes the jobs it took before. A
-+        // fresh backoff takes every migration, so this step returns its first
-+        // failure after all have run, as the worker logs each.
-+        match migrations::background::process_background_step(
-             writer,
-             &std::sync::Weak::new(),
-             self.config().db().migrations(),
-             migrations::background::BackgroundMigrations::All,
-             &mut migrations::LabelCopySession::new(),
-+            &mut migrations::background::MigrationRetries::default(),
-+            tokio::time::Instant::now,
-         )
-         .await
-+        {
-+            migrations::background::BackgroundStep::Active {
-+                failure: Some(error),
-+            }
-+            | migrations::background::BackgroundStep::RetryAt {
-+                failure: Some(error),
-+                ..
-+            } => Err(error),
-+            // A fresh backoff waits on nothing, so only a failure retries.
-+            migrations::background::BackgroundStep::Active { failure: None }
-+            | migrations::background::BackgroundStep::RetryAt { failure: None, .. } => Ok(true),
-+            migrations::background::BackgroundStep::Finished => Ok(false),
-+        }
-     }
+@@ -159,7 +159,7 @@ func (d DateTime) RFC3339() (string, error) {
+ }
  
-     #[cfg(any(test, feature = "bench-internals"))]
+ func dateTimeFromTime(t time.Time) DateTime {
+-	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
++	return DateTime{millis: t.UnixMilli()}
+ }
+ 
+ type PropertyValue struct {
 ```
 
-**File**: `crates/db/src/migrations/background/label_and_datetime_tests.rs` (modified, +781/-2)
+**File**: `sdks/go/dsl_test.go` (modified, +60/-0)
 ```diff
-@@ -1,8 +1,13 @@
- //! A store that needs both the label identity copy and the datetime string
- //! conversion: one background worker finishes both, whatever order their
--//! steps interleave in, while the writer serves graph writes.
-+//! steps interleave in, while the writer serves graph writes. A failing
-+//! migration backs off alone: a failing label step does not slow the
-+//! conversion, a failing migration job does not slow the label steps but does
-+//! hold the conversion back, and the conversion waits while the writer's flush
-+//! backlog is high.
- 
- use std::sync::Arc;
-+use std::time::Duration;
- 
- use helix_ast::batch::{read_batch, write_batch};
- use helix_ast::expr::Predicate;
-@@ -13,14 +18,25 @@ use helix_ast::value::{DateTime, PropertyInput};
- use serde_json::json;
- use slatedb::object_store::{memory::InMemory, ObjectStore};
- use slatedb::DbReadOps;
-+use tokio::time::Instant;
- 
-+use super::{
-+    process_background_step, BackgroundMigrations, BackgroundStep, MigrationRetries,
-+    MigrationWorkerSupervisor, Retry, MAX_FAILURE_BACKOFF,
-+};
- use crate::config::{self, DbConfig, MigrationTuning, SecondaryIndexDefinition};
-+use crate::encoding::indexes::{label, PropertyIndexKey};
- use crate::encoding::keys::scope::{DataScope, TenantId};
--use crate::encoding::v2::keys::DataKey;
-+use crate::encoding::keys::NodePropertyKey;
-+use crate::encoding::property::{encode_properties, Property};
-+use crate::encoding::v2::keys::{DataKey, DataKeyKind};
- use crate::encoding::v2::legacy::label_hash;
-+use crate::encoding::v2::values::indexes::SecondaryEqualityBitmapValue;
-+use crate::error::HelixDbError;
- use crate::index_lifecycle::IndexStorageVersion;
- use crate::migrations::{datetime_strings, indexes::label_identity, startup};
- use crate::query_service::HelixQueryService;
-+use crate::search::vector::gated_wal::{GatedWalStore, WalUploads};
- use crate::{HelixDB, HelixStorage};
- 
- const DB_PATH: &str = "label-and-datetime-migrations";
-@@ -439,3 +455,766 @@ async fn one_worker_finishes_the_label_copy_and_the_datetime_conversion() {
- 
-     db.close().await.unwrap();
- }
-+
-+/// One background step of every migration with the clock held at `now`, as
-+/// the worker takes it.
-+async fn step(
-+    db: &HelixDB,
-+    labels: &mut label_identity::LabelCopySession,
-+    retries: &mut MigrationRetries,
-+    now: Instant,
-+) -> BackgroundStep {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    process_background_step(
-+        writer,
-+        &Arc::downgrade(&db.inner),
-+        db.config().db().migrations(),
-+        BackgroundMigrations::All,
-+        labels,
-+        retries,
-+        || now,
-+    )
-+    .await
-+}
-+
-+/// The first failure backoff of `db`'s migrations: its idle interval.
-+fn initial_backoff(db: &HelixDB) -> Duration {
-+    Duration::from_millis(db.config().db().migrations().idle_interval_millis().get())
-+}
-+
-+/// A background worker of `db` on `tuning`, with no handle on the database
-+/// it keeps alive, as the open starts one.
-+fn start_worker(db: &HelixDB, tuning: MigrationTuning) -> MigrationWorkerSupervisor {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    MigrationWorkerSupervisor::start_if_enabled(
-+        Arc::clone(writer),
-+        Arc::downgrade(&db.inner),
-+        tuning
-+            .with_worker_mode(config::MigrationWorkerMode::Background)
-+            .with_active_interval(config::MigrationActiveIntervalMillis::new(1).unwrap()),
-+        BackgroundMigrations::All,
-+    )
-+    .expect("background tuning starts a worker")
-+}
-+
-+async fn conversion(db: &HelixDB) -> Option<datetime_strings::Job> {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    datetime_strings::load(writer.db()).await.unwrap()
-+}
-+
-+/// Every unscoped event and attendance as written: datetimes still strings.
-+async fn assert_unconverted(db: &HelixDB) {
-+    let mut events = (0..EVENTS)
-+        .map(|event| (format!("e{event}"), event_at(event)))
-+        .collect::<Vec<_>>();
-+    events.sort();
-+    assert_eq!(scanned_events(db, DataScope::LegacyUnscoped).await, events);
-+    let mut since = (0..EVENTS).map(attends_since).collect::<Vec<_>>();
-+    since.sort();
-+    assert_eq!(edge_since(db, DataScope::LegacyUnscoped).await, since);
-+}
-+
-+/// The conversion finished and every unscoped datetime is stored as one.
-+async fn assert_converted(db: &HelixDB) {
-+    let job = conversion(db).await.expect("the conversion ran");
-+    assert!(job.is_completed(), "{job:?}");
-+    assert_eq!(
-+        job.report().converted_values,
-+        u64::try_from(2 * EVENTS).unwrap(),
-+        "{job:?}"
-+    );
-+    let mut events = (0..EVENTS)
-+        .map(|event| (format!("e{event}"), canonical(&event_at(event))))
-+        .collect::<Vec<_>>();
-+    events.sort();
-+    assert_eq!(scanned_events(db, DataScope::LegacyUnscoped).await, events);
-+    let mut since = (0..EVENTS)
-+        .map(|event| can
-```
-
-**File**: `crates/db/src/migrations/background/mod.rs` (modified, +1/-1)
-```diff
-@@ -3,5 +3,5 @@
- mod worker;
- 
- #[cfg(test)]
--pub(crate) use worker::process_background_step;
-+pub(crate) use worker::{process_background_step, BackgroundStep, MigrationRetries};
- pub(crate) use worker::{BackgroundMigrations, MigrationWorkerSupervisor};
-```
-
-**File**: `crates/db/src/migrations/background/worker.rs` (modified, +229/-95)
-```diff
-@@ -5,6 +5,7 @@ use std::time::Duration;
- 
- use tokio::sync::watch;
- use tokio::task::JoinHandle;
-+use tokio::time::Instant;
- 
- use crate::config::{MigrationTuning, MigrationWorkerMode};
- use crate::encoding::v2::keys::scope::DataScope;
-@@ -13,30 +14,57 @@ use crate::HelixWriter;
- 
- const MAX_FAILURE_BACKOFF: Duration = Duration::from_secs(60);
- 
--#[derive(Debug, Clone, Copy)]
--struct FailureBackoff {
--    initial: Duration,
--    next: Duration,
-+/// When a step may next take one background migration.
-+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-+enum Retry {
-+    /// It has not failed since its last success: every step takes it.
-+    #[default]
-+    Ready,
-+    /// Its last attempt failed: no step takes it before `at`, which is `delay`
-+    /// after the step that made that attempt ended. Another failure waits twice as long, up to
-+    /// [`MAX_FAILURE_BACKOFF`]; a success makes it [`Retry::Ready`] again.
-+    At { at: Instant, delay: Duration },
+@@ -1501,6 +1501,66 @@ func TestIndexLifecycleResponseDecoders(t *testing.T) {
+ 	}
  }
  
--impl FailureBackoff {
--    fn new(initial: Duration) -> Self {
--        let initial = initial.min(MAX_FAILURE_BACKOFF);
--        Self {
--            initial,
--            next: initial,
--        }
--    }
--
--    fn next_delay(&mut self) -> Duration {
--        let delay = self.next;
--        self.next = self.next.saturating_mul(2).min(MAX_FAILURE_BACKOFF);
--        delay
--    }
-+/// Each background migration's own failure backoff, kept by the worker
-+/// between steps, so a migration that keeps failing slows only itself.
-+///
-+/// The flush backlog check that admits the paced migrations backs off on its
-+/// own too: while it does, no paced migration runs.
-+#[derive(Debug, Default)]
-+pub(crate) struct MigrationRetries {
-+    job: Retry,
-+    pacing: Retry,
-+    label_copy: Retry,
-+    label_cleanup: Retry,
-+    datetimes: Retry,
-+}
- 
--    fn reset(&mut self) {
--        self.next = self.initial;
--    }
-+/// What one background step leaves the worker to do.
-+#[derive(Debug)]
-+#[cfg_attr(
-+    not(test),
-+    allow(
-+        dead_code,
-+        reason = "the step logs every failure; only stepping tests read a failure back"
-+    )
-+)]
-+pub(crate) enum BackgroundStep {
-+    /// A migration advanced, or was held back by the flush backlog: the worker
-+    /// steps again after its active interval. `failure` is the first failure
-+    /// of another migration in this step.
-+    Active {
-+        failure: Option<crate::error::HelixDbError>,
-+    },
-+    /// No migration advanced and at least one is backing off: the worker steps
-+    /// again at `at`, the earliest retry. `failure` is this step's first
-+    /// failure, or `None` if every unfinished migration was waiting.
-+    RetryAt {
-+        at: Instant,
-+        failure: Option<crate::error::HelixDbError>,
-+    },
-+    /// Every background migration has finished.
-+    Finished,
- }
- 
- /// The background migrations one writer runs.
-@@ -98,53 +126,178 @@ impl MigrationWorkerSupervisor {
- }
- 
- /// Advances every pending background migration `migrations` names by one
--/// bounded batch: the next runnable migration job, the label identity copy,
--/// the deletion of the hash label rows it retires, and, once no migration job
--/// has more to do, the datetime string conversion. Returns whether any has
--/// more to do, so the worker stops only when every one has finished. `labels`
--/// carries the copy's state between steps.
-+/// bounded batch: the next runnable migration job, the label identity
-+/// copy, the deletion of the hash label rows it retires, and, once no migration
-+/// job has more to do, the datetime string conversion. `labels` carries the
-+/// copy's state and the step pacing between steps, `retries` each migration's
-+/// failure backoff.
-+///
-+/// The step reads `clock` twice: before it takes any migration, to tell which
-+/// are due, and after all have run, to time each failure's retry from then. A
-+/// retry delay so starts when the failed step ends, not when it started, so a
-+/// slow batch beside a failure does not eat into that failure's backoff.
-+///
-+/// A migration that failed is skipped until its retry time, and backs off
-+/// alone: a failing label step slows neither the migration jobs nor the
-+/// datetime conversion, nor they it. The step logs each failure with the
-+/// migration's name and retry delay, and a success clears that migration's
-+/// backoff. The one ordering is that the datetime conversion runs only once
-+/// the migration jobs report nothing more to do: jobs that fail or wait on
-+/// their backoff count as not done, so the conversion never rewrites rows an
-+/// unfinished job still moves.
-+///
-+/// The step reports [`BackgroundStep::Finished`] only when every migration has
-+/// finished; one backing off has not, and makes the step report its retry
-+/// time unless another advanced.
- ///
--/// The migration job and the label steps run every step, so neither waits for
--/// the other to finish, and one failing does not stop another's batch from
--/// committing. The cleanup follo
-```
-
-**File**: `crates/db/src/migrations/datetime_strings.rs` (modified, +59/-59)
-```diff
-@@ -21,7 +21,7 @@
- //!
- //! Progress is one JSON row in the unscoped metadata namespace, committed after
- //! every batch, so the job resumes after a restart. Older binaries never read
--//! that row. A row whose conversion would collide in a unique index keeps its
-+//! that row. A value whose conversion would collide in a unique index keeps its
- //! string and is counted, as is every skipped property.
- 
- use std::collections::{BTreeMap, BTreeSet};
-@@ -161,7 +161,7 @@ pub(crate) struct SkippedProperty {
- pub(crate) struct Report {
-     /// String values rewritten as datetimes.
-     pub(crate) converted_values: u64,
--    /// Rows left as strings because the datetime collides in a unique index.
-+    /// Values left as strings because the datetime collides in a unique index.
-     pub(crate) unique_conflicts: u64,
-     /// Properties with RFC3339 strings left as stored, first ones listed.
-     pub(crate) skipped_properties: Vec<SkippedProperty>,
-@@ -508,52 +508,45 @@ struct RowConversion {
-     values: Vec<(String, String, i64)>,
- }
- 
-+/// The response name of each converted value, row by row: `r{row}v{value}`.
-+fn value_names(rows: &[RowConversion]) -> impl Iterator<Item = String> + '_ {
-+    rows.iter().enumerate().flat_map(|(row, conversion)| {
-+        (0..conversion.values.len()).map(move |value| format!("r{row}v{value}"))
-+    })
++func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
++	// time.Time.UnixNano is undefined outside 1677-09-21..2262-04-11, and
++	// integer division truncates toward zero. Both used to corrupt the stored
++	// instant silently; conversion must keep the exact (floored) millisecond.
++	cases := []struct {
++		input string
++		want  string
++	}{
++		{"0001-01-01T00:00:00.000Z", "0001-01-01T00:00:00.000Z"},
++		{"1677-01-01T00:00:00.000Z", "1677-01-01T00:00:00.000Z"},
++		{"2262-12-31T23:59:59.999Z", "2262-12-31T23:59:59.999Z"},
++		{"2300-01-01T00:00:00.000Z", "2300-01-01T00:00:00.000Z"},
++		{"9999-12-31T23:59:59.999Z", "9999-12-31T23:59:59.999Z"},
++		{"1969-12-31T23:59:59.9995Z", "1969-12-31T23:59:59.999Z"},
++	}
++	for _, tc := range cases {
++		parsed, err := ParseDateTimeRFC3339(tc.input)
++		if err != nil {
++			t.Fatalf("%s: %v", tc.input, err)
++		}
++		got, err := parsed.RFC3339()
++		if err != nil {
++			t.Fatalf("%s: %v", tc.input, err)
++		}
++		if got != tc.want {
++			t.Fatalf("%s: got %s want %s", tc.input, got, tc.want)
++		}
++	}
++
++	instant := time.Date(2300, time.January, 1, 0, 0, 0, 0, time.UTC)
++	gotValue, err := PropertyValueOf(instant)
++	if err != nil {
++		t.Fatal(err)
++	}
++	wantValue, err := PropertyValueOf(DateTimeFromMillis(instant.Unix() * 1000))
++	if err != nil {
++		t.Fatal(err)
++	}
++	gotProperty, err := json.Marshal(gotValue)
++	if err != nil {
++		t.Fatal(err)
++	}
++	wantProperty, err := json.Marshal(wantValue)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(gotProperty) != string(wantProperty) {
++		t.Fatalf("time.Time property value: got %s want %s", gotProperty, wantProperty)
++	}
++	request := NewReadQueryRequest(Read())
++	request.ParamDateTime("t", instant)
++	body, err := MarshalRequest(request)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(string(body), `"t":"2300-01-01T00:00:00.000Z"`) {
++		t.Fatalf("time.Time parameter serialized to the wrong instant: %s", body)
++	}
 +}
 +
-+/// One write converting every value of `rows`, each guarded on its own
-+/// stored string: a concurrent write to one property of a row leaves that
-+/// property as written and still converts the row's others.
- fn conversion_request(element: Element, rows: &[RowConversion]) -> QueryRequest {
--    let names = (0..rows.len())
--        .map(|index| format!("r{index}"))
--        .collect::<Vec<_>>();
-+    let names = value_names(rows).collect::<Vec<_>>();
-     let batch = rows
-         .iter()
-+        .flat_map(|row| row.values.iter().map(move |value| (row.id, value)))
-         .zip(&names)
--        .fold(write_batch(), |batch, (row, name)| {
--            let guard = Predicate::and(
--                row.values
--                    .iter()
--                    .map(|(property, stored, _)| Predicate::eq(property.as_str(), stored.as_str()))
--                    .collect(),
--            );
--            let mut sets = row.values.iter().map(|(property, _, millis)| {
--                (
--                    property.clone(),
--                    PropertyInput::from(DateTime::from_millis(*millis)),
--                )
--            });
--            let (property, value) = sets
--                .next()
--                .expect("a conversion row has at least one value");
--            match element {
--                Element::Node => batch.var_as(
--                    name.as_str(),
--                    sets.fold(
--                        g().n(NodeRef::id(row.id))
-+        .fold(
-+            write_batch(),
-+            |batch, ((id, (property, stored, millis)), name)| {
-+                let guard = Predicate::eq(property.as_str(), stored.as_str());
-+                let value = PropertyInput::from(DateTime::from_millis(*millis));
-+                match element {
-+                    Element::Node => batch.var_as(
-+                        name.as_str(),
-+                        g().n(NodeRef::id(id))
-                             .where_(guard)
--                            .set_property(property, value),
--                        |traversal, (property, value)| traversal.set_property(property, value),
--                    )
--                    .count(),
--                ),
--                Element::Edge => batch.var_as(
--                    name.as_str(),
--                    sets.fold(
--                        g().e(EdgeRef::id(row.id))
-+                            .set_property(property.clone(), value)
-+                            .count(),
-+                    ),
-+                    Element::Edge => batch.var_as(
-+                        name.as_str(),
-+                        g().e(EdgeRef::id(id))
-                             .where_(guard)
--                            .set_property(property, value),
--                        |traversal, (property, value)| traversal.set_property(property, value),
--                    )
--                    .count(),
--                ),
--            }
--        });
-+                            .set_property(property.clone(), value)
-+                            .count(),
-+                    ),
-+                }
-+            },
-+        );
-     QueryRequest::write(batch.returning(names))
- }
- 
-@@ -579,18 +572,12 @@ async fn execute(
-     .map_err(HelixDbError::from)
- }
- 
--/// Values rewritten by a conversion response: each row's string count when
--/// its guarded traversal matched (counted 1, not 0).
-+/// Values rewritten by a conversion response: those whose guarded traversal
-+/// matched (counted 1, not 0).
- fn converted_values(response: &serde_json::Value, rows: &[RowConversion]) -> u64 {
--    rows.iter()
--        .enumerate()
--        .filter(|(index, _)
-```
-
-**File**: `crates/db/src/migrations/datetime_strings_tests.rs` (modified, +456/-4)
-```diff
-@@ -14,6 +14,29 @@ use slatedb::object_store::ObjectStore;
- 
- use super::*;
- use crate::config::{self, DbConfig, SecondaryIndexDefinition};
-+use crate::encoding::indexes::range::RangeIndexDirection;
-+use crate::encoding::v2::keys::{ManagedIndexKey, ScopedKey, SecondaryEntryLane};
-+use crate::encoding::v2::values::property::range_index_value::{
-+    project_range_value, RangeValueProjection,
-+};
-+use crate::index_lifecycle::{ActiveIndexHandle, ValidatedSecondaryIndexDefinition};
-+
-+tokio::task_local! {
-+    /// Holds a conversion batch between its reads and its write: the batch
-+    /// signals the first notify, then waits for the second.
-+    static BEFORE_CONVERSION: (Arc<tokio::sync::Notify>, Arc<tokio::sync::Notify>);
-+}
-+
-+/// Pauses a conversion batch taken inside a [`BEFORE_CONVERSION`] scope.
-+pub(super) async fn pause_before_conversion() {
-+    let Ok((reached, resume)) =
-+        BEFORE_CONVERSION.try_with(|(reached, resume)| (Arc::clone(reached), Arc::clone(resume)))
-+    else {
-+        return;
-+    };
-+    reached.notify_one();
-+    resume.notified().await;
-+}
- 
- fn config(batch_rows: usize, worker: config::MigrationWorkerMode) -> DbConfig {
-     DbConfig::new().with_migration_tuning(
-@@ -345,8 +368,10 @@ async fn converts_every_tenant_scope_independently() {
-         .all(|row| row["at"] != json!("2026-01-01T00:00:00.000Z")));
- }
- 
-+/// A collision in a unique index keeps only the colliding value a string: the
-+/// row's other convertible properties still convert.
- #[tokio::test]
--async fn a_unique_collision_keeps_only_the_colliding_row_as_a_string() {
-+async fn a_unique_collision_keeps_only_the_colliding_value_as_a_string() {
-     let db = open(1024).await;
-     db.install_index_for_tests(
-         SecondaryIndexDefinition::node_unique_equality("Event", "at")
-@@ -369,7 +394,11 @@ async fn a_unique_collision_keeps_only_the_colliding_row_as_a_string() {
-         &db,
-         u,
-         "Event",
--        vec![("name", s("b")), ("at", s("2026-01-01T01:00:00+01:00"))],
-+        vec![
-+            ("name", s("b")),
-+            ("at", s("2026-01-01T01:00:00+01:00")),
-+            ("until", s("2026-03-01T00:00:00Z")),
-+        ],
-     )
-     .await;
-     add_node(
-@@ -382,13 +411,13 @@ async fn a_unique_collision_keeps_only_the_colliding_row_as_a_string() {
- 
-     let report = run_to_completion(&db).await;
- 
--    assert_eq!(report.converted_values, 1, "{report:?}");
-+    assert_eq!(report.converted_values, 2, "{report:?}");
-     assert_eq!(report.unique_conflicts, 1);
-     assert_eq!(
-         values(&db, u, "Event").await,
-         [
-             json!({ "name": "a", "at": "2026-01-01T00:00:00.000Z" }),
--            json!({ "name": "b", "at": "2026-01-01T01:00:00+01:00" }),
-+            json!({ "name": "b", "at": "2026-01-01T01:00:00+01:00", "until": "2026-03-01T00:00:00.000Z" }),
-             json!({ "name": "c", "at": "2026-02-01T00:00:00.000Z" }),
-         ]
-     );
-@@ -721,3 +750,426 @@ async fn cypher_and_sql_read_converted_rows_as_datetimes() {
-     assert_eq!(sql.rows, vec![vec![json!("d")], vec![json!("a")]]);
-     db.close().await.unwrap();
- }
-+
-+/// `(id, value)` of every unscoped `Event` storing `property`, read from the
-+/// rows.
-+async fn stored(db: &HelixDB, property: &str) -> Vec<(u64, PropertyValue)> {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    read_rows(
-+        writer.db(),
-+        DataScope::LegacyUnscoped,
-+        Element::Node,
-+        None,
-+        MigrationTuning::default(),
-+    )
-+    .await
-+    .unwrap()
-+    .iter()
-+    .filter_map(|(key, value)| {
-+        let (id, row) = decode_row(DataScope::LegacyUnscoped, Element::Node, key, value)
-+            .unwrap()
-+            .unwrap();
-+        if label_of(&row) != Some("Event") {
-+            return None;
-+        }
-+        row.into_iter()
-+            .find(|stored| stored.name == property)
-+            .map(|stored| (id, stored.value))
-+    })
-+    .collect()
-+}
-+
-+/// The raw rows of `Event.{property}`'s equality and range indexes, read
-+/// without the per-row check a query applies to index hits, hold exactly what
-+/// a scan of the rows does: each probed value's equality row holds the ids
-+/// storing that value and no other, and the range index holds one entry per
-+/// stored value.
-+async fn assert_indexes_match_rows(db: &HelixDB, property: &str, probes: &[PropertyValue]) {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    let store = writer.db();
-+    let stored = stored(db, property).await;
-+    let handles = db.active_index_handles_loaded(DataScope::LegacyUnscoped);
-+    let handle = |range: bool| -> &ActiveIndexHandle {
-+        handles
-+            .iter()
-+            .find(|handle| {
-+                handle
-+                    .secondary_definition()
-+                    .is_some_and(|definition| definition.property().as_str() == property)
-+                    && matches!(
-+                    
-```
-
-**File**: `crates/db/src/migrations/indexes/label_identity.rs` (modified, +8/-5)
-```diff
-@@ -283,9 +283,11 @@ impl LabelCopySession {
-         }
-     }
- 
--    /// Whether a label step may run now. While the writer's flush backlog is
--    /// high it waits [`YIELD_WAIT`] and declines, so the caller takes the step
--    /// later and foreground writes keep the room meanwhile.
-+    /// Whether a paced background step may run now: the label steps and the
-+    /// datetime string conversion, which the worker admits together, so they
-+    /// share one pacing. While the writer's flush backlog is high it waits
-+    /// [`YIELD_WAIT`] and declines, so the caller takes the step later and
-+    /// foreground writes keep the room meanwhile.
-     pub(crate) async fn admit_step(&mut self, db: &Db) -> Result<bool> {
-         let unflushed = db.unflushed_bytes()?;
-         if self.pacing.admits(unflushed) {
-@@ -401,12 +403,13 @@ fn per_second(rows: u64, elapsed: Duration) -> u64 {
-     (rows as f64 / seconds) as u64
- }
- 
--/// Holds label steps back while the writer's flush backlog is high.
-+/// Holds paced background steps (the label steps and the datetime string
-+/// conversion) back while the writer's flush backlog is high.
- ///
- /// Every write, foreground or background, waits once the writer's unflushed
- /// bytes reach `max_unflushed_bytes` (SlateDB backpressure). The backlog that
- /// fills that room is the immutable memtables and the WAL waiting for object
--/// storage; the active memtable fills and freezes in normal operation. Label
-+/// storage; the active memtable fills and freezes in normal operation. Paced
- /// steps stop once the backlog reaches 1/[`BACKLOG_HIGH_SHARE`] of the limit
- /// and start again below 1/[`BACKLOG_LOW_SHARE`], so they only use flush
- /// capacity foreground writes leave spare.
-```
-
-**File**: `crates/db/src/migrations/indexes/label_identity_tests.rs` (modified, +22/-10)
-```diff
-@@ -2182,17 +2182,29 @@ async fn background_label_steps_leave_foreground_writes_room_under_a_slow_store(
-         let writer = Arc::clone(&writer);
-         async move {
-             let mut session = LabelCopySession::new();
-+            let mut retries = crate::migrations::background::MigrationRetries::default();
-             let started = Instant::now();
--            while crate::migrations::background::process_background_step(
--                &writer,
--                &std::sync::Weak::new(),
--                MigrationTuning::default(),
--                crate::migrations::background::BackgroundMigrations::LabelIdentity,
--                &mut session,
--            )
--            .await
--            .unwrap()
--            {
-+            loop {
-+                match crate::migrations::background::process_background_step(
-+                    &writer,
-+                    &std::sync::Weak::new(),
-+                    MigrationTuning::default(),
-+                    crate::migrations::background::BackgroundMigrations::LabelIdentity,
-+                    &mut session,
-+                    &mut retries,
-+                    tokio::time::Instant::now,
-+                )
-+                .await
-+                {
-+                    crate::migrations::background::BackgroundStep::Active { failure: None } => {}
-+                    crate::migrations::background::BackgroundStep::Finished => break,
-+                    failed @ (crate::migrations::background::BackgroundStep::Active {
-+                        failure: Some(_),
-+                    }
-+                    | crate::migrations::background::BackgroundStep::RetryAt { .. }) => {
-+                        panic!("a label step failed: {failed:?}")
-+                    }
-+                }
-                 assert!(
-                     started.elapsed() < Duration::from_secs(600),
-                     "label steps stalled"
+ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 2: `3a1d4e52` (2026-11-19)
-**Commit Message**: Isolate and pace background migrations with per-migration backoff
+### Incident Patch 2: `13345cd6` (2026-11-22)
+**Commit Message**: fix(go): accept every integer width in datetime parameters (#1293)
 
-A failure in one background migration step no longer stops the others:
-the migration jobs, label identity copy, hash label cleanup, step pacing
-check and datetime conversion each keep their own Retry state (Ready, or
-At a retry time with a doubling delay capped at 60s, reset on success).
-The delay starts when the failed step ends. The worker sleeps its active
-interval after any advance, otherwise until the earliest pending retry,
-and exits only once every migration has finished.
+ParamDateTime and WithTypedParameter(ParamTypeDateTime()) treated an
+integer as epoch milliseconds only when it was int or int64, so
+ParamDateTime("t", int32(5)) failed with "invalid datetime parameter"
+even though ParamI64 and ParamF64 accept every integer width since #1032.
 
-The datetime conversion runs only once the migration jobs report nothing
-left, and only while the writer's flush backlog is low, so it never
-pushes foreground writes into backpressure. The database handle is
-upgraded only for a conversion step.
+Route all integer kinds through queryI64, the same conversion ParamI64
+uses. uint values above math.MaxInt64 still fail with
+ErrInvalidDateTimeParameter, and booleans and floats are still rejected.
 
-**File**: `crates/db/src/lib.rs` (modified, +19/-2)
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
+
+**File**: `sdks/go/dsl.go` (modified, +6/-4)
 ```diff
-@@ -4288,15 +4288,32 @@ impl HelixDB {
-             return Err(HelixDbError::MigrationSteppingRequiresDisabledMode);
-         }
-         // No database handle: the datetime string conversion keeps its own
--        // stepping surface, so a step here takes the jobs it took before.
--        migrations::background::process_background_step(
-+        // stepping surface, so a step here takes the jobs it took before. A
-+        // fresh backoff takes every migration, so this step returns its first
-+        // failure after all have run, as the worker logs each.
-+        match migrations::background::process_background_step(
-             writer,
-             &std::sync::Weak::new(),
-             self.config().db().migrations(),
-             migrations::background::BackgroundMigrations::All,
-             &mut migrations::LabelCopySession::new(),
-+            &mut migrations::background::MigrationRetries::default(),
-+            tokio::time::Instant::now,
-         )
-         .await
-+        {
-+            migrations::background::BackgroundStep::Active {
-+                failure: Some(error),
-+            }
-+            | migrations::background::BackgroundStep::RetryAt {
-+                failure: Some(error),
-+                ..
-+            } => Err(error),
-+            // A fresh backoff waits on nothing, so only a failure retries.
-+            migrations::background::BackgroundStep::Active { failure: None }
-+            | migrations::background::BackgroundStep::RetryAt { failure: None, .. } => Ok(true),
-+            migrations::background::BackgroundStep::Finished => Ok(false),
-+        }
-     }
- 
-     #[cfg(any(test, feature = "bench-internals"))]
+@@ -3176,10 +3176,12 @@ func queryDateTime(value any) (string, error) {
+ 			return "", ErrInvalidDateTimeParameter
+ 		}
+ 		return dt.RFC3339()
+-	case int64:
+-		return DateTimeFromMillis(v).RFC3339()
+-	case int:
+-		return DateTimeFromMillis(int64(v)).RFC3339()
++	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
++		millis, err := queryI64(v)
++		if err != nil {
++			return "", ErrInvalidDateTimeParameter
++		}
++		return DateTimeFromMillis(millis).RFC3339()
+ 	default:
+ 		return "", ErrInvalidDateTimeParameter
+ 	}
 ```
 
-**File**: `crates/db/src/migrations/background/label_and_datetime_tests.rs` (modified, +781/-2)
+**File**: `sdks/go/dsl_test.go` (modified, +34/-0)
 ```diff
-@@ -1,8 +1,13 @@
- //! A store that needs both the label identity copy and the datetime string
- //! conversion: one background worker finishes both, whatever order their
--//! steps interleave in, while the writer serves graph writes.
-+//! steps interleave in, while the writer serves graph writes. A failing
-+//! migration backs off alone: a failing label step does not slow the
-+//! conversion, a failing migration job does not slow the label steps but does
-+//! hold the conversion back, and the conversion waits while the writer's flush
-+//! backlog is high.
- 
- use std::sync::Arc;
-+use std::time::Duration;
- 
- use helix_ast::batch::{read_batch, write_batch};
- use helix_ast::expr::Predicate;
-@@ -13,14 +18,25 @@ use helix_ast::value::{DateTime, PropertyInput};
- use serde_json::json;
- use slatedb::object_store::{memory::InMemory, ObjectStore};
- use slatedb::DbReadOps;
-+use tokio::time::Instant;
- 
-+use super::{
-+    process_background_step, BackgroundMigrations, BackgroundStep, MigrationRetries,
-+    MigrationWorkerSupervisor, Retry, MAX_FAILURE_BACKOFF,
-+};
- use crate::config::{self, DbConfig, MigrationTuning, SecondaryIndexDefinition};
-+use crate::encoding::indexes::{label, PropertyIndexKey};
- use crate::encoding::keys::scope::{DataScope, TenantId};
--use crate::encoding::v2::keys::DataKey;
-+use crate::encoding::keys::NodePropertyKey;
-+use crate::encoding::property::{encode_properties, Property};
-+use crate::encoding::v2::keys::{DataKey, DataKeyKind};
- use crate::encoding::v2::legacy::label_hash;
-+use crate::encoding::v2::values::indexes::SecondaryEqualityBitmapValue;
-+use crate::error::HelixDbError;
- use crate::index_lifecycle::IndexStorageVersion;
- use crate::migrations::{datetime_strings, indexes::label_identity, startup};
- use crate::query_service::HelixQueryService;
-+use crate::search::vector::gated_wal::{GatedWalStore, WalUploads};
- use crate::{HelixDB, HelixStorage};
- 
- const DB_PATH: &str = "label-and-datetime-migrations";
-@@ -439,3 +455,766 @@ async fn one_worker_finishes_the_label_copy_and_the_datetime_conversion() {
- 
-     db.close().await.unwrap();
+@@ -1561,6 +1561,40 @@ func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
+ 	}
  }
+ 
++func TestDateTimeParameterAcceptsEveryIntegerWidth(t *testing.T) {
++	// ParamI64 and ParamF64 accept every Go integer width (#1032); epoch-millis
++	// datetime parameters must too, through both insertion paths.
++	const want = "1970-01-01T00:00:00.005Z"
++	values := []any{int(5), int8(5), int16(5), int32(5), int64(5), uint(5), uint8(5), uint16(5), uint32(5), uint64(5)}
++	for _, value := range values {
++		convenience := NewReadQueryRequest(Read())
++		convenience.ParamDateTime("t", value)
++		typed := NewReadQueryRequest(Read())
++		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
++		for _, request := range []*QueryRequest{convenience, typed} {
++			body, err := MarshalRequest(request)
++			if err != nil {
++				t.Fatalf("%T: %v", value, err)
++			}
++			if !strings.Contains(string(body), `"t":"`+want+`"`) {
++				t.Fatalf("%T: unexpected body %s", value, body)
++			}
++		}
++	}
 +
-+/// One background step of every migration with the clock held at `now`, as
-+/// the worker takes it.
-+async fn step(
-+    db: &HelixDB,
-+    labels: &mut label_identity::LabelCopySession,
-+    retries: &mut MigrationRetries,
-+    now: Instant,
-+) -> BackgroundStep {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    process_background_step(
-+        writer,
-+        &Arc::downgrade(&db.inner),
-+        db.config().db().migrations(),
-+        BackgroundMigrations::All,
-+        labels,
-+        retries,
-+        || now,
-+    )
-+    .await
++	for _, value := range []any{uint64(math.MaxUint64), true, 1.5} {
++		convenience := NewReadQueryRequest(Read())
++		convenience.ParamDateTime("t", value)
++		typed := NewReadQueryRequest(Read())
++		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
++		for _, request := range []*QueryRequest{convenience, typed} {
++			if err := request.Validate(); !errors.Is(err, ErrInvalidDateTimeParameter) {
++				t.Fatalf("%T(%v): expected ErrInvalidDateTimeParameter, got %v", value, value, err)
++			}
++		}
++	}
 +}
 +
-+/// The first failure backoff of `db`'s migrations: its idle interval.
-+fn initial_backoff(db: &HelixDB) -> Duration {
-+    Duration::from_millis(db.config().db().migrations().idle_interval_millis().get())
-+}
-+
-+/// A background worker of `db` on `tuning`, with no handle on the database
-+/// it keeps alive, as the open starts one.
-+fn start_worker(db: &HelixDB, tuning: MigrationTuning) -> MigrationWorkerSupervisor {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    MigrationWorkerSupervisor::start_if_enabled(
-+        Arc::clone(writer),
-+        Arc::downgrade(&db.inner),
-+        tuning
-+            .with_worker_mode(config::MigrationWorkerMode::Background)
-+            .with_active_interval(config::MigrationActiveIntervalMillis::new(1).unwrap()),
-+        BackgroundMigrations::All,
-+    )
-+    .expect("background tuning starts a worker")
-+}
-+
-+async fn conversion(db: &HelixDB) -> Option<datetime_strings::Job> {
-+    let HelixStorage::Writer(writer) = db.storage() else {
-+        panic!("writer");
-+    };
-+    datetime_strings::load(writer.db()).await.unwrap()
-+}
-+
-+/// Every unscoped event and attendance as written: datetimes still strings.
-+async fn assert_unconverted(db: &HelixDB) {
-+    let mut events = (0..EVENTS)
-+        .map(|event| (format!("e{event}"), event_at(event)))
-+        .collect::<Vec<_>>();
-+    events.sort();
-+    assert_eq!(scanned_events(db, DataScope::LegacyUnscoped).await, events);
-+    let mut since = (0..EVENTS).map(attends_since).collect::<Vec<_>>();
-+    since.sort();
-+    assert_eq!(edge_since(db, DataScope::LegacyUnscoped).await, since);
-+}
-+
-+/// The conversion finished and every unscoped datetime is stored as one.
-+async fn assert_converted(db: &HelixDB) {
-+    let job = conversion(db).await.expect("the conversion ran");
-+    assert!(job.is_completed(), "{job:?}");
-+    assert_eq!(
-+        job.report().converted_values,
-+        u64::try_from(2 * EVENTS).unwrap(),
-+        "{job:?}"
-+    );
-+    let mut events = (0..EVENTS)
-+        .map(|event| (format!("e{event}"), canonical(&event_at(event))))
-+        .collect::<Vec<_>>();
-+    events.sort();
-+    assert_eq!(scanned_events(db, DataScope::LegacyUnscoped).await, events);
-+    let mut since = (0..EVENTS)
-+        .map(|event| can
+ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
+ 	if err != nil {
 ```
 
-**File**: `crates/db/src/migrations/background/mod.rs` (modified, +1/-1)
-```diff
-@@ -3,5 +3,5 @@
- mod worker;
- 
- #[cfg(test)]
--pub(crate) use worker::process_background_step;
-+pub(crate) use worker::{process_background_step, BackgroundStep, MigrationRetries};
- pub(crate) use worker::{BackgroundMigrations, MigrationWorkerSupervisor};
-```
+---
 
-**File**: `crates/db/src/migrations/background/worker.rs` (modified, +229/-95)
+### Incident Patch 3: `e0ebb886` (2026-11-22)
+**Commit Message**: fix(go): reject non-finite floats in float slices during Validate (#1296)
+
+F64/F32 reject NaN and +/-Inf when the value is built, so
+ParamValue("v", math.NaN()).Validate() returns "v: helix: non-finite float".
+F64Array/F32Array (and PropertyValueOf for []float64 / []float32) did no such
+check, so ParamValue("v", []float64{1, math.NaN()}) passed Validate and
+only failed later inside encoding/json with "json: unsupported value: NaN",
+without the parameter path.
+
+Check every element in F64Array/F32Array the same way propertyFloat does.
+
+Signed-off-by: anant <[REDACTED_EMAIL]>
+Co-authored-by: anant <[REDACTED_EMAIL]>
+
+**File**: `sdks/go/dsl.go` (modified, +11/-2)
 ```diff
-@@ -5,6 +5,7 @@ use std::time::Duration;
- 
- use tokio::sync::watch;
- use tokio::task::JoinHandle;
-+use tokio::time::Instant;
- 
- use crate::config::{MigrationTuning, MigrationWorkerMode};
- use crate::encoding::v2::keys::scope::DataScope;
-@@ -13,30 +14,57 @@ use crate::HelixWriter;
- 
- const MAX_FAILURE_BACKOFF: Duration = Duration::from_secs(60);
- 
--#[derive(Debug, Clone, Copy)]
--struct FailureBackoff {
--    initial: Duration,
--    next: Duration,
-+/// When a step may next take one background migration.
-+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-+enum Retry {
-+    /// It has not failed since its last success: every step takes it.
-+    #[default]
-+    Ready,
-+    /// Its last attempt failed: no step takes it before `at`, which is `delay`
-+    /// after the step that made that attempt ended. Another failure waits twice as long, up to
-+    /// [`MAX_FAILURE_BACKOFF`]; a success makes it [`Retry::Ready`] again.
-+    At { at: Instant, delay: Duration },
+@@ -182,10 +182,10 @@ func I64Array(v ...int64) PropertyValue {
+ 	return PropertyValue{kind: "I64Array", value: append([]int64(nil), v...)}
+ }
+ func F64Array(v ...float64) PropertyValue {
+-	return PropertyValue{kind: "F64Array", value: append([]float64(nil), v...)}
++	return propertyFloatArray("F64Array", append([]float64(nil), v...))
+ }
+ func F32Array(v ...float32) PropertyValue {
+-	return PropertyValue{kind: "F32Array", value: append([]float32(nil), v...)}
++	return propertyFloatArray("F32Array", append([]float32(nil), v...))
+ }
+ func StringArray(v ...string) PropertyValue {
+ 	return PropertyValue{kind: "StringArray", value: append([]string(nil), v...)}
+@@ -226,6 +226,15 @@ func propertyFloat[T ~float32 | ~float64](kind string, v T) PropertyValue {
+ 	return PropertyValue{kind: kind, value: v}
  }
  
--impl FailureBackoff {
--    fn new(initial: Duration) -> Self {
--        let initial = initial.min(MAX_FAILURE_BACKOFF);
--        Self {
--            initial,
--            next: initial,
--        }
--    }
--
--    fn next_delay(&mut self) -> Duration {
--        let delay = self.next;
--        self.next = self.next.saturating_mul(2).min(MAX_FAILURE_BACKOFF);
--        delay
--    }
-+/// Each background migration's own failure backoff, kept by the worker
-+/// between steps, so a migration that keeps failing slows only itself.
-+///
-+/// The flush backlog check that admits the paced migrations backs off on its
-+/// own too: while it does, no paced migration runs.
-+#[derive(Debug, Default)]
-+pub(crate) struct MigrationRetries {
-+    job: Retry,
-+    pacing: Retry,
-+    label_copy: Retry,
-+    label_cleanup: Retry,
-+    datetimes: Retry,
++func propertyFloatArray[T ~float32 | ~float64](kind string, v []T) PropertyValue {
++	for _, f := range v {
++		if math.IsNaN(float64(f)) || math.IsInf(float64(f), 0) {
++			return PropertyValue{kind: kind, err: errors.New("helix: non-finite float")}
++		}
++	}
++	return PropertyValue{kind: kind, value: v}
 +}
- 
--    fn reset(&mut self) {
--        self.next = self.initial;
--    }
-+/// What one background step leaves the worker to do.
-+#[derive(Debug)]
-+#[cfg_attr(
-+    not(test),
-+    allow(
-+        dead_code,
-+        reason = "the step logs every failure; only stepping tests read a failure back"
-+    )
-+)]
-+pub(crate) enum BackgroundStep {
-+    /// A migration advanced, or was held back by the flush backlog: the worker
-+    /// steps again after its active interval. `failure` is the first failure
-+    /// of another migration in this step.
-+    Active {
-+        failure: Option<crate::error::HelixDbError>,
-+    },
-+    /// No migration advanced and at least one is backing off: the worker steps
-+    /// again at `at`, the earliest retry. `failure` is this step's first
-+    /// failure, or `None` if every unfinished migration was waiting.
-+    RetryAt {
-+        at: Instant,
-+        failure: Option<crate::error::HelixDbError>,
-+    },
-+    /// Every background migration has finished.
-+    Finished,
- }
- 
- /// The background migrations one writer runs.
-@@ -98,53 +126,178 @@ impl MigrationWorkerSupervisor {
- }
- 
- /// Advances every pending background migration `migrations` names by one
--/// bounded batch: the next runnable migration job, the label identity copy,
--/// the deletion of the hash label rows it retires, and, once no migration job
--/// has more to do, the datetime string conversion. Returns whether any has
--/// more to do, so the worker stops only when every one has finished. `labels`
--/// carries the copy's state between steps.
-+/// bounded batch: the next runnable migration job, the label identity
-+/// copy, the deletion of the hash label rows it retires, and, once no migration
-+/// job has more to do, the datetime string conversion. `labels` carries the
-+/// copy's state and the step pacing between steps, `retries` each migration's
-+/// failure backoff.
-+///
-+/// The step reads `clock` twice: before it takes any migration, to tell which
-+/// are due, and after all have run, to time each failure's retry from then. A
-+/// retry delay so starts when the failed step ends, not when it started, so a
-+/// slow batch beside a failure does not eat into that failure's backoff.
-+///
-+/// A migration that failed is skipped until its retry time, and backs off
-+/// alone: a failing label step slows neither the migration jobs nor the
-+/// datetime conversion, nor they it. The step logs each failure with the
-+/// migration's name and retry delay, and a success clears that migration's
-+/// backoff. The one ordering is that the datetime conversion runs only once
-+/// the migration jobs report nothing more to do: jobs that fail or wait on
-+/// their backoff count as not done, so the conversion never rewrites rows an
-+/// unfinished job still moves.
-+///
-+/// The step reports [`BackgroundStep::Finished`] only when every migration has
-+/// finished; one backing off has not, and makes the step report its retry
-+/// time unless another advanced.
- ///
--/// The migration job and the label steps run every step, so neither waits for
--/// the other to finish, and one failing does not stop another's batch from
--/// committing. The cleanup follo
++
+ func MustPropertyValue(value any) PropertyValue {
+ 	v, err := PropertyValueOf(value)
+ 	if err != nil {
 ```
 
-**File**: `crates/db/src/migrations/indexes/label_identity.rs` (modified, +8/-5)
+**File**: `sdks/go/dsl_test.go` (modified, +29/-0)
 ```diff
-@@ -283,9 +283,11 @@ impl LabelCopySession {
-         }
-     }
- 
--    /// Whether a label step may run now. While the writer's flush backlog is
--    /// high it waits [`YIELD_WAIT`] and declines, so the caller takes the step
--    /// later and foreground writes keep the room meanwhile.
-+    /// Whether a paced background step may run now: the label steps and the
-+    /// datetime string conversion, which the worker admits together, so they
-+    /// share one pacing. While the writer's flush backlog is high it waits
-+    /// [`YIELD_WAIT`] and declines, so the caller takes the step later and
-+    /// foreground writes keep the room meanwhile.
-     pub(crate) async fn admit_step(&mut self, db: &Db) -> Result<bool> {
-         let unflushed = db.unflushed_bytes()?;
-         if self.pacing.admits(unflushed) {
-@@ -401,12 +403,13 @@ fn per_second(rows: u64, elapsed: Duration) -> u64 {
-     (rows as f64 / seconds) as u64
+@@ -1656,6 +1656,35 @@ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
+ 	}
  }
  
--/// Holds label steps back while the writer's flush backlog is high.
-+/// Holds paced background steps (the label steps and the datetime string
-+/// conversion) back while the writer's flush backlog is high.
- ///
- /// Every write, foreground or background, waits once the writer's unflushed
- /// bytes reach `max_unflushed_bytes` (SlateDB backpressure). The backlog that
- /// fills that room is the immutable memtables and the WAL waiting for object
--/// storage; the active memtable fills and freezes in normal operation. Label
-+/// storage; the active memtable fills and freezes in normal operation. Paced
- /// steps stop once the backlog reaches 1/[`BACKLOG_HIGH_SHARE`] of the limit
- /// and start again below 1/[`BACKLOG_LOW_SHARE`], so they only use flush
- /// capacity foreground writes leave spare.
-```
-
-**File**: `crates/db/src/migrations/indexes/label_identity_tests.rs` (modified, +22/-10)
-```diff
-@@ -2182,17 +2182,29 @@ async fn background_label_steps_leave_foreground_writes_room_under_a_slow_store(
-         let writer = Arc::clone(&writer);
-         async move {
-             let mut session = LabelCopySession::new();
-+            let mut retries = crate::migrations::background::MigrationRetries::default();
-             let started = Instant::now();
--            while crate::migrations::background::process_background_step(
--                &writer,
--                &std::sync::Weak::new(),
--                MigrationTuning::default(),
--                crate::migrations::background::BackgroundMigrations::LabelIdentity,
--                &mut session,
--            )
--            .await
--            .unwrap()
--            {
-+            loop {
-+                match crate::migrations::background::process_background_step(
-+                    &writer,
-+                    &std::sync::Weak::new(),
-+                    MigrationTuning::default(),
-+                    crate::migrations::background::BackgroundMigrations::LabelIdentity,
-+                    &mut session,
-+                    &mut retries,
-+                    tokio::time::Instant::now,
-+                )
-+                .await
-+                {
-+                    crate::migrations::background::BackgroundStep::Active { failure: None } => {}
-+                    crate::migrations::background::BackgroundStep::Finished => break,
-+                    failed @ (crate::migrations::background::BackgroundStep::Active {
-+                        failure: Some(_),
-+                    }
-+                    | crate::migrations::background::BackgroundStep::RetryAt { .. }) => {
-+                        panic!("a label step failed: {failed:?}")
-+                    }
-+                }
-                 assert!(
-                     started.elapsed() < Duration::from_secs(600),
-                     "label steps stalled"
++func TestNonFiniteFloatArraysFailLikeScalars(t *testing.T) {
++	// A NaN or ±Inf inside a float slice must be rejected the same way a scalar
++	// one is: at Validate() with the parameter path, not later inside
++	// encoding/json with "json: unsupported value".
++	values := []any{
++		[]float64{1, math.NaN()},
++		[]float64{math.Inf(-1)},
++		[]float32{1, float32(math.Inf(1))},
++		F64Array(math.NaN()),
++		F32Array(float32(math.NaN())),
++	}
++	for _, value := range values {
++		request := NewReadQueryRequest(Read())
++		request.ParamValue("v", value)
++		err := request.Validate()
++		var pathErr *PathError
++		if !errors.As(err, &pathErr) || !strings.Contains(err.Error(), "non-finite float") {
++			t.Fatalf("%#v: expected a non-finite float PathError from Validate, got %v", value, err)
++		}
++		if _, err := json.Marshal(MustPropertyValue(value)); err == nil {
++			t.Fatalf("%#v: expected property serialization to fail", value)
++		}
++	}
++
++	if _, err := json.Marshal(F64Array(1, 2.5)); err != nil {
++		t.Fatalf("finite float slice failed: %v", err)
++	}
++}
++
+ func TestExpressionReferenceAndPredicateConversions(t *testing.T) {
+ 	marshaled := []any{
+ 		ExprInput(ExprID()),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1314** (2026-11-20): Isolate, pace and back off background migrations independently (@xav-db)
-- **PR #1311** (2026-11-19): Compare datetimes with text as unknown on every plan (@xav-db)
-- **PR #1310** (2026-11-19): Build indexes without waiting on S3 per step or rescanning applied deltas (@xav-db)
-- **PR #1309** (2026-11-19): Use datetime() and timestamp() as index bounds (@xav-db)
-- **PR #1307** (2026-11-19): Declare typed fields on object parameters (@xav-db)
-- **PR #1306** (2026-11-19): Read and write datetimes in Cypher and SQL (@xav-db)
+- **PR #1322** (2026-11-23): Default the CLI to Docker v0.0.18 (@xav-db)
+- **PR #1321** (2026-11-23): Datetime string migration: leave text- and vector-indexed properties as stored (@xav-db)
+- **PR #1320** (2026-11-23): docs: Helix Foundry first, Cloud inside HelixDB, Foundry pages brought up to date with prod (@xav-db)
+- **PR #1319** (2026-11-23): Default the CLI to Docker v0.0.17 (@xav-db)
+- **PR #1318** (2026-11-22): docs: Helix Foundry agent memory with helix_foundry_recall (@xav-db)
+- **PR #1317** (2026-11-22): Point the README to Helix Foundry (@xav-db)
 
 ---
 
@@ -3198,50 +2399,31 @@ upgraded only for a conversion step.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Isolate, pace and back off background migrations independently
+## X. go): convert time.Time to millis without UnixNano overflow
 
 **RULE**:
-When implementing operations in `crates/db/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/go/dsl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a29a8d49`: Isolate, pace and back off background migrations independently. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce6bcc9c`: go): convert time.Time to millis without UnixNano overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/go/dsl.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // stepping surface, so a step here takes the jobs it took before. A
-        // fresh backoff takes every migration, so this step returns its first
-        // failure after all have run, as the worker logs each.
-        match migrations::background::process_background_step(
-            &mut migrations::background::MigrationRetries::default(),
-            tokio::time::Instant::now,
-        {
-            migrations::background::BackgroundStep::Active {
-                failure: Some(error),
-            }
-            | migrations::background::BackgroundStep::RetryAt {
-                failure: Some(error),
-                ..
-            } => Err(error),
-            // A fresh backoff waits on nothing, so only a failure retries.
-            migrations::background::BackgroundStep::Active { failure: None }
-            | migrations::background::BackgroundStep::RetryAt { failure: None, .. } => Ok(true),
-            migrations::background::BackgroundStep::Finished => Ok(false),
-        }
+	return DateTime{millis: t.UnixMilli()}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        // stepping surface, so a step here takes the jobs it took before.
-        migrations::background::process_background_step(
+	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a29a8d49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce6bcc9c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

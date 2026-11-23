@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T18:41:54.164Z",
+  "timestamp": "2026-11-23T14:46:46.133Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T18:41:54.164Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:46:46.133Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `dcfe7e6d`  
+> **Source Version**: `0383d4d1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T18:41:41.020Z  
+> **Timestamp**: 2026-11-23T14:46:35.335Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T18:41:41.010Z  
+> **Harvest Timestamp**: 2026-11-23T14:46:35.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1681 stars
+- **Stars / Engagement**: 1684 stars
 
 ---
 
@@ -1963,310 +1963,529 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dcfe7e6d` (2026-11-20)
-**Commit Message**: feat(hpu): HPU backend moves to use ZHC 0.12.4 (#4150)
+### Incident Patch 1: `2dddbbc4` (2026-11-23)
+**Commit Message**: fix(gpu): keep the CPU copy when moving a ciphertext back to the CPU (#4179)
 
-* feat(hpu): HPU backend moves to use ZHC 0.12.0 with lots of operation speed improvements
-* fix(hpu): correct fw_dyn HPU example to use best known manual partioning
-* fix(hpu): 1-bit integer are not accepted by ZHC 0.12 anymore so moving boolean to one block
-* chore(hpu): update to ZHC 0.12.1 to get best known manual partitioning of Mul64
-* fix(hpu): Erc7984 SIMD throughput bench was trying to allocate more cts
-that what could fit on 1 node so input set is not dependent on number
-of HPU nodes available; also fixes a small warning in HPU backend
-* fix(hpu): need to update to ZHC 0.12.3 to get a few multi-HPU related fixes
-update fw_dyn example to execute more multi-HPU operations
-* feat(hpu): move to ZHC 0.12.4 to get 88ms triangular mul
-
-**File**: `Cargo.lock` (modified, +38/-38)
+**File**: `tfhe/src/high_level_api/booleans/inner.rs` (modified, +33/-48)
 ```diff
-@@ -5206,54 +5206,54 @@ dependencies = [
+@@ -1,13 +1,11 @@
+ #[cfg(feature = "gpu")]
+ use crate::core_crypto::gpu::CudaStreams;
+ use crate::high_level_api::backward_compatibility::booleans::SerializableInnerBooleanVersions;
+-use crate::high_level_api::details::MaybeCloned;
++use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
+ use crate::high_level_api::global_state;
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::cuda_clone;
+ #[cfg(feature = "gpu")]
+-use crate::high_level_api::global_state::with_cuda_internal_keys;
+-#[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
+ use crate::integer::BooleanBlock;
+ use crate::Device;
+@@ -209,59 +207,46 @@ impl InnerBoolean {
+         CudaBooleanBlock::from_boolean_block(&cpu_bool, streams)
+     }
  
- [[package]]
- name = "zhc"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
-+checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
- dependencies = [
-  "zhc_builder",
-  "zhc_config",
-  "zhc_crypto",
-- "zhc_ir 0.10.1",
-+ "zhc_ir 0.12.4",
-  "zhc_langs",
-  "zhc_pipeline",
-  "zhc_sim",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
+-    #[allow(clippy::needless_pass_by_ref_mut)]
+     pub(crate) fn move_to_device(&mut self, target_device: Device) {
+-        let current_device = self.current_device();
++        crate::high_level_api::details::move_to_device(self, target_device);
++    }
  
- [[package]]
- name = "zhc_builder"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
-+checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
- dependencies = [
-  "zhc_crypto",
-- "zhc_ir 0.10.1",
-+ "zhc_ir 0.12.4",
-  "zhc_langs",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
+-        if current_device == target_device {
+-            #[cfg(feature = "gpu")]
+-            // We may not be on the correct Cuda device
+-            if let Self::Cuda(cuda_ct) = self {
+-                with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+-                        *cuda_ct = cuda_ct.duplicate(streams);
+-                    }
+-                })
+-            }
+-            return;
++    #[inline]
++    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
++        if let Some(device) = global_state::device_of_internal_keys() {
++            self.move_to_device(device);
+         }
++    }
++}
  
- [[package]]
- name = "zhc_config"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
-+checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
- dependencies = [
-  "serde",
-  "serde_json",
-  "toml 0.9.12+spec-1.1.0",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
+-        // The logic is that the common device is the CPU, all other devices
+-        // know how to transfer from and to CPU.
++impl DeviceMovable for InnerBoolean {
++    type CpuCiphertext = BooleanBlock;
  
- [[package]]
- name = "zhc_crypto"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
-+checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
- dependencies = [
-  "paste",
-  "rand 0.10.1",
-  "serde",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
+-        // So we first transfer to CPU
+-        let cpu_ct = self.on_cpu();
++    fn current_device(&self) -> Device {
++        Self::current_device(self)
++    }
  
- [[package]]
-@@ -5269,33 +5269,33 @@ dependencies = [
+-        // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
+-            #[cfg(feature = "gpu")]
+-            Device::CudaGpu => {
+-                let new_inner = with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock::from_boolean_block(
+-                        &cpu_ct, streams,
+-                    )
+-                });
+-                *self = Self::Cuda(new_inner);
+-            }
+-            #[cfg(feature = "hpu")]
+-            Device::Hpu => {
+-                let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
+-                    HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
+-                });
+-                *self = Self::Hpu(hpu_ct);
+-            }
+-        }
++    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
++        Self::on_cpu(self)
+     }
  
- [[package]]
- name = "zhc_ir"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
-+checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
- dependencies = [
-  "serde",
-- "zhc_utils 0.10.1",
-- "zhc_utils_macro 0.10.1",
-+ "zhc_utils 0.12.4",
-+ "zhc_utils_macro 0.12.4",
- ]
- 
- [[package]]
- name = "zhc_langs"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
-+checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
- dependencies = [
-  "serde",
-  "zhc_crypto",
-- "zhc_ir 0.10.1",
-+ "zhc_ir 0.12.4",
-  "zhc_langs_macro",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
- 
- [[package]]
- name = "zhc_langs_macro"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
-+checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -5304,40 +5304,40 @@ dependencies = [
- 
- [[package]]
- name = "zhc_pipeline"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
-+checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
- dependencies = [
-  "bitfield-struct 0.10.1",
-  "rand 0.10.1",
-  "serde",
-  "zhc_config",
-  "zhc_crypto",
-- "zhc_ir 0.10.1",
-+ "zhc_ir 0.12.4",
-  "zhc_langs",
-  "zhc_profiling",
-  "zhc_sim",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
- 
- [[package]]
- name = "zhc_profiling"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
-+checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
- 
- [[package]]
- name = "zhc_sim"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b210ddee27dd47d34"
-+checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb14d392b74d76b2"
- dependencies = [
-  "serde",
-  "serde_json",
-  "toml 0.9.12+spec-1.1.0",
-  "zhc_config",
-  "zhc_langs",
-- "zhc_utils 0.10.1",
-+ "zhc_utils 0.12.4",
- ]
- 
- [[package]]
-@@ -5354,17 +5354,17 @@ dependencies = [
- 
- [[package]]
- name = "zhc_utils"
--version = "0.10.1"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4473d2d0f56bd97ddcb7ad9fb71c46947aa7a34c6e093bdd91d8b7e4b048f67d"
-+checksum = "4944f9b1930f618edc83924f13d5537d7b353ea506a825c42c2fb7d2e276edc9"
- dependencies = [
-  "libc",
-  "paste",
-  "rand 0.10.1",
-  "rustc-hash",
-  "serde",
-  "serde_json",
-- "zhc_utils_macro 0.10.1",
-+ "zhc_utils_macro 0.12.4",
- ]
- 
- [[package]]
-@@ -5380,9 +5380,9 @@ dependencies = [
- 
- [[package]]
- name = "z
+-    #[inline]
+-    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
+-        if let Some(device) = global_state::device_of_internal_keys() {
+-            self.move_to_device(device);
++    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
++        Self::Cpu(cpu_ct)
++    }
++
++    #[cfg(feature = "gpu")]
++    fn move_to_gpu(&mut self, streams: &CudaStreams) {
++        self.as_gpu_mut(streams);
++    }
++
++    #[cfg(feature = "hpu")]
++    fn move_to_hpu(&mut self) {
++        if !matches!(self, Self::Hpu(_)) {
++            let cpu_ct = Self::on_cpu(self);
++            let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
++                HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
++            });
++            *self = Self::Hpu(hpu_ct);
+         }
+     }
+ }
 ```
 
-**File**: `backends/tfhe-hpu-backend/Cargo.toml` (modified, +1/-1)
+**File**: `tfhe/src/high_level_api/booleans/squashed_noise.rs` (modified, +6/-6)
 ```diff
-@@ -41,7 +41,7 @@ lru = "0.18.2"
- bitfield-struct = "0.13.0"
- crossbeam = { version = "0.8.4", features = ["crossbeam-queue"] }
- rayon = { workspace = true }
--zhc = "0.10.1"
-+zhc = "0.12.4"
+@@ -131,10 +131,10 @@ impl InnerSquashedNoiseBoolean {
+         let cpu_ct = self.on_cpu();
  
- # Dependencies used for Sim feature
- ra2m_ffi = "1.0"
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_15_v0.asm` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
-+; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
- ; [lut]
- ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
- ; } ----------------------------------------------------------------------------
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_5_v0.asm` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
-+; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
- ; [lut]
- ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
- ; } ----------------------------------------------------------------------------
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_6_v0.asm` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
-+; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
- ; [lut]
- ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
- ; } ----------------------------------------------------------------------------
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_7_v0.asm` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
-+; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
- ; [lut]
- ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
- ; } ----------------------------------------------------------------------------
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_21_v0.asm` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<2, 2, 2> -> Ciphertext<16, 2, 2>
-+; CiphertextInteger<2, 2, 2> -> CiphertextInteger<16, 2, 2>
- ; [lut]
- ; TestMany8: [0,1,1,2,2,3,3,0,0,1,1,2,2,3,3,0]
- ; } ----------------------------------------------------------------------------
-```
-
-**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_33_v0.asm` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- ; ------------------------------------------------------------------------------
- ; !preamble {
- ; [signature]
--; Ciphertext<16, 2, 2> -> Ciphertext<16, 2, 2>
-+; CiphertextInteger<16, 2, 2> -> CiphertextInteger<16, 2, 2>
- ; [lut]
- ; } ----------------------------------------------------------------------------
+         // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
++        // Each arm builds the new self, so a transfer cannot be forgotten
++        *self = match target_device {
++            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
++            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
+             #[cfg(feature = "gpu")]
+             Device::CudaGpu => {
+                 let new_inner = with_cuda_internal_keys(|keys| {
+@@ -143,13 +143,13 @@ impl InnerSquashedNoiseBoolean {
+                         &cpu_ct, streams,
+                     )
+                 });
+-                *self = Self::Cuda(new_inner);
++                Self::Cuda(new_inner)
+             }
+             #[cfg(feature = "hpu")]
+             Device::Hpu => {
+                 panic!("HPU does not support compression");
+             }
+-        }
++        };
+     }
  
+     #[inline]
+```
+
+**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +6/-6)
+```diff
+@@ -423,23 +423,23 @@ impl InnerCompressedCiphertextList {
+         let cpu_ct = self.on_cpu()?;
+ 
+         // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
++        // Each arm builds the new self, so a transfer cannot be forgotten
++        *self = match target_device {
++            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
++            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
+             #[cfg(feature = "gpu")]
+             Device::CudaGpu => {
+                 let new_inner = with_cuda_internal_keys(|keys| {
+                     let streams = &keys.streams;
+                     cpu_ct.to_cuda_compressed_ciphertext_list(streams)
+                 });
+-                *self = Self::Cuda(new_inner);
++                Self::Cuda(new_inner)
+             }
+             #[cfg(feature = "hpu")]
+             Device::Hpu => {
+                 panic!("HPU does not support compression");
+             }
+-        }
++        };
+ 
+         Ok(())
+     }
+```
+
+**File**: `tfhe/src/high_level_api/compressed_noise_squashed_ciphertext_list.rs` (modified, +6/-6)
+```diff
+@@ -147,23 +147,23 @@ impl InnerCompressedSquashedNoiseCiphertextList {
+         let cpu_ct = self.on_cpu()?;
+ 
+         // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
++        // Each arm builds the new self, so a transfer cannot be forgotten
++        *self = match target_device {
++            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
++            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
+             #[cfg(feature = "gpu")]
+             Device::CudaGpu => {
+                 let new_inner = with_cuda_internal_keys(|keys| {
+                     let streams = &keys.streams;
+                     CudaCompressedSquashedNoiseCiphertextList::from_compressed_squashed_noise_ciphertext_list(&cpu_ct, streams)
+                 })?;
+-                *self = Self::Cuda(new_inner);
++                Self::Cuda(new_inner)
+             }
+             #[cfg(feature = "hpu")]
+             Device::Hpu => {
+                 panic!("HPU does not support compression");
+             }
+-        }
++        };
+ 
+         Ok(())
+     }
+```
+
+**File**: `tfhe/src/high_level_api/details.rs` (modified, +51/-0)
+```diff
+@@ -30,3 +30,54 @@ impl<T> Deref for MaybeCloned<'_, T> {
+         }
+     }
+ }
++
++/// Inner ciphertext of a high level type, which lives on one device at a time.
++///
++/// The CPU is the hub. No device converts directly to another one, every transfer
++/// goes through the CPU form. A type only describes its own transfers,
++/// [move_to_device] owns the policy that is the same for all of them.
++pub(in crate::high_level_api) trait DeviceMovable: Sized {
++    type CpuCiphertext: Clone;
++
++    fn current_device(&self) -> crate::Device;
++
++    /// Borrows when self already is on the CPU, a copy is only paid for a real transfer
++    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext>;
++
++    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self;
++
++    /// Also has to handle a ciphertext that sits on another GPU than the one of the streams
++    #[cfg(feature = "gpu")]
++    fn move_to_gpu(&mut self, streams: &crate::core_crypto::gpu::CudaStreams);
++
++    /// Takes no device so that a type without HPU support can refuse before one is looked up
++    #[cfg(feature = "hpu")]
++    fn move_to_hpu(&mut self);
++}
++
++/// Shared by the boolean, unsigned and signed inner ciphertexts.
++#[allow(clippy::needless_pass_by_ref_mut)]
++pub(in crate::high_level_api) fn move_to_device<T: DeviceMovable>(
++    ct: &mut T,
++    target_device: crate::Device,
++) {
++    match target_device {
++        crate::Device::Cpu => {
++            if ct.current_device() != crate::Device::Cpu {
++                // as_cpu_mut calls itself again after this move, it only terminates if ct
++                // really ends up on the CPU
++                let cpu_ct = ct.on_cpu().into_owned();
++                *ct = T::from_cpu(cpu_ct);
++            }
++        }
++        #[cfg(feature = "gpu")]
++        crate::Device::CudaGpu => {
++            // No early return when ct already is on a GPU, it may be another one than the key's
++            crate::high_level_api::global_state::with_cuda_internal_keys(|key| {
++                ct.move_to_gpu(&key.streams);
++            });
++        }
++        #[cfg(feature = "hpu")]
++        crate::Device::Hpu => ct.move_to_hpu(),
++    }
++}
+```
+
+**File**: `tfhe/src/high_level_api/integers/signed/inner.rs` (modified, +29/-45)
+```diff
+@@ -1,13 +1,11 @@
+ #[cfg(feature = "gpu")]
+ use crate::core_crypto::gpu::CudaStreams;
+ use crate::high_level_api::backward_compatibility::integers::SerializableSignedRadixCiphertextVersions;
+-use crate::high_level_api::details::MaybeCloned;
++use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
+ use crate::high_level_api::global_state;
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::cuda_clone;
+ #[cfg(feature = "gpu")]
+-use crate::high_level_api::global_state::with_cuda_internal_keys;
+-#[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
+ #[cfg(feature = "gpu")]
+ use crate::integer::gpu::ciphertext::CudaIntegerRadixCiphertext;
+@@ -179,48 +177,8 @@ impl SignedRadixCiphertext {
+         }
+     }
+ 
+-    #[allow(clippy::needless_pass_by_ref_mut)]
+-    pub(crate) fn move_to_device(&mut self, device: Device) {
+-        match (&self, device) {
+-            (Self::Cpu(_), Device::Cpu) => {
+-                // Nothing to do, we already are on the correct device
+-            }
+-            #[cfg(feature = "gpu")]
+-            (Self::Cuda(cuda_ct), Device::CudaGpu) => {
+-                // We are on a GPU, but it may not be the correct one
+-                let new = with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+-                        None
+-                    } else {
+-                        Some(cuda_ct.duplicate(streams))
+-                    }
+-                });
+-                if let Some(ct) = new {
+-                    *self = Self::Cuda(ct);
+-                }
+-            }
+-            #[cfg(feature = "gpu")]
+-            (Self::Cpu(ct), Device::CudaGpu) => {
+-                let new_inner = with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    CudaSignedRadixCiphertext::from_signed_radix_ciphertext(ct, streams)
+-                });
+-                *self = Self::Cuda(new_inner);
+-            }
+-            #[cfg(feature = "gpu")]
+-            (Self::Cuda(ct), Device::Cpu) => {
+-                let new_inner =
+-                    with_thread_local_cuda_streams_for_gpu_indexes(ct.gpu_indexes(), |streams| {
+-                        ct.to_signed_radix_ciphertext(streams)
+-                    });
+-                *self = Self::Cpu(new_inner);
+-            }
+-            #[cfg(feature = "hpu")]
+-            (_, Device::Hpu) => {
+-                panic!("Hpu device do not support signed integer yet")
+-            }
+-        }
++    pub(crate) fn move_to_device(&mut self, target_device: Device) {
++        crate::high_level_api::details::move_to_device(self, target_device);
+     }
+ 
+     #[inline]
+@@ -230,3 +188,29 @@ impl SignedRadixCiphertext {
+         }
+     }
+ }
++
++impl DeviceMovable for SignedRadixCiphertext {
++    type CpuCiphertext = crate::integer::SignedRadixCiphertext;
++
++    fn current_device(&self) -> Device {
++        Self::current_device(self)
++    }
++
++    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
++        Self::on_cpu(self)
++    }
++
++    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
++        Self::Cpu(cpu_ct)
++    }
++
++    #[cfg(feature = "gpu")]
++    fn move_to_gpu(&mut self, streams: &CudaStreams) {
++        self.as_gpu_mut(streams);
++    }
++
++    #[cfg(feature = "hpu")]
++    fn move_to_hpu(&mut self) {
++        panic!("Hpu device do not support signed integer yet")
++    }
++}
+```
+
+**File**: `tfhe/src/high_level_api/integers/signed/squashed_noise.rs` (modified, +6/-6)
+```diff
+@@ -139,23 +139,23 @@ impl InnerSquashedNoiseSignedRadixCiphertext {
+         let cpu_ct = self.on_cpu();
+ 
+         // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
++        // Each arm builds the new self, so a transfer cannot be forgotten
++        *self = match target_device {
++            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
++            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
+             #[cfg(feature = "gpu")]
+             Device::CudaGpu => {
+                 let new_inner = with_cuda_internal_keys(|keys| {
+                     let streams = &keys.streams;
+                     CudaSquashedNoiseSignedRadixCiphertext::from_squashed_noise_signed_radix_ciphertext(&cpu_ct, streams)
+                 });
+-                *self = Self::Cuda(new_inner);
++                Self::Cuda(new_inner)
+             }
+             #[cfg(feature = "hpu")]
+             Device::Hpu => {
+                 panic!("HPU does not support noise squashing compression");
+             }
+-        }
++        };
+     }
+ 
+     #[inline]
+```
+
+**File**: `tfhe/src/high_level_api/integers/unsigned/inner.rs` (modified, +30/-49)
+```diff
+@@ -1,13 +1,11 @@
+ #[cfg(feature = "gpu")]
+ use crate::core_crypto::gpu::CudaStreams;
+ use crate::high_level_api::backward_compatibility::integers::SerializableRadixCiphertextVersions;
+-use crate::high_level_api::details::MaybeCloned;
++use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
+ use crate::high_level_api::global_state;
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::cuda_clone;
+ #[cfg(feature = "gpu")]
+-use crate::high_level_api::global_state::with_cuda_internal_keys;
+-#[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
+ #[cfg(feature = "hpu")]
+ use crate::high_level_api::keys::HpuTaggedDevice;
+@@ -253,53 +251,8 @@ impl RadixCiphertext {
+         }
+     }
+ 
+-    #[allow(clippy::needless_pass_by_ref_mut)]
+     pub(crate) fn move_to_device(&mut self, target_device: Device) {
+-        let current_device = self.current_device();
+-
+-        if current_device == target_device {
+-            #[cfg(feature = "gpu")]
+-            // We may not be on the correct Cuda device
+-            if let Self::Cuda(cuda_ct) = self {
+-                with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+-                        *cuda_ct = cuda_ct.duplicate(streams);
+-                    }
+-                })
+-            }
+-            return;
+-        }
+-
+-        // The logic is that the common device is the CPU, all other devices
+-        // know how to transfer from and to CPU.
+-
+-        // So we first transfer to CPU
+-        let cpu_ct = self.on_cpu();
+-
+-        // Then we can transfer the desired device
+-        match target_device {
+-            Device::Cpu => {
+-                let _ = cpu_ct;
+-            }
+-            #[cfg(feature = "gpu")]
+-            Device::CudaGpu => {
+-                let new_inner = with_cuda_internal_keys(|key| {
+-                    let streams = &key.streams;
+-                    crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext::from_radix_ciphertext(
+-                        &cpu_ct, streams,
+-                    )
+-                });
+-                *self = Self::Cuda(new_inner);
+-            }
+-            #[cfg(feature = "hpu")]
+-            Device::Hpu => {
+-                let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
+-                    HpuRadixCiphertext::from_radix_ciphertext(&cpu_ct, &device.device, None)
+-                });
+-                *self = Self::Hpu(hpu_ct);
+-            }
+-        }
++        crate::high_level_api::details::move_to_device(self, target_device);
+     }
+ 
+     #[inline]
+@@ -309,3 +262,31 @@ impl RadixCiphertext {
+         }
+     }
+ }
++
++impl DeviceMovable for RadixCiphertext {
++    type CpuCiphertext = crate::integer::RadixCiphertext;
++
++    fn current_device(&self) -> Device {
++        Self::current_device(self)
++    }
++
++    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
++        Self::on_cpu(self)
++    }
++
++    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
++        Self::Cpu(cpu_ct)
++    }
++
++    #[cfg(feature = "gpu")]
++    fn move_to_gpu(&mut self, streams: &CudaStreams) {
++        self.as_gpu_mut(streams);
++    }
++
++    #[cfg(feature = "hpu")]
++    fn move_to_hpu(&mut self) {
++        global_state::with_thread_local_hpu_device(|device| {
++            self.as_hpu_mut(device);
++        });
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
+- **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
+- **PR #4198** (2026-11-23): Ns/chore/transciphering 2 bits (@nsarlin-zama)
 - **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
 - **PR #4195** (2026-11-19): fix(gpu): do not return a 0 decompression size for single-block items (@agnesLeroy)
 - **PR #4194** (2026-11-19): chore: publish steps are put beyon a release environment (@IceTDrinker)
-- **PR #4193** (closed): fix(gpu): fixing inplace shift and rotate with dirty inputs (@enzodimaria)
-- **PR #4189** (2026-11-18): fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (@pdroalves)
-- **PR #4186** (2026-11-20): fix(gpu): handle out-of-range and negative scalars in scalar max and min (@pdroalves)
 
 ---
 
@@ -2286,93 +2505,91 @@ update fw_dyn example to execute more multi-HPU operations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hpu): HPU backend moves to use ZHC 0.12.4
+## X. gpu): keep the CPU copy when moving a ciphertext back to the CPU
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/booleans/inner.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dcfe7e6d`: hpu): HPU backend moves to use ZHC 0.12.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dddbbc4`: gpu): keep the CPU copy when moving a ciphertext back to the CPU. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/booleans/inner.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.12.4"
-checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
- "zhc_ir 0.12.4",
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
- "zhc_ir 0.12.4",
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
- "zhc_utils 0.12.4",
- "zhc_utils_macro 0.12.4",
-version = "0.12.4"
-checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
- "zhc_ir 0.12.4",
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
-version = "0.12.4"
-checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
- "zhc_ir 0.12.4",
- "zhc_utils 0.12.4",
-version = "0.12.4"
-checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
-version = "0.12.4"
-checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb
+use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
+        crate::high_level_api::details::move_to_device(self, target_device);
+    }
+    #[inline]
+    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
+        if let Some(device) = global_state::device_of_internal_keys() {
+            self.move_to_device(device);
+    }
+}
+impl DeviceMovable for InnerBoolean {
+    type CpuCiphertext = BooleanBlock;
+    fn current_device(&self) -> Device {
+        Self::current_device(self)
+    }
+    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
+        Self::on_cpu(self)
+    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
+        Self::Cpu(cpu_ct)
+    }
+
+    #[cfg(feature = "gpu")]
+    fn move_to_gpu(&mut self, streams: &CudaStreams) {
+        self.as_gpu_mut(streams);
+    }
+
+    #[cfg(feature = "hpu")]
+    fn move_to_hpu(&mut self) {
+        if !matches!(self, Self::Hpu(_)) {
+            let cpu_ct = Self::on_cpu(self);
+            let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
+                HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
+            });
+            *self = Self::Hpu(hpu_ct);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.10.1"
-checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
- "zhc_ir 0.10.1",
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
- "zhc_ir 0.10.1",
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
- "zhc_utils 0.10.1",
- "zhc_utils_macro 0.10.1",
-version = "0.10.1"
-checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
- "zhc_ir 0.10.1",
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
-version = "0.10.1"
-checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
- "zhc_ir 0.10.1",
- "zhc_utils 0.10.1",
-version = "0.10.1"
-checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
-version = "0.10.1"
-checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b21
+use crate::high_level_api::details::MaybeCloned;
+use crate::high_level_api::global_state::with_cuda_internal_keys;
+#[cfg(feature = "gpu")]
+    #[allow(clippy::needless_pass_by_ref_mut)]
+        let current_device = self.current_device();
+        if current_device == target_device {
+            #[cfg(feature = "gpu")]
+            // We may not be on the correct Cuda device
+            if let Self::Cuda(cuda_ct) = self {
+                with_cuda_internal_keys(|key| {
+                    let streams = &key.streams;
+                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                        *cuda_ct = cuda_ct.duplicate(streams);
+                    }
+                })
+            }
+            return;
+        // The logic is that the common device is the CPU, all other devices
+        // know how to transfer from and to CPU.
+        // So we first transfer to CPU
+        let cpu_ct = self.on_cpu();
+        // Then we can transfer the desired device
+        match target_device {
+            Device::Cpu => {
+                let _ = cpu_ct;
+            }
+            #[cfg(feature = "gpu")]
+            Device::CudaGpu => {
+                let new_inner = with_cuda_in
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dcfe7e6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dddbbc4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
