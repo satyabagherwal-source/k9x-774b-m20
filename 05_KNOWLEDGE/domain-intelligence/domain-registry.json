@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T15:54:55.051Z",
-  "total_records": 2427,
+  "last_updated": "2026-11-23T16:03:06.743Z",
+  "total_records": 2429,
   "domains": {
     "A": {
       "total": 20,
@@ -1117,7 +1117,7 @@
       ]
     },
     "G": {
-      "total": 418,
+      "total": 420,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1536,7 +1536,9 @@
         "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants",
-        "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants",
+        "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants"
       ]
     },
     "H": {
@@ -15965,8 +15967,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants.md",
       "repository": "Qwen/Qwen3-8B",
-      "content_hash": "4483ab75af1f20d8bd875e8f52652fff2e3301d15882821e8ae458b333003b6c",
-      "created_at": "2026-11-19T02:56:06.475Z"
+      "content_hash": "e86194ecdeafa3e219795d2ee99705125f62af95281e6631b3cbe72c0ff92304",
+      "created_at": "2026-11-23T16:02:50.126Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
@@ -16025,8 +16027,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8b-lear.md",
       "repository": "hf-qwen-qwen3-8b-learnings",
-      "content_hash": "6b80d1c2368693898d10cd2b078609e628359be6f78517928b9b339079665d59",
-      "created_at": "2026-11-19T02:56:54.229Z"
+      "content_hash": "4291ec77ccf3479d41d080598d8570a55eea3182abd3158f5ccc43f82813b4ad",
+      "created_at": "2026-11-23T16:03:06.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
@@ -22486,8 +22488,8 @@
       "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
       "repository": "mlua-rs/mlua",
-      "content_hash": "165f090d2720fa882b9ad17943c0894cd3f7b9d3bced1acfb664ba4fac0f0ec1",
-      "created_at": "2026-11-19T00:22:43.875Z"
+      "content_hash": "1630ae30760c39196be8597b74a13c521623d4a0d18d15613ecbf0cb62bb0b18",
+      "created_at": "2026-11-23T16:02:52.844Z"
     },
     "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants",
@@ -22495,8 +22497,8 @@
       "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-learnings-architecture-intelligence-mlua-rs-mlua-learnings-core-inv.md",
       "repository": "mlua-rs-mlua-learnings",
-      "content_hash": "8f19d6ab12c705a7441e97bb8268151e9181e4fe5015f9ced73dbd579ad08ca7",
-      "created_at": "2026-11-19T00:23:00.228Z"
+      "content_hash": "06ee466f1cf6408c93c78508ce56f76836d20a937bbfa7ca60a5d57a7f714c47",
+      "created_at": "2026-11-23T16:03:05.596Z"
     },
     "DOM-K-9BB3D64B": {
       "record_id": "DOM-K-9BB3D64B",
@@ -40763,6 +40765,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T15:38:08.260Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: argoproj/argo-workflows Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-architecture-intelligence-argoproj-argo-workflows-core-i.md",
+      "repository": "argoproj/argo-workflows",
+      "content_hash": "78a3f9f513d29497f0e80df6648fca25e9b3ac3ef9a62ec19120886dca9d5224",
+      "created_at": "2026-11-23T16:03:02.143Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: argoproj-argo-workflows-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-learnings-architecture-intelligence-argoproj-argo-workfl.md",
+      "repository": "argoproj-argo-workflows-learnings",
+      "content_hash": "0a45f2588bdd4258785335a550bd37f2bef523d741f59e082647156f5840c326",
+      "created_at": "2026-11-23T16:03:06.743Z"
     }
   }
 }

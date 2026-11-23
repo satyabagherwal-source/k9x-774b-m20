@@ -12360,3 +12360,6 @@
 | `CYCLE-20261123-TXPV` | `2026-11-23T15:45:54.931Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`285b0950...`) |
 | `CYCLE-20261123-580H` | `2026-11-23T15:54:41.489Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`cfd4a294...`) |
 | `CYCLE-20261123-596Z` | `2026-11-23T15:54:43.019Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10062` | Yes (`7a4e7556...`) |
+| `CYCLE-20261123-FOVX` | `2026-11-23T16:02:49.917Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`58eb9dc8...`) |
+| `CYCLE-20261123-FQSY` | `2026-11-23T16:02:52.402Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md` | Yes (`9059a661...`) |
+| `CYCLE-20261123-FY0N` | `2026-11-23T16:03:01.751Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10063` | Yes (`80a08af9...`) |

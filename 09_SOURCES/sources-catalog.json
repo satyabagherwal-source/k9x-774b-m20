@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "b88a9e242c04c92d37595bc6b2e91e402320ee90081d42ef19e6c2d4b4868908",
-    "lastHarvestedAt": "2026-11-19T02:56:06.237Z",
+    "contentHash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
+    "lastHarvestedAt": "2026-11-23T16:02:49.921Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "3c0fd858",
+    "sourceVersion": "cbd45a79",
     "license": "NOASSERTION",
-    "contentHash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
-    "lastHarvestedAt": "2026-11-19T00:22:43.426Z",
+    "contentHash": "9059a66108be3bdfcdad77fbfac4e5994e4546a911428d55577399832a2c4230",
+    "lastHarvestedAt": "2026-11-23T16:02:52.407Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "e651c727",
+    "sourceVersion": "a25c64b8",
     "license": "Apache-2.0",
-    "contentHash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
-    "lastHarvestedAt": "2026-11-21T11:38:41.864Z",
+    "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
+    "lastHarvestedAt": "2026-11-23T16:03:01.755Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

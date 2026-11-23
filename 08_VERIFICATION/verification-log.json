@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-Y117",
-    "timestamp": "2026-11-21T15:17:45.787Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "b013df4c1cf6153889609c59a2c84086553a27eeae8aec6a1246d21e4b7c0702",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-Y6PQ",
-    "timestamp": "2026-11-21T15:17:53.150Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "43a1a0a685f7e79e7f0dc7c6700508a78d413f0acd2fa75a328194b899241bf4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-FFIO",
-    "timestamp": "2026-11-21T15:31:17.712Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-FJNH",
     "timestamp": "2026-11-21T15:31:23.069Z",
     "repository": "react-navigation/react-navigation",
@@ -7490,6 +7445,51 @@
     "repository": "NVIDIA/cuda-rust",
     "learningId": "learn-github-nvidia-cuda-rust",
     "contentHash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-FOVX",
+    "timestamp": "2026-11-23T16:02:49.917Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-FQSY",
+    "timestamp": "2026-11-23T16:02:52.402Z",
+    "repository": "mlua-rs/mlua",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "9059a66108be3bdfcdad77fbfac4e5994e4546a911428d55577399832a2c4230",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-FY0N",
+    "timestamp": "2026-11-23T16:03:01.751Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

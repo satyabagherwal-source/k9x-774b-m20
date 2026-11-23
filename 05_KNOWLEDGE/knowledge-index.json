@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T15:54:55.304Z",
+  "last_updated": "2026-11-23T16:03:06.921Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24023,
+  "total_items": 24028,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "e651c727",
-      "content_hash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
+      "source_version": "a25c64b8",
+      "content_hash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212423,6 +212423,11 @@
           "number": 9771,
           "title": "test(controller): move fourth slice of operator fixtures into testdata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10063,
+          "title": "ignore unspecified container timestamps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212430,7 +212435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:38:41.623Z",
+      "verified_at": "2026-11-23T16:03:01.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212484,10 +212489,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "e651c727",
-      "content_hash": "1ac353662af4086530aff7e11e66fef9bcfd4e0f5b453fb63f48252019c25aff",
+      "source_version": "a25c64b8",
+      "content_hash": "880fdd868bd75769c90ba0316fa51950e5fd51addfc81a965a073ffef6f1bd04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:38:42.549Z"
+      "persisted_at": "2026-11-23T16:03:02.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212533,9 +212538,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "aeb61f17ff3a429080fec9dfb3b7dde80dfb85eab9da5bc88809a789fe105915",
+      "content_hash": "a5c2aa30cd9a3ad24f069c5138047c17d5a5d90c25869f6554ff0d782fc5ee2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:38:52.489Z"
+      "persisted_at": "2026-11-23T16:03:06.921Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -220361,13 +220366,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3GWJ-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G0UM-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "maziyarpanahi-openmed-learnings",
+      "repository": "mlua-rs-mlua-learnings",
       "source_version": "HEAD",
-      "content_hash": "45332e773ada9472798a3f39ffea4eca2fee585707c0bddb6c9a2f809cf68cc7",
+      "content_hash": "286965aa4b4224e3b6dfa3c99e8c492640ee9762c0794e51fcd08e31d8c5c250",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:33:33.144Z"
+      "persisted_at": "2026-11-23T16:03:05.426Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -231306,7 +231311,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "b88a9e242c04c92d37595bc6b2e91e402320ee90081d42ef19e6c2d4b4868908",
+      "content_hash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "promoted_rules": [],
@@ -231315,7 +231320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T02:56:05.988Z",
+      "verified_at": "2026-11-23T16:02:49.667Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231332,9 +231337,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-8B Core Invariants",
       "repository": "Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "4483ab75af1f20d8bd875e8f52652fff2e3301d15882821e8ae458b333003b6c",
+      "content_hash": "e86194ecdeafa3e219795d2ee99705125f62af95281e6631b3cbe72c0ff92304",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:56:06.475Z"
+      "persisted_at": "2026-11-23T16:02:50.126Z"
     },
     "learn-github-dosco-graphjin": {
       "learning_id": "learn-github-dosco-graphjin",
@@ -231437,9 +231442,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-8b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-8b-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b80d1c2368693898d10cd2b078609e628359be6f78517928b9b339079665d59",
+      "content_hash": "4291ec77ccf3479d41d080598d8570a55eea3182abd3158f5ccc43f82813b4ad",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:56:54.229Z"
+      "persisted_at": "2026-11-23T16:03:06.138Z"
     },
     "candidate_directive-introspection-expose-columns-of-postgres-functions-returning-table-rows": {
       "item_id": "candidate_directive-introspection-expose-columns-of-postgres-functions-returning-table-rows",
@@ -251333,8 +251338,8 @@
       "slug": "mlua-rs-mlua",
       "platform": "github",
       "source_url": "https://github.com/mlua-rs/mlua",
-      "source_version": "3c0fd858",
-      "content_hash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
+      "source_version": "cbd45a79",
+      "content_hash": "9059a66108be3bdfcdad77fbfac4e5994e4546a911428d55577399832a2c4230",
       "dossier_path": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "promoted_rules": [
@@ -251359,7 +251364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:22:43.190Z",
+      "verified_at": "2026-11-23T16:02:52.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251401,10 +251406,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
       "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
       "repository": "mlua-rs/mlua",
-      "source_version": "3c0fd858",
-      "content_hash": "165f090d2720fa882b9ad17943c0894cd3f7b9d3bced1acfb664ba4fac0f0ec1",
+      "source_version": "cbd45a79",
+      "content_hash": "1630ae30760c39196be8597b74a13c521623d4a0d18d15613ecbf0cb62bb0b18",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:22:43.875Z"
+      "persisted_at": "2026-11-23T16:02:52.844Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua",
@@ -251413,10 +251418,10 @@
       "relative_path": "08_VERIFICATION/mlua-rs-mlua-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua.md",
       "title": "Verification Protocol: Empirical Defect Shield for mlua-rs/mlua",
       "repository": "mlua-rs/mlua",
-      "source_version": "3c0fd858",
-      "content_hash": "f41e7f13caeb202049e918159cb534fd605f2e899b1a7d38b8286053230928cb",
+      "source_version": "cbd45a79",
+      "content_hash": "6b87a25ca2cb2e97a94a5e308c86725f6a65ae0419b473bd60af0e0f379398fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:22:44.055Z"
+      "persisted_at": "2026-11-23T16:02:53.033Z"
     },
     "rule-8649": {
       "learning_id": "rule-8649",
@@ -251504,9 +251509,9 @@
       "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
       "repository": "mlua-rs-mlua-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f19d6ab12c705a7441e97bb8268151e9181e4fe5015f9ced73dbd579ad08ca7",
+      "content_hash": "06ee466f1cf6408c93c78508ce56f76836d20a937bbfa7ca60a5d57a7f714c47",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:23:00.228Z"
+      "persisted_at": "2026-11-23T16:03:05.596Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings",
@@ -251516,9 +251521,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mlua-rs-mlua-learnings",
       "repository": "mlua-rs-mlua-learnings",
       "source_version": "HEAD",
-      "content_hash": "79053f2339815d06591791e961a858c1721980eed901c29d6b40f0728ee11229",
+      "content_hash": "d1c0b1d8aad646276586c90bed0e4dd56a98fc73e0408e97a4de094ac537c91b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:23:00.426Z"
+      "persisted_at": "2026-11-23T16:03:05.771Z"
     },
     "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache": {
       "item_id": "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache",
@@ -327299,6 +327304,68 @@
       "content_hash": "0fcfdc6058d08db3de21663164babdddf478f0f9fd6554d66cde9b1a6bceda36",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T15:54:53.186Z"
+    },
+    "rule-10063": {
+      "learning_id": "rule-10063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10063,
+      "title": "ignore unspecified container timestamps",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "a25c64b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:03:01.542Z"
+    },
+    "candidate_directive-ignore-unspecified-container-timestamps": {
+      "item_id": "candidate_directive-ignore-unspecified-container-timestamps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FY6U-ignore-unspecified-container-timestamps.md",
+      "title": "ignore unspecified container timestamps",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "a25c64b8",
+      "content_hash": "926b16d27feb67bd7c8703b0c4cdf0fa730095b3e3908a5f1019c71a3359614b",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T16:03:01.975Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-architecture-intelligence-argoproj-argo-workflows-core-i.md",
+      "title": "Architecture Intelligence: argoproj/argo-workflows Core Invariants",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "a25c64b8",
+      "content_hash": "78a3f9f513d29497f0e80df6648fca25e9b3ac3ef9a62ec19120886dca9d5224",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:03:02.143Z"
+    },
+    "candidate_directive-resource-ignore-unspecified-container-timestamps": {
+      "item_id": "candidate_directive-resource-ignore-unspecified-container-timestamps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G1QE-resource-ignore-unspecified-container-timestamps.md",
+      "title": "resource): ignore unspecified container timestamps",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80b8648a1ff1c3f7474308c83a91b5d6acba28c9838e5c0e60d93d7915af81ec",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T16:03:06.566Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-learnings-architecture-intelligence-argoproj-argo-workfl.md",
+      "title": "Architecture Intelligence: argoproj-argo-workflows-learnings Core Invariants",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a45f2588bdd4258785335a550bd37f2bef523d741f59e082647156f5840c326",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:03:06.743Z"
     }
   },
   "ai-builder-brain": {

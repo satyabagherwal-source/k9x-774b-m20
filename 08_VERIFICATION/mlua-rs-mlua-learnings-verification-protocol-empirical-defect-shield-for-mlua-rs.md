@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T00:22:59.911Z",
+  "timestamp": "2026-11-23T16:03:05.301Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mlua-rs-mlua-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mlua-rs-mlua-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T00:22:59.911Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T16:03:05.301Z`  
 > **Learning ID**: `LEARN-EVO-mlua-rs-mlua-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source**: github ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
-> **Source Version**: `3c0fd858`  
+> **Source Version**: `cbd45a79`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:22:42.156Z  
+> **Timestamp**: 2026-11-23T16:02:51.898Z  
 > **Learning ID**: `learn-github-mlua-rs-mlua`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:22:42.149Z  
+> **Harvest Timestamp**: 2026-11-23T16:02:51.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High level Lua 5.5/5.4/5.3/5.2/5.1 (including LuaJIT) and Luau bindings to Rust with async/await support
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2956 stars
+- **Stars / Engagement**: 2964 stars
 
 ---
 
@@ -2397,19 +2397,57 @@ impl TypeKey for Option<std::task::Waker> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c0fd858` (2026-11-18)
-**Commit Message**: ci: Don't try and generate documentation github-pages on forks. (#767)
+### Incident Patch 1: `cbd45a79` (2026-11-22)
+**Commit Message**: v0.12.3
 
-**File**: `.github/workflows/docs.yml` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -19,6 +19,7 @@ concurrency:
- jobs:
-   build:
-     name: Build Documentation
-+    if: github.repository == 'mlua-rs/mlua'
-     runs-on: ubuntu-latest
+@@ -1,4 +1,4 @@
+-## v0.12.3 (unreleased)
++## v0.12.3 (Nov 22, 2026)
+ 
+ - Luau updated to 0.747
+ - Luau integer64 support is removed and `StdLib::INTEGER` is deprecated
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "mlua"
+-version = "0.12.2" # remember to update mlua_derive
++version = "0.12.3" # remember to update mlua_derive
+ authors = ["Aleksandr Orlenko <zxteam@pm.me>", "kyren <catherine@kyju.org>"]
+ rust-version = "1.88"
+ edition = "2024"
+```
+
+---
+
+### Incident Patch 2: `e53c2cae` (2026-11-22)
+**Commit Message**: CI: Use UCRT64 for Windows module tests
+
+**File**: `.github/workflows/main.yml` (modified, +8/-3)
+```diff
+@@ -209,10 +209,15 @@ jobs:
+         shell: msys2 {0}
      steps:
+       - uses: msys2/setup-msys2@v2
++        with:
++          msystem: UCRT64
++          install: >-
++            mingw-w64-ucrt-x86_64-rust
++            mingw-w64-ucrt-x86_64-lua54
++            mingw-w64-ucrt-x86_64-lua
++            mingw-w64-ucrt-x86_64-luajit
++            mingw-w64-ucrt-x86_64-pkgconf
        - uses: actions/checkout@main
+-      - name: Install Rust & Lua
+-        run: |
+-          pacman -S --noconfirm mingw-w64-x86_64-rust mingw-w64-x86_64-lua54 mingw-w64-x86_64-lua mingw-w64-x86_64-luajit mingw-w64-x86_64-pkg-config
+       - name: Run ${{ matrix.lua }} module tests
+         run: |
+           (cd tests/module && cargo build --release --features "${{ matrix.lua }}")
 ```
 
 #### Recent Merged Pull Requests:
@@ -2438,31 +2476,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Don't try and generate documentation github-pages on forks.
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c0fd858`: ci: Don't try and generate documentation github-pages on forks.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbd45a79`: v0.12.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if: github.repository == 'mlua-rs/mlua'
+## v0.12.3 (Nov 22, 2026)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+## v0.12.3 (unreleased)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c0fd858` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbd45a79` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

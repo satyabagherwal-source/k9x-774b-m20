@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:54:43.031Z",
-  "total_cycles_completed": 11752,
-  "total_learnings_persisted": 11752,
-  "total_rules_promoted": 10899,
+  "last_updated": "2026-11-23T16:03:01.761Z",
+  "total_cycles_completed": 11755,
+  "total_learnings_persisted": 11755,
+  "total_rules_promoted": 10900,
   "history": [
-    {
-      "timestamp": "2026-11-22T18:35:17.057Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:35:18.202Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:44:02.733Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T18:44:06.320Z",
       "repository": "tuist/tuist",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T15:54:43.031Z",
       "repository": "NVIDIA/cuda-rust",
       "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:02:49.926Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:02:52.447Z",
+      "repository": "mlua-rs/mlua",
+      "learningId": "learn-github-mlua-rs-mlua",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:03:01.761Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

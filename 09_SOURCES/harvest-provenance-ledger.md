@@ -12393,3 +12393,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ffead11c` | Multi-dimensional audit evidence | 2026-11-23T15:45:54.934Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-23T15:54:41.495Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `5e5c77b1` | Multi-dimensional audit evidence | 2026-11-23T15:54:43.024Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T16:02:49.921Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `cbd45a79` | Multi-dimensional audit evidence | 2026-11-23T16:02:52.407Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `a25c64b8` | Multi-dimensional audit evidence | 2026-11-23T16:03:01.755Z |
