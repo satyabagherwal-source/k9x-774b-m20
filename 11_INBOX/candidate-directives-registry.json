@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:12:00.761Z",
+  "last_updated": "2026-11-23T17:20:57.743Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50038,6 +50038,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3608D1-bind-lookaround-exemptions-to-their-segm.md",
       "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-8584",
+      "directive_title": "Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout sw",
+      "source_repo": "0xcub3-wblock-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8584-lock-peek-sheet-detent-on-open-fix-show-all-lists-freeze-and-animate-layout-sw.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-7XAP",
+      "directive_title": "changes to let the upstream drain gracefully",
+      "source_repo": "envoyproxy/envoy",
+      "source_commit": "15487f34",
+      "staged_file": "11_INBOX/candidate-directives/CD-7XAP-changes-to-let-the-upstream-drain-gracefully.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-81PF",
+      "directive_title": "Use AST and dialect options for PostgreSQL SQL handling",
+      "source_repo": "apache/shardingsphere",
+      "source_commit": "0d551770",
+      "staged_file": "11_INBOX/candidate-directives/CD-81PF-use-ast-and-dialect-options-for-postgresql-sql-handling.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-5F6EF0",
+      "directive_title": "Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout sw",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "0xcub3-wblock",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F6EF0-lock-peek-sheet-detent-on-open-fix-show-.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-8615",
+      "directive_title": "reverse_tunnels: changes to let the upstream drain gracefully",
+      "source_repo": "envoyproxy-envoy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8615-reverse_tunnels-changes-to-let-the-upstream-drain-gracefully.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
     }
   ]
 }

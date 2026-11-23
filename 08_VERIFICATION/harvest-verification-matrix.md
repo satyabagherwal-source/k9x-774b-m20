@@ -12390,3 +12390,8 @@
 | `CYCLE-20261123-WBKI` | `2026-11-23T17:11:45.042Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`f914c43f...`) |
 | `CYCLE-20261123-WEIC` | `2026-11-23T17:11:48.852Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10077` | Yes (`86b9dfb8...`) |
 | `CYCLE-20261123-WJT0` | `2026-11-23T17:11:55.716Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10078` | Yes (`59b7ef61...`) |
+| `CYCLE-20261123-7OT8` | `2026-11-23T17:20:35.420Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`39db9727...`) |
+| `CYCLE-20261123-7ULE` | `2026-11-23T17:20:42.914Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10079` | Yes (`5a41822f...`) |
+| `CYCLE-20261123-7X1U` | `2026-11-23T17:20:46.098Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10080` | Yes (`b311b454...`) |
+| `CYCLE-20261123-7YEP` | `2026-11-23T17:20:47.857Z` | `rustls/rustls` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rustls-rustls-learnings.md` | Yes (`74450d7e...`) |
+| `CYCLE-20261123-81HA` | `2026-11-23T17:20:51.838Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10081` | Yes (`1d68794b...`) |

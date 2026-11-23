@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:12:00.928Z",
+  "last_updated": "2026-11-23T17:20:57.956Z",
   "total_records": 2433,
   "domains": {
     "A": {
@@ -10885,8 +10885,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "3a53f1df6a09521fd9fa0ef25be6a8ba3b4b966c3b03a30fb6749dee5b86650c",
-      "created_at": "2026-11-22T15:09:15.623Z"
+      "content_hash": "bc30ef4c7fd5700cc8f312e452f5cc866c6dada27ce738ebb004508ce181b134",
+      "created_at": "2026-11-23T17:20:46.642Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -11005,8 +11005,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "04f14007a26f868f07fafdd68e61ae341cd4acd4da0855fa717d583a80c7cd83",
-      "created_at": "2026-11-22T15:09:20.319Z"
+      "content_hash": "b4af178a3552a76c272d16e09923ed4f02a55edd0e0f7e38f0fd775baead9e49",
+      "created_at": "2026-11-23T17:20:57.956Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -16664,8 +16664,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-research-knowledge-intelligence-zai-org-glm-5-3-core-invarian.md",
       "repository": "zai-org/GLM-5.3",
-      "content_hash": "c003cdb41bd8fa256ed447f894009381e5604ff7ce99dde04e2657781efc8cc2",
-      "created_at": "2026-11-19T05:24:20.832Z"
+      "content_hash": "4d657381c1c4de1a5913bff3ca4a3a72792272e7045b7ef7901651519563ce77",
+      "created_at": "2026-11-23T17:20:35.696Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
@@ -16751,8 +16751,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-3-.md",
       "repository": "hf-zai-org-glm-5.3-learnings",
-      "content_hash": "a6b7991295feb4733f2054a4aa44de8b4d4bfb82d117a9daef6276aa366ba253",
-      "created_at": "2026-11-19T05:24:38.648Z"
+      "content_hash": "75c668a2964e24b3a712acc9db6b6e7401d4dba99a25b46d60a4bfc57f7eb500",
+      "created_at": "2026-11-23T17:20:55.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
@@ -24399,8 +24399,8 @@
       "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
       "repository": "0xCUB3/wBlock",
-      "content_hash": "4695598c6e1af0bce774d8f08f25d38855fbc266b24bd3dac0fcfdd8cac451a2",
-      "created_at": "2026-11-20T16:56:35.754Z"
+      "content_hash": "fe6bbae14fa956b6982dda89000c78b2b779426601b7c590a4a8d73ee4840052",
+      "created_at": "2026-11-23T17:20:43.435Z"
     },
     "DOM-L-497D3321": {
       "record_id": "DOM-L-497D3321",
@@ -24451,8 +24451,8 @@
       "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-learnings-technical-construction-intelligence-0xcub3-wblock-learni.md",
       "repository": "0xcub3-wblock-learnings",
-      "content_hash": "73df7387f5baa6a1812f164cecaec7c1e71b2cfd46c7b294976bde2cf8210b9c",
-      "created_at": "2026-11-20T16:58:12.719Z"
+      "content_hash": "40a5f6363dd1658f0a26a27f731ea770ce4a99db8646c48663fb83675cc799a3",
+      "created_at": "2026-11-23T17:20:56.914Z"
     },
     "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
@@ -24691,8 +24691,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "1580a3da54e7f749f572e95c390fcee0b120abad093873223cbd63121f90181c",
-      "created_at": "2026-11-22T14:40:45.985Z"
+      "content_hash": "869a4b2f49d55708500f1d96bfa106eb489639b34f9a5e2745dbc5da19d191d4",
+      "created_at": "2026-11-23T17:20:48.167Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -26686,8 +26686,8 @@
       "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "93e5817c92fdc2eb8b8ccaee6a23761bf0b368714322d3e28c75ff942ede3fc2",
-      "created_at": "2026-11-18T23:26:27.136Z"
+      "content_hash": "2c7f48c2b130d65059a2a57cd2f907bcb04aed7e4c7444844c79d23de8f40324",
+      "created_at": "2026-11-23T17:20:52.359Z"
     },
     "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",

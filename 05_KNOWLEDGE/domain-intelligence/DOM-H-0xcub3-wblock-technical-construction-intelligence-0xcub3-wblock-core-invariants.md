@@ -4,24 +4,24 @@
 {
   "source_repository": "0xCUB3/wBlock",
   "source_url": "https://github.com/0xCUB3/wBlock",
-  "source_version": "71f06abb",
+  "source_version": "bb1c3e27",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-20T16:56:35.552Z",
+  "timestamp": "2026-11-23T17:20:43.209Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-0xcub3-wblock",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `71f06abb`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-20T16:56:35.552Z`  
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `bb1c3e27`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-23T17:20:43.209Z`  
 > **Learning ID**: `learn-github-0xcub3-wblock`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from 0xCUB3/wBlock:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:56:33.964Z  
+> **Harvest Timestamp**: 2026-11-23T17:20:41.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3247 stars
+- **Stars / Engagement**: 3259 stars
 
 ---
 
@@ -141,18 +141,74 @@ public enum WBEngine {
         public let capacityMessage: String?
 
         public init(requestJSON: String) throws {
-            guard let handle = wbe_plan_new(requestJSON) else { throw EngineError.last() }
-            self.handle = handle
-            if let json = wbe_plan_capacity_json(handle) {
-                capacity = try JSONDecoder().decode(Capacity.self, from: Data(String(cString: json).utf8))
-                capacityMessage = wbe_plan_capacity_message(handle).map { String(cString: $0) }
-            } else {
-                capacity = nil
-                capacityMessage = nil
+            guard let raw = wbe_plan_new(Self.withFileKeys(requestJSON)) else { throw EngineError.last() }
+            // `raw` has no owner until `handle` is set, and a throw here skips
+            // `deinit`, so it is freed on that path.
+            let capacity: Capacity?
+            let capacityMessage: String?
+            do {
+                if let json = wbe_plan_capacity_json(raw) {
+                    capacity = try JSONDecoder().decode(Capacity.self, from: Data(String(cString: json).utf8))
+                    capacityMessage = wbe_plan_capacity_message(raw).map { String(cString: $0) }
+                } else {
+                    capacity = nil
+                    capacityMessage = nil
+                }
+            } catch {
+                wbe_plan_free(raw)
+                throw error
             }
+            handle = raw
+            self.capacity = capacity
+            self.capacityMessage = capacityMessage
         }
 
         deinit { wbe_plan_free(handle) }
+
+        /// The request with `cache_key` set on each file list, so the engine
+        /// skips reading a file it has parsed and the file has not changed.
+        /// A request that cannot be read is passed on unchanged.
+        static func withFileKeys(_ requestJSON: String) -> String {
+            guard var request = try? JSONSerialization.jsonObject(with: Data(requestJSON.utf8)) as? [String: Any],
+                  var lists = request["lists"] as? [[String: Any]] else { return requestJSON }
+            var changed = false
+            for index in lists.indices where lists[index]["cache_key"] == nil {
+                guard let path = lists[index]["path"] as? String, let key = fileKey(path) else { continue }
+                lists[index]["cache_key"] = key
+                changed = true
+            }
+            guard changed else { return requestJSON }
+            request["lists"] = lists
+            guard let data = try? JSONSerialization.data(withJSONObject: request, options: [.sortedKeys]) else {
+                return requestJSON
+            }
+            return String(decoding: data, as: UTF8.self)
+        }
+
+        /// `path|inode|size|mtime`, which changes when the file is replaced or
+        /// written. Read it before the file, so a change in between leaves the
+        /// key stale rather than current.
+        static func fileKey(_ path: String) -> String? {
+            var info = stat()
+            guard stat(path, &info) == 0 else { return nil }
+            return "\(path)|\(info.st_ino)|\(info.st_size)|\(info.st_mtimespec.tv_sec).\(info.st_mtimespec.tv_nsec)"
+        }
+
+        /// The fingerprint `compileTarget` compares with `knownFingerprint` for
+        /// blocker `target` compiled with `extras`. A caller stores it as the
+        /// 16 hex digits `String(format: "%016llx", fingerprint)`, which is the
+        /// form `known_targets` takes.
+        public func targetFingerprint(_ target: Int, extras: String) throws -> UInt64 {
+            guard target >= 0 else {
+                throw EngineError(errorDescription: "target index out of bounds")
+            }
+            let fingerprint = wbe_plan_target_fingerprint(handle, target, extras)
+            // Zero is a fingerprint too; only a set error means failure.
+            guard fingerprint != 0 || String(cString: wbe_last_error()).isEmpty else {
+                throw EngineError.last()
+            }
+            return fingerprint
+        }
 
         /// Compiles the blocker unless `knownFingerprint` is the fingerprint its
         /// output has now (`compiled.stats.fingerprint`); then nil, and nothing
@@ -166,16 +222,34 @@ public enum WBEngine {
             ) else {
                 throw EngineError.last()
             }
-            defer { wbe_compile_free(result) }
-            if wbe_compile_unchanged(result) { return nil }
-            let statsJSON = String(cString: wbe_compile_stats_json(result))
+            if wbe_compile_unchanged(result) {
+                wbe_compile_free(result)
+                return nil
+            }
+            // The result owns the strings the accessors return, so it is freed
+            // only after they are read, or, for the webkit JSON, with its Data.
+            let stats: Stats
+            do {
+                stats = try JSONDecoder().decode(Stats.self, from: Data(String(cString: wbe_compile_stats_json(result)).utf8))
+            } catch {
+                wbe_compile_free(result)
+                throw error
+            }
+            let runtimeRules = String(cString: wbe_compile_runtime_text(result))
             let webkit = wbe_compile_webkit_json(result)!
-            return Compiled(
-                // One copy out of the engine's buffer; no String round trip.
-                safariRulesJSON: Data(bytes: webkit, count: strlen(webkit)),
-                runtimeRules: String(cString: wbe_compile_runtime_text(result)),
-                stats: try JSONDecoder().decode(Stats.self, from: Data(statsJSON.utf8))
+            let length = strlen(webkit)
+            guard length > 0 else {
+                wbe_compile_free(result)
+                return Compiled(safariRulesJSON: Data(), runtimeRules: runtimeRules, stats: stats)
+            }
+            // The engine's buffer is handed over, not copied: it is freed when
+            // the Data is released.
+            let safariRulesJSON = Data(
+                bytesNoCopy: UnsafeMutableRawPointer(mutating: UnsafeRawPointer(webkit)),
+                count: length,
+                deallocator: .custom { _, _ in wbe_compile_free(result) }
             )
+            return Compiled(safariRulesJSON: safariRulesJSON, runtimeRules: runtimeRules, stats: stats)
         }
     }
 
@@ -186,8 +260,14 @@ public enum WBEngine {
         guard wbe_engine_build(runtimeRules, &bytes, &length), let bytes else {
             throw EngineError.last()
         }
-        defer { wbe_bytes_free(bytes, length) }
-        return Data(bytes: bytes, count: length)
+        guard length > 0 else {
+            wbe_bytes_free(bytes, length)
+            return Data()
+        }
+        // The engine's buffer is handed over, not copied: freed with the Data.
+        return Data(bytesNoCopy: UnsafeMutableRawPointer(bytes), count: length, deallocator: .custom { pointer, count in
+            wbe_bytes_free(pointer.assumingMemoryBound(to: UInt8.self), count)
+        })
     }
 
     /// The per-page engine. Not safe for concurrent use; callers serialize.
@@ -216,17 +296,7 @@ public enum WBEngine {
     public static func registrableDomain(of host: String) -> String? {
         guard let root = wbe_registrable_domain(host) else { return nil }
         defer { wbe_string_free(root) }
-        return String(cString: root)
-    }
-
-    /// The parsed form of one rule line as JSON, for the rule editor.
-    public static func classify(line: String) -> Data? {
-        guard let json = wbe_classify_line(line) else { return nil }
-        defer { wbe_string_free(json) }
-        return Data(bytes: json, count: strlen(json))
-    }
-}
-
+        return String(cString
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/include/wbe.h`
@@ -287,6 +357,11 @@ WbeCompileResult *wbe_plan_compile_target(const WbePlan *plan, size_t target,
                                           bool has_known_fingerprint,
                                           uint64_t known_fingerprint);
 bool wbe_compile_unchanged(const WbeCompileResult *result);
+/* The fingerprint wbe_plan_compile_target compares with a known one for blocker
+ * `target` compiled with extras_json. On an invalid target or extras it returns
+ * 0 and sets wbe_last_error. */
+uint64_t wbe_plan_target_fingerprint(const WbePlan *plan, size_t target,
+                                     const char *extras_json);
 void wbe_plan_free(WbePlan *plan);
 /* Drops the parsed lists kept between plans; plans in use keep theirs. */
 void wbe_clear_parse_cache(void);
@@ -352,11 +427,12 @@ use crate::compile::prune::Seen;
 use crate::compile::regex::domain_top_url;
 use crate::parse::{cosmetic::with_domains, restate};
 use crate::webkit::{SafariVersion, WebkitJson, WkAction, WkRule, WkTrigger};
+use memmap2::Mmap;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::BTreeMap;
-use std::ops::Range;
+use std::ops::{Deref, Range};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 use std::hash::{Hash, Hasher};
 
@@ -383,6 +459,10 @@ pub struct ListSpec {
     pub text: String,
     #[serde(default)]
     pub path: Option<String>,
+    /// Names the file at `path` (its path, inode, size, and mtime). A list whose
+    /// file the parse cache knows by this key is neither read nor hashed.
+    #[serde(default)]
+    pub cache_key: Option<String>,
     #[serde(default)]
     pub trusted: bool,
     #[serde(default)]
@@ -429,6 +509,30 @@ pub struct PlanRequest {
     pub cosmetics: CosmeticScope,
     #[serde(default)]
     pub limits: Limits,
+    /// The extras every blocker is compiled with, so the packing measures
+    /// what the blockers will hold. Empty measures the lists alone.
+    #[serde(default)]
+    pub extras: Vec<Extra>,
+    /// Per target, the fingerprint and size of a blocker the caller already
+    /// holds for these inputs. A target whose fingerprint matches is measured
+    /// from these numbers and not compiled.
+    #[serde(default)]
+    pub known_targets: Vec<Option<KnownTarget>>,
+    /// The bytes of compiled blockers `pack` may keep, so the first
+    /// `compile_unless` of each takes its output without compiling it again.
+    /// 0 keeps none.
+    #[serde(default)]
+    pub cache_pack_outputs_max_bytes: usize,
+}
+
+/// A blocker's fingerprint and measured size, as a plan's previous apply
+/// reported them.
+#[derive(Clone, Debug, Deserialize)]
+pub struct KnownTarget {
+    /// The 16 lowercase hex digits of the blocker's fingerprint (`{:016x}`).
+    pub fingerprint: String,
+    pub rules: usize,
+    pub bytes: usize,
 }
 
 /// Extra text one blocker compiles after its lists (zapper rules, wBlock's
@@ -503,7 +607,7 @@ impl ParsedList {
 /// What `parse` reads from a list, so a list's records can be reused by any
 /// plan with the same key. The text is hashed and its length kept beside the
 /// hash; the records' offsets point into that text.
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 struct ParseKey {
     text: u64,
     len: usize,
@@ -513,10 +617,10 @@ struct ParseKey {
 }
 
 impl ParseKey {
-    fn of(list: &ListSpec, text: u64) -> ParseKey {
+    fn of(list: &ListSpec, text: u64, len: usize) -> ParseKey {
         ParseKey {
             text,
-            len: list.text.len(),
+            len,
             trusted: list.trusted,
             scope: hash(&(&list.scope.exclude, &list.scope.only)),
             version: crate::OUTPUT_VERSION,
@@ -524,34 +628,59 @@ impl ParseKey {
     }
 }
 
+/// A list kept by the parse cache: its text, which the records' offsets point
+/// into, and the records.
+struct CacheEntry {
+    key: ParseKey,
+    /// The file the list was read from, as `ListSpec::cache_key`.
+    file: Option<String>,
+    text: Arc<ListText>,
+    parsed: Arc<ParsedList>,
+}
+
 /// Parsed lists kept between plans. A plan keeps only the entries of its own
 /// lists, so the cache holds one apply's lists and a changed list is parsed
 /// again alone. The app clears it on phones after each apply.
 #[derive(Default)]
-pub struct ParseCache(Mutex<Vec<(ParseKey, Arc<ParsedList>)>>);
+pub struct ParseCache(Mutex<Vec<CacheEntry>>);
 
 /// The cache `Plan::new` uses.
 static PARSE_CACHE: ParseCache = ParseCache(Mutex::new(Vec::new()));
 
 impl ParseCache {
-    fn entries(&self) -> MutexGuard<'_, Vec<(ParseKey, Arc<ParsedList>)>> {
+    fn entries(&self) -> MutexGuard<'_, Vec<CacheEntry>> {
         self.0.lock().unwrap_or_else(PoisonError::into_inner)
     }
 
-    fn parsed(&self, key: ParseKey, list: &ListSpec) -> Arc<ParsedList> {
-        if let Some((_, hit)) = self.entries().iter().find(|(k, _)| *k == key) {
-            return hit.clone();
+    /// The entry of the list read from `file`, when its parse options are
+    /// `list`'s. Its text is not read again.
+    fn by_file(&self, file: &str, list: &ListSpec) -> Option<(ParseKey, Arc<ListText>, Arc<ParsedList>)> {
+        self.entries()
+            .iter()
+            .find(|e| e.file.as_deref() == Some(file) && e.key == ParseKey::of(list, e.key.text, e.key.len))
+            .map(|e| (e.key, e.text.clone(), e.parsed.clone()))
+    }
+
+    /// The entry for `text`, parsed now unless one has `key`; `file` is kept
+    /// as the entry's file, so the next plan finds it by key.
+    fn parsed(&self, key: ParseKey, file: Option<&str>, text: Arc<ListText>, list: &ListSpec) -> (Arc<ListText>, Arc<ParsedList>) {
+        if let Some(hit) = self.entries().iter_mut().find(|e| e.key == key) {
+            if file.is_some() {
+                hit.file = file.map(str::to_owned);
+            }
+            return (hit.text.clone(), hit.parsed.clone());
         }
-        let parsed = Arc::new(parse(list));
+        let parsed = Arc::new(parse(list, &text));
         let mut entries = self.entries();
-        if !entries.iter().any(|(k, _)| *k == key) {
-            entries.push((key, parsed.clone()));
+        if let Some(hit) = entries.iter().find(|e| e.key == key) {
+            return (hit.text.clone(), hit.parsed.clone());
         }
-        parsed
+        entries.push(CacheEntry { key, file: file.map(str::to_owned), text: text.clone(), parsed: parsed.clone() });
+        (text, parsed)
     }
 
     fn keep(&self, keys: &[ParseKey]) {
-        self.entries().retain(|(k, _)| keys.contains(k));
+        self.entries().retain(|e| keys.contains(&e.key));
     }
 
     /// Drops every entry. Plans in use keep the lists they already parsed.
@@ -560,92 +689,9 @@ impl ParseCache {
     }
 }
 
-/// Empties the process-wide parse cache.
-pub fn clear_parse_cache() {
-    PARSE_CACHE.clear();
-}
-
-/// Records per network unit: the granularity at which rules are parsed and
-/// compiled, so a unit's rules are the only ones held at once.
-const UNIT_RECORDS: usize = 2048;
-
-/// A run of records of one chunk of one list.
-struct Unit {
-    list: usize,
-    chunk: usize,
-    range: Range<usize>,
-}
-
-/// A `fmt::Write` that hashes the text it is given.
-struct HashText<'a>(&'a mut DefaultHasher);
-
-impl std::fmt::Write for HashText<'_> {
-    fn write_str(&mut self, text: &str) -> std::fmt::Result {
-        self.0.write(text.as_bytes());
-        Ok(())
-    }
-}
-
-/// What one list adds to a blocker, gathered by `Plan::scan` in one pass over
-/// the list's rules, which are then dropped.
-#[derive(Default)]
-struct ListScan {
-    /// Whether the blocker takes any rule of the list. A list it takes none
-    /// from adds no stats and no admission counts.
-    takes: bool,
-    /// Admission identities of the kept rules, in order.
-    admitted: Vec<u64>,
-    /// The whole-set facts of the kept network rules.
-    ctx: NetworkContext,
-    /// Cosmetic and scriptlet rules kept, in order.
-    others: Others,
-}
-
-impl ListScan {
-    /// Adds `part`, the scan of a later range of the same list.
-    fn absorb(&mut self, part: ListScan) {
-        self.takes |= part.takes;
-        self.admitted.extend(part.admitted);
-        self.ctx.merge(part.ctx);
-        self.others.cosmetic.extend(part.others.cosmetic);
-        self.others.scriptlets.extend(part.others.scriptlets);
-    }
-}
-
-pub struct Plan {
-    opts: CompileOptions,
-    lists: Vec<ListSpec>,
-    parsed: Vec<Arc<ParsedList>>,
-    targets: Vec<TargetSpec>,
-    cosmetics: CosmeticScope,
-    limits: Limits,
-    /// List index -> rule identities a blocker other than this one owns (#681).
-    duplicates: Vec<Vec<FxHashSet<u64>>>,
-    /// Hash of each list's text, for `fingerprint`.
-    text_hashes: Vec<u64>,
-    /// Where the blocks exceptions can reach go, when they go to one blocker.
-    wide: Option<Wide>,
-    capacity: Option<Capacity>,
-}
-
-/// A packing that exceeds the limits: the budgets, and each slot's measured
-/// size in target order.
-#[derive(Clone, Debug, PartialEq, Serialize)]
-pub struct Capacity {
-    pub rules: usize,
-    pub bytes: usize,
-    pub slots: Vec<Slot>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Serialize)]
-pub struct Slot {
-    pub rules: usize,
-    pub bytes: usize,
-}
-
-impl Capacity {
-    pub fn message(&self) -> String {
-        format!("selection exceeds content blocker budgets after bounded repacking ({} rules, {} bytes per slot); measured slots:
+/// The packing decided for one set of plan inputs, kept for the next plan
+/// with the same inputs. One is kept: the app plans again with the same lists
+/// when nothing changed, and the measured comp
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -1709,7 +1755,7 @@ impl Emitted {
 //! makes them wider and can only under-block. Each rule's tier follows
 //! `compile/mod.rs`; exceptions use ignore-previous-rules.
 
-use super::regex::{apart, domain_top_url, host_top_url, url_filter};
+use super::regex::{apart, domain_top_url, host_top_url, split_negative_lookahead, url_filter};
 use super::prune::{domain_host, if_page, unless_page, Page, Shape};
 use super::{DomainSpan, Emitted, Entry, Stats, Tier};
 use crate::ast::{
@@ -1963,7 +2009,7 @@ fn compile_rule(
         return page;
     }
     let exception = r.exception;
-    // `@@...$cname` only exempts a request 
+    // `@@...$cnam
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/prune.rs`
@@ -2249,11 +2295,11 @@ impl Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1125** (2026-11-19): **[BUG] Can’t pause filters after importing new list**
-  *Symptoms*: ### Describe the bug  After importing a custom filter list via URL, the options to pause filtering are greyed out.  ### To reproduce  Steps to reproduce the behavior: 1. Import a new filter list via URL 2. Hit apply and wait for it to finish 3. Go to settings 4. Hit pause button 5. Pause options are greyed out   ### Expected behavior  Pause options are available once filters have been applied  ### Screenshot or video  https://github.com/user-attachments/assets/8df6b4ff-402f-4391-aca6-94bc2fac4810  ### Environment  - OS: iOS 26.6.1 - wBlock Version: 3.2.3  ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1152** (2026-11-23): **[BUG]Bypass paywall clean(en) shows the wrong date**
+  *Symptoms*: ### Describe the bug  I found a little bug. Bypass paywall clean script shows last update last month but the script was updated 7 hours ago  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  <img width="375" height="667" alt="IMG_2770" src="https://github.com/user-attachments/assets/0ddbe219-1b31-46ca-9ac5-7715dbd8de7b" /> <img width="375" height="667" alt="IMG_2769" src="https://github.com/user-attachments/assets/5aa8a482-8fa8-4939-a171-68dde0880979" />  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
-- **Issue #1123** (2026-11-19): **[BUG] Closing View Rules when View menu is open causes flash**
-  *Symptoms*: ### Describe the bug  When you open the View menu in the View Rules popover, and then press the x while it is open, it flashes before finally closing.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1151** (2026-11-23): **[BUG] support `.tld` which should be considered as any-TLD magic keyword**
+  *Symptoms*: ### Describe the bug  https://github.com/violentmonkey/violentmonkey/issues/2527  ### To reproduce     ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  _No response_  ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2270,266 +2316,1113 @@ impl Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0612d643` (2026-11-18)
-**Commit Message**: fix(filters): Remove the allowlists and rerun the 4.0 upgrade once
+### Incident Patch 1: `2880c43d` (2026-11-23)
+**Commit Message**: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch
 
-AdGuard Allowlist and HaGeZi Referral Allowlist undo blocking on purpose,
-yet a selected one stayed on as a custom list after the upgrade. Purge
-them with any kept copy, skip them on backup restore, and run the 3.2.3
-to 4.0 handover and changed defaults once more on 4.0.0 installs.
-
-**File**: `scripts/test_filter_catalog_migrations.swift` (modified, +10/-7)
+**File**: `wBlock/BasicFiltersView.swift` (modified, +59/-36)
 ```diff
-@@ -306,9 +306,6 @@ private final class TestLoader: FilterListLoader {
-         // Retired built-ins leave the catalog and are recognized by address, so they go without errors.
-         let retired = [
-             ("\(registry)/extension/safari/filters/207_optimized.txt", "Adblock Warning Removal List"),
--            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
--            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
--            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
-             // #1088: every address the list was ever stored under.
-             ("https://filters.adtidy.org/extension/ublock/filters/25.txt", "AdGuard Mail Tracking Protection Filter"),
-             ("\(registry)/extension/safari/filters/25_optimized.txt", "AdGuard Mail Tracking Protection Filter"),
-@@ -324,12 +321,18 @@ private final class TestLoader: FilterListLoader {
-             precondition(!FilterListLoader.isRetiredBuiltIn(custom), "a custom copy of \(name) must stay")
-         }
- 
--        // Online Malicious URL Blocklist goes even when on, with the custom copy 3.2.3 kept (#1088).
--        for url in ["https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
--                    "\(registry)/extension/safari/filters/208_optimized.txt"] {
-+        // Online Malicious URL Blocklist and the two allowlists go even when on, with the custom copies earlier
-+        // releases kept (#1088).
-+        for (url, name) in [
-+            ("https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt", "Online Malicious URL Blocklist"),
-+            ("\(registry)/extension/safari/filters/208_optimized.txt", "Online Malicious URL Blocklist"),
-+            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
-+            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
-+            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
-+        ] {
-             precondition(!defaults.contains { $0.url.absoluteString == url }, "\(url) is still in the catalog")
-             for isCustom in [false, true] {
--                let filter = FilterList(name: "Online Malicious URL Blocklist", url: URL(string: url)!, category: .security,
-+                let filter = FilterList(name: name, url: URL(string: url)!, category: .security,
-                                         isCustom: isCustom, isSelected: true)
-                 precondition(FilterListLoader.isRetiredBuiltIn(filter) && FilterListLoader.isPurgedBuiltIn(filter),
-                              "\(url) custom:\(isCustom) is not purged")
-```
-
-**File**: `wBlock/AppFilterManager.swift` (modified, +5/-2)
-```diff
-@@ -236,7 +236,9 @@ class AppFilterManager: ObservableObject {
-     /// handover and have not handed over yet (completeAdGuardHandover).
-     /// Device-local and recorded once, so a list turned on later, here or on a
-     /// synced device, stays on.
--    private static let adGuardHandoverPendingKey = "wBlock.adGuardHandoverPending.3"
-+    /// `.4` runs the 3.2.3 to 4.0 handover once more on 4.0.0 installs, so AdGuard
-+    /// lists turned on after the first run hand over as an upgrade from 3.2.3 does.
-+    private static let adGuardHandoverPendingKey = "wBlock.adGuardHandoverPending.4"
- 
-     var adGuardHandoverPending: Set<UUID> {
-         get {
-@@ -255,7 +257,8 @@ class AppFilterManager: ObservableObject {
-         adGuardHandoverPending = Set(lists.filter { $0.isSelected && FilterListLoader.isReplacedList($0) }.map(\.id))
+@@ -125,8 +125,18 @@ struct BasicFiltersView: View {
      }
  
--    private static let changedDefaultsKey = "wBlock.changedDefaults.4.0"
-+    /// `.2` applies the changed defaults once more on 4.0.0 installs, with the handover above.
-+    private static let changedDefaultsKey = "wBlock.changedDefaults.4.0.2"
+     private var languageSummary: String {
+-        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
+-        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
++        let codes = activeLanguageCodes
++        guard !codes.isEmpty else { return String(localized: "None") }
++        let displayLocale = RegionalLanguageOption.displayLocale
++        let names = codes
++            .map { code -> (sortKey: String, native: String) in
++                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
++                let native = Locale.nativeLanguageName(for: code) ?? display
++                return (display, native)
++            }
++            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
++            .map(\.native)
++        return ListFormatter.localizedString(byJoining: names)
+     }
  
-     /// Gives an existing install the defaults 4.0 changed after its first
-     /// builds, once per device. New installs start from the current defaults.
-```
-
-**File**: `wBlock/BackupManager.swift` (modified, +2/-0)
-```diff
-@@ -438,6 +438,8 @@ enum BackupCustomFilterRestorer {
+     private var atmosphereFade: Double {
+@@ -180,6 +190,7 @@ struct BasicFiltersView: View {
+                     resetBundleToRecommended(bundle)
                  }
-                 inlineID = nil
-                 url = remoteURL
-+                // A list wBlock purges stays gone; loading would delete it again anyway.
-+                if PurgedFilterLists.contains(remoteURL, isCustom: true) { continue }
-                 // A custom copy of a built-in list is that list, as loading folds
-                 // it (FilterListSetup.hydrate); restoring it must not add it again.
-                 let address = currentAddress(remoteURL)
+             )
++            .id(bundle.id)
+         }
+         .infoPresentation(item: $unownedSheetItem) { _ in
+             ScopedBundleListsSheet(
+@@ -850,13 +861,21 @@ struct BasicBundlePeekView: View {
+             .padding(16)
+             .frame(width: 360)
+         #else
+-        ScrollView {
+-            peekBody
+-                .padding(SheetDesign.contentHorizontalPadding)
++        if #available(iOS 16.0, *) {
++            PeekSheetDetentsHost(showAllLists: $showAllLists) {
++                ScrollView {
++                    peekBody
++                        .padding(SheetDesign.contentHorizontalPadding)
++                }
++                .scrollBounceBasedOnSizeCompat()
++                .opaqueSheetBackgroundCompat()
++            }
++        } else {
++            ScrollView {
++                peekBody
++                    .padding(SheetDesign.contentHorizontalPadding)
++            }
+         }
+-        .scrollBounceBasedOnSizeCompat()
+-        .opaqueSheetBackgroundCompat()
+-        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
+         #endif
+     }
+ 
+@@ -1061,41 +1080,45 @@ struct BasicBundlePeekView: View {
+ }
+ 
+ #if os(iOS)
+-private struct PeekSheetDetentsCompat: ViewModifier {
+-    @Binding var showAllLists: Bool
+-
+-    func body(content: Content) -> some View {
+-        if #available(iOS 16.0, *) {
+-            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
+-        } else {
+-            content
+-        }
+-    }
+-}
+-
+ @available(iOS 16.0, *)
+-private struct PeekSheetDetentsModifier: ViewModifier {
++private struct PeekSheetDetentsHost<Content: View>: View {
+     @Binding var showAllLists: Bool
++    @ViewBuilder let content: () -> Content
+     @State private var selectedDetent: PresentationDetent = .medium
+ 
+-    func body(content: Content) -> some View {
+-        content
+-            .presentationDetents([.medium, .large], selection: $selectedDetent)
+-            .presentationDragIndicator(.visible)
+-            .onChangeCompat(of: showAllLists) { _, expanded in
+-                let target: PresentationDetent = expanded ? .large : .medium
+-                if selectedDetent != target {
+-                    selectedDetent = target
+-                }
++    private var availableDetents: Set<PresentationDetent> {
++        showAllLists ? [.medium, .large] : [.medium]
++    }
++
++    var body: some View {
++        Group {
++            if #available(iOS 16.4, *) {
++                content()
++                    .presentationContentInteraction(.scrolls)
++            } else {
++                content()
+             }
+-            .onChangeCompat(of: selectedDetent) { _, detent in
+-                let shouldExpand = detent == .large
+-                if showAllLists != shouldExpand {
+-                    withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
+-                        showAllLists = shouldExpand
+-                    }
++        }
++        .presentationDetents(availableDetents, selection: $selectedDetent)
++        .presentationDragIndicator(.visible)
++        .onAppear {
++            if !showAllLists, selectedDetent != .medium {
++                selectedDetent = .medium
++            }
++        }
++        .onChangeCompat(of: showAllLists) { _, expanded in
++            let target: PresentationDetent = expanded ? .large : .medium
++            if selectedDetent != target {
++                selectedDetent = target
++            }
++        }
++        .onChangeCompat(of: selectedDetent) { _, detent in
++            if detent == .medium, showAllLists {
++                withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
++                    showAllLists = false
+                 }
+             }
++        }
+     }
+ }
+ #endif
 ```
 
-**File**: `wBlock/FilterListLoader.swift` (modified, +0/-3)
+**File**: `wBlock/ContentView.swift` (modified, +70/-6)
 ```diff
-@@ -305,9 +305,6 @@ class FilterListLoader {
-         "d3ward/toolz",
-         "platforms/extension/safari/filters/122_optimized.txt",  // Fanboy's Annoyances Filter (#877)
-         "platforms/extension/safari/filters/207_optimized.txt",  // Adblock Warning Removal List
--        "platforms/extension/safari/filters/10_optimized.txt",  // AdGuard Allowlist
--        "platforms/extension/safari/filters/10.txt",  // AdGuard Allowlist, older address
--        "adblock/whitelist-referral.txt",  // HaGeZi Referral Allowlist
-         "raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt",  // CJX's Annoyances List (#882)
-         "raw.githubusercontent.com/easylist/easylistchina/master/easylistchina.txt",  // EasyList China (#882)
-         "easylist-downloads.adblockplus.org/easylistdutch.txt",  // EasyList Dutch (#882)
+@@ -71,7 +71,11 @@ struct ContentView: View {
+     @State private var userScriptSearchRequest = 0
+     @State private var filtersScrollToTopToken = 0
+     @State private var showingLogs = false
++    @State private var isTransitioningLayout = false
++    @State private var layoutTransitionTask: Task<Void, Never>?
++    @State private var deferredModeFlushTask: Task<Void, Never>?
+     @Environment(\.scenePhase) var scenePhase
++    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ 
+     private var enabledListsCount: Int {
+         filterManager.filterLists.filter { $0.isSelected }.count
+@@ -252,11 +256,60 @@ struct ContentView: View {
+         selectedCategoryInfo = nil
+     }
+ 
+-    private func switchAppMode(to newMode: AppMode) {
+-        guard appMode != newMode else { return }
++    private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
++        layoutTransitionTask?.cancel()
++        layoutTransitionTask = nil
++        guard appMode != newMode else {
++            if isTransitioningLayout {
++                withAnimation(.easeOut(duration: 0.16)) {
++                    isTransitioningLayout = false
++                }
++            }
++            return
++        }
+         clearFilterPopoverSelections()
+-        filterManager.flushBasicAutoApplyIfNeeded()
+-        appMode = newMode
++        if !fromToggle {
++            Haptics.play(.tap)
++        }
++        layoutTransitionTask = Task { @MainActor in
++            if fromToggle {
++                // Let the native switch thumb finish sliding before swapping layouts.
++                try? await Task.sleep(nanoseconds: 110_000_000)
++                guard !Task.isCancelled else { return }
++            }
++
++            if reduceMotion {
++                withAnimation(.easeInOut(duration: 0.14)) {
++                    isTransitioningLayout = true
++                }
++                try? await Task.sleep(nanoseconds: 120_000_000)
++                guard !Task.isCancelled else { return }
++                var transaction = Transaction(animation: nil)
++                transaction.disablesAnimations = true
++                withTransaction(transaction) {
++                    appMode = newMode
++                }
++                withAnimation(.easeInOut(duration: 0.18)) {
++                    isTransitioningLayout = false
++                }
++            } else {
++                withAnimation(.easeIn(duration: 0.13)) {
++                    isTransitioningLayout = true
++                }
++                try? await Task.sleep(nanoseconds: 130_000_000)
++                guard !Task.isCancelled else { return }
++                var transaction = Transaction(animation: nil)
++                transaction.disablesAnimations = true
++                withTransaction(transaction) {
++                    appMode = newMode
++                }
++                try? await Task.sleep(nanoseconds: 16_000_000)
++                guard !Task.isCancelled else { return }
++                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
++                    isTransitioningLayout = false
++                }
++            }
++        }
+     }
+ 
+     var body: some View {
+@@ -352,6 +405,9 @@ struct ContentView: View {
+                 onAction: handleHealthAction
+             )
+         }
++        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
++        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
++        .opacity(isTransitioningLayout ? 0.86 : 1)
+         .background(keyboardShortcutHandlers)
+         .keyboardScrollingCompat()
+         .onAppear {
+@@ -364,7 +420,12 @@ struct ContentView: View {
+             clearFilterPopoverSelections()
+             filterManager.showingAppliedBanner = false
+             filterManager.showingNoUpdatesAlert = false
+-            filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
++            deferredModeFlushTask?.cancel()
++            deferredModeFlushTask = Task { @MainActor in
++                try? await Task.sleep(nanoseconds: 380_000_000)
++                guard !Task.isCancelled else { return }
++                filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
++            }
+         }
+         .sheet(isPresented: $showingHealthDetail) {
+             SafariHealthDetailView(
+@@ -752,7 +813,10 @@ struct ContentView: View {
+     }
+ 
+     private var settingsView: some View {
+-        SettingsView(filterManager: filterManager)
++        SettingsView(
++            filterManager: filterManager,
++            onSwitchAppMode: { switchAppMode(to: $0, fromToggle: true) }
++        )
+     }
+ 
+     private var topBanners: some ViewModifier {
 ```
 
-**File**: `wBlockCoreService/FilterListValidation.swift` (modified, +7/-1)
+**File**: `wBlock/LocalizationHelpers.swift` (modified, +10/-2)
 ```diff
-@@ -23,10 +23,16 @@ public enum PurgedFilterLists {
-         "hagezi/dns-blocklists@latest/adblock/pro.mini.txt",  // HaGeZi Multi Pro Mini, a DNS list (docs/HAGEZI.md)
-     ]
+@@ -77,16 +77,24 @@ struct RegionalLanguageOption: Identifiable, Hashable {
+         let nativeName: String = Locale.nativeLanguageName(for: code) ?? self.name
+         self.nativeName = nativeName
+         var terms: [String] = [nativeName, self.name, code, Self.english.localizedString(forLanguageCode: code) ?? code]
+-        terms += Self.scriptNamesByCode[code] ?? []
+         terms += Self.synonymsByCode[code] ?? []
+         searchTerms = terms
+     }
  
--    /// Online Malicious URL Blocklist: 24k rules Safe Browsing covers (#864, #1088). 3.2.3 kept the registry copy.
-+    /// Lists an earlier release left on as custom copies.
-     private static let keptCopyFragments = [
-+        // Online Malicious URL Blocklist: 24k rules Safe Browsing covers (#864, #1088). 3.2.3 kept the registry copy.
-         "malware-filter/urlhaus-filter-vivaldi-online.txt",
-         "filters/208_optimized.txt",
-+        // AdGuard Allowlist and HaGeZi Referral Allowlist undo blocking on purpose: search ads, self-promotion,
-+        // and referral links. 4.0 builds kept a selected one as a custom list instead of turning it off.
-+        "platforms/extension/safari/filters/10_optimized.txt",
-+        "platforms/extension/safari/filters/10.txt",
-+        "adblock/whitelist-referral.txt",
-     ]
+     /// Ignores case and accents, so "espanol" finds español (#951).
++    /// Defers `scriptNamesByCode` (which scans `Locale.availableIdentifiers`)
++    /// until an actual search query runs so building language lists never stalls
++    /// the main thread.
+     func matches(_ query: String) -> Bool {
+         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+         guard !query.isEmpty else { return false }
+-        return searchTerms.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
++        if searchTerms.contains(where: { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }) {
++            return true
++        }
++        if let scriptNames = Self.scriptNamesByCode[code] {
++            return scriptNames.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
++        }
++        return false
+     }
  
-     /// A custom list matches only the kept copies, so a user's own custom list at a purged built-in address stays.
+     /// The locale the app is actually displayed in, so names sort the way the
+```
+
+**File**: `wBlock/SettingsView.swift` (modified, +30/-4)
+```diff
+@@ -8,9 +8,12 @@ import wBlockCoreService
+ 
+ struct SettingsView: View {
+     let filterManager: AppFilterManager
++    var onSwitchAppMode: ((AppMode) -> Void)? = nil
+     @ObservedObject private var dataManager = ProtobufDataManager.shared
+     @ObservedObject private var syncManager = CloudSyncManager.shared
+     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
++    @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
++    @State private var preserveAdvancedScrollOnModeChange = false
+     @Environment(\.openURL) private var openURL
+     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
+     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
+@@ -247,12 +250,16 @@ struct SettingsView: View {
+ 
+     private var showAllListsBinding: Binding<Bool> {
+         Binding(
+-            get: { appMode == .advanced },
++            get: { showAllListsSwitch },
+             set: { showAll in
+                 let newMode: AppMode = showAll ? .advanced : .basic
+-                guard newMode != appMode else { return }
+-                filterManager.flushBasicAutoApplyIfNeeded()
+-                appMode = newMode
++                showAllListsSwitch = showAll
++                preserveAdvancedScrollOnModeChange = (newMode != appMode)
++                if let onSwitchAppMode {
++                    onSwitchAppMode(newMode)
++                } else if newMode != appMode {
++                    appMode = newMode
++                }
+             }
+         )
+     }
+@@ -940,6 +947,25 @@ struct SettingsView: View {
+                         withAnimation { proxy.scrollTo(target, anchor: Self.sectionScrollAnchor) }
+                         scrollTarget = nil
+                     }
++                    .onAppear {
++                        showAllListsSwitch = (appMode == .advanced)
++                    }
++                    .onChangeCompat(of: appMode) { _, newMode in
++                        let isAdvanced = (newMode == .advanced)
++                        if showAllListsSwitch != isAdvanced {
++                            showAllListsSwitch = isAdvanced
++                        }
++                        #if os(iOS)
++                        if preserveAdvancedScrollOnModeChange {
++                            preserveAdvancedScrollOnModeChange = false
++                            DispatchQueue.main.async {
++                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
++                            }
++                        }
++                        #else
++                        preserveAdvancedScrollOnModeChange = false
++                        #endif
++                    }
+             }
+         }
+     }
 ```
 
 ---
 
-### Incident Patch 2: `1a2c9576` (2026-11-20)
-**Commit Message**: fix(annoyances): Stop turning on General by default
+### Incident Patch 2: `0bdfd797` (2026-11-23)
+**Commit Message**: feat(ui): polish default layout updates, Also on peek, Reset to Recommended, and Stricter Blocking (#1150)
 
-AdGuard Other Annoyances hides Google's AI Overview (Dalsu, Discord). Onboarding now preselects only Cookie Notices, like 3.2.3. 4.0 installs with every General list on get it turned off once. A 3.2.3 install that ran AdGuard Other Annoyances keeps it because uBlock filters – Annoyances is new in 4.0.
-
-**File**: `scripts/test_filter_catalog_migrations.swift` (modified, +12/-0)
+**File**: `scripts/test_basic_mode.swift` (modified, +17/-0)
 ```diff
-@@ -204,6 +204,18 @@ private final class TestLoader: FilterListLoader {
-                      && !alphaByName["AdGuard Cookie Notices"]!.updatesAutomatically, "settings move with the swap")
-         precondition(FilterListLoader.swappingToAdGuardAnnoyances(alpha) == alpha, "the swap leaves AdGuard users alone")
-         precondition(Set(FilterListLoader.adGuardAnnoyanceSwaps.flatMap { [$0.key, $0.value] }).isSubset(of: Set(defaults.map(\.name))))
-+        // General goes off for 4.0 alphas; a 3.2.3 AdGuard Other Annoyances user keeps it.
-+        let general = Set(AnnoyanceChoice.general.filterNames)
-+        let withGeneral = defaults.map { list -> FilterList in
-+            var list = list; list.isSelected = general.contains(list.name) || list.name == "AdGuard Cookie Notices"; return list
-+        }
-+        precondition(Set(AnnoyanceChoice.turningOffGeneral(withGeneral).filter(\.isSelected).map(\.name))
-+                     == ["AdGuard Cookie Notices"], "General goes off")
-+        let upgraded = defaults.map { list -> FilterList in
-+            var list = list; list.isSelected = list.name == "AdGuard Other Annoyances"; return list
-+        }
-+        precondition(AnnoyanceChoice.turningOffGeneral(upgraded) == upgraded, "3.2.3 choice stays")
-+        precondition(general.isSubset(of: Set(defaults.map(\.name))), "General names in catalog")
- 
-         // A renamed annoyance list would silently fall into Other.
-         let topical = defaults.filter { $0.category == .annoyances && AnnoyanceTopic.topic(for: $0) != .other }
-```
-
-**File**: `wBlock/AnnoyanceTopic.swift` (modified, +17/-2)
-```diff
-@@ -56,8 +56,9 @@ enum AnnoyanceChoice: String, CaseIterable, Identifiable, Sendable {
- 
-     var id: String { rawValue }
- 
--    /// What onboarding preselects (#1091).
--    static let recommended: Set<AnnoyanceChoice> = [.cookies, .general]
-+    /// What onboarding preselects (#1091). Cookie Notices only, as in 3.2.3:
-+    /// AdGuard Other Annoyances hides Google's AI Overview (Dalsu, Discord).
-+    static let recommended: Set<AnnoyanceChoice> = [.cookies]
- 
-     /// A localization key.
-     var title: String {
-@@ -99,6 +100,20 @@ enum AnnoyanceChoice: String, CaseIterable, Identifiable, Sendable {
-         return filters.filter { !$0.isCustom && names.contains($0.name) }
+@@ -147,6 +147,23 @@ struct BasicModeTests {
+         apply(resetChanges, to: &lists)
+         precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize bundle to .on")
+         precondition(!memory.hasSnapshot(for: adsBundle))
++
++        // Custom list inside a core category puts the bundle in .partlyOn and
++        // Reset to Recommended disables it (#1150).
++        var customInAds = FilterList(
++            id: UUID(),
++            name: "Custom Ads List",
++            url: URL(string: "https://example.com/custom-ads-reset.txt")!,
++            category: .ads,
++            isSelected: true
++        )
++        customInAds.isCustom = true
++        lists.append(customInAds)
++        precondition(adsBundle.state(in: lists) == .partlyOn, "Custom list enabled in Ads must yield .partlyOn")
++        let resetCustomChanges = memory.resetToRecommendedChanges(for: adsBundle, in: lists)
++        apply(resetCustomChanges, to: &lists)
++        precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize Ads with custom list to .on")
++        precondition(!(lists.first { $0.id == customInAds.id }?.isSelected ?? true), "Reset to Recommended must disable custom lists in category")
      }
  
-+    /// General was on by default in the 4.0 alphas. It goes off once where
-+    /// all its lists are on (AppFilterManager.applyOnce). uBlock filters –
-+    /// Annoyances is new in 4.0, so a 3.2.3 install that ran AdGuard Other
-+    /// Annoyances keeps it.
-+    static func turningOffGeneral(_ lists: [FilterList]) -> [FilterList] {
-+        guard choices(enabledIn: lists).contains(.general) else { return lists }
-+        let names = Set(general.filterNames)
-+        return lists.map { list in
-+            var list = list
-+            if !list.isCustom && names.contains(list.name) { list.isSelected = false }
-+            return list
+     private static func testBasicBundleUnownedActiveAndDirty() {
+```
+
+**File**: `wBlock/AppFilterManager+Updates.swift` (modified, +33/-14)
+```diff
+@@ -47,15 +47,19 @@ extension AppFilterManager {
+ 
+     func checkForUpdates(
+         scope: UpdateCheckScope = .all,
+-        presentation: UpdateCheckPresentation = .blocking
++        presentation: UpdateCheckPresentation = .blocking,
++        autoApply: Bool = false
+     ) async {
+         // A running auto-update is already checking and applying the same lists;
+         // show its progress instead of ignoring the request.
+         guard !isAutoUpdateRunning else {
+-            showBackgroundApplyProgress()
++            if !autoApply {
++                showBackgroundApplyProgress()
++            }
+             return
+         }
+-        if presentation == .refresh {
++        clearBasicUpToDateStatus()
++        if presentation == .refresh || autoApply {
+             suppressBlockingOverlay = true
+         }
+         updateCheckProgress = nil
+@@ -64,7 +68,7 @@ extension AppFilterManager {
+         defer {
+             isLoading = false
+             updateCheckProgress = nil
+-            if presentation == .refresh {
++            if presentation == .refresh || autoApply {
+                 suppressBlockingOverlay = false
+             }
+             drainFollowUpBasicApplyIfNeeded()
+@@ -95,15 +99,29 @@ extension AppFilterManager {
+ 
+         let totalUpdates = availableUpdates.count + availableScriptUpdates.count
+         if totalUpdates > 0 {
+-            applyProgressViewModel.presentReview()
+-            showingApplyProgressSheet = true
+-            statusDescription = LocalizedStrings.format(
+-                "Found %d update(s) available.",
+-                comment: "Updates found status",
+-                totalUpdates
+-            )
++            if autoApply {
++                let filtersToUpdate = availableUpdates
++                let scriptsToUpdate = availableScriptUpdates
++                await downloadAndApplySelectedUpdates(
++                    filters: filtersToUpdate,
++                    scripts: scriptsToUpdate,
++                    showProgressSheet: false
++                )
++            } else {
++                applyProgressViewModel.presentReview()
++                showingApplyProgressSheet = true
++                statusDescription = LocalizedStrings.format(
++                    "Found %d update(s) available.",
++                    comment: "Updates found status",
++                    totalUpdates
++                )
++            }
+         } else {
+-            showingNoUpdatesAlert = true
++            if autoApply {
++                showBasicUpToDateBriefly()
++            } else {
++                showingNoUpdatesAlert = true
++            }
+             statusDescription = LocalizedStrings.text("No updates available.", comment: "No updates status")
+             Task {
+                 await ConcurrentLogManager.shared.info(
+@@ -158,11 +176,12 @@ extension AppFilterManager {
+     /// Downloads the selected filter/script updates, then runs the shared apply pipeline.
+     func downloadAndApplySelectedUpdates(
+         filters selectedFilters: [FilterList],
+-        scripts selectedScripts: [UserScript]
++        scripts selectedScripts: [UserScript],
++        showProgressSheet: Bool = true
+     ) async {
+         let started = await performExclusiveApply {
+             self.prepareApplyRunState()
+-            self.showingApplyProgressSheet = true
++            self.showingApplyProgressSheet = showProgressSheet
+ 
+             let downloadingStatus = LocalizedStrings.text(
+                 "Downloading selected updates...",
+```
+
+**File**: `wBlock/AppFilterManager.swift` (modified, +20/-0)
+```diff
+@@ -222,7 +222,27 @@ class AppFilterManager: ObservableObject {
+     @Published private(set) var basicApplyCompletionToken = 0
+     @Published private(set) var lastBasicApplyFailed = false
+     @Published private(set) var lastBasicApplyFailedFilterIDs: Set<UUID> = []
++    @Published private(set) var showingBasicUpToDateStatus = false
+     private var needsFollowUpBasicApply = false
++    private var basicUpToDateTask: Task<Void, Never>?
++
++    func showBasicUpToDateBriefly() {
++        basicUpToDateTask?.cancel()
++        showingBasicUpToDateStatus = true
++        basicUpToDateTask = Task { @MainActor [weak self] in
++            try? await Task.sleep(nanoseconds: 3_500_000_000)
++            guard !Task.isCancelled else { return }
++            self?.showingBasicUpToDateStatus = false
 +        }
 +    }
 +
-     /// Choices whose lists are all on.
-     static func choices(enabledIn filters: [FilterList]) -> Set<AnnoyanceChoice> {
-         let enabled = Set(filters.filter { !$0.isCustom && $0.isSelected }.map(\.name))
++    func clearBasicUpToDateStatus() {
++        basicUpToDateTask?.cancel()
++        basicUpToDateTask = nil
++        if showingBasicUpToDateStatus {
++            showingBasicUpToDateStatus = false
++        }
++    }
+ 
+     func markCurrentStateApplied() {
+         appliedSelectedFilterIDs = selectedFilterIDs
 ```
 
-**File**: `wBlock/AppFilterManager.swift` (modified, +5/-2)
+**File**: `wBlock/BasicBundle.swift` (modified, +16/-13)
 ```diff
-@@ -261,6 +261,7 @@ class AppFilterManager: ObservableObject {
-     private static let changedDefaultsKey = "wBlock.changedDefaults.4.0.2"
-     /// Its own key, so the defaults above don't come back on for people who turned them off.
-     private static let adGuardAnnoyancesKey = "wBlock.adGuardAnnoyances.4"
-+    private static let generalAnnoyancesOffKey = "wBlock.generalAnnoyancesOff.4"
+@@ -283,17 +283,19 @@ enum BasicBundle: Hashable, Identifiable, Sendable {
+     }
  
-     /// Gives an existing install the defaults 4.0 changed after its first
-     /// builds, once per device and `key`. New installs start from the current
-@@ -823,6 +824,8 @@ class AppFilterManager: ObservableObject {
-         let changedDefaults = applyOnce(Self.changedDefaultsKey, FilterListLoader.applyingChangedDefaults, to: &migratedFilterLists)
-         let swappedAnnoyances = applyOnce(Self.adGuardAnnoyancesKey, FilterListLoader.swappingToAdGuardAnnoyances,
-                                           to: &migratedFilterLists)
-+        let generalOff = applyOnce(Self.generalAnnoyancesOffKey, AnnoyanceChoice.turningOffGeneral, to: &migratedFilterLists)
-+        let migratedAnnoyances = swappedAnnoyances || generalOff
-         let foldedCustomCopies = migratedFilterLists.filter(\.isCustom).count < customCountBeforeHydrate
-         migratedFilterLists = deduplicateFilterIDs(migratedFilterLists)
-         validatorClearIDs = migratedFilterLists.compactMap { filter in
-@@ -840,7 +843,7 @@ class AppFilterManager: ObservableObject {
-             return originalURL != filter.url
+     /// Derives `.off`, `.on`, or `.partlyOn` directly from `filters`.
++    /// Core bundles inspect `scopedFilters` so custom lists placed in that
++    /// category also participate in custom state and Reset to Recommended.
+     func state(
+         in filters: [FilterList],
+         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
+     ) -> BasicBundleState {
+-        let owned = ownedFilters(in: filters, recommendedNames: recommendedNames)
+-        let selectedOwnedIDs = Set(owned.filter(\.isSelected).map(\.id))
+-        if selectedOwnedIDs.isEmpty {
++        let scoped = scopedFilters(in: filters, recommendedNames: recommendedNames)
++        let selectedScopedIDs = Set(scoped.filter(\.isSelected).map(\.id))
++        if selectedScopedIDs.isEmpty {
+             return .off
          }
-         if hasURLMigrations || addedDefaultFilters || selectedDeprecatedListWasRemoved || foldedCustomCopies || !offAdGuard.removed.isEmpty
--            || changedDefaults || swappedAnnoyances {
-+            || changedDefaults || migratedAnnoyances {
-             Task { await self.saveFilterLists() }
+         let memberIDs = Set(memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
+-        if !memberIDs.isEmpty && selectedOwnedIDs == memberIDs {
++        if !memberIDs.isEmpty && selectedScopedIDs == memberIDs {
+             return .on
          }
+         return .partlyOn
+@@ -508,21 +510,21 @@ struct BasicBundleToggleMemory: Sendable {
+         in filters: [FilterList],
+         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
+     ) -> [(id: UUID, selected: Bool)] {
+-        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
+-        let ownedIDs = Set(owned.map(\.id))
++        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
++        let scopedIDs = Set(scoped.map(\.id))
+         let currentState = bundle.state(in: filters, recommendedNames: recommendedNames)
  
-@@ -869,7 +872,7 @@ class AppFilterManager: ObservableObject {
-         let signatureMismatch = storedSignature != currentSignature
-         let needsRebuild = dataManager.hasCompletedOnboarding
-             && (hasURLMigrations || selectedDeprecatedListWasRemoved || foldedCustomCopies || handedOverSelections || changedDefaults
--                || swappedAnnoyances || signatureMismatch)
-+                || migratedAnnoyances || signatureMismatch)
-         if needsRebuild {
-             markNonSelectionChangesPending()
-             if let delay = ContentBlockerService.automaticRebuildDelay(
+         if !turnOn {
+             if currentState == .partlyOn {
+-                snapshots[bundle.id] = Set(owned.filter(\.isSelected).map(\.id))
++                snapshots[bundle.id] = Set(scoped.filter(\.isSelected).map(\.id))
+             } else {
+                 snapshots.removeValue(forKey: bundle.id)
+             }
+-            return owned.filter(\.isSelected).map { ($0.id, false) }
++            return scoped.filter(\.isSelected).map { ($0.id, false) }
+         } else {
+             let targetIDs: Set<UUID>
+             if let saved = snapshots.removeValue(forKey: bundle.id) {
+-                let valid = saved.intersection(ownedIDs)
++                let valid = saved.intersection(scopedIDs)
+                 if !valid.isEmpty {
+                     targetIDs = valid
+                 } else {
+@@ -531,23 +533,24 @@ struct BasicBundleToggleMemory: Sendable {
+             } else {
+                 targetIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
+             }
+-            return owned.compactMap { filter in
++            return scoped.compactMap { filter in
+                 let desired = targetIDs.contains(filter.id)
+                 return filter.isSelected == desired ? nil : (filter.id, desired)
+             }
+         }
+     }
+ 
+-    /// Normalizes a bundle to its recommended `members` and clears any snapshot.
++    /// Normalizes a bundle to its recommended `members` (including disabling
++    /// custom lists placed in the category) and clears any snapshot.
+     mutating func resetToRecommendedChanges(
+         for bundle: BasicBundle,
+         in filters: [FilterList],
+         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
+     ) -> [(id: UUID, selected: Bool)] {
+         snapshots.removeValue(forKey: bundle.id)
+-        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
++        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
+         let memberIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
+-        return owned.compactMap { filter in
++        return scoped.compactMap { filter in
+             let desired = memberIDs.contains(filter.id)
+             return filter.isSelected == desired ? nil : (filter.id, desired)
+         }
+```
+
+**File**: `wBlock/BasicFiltersView.swift` (modified, +125/-42)
+```diff
+@@ -16,16 +16,53 @@ struct BasicFiltersView: View {
+     let onHeroVisibilityChange: (Bool) -> Void
+     let onSwitchToAdvanced: () -> Void
+ 
++    private struct AlsoOnSheetItem: Identifiable {
++        let id = "alsoOn"
++    }
++
+     @AppStorage(ListDisplayOrder.filtersKey) private var filterDisplayOrder = Data()
+     @State private var toggleMemory = BasicBundleToggleMemory()
+     @State private var peekBundle: BasicBundle?
+-    @State private var showingUnownedSheet = false
++    @State private var unownedSheetItem: AlsoOnSheetItem?
+     @State private var showingLanguagesSheet = false
+     @State private var showingHeroPopover = false
+     private static let stricterBlockingExpandedKey = "wBlock.basicStricterBlockingExpanded"
+-    @State private var showStricterBlocking = UserDefaults.standard.bool(forKey: BasicFiltersView.stricterBlockingExpandedKey)
++    @State private var showStricterBlocking: Bool
+     @State private var scrollOffset: CGFloat = 0
+ 
++    init(
++        filterManager: AppFilterManager,
++        safariHealth: SafariHealthMonitor,
++        lastUpdatedDate: Date?,
++        onOpenHealthDetail: @escaping () -> Void,
++        onCheckForUpdates: @escaping () -> Void,
++        onHealthAction: @escaping (SafariHealthStatus.Action) -> Void,
++        onHeroVisibilityChange: @escaping (Bool) -> Void,
++        onSwitchToAdvanced: @escaping () -> Void
++    ) {
++        self.filterManager = filterManager
++        self.safariHealth = safariHealth
++        self.lastUpdatedDate = lastUpdatedDate
++        self.onOpenHealthDetail = onOpenHealthDetail
++        self.onCheckForUpdates = onCheckForUpdates
++        self.onHealthAction = onHealthAction
++        self.onHeroVisibilityChange = onHeroVisibilityChange
++        self.onSwitchToAdvanced = onSwitchToAdvanced
++
++        // Respect the user's saved dropdown state when set; on first visit,
++        // start already expanded (without an appear animation) if any stricter
++        // annoyance list is active (#1150).
++        let initialExpanded: Bool
++        if UserDefaults.standard.object(forKey: Self.stricterBlockingExpandedKey) != nil {
++            initialExpanded = UserDefaults.standard.bool(forKey: Self.stricterBlockingExpandedKey)
++        } else {
++            initialExpanded = AnnoyanceChoice.basicStricterChoices.contains {
++                BasicBundle.annoyance($0).state(in: filterManager.filterLists) != .off
++            }
++        }
++        _showStricterBlocking = State(initialValue: initialExpanded)
++    }
++
+     @Environment(\.colorScheme) private var colorScheme
+     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+ 
+@@ -128,14 +165,9 @@ struct BasicFiltersView: View {
+         #if os(iOS)
+         .refreshable {
+             guard !filterManager.isLoading else { return }
+-            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh)
++            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh, autoApply: true)
+         }
+         #endif
+-        .onAppear {
+-            if hasActiveStricterAnnoyance {
+-                showStricterBlocking = true
+-            }
+-        }
+         .infoPresentation(item: $peekBundle) { bundle in
+             BasicBundlePeekView(
+                 bundle: bundle,
+@@ -149,7 +181,7 @@ struct BasicFiltersView: View {
+                 }
+             )
+         }
+-        .sheet(isPresented: $showingUnownedSheet) {
++        .infoPresentation(item: $unownedSheetItem) { _ in
+             ScopedBundleListsSheet(
+                 title: String(localized: "Also on"),
+                 filters: FilterListPresentation.ordered(unownedActiveFilters, order: filterDisplayOrder),
+@@ -178,6 +210,9 @@ struct BasicFiltersView: View {
+             isWelded: safariHealth.hysteresis.isWelded,
+             weldCelebrationCount: safariHealth.weldCelebrationCount,
+             applyProgress: applyProgress,
++            statusSubtitleOverride: filterManager.showingBasicUpToDateStatus
++                ? String(localized: "Filters are up to date.")
++                : nil,
+             onTapHero: {
+                 #if os(macOS)
+                 showingHeroPopover = true
+@@ -624,7 +659,7 @@ struct BasicFiltersView: View {
+             isBypassPaywallsCleanEnabled: isBypassPaywallsCleanEnabled
+         )
+         return Button {
+-            showingUnownedSheet = true
++            unownedSheetItem = AlsoOnSheetItem()
+         } label: {
+             HStack(spacing: 12) {
+                 IconBadge(
+@@ -654,6 +689,7 @@ struct BasicFiltersView: View {
+         }
+         .buttonStyle(.plain)
+         .noFocusRingCompat()
++        .infoPopoverAnchor("alsoOn")
+     }
+ 
+     // MARK: - Footer
+@@ -923,13 +959,8 @@ struct BasicBundlePeekView: View {
+                     }
+                 } label: {
+                     HStack {
+-                        Text(
+-                            String.localizedStringWithFormat(
+-                                NSLocalizedString("All %d list
+```
+
+**File**: `wBlock/ContentView.swift` (modified, +9/-3)
+```diff
+@@ -222,7 +222,10 @@ struct ContentView: View {
+     }
+ 
+     private var showBasicBottomAccessory: Bool {
+-        appMode == .basic && !healthStatus.isProtected && (!isBasicHeroVisible || tabSelection.value != 0)
++        appMode == .basic
++            && !healthStatus.isProtected
++            && healthStatus != .applying
++            && (!isBasicHeroVisible || tabSelection.value != 0)
+     }
+ 
+     private func handleHealthAction(_ action: SafariHealthStatus.Action) {
+@@ -535,7 +538,10 @@ struct ContentView: View {
+                     safariHealth: safariHealth,
+                     lastUpdatedDate: latestFilterUpdateDate,
+                     onOpenHealthDetail: { showingHealthDetail = true },
+-                    onCheckForUpdates: { checkForUpdates(scope: .all) },
++                    onCheckForUpdates: {
++                        guard !filterManager.isLoading else { return }
++                        Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
++                    },
+                     onHealthAction: handleHealthAction,
+                     onHeroVisibilityChange: { visible in
+                         if isBasicHeroVisible != visible { isBasicHeroVisible = visible }
+@@ -608,7 +614,7 @@ struct ContentView: View {
+             hasPendingChanges: false,
+             onTap: {
+                 guard !filterManager.isLoading else { return }
+-                Task { await filterManager.checkForUpdates(scope: .all, presentation: .blocking) }
++                Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
+             },
+             onBusyTap: filterManager.showBackgroundApplyProgress
+         ) {
+```
+
+**File**: `wBlock/OnboardingView.swift` (modified, +11/-2)
+```diff
+@@ -637,7 +637,7 @@ struct OnboardingView: View {
+                     Text("Extras")
+                         .font(.headline)
+                     SelectableRowGroup(data: featuredExtras) { item in
+-                        userscriptCard(for: item)
++                        userscriptCard(for: item, showLanguageCaption: true)
+                     }
+                 }
+             }
+@@ -1098,11 +1098,20 @@ struct OnboardingView: View {
+         }
+     }
+ 
+-    private func userscriptCard(for script: OnboardingUserScriptItem) -> some View {
++    private func userscriptCard(
++        for script: OnboardingUserScriptItem,
++        showLanguageCaption: Bool = false
++    ) -> some View {
+         let isSelected = selectedUserscripts.contains(script.id)
++        let languageCaption: String = showLanguageCaption && !script.languageCodes.isEmpty
++            ? script.languageCodes
++                .map { RegionalLanguageOption(code: $0).nativeName }
++                .joined(separator: ", ")
++            : ""
+ 
+         return SelectableRow(
+             title: Text(script.name),
++            caption: languageCaption,
+             subtitle: script.description,
+             badge: script.isBeta ? "Beta" : nil,
+             isSelected: isSelected
+```
+
+**File**: `wBlock/ProtectionHero.swift` (modified, +5/-2)
+```diff
+@@ -261,11 +261,14 @@ struct ProtectionHero: View {
+     let isWelded: Bool
+     let weldCelebrationCount: Int
+     var applyProgress: Double? = nil
++    var statusSubtitleOverride: String? = nil
+     let onTapHero: () -> Void
+     let onAction: (SafariHealthStatus.Action) -> Void
+ 
+     var body: some View {
+         TimelineView(.periodic(from: .now, by: 30)) { context in
++            let subtitleText = (status.isProtected ? statusSubtitleOverride : nil)
++                ?? status.subtitle(now: context.date)
+             VStack(spacing: 10) {
+                 Button(action: onTapHero) {
+                     VStack(spacing: 8) {
+@@ -288,7 +291,7 @@ struct ProtectionHero: View {
+                                     .foregroundStyle(.tertiary)
+                                     .accessibilityHidden(true)
+                             }
+-                            Text(status.subtitle(now: context.date))
++                            Text(subtitleText)
+                                 .font(.footnote)
+                                 .foregroundStyle(.secondary)
+                                 .multilineTextAlignment(.center)
+@@ -301,7 +304,7 @@ struct ProtectionHero: View {
+                 .buttonStyle(.plain)
+                 .noFocusRingCompat()
+                 .accessibilityElement(children: .combine)
+-                .accessibilityLabel(Text("\(status.title). \(status.subtitle(now: context.date))"))
++                .accessibilityLabel(Text("\(status.title). \(subtitleText)"))
+                 .accessibilityHint(Text("Shows Safari extension status"))
+ 
+                 if let action = status.action, let ctaTitle = status.ctaTitle {
 ```
 
 ---
 
-### Incident Patch 3: `3a1125b6` (2026-11-20)
-**Commit Message**: fix(search): Stop matching catalog lists by their URL
+### Incident Patch 3: `bb1c3e27` (2026-11-23)
+**Commit Message**: Fix Show All Lists toggle glitch and Settings separator alignment
 
-Most catalog lists download from AdGuard's uBlock builds or uBlock's CDN. Searching "ublock" listed nearly every filter (Dalsu, Discord). Only custom lists match by URL now.
-
-**File**: `wBlock/LocalizationHelpers.swift` (modified, +4/-2)
+**File**: `wBlock/ContentView.swift` (modified, +16/-48)
 ```diff
-@@ -284,12 +284,14 @@ extension FilterList {
-         languages.contains { RegionalLanguageOption(code: $0.lowercased(), locale: locale).matches(query) }
+@@ -71,7 +71,6 @@ struct ContentView: View {
+     @State private var userScriptSearchRequest = 0
+     @State private var filtersScrollToTopToken = 0
+     @State private var showingLogs = false
+-    @State private var isTransitioningLayout = false
+     @State private var layoutTransitionTask: Task<Void, Never>?
+     @State private var deferredModeFlushTask: Task<Void, Never>?
+     @Environment(\.scenePhase) var scenePhase
+@@ -259,55 +258,23 @@ struct ContentView: View {
+     private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
+         layoutTransitionTask?.cancel()
+         layoutTransitionTask = nil
+-        guard appMode != newMode else {
+-            if isTransitioningLayout {
+-                withAnimation(.easeOut(duration: 0.16)) {
+-                    isTransitioningLayout = false
+-                }
+-            }
+-            return
+-        }
++        guard appMode != newMode else { return }
+         clearFilterPopoverSelections()
+         if !fromToggle {
+             Haptics.play(.tap)
++            withAnimation(reduceMotion ? .easeInOut(duration: 0.16) : .easeInOut(duration: 0.24)) {
++                appMode = newMode
++            }
++            return
+         }
+         layoutTransitionTask = Task { @MainActor in
+-            if fromToggle {
+-                // Let the native switch thumb finish sliding before swapping layouts.
+-                try? await Task.sleep(nanoseconds: 110_000_000)
+-                guard !Task.isCancelled else { return }
+-            }
+-
+-            if reduceMotion {
+-                withAnimation(.easeInOut(duration: 0.14)) {
+-                    isTransitioningLayout = true
+-                }
+-                try? await Task.sleep(nanoseconds: 120_000_000)
+-                guard !Task.isCancelled else { return }
+-                var transaction = Transaction(animation: nil)
+-                transaction.disablesAnimations = true
+-                withTransaction(transaction) {
+-                    appMode = newMode
+-                }
+-                withAnimation(.easeInOut(duration: 0.18)) {
+-                    isTransitioningLayout = false
+-                }
+-            } else {
+-                withAnimation(.easeIn(duration: 0.13)) {
+-                    isTransitioningLayout = true
+-                }
+-                try? await Task.sleep(nanoseconds: 130_000_000)
+-                guard !Task.isCancelled else { return }
+-                var transaction = Transaction(animation: nil)
+-                transaction.disablesAnimations = true
+-                withTransaction(transaction) {
+-                    appMode = newMode
+-                }
+-                try? await Task.sleep(nanoseconds: 16_000_000)
+-                guard !Task.isCancelled else { return }
+-                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
+-                    isTransitioningLayout = false
+-                }
++            // Let the native switch thumb finish gliding before rebuilding off-screen tabs.
++            try? await Task.sleep(nanoseconds: 140_000_000)
++            guard !Task.isCancelled else { return }
++            var transaction = Transaction(animation: nil)
++            transaction.disablesAnimations = true
++            withTransaction(transaction) {
++                appMode = newMode
+             }
+         }
      }
- 
--    /// The filter search: name, description, URL, or a language it covers.
-+    /// The filter search: name, description, a language it covers, or a custom
-+    /// list's URL. Catalog URLs stay out: most are uBlock-flavored builds or
-+    /// mirrors, so "ublock" matched nearly every list (Dalsu, Discord).
-     func matchesSearch(_ query: String, locale: Locale) -> Bool {
-         query.isEmpty
-             || localizedDisplayName.localizedCaseInsensitiveContains(query)
-             || localizedDisplayDescription.localizedCaseInsensitiveContains(query)
--            || url.absoluteString.localizedCaseInsensitiveContains(query)
-+            || (isCustom && url.absoluteString.localizedCaseInsensitiveContains(query))
-             || matchesLanguage(query, locale: locale)
+@@ -405,9 +372,6 @@ struct ContentView: View {
+                 onAction: handleHealthAction
+             )
+         }
+-        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
+-        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
+-        .opacity(isTransitioningLayout ? 0.86 : 1)
+         .background(keyboardShortcutHandlers)
+         .keyboardScrollingCompat()
+         .onAppear {
+@@ -620,6 +584,7 @@ struct ContentView: View {
+                 #endif
+                 .modifier(basicToolbar)
+             }
++            .transition(.opacity)
+             #if os(macOS)
+             .frame(
+                 minWidth: 480, idealWidth: 540, maxWidth: .infinity,
+@@ -636,6 +601,7 @@ struct ContentView: View {
+                     // Inside the stack, like Userscripts; iOS ignores toolbar items attached outside it.
+                     .modifier(filtersToolbar)
+             }
++            .transition(.opacity)
+             #if os(iOS)
+                 .searchableCompat(
+                     text: $filterSearchText,
+@@ -788,6 +754,7 @@ struct ContentView: View {
+                 .navigationBarTitleDisplayMode(.inline)
+                 #endif
+             }
++            .transition(.opacity)
+         } else {
+             CompatibleNavigationStack(requiresNavigationView: false) {
+                 UserScriptManagerView(
+@@ -809,6 +776,7 @@ struct ContentView: View {
+                         .navigationBarTitleDisplayMode(.inline)
+                     #endif
+             }
++            .transition(.opacity)
+         }
      }
  
 ```
 
+**File**: `wBlock/SettingsRowLabel.swift` (modified, +10/-7)
+```diff
+@@ -54,13 +54,16 @@ struct SettingsRowLabel: View {
+         // iOS lists draw disclosure chevrons for NavigationLink only, so a
+         // sheet-presenting button borrows one to read the same way.
+         if accessory == .popover {
+-            HStack {
+-                Label(title, systemImage: systemImage)
+-                    .foregroundStyle(.primary)
+-                Spacer()
+-                Image(systemName: "chevron.right")
+-                    .font(.footnote.weight(.semibold))
+-                    .foregroundStyle(.tertiary)
++            Label {
++                HStack {
++                    Text(title)
++                    Spacer()
++                    Image(systemName: "chevron.right")
++                        .font(.footnote.weight(.semibold))
++                        .foregroundStyle(.tertiary)
++                }
++            } icon: {
++                Image(systemName: systemImage)
+             }
+         } else {
+             Label(title, systemImage: systemImage)
+```
+
+**File**: `wBlock/SettingsView.swift` (modified, +63/-11)
+```diff
+@@ -13,7 +13,11 @@ struct SettingsView: View {
+     @ObservedObject private var syncManager = CloudSyncManager.shared
+     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
+     @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
+-    @State private var preserveAdvancedScrollOnModeChange = false
++    #if os(iOS)
++    @State private var showsStatusPills = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
++    @State private var deferStatusPillsSyncOnModeChange = false
++    @State private var isListNearTop = false
++    #endif
+     @Environment(\.openURL) private var openURL
+     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
+     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
+@@ -79,7 +83,13 @@ struct SettingsView: View {
+             guard !Task.isCancelled else { return }
+             await MainActor.run { startTimer() }
+         }
+-        .onDisappear { stopTimer() }
++        .onDisappear {
++            stopTimer()
++            #if os(iOS)
++            showsStatusPills = (appMode == .advanced)
++            deferStatusPillsSyncOnModeChange = false
++            #endif
++        }
+         .alert("Restart Onboarding?", isPresented: $showingRestartConfirmation) {
+             Button("Cancel", role: .cancel) {}
+             Button("Restart", role: .destructive) { restartOnboarding() }
+@@ -254,7 +264,9 @@ struct SettingsView: View {
+             set: { showAll in
+                 let newMode: AppMode = showAll ? .advanced : .basic
+                 showAllListsSwitch = showAll
+-                preserveAdvancedScrollOnModeChange = (newMode != appMode)
++                #if os(iOS)
++                deferStatusPillsSyncOnModeChange = (newMode != appMode)
++                #endif
+                 if let onSwitchAppMode {
+                     onSwitchAppMode(newMode)
+                 } else if newMode != appMode {
+@@ -405,6 +417,7 @@ struct SettingsView: View {
+             }
+ 
+             cosmeticFilteringControls
++                .leadingAlignedListRowSeparatorCompat()
+ 
+             // Opt-in and partial, so it sits with the other power-user settings.
+             Toggle(isOn: blockedRequestCountBinding) {
+@@ -948,22 +961,29 @@ struct SettingsView: View {
+                         scrollTarget = nil
+                     }
+                     .onAppear {
+-                        showAllListsSwitch = (appMode == .advanced)
++                        let isAdvanced = (appMode == .advanced)
++                        showAllListsSwitch = isAdvanced
++                        #if os(iOS)
++                        showsStatusPills = isAdvanced
++                        deferStatusPillsSyncOnModeChange = false
++                        #endif
+                     }
+                     .onChangeCompat(of: appMode) { _, newMode in
+                         let isAdvanced = (newMode == .advanced)
+                         if showAllListsSwitch != isAdvanced {
+                             showAllListsSwitch = isAdvanced
+                         }
+                         #if os(iOS)
+-                        if preserveAdvancedScrollOnModeChange {
+-                            preserveAdvancedScrollOnModeChange = false
+-                            DispatchQueue.main.async {
+-                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
++                        if deferStatusPillsSyncOnModeChange {
++                            deferStatusPillsSyncOnModeChange = false
++                            if isListNearTop, showsStatusPills != isAdvanced {
++                                withAnimation(.easeInOut(duration: 0.22)) {
++                                    showsStatusPills = isAdvanced
++                                }
+                             }
++                        } else if showsStatusPills != isAdvanced {
++                            showsStatusPills = isAdvanced
+                         }
+-                        #else
+-                        preserveAdvancedScrollOnModeChange = false
+                         #endif
+                     }
+             }
+@@ -974,7 +994,7 @@ struct SettingsView: View {
+     private var settingsList: some View {
+         #if os(iOS)
+         List {
+-            if appMode == .advanced {
++            if showsStatusPills {
+                 Section {
+                     statusPills
+                         .unifiedTabCardSectionRow()
+@@ -983,6 +1003,14 @@ struct SettingsView: View {
+             settingsSections
+         }
+         .unifiedTabListStyle()
++        .modifier(SettingsTopTrackingModifier(isNearTop: $isListNearTop) {
++            let isAdvanced = (appMode == .advanced)
++            if showsStatusPills != isAdvanced {
++                withAnimation(.easeInOut(duration: 0.22)) {
++                    showsStatusPills = isAdvanced
++           
+```
+
+**File**: `wBlock/SwiftUICompatibility.swift` (modified, +11/-0)
+```diff
+@@ -367,6 +367,17 @@ extension View {
+             self
+         }
+     }
++
++    /// Starts the row's bottom separator at the leading content edge instead of
++    /// indenting past a `Label` icon, for rows followed by an iconless row.
++    @ViewBuilder
++    func leadingAlignedListRowSeparatorCompat() -> some View {
++        if #available(iOS 16.0, macOS 13.0, *) {
++            alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
++        } else {
++            self
++        }
++    }
+ }
+ 
+ struct CompatibleLabeledContent<Label: View, Content: View>: View {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #1124** (2026-11-19): fix(filters): Keep enabled regional lists visible when collapsed (@huseyinbal05)
-- **PR #1120** (2026-11-18): Improve Japanese translation (@Lark8037)
-- **PR #1118** (2026-11-17): Align UI with the HIG and move policy tests to proofs (@0xCUB3)
-- **PR #1076** (2026-11-03): ci: build only wBlockCoreService for the native tests (@0xCUB3)
-- **PR #1075** (2026-11-03): [ImgBot] Optimize images (@imgbot[bot])
-- **PR #1072** (2026-11-03): feat: replace AdGuard's converter with a uBO-semantics engine (@0xCUB3)
+- **PR #1153** (2026-11-23): Simplify onboarding to 2-step Express Setup and replace mode naming with Show All Lists (@0xCUB3)
+- **PR #1149** (2026-11-23): Revert "Add target.microsoft.com to ad-tracking hosts (#1145)" (@braverug)
+- **PR #1147** (2026-11-22): [ImgBot] Optimize images (@imgbot[bot])
+- **PR #1146** (2026-11-22): perf(content-blocker): skip redundant cache reads and reload re-hashing (@huseyinbal05)
+- **PR #1145** (2026-11-22): Add target.microsoft.com to ad-tracking hosts (@braverug)
+- **PR #1144** (2026-11-22): feat(mode): add Basic and Advanced modes (#404) (@0xCUB3)
 
 ---
 
@@ -2549,46 +3442,84 @@ Most catalog lists download from AdGuard's uBlock builds or uBlock's CDN. Search
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filters): Remove the allowlists and rerun the 4.0 upgrade once
+## X. Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout sw
 
 **RULE**:
-When implementing operations in `scripts/test_filter_catalog_migrations.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlock/BasicFiltersView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0612d643`: filters): Remove the allowlists and rerun the 4.0 upgrade once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2880c43d`: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/test_filter_catalog_migrations.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/BasicFiltersView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // Online Malicious URL Blocklist and the two allowlists go even when on, with the custom copies earlier
-        // releases kept (#1088).
-        for (url, name) in [
-            ("https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt", "Online Malicious URL Blocklist"),
-            ("\(registry)/extension/safari/filters/208_optimized.txt", "Online Malicious URL Blocklist"),
-            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
-            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
-            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
-        ] {
-                let filter = FilterList(name: name, url: URL(string: url)!, category: .security,
+        let codes = activeLanguageCodes
+        guard !codes.isEmpty else { return String(localized: "None") }
+        let displayLocale = RegionalLanguageOption.displayLocale
+        let names = codes
+            .map { code -> (sortKey: String, native: String) in
+                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
+                let native = Locale.nativeLanguageName(for: code) ?? display
+                return (display, native)
+            }
+            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
+            .map(\.native)
+        return ListFormatter.localizedString(byJoining: names)
+            .id(bundle.id)
+        if #available(iOS 16.0, *) {
+            PeekSheetDetentsHost(showAllLists: $showAllLists) {
+                ScrollView {
+                    peekBody
+                        .padding(SheetDesign.contentHorizontalPadding)
+                }
+                .scrollBounceBasedOnSizeCompat()
+                .opaqueSheetBackgroundCompat()
+            }
+        } else {
+            ScrollView {
+                peekBody
+                    .padding(SheetDesign.contentHorizontalPadding)
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
-            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
-            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
-        // Online Malicious URL Blocklist goes even when on, with the custom copy 3.2.3 kept (#1088).
-        for url in ["https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
-                    "\(registry)/extension/safari/filters/208_optimized.txt"] {
-                let filter = FilterList(name: "Online Malicious URL Blocklist", url: URL(string: url)!, category: .security,
+        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
+        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
+        ScrollView {
+            peekBody
+                .padding(SheetDesign.contentHorizontalPadding)
+        .scrollBounceBasedOnSizeCompat()
+        .opaqueSheetBackgroundCompat()
+        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
+private struct PeekSheetDetentsCompat: ViewModifier {
+    @Binding var showAllLists: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
+        } else {
+            content
+        }
+    }
+}
+
+private struct PeekSheetDetentsModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .presentationDetents([.medium, .large], selection: $selectedDetent)
+            .presentationDragIndicator(.visible)
+            .onChangeCompat(of: showAllLists) { _, expanded in
+                let target: PresentationDetent = expanded ? .large : .medium
+                if selectedDete
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0612d643` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2880c43d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

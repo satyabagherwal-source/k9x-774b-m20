@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T17:12:00.481Z",
+  "updated_at": "2026-11-23T17:20:56.413Z",
   "stats": {
-    "total_discovered": 7930,
-    "approved_pending_harvest": 7506,
+    "total_discovered": 7935,
+    "approved_pending_harvest": 7511,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7495,
+      "COMMUNITY_AND_EXPERT": 7500,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -171515,6 +171515,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
         "fileName": "dicklesworthstone-destructive_command_guard-learnings.md"
+      }
+    },
+    "SRC-F247B01E80FA": {
+      "id": "SRC-F247B01E80FA",
+      "url": "https://github.com/user-attachments/assets/0ddbe219-1b31-46ca-9ac5-7715dbd8de7b",
+      "title": "https://github.com/user-attachments/assets/0ddbe219-1b31-46ca-9ac5-7715dbd8de7b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:20:56.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-ACED0F8284B6": {
+      "id": "SRC-ACED0F8284B6",
+      "url": "https://github.com/user-attachments/assets/5aa8a482-8fa8-4939-a171-68dde0880979",
+      "title": "https://github.com/user-attachments/assets/5aa8a482-8fa8-4939-a171-68dde0880979",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:20:56.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-2D3DD3D01AA6": {
+      "id": "SRC-2D3DD3D01AA6",
+      "url": "https://github.com/violentmonkey/violentmonkey/issues/2527",
+      "title": "https://github.com/violentmonkey/violentmonkey/issues/2527",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:20:56.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-0ABDCFBCA848": {
+      "id": "SRC-0ABDCFBCA848",
+      "url": "https://github.com/0xCUB3/wBlock/issues/new/choose",
+      "title": "https://github.com/0xCUB3/wBlock/issues/new/choose",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:20:56.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-158915F07607": {
+      "id": "SRC-158915F07607",
+      "url": "https://example.com/custom-ads-reset.txt",
+      "title": "https://example.com/custom-ads-reset.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:20:56.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
       }
     }
   }

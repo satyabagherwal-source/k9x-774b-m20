@@ -4,22 +4,22 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "a8595edc",
+  "source_version": "15487f34",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T15:09:15.457Z",
+  "timestamp": "2026-11-23T17:20:46.424Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `a8595edc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T15:09:15.457Z`  
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `15487f34`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:20:46.424Z`  
 > **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `envoyproxy/envoy` (Commit: `a8595edc`)
+- **Target Repository**: `envoyproxy/envoy` (Commit: `15487f34`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:09:14.184Z  
+> **Harvest Timestamp**: 2026-11-23T17:20:44.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29276 stars
+- **Stars / Engagement**: 29284 stars
 
 ---
 
@@ -1058,625 +1058,528 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8595edc` (2026-11-22)
-**Commit Message**: http: close idle HTTP/1 downstream connections without delayed close (#48884)
+### Incident Patch 1: `331b8ca6` (2026-11-22)
+**Commit Message**: reverse_tunnels: changes to let the upstream drain gracefully (#49458)
 
-Commit Message: http: close idle HTTP/1 downstream connections without
-delayed close
+## Commit Message 
+reverse_tunnel: changes to let the upstream drain gracefully
 
-When the drain timer fires on an HTTP/1 connection that carried no
-request since the drain sequence started, close it with `FlushWrite`
-instead of `FlushWriteAndDelay`. That's the connection idle timeout
-path, and also max connection duration or a listener drain on a
-connection that happens to be idle.
+## Additional Description
+As described in: https://github.com/envoyproxy/envoy/pull/47717 this PR
+makes the changes to let the upstream side drain gracefully.
+We hook in the changes for the upstream drain and the downstream to open
+a new tunnel via the connection metadata hooks added.
 
-Additional Description:
-Delayed close exists so a client that is still sending can read a
-response Envoy wrote early before it gets an RST. An idle connection has
-no response to read, so the delay only holds the socket open for
-`delayed_close_timeout` with reads disabled and no FIN sent. A pooling
-client that keeps no idle timeout of its own will happily reuse the
-socket in that window, and its request is never answered. We hit this
-with a pooling L7 proxy in front of Envoy that surfaced those as 503s.
-nginx's `keepalive_timeout` sends the FIN right away, so it never showed
-up there.
+Fixes commit #45874
+Replaces the drain-start GOAWAY (which never reached the wire under
+nghttp2/oghttp2) with a stream-0 METADATA frame.
+Also gets rid of the double counter for the goaway_sent as the cluster
+directly counted the same.
 
-The delay is kept whenever a request came in after the drain started,
-since its response (with `Connection: close`) may have just gone out
+## Risk level
+Low
 
-**File**: `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst` (added, +10/-0)
+## Testing
+Added unit, integ tests.
+
+---------
+
+Signed-off-by: aakugan <[REDACTED_EMAIL]>
+
+**File**: `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto` (modified, +6/-3)
 ```diff
-@@ -0,0 +1,10 @@
-+An HTTP/1 downstream connection that carries no request between the start of a drain sequence and
-+its :ref:`drain timeout
-+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.drain_timeout>`,
-+such as one closed by the connection idle timeout, is now closed without waiting for the
-+:ref:`delayed close timeout
-+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.delayed_close_timeout>`.
-+There is no response on such a connection for the client to read, and while the delayed close was
-+pending Envoy ignored any request a pooling client sent on it, so that request was never answered.
-+This change can be reverted by setting the runtime guard
-+``envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain`` to ``false``.
-```
-
-**File**: `source/common/http/conn_manager_impl.cc` (modified, +8/-1)
-```diff
-@@ -527,6 +527,7 @@ RequestDecoder& ConnectionManagerImpl::newStream(ResponseEncoder& response_encod
-       *this, response_encoder.getStream().bufferLimit(), std::move(downstream_stream_account));
+@@ -37,10 +37,13 @@ message DrainAwareHttpConnectionManager {
+   // The underlying HCM configuration to apply.
+   http_connection_manager.v3.HttpConnectionManager hcm_config = 1;
  
-   accumulated_requests_++;
-+  idle_since_drain_start_ = false;
-   if (config_->maxRequestsPerConnection() > 0 &&
-       accumulated_requests_ >= config_->maxRequestsPerConnection()) {
-     if (codec_->protocol() < Protocol::Http2) {
-@@ -980,7 +981,12 @@ void ConnectionManagerImpl::onDrainTimeout() {
-   ASSERT(drain_state_ != DrainState::NotDraining);
-   codec_->goAway();
-   drain_state_ = DrainState::Closing;
--  checkForDeferredClose(false);
-+  // An HTTP/1 connection that carried no request while draining has no response for the client to
-+  // read, so delaying the close would only hold the socket open and ignore any request sent on it.
-+  checkForDeferredClose(
-+      /*skip_delay_close=*/idle_since_drain_start_ && codec_->protocol() < Protocol::Http2 &&
-+      Runtime::runtimeFeatureEnabled(
-+          "envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain"));
-   // Only once the end of the drain window is near: a drain sequence started earlier (e.g. by a
-   // response) must not cut the tunneling streams short while other traffic on the connection can
-   // still complete normally.
-@@ -1936,6 +1942,7 @@ void ConnectionManagerImpl::ActiveStream::disarmRequestTimeout() {
- void ConnectionManagerImpl::startDrainSequence() {
-   ASSERT(drain_state_ == DrainState::NotDraining);
-   drain_state_ = DrainState::Draining;
-+  idle_since_drain_start_ = streams_.empty();
-   codec_->shutdownNotice();
-   drain_timer_ = dispatcher_->createTimer([this]() -> void { onDrainTimeout(); });
-   drain_timer_->enableTimer(config_->drainTimeout());
-```
-
-**File**: `source/common/http/conn_manager_impl.h` (modified, +2/-0)
-```diff
-@@ -702,6 +702,8 @@ class ConnectionManagerImpl : Logger::Loggable<Logger::Id::http>,
-   bool proactive_drain_{false};
-   // When set to true, add Connection:close response header to nudge downstream client to reconnect.
-   bool soft_drain_http1_{false};
-+  // Whether the connection has carried no stream since the drain sequence started.
-+  bool idle_since_drain_start_{false};
-   Random::RandomGenerator& random_generator_;
-   Runtime::Loader& runtime_;
-   const LocalInfo::LocalInfo& local_info_;
-```
-
-**File**: `source/common/runtime/runtime_features.cc` (modified, +1/-0)
-```diff
-@@ -123,6 +123,7 @@ RUNTIME_GUARD(envoy_reloadable_features_health_check_after_cluster_warming);
- RUNTIME_GUARD(envoy_reloadable_features_hide_transport_failure_reason_in_response_body);
- RUNTIME_GUARD(envoy_reloadable_features_hot_restart_propagate_stat_tags);
- RUNTIME_GUARD(envoy_reloadable_features_http1_allow_query_method);
-+RUNTIME_GUARD(envoy_reloadable_features_http1_skip_delayed_close_on_idle_drain);
- RUNTIME_GUARD(envoy_reloadable_features_http2_discard_host_header);
- RUNTIME_GUARD(envoy_reloadable_features_http2_fix_goaway_loadshed_point);
- RUNTIME_GUARD(envoy_reloadable_features_http2_flood_protection_active_streams);
-```
-
-**File**: `test/common/http/conn_manager_impl_test_2.cc` (modified, +76/-10)
-```diff
-@@ -433,15 +433,85 @@ TEST_F(HttpConnectionManagerImplTest, IdleTimeout) {
-   idle_timer->invokeCallback();
+-  // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
++  // When true, a peer-initiated GOAWAY or connection-level METADATA frame carrying
++  // ``envoy.reverse_tunnel.drain: true`` on a reverse tunnel makes the initiator drop the draining
+   // tunnel and dial a replacement, so capacity is restored before the old tunnel closes while its
+-  // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
+-  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
++  // in-flight streams finish. Receiving the METADATA frame requires
++  // ``hcm_config.http2_protocol_options.allow_metadata`` to be true. Default false, so the
++  // behavior is opt-in and unconfigured listeners are unaffected. Required by ``metadata_delay``
++  // and ``shutdown_notice_delay``.
+   bool enable_drain_with_goaway = 2;
  
-   EXPECT_CALL(*codec_, goAway());
--  EXPECT_CALL(filter_callbacks_.connection_,
--              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
-+  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
-   EXPECT_CALL(*idle_timer, disableTimer());
-   EXPECT_CALL(*drain_timer, disableTimer());
-   drain_timer->invokeCallback();
+   // Delay from the start of a reverse tunnel drain until a METADATA frame carrying
+```
+
+**File**: `api/envoy/extensions/upstreams/http/reverse_tunnel/v3/reverse_tunnel_codec.proto` (modified, +13/-5)
+```diff
+@@ -20,10 +20,18 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
  
-   EXPECT_EQ(1U, stats_.named_.downstream_cx_idle_timeout_.value());
+ // Configuration for the drain-aware reverse-tunnel upstream codec.
+ message ReverseTunnelUpstreamCodecOptions {
+-  // When true, the upstream HTTP/2 client codec emits a GOAWAY when the reverse tunnel begins
+-  // draining. Defaults to false, in which case the stock HTTP/2 client codec is used unchanged.
+-  // When true, a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
+-  // also notifies the reverse tunnel reporter; this requires the cluster's
+-  // ``http2_protocol_options.allow_metadata``.
++  // When true, the upstream HTTP/2 client codec becomes drain-aware: it observes peer GOAWAY and
++  // drain METADATA frames to notify the reverse tunnel reporter, and on an upstream-initiated
++  // graceful drain (via ``/reverse_tunnel/drain_clusters``) it immediately emits a
++  // connection-level (stream 0) METADATA frame carrying ``envoy.reverse_tunnel.drain: true`` so
++  // the peer can dial a replacement tunnel, then emits a final GOAWAY after the drain window and
++  // drains the pool connection. Emitting and observing drain METADATA frames requires the
++  // cluster's ``http2_protocol_options.allow_metadata`` to be true (otherwise the HTTP/2 codec
++  // drops the outgoing METADATA frame and increments ``http2.metadata_dropped``). Because the
++  // replacement tunnel overlaps the draining tunnel for the entire drain window, if
++  // ``enable_connection_limit`` is enabled, ``max_connections_per_node`` must leave room for the
++  // replacement connection; otherwise a worker already at the limit rejects it with HTTP 429 and
++  // each refusal lengthens the initiator's backoff. Defaults to false, in which case the stock
++  // HTTP/2 client codec is used unchanged.
+   bool enable_drain_with_goaway = 1;
+ }
+```
+
+**File**: `changelogs/current/minor_behavior_changes/reverse_tunnel__upstream-connection-metadata-drain.rst` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++Updated the reverse-tunnel upstream HTTP/2 codec so when :ref:`enable_drain_with_goaway
++<envoy_v3_api_field_extensions.upstreams.http.reverse_tunnel.v3.ReverseTunnelUpstreamCodecOptions.enable_drain_with_goaway>`
++is enabled, upstream-initiated graceful drains (such as via ``/reverse_tunnel/drain_clusters``)
++emit a connection-level (stream 0) METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
++before the final GOAWAY, replacing the previous drain-start client GOAWAY (which never reached the
++wire because nghttp2 rejects client GOAWAYs with an odd last stream ID and oghttp2 drops client
++GOAWAYs, yet ``reverse_tunnel_upstream_codec.goaway_sent`` counted it). Replaced
++``reverse_tunnel_upstream_codec.goaway_sent`` with ``reverse_tunnel_upstream_codec.drain_started``
++to count each drain start, while the cluster's ``http2.goaway_sent`` stat tracks the final GOAWAY
++sent after the drain window. The server-side drain-aware HTTP connection manager now observes that
++METADATA frame when :ref:`enable_drain_with_goaway
++<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.enable_drain_with_goaway>`
++is enabled and dials a replacement tunnel before the final GOAWAY arrives. Emitting and observing
++the drain METADATA frame requires ``http2_protocol_options.allow_metadata`` on both sides.
+```
+
+**File**: `contrib/reverse_tunnel_reporter/test/clients/grpc_client_integration_test.cc` (modified, +84/-0)
+```diff
+@@ -702,6 +702,90 @@ TEST_P(GrpcClientIntegrationTest, ListenerDrainMetadataThreePhase) {
+   completeReq(std::chrono::milliseconds((inFlightRequestDelay.count() + 1) * 1000), in_flight_resp);
  }
  
-+class HttpConnectionManagerIdleDrainTest : public HttpConnectionManagerImplTest {
-+protected:
-+  // Sends one request, then fires the connection idle timer, which starts the drain sequence.
-+  void startIdleDrain() {
-+    idle_timeout_ = std::chrono::milliseconds(10);
-+    idle_timer_ = setUpTimer();
-+    EXPECT_CALL(*idle_timer_, enableTimer(_, _)).Times(testing::AnyNumber());
-+    EXPECT_CALL(*idle_timer_, disableTimer()).Times(testing::AnyNumber());
-+    setup();
-+    sendRequestAndResponse();
++// Upstream-initiated drain: the admin endpoint /reverse_tunnel/drain_clusters triggers the upstream
++// (client) codec's startGracefulDrain, which sends a stream-0 METADATA frame immediately (drain
++// key -> the downstream redials a replacement tunnel) and a final GOAWAY after drain_time (pool
++// drain, old tunnel closes). The downstream listener uses a long max_connection_duration so it does
++// NOT self-drain during the test; the only drain is the upstream admin trigger. Validated as a
++// gradual cutover:
++//   (1) tunnel established (established_total==1), nothing closed, traffic flows;
++//   (2) admin drain -> upstream sends METADATA -> downstream redials (established_total==2),
++//       no GOAWAY yet (goaway_sent==0), no close yet (reverse_tunnel_closed==0), traffic flows;
++//   (3) after drain_time -> upstream sends final GOAWAY (goaway_sent==1), the pool drains the
++//       old connection, the old tunnel closes (reverse_tunnel_closed==1), traffic flows on the
++//       replacement.
++TEST_P(GrpcClientIntegrationTest, UpstreamAdminDrainMetadata) {
++  enable_drain_metadata_ = true;
++  initialize();
++  makeNewServer();
 +
-+    drain_timer_ = setUpTimer();
-+    EXPECT_CALL(*drain_timer_, enableTimer(_, _));
-+    EXPECT_CALL(*drain_timer_, disableTimer()).Times(testing::AnyNumber());
-+    idle_timer_->invokeCallback();
-+  }
++  // Long max_connection_duration so the downstream does not self-drain during the test; the only
++  // drain is the upstream admin trigger. drain_time_ms=5000 -> METADATA now, final GOAWAY ~5s.
++  // The in-flight /slow request started before the drain must outlive the final GOAWAY at ~5s.
++  constexpr std::chrono::seconds inFlightRequestDelay{10};
++  addListenerLds(getDownstreamListenerWithMetadata(
++      "node-1", 1, std::chrono::seconds(120), std::chrono::milliseconds(1000),
++      std::chrono::milliseconds(5000), std::chrono::seconds(10), inFlightRequestDelay));
++  waitForActiveTunnels(1);
++  validateEqual(std::chrono::milliseconds(sendInterval * 3), getConns({"node-1"}));
 +
-+  void sendRequestAndResponse() {
-+    auto* filter = new NiceMock<MockStreamDecoderFilter>();
-+    EXPECT_CALL(filter_factory_, createFilterChain(_))
-+        .WillOnce([this, filter](FilterChainFactoryCallbacks& callbacks) -> bool {
-+          auto factory = createDecoderFilterFactoryCb(StreamDecoderFilterSharedPtr{filter});
-+          callbacks.setFilterConfigName("");
-+          factory(callbacks);
-+          return true;
-+        });
-+    EXPECT_CALL(*filter, decodeHeaders(_, true))
-+        .WillOnce(Return(FilterHeadersStatus::StopIteration));
-+    startRequest(true);
++  auto sendDirectRequest = [&]() {
++    auto client = makeHttpConnection(egressPort);
++    auto resp = makeClientRequest("/direct", client);
++    completeReq(std::chrono::milliseconds(1000), resp);
++  };
 +
-+    filter->callbacks_->streamInfo().setResponseCodeDetails("");
-+    filter->callbacks_->encodeHeaders(
-+        ResponseHeaderMapPtr{new TestResponseHeaderMapImpl{{":status", "200"}}}, true, "details");
-+    response_encoder_.stream_.codec_callbacks_->onCodecEncodeComplete();
-+  }
++  // Convenience aliases for the long stat names.
++  const std::string closed_total =
++      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
++      "reverse_tunnel_closed_total";
++  const std::string established_total =
++      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
++      "reverse_tunnel_established_total";
++  const std::string drain_started = "reverse_tunnel_upstream_codec.drain_started";
++  const std::string goaway_sent = "cluster.reverse_connection_cluster.http2.goaway_sent";
 +
-+  void expectCloseOnDrainTimeout(Network::ConnectionCloseType close_type) {
-+    EXPECT_CALL(*codec_, goAway());
-+    EXPECT_CALL(filter_callbacks_.connection_, close(close_type, _));
-+    drain_timer_->invokeCallback();
-+  }
++  // (1) Tunnel established, nothing closed yet. Baseline: the tunnel is routable.
++  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
++  EXPECT_EQ(0, test_server_->counter(drain_started)->value());
++  sendDirectRequest();
++  ASSERT_NE(nullptr, test_server_->counter(goaway_sent));
++  EXPECT_EQ(0, test_server_->counter(goaway_sent)->value());
 +
-+  Event::MockTimer* idle_timer_{};
-+  Event::MockTimer* drain_timer_{};
-+};
++  // Hold a /slow stream open on the old tunnel before starting the drain so we verify in-flight
++  // requests survive both the drain METADATA and the final GOAWAY + pool drain.
++  auto in_flight_client = makeHttpConnection(egressPort);
++  auto in_flight_resp = makeClientRequest("/slow", in_flight_client);
 +
-+TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseWithRuntimeGuardDisabled) {
-+  TestScopedRuntime scoped_runtime;
-+  scoped_runtime.mergeValues(
-+      {{"envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain", "false"}});
-+  startIdleDrain();
-+  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
-+}
++  // (2) Trigger the upstream-initiated drain. The upstream sends METADATA now -> the downstream
++  // redials a replacement (established_total==2). No GOAWAY yet (goaway_sent==0) and no close yet
++  // (reverse_tunnel_closed==0); traffic still flows on the old tunnel.
++  BufferingStreamDecoderPtr admin_response = IntegrationUtil::makeSingleRequest(
++      test_server_->adminAddress(), "POST", "/reverse_tunnel/drain_clusters?drain_time_ms=5000", "",
++      Http::CodecType::HTTP1);
++  ASSERT_TRUE(admin_response != nullptr);
++  ASSERT_TRUE(admin_response->complete());
++  EXPECT_EQ("200", admin_response->headers().Status()->value().getStringView());
++  test_server_->waitForCounter(drain_started, testing::Eq(1));
 +
-+// The drain timeout writes the final GOAWAY, which the client should get to read.
-+TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseForHttp2) {
-+  EXPECT_CALL(*codec_, protocol()).WillRepeatedly(Return(Protocol::Http2));
-+  startIdleDrain();
-+  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
-+}
++  // The downstream redials as soon as it receives the drain METADATA (sent immediately on the admin
++  // trigger), so established_total==2 follows within ~1-2s; ~10s is a tight CI-safe bound.
++  test_server_->waitForCounter(established_total, testing::Eq(2), std::chrono::milliseconds(10000));
++  EXPECT_EQ(0, test_server_->counter(goaway_sent)->value());
++  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
++  sendDirectRequest();
 +
-+TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseAfterResponseWhileDraining) {
-+  startIdleDrain();
-+  EXPECT_CALL(response_encoder_, encodeHeaders(_, true))
-+      .WillOnce([](const ResponseHeaderMap& headers, bool) -> void {
-+        EXPECT_EQ("close", headers.getConnectionValue());
-+      });
-+  sendRequestAndResponse();
-+  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
-+}
-+
- TEST_F(HttpConnectionManagerImplTest, ConnectionDurationResponseFlag) {
-   // Not used in the test.
-   delete codec_;
-@@ -664,8 +734,7 @@ TEST_F(HttpConnectionManagerImplTest, ConnectionDuration) {
-   connection_duration_timer->invokeCallback();
- 
-   EXPECT_CALL(*codec_, goAway());
--  EXPECT_CALL(filter_callbacks_.connection_,
--              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
-+  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
-   EXPECT_CALL(*connection_duration_timer, disableTimer());
-   EXPECT_CALL(*drain_timer, disableTimer());
-   drain_timer->invokeCallback();
-@@ -2340,8 +2409,7 @@ TEST_F(HttpConnectionManagerImplTest, DrainTimeoutJitter) {
-   connection_duration_timer->invokeCallback();
- 
-   EXPECT_CALL(*codec_, goAway());
--  EXPECT_CALL(filter_callbacks_.connection_,
--              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
-+  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
-   EXPECT_CALL(*connection_duration_timer, disableTimer());
-   EXPECT_CALL(*drain_timer, disableTimer());
-   drain_timer->invokeCallback();
-@@ -2380,8 +2448,7 @@ TEST_F(HttpConnectionManagerImplTest, DrainTimeoutJitterZeroPercent) {
-   connection_duration_timer->invokeCallback();
- 
-   EXPECT_CALL(*codec_, goAway());
--  EXPECT_CALL(filter_callbacks_.connection_,
--              close(Network:
++  // (3) After drain_time (~5s) the upstream sends the final GOAWAY (goaway_sent==1) and drains the
++  // old pool connection. New traffic routes to the replacement while the in-flight /slow request
++  // finishes cleanly on the old tunnel, after which the old tunnel closes
++  // (reverse_tunnel_closed==1).
++  test_server_->wai
 ```
 
-**File**: `test/common/http/conn_manager_impl_test_3.cc` (modified, +1/-2)
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/BUILD` (modified, +1/-0)
 ```diff
-@@ -3638,8 +3638,7 @@ TEST_F(HttpConnectionManagerImplTest, ProactiveDrainIdleConnection) {
-   EXPECT_EQ(1U, stats_.named_.downstream_cx_drain_close_.value());
- 
-   EXPECT_CALL(*codec_, goAway());
--  EXPECT_CALL(filter_callbacks_.connection_,
--              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
-+  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
-   EXPECT_CALL(*proactive_drain_timer, disableTimer());
-   EXPECT_CALL(*drain_timer, disableTimer());
-   drain_timer->invokeCallback();
+@@ -16,6 +16,7 @@ envoy_cc_extension(
+     deps = [
+         "//envoy/buffer:buffer_interface",
+         "//envoy/common:random_generator_interface",
++        "//envoy/http:metadata_interface",
+         "//envoy/network:connection_interface",
+         "//source/common/buffer:buffer_lib",
+         "//source/common/common:logger_lib",
 ```
 
-**File**: `test/integration/BUILD` (modified, +1/-0)
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.cc` (modified, +22/-0)
 ```diff
-@@ -2174,6 +2174,7 @@ envoy_cc_test(
-         "//test/integration/filters:stop_iteration_and_continue",
-         "//test/mocks/http:http_mocks",
-         "//test/test_common:registry_lib",
-+        "//test/test_common:simulated_time_system_lib",
-         "//test/test_common:threadsafe_singleton_injector_lib",
-         "//test/test_common:utility_lib",
-         "@envoy_api//envoy/config/bootstrap/v3:pkg_cc_proto",
-```
-
-**File**: `test/integration/integration_test.cc` (modified, +59/-0)
-```diff
-@@ -27,6 +27,7 @@
- #include "test/test_common/network_utility.h"
- #include "test/test_common/printers.h"
- #include "test/test_common/registry.h"
-+#include "test/test_common/simulated_time_system.h"
- #include "test/test_common/threadsafe_singleton_injector.h"
- #include "test/test_common/utility.h"
- 
-@@ -2017,6 +2018,64 @@ TEST_P(IntegrationTest, TestDelayedConnectionTeardownConfig) {
-   EXPECT_EQ(codec_client_->lastConnectionEvent(), Network::ConnectionEvent::RemoteClose);
+@@ -173,6 +173,28 @@ uint64_t ReverseConnectionUtility::diffMs(const Envoy::MonotonicTime& start,
+   return ms.count();
  }
  
-+class IntegrationTestWithSimulatedTime : public Event::TestUsingSimulatedTime,
-+                                         public IntegrationTest {
-+protected:
-+  static constexpr std::chrono::seconds kIdleTimeout{1};
-+  static constexpr std::chrono::seconds kDrainTimeout{1};
-+  static constexpr std::chrono::seconds kDelayedCloseTimeout{100};
++Http::MetadataMapVector ReverseConnectionUtility::createDrainMetadata() {
++  Http::MetadataMap metadata_map;
++  metadata_map.emplace(DRAIN_METADATA_KEY, DRAIN_METADATA_VALUE);
++  Http::MetadataMapVector metadata_map_vector;
++  metadata_map_vector.push_back(std::make_unique<Http::MetadataMap>(std::move(metadata_map)));
 +
-+  // Serves one request, then lets the idle timeout start a drain sequence and runs it to its end.
-+  void idleTimeoutThroughDrain() {
-+    autonomous_upstream_ = true;
-+    config_helper_.addConfigModifier(
-+        [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
-+               hcm) {
-+          hcm.mutable_common_http_protocol_options()->mutable_idle_timeout()->set_seconds(
-+              kIdleTimeout.count());
-+          hcm.mutable_drain_timeout()->set_seconds(kDrainTimeout.count());
-+          hcm.mutable_delayed_close_timeout()->set_seconds(kDelayedCloseTimeout.count());
-+        });
-+    initialize();
++  return metadata_map_vector;
++}
 +
-+    codec_client_ = makeHttpConnection(lookupPort("http"));
-+    auto response = codec_client_->makeHeaderOnlyRequest(default_request_headers_);
-+    ASSERT_TRUE(response->waitForEndStream());
-+    EXPECT_THAT(response->headers(), HttpStatusIs("200"));
-+    test_server_->waitForCounter("http.config_test.downstream_rq_completed", Eq(1));
-+
-+    timeSystem().advanceTimeWait(kIdleTimeout);
-+    test_server_->waitForCounter("http.config_test.downstream_cx_idle_timeout", Eq(1));
-+    timeSystem().advanceTimeWait(kDrainTimeout);
++bool ReverseConnectionUtility::eraseDrainMetadata(Http::MetadataMap& metadata_map) {
++  auto it = metadata_map.find(DRAIN_METADATA_KEY);
++  if (it == metadata_map.end()) {
++    return false;
 +  }
-+};
++  if (it->second != DRAIN_METADATA_VALUE) {
++    return false;
++  }
 +
-+INSTANTIATE_TEST_SUITE_P(IpVersions, IntegrationTestWithSimulatedTime,
-+                         ValuesIn(TestEnvironment::getIpVersionsForTest()), testParamToString);
-+
-+// A connection closed by the idle timeout has no response in flight, so it is closed as soon as the
-+// drain sequence ends rather than after the delayed close timeout.
-+TEST_P(IntegrationTestWithSimulatedTime, IdleTimeoutSkipsDelayedClose) {
-+  idleTimeoutThroughDrain();
-+
-+  // Waiting on a counter advances simulated time, so a delayed close would eventually fire too.
-+  test_server_->waitForCounter("http.config_test.downstream_cx_destroy_local", Eq(1));
-+  EXPECT_EQ(0,
-+            test_server_->counter("http.config_test.downstream_cx_delayed_close_timeout")->value());
-+  ASSERT_TRUE(codec_client_->waitForDisconnect());
-+  EXPECT_EQ(codec_client_->lastConnectionEvent(), Network::ConnectionEvent::RemoteClose);
++  metadata_map.erase(it);
++  return true;
 +}
 +
-+TEST_P(IntegrationTestWithSimulatedTime, IdleTimeoutDelayedCloseWithRuntimeGuardOff) {
-+  config_helper_.addRuntimeOverride(
-+      "envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain", "false");
-+  idleTimeoutThroughDrain();
+ } // namespace ReverseConnection
+ } // namespace Bootstrap
+ } // namespace Extensions
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h` (modified, +8/-0)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ #include "envoy/buffer/buffer.h"
+ #include "envoy/common/random_generator.h"
++#include "envoy/http/metadata_interface.h"
+ #include "envoy/network/connection.h"
+ 
+ #include "source/common/buffer/buffer_impl.h"
+@@ -94,6 +95,13 @@ class ReverseConnectionUtility : public Logger::Loggable<Logger::Id::connection>
+ 
+   static uint64_t diffMs(const Envoy::MonotonicTime& start, const Envoy::MonotonicTime& end);
+ 
++  // Creates a single-entry MetadataMapVector carrying the reverse-tunnel drain marker.
++  static Http::MetadataMapVector createDrainMetadata();
 +
-+  timeSystem().advanceTimeWait(kDelayedCloseTimeout);
-+  test_server_->waitForCounter("http.config_test.downstream_cx_delayed_close_timeout", Eq(1));
-+  ASSERT_TRUE(codec_client_->waitForDisconnect());
-+}
++  // If `metadata_map` contains the reverse-tunnel drain marker with its expected value, removes
++  // that entry and returns true; otherwise leaves `metadata_map` unchanged and returns false.
++  static bool eraseDrainMetadata(Http::MetadataMap& metadata_map);
 +
- // Test that if the route cache is cleared, it doesn't cause problems.
- TEST_P(IntegrationTest, TestClearingRouteCacheFilter) {
-   config_helper_.prependFilter(R"EOF(
+ private:
+   ReverseConnectionUtility() = delete;
+ };
+```
+
+**File**: `source/extensions/filters/network/reverse_tunnel/drain_aware_hcm/BUILD` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ envoy_cc_extension(
+         "//source/common/network:drain_close_util_lib",
+         "//source/common/protobuf:utility_lib",
+         "//source/common/runtime:runtime_features_lib",
+-        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_includes",
++        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface:reverse_connection_io_handle_lib",
+         "//source/extensions/filters/network:well_known_names",
+         "//source/extensions/filters/network/common:factory_base_lib",
 ```
 
 ---
 
-### Incident Patch 2: `ae6dd24c` (2026-11-22)
-**Commit Message**: reverse_tunnel: rebalance new sockets by idle count, not sockets ever accepted (#49410)
+### Incident Patch 2: `61423525` (2026-11-23)
+**Commit Message**: cache: key cache maps by serialized keys and fix cache_v2 session expiry (#49276)
 
-**File**: `changelogs/current/bug_fixes/reverse_tunnel__rebalance-by-idle-sockets.rst` (added, +4/-0)
+## Description
+
+This PR keys the in-memory maps of the HTTP cache filters and their
+caches by `SerializedKey`, the deterministic serialization of the cache
+key, instead of hashing and comparing the key with reflection. In a
+local microbenchmark built with `-c opt`, a lookup of a key with a
+30-byte path in a map of 1000 entries goes from about **430 ns** to
+about **75 ns**. The gain shrinks as the path grows, since serializing
+copies it. With a 1 KiB path a lookup is two to three times faster, with
+an 8 KiB path it is slightly faster, and with a path near the default 60
+KiB header limit a lookup is about 40% slower.
+
+Each map call serializes the key it is given, so a request can serialize
+its key again when it opens a `cache_v2` session, misses or revalidates.
+
+It also fixes the expiry of idle sessions in the `cache_v2` filter. Each
+lookup is meant to check the session after the one it uses and remove it
+if it has expired. The Abseil version Envoy pins returns an iterator
+from an insert that always advances to the end, even when the key
+already exists. So each lookup checked only the first session in 
+
+**File**: `changelogs/current/bug_fixes/cache__cache-v2-session-expiry.rst` (added, +3/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+Fixed the reverse tunnel responder spreading a node's new sockets across workers by the number of sockets
-+each worker had ever accepted for it, a count that never went down. As sockets were used or closed, a worker
-+could be left with no idle socket for a node while others held several, and requests on that worker failed with
-+``fallback_no_reverse_socket``. New sockets now go to the worker holding the fewest idle sockets for the node.
+@@ -0,0 +1,3 @@
++Fixed the ``cache_v2`` filter so that idle cache sessions expire. Each lookup checked only the first
++session in the table, so idle sessions and the ``cache_sessions_entries`` gauge could grow while
++that session stayed in use.
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.cc` (modified, +49/-34)
+**File**: `source/extensions/filters/http/cache/BUILD` (modified, +1/-0)
 ```diff
-@@ -64,44 +64,48 @@ UpstreamSocketManager::UpstreamSocketManager(Event::Dispatcher& dispatcher,
- UpstreamSocketManager&
- UpstreamSocketManager::pickLeastLoadedSocketManager(const std::string& node_id,
-                                                     const std::string& cluster_id) {
--  absl::WriterMutexLock wlock(UpstreamSocketManager::socket_manager_lock);
--
--  // Assume that this worker is the best candidate for sending the reverse.
--  // connection socket.
-   UpstreamSocketManager* target_socket_manager = this;
-   const std::string source_worker = this->dispatcher_.name();
--
--  // Contains the value that we assume to be the minimum value so far.
--  int min_node_count = target_socket_manager->node_to_conn_count_map_[node_id];
--
--  // Iterate over UpstreamSocketManager instances of all threads to check.
--  // if any of them have a lower number of accepted reverse tunnels for.
--  // the node 'node_id'.
--  for (UpstreamSocketManager* socket_manager : socket_managers_) {
--    int node_count = socket_manager->node_to_conn_count_map_[node_id];
--
--    if (node_count < min_node_count) {
--      target_socket_manager = socket_manager;
--      min_node_count = node_count;
-+  std::string dest_worker;
-+  int min_node_count;
-+  {
-+    absl::WriterMutexLock lock(UpstreamSocketManager::socket_manager_lock);
-+    const auto count_for_node = [&node_id](const UpstreamSocketManager& manager) {
-+      auto it = manager.node_to_conn_count_map_.find(node_id);
-+      return it == manager.node_to_conn_count_map_.end() ? 0 : it->second;
-+    };
-+    min_node_count = count_for_node(*this);
-+    for (UpstreamSocketManager* socket_manager : socket_managers_) {
-+      const int node_count = count_for_node(*socket_manager);
-+      if (node_count < min_node_count) {
-+        target_socket_manager = socket_manager;
-+        min_node_count = node_count;
-+      }
-     }
-+    target_socket_manager->node_to_conn_count_map_[node_id] = min_node_count + 1;
-+    dest_worker = target_socket_manager->dispatcher_.name();
+@@ -110,6 +110,7 @@ envoy_cc_library(
+         "//source/common/http:header_utility_lib",
+         "//source/common/http:headers_lib",
+         "//source/common/protobuf:deterministic_hash_lib",
++        "//source/common/protobuf:utility_lib",
+         "@envoy_api//envoy/extensions/filters/http/cache/v3:pkg_cc_proto",
+     ],
+ )
+```
+
+**File**: `source/extensions/filters/http/cache/http_cache.cc` (modified, +3/-0)
+```diff
+@@ -11,6 +11,7 @@
+ #include "source/common/http/headers.h"
+ #include "source/common/http/utility.h"
+ #include "source/common/protobuf/deterministic_hash.h"
++#include "source/common/protobuf/utility.h"
+ #include "source/extensions/filters/http/cache/cache_custom_headers.h"
+ #include "source/extensions/filters/http/cache/cache_headers_utils.h"
+ 
+@@ -59,6 +60,8 @@ LookupRequest::LookupRequest(const Http::RequestHeaderMap& request_headers, Syst
+ // flush.
+ size_t stableHashKey(const Key& key) { return DeterministicProtoHash::hash(key); }
+ 
++SerializedKey serializeKey(const Key& key) { return MessageUtil::serializeDeterministically(key); }
++
+ void LookupRequest::initializeRequestCacheControl(const Http::RequestHeaderMap& request_headers) {
+   const absl::string_view cache_control =
+       request_headers.getInlineValue(CacheCustomHeaders::requestCacheControl());
+```
+
+**File**: `source/extensions/filters/http/cache/http_cache.h` (modified, +7/-2)
+```diff
+@@ -63,13 +63,18 @@ using LookupResultPtr = std::unique_ptr<LookupResult>;
+ // leaves alpha, any improvements to stableHashKey that would change its output
+ // for existing callers is a breaking change.
+ //
+-// For non-persistent storage, use MessageUtil, which has no long-term stability
+-// guarantees.
++// For non-persistent storage, key by serializeKey(), whose bytes are stable
++// only within one binary.
+ //
+ // When providing a cached response, Caches must ensure that the keys (and not
+ // just their hashes) match.
+ size_t stableHashKey(const Key& key);
+ 
++// The deterministic serialization of a Key, which in-memory maps and sets of
++// Keys use as their key.
++using SerializedKey = std::string;
++SerializedKey serializeKey(const Key& key);
++
+ // LookupRequest holds everything about a request that's needed to look for a
+ // response in a cache, to evaluate whether an entry from a cache is usable, and
+ // to determine what ranges are needed.
+```
+
+**File**: `source/extensions/filters/http/cache_v2/BUILD` (modified, +1/-0)
+```diff
+@@ -172,6 +172,7 @@ envoy_cc_library(
+         "//source/common/http:header_utility_lib",
+         "//source/common/http:headers_lib",
+         "//source/common/protobuf:deterministic_hash_lib",
++        "//source/common/protobuf:utility_lib",
+         "@envoy_api//envoy/extensions/filters/http/cache_v2/v3:pkg_cc_proto",
+     ],
+ )
+```
+
+**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.cc` (modified, +5/-2)
+```diff
+@@ -963,8 +963,9 @@ void CacheSession::performValidation() {
+ std::shared_ptr<CacheSession> CacheSessionsImpl::getEntry(const Key& key) {
+   const SystemTime now = time_source_.systemTime();
+   cache().touch(key, now);
++  SerializedKey serialized_key = serializeKey(key);
+   absl::MutexLock lock(mu_);
+-  auto [it, is_new] = entries_.try_emplace(key);
++  auto [it, is_new] = entries_.try_emplace(std::move(serialized_key));
+   if (is_new) {
+     stats().incCacheSessionsEntries();
    }
- 
--  const std::string dest_worker = target_socket_manager->dispatcher_.name();
--
--  // Increment the reverse connection count of the chosen handler.
-   if (source_worker != dest_worker) {
-     ENVOY_LOG(info,
-               "reverse_tunnel: Rebalancing socket from worker {} to worker {} with min "
-               "count {} for node {} cluster {}",
--              source_worker, dest_worker, target_socket_manager->node_to_conn_count_map_[node_id],
--              node_id, cluster_id);
-+              source_worker, dest_worker, min_node_count, node_id, cluster_id);
+@@ -978,7 +979,9 @@ std::shared_ptr<CacheSession> CacheSessionsImpl::getEntry(const Key& key) {
+   // if the adjacent entry hasn't been touched in a while.
+   // This should do a decent job of expiring them simply, with a low cost, and
+   // without taking any long-lived locks as would be required for periodic
+-  // scanning.
++  // scanning. Advancing the iterator that try_emplace() returns always yields end(),
++  // so look the entry up again.
++  it = entries_.find(it->first);
+   if (++it == entries_.end()) {
+     it = entries_.begin();
    }
--  target_socket_manager->node_to_conn_count_map_[node_id]++;
-   ENVOY_LOG(debug, "reverse_tunnel: Incremented count for node {}: {}", node_id,
--            target_socket_manager->node_to_conn_count_map_[node_id]);
-+            min_node_count + 1);
-   return *target_socket_manager;
- }
- 
-+void UpstreamSocketManager::decrementIdleCount(const std::string& node_id) {
-+  absl::WriterMutexLock wlock(UpstreamSocketManager::socket_manager_lock);
-+  auto it = node_to_conn_count_map_.find(node_id);
-+  ASSERT(it != node_to_conn_count_map_.end() && it->second > 0);
-+  if (--it->second == 0) {
-+    node_to_conn_count_map_.erase(it);
-+  }
-+}
-+
- void UpstreamSocketManager::onGoAway(int fd) {
-   auto node_it = fd_to_node_map_.find(fd);
-   if (node_it == fd_to_node_map_.end()) {
-@@ -129,14 +133,23 @@ void UpstreamSocketManager::handoffSocketToWorker(
-                     socket = std::move(socket)]() mutable -> void {
-     this->addConnectionSocket(node_id, cluster_id, std::move(socket), ping_interval,
-                               true /* rebalanced */, tenant_id, initiator_worker_id,
--                              initiator_connection_id);
-+                              initiator_connection_id, true /* counted_for_rebalancing */);
-   });
- }
- 
- void UpstreamSocketManager::addConnectionSocket(
-     const std::string& node_id, const std::string& cluster_id, Network::ConnectionSocketPtr socket,
-     const std::chrono::seconds& ping_interval, bool rebalanced, absl::string_view tenant_id,
--    absl::string_view initiator_worker_id, absl::string_view initiator_connection_id) {
-+    absl::string_view initiator_worker_id, absl::string_view initiator_connection_id,
-+    bool counted_for_rebalancing) {
-+  // Both node_id and cluster_id are mandatory for consistent state management and stats tracking.
-+  if (node_id.empty() || cluster_id.empty()) {
-+    ENVOY_LOG(error,
-+              "reverse_tunnel: node_id or cluster_id cannot be empty. node: '{}', cluster: '{}'.",
-+              node_id, cluster_id);
-+    return;
-+  }
-+
-   const std::string scoped_node_id =
-       maybeBuildTenantScopedIdentifier(tenant_isolation_enabled_, tenant_id, node_id);
-   const std::string scoped_cluster_id =
-@@ -155,19 +168,12 @@ void UpstreamSocketManager::addConnectionSocket(
-                                            tenant_id, initiator_worker_id, initiator_connection_id);
-       return;
-     }
-+    coun
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.h` (modified, +17/-4)
+**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.h` (modified, +1/-2)
 ```diff
-@@ -14,6 +14,7 @@
- #include "source/common/common/random_generator.h"
- #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_lifecycle_info.h"
+@@ -304,8 +304,7 @@ class CacheSessionsImpl : public CacheSessions,
+   // their own mutex. Since it's only held for a short time and is related to
+   // async operations, it seems unlikely that mutex contention would be a
+   // significant bottleneck.
+-  absl::flat_hash_map<Key, std::shared_ptr<CacheSession>, MessageUtil, MessageUtil>
+-      entries_ ABSL_GUARDED_BY(mu_);
++  absl::flat_hash_map<SerializedKey, std::shared_ptr<CacheSession>> entries_ ABSL_GUARDED_BY(mu_);
  
-+#include "absl/container/flat_hash_set.h"
- #include "absl/strings/string_view.h"
- #include "absl/synchronization/mutex.h"
- 
-@@ -50,13 +51,15 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
-    * @param tenant_id tenant identifier supplied by the peer.
-    * @param initiator_worker_id the initiator worker (dispatcher name) that opened the tunnel.
-    * @param initiator_connection_id the initiator's per-connection identifier.
-+   * @param counted_for_rebalancing true if the picker already reserved a count for this socket.
-    */
-   void addConnectionSocket(const std::string& node_id, const std::string& cluster_id,
-                            Network::ConnectionSocketPtr socket,
-                            const std::chrono::seconds& ping_interval, bool rebalanced = true,
-                            absl::string_view tenant_id = {},
-                            absl::string_view initiator_worker_id = {},
--                           absl::string_view initiator_connection_id = {});
-+                           absl::string_view initiator_connection_id = {},
-+                           bool counted_for_rebalancing = false);
- 
-   /**
-    * Returns true if a new reverse connection can be accepted for the given node, scoped by tenant
-@@ -217,6 +220,12 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
- 
-   OptRef<const MonotonicTime> findStartTime(int fd) const;
- 
-+  /**
-+   * Drop one idle socket of the node from node_to_conn_count_map_ under socket_manager_lock.
-+   * @param node_id the node ID whose socket left the idle pool.
-+   */
-+  void decrementIdleCount(const std::string& node_id);
-+
-   // Thread local dispatcher instance.
-   Event::Dispatcher& dispatcher_;
-   Random::RandomGeneratorPtr random_generator_;
-@@ -232,6 +241,9 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
-   // Map from FD to its iterator in accepted_reverse_connections_, used to avoid linear scans.
-   absl::flat_hash_map<int, std::list<Network::ConnectionSocketPtr>::iterator> fd_to_socket_it_map_;
- 
-+  // Idle sockets included in node_to_conn_count_map_. Listeners that skip rebalancing bypass it.
-+  absl::flat_hash_set<int> counted_idle_fds_;
-+
-   // Map from file descriptor to cluster ID. An entry is added when a reverse tunnel is accepted
-   // from a node and is removed when the socket dies.
-   absl::flat_hash_map<int, std::string> fd_to_cluster_map_;
-@@ -281,9 +293,10 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
-   // Upstream extension for stats integration.
-   ReverseTunnelAcceptorExtension* extension_;
- 
--  // Map of node IDs to the number of total accepted reverse connections
--  // for the node. This is used to rebalance a request to accept reverse
--  // connections to a different worker thread.
-+  // Map of node IDs to the number of idle sockets this worker holds for the node in
-+  // accepted_reverse_connections_, plus sockets already picked for it and in flight to its
-+  // dispatcher. Requests only take idle sockets from their own worker, so new sockets go to the
-+  // worker with the fewest. Guarded by socket_manager_lock since other workers read and write it.
-   absl::flat_hash_map<std::string, int> node_to_conn_count_map_;
- 
-   bool tenant_isolation_enabled_{false};
+   friend class CacheSession;
+ };
 ```
 
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/BUILD` (modified, +1/-0)
+**File**: `source/extensions/filters/http/cache_v2/http_cache.cc` (modified, +3/-0)
 ```diff
-@@ -104,6 +104,7 @@ envoy_extension_cc_test(
-         "//envoy/router:string_accessor_interface",
-         "//envoy/stream_info:uint64_accessor_interface",
-         "//source/common/network:utility_lib",
-+        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
-         "//source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface:reverse_tunnel_acceptor_lib",
-         "//test/mocks/access_log:access_log_mocks",
-         "//test/mocks/event:event_mocks",
+@@ -11,6 +11,7 @@
+ #include "source/common/http/headers.h"
+ #include "source/common/http/utility.h"
+ #include "source/common/protobuf/deterministic_hash.h"
++#include "source/common/protobuf/utility.h"
+ #include "source/extensions/filters/http/cache_v2/cache_custom_headers.h"
+ #include "source/extensions/filters/http/cache_v2/cache_headers_utils.h"
+ 
+@@ -25,6 +26,8 @@ namespace CacheV2 {
+ 
+ size_t stableHashKey(const Key& key) { return DeterministicProtoHash::hash(key); }
+ 
++SerializedKey serializeKey(const Key& key) { return MessageUtil::serializeDeterministically(key); }
++
+ LookupRequest::LookupRequest(Key&& key, Event::Dispatcher& dispatcher)
+     : dispatcher_(dispatcher), key_(key) {}
+ 
 ```
 
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager_test.cc` (modified, +121/-0)
+---
+
+### Incident Patch 3: `4d8080cd` (2026-11-23)
+**Commit Message**: ext_authz: document error_response status requirement (#49093)
+
+Commit Message: ext_authz: document error_response status requirement
+
+Additional Description:
+The CheckResponse documentation previously implied that a populated
+error_response was sufficient for the response to be handled as an
+authorization-service error. The gRPC ext_authz client evaluates the
+top-level status first, so an OK or omitted status allows the request
+and ignores error_response.
+
+Clarify the existing contract in the API documentation and UDP session
+filter documentation. This follows review feedback and does not change
+runtime behavior.
+
+Risk Level: Low
+
+Testing:
+- git diff --check
+- Full Envoy format, proto, and documentation checks could not be run
+locally because Bazel is unavailable; CI will run them.
+
+Docs Changes:
+- Clarified the top-level status requirement for
+CheckResponse.error_response.
+- Updated the UDP ext_authz session outcome documentation.
+
+Release Notes: N/A
+
+Platform Specific Features: N/A
+Runtime guard: N/A
+
+AI assistance: OpenAI Codex assisted with investigation, documentation
+changes, and validation. The submitter reviewed and understands the
+complete change.
+
+Fixes #49041
+
+Signed-of
+
+**File**: `api/envoy/service/auth/v3/external_auth.proto` (modified, +7/-4)
 ```diff
-@@ -5,6 +5,7 @@
+@@ -158,14 +158,17 @@ message CheckResponse {
+     // Supplies http attributes for an ok response.
+     OkHttpResponse ok_response = 3;
  
- #include "source/common/network/utility.h"
- #include "source/common/protobuf/protobuf.h"
-+#include "source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h"
- #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor.h"
- #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_extension.h"
- #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.h"
-@@ -1635,6 +1636,10 @@ class TestUpstreamSocketManagerRebalancing : public testing::Test {
-     return (it != manager->node_to_conn_count_map_.end()) ? it->second : 0;
-   }
+-    // Supplies http attributes for an error response. This is used when the authorization
++    // Supplies HTTP attributes for an error response. This is used when the authorization
+     // service encounters an internal error and wants to return custom headers and body to the
+-    // downstream client. When ``error_response`` is set, the ext_authz filter increments the
+-    // ``ext_authz_error`` stat and respects the :ref:`failure_mode_allow
++    // downstream client. The top-level :ref:`status
++    // <envoy_v3_api_field_service.auth.v3.CheckResponse.status>` must be non-``OK`` for this field
++    // to be processed. If ``status`` is ``OK`` or omitted, the request is allowed and this field
++    // is ignored. When processed, the ext_authz filter increments the ``ext_authz_error`` stat and
++    // respects the :ref:`failure_mode_allow
+     // <envoy_v3_api_field_extensions.filters.http.ext_authz.v3.ExtAuthz.failure_mode_allow>`
+     // configuration. The HTTP status code, headers, and body are taken from the
+     // :ref:`DeniedHttpResponse <envoy_v3_api_msg_service.auth.v3.DeniedHttpResponse>` message.
+-    // If the status field is not set, Envoy sends the status code configured via
++    // If ``error_response.status`` is not set, Envoy sends the status code configured via
+     // :ref:`status_on_error <envoy_v3_api_field_extensions.filters.http.ext_authz.v3.ExtAuthz.status_on_error>`,
+     // which defaults to ``403 Forbidden``.
+     DeniedHttpResponse error_response = 5;
+```
+
+**File**: `docs/root/configuration/listeners/udp_filters/session_filters/ext_authz.rst` (modified, +2/-2)
+```diff
+@@ -49,8 +49,8 @@ The session outcome is taken from the
  
-+  bool hasNodeConnCount(UpstreamSocketManager* manager, const std::string& node_id) {
-+    return manager->node_to_conn_count_map_.contains(node_id);
-+  }
-+
-   size_t verifyAcceptedReverseConnectionsMap(UpstreamSocketManager* manager,
-                                              const std::string& node_id) {
-     auto it = manager->accepted_reverse_connections_.find(node_id);
-@@ -1819,6 +1824,8 @@ TEST_F(TestUpstreamSocketManagerRebalancing, RebalancingWithNewNode) {
-   EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
-   EXPECT_EQ(getNodeConnCount(socket_manager2_.get(), node_id), 0);
-   EXPECT_EQ(getNodeConnCount(socket_manager3_.get(), node_id), 0);
-+  EXPECT_FALSE(hasNodeConnCount(socket_manager2_.get(), node_id));
-+  EXPECT_FALSE(hasNodeConnCount(socket_manager3_.get(), node_id));
- }
+ * an ``OK`` status allows the session.
+ * a denied response (non-``OK`` status, no ``error_response``) drops the session.
+-* an error (a gRPC failure or timeout, or a response carrying an ``error_response``) drops the
+-  session unless :ref:`failure_mode_allow
++* an error (a gRPC failure or timeout, or a non-``OK`` status with an ``error_response``) drops
++  the session unless :ref:`failure_mode_allow
+   <envoy_v3_api_field_extensions.filters.udp.udp_proxy.session.ext_authz.v3.FilterConfig.failure_mode_allow>`
+   is set.
  
- TEST_F(TestUpstreamSocketManagerRebalancing, RebalancingSkippedWhenAlreadyRebalanced) {
-@@ -1893,6 +1900,120 @@ TEST_F(TestUpstreamSocketManagerRebalancing, MainThreadExcludedFromRebalancing)
-   EXPECT_EQ(getNodeConnCount(main_socket_manager.get(), node_id), 0);
- }
- 
-+TEST_F(TestUpstreamSocketManagerRebalancing, RebalanceToWorkerWithFewestIdleSockets) {
-+  const std::string node_id = "test-node";
-+  const std::string cluster_id = "test-cluster";
-+  const std::chrono::seconds ping_interval(30);
-+  for (auto* dispatcher : {&dispatcher1_, &dispatcher2_, &dispatcher3_}) {
-+    EXPECT_CALL(*dispatcher, post(_)).WillRepeatedly(Invoke([](Event::PostCb cb) { cb(); }));
-+  }
-+
-+  // One idle socket per worker.
-+  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1001), ping_interval,
-+                                        false /* rebalanced */);
-+  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1002), ping_interval,
-+                                        false /* rebalanced */);
-+  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1003), ping_interval,
-+                                        false /* rebalanced */);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager1_.get(), node_id), 1);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager3_.get(), node_id), 1);
-+
-+  // Worker 1 hands its socket to a request; the replacement goes back to worker 1.
-+  ASSERT_NE(socket_manager1_->getConnectionSocket(node_id), nullptr);
-+  socket_manager2_->addConnectionSocket(node_id, cluster_id, createMockSocket(1004), ping_interval,
-+                                        false /* rebalanced */);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager1_.get(), node_id), 1);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
-+
-+  // Worker 3's idle socket dies; the replacement goes back to worker 3.
-+  socket_manager3_->markSocketDead(1003);
-+  socket_manager2_->addConnectionSocket(node_id, cluster_id, createMockSocket(1005), ping_interval,
-+                                        false /* rebalanced */);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
-+  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager3_.get(), node_id), 1);
-+
-+  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
-+  EXPECT_EQ(getNodeConnCount(socket_manager2_.get(), node_id), 1);
-+  EXPECT_EQ(getNodeConnCount(socket_manager3_.get(), node_id), 1);
-+
-+  socket_manager1_->markSocketDead(1001);
-+  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
-+
-+  socket_manager1_->addConnectionSocket(node_id, "", createMockSocket(1006), ping_interval,
-+                                        false /* rebalanced */);
-+  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
-+}
-+
-+TEST_F(TestUpstreamSocketManagerRebalancing, SkippedSocketsDoNotChangeRebalancingCounts) {
-+  const std::string node_id = "test-node";
-+  const std::string cluster_id = "test-cluster";
-+  const std::chrono::seconds ping_interval(30);
-+
-+  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1101), ping_interval,
-+                                        true /* rebalanced */);
-+  EXPECT_FALSE(hasNodeConnCount(socket_manager1_.get(), node_id));
-+
-+  ASSERT_NE(sock
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49532** (2026-11-23): reverse_tunnel: keep the idle count within one extension and report a missing entry (@skpulipaka26)
 - **PR #49516** (2026-11-21): [bp/1.37] mcp: fix an issue and use the watermark to buffer (#43173) (@derekargueta)
 - **PR #49508** (2026-11-20): [bp/1.37] test/ext_proc: Fix spinning loop (and hang) in serverReceiveBodyDuplexStreamed (#44583) (@phlax)
 - **PR #49507** (2026-11-20): deps: Bump `bazel-registry` -> d72a252 (+envoy-examples) (@dependency-envoy[bot])
 - **PR #49505** (2026-11-21): docs: fix propogated typo in headers and flow control docs (@sundeep8967)
-- **PR #49494** (2026-11-20): ai_protocol_manager: move watermark echo suppression to FilterChainBridge (@paul-r-gall)
-- **PR #49493** (2026-11-20): ci: Remove the docker-ci workflow input (@phlax)
+- **PR #49503** (2026-11-23): tls: add max_send_fragment to cap the TLS record size (@devnarula)
 
 ---
 
@@ -1696,40 +1599,38 @@ since its response (with `Connection: close`) may have just gone out
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http: close idle HTTP/1 downstream connections without delayed close
+## X. reverse_tunnels: changes to let the upstream drain gracefully
 
 **RULE**:
-When implementing operations in `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8595edc`: http: close idle HTTP/1 downstream connections without delayed close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `331b8ca6`: reverse_tunnels: changes to let the upstream drain gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-An HTTP/1 downstream connection that carries no request between the start of a drain sequence and
-its :ref:`drain timeout
-<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.drain_timeout>`,
-such as one closed by the connection idle timeout, is now closed without waiting for the
-:ref:`delayed close timeout
-<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.delayed_close_timeout>`.
-There is no response on such a connection for the client to read, and while the delayed close was
-pending Envoy ignored any request a pooling client sent on it, so that request was never answered.
-This change can be reverted by setting the runtime guard
-``envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain`` to ``false``.
+  // When true, a peer-initiated GOAWAY or connection-level METADATA frame carrying
+  // ``envoy.reverse_tunnel.drain: true`` on a reverse tunnel makes the initiator drop the draining
+  // in-flight streams finish. Receiving the METADATA frame requires
+  // ``hcm_config.http2_protocol_options.allow_metadata`` to be true. Default false, so the
+  // behavior is opt-in and unconfigured listeners are unaffected. Required by ``metadata_delay``
+  // and ``shutdown_notice_delay``.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
+  // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
+  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8595edc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `331b8ca6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

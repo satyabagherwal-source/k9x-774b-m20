@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "f549d825b8af51fb809c5482f8af7d01b75435be10c8936e6a5226b3fa80a815",
-    "lastHarvestedAt": "2026-11-19T05:24:20.653Z",
+    "contentHash": "39db97271c15eb193422052e76e58fc17ef39329e06c74169a86da1e2163ac27",
+    "lastHarvestedAt": "2026-11-23T17:20:35.424Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "4ce60f1a",
+    "sourceVersion": "a40acf9d",
     "license": "NOASSERTION",
-    "contentHash": "61946723aab1d05baea752a6bf80b94cfaf0ac95916d4df6520635d27cc6d6cc",
-    "lastHarvestedAt": "2026-11-22T14:40:45.607Z",
+    "contentHash": "74450d7e40295833c41accdc66a2b87e0a389a9aeba7dfd0d19df6a5ac9976e4",
+    "lastHarvestedAt": "2026-11-23T17:20:47.863Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "2436670d",
+    "sourceVersion": "0d551770",
     "license": "Apache-2.0",
-    "contentHash": "530b88ec981ac701b47bb9ce660642278811bcbe01d1bf40a797650a6a278294",
-    "lastHarvestedAt": "2026-11-22T12:57:02.380Z",
+    "contentHash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
+    "lastHarvestedAt": "2026-11-23T17:20:51.843Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "a8595edc",
+    "sourceVersion": "15487f34",
     "license": "Apache-2.0",
-    "contentHash": "5b2ff43489c0ce5ad6431acdff408c91b21bccd61eafbebd24e9d77010b80056",
-    "lastHarvestedAt": "2026-11-22T15:09:15.228Z",
+    "contentHash": "b311b454a7e142277995993fb17c908c1fda20dbaa331423d228167deb4be8ab",
+    "lastHarvestedAt": "2026-11-23T17:20:46.102Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "71f06abb",
+    "sourceVersion": "bb1c3e27",
     "license": "GPL-3.0",
-    "contentHash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
-    "lastHarvestedAt": "2026-11-20T16:56:35.268Z",
+    "contentHash": "5a41822faa312974fc572b6129ce9dbf7c71aecde5a03c8f5fc9843bc98ed882",
+    "lastHarvestedAt": "2026-11-23T17:20:42.919Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {

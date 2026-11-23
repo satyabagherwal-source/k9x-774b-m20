@@ -4,24 +4,24 @@
 {
   "source_repository": "rustls/rustls",
   "source_url": "https://github.com/rustls/rustls",
-  "source_version": "4ce60f1a",
+  "source_version": "a40acf9d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T14:40:45.819Z",
+  "timestamp": "2026-11-23T17:20:48.161Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rustls-rustls",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `4ce60f1a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T14:40:45.819Z`  
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `a40acf9d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T17:20:48.161Z`  
 > **Learning ID**: `learn-github-rustls-rustls`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rustls/rustls:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:40:44.544Z  
+> **Harvest Timestamp**: 2026-11-23T17:20:47.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7780 stars
+- **Stars / Engagement**: 7783 stars
 
 ---
 
@@ -2262,17 +2262,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3450** (2026-11-22): **Take semver-compatible dependency updates**
-  *Symptoms*: Notably updates url past https://rustsec.org/advisories/RUSTSEC-2026-0592.
+- **Issue #3453** (2026-11-23): **Remove meaningless benchmark**
+  *Symptoms*: This was benchmarking how fast a `VecInput::read` could report an IO error.  That is both not interesting and also not related to rustls-ring.
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_tickets_1.3_no_crypto_server | 1311136 | 1270936 | ✅ [-40200](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51a6972652d6551a8fc33897008/cachegrind-diff/handshake_tickets_1.3_no_crypto_server) (-3.07%) | 0.20% | | handshake_session_id_1.3_no_crypto_server | 1361416 | 1321156 | ✅ [-40260](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51a6972652d6551a8fc33897008/cachegrind-diff/handshake_session_id_1.3_no_crypto_server) (-2.96%) | 0.20% | | handshake_no_resume_1.3_no_crypto_server | 42561 | 41493 | ✅ [-1068](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3450?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`10bb7f9`](https://app.codecov.io/gh/rustls/rustls/commit/10bb7f9c711278bf11b0f4985313f97fd2e42df1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`abfaa2c`](https://app.codecov.io/gh/rustls/rustls/commit/abfaa2cb263ef51a6972652d6551a8fc33897008?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3450   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client | 2372926 | 2360230 | [-12696](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client) (-0.54%) | 2.17% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8781746 | 8740315 | [-41431](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.47%) | 0.82% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10912370 | 10943196 | [30826](
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3453?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`8b0a810`](https://app.codecov.io/gh/rustls/rustls/commit/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`74b3a69`](https://app.codecov.io/gh/rustls/rustls/commit/74b3a6960387266ebbddec2fc23aa4d065b855e5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3453   +/-   ## ======================================= 
 
-- **Issue #3449** (2026-11-21): **Fix typos in test and example comments**
-  *Symptoms*: Fix typos and grammar in test/example comments: "A ECH" -> "An ECH", "don't sent" -> "don't send", "don't do complete" -> "don't complete", "Maybe be used" -> "May be used" (matching sibling flag docs), and a `set_ver` -> `set_var` typo in a comment (the test uses std::env::set_var). Comment text only, no behavior change.  AI assistance: I used an AI tool to help locate these typos. I reviewed all changes myself. 
+- **Issue #3452** (2026-11-23): **client: keep the original epoch of a resumed TLS1.2 session**
+  *Symptoms*: This avoids a line of successive resumptions extending one session indefinitely.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3449?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`796b8d3`](https://app.codecov.io/gh/rustls/rustls/commit/796b8d3b08481e7f5119c0b3d0b640586c45f0d8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`c8dee27`](https://app.codecov.io/gh/rustls/rustls/commit/c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3449 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10922753 | 10980622 | [57869](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (0.53%) | 1.04% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8768128 | 8747945 | [-20183](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.23%) | 0.89% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8764476 | 8783831 | [193
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_client | 736195 | 732805 | ✅ [-3390](https://bench.rustls.dev/comparisons/8b8de3da77373c37a0d3b5a29b9d54ecf61a36f8:268c28f140fd8b1b58df182b0781e59d8512ee75/cachegrind-diff/handshake_session_id_1.2_no_crypto_client) (-0.46%) | 0.20% | | handshake_tickets_1.2_no_crypto_client | 796319 | 792929 | ✅ [-3390](https://bench.rustls.dev/comparisons/8b8de3da77373c37a0d3b5a29b9d54ecf61a36f8:268c28f140fd8b1b58df182b0781e59d8512ee75/cachegrind-diff/handshake_tickets_1.2_no_crypto_client) (-0.43%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3452?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `80.00000%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 96.10%. Comparing base ([`8b8de3d`](https://app.codecov.io/gh/rustls/rustls/commit/8b8de3da77373c37a0d3b5a29b9d54ecf61a36f8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`268c28f`](https://app.codecov.io/gh/rustls/rustls/commit/268c28f140fd8b1b58df182b0781e59d8512ee75?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3452?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2289,51 +2289,177 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ce60f1a` (2026-11-20)
-**Commit Message**: doc: fix objective documentation defects
+### Incident Patch 1: `a40acf9d` (2026-11-23)
+**Commit Message**: Remove meaningless benchmark
 
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+This was benchmarking how fast a `VecInput::read` could report an
+IO error.  That is both not interesting and also not related to
+rustls-ring.
 
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +0/-2)
 ```diff
-@@ -72,7 +72,7 @@ Make sure to disclose any use of AI assistance upfront.
- We'll then:
+@@ -1885,11 +1885,9 @@ dependencies = [
+ name = "rustls-ring"
+ version = "0.24.0-dev.3"
+ dependencies = [
+- "bencher",
+  "ring",
+  "rustls 0.24.0-dev.3",
+  "rustls-pki-types",
+- "rustls-test",
+  "subtle",
+  "zeroize",
+ ]
+```
+
+**File**: `rustls-ring/Cargo.toml` (modified, +0/-9)
+```diff
+@@ -20,14 +20,5 @@ ring = { workspace = true }
+ subtle = { workspace = true }
+ zeroize = { workspace = true }
  
- - Prepare a fix and regression tests.
--- Backport the fix and make a patch release for most recent release.
-+- Backport the fix and make a patch release for the most recent release.
- - Submit an advisory to [rustsec/advisory-db](https://github.com/RustSec/advisory-db).
- - Refer to the advisory on the main README.md and release notes.
- 
+-[dev-dependencies]
+-bencher = { workspace = true }
+-rustls-test = { workspace = true, default-features = false }
+-
+-[[bench]]
+-name = "benchmarks"
+-path = "benches/benchmarks.rs"
+-harness = false
+-
+ [lints]
+ workspace = true
+```
+
+**File**: `rustls-ring/benches/benchmarks.rs` (removed, +0/-11)
+```diff
+@@ -1,11 +0,0 @@
+-use bencher::{Bencher, benchmark_group, benchmark_main};
+-use rustls::VecInput;
+-use rustls_test::TestNonBlockIo;
+-
+-fn bench_ewouldblock(c: &mut Bencher) {
+-    let mut input = VecInput::default();
+-    c.iter(|| input.read(&mut TestNonBlockIo::default()));
+-}
+-
+-benchmark_group!(benches, bench_ewouldblock);
+-benchmark_main!(benches);
 ```
 
 ---
 
-### Incident Patch 2: `e5d0d099` (2026-11-20)
-**Commit Message**: doc: fix objective documentation defects
+### Incident Patch 2: `8b0a810d` (2026-11-23)
+**Commit Message**: client: keep the original epoch of a resumed TLS1.2 session
 
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `rustls-test/tests/api/resume.rs` (modified, +28/-0)
 ```diff
-@@ -388,7 +388,7 @@ unnecessary. The one exception to this is when the symbol name is overly
- generic, or easily confused between different crates. In this case we prefer to
- import the symbol name under an alias, or if the parent module name is short,
- using a one-level qualified path. E.g. for a crate with a local `Error` type,
--prefer to `import std::error::Error as StdError`.
-+prefer to `use std::error::Error as StdError`.
+@@ -1455,6 +1455,34 @@ fn tls12_client_expires_session_without_lifetime() {
+     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
+ }
  
- ### Exports
++#[test]
++fn tls12_client_resumption_does_not_extend_session_lifetime() {
++    let provider = provider::DEFAULT_TLS12_PROVIDER;
++    let clock = Arc::new(AdjustableClock::new());
++    let client_config = Arc::new(
++        ClientConfig::builder_with_details(provider.clone().into(), clock.clone())
++            .finish(KeyType::default()),
++    );
++    let server_config = Arc::new(make_server_config(KeyType::default(), &provider));
++
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
++
++    clock.advance(Duration::from_secs(6 * 24 * 60 * 60));
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
++
++    clock.advance(Duration::from_secs(2 * 24 * 60 * 60));
++    let (mut client, mut server, mut buf) =
++        make_pair_for_arc_configs(&client_config, &server_config);
++    buf.handshake(&mut client, &mut server);
++    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
++}
++
+ /// A `TimeProvider` that starts at the current time and only moves when told to.
+ #[derive(Debug)]
+ struct AdjustableClock(AtomicU64);
+```
+
+**File**: `rustls/src/client/tls12.rs` (modified, +16/-6)
+```diff
+@@ -4,6 +4,7 @@ use alloc::vec;
+ use alloc::vec::Vec;
+ use core::time::Duration;
  
++use pki_types::UnixTime;
+ pub(crate) use server_hello::TLS12_HANDLER;
+ use subtle::ConstantTimeEq;
+ 
+@@ -1070,7 +1071,7 @@ impl ExpectFinished {
+     fn save_session(&mut self) {
+         // Save a ticket.  If we got a new ticket, save that.  Otherwise, save the
+         // original ticket again.
+-        let (mut ticket, lifetime) = match self.ticket.take() {
++        let (mut ticket, mut lifetime) = match self.ticket.take() {
+             Some(nst) => (nst.ticket, nst.lifetime_hint),
+             None => (
+                 Arc::new(SizedPayload::from(Payload::new(Vec::new()))),
+@@ -1079,8 +1080,9 @@ impl ExpectFinished {
+         };
+ 
+         if ticket.is_empty() {
+-            if let Some((resuming_session, _)) = &mut self.resuming {
++            if let Some((resuming_session, _)) = &self.resuming {
+                 ticket = resuming_session.ticket.clone();
++                lifetime = resuming_session.lifetime;
+             }
+         }
+ 
+@@ -1089,9 +1091,17 @@ impl ExpectFinished {
+             return;
+         }
+ 
+-        let Ok(now) = self.hs.config.current_time() else {
+-            debug!("Could not get current time");
+-            return;
++        let epoch = match &self.resuming {
++            Some((resuming_session, _)) => {
++                UnixTime::since_unix_epoch(Duration::from_secs(resuming_session.epoch))
++            }
++            None => match self.hs.config.current_time() {
++                Ok(now) => now,
++                Err(_) => {
++                    debug!("Could not get current time");
++                    return;
++                }
++            },
+         };
+ 
+         let session_value = Tls12Session::new(
+@@ -1100,7 +1110,7 @@ impl ExpectFinished {
+             ticket,
+             self.secrets.master_secret(),
+             self.peer_identity.clone(),
+-            now,
++            epoch,
+             lifetime,
+             self.hs.using_ems,
+         );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3453** (2026-11-23): Remove meaningless benchmark (@ctz)
+- **PR #3452** (2026-11-23): client: keep the original epoch of a resumed TLS1.2 session (@ctz)
 - **PR #3450** (2026-11-22): Take semver-compatible dependency updates (@djc)
 - **PR #3449** (2026-11-21): Fix typos in test and example comments (@CharoenwitKunna)
 - **PR #3448** (2026-11-21): Fix doubled word and article in doc comments (@CharoenwitKunna)
 - **PR #3447** (2026-11-22): Fix Rust keyword and article in docs (@CharoenwitKunna)
-- **PR #3446** (2026-11-20): Fix grammar in post-quantum README (@CharoenwitKunna)
-- **PR #3442** (2026-11-21): ci: allow warnings from nightly clippy (@djc)
 
 ---
 
@@ -2347,37 +2473,6 @@ Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. doc: fix objective documentation defects
-
-**RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4ce60f1a`: doc: fix objective documentation defects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-- Backport the fix and make a patch release for the most recent release.
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-- Backport the fix and make a patch release for most recent release.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ce60f1a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

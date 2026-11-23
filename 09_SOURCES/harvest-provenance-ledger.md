@@ -12423,3 +12423,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T17:11:45.047Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `b4f82a73` | Multi-dimensional audit evidence | 2026-11-23T17:11:48.856Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `5208234b` | Multi-dimensional audit evidence | 2026-11-23T17:11:55.720Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-23T17:20:35.424Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `bb1c3e27` | Multi-dimensional audit evidence | 2026-11-23T17:20:42.919Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `15487f34` | Multi-dimensional audit evidence | 2026-11-23T17:20:46.102Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `a40acf9d` | Multi-dimensional audit evidence | 2026-11-23T17:20:47.863Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `0d551770` | Multi-dimensional audit evidence | 2026-11-23T17:20:51.843Z |
