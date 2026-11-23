@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T14:21:14.373Z",
+  "updated_at": "2026-11-23T14:38:24.661Z",
   "stats": {
-    "total_discovered": 7840,
-    "approved_pending_harvest": 7416,
+    "total_discovered": 7854,
+    "approved_pending_harvest": 7430,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7408,
-      "OFFICIAL_DOCUMENTATION": 248,
+      "COMMUNITY_AND_EXPERT": 7421,
+      "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
       "SECURITY_ADVISORIES": 44,
@@ -169535,6 +169535,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fei-craft-ds-bot-learnings.md",
         "fileName": "fei-craft-ds-bot-learnings.md"
+      }
+    },
+    "SRC-6D15C64C5869": {
+      "id": "SRC-6D15C64C5869",
+      "url": "https://redirect.github.com/servo/rust-url",
+      "title": "https://redirect.github.com/servo/rust-url",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:23.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-65C4826F936B": {
+      "id": "SRC-65C4826F936B",
+      "url": "https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9",
+      "title": "https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:23.675Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-6C7F246C8849": {
+      "id": "SRC-6C7F246C8849",
+      "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
+      "title": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:23.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-90CCD1515063": {
+      "id": "SRC-90CCD1515063",
+      "url": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items%28name%2CtimeCreated",
+      "title": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items%28name%2CtimeCreated",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:23.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-07B7681B6FD5": {
+      "id": "SRC-07B7681B6FD5",
+      "url": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
+      "title": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:23.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-CD3B4C6100FB": {
+      "id": "SRC-CD3B4C6100FB",
+      "url": "https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4",
+      "title": "https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-E80119DF9643": {
+      "id": "SRC-E80119DF9643",
+      "url": "https://github.com/gohugoio/hugo/releases/download/$%7BHUGO_VERSION",
+      "title": "https://github.com/gohugoio/hugo/releases/download/$%7BHUGO_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-8991F40A5C7D": {
+      "id": "SRC-8991F40A5C7D",
+      "url": "https://github.com/sass/dart-sass/releases/download/$%7BDART_SASS_VERSION",
+      "title": "https://github.com/sass/dart-sass/releases/download/$%7BDART_SASS_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-D27993BFEE7E": {
+      "id": "SRC-D27993BFEE7E",
+      "url": "https://materialize.com/support",
+      "title": "https://materialize.com/support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-EAF80C125104": {
+      "id": "SRC-EAF80C125104",
+      "url": "https://ci.materialize.com/docs",
+      "title": "https://ci.materialize.com/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-2711B93134D4": {
+      "id": "SRC-2711B93134D4",
+      "url": "https://gohugo.io/getting-started/installing",
+      "title": "https://gohugo.io/getting-started/installing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-7D765784E76D": {
+      "id": "SRC-7D765784E76D",
+      "url": "https://gohugo.io/functions/css/sass",
+      "title": "https://gohugo.io/functions/css/sass",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-76E79133A734": {
+      "id": "SRC-76E79133A734",
+      "url": "https://redirect.github.com/docker/buildx/releases/tag/v0.39.1",
+      "title": "https://redirect.github.com/docker/buildx/releases/tag/v0.39.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-46F9974AC340": {
+      "id": "SRC-46F9974AC340",
+      "url": "https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1",
+      "title": "https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:38:24.661Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

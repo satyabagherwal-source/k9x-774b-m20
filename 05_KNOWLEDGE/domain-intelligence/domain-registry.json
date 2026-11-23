@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T14:29:28.359Z",
+  "last_updated": "2026-11-23T14:38:25.303Z",
   "total_records": 2421,
   "domains": {
     "A": {
@@ -14486,8 +14486,8 @@
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "ef465493ec00939cbc27aafe02570c0f27065791c219fe21c53221764685e1de",
-      "created_at": "2026-11-22T07:37:18.564Z"
+      "content_hash": "190c84cf4580e7584dfe8679cbc99b20df2f247ab9461c4fa2a6f6a11010e884",
+      "created_at": "2026-11-23T14:38:18.527Z"
     },
     "DOM-K-C3DCBF34": {
       "record_id": "DOM-K-C3DCBF34",
@@ -26028,8 +26028,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "1f066cdcfd190987e396a1a14e721eec82ba2c424f568dfc7e3e67628515b286",
-      "created_at": "2026-11-20T01:23:31.079Z"
+      "content_hash": "eb8e5d9b4adea11d3ebd96d06eae03a8b307c58ca3db1335633c55b435d6893c",
+      "created_at": "2026-11-23T14:38:25.303Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -32759,8 +32759,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-reranker-v2-m3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-reranker-v2-m3-research-knowledge-intelligence-baai-bge-reranker-v2-.md",
       "repository": "BAAI/bge-reranker-v2-m3",
-      "content_hash": "1c186510663e1d5a2d231d2f16fac329e18eff5df43f2a91c24ef4fde0892c0c",
-      "created_at": "2026-11-19T00:49:39.816Z"
+      "content_hash": "d59e030451b1060bda084e8fc05e3dcd2d7511ccb62e2a10c954edaa0777211a",
+      "created_at": "2026-11-23T14:38:02.398Z"
     },
     "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants",
@@ -32819,8 +32819,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-reranker-v2-m3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-reranker-v2-m3-learnings-research-knowledge-intelligence-hf-baai-bge.md",
       "repository": "hf-baai-bge-reranker-v2-m3-learnings",
-      "content_hash": "a7e95fb3f78e4ac46ceef0d0d6a36727c7e045daca48814bae5623bba3f7f399",
-      "created_at": "2026-11-19T00:50:27.730Z"
+      "content_hash": "0fafe8ecb91a014a8571e27aa6c54dd0edbee9b2bfa136a301938cc0ded09e64",
+      "created_at": "2026-11-23T14:38:22.204Z"
     },
     "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
@@ -35923,8 +35923,8 @@
       "title": "Architecture Intelligence: joreilly/Confetti Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-architecture-intelligence-joreilly-confetti-core-invariants.md",
       "repository": "joreilly/Confetti",
-      "content_hash": "84dc33303694026262f58cf5d49aac2a04c4977dbeabac65457348c5edba0403",
-      "created_at": "2026-11-20T11:08:55.597Z"
+      "content_hash": "31858dfa5153f4537a95a0eecaedd93d9924718d9ebf12751c2312f10f1ddaac",
+      "created_at": "2026-11-23T14:38:09.225Z"
     },
     "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
@@ -35941,8 +35941,8 @@
       "title": "Architecture Intelligence: joreilly-confetti-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-learnings-architecture-intelligence-joreilly-confetti-learning.md",
       "repository": "joreilly-confetti-learnings",
-      "content_hash": "fbf0ef01e5dbf59759728072d2bb22cdc8d76877146aff3e79c35587f363de77",
-      "created_at": "2026-11-20T11:09:13.983Z"
+      "content_hash": "2d7c2cb995e0ebc1618acc4c49e6db7b8114a836e4b39d5fbf1d4a0c50c055a6",
+      "created_at": "2026-11-23T14:38:22.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy4-core-invariants",

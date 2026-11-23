@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:29:28.861Z",
+  "last_updated": "2026-11-23T14:38:25.917Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T09:29:54.071Z",
@@ -498,7 +498,7 @@
       "staged_for_review": 1
     },
     "materializeinc-materialize-learnings.md": {
-      "processed_at": "2026-11-21T03:28:55.751Z",
+      "processed_at": "2026-11-23T14:38:23.436Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1343,7 +1343,7 @@
       "staged_for_review": 1
     },
     "joreilly-confetti-learnings.md": {
-      "processed_at": "2026-11-20T11:09:13.373Z",
+      "processed_at": "2026-11-23T14:38:22.465Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2503,8 +2503,8 @@
       "staged_for_review": 1
     },
     "hf-baai-bge-reranker-v2-m3-learnings.md": {
-      "processed_at": "2026-11-19T00:50:27.525Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-23T14:38:21.899Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "wix-react-native-ui-lib-learnings.md": {
@@ -3768,7 +3768,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3390,
+  "total_dossiers_evaluated": 3393,
   "total_canonical_promoted": 484,
-  "total_staged_for_review": 2549
+  "total_staged_for_review": 2551
 }

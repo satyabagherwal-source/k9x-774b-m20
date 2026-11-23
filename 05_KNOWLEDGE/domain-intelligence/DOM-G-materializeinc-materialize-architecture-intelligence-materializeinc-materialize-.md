@@ -4,24 +4,24 @@
 {
   "source_repository": "MaterializeInc/materialize",
   "source_url": "https://github.com/MaterializeInc/materialize",
-  "source_version": "cae35259",
+  "source_version": "d9c983d5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T07:37:18.393Z",
+  "timestamp": "2026-11-23T14:38:18.303Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `cae35259`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T07:37:18.393Z`  
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `d9c983d5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T14:38:18.303Z`  
 > **Learning ID**: `learn-github-materializeinc-materialize`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from MaterializeInc/materialize:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:37:17.086Z  
+> **Harvest Timestamp**: 2026-11-23T14:38:16.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6409 stars
+- **Stars / Engagement**: 6411 stars
 
 ---
 
@@ -1095,11 +1095,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40993** (2026-11-22): **chore(deps): update dependency jquery to v3.8.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [jquery](https://jquery.com) ([source](https://redirect.github.com/jquery/jquery)) | `3.5.0` → `3.8.0` | ![age](https://developer.mend.io/api/mc/badges/age/npm/jquery/3.8.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.5.0/3.8.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>jquery/jquery (jquery)</summary>  ### [`v3.8.0`](https://redirect.github.com/jquery/jquery/releases/tag/3.8.0)  [Compare Source](https://redirect.github.com/jquery/jquery/compare/3.7.1...3.8.0)  <https://blog.jquery.com/2026/11/17/jquery-4-1-0-and-3-8-0-released-passing-the-torch/>  #### Ajax  - Support an alternative completeCallback API for transports ([43b8652b](https://redirect.github.com/jquery/jquery/commit/43b8652b020fb26920d250ca917ee2ecc298cd3f))  #### Attributes  - Support the `until-found` value for the `hidden` attribute ([85290c59](https://redirect.github.com/jquery/jquery/commit/85290c59724db69a3967885892d4305d76de058f))  #### Core  - Formally deprecate push/sort/splice ([50d9a8dc](https://redirect.github.com/jquery/jquery/commit/50d9a8dc7fd9e93e09827e4a60772c617d1d5e28)) - Simplify code post browser support reduction ([6fe886
+- **Issue #41015** (2026-11-23): **skills: scope mz-commit checklist to pre-push, drop clippy**
+  *Symptoms*: The `mz-commit` skill told agents to run `bin/fmt`, `bin/lint`, and workspace clippy before every commit, including local commits that only checkpoint work in progress.  Scope the checklist to pushing a branch for review, and drop clippy, which CI already runs. `AGENTS.md` and the skills README are updated to match. No tests, docs only.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #40992** (2026-11-22): **chore(deps): update dependency docker/compose to v5.8.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [docker/compose](https://redirect.github.com/docker/compose) | minor | `5.7.1` → `5.8.0` | | [docker/compose](https://redirect.github.com/docker/compose) | minor | `v5.7.1` → `v5.8.0` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>docker/compose</summary>  ### [`v5.8.0`](https://redirect.github.com/docker/compose/releases/tag/v5.8.0)  [Compare Source](https://redirect.github.com/docker/compose/compare/v5.7.2...v5.8.0)  #### What's Changed  > ℹ️ **Scheduled jobs are now supported.** A job is a one-shot unit of work declared in the top-level `jobs:` element of your Compose file, run on demand or on a schedule. > Scheduling needs **Docker Engine 29.10 or later with the jobs extension enabled** (it is off by default: `dockerd --extension-enable org.mobyproject.jobs.v0`). Manual jobs keep working on any engine, and projects that declare no jobs are unaffected.  ```yaml services:   db:     image: postgres jobs:   backup:     image: backup-tool     depends_on: [db]     triggers:       schedule:         - cron: "0 3 * * *" ```  > - `docker compose up` (or `create`) registers the scheduled jobs with the engine, which fires them on its own clock; `docker compose down` removes them. On an engine without jobs support, `up` refuses a project with scheduled jobs before creating anything. > -
+- **Issue #41014** (2026-11-23): **renovate: Fix digest lookups and WASM lockfile updates**
+  *Symptoms*: Based on Mend logs of 5 most recent runs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1116,23 +1116,296 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d689771` (2026-11-21)
-**Commit Message**: fix(deps): update dependency @faker-js/faker to v10.6.0 (#40971)
+### Incident Patch 1: `328c9ab3` (2026-11-23)
+**Commit Message**: chore(deps): update rust crate url to v2.5.9 [security] (#40995)
 
 This PR contains the following updates:
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+| Package | Type | Update | Change |
 |---|---|---|---|
-| [@faker-js/faker](https://fakerjs.dev)
-([source](https://redirect.github.com/faker-js/faker)) | [`10.5.0` →
-`10.6.0`](https://renovatebot.com/diffs/npm/@faker-js%2ffaker/10.5.0/10.6.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@faker-js%2ffaker/10.6.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@faker-js%2ffaker/10.5.0/10.6.0?slim=true)
-|
+| [url](https://redirect.github.com/servo/rust-url) |
+workspace.dependencies | patch | `2.5.8` → `2.5.9` |
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
+
+---
+
+### Stack overflow in `Url::origin()` on nested `blob:` URLs
+
+[GHSA-hrj5-67jp-wqp9](https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9)
+/
+[RUSTSEC-2026-0592](https://rustsec.org/advisories/RUSTSEC-2026-0592.html)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+In `url` 2.5.8 and earlier, `Url::origin()` handled a `blob:` URL by
+parsing its path as another URL and calling itself on the result. It did
+so regardless of the inner URL's scheme, `blob` included. Each `blob:`
+prefix cost one stack frame, with no limit on nesting depth.
+`Url::parse()` accepts a URL with 10,000 `blob:` prefixes followed by
+`https://example.com/` (50,020 bytes in total); calling `Url::origin()`
+on it overflowed the default 2 MiB stack of a spawned thread.
+
+A stack overflow aborts the whole process, and `
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -3721,9 +3721,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+ 
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -14562,9 +14562,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
+```
+
+---
+
+### Incident Patch 2: `be6d706d` (2026-11-23)
+**Commit Message**: renovate: Fix digest lookups and WASM lockfile updates (#41014)
+
+Based on Mend logs of 5 most recent runs.
+
+**File**: `.github/renovate.json5` (modified, +20/-3)
+```diff
+@@ -20,8 +20,8 @@
+   "constraints": {"rust": "1.98.1"},
+   "customDatasources": {
+     "gcloud": {
+-      "defaultRegistryUrlTemplate": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
+-      "transformTemplates": ["{\"releases\": [{\"version\": version}]}"]
++      "defaultRegistryUrlTemplate": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items(name,timeCreated)&maxResults=1000",
++      "transformTemplates": ["{\"releases\": [items.{\"version\": $split(name, '-')[3], \"releaseTimestamp\": timeCreated}]}"]
+     },
+     "inspector-sbomgen": {
+       "defaultRegistryUrlTemplate": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
+@@ -39,7 +39,7 @@
+         "/\\.(sh|bash|py)$/"
+       ],
+       "matchStrings": [
+-        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
++        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*(?:\\([ \\t]*\\n[ \\t]*)?[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
+         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[ \\t]*\\nprintf [\"'](?<currentValue>[^\"']+)"
+       ],
+       // Regex managers need a template to append a previously absent digest.
+@@ -190,6 +190,14 @@
+       "matchFileNames": ["misc/wasm/**/Cargo.toml"],
+       "additionalBranchPrefix": "cargo-wasm-"
+     },
++    {
++      // js-sys requires an exact wasm-bindgen version. Bumping the manifest
++      // lets Cargo resolve both crates together when updating the lock file.
++      "matchManagers": ["cargo"],
++      "matchFileNames": ["misc/wasm/**/Cargo.toml"],
++      "matchPackageNames": ["wasm-bindgen"],
++      "rangeStrategy": "bump"
++    },
+     {
+       "matchManagers": ["cargo"],
+       "matchFileNames": ["misc/materialize-sdk/**/Cargo.toml"],
+@@ -241,6 +249,15 @@
+       "matchDatasources": ["docker"],
+       "pinDigests": true
+     },
++    {
++      // Renovate checks the tag's age during lookup, then omits the timestamp
++      // from digest updates. Skip the duplicate branch check once lookup has
++      // returned a digest and cleared its pending checks.
++      "matchDatasources": ["docker"],
++      "matchUpdateTypes": ["digest", "pinDigest"],
++      "matchJsonata": ["$exists(newDigest) and $not(pendingChecks = true) and $not($exists(releaseTimestamp)) and minimumReleaseAgeBehaviour = 'timestamp-optional'"],
++      "minimumReleaseAge": null
++    },
+     {
+       // This tag also selects ZooKeeper and Schema Registry images, whose
+       // digests differ from Kafka's.
+```
+
+**File**: `ci/builder/Dockerfile` (modified, +12/-5)
+```diff
+@@ -356,16 +356,17 @@ RUN arch_gcloud=$(echo "$ARCH_GCC" | sed -e "s/aarch64/arm/" -e "s/amd64/x86_64/
+     && rm -rf /root/.cache/pip
+ 
+ # Install docs site dependencies. These are towards the end for the same reason
+-# as the Python dependencies. These are only supported on x86_64 at the moment.
+-# See: https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4
++# as the Python dependencies. The docs build runs on x86_64.
+ #
+ # On every Hugo version bump, compare doc/user/layouts/sitemap.xml with the new
+ # version's built-in sitemap template, which it copies, and port any changes.
+ 
+ # renovate: datasource=github-release-attachments depName=wjdp/htmltest
+ ARG HTMLTEST_AMD64=v0.17.0@775c597ee74899d6002cd2d93076f897f4ba68686bceabe2e5d72e84c57bc0fb
+ # renovate: datasource=github-release-attachments depName=gohugoio/hugo
+-ARG HUGO_AMD64=v0.152.2@08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a
++ARG HUGO_AMD64=v0.170.1@a1c81c53a8bc789f1af9494a6b6be1a9b1aa7782e22a1398f919d5df50558433
++# renovate: datasource=github-release-attachments depName=sass/dart-sass
++ARG DART_SASS_AMD64=1.108.2@32d2eb5b83cbc180fce9657ff3c57401a9006c59eccfe0bfdde0aa755a66d42f
+ 
+ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     HTMLTEST_VERSION=${HTMLTEST_AMD64%@*} \
+@@ -374,10 +375,16 @@ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     && tar -xzf htmltest.tar.gz -C /usr/local/bin htmltest \
+     && rm htmltest.tar.gz \
+     && HUGO_VERSION=${HUGO_AMD64%@*} \
+-    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION#v}_Linux-64bit.tar.gz > hugo.tar.gz \
++    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_withdeploy_${HUGO_VERSION#v}_linux-amd64.tar.gz > hugo.tar.gz \
+     && echo "${HUGO_AMD64#*@} hugo.tar.gz" | sha256sum --check \
+     && tar -xzf hugo.tar.gz -C /usr/local/bin hugo \
+-    && rm hugo.tar.gz; \
++    && rm hugo.tar.gz \
++    && DART_SASS_VERSION=${DART_SASS_AMD64%@*} \
++    && curl -fsSL https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz > dart-sass.tar.gz \
++    && echo "${DART_SASS_AMD64#*@} dart-sass.tar.gz" | sha256sum --check \
++    && tar -xzf dart-sass.tar.gz -C /opt \
++    && ln -s /opt/dart-sass/sass /usr/local/bin/sass \
++    && rm dart-sass.tar.gz; \
+     fi
+ 
+ # Install KinD, kubectl, helm & helm-docs
+```
+
+**File**: `ci/deploy_website/website.sh` (modified, +0/-3)
+```diff
+@@ -46,9 +46,6 @@ declare -A external_redirects=(
+     [docs/self-managed/v25.2/support/index.html]="https://materialize.com/support/"
+ )
+ 
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
+ if [[ "$BUILDKITE_ORGANIZATION_SLUG" == "materialize" ]] && [[ "$BUILDKITE_BRANCH" == self-managed-docs/* ]]; then
+     VERSION=${BUILDKITE_BRANCH#self-managed-docs/}
+```
+
+**File**: `ci/test/lint-docs.sh` (modified, +0/-3)
+```diff
+@@ -15,9 +15,6 @@ set -euo pipefail
+ 
+ . misc/shlib/shlib.bash
+ 
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ git clean -ffdX ci/www/public ci/www/preview
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --destination ../../ci/www/public/docs
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination ../../ci/www/public/docs/markdown-docs
+```
+
+**File**: `ci/test/preview-docs.sh` (modified, +0/-7)
+```diff
+@@ -18,13 +18,6 @@ if [[ "$BUILDKITE_PULL_REQUEST" = false ]]; then
+     exit 0
+ fi
+ 
+-# Hugo 0.152.2 has a data race between pages that include the same headless
+-# page, which aborts a build with "concurrent map iteration and map write"
+-# (QAR-260). Rendering pages on one worker avoids it.
+-# TODO: Remove this once ci/builder/Dockerfile installs Hugo 0.153.0 or later,
+-# which fixed the race.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
+ 
+ # Build main docs to public/
+```
+
+**File**: `doc/user/CONTRIBUTING.md` (modified, +2/-1)
+```diff
+@@ -34,7 +34,8 @@ to `git pull` the latest version of Materialize.
+ 
+ # View the docs locally
+ 
+-1. [Install Hugo](https://gohugo.io/getting-started/installing/).
++1. Install [Hugo](https://gohugo.io/getting-started/installing/) and
++   [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) to compile the site's stylesheets.
+ 
+ 1. Launch the site by running:
+ 
+```
+
+**File**: `doc/user/config.skill.toml` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ disable = true
+ [[module.mounts]]
+   source = "static"
+   target = "static"
+-  excludeFiles = ["**", "*"]
++  files = ["! **", "! *"]
+ 
+ # Skill-specific parameters
+ [params]
+```
+
+**File**: `doc/user/layouts/sitemap.xml` (modified, +4/-9)
+```diff
+@@ -9,7 +9,7 @@
+   by the Apache License, Version 2.0.
+ */ -}}
+ {{- /*
+-  Hugo's built-in sitemap template, from v0.152.2, with absolute URLs. The
++  Hugo's built-in sitemap template, from v0.170.1, with absolute URLs. The
+   sitemap protocol requires a full URL in every <loc>, and the built-in
+   template emits .Permalink, which has no host under a bare-path baseURL such
+   as "/docs".
+@@ -23,17 +23,12 @@
+     <loc>{{ partial "absolute-permalink.html" . }}</loc>{{ if not .Lastmod.IsZero }}
+     <lastmod>{{ safeHTML ( .Lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
+     <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
+-    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .Translations }}
++    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .AllTranslations }}
+     <xhtml:link
+                 rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
++                hreflang="{{ .Language.Locale }}"
+                 href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
+-    <xhtml:link
+-                rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
+-                href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
++                />{{ end }}{{ end }}
+   </url>
+     {{- end -}}
+   {{ end }}
+```
+
+---
+
+### Incident Patch 3: `730cd6dc` (2026-11-23)
+**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.1 (#40997)
+
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| [docker/buildx](https://redirect.github.com/docker/buildx) | patch |
+`v0.39.0` → `v0.39.1` |
 
 ---
 
@@ -1145,376 +1418,77 @@ Dashboard for more information.
 ### Release Notes
 
 <details>
-<summary>faker-js/faker (@&#8203;faker-js/faker)</summary>
+<summary>docker/buildx</summary>
 
 ###
-[`v10.6.0`](https://redirect.github.com/faker-js/faker/blob/HEAD/CHANGELOG.md#1060-2026-08-14)
+[`v0.39.1`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.1)
 
 [Compare
-Source](https://redirect.github.com/faker-js/faker/compare/v10.5.0...v10.6.0)
+Source](https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1)
 
-##### New Locales
+buildx 0.39.1
 
-- **locale:** add 060 Japanese mobile phone number formats
-([#&#8203;3922](https://redirect.github.com/faker-js/faker/iss
+Welcome to the v0.39.1 release of buildx!
 
-**File**: `.github/renovate.json5` (modified, +7/-0)
-```diff
-@@ -261,6 +261,13 @@
-       "additionalBranchPrefix": "docs-cdn-",
-       "groupName": "{{depName}}"
-     },
-+    {
-+      // ci/test/docs-widgets asserts that a widget's CDN imports match the
-+      // versions in its package.json, so both must move in the same PR.
-+      "matchManagers": ["custom.regex"],
-+      "matchFileNames": ["doc/user/layouts/shortcodes/plugins/**"],
-+      "additionalBranchPrefix": "docs-widgets-"
-+    },
-     {
-       "matchManagers": ["custom.regex"],
-       "matchPackageNames": ["@docsearch/css", "@docsearch/js"],
-```
+Please try out the release binaries and report any issues at
+<https://github.com/docker/buildx/issues>.
 
-**File**: `ci/test/docs-widgets/package-lock.json` (modified, +4/-4)
-```diff
-@@ -6,7 +6,7 @@
-     "": {
-       "name": "docs-widgets-tests",
-       "dependencies": {
--        "@faker-js/faker": "10.5.0",
-+        "@faker-js/faker": "10.6.0",
-         "jsdom": "^31.0.0",
-         "vitest": "^5.0.0"
-       }
-@@ -63,9 +63,9 @@
-       }
-     },
-     "node_modules/@faker-js/faker": {
--      "version": "10.5.0",
--      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
--      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
-+      "version": "10.6.0",
-+      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.6.0.tgz",
-+      "integrity": "sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==",
-       "funding": [
-         {
-           "type": "opencollective",
-```
+##### Contributors
 
-**File**: `ci/test/docs-widgets/package.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
-     "test": "vitest"
-   },
-   "dependencies": {
--    "@faker-js/faker": "10.5.0",
-+    "@faker-js/faker": "10.6.0",
-     "jsdom": "^31.0.0",
-     "vitest": "^5.0.0"
-   }
-```
+- Tõnis Tiigi
 
-**File**: `doc/user/layouts/shortcodes/plugins/webhooks-datagen.html` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@
- </div>
- 
- <script type="module">
--  import { faker } from 'https://esm.sh/@faker-js/faker@10.5.0';
-+  import { faker } from 'https://esm.sh/@faker-js/faker@10.6.0';
- 
-   const webhookURLInput = document.getElementById("webhookURL");
-   const authPasswordInput = document.getElementById("authPassword");
-```
+##### Notable Changes
+
+- Fix regression in v0.39.0 where build could error if .dockerignore
+contained lots of entries
+
+##### Dependency Changes
+
+- **github.com/moby/buildkit**  v0.35.0 -> v0.35.1
+
+Previous release can be found at
+[v0.39.0](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
+
+</details>
 
 ---
 
-### Incident Patch 2: `8a8f06b1` (2026-11-22)
-**Commit Message**: ci: derive the GitHub repository from the build (#40934)
+### Configuration
 
-CI hardcoded MaterializeInc/materialize in GitHub API URLs and remote
-lookups, so builds of the same tree from a differently named repository
-got 404s. Derive the repository from BUILDKITE_REPO, falling back to the
-single MaterializeInc git remote and then to the public repository.
+📅 **Schedule**: (in timezone Etc/UTC)
 
-Git fetches inside ci-builder for another repository use a credential
-helper. Builds of the public repository get no helper and keep fetching
-anonymously. The helper and the compare API calls prefer
-GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN, because GITHUB_TOKEN cannot
-read private repositories.
+- Branch creation
+  - 
 
-ci/license/bump-change-date.sh now pushes to the repository being built.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `bin/ci-builder` (modified, +10/-0)
+**File**: `ci/builder/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -382,6 +382,16 @@ case "$cmd" in
-                     --env "SSH_AUTH_SOCK=/tmp/ssh-agent.sock"
-                 )
-             fi
-+            # Lets git in the container fetch from a private repository.
-+            if [[ "${BUILDKITE:-}" && "$(github_repo)" != "MaterializeInc/materialize" ]]; then
-+                # shellcheck disable=SC2016
-+                git_credential_helper='!f() { token=${GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN:-$GITHUB_TOKEN}; test "$1" = get && test -n "$token" && printf "username=x-access-token\npassword=%s\n" "$token"; }; f'
-+                args+=(
-+                    --env GIT_CONFIG_COUNT=1
-+                    --env GIT_CONFIG_KEY_0=credential.https://github.com.helper
-+                    --env "GIT_CONFIG_VALUE_0=$git_credential_helper"
-+                )
-+            fi
-         fi
+@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
+ ARG DOCKER_PUSHRM_VERSION=v1.9.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
  
-         if [[ $detach_container == "true" ]]; then
-```
-
-**File**: `ci/license/bump-change-date.sh` (modified, +3/-1)
-```diff
-@@ -13,6 +13,8 @@
+ RUN \
+     # 1. autouseradd
+@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
+ # renovate: datasource=github-releases depName=docker/compose
+ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
  
- set -euo pipefail
- 
-+. misc/shlib/shlib.bash
-+
- git_date=$(date "+%B %d, %Y 00:00:00 UTC")
- change_date=$(date -d "+4 years" "+%B %d, %Y")
- version_date=$(date "+%Y%m%d")
-@@ -34,4 +36,4 @@ sed -Ei \
-     LICENSE
- git add LICENSE
- git commit -m "LICENSE: update change date"
--git push "https://materializebot:$GITHUB_TOKEN@github.com/MaterializeInc/materialize.git" main
-+git push "https://materializebot:$GITHUB_TOKEN@github.com/$(github_repo).git" main
-```
-
-**File**: `ci/mkpipeline.py` (modified, +7/-4)
-```diff
-@@ -39,7 +39,7 @@
- import requests
- import yaml
- 
--from materialize import mzbuild, spawn, ui
-+from materialize import git, mzbuild, spawn, ui
- from materialize.buildkite_insights.buildkite_api import generic_api
- from materialize.mz_version import MzVersion
- from materialize.mzcompose.composition import Composition
-@@ -95,6 +95,9 @@ def post_ci_trigger_status() -> None:
-     """Post a GitHub commit status linking to the CI trigger page for PRs."""
-     if not ui.env_is_truthy("BUILDKITE_PULL_REQUEST"):
-         return
-+    # The trigger page resolves PR numbers in this repository only.
-+    if git.get_github_repo().lower() != git.DEFAULT_GITHUB_REPO.lower():
-+        return
-     pr_number = os.environ["BUILDKITE_PULL_REQUEST"]
-     token = os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
-         "GITHUB_TOKEN"
-@@ -106,7 +109,7 @@ def post_ci_trigger_status() -> None:
-         return
-     try:
-         resp = requests.post(
--            f"https://api.github.com/repos/MaterializeInc/materialize/statuses/{commit}",
-+            f"https://api.github.com/repos/{git.get_github_repo()}/statuses/{commit}",
-             headers={
-                 "Authorization": f"Bearer {token}",
-                 "Accept": "application/vnd.github.v3+json",
-@@ -138,7 +141,7 @@ def get_pull_request_labels() -> set[str]:
-         if token:
-             headers["Authorization"] = f"Bearer {token}"
-         resp = requests.get(
--            f"https://api.github.com/repos/MaterializeInc/materialize/pulls/{pr}",
-+            f"https://api.github.com/repos/{git.get_github_repo()}/pulls/{pr}",
-             headers=headers,
-             timeout=30,
-         )
-@@ -1390,7 +1393,7 @@ def _changed_files_from_main() -> set[str]:
-             headers["Authorization"] = f"Bearer {token}"
- 
-         resp = requests.get(
--            f"https://api.github.com/repos/materializeinc/materialize/compare/main...{head}",
-+            f"https://api.github.com/repos/{git.get_github_repo()}/compare/main...{head}",
-             headers=headers,
-         )
-         resp.raise_for_status()
-```
-
-**File**: `ci/test/console/vercel-preview.sh` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ printf "+++ Console preview: \033]1339;url='https://%s'\a\n" "$alias_url"
- curl -fsSL \
-     -H "Authorization: Bearer $GITHUB_TOKEN" \
-     -H "Accept: application/vnd.github.v3+json" \
--    "https://api.github.com/repos/MaterializeInc/materialize/statuses/$BUILDKITE_COMMIT" \
-+    "https://api.github.com/repos/$(github_repo)/statuses/$BUILDKITE_COMMIT" \
-     --data "{\
-         \"state\": \"success\",\
-         \"description\": \"Console preview ready.\",\
-```
-
-**File**: `ci/test/lint-codeowners.sh` (modified, +3/-1)
-```diff
-@@ -11,13 +11,15 @@
- 
- set -euo pipefail
- 
-+. misc/shlib/shlib.bash
-+
- auth=()
- if [[ "${GITHUB_TOKEN:-}" ]]; then
-     auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
- fi
- 
- errors=$(curl -fsSL "${auth[@]}" \
--    "https://api.github.com/repos/MaterializeInc/materialize/codeowners/errors?ref=${BUILDKITE_COMMIT:-main}" \
-+    "https://api.github.com/repos/$(github_repo)/codeowners/errors?ref=${BUILDKITE_COMMIT:-main}" \
-     | jq -r '.errors[].message')
- 
- if [[ "$errors" ]]; then
-```
-
-**File**: `ci/test/preview-docs.sh` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ hugo deploy --config config.toml,config.deployment.toml --force
- curl -fsSL \
-     -H "Authorization: Bearer $GITHUB_TOKEN" \
-     -H "Accept: application/vnd.github.v3+json" \
--    "https://api.github.com/repos/MaterializeInc/materialize/statuses/$BUILDKITE_COMMIT" \
-+    "https://api.github.com/repos/$(github_repo)/statuses/$BUILDKITE_COMMIT" \
-     --data "{\
-         \"state\": \"success\",\
-         \"description\": \"Deploy preview ready.\",\
-```
-
-**File**: `misc/python/materialize/buildkite.py` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ def get_pipeline_default_branch(fallback: str = "main"):
-     return get_var(BuildkiteEnvVar.BUILDKITE_PIPELINE_DEFAULT_BRANCH, fallback)
- 
- 
--def get_merge_base(url: str = "https://github.com/MaterializeInc/materialize") -> str:
-+def get_merge_base(url: str | None = None) -> str:
-     base_branch = get_pull_request_base_branch() or get_pipeline_default_branch()
-     merge_base = git.get_common_ancestor_commit(
-         remote=git.get_remote(url), branch=base_branch
-```
-
-**File**: `misc/python/materialize/git.py` (modified, +42/-8)
-```diff
-@@ -24,7 +24,36 @@
- 
- VERSION_TYPE = TypeVar("VERSION_TYPE", bound=TypedVersionBase)
- 
--MATERIALIZE_REMOTE_URL = "https://github.com/MaterializeInc/materialize"
-+DEFAULT_GITHUB_REPO = "MaterializeInc/materialize"
-+
-+
-+@functools.cache
-+def get_github_repo() -> str:
-+    """The "owner/name" of the GitHub repository this checkout belongs to.
-+
-+    In Buildkite this is the repository the pipeline builds. Locally it is the
-+    one remote in the organization of `DEFAULT_GITHUB_REPO`, so that a fork as
-+    `origin` does not win, and otherwise `DEFAULT_GITHUB_REPO`.
-+    """
-+    urls = os.getenv("BUILDKITE_REPO")
-+    if not urls:
-+        try:
-+            urls = spawn.capture(["git", "remote", "--verbose"])
-+        except subprocess.CalledProcessError:
-+            urls = ""
-+    owner = DEFAULT_GITHUB_REPO.split("/")[0].lower()
-+    repos = set()
-+    for url in urls.split():
-+        # Both git@github.com:owner/name.git and https://github.com/owner/name.
-+        repo = url.partition("github.com")[2][1:].removesuffix(".git")
-+        if repo.lower().startswith(f"{owner}/"):
-+            repos.add(repo)
-+    return repos.pop() if len(repos) == 1 else DEFAULT_GITHUB_REPO
-+
-+
-+def get_remote_url() -> str:
-+    return f"https://github.com/{get_github_repo()}"
-+
- 
- fetched_tags_in_remotes: set[str | None] = set()
- 
-@@ -129,7 +158,7 @@ def get_version_tags(
-     version_type: type[VERSION_TYPE],
-     newest_first: bool = True,
-     fetch: bool = True,
--    remote_url: str = MATERIALIZE_REMOTE_URL,
-+    remote_url: str | None = None,
- ) -> list[VERSION_TYPE]:
-     """List all the version-like tags in the repo
- 
-@@ -193,7 +222,9 @@ def is_ancestor(earlier: str, later: str) -> bool:
-     """True if earlier is in an ancestor of later"""
-     try:
-         headers = {"Accept": "application/vnd.github+json"}
--        if token := os.getenv("GITHUB_TOKEN"):
-+        if token := os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
-+            "GITHUB_TOKEN"
-+        ):
-             headers["Authorization"] = f"Bearer {token}"
- 
-         # GitHub resolves the ref "HEAD" server-side to the repo's default
-@@ -203,7 +234,7 @@ def is_ancestor(earlier: str, later: str) -> bool:
-         api_later = rev_parse(later) if later == "HEAD" else later
- 
-         resp = requests.get(
--            f"https://api.github.com/repos/materializeinc/materialize/compare/{api_earlier}...{api_later}",
-+            f"https://api.github.com/repos/{get_github_repo()}/compare/{api_earlier}...{api_later}",
-             headers=headers,
-         )
-         resp.raise_for_status()
-@@ -318,9 +349,10 @@ def try_get_remote_name_by_url(url: str) -> str | None:
- 
- 
- def get_remote(
--    url: str = MATERIALIZE_REMOTE_URL,
-+    url: str | None = None,
-     default_remote_name: str = "origin",
- ) -> str:
-+    url = url or get_remote_url()
-     # Alternative syntax
-     remote = try_get_remote_name_by_url(url) or try_get_remote_name_by_url(
-         url.replace("https://github.com/", "git@github.com:")
-@@ -336,11 +368,13 @@ def get_common_ancestor_commit(remote: str, branch: str) -> str:
-     try:
-         head = spawn.capture(["git", "rev-parse", "HEAD"]).strip()
-         headers = {"Accept": "application/vnd.github+json"}
--        if token := os.getenv("GITHUB_TOKEN"):
-+        if token := os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
-+            "GITHUB_TOKEN"
-+        ):
-             headers["Authorization"] = f"Bearer {token}"
- 
-         resp = requests.get(
--            f"https://api.github.com/repos/materializeinc/materialize/compare/{head}...{branch}",
-+            f"https://api.github.com/repos/{get_github_repo()}/compare/{head}...{branch}",
-             headers=headers,
-         )
-         resp.raise_for_status()
-@@ -372,7 +406,7 @@ def is_on_release_version() -> bool:
- def contains_commit(
-     commit_sha: str,
-     target: str = "HEAD",
--    remote_url: str = MATERIALIZE_REMOTE_URL,
-+    remote_url: str | None = None,
- ) -> bool:
-     return is_ancestor(commit_sha, target)
- 
+ RUN mkdir -p /usr/local/lib/docker/cli-plugins \
+     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40993** (2026-11-22): chore(deps): update dependency jquery to v3.8.0 (@renovate[bot])
-- **PR #40992** (2026-11-22): chore(deps): update dependency docker/compose to v5.8.0 (@renovate[bot])
-- **PR #40990** (2026-11-22): chore(deps): update dependency cargo-deny to v0.21.0 (@renovate[bot])
-- **PR #40989** (2026-11-22): chore(deps): update confluentinc/cp-kafka docker tag to v8.4.0 (@renovate[bot])
-- **PR #40987** (2026-11-22): chore(deps): update lang-tests simple (@renovate[bot])
-- **PR #40985** (2026-11-22): chore(deps): update dependency style-mod to v4.1.5 (@renovate[bot])
+- **PR #41015** (2026-11-23): skills: scope mz-commit checklist to pre-push, drop clippy (@alex-hunt-materialize)
+- **PR #41014** (2026-11-23): renovate: Fix digest lookups and WASM lockfile updates (@def-)
+- **PR #41010** (2026-11-23): repr: Preserve the sign when retrying wide decimal decoding (@def-)
+- **PR #41005** (2026-11-23): chore(deps): update dependency terraform-docs/terraform-docs to v0.25.1 (@renovate[bot])
+- **PR #41004** (closed): chore(deps): update dependency simple-scrollspy to v2.5.3 (@renovate[bot])
+- **PR #41003** (2026-11-23): chore(deps): update dependency mikefarah/yq to v4.54.3 (@renovate[bot])
 
 ---
 
@@ -1534,37 +1508,37 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency @faker-js/faker to v10.6.0
+## X. deps): update rust crate url to v2.5.9 [security]
 
 **RULE**:
-When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d689771`: deps): update dependency @faker-js/faker to v10.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328c9ab3`: deps): update rust crate url to v2.5.9 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    {
-      // ci/test/docs-widgets asserts that a widget's CDN imports match the
-      // versions in its package.json, so both must move in the same PR.
-      "matchManagers": ["custom.regex"],
-      "matchFileNames": ["doc/user/layouts/shortcodes/plugins/**"],
-      "additionalBranchPrefix": "docs-widgets-"
-    },
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d689771` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328c9ab3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

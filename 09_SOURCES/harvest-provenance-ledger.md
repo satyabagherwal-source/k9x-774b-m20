@@ -12367,3 +12367,6 @@ Every entry in this ledger must capture:
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `e11ca719` | Multi-dimensional audit evidence | 2026-11-23T14:21:09.878Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T14:29:14.804Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `5fb737cd` | Multi-dimensional audit evidence | 2026-11-23T14:29:17.499Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T14:38:02.106Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `4491acd8` | Multi-dimensional audit evidence | 2026-11-23T14:38:08.716Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `d9c983d5` | Multi-dimensional audit evidence | 2026-11-23T14:38:18.010Z |

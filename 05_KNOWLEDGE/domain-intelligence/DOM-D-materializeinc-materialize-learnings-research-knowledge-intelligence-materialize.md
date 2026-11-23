@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T01:23:30.811Z",
+  "timestamp": "2026-11-23T14:38:24.948Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-materializeinc-materialize-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [materializeinc-materialize-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T01:23:30.811Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:38:24.948Z`  
 > **Learning ID**: `LEARN-EVO-materializeinc-materialize-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), C (Market & Business Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from materializeinc-materialize-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `116bffc3`  
+> **Source Version**: `d9c983d5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T01:20:33.375Z  
+> **Timestamp**: 2026-11-23T14:38:16.734Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T01:20:33.181Z  
+> **Harvest Timestamp**: 2026-11-23T14:38:16.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6407 stars
+- **Stars / Engagement**: 6411 stars
 
 ---
 
@@ -1109,11 +1109,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40933** (2026-11-19): **ci: Nightly fixes (2026-11-19)**
-  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18794  Exposed by https://github.com/MaterializeInc/materialize/pull/40890  Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit: green)
+- **Issue #41015** (2026-11-23): **skills: scope mz-commit checklist to pre-push, drop clippy**
+  *Symptoms*: The `mz-commit` skill told agents to run `bin/fmt`, `bin/lint`, and workspace clippy before every commit, including local commits that only checkpoint work in progress.  Scope the checklist to pushing a branch for review, and drop clippy, which CI already runs. `AGENTS.md` and the skills README are updated to match. No tests, docs only.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #40932** (2026-11-19): **workload-anonymize: rename query policy names in cluster options**
-  *Symptoms*: SHOW CREATE CLUSTER renders a managed cluster's attached query policy as a string literal (QUERY POLICY = '<name>'). CREATE/ALTER CLUSTER literals are preserved as configuration, so the policy name survived bin/mz-workload-anonymize verbatim, and the verification pass did not notice because it blanks string literals before scanning for identifiers.  Treat the option value as an object reference: the helper collects and renames it consistently with query policy names in captured statements, and the verification pass checks it like an identifier.  Follow-up to #38762  Closes: [QAR-294](https://linear.app/materializeinc/issue/QAR-294)
+- **Issue #41014** (2026-11-23): **renovate: Fix digest lookups and WASM lockfile updates**
+  *Symptoms*: Based on Mend logs of 5 most recent runs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1130,416 +1130,379 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6b3569ab` (2026-11-19)
-**Commit Message**: workload-replay: Confirm performance regressions (#40841)
+### Incident Patch 1: `328c9ab3` (2026-11-23)
+**Commit Message**: chore(deps): update rust crate url to v2.5.9 [security] (#40995)
 
-Require the same metric to regress in two fresh reference/current pairs.
-Alternative to https://github.com/MaterializeInc/materialize/pull/38712
+This PR contains the following updates:
 
-Closes: [QAR-153](https://linear.app/materializeinc/issue/QAR-153)
+| Package | Type | Update | Change |
+|---|---|---|---|
+| [url](https://redirect.github.com/servo/rust-url) |
+workspace.dependencies | patch | `2.5.8` → `2.5.9` |
 
-Test run: https://buildkite.com/materialize/nightly/builds/18765
+---
 
-**File**: `misc/python/materialize/workload_replay/executor.py` (modified, +59/-72)
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
+
+---
+
+### Stack overflow in `Url::origin()` on nested `blob:` URLs
+
+[GHSA-hrj5-67jp-wqp9](https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9)
+/
+[RUSTSEC-2026-0592](https://rustsec.org/advisories/RUSTSEC-2026-0592.html)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+In `url` 2.5.8 and earlier, `Url::origin()` handled a `blob:` URL by
+parsing its path as another URL and calling itself on the result. It did
+so regardless of the inner URL's scheme, `blob` included. Each `blob:`
+prefix cost one stack frame, with no limit on nesting depth.
+`Url::parse()` accepts a URL with 10,000 `blob:` prefixes followed by
+`https://example.com/` (50,020 bytes in total); calling `Url::origin()`
+on it overflowed the default 2 MiB stack of a spawned thread.
+
+A stack overflow aborts the whole process, and `
+
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -314,9 +314,9 @@ def benchmark(
-     When `compare_against` is set, an older reference version is run first and
-     its stats are compared against the current version. Otherwise only the
-     current version is run, which still exercises that the workload replays
--    without crashing.
-+    without crashing. A performance failure must repeat for the same metric in
-+    a fresh reference/current pair. Query errors are not retried.
-     """
--    import random
+@@ -3721,9 +3721,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
  
-     services = [
-         "materialized",
-@@ -348,22 +348,19 @@ def benchmark(
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -14562,9 +14562,9 @@ dependencies = [
  
-     print_workload_stats(file, workload)
- 
--    stats_old = None
--    old_version = None
--    if compare_against:
--        tag = resolve_tag(compare_against)
--        print(f"-- Running against materialized:{tag} (reference)")
-+    def run(image: str | None) -> tuple[dict[str, Any], str]:
-+        print(f"-- Running against {image or 'current materialized'}")
-         random.seed(seed)
-         with c.override(
-             Materialized(
--                image=f"{image_registry()}/materialized:{tag}",
-+                image=image,
-                 cluster_replica_size=cluster_replica_sizes,
-                 ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
-                 environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
-                 additional_system_parameter_defaults=additional_system_parameter_defaults,
-             )
-         ):
--            stats_old = test(
-+            stats = test(
-                 c,
-                 workload,
-                 file,
-@@ -379,82 +376,72 @@ def benchmark(
-                 True,
-                 max_concurrent_queries,
-             )
--            old_version = c.query_mz_version()
-+            version = c.query_mz_version()
-         try:
-             c.kill(*services)
-         except:
-             pass
-         c.rm(*services, destroy_volumes=True)
-         c.rm_volumes("mzdata")
--    print("-- Running against current materialized")
--    random.seed(seed)
--    with c.override(
--        Materialized(
--            image=None,
--            cluster_replica_size=cluster_replica_sizes,
--            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
--            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
--            additional_system_parameter_defaults=additional_system_parameter_defaults,
--        )
--    ):
--        stats_new = test(
--            c,
--            workload,
--            file,
--            factor_initial_data,
--            factor_ingestions,
--            factor_queries,
--            runtime,
--            verbose,
--            True,
--            True,
--            early_initial_data,
--            True,
--            True,
--            max_concurrent_queries,
--        )
--        new_version = c.query_mz_version()
--    try:
--        c.kill(*services)
--    except:
--        pass
--    c.rm(*services, destroy_volumes=True)
--    c.rm_volumes("mzdata")
--    filename = posixpath.relpath(file, LOCATION)
-+        return stats, version
- 
--    if stats_old is None or old_version is None:
-+    if not compare_against:
-+        _, new_version = run(None)
-         print(f"-- Ran {new_version} without a reference version to compare against")
-         return
- 
--    print(f"-- Comparing {old_version} against {new_version}")
--    plot_docker_stats_compare(
--        stats_old=stats_old,
--        stats_new=stats_new,
--        file=filename,
--        old_version=old_version,
--        new_version=new_version,
--    )
--    failures: list[TestFailureDetails] = []
--    failures.extend(compare_table(filename, stats_old, stats_new))
--
--    if "errors" in stats_old["queries"]:
--        new_errors = []
--        for error, occurrences in stats_new["queries"]["errors"].items():
--            if error in stats_old["queries"]["errors"]:
--                continue
-+    tag = resolve_tag(compare_against)
-+    if tag is None:
-+        raise ValueError(f"Could not resolve reference {compare_against}")
-+    filename = posixpath.relpath(file, LOCATION)
-+    pending: set[str] = set()
-+    tables = []
-+    # A fast baseline can also produce a false regression, so rerun both versions.
-+    for attempt in range(1, 3):
-+        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
-+        stats_new, new_version = run(None)
-+        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
-+        plot_docker_stats_compare(
-+            stats_old=stats_old,
-+            stats_new=stats_new,
-+            file=f"{filename}_attempt_{attempt}",
-+            old_version=old_version,
-+            new_version=new_version,
-+        )
-+        table, regressions = compare_table(stats_old, stats_new)
-+        tables.append(f"Attempt {attempt}\n{table}")
-+        details = "\n\n".join(tables)
-+
-+        new_errors = [
-+            f"{error} in queries: {occurrences}"
-+            for error, occurrences in stats_new["queries"].get("errors", {}).items()
-+            if error not in stats_old["queries"].get("errors", {})
-      
-```
-
-**File**: `misc/python/materialize/workload_replay/stats.py` (modified, +6/-19)
-```diff
-@@ -26,7 +26,6 @@
- import numpy
- 
- from materialize import MZ_ROOT, buildkite
--from materialize.mzcompose.test_result import TestFailureDetails
- 
- # Byte parsing utilities
- 
-@@ -391,9 +390,9 @@ def fmt_pct(delta: float) -> str:
- 
- 
- def compare_table(
--    filename: str, stats_old: dict[str, Any], stats_new: dict[str, Any]
--) -> list[TestFailureDetails]:
--    """Generate a comparison table and check for regressions."""
-+    stats_old: dict[str, Any], stats_new: dict[str, Any]
-+) -> tuple[str, set[str]]:
-+    """Return a comparison table and the metrics exceeding their thresholds."""
-     rows = []
-     if "object_creation" in stats_old:
-         rows.append(
-@@ -480,21 +479,19 @@ def compare_table(
-             ]
-         )
- 
--    failures: list[TestFailureDetails] = []
--
-     output_lines = [
-         f"{'METRIC':<24} | {'OLD':^12} | {'NEW':^12} | {'CHANGE':^9} | {'THRESHOLD':^9} | {'REGRESSION?':^12}",
-         "-" * 92,
-     ]
- 
--    regressed = False
-+    regressions = set()
-     for name, old, new, threshold in rows:
-         delta = pct_change(old, new)
- 
-         if threshold is None:
-             flag = ""
-         elif new > old * threshold:
--            regressed = True
-+            regressions.add(name)
-             flag = "!!YES!!"
-         else:
-             flag = "no"
-@@ -509,14 +506,4 @@ def compare_table(
-             f"{threshold_field:>9} | "
-             f"{flag:^12}"
-         )
--    if regressed:
--        failures.append(
--            TestFailureDetails(
--                message=f"Workload {filename} regressed",
--                details="\n".join(output_lines),
--                test_class_name_override=filename,
--            )
--        )
--
--    print("\n".join(output_lines))
--    return failures
-+    return "\n".join(output_lines), regressions
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 ---
 
-### Incident Patch 2: `b097a5f4` (2026-11-19)
-**Commit Message**: ci: Nightly fixes (2026-11-19) (#40933)
+### Incident Patch 2: `be6d706d` (2026-11-23)
+**Commit Message**: renovate: Fix digest lookups and WASM lockfile updates (#41014)
 
-Based on https://buildkite.com/materialize/nightly/builds/18794
+Based on Mend logs of 5 most recent runs.
 
-Exposed by https://github.com/MaterializeInc/materialize/pull/40890
-
-Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit:
-green)
-
-**File**: `test/terraform/mzcompose.py` (modified, +11/-19)
+**File**: `.github/renovate.json5` (modified, +20/-3)
 ```diff
-@@ -23,7 +23,7 @@
- import tempfile
- import threading
- import time
--from collections.abc import Sequence
-+from collections.abc import MutableMapping, Sequence
- from pathlib import Path
- from textwrap import dedent
- from typing import IO
-@@ -205,6 +205,13 @@ def testdrive(no_reset: bool, use_https: bool = True) -> Testdrive:
-     )
+@@ -20,8 +20,8 @@
+   "constraints": {"rust": "1.98.1"},
+   "customDatasources": {
+     "gcloud": {
+-      "defaultRegistryUrlTemplate": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
+-      "transformTemplates": ["{\"releases\": [{\"version\": version}]}"]
++      "defaultRegistryUrlTemplate": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items(name,timeCreated)&maxResults=1000",
++      "transformTemplates": ["{\"releases\": [items.{\"version\": $split(name, '-')[3], \"releaseTimestamp\": timeCreated}]}"]
+     },
+     "inspector-sbomgen": {
+       "defaultRegistryUrlTemplate": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
+@@ -39,7 +39,7 @@
+         "/\\.(sh|bash|py)$/"
+       ],
+       "matchStrings": [
+-        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
++        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*(?:\\([ \\t]*\\n[ \\t]*)?[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
+         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[ \\t]*\\nprintf [\"'](?<currentValue>[^\"']+)"
+       ],
+       // Regex managers need a template to append a previously absent digest.
+@@ -190,6 +190,14 @@
+       "matchFileNames": ["misc/wasm/**/Cargo.toml"],
+       "additionalBranchPrefix": "cargo-wasm-"
+     },
++    {
++      // js-sys requires an exact wasm-bindgen version. Bumping the manifest
++      // lets Cargo resolve both crates together when updating the lock file.
++      "matchManagers": ["cargo"],
++      "matchFileNames": ["misc/wasm/**/Cargo.toml"],
++      "matchPackageNames": ["wasm-bindgen"],
++      "rangeStrategy": "bump"
++    },
+     {
+       "matchManagers": ["cargo"],
+       "matchFileNames": ["misc/materialize-sdk/**/Cargo.toml"],
+@@ -241,6 +249,15 @@
+       "matchDatasources": ["docker"],
+       "pinDigests": true
+     },
++    {
++      // Renovate checks the tag's age during lookup, then omits the timestamp
++      // from digest updates. Skip the duplicate branch check once lookup has
++      // returned a digest and cleared its pending checks.
++      "matchDatasources": ["docker"],
++      "matchUpdateTypes": ["digest", "pinDigest"],
++      "matchJsonata": ["$exists(newDigest) and $not(pendingChecks = true) and $not($exists(releaseTimestamp)) and minimumReleaseAgeBehaviour = 'timestamp-optional'"],
++      "minimumReleaseAge": null
++    },
+     {
+       // This tag also selects ZooKeeper and Schema Registry images, whose
+       // digests differ from Kafka's.
+```
+
+**File**: `ci/builder/Dockerfile` (modified, +12/-5)
+```diff
+@@ -356,16 +356,17 @@ RUN arch_gcloud=$(echo "$ARCH_GCC" | sed -e "s/aarch64/arm/" -e "s/amd64/x86_64/
+     && rm -rf /root/.cache/pip
  
+ # Install docs site dependencies. These are towards the end for the same reason
+-# as the Python dependencies. These are only supported on x86_64 at the moment.
+-# See: https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4
++# as the Python dependencies. The docs build runs on x86_64.
+ #
+ # On every Hugo version bump, compare doc/user/layouts/sitemap.xml with the new
+ # version's built-in sitemap template, which it copies, and port any changes.
  
-+def pass_license_key(env: MutableMapping[str, str]) -> None:
-+    """Hands the CI license key to the Terraform invocations run with `env`."""
-+    license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
-+    if license_key:
-+        env["TF_VAR_license_key"] = license_key
-+
-+
- def get_tag(tag: str | None) -> str:
-     return tag or ci_util.dev_docker_tag()
+ # renovate: datasource=github-release-attachments depName=wjdp/htmltest
+ ARG HTMLTEST_AMD64=v0.17.0@775c597ee74899d6002cd2d93076f897f4ba68686bceabe2e5d72e84c57bc0fb
+ # renovate: datasource=github-release-attachments depName=gohugoio/hugo
+-ARG HUGO_AMD64=v0.152.2@08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a
++ARG HUGO_AMD64=v0.170.1@a1c81c53a8bc789f1af9494a6b6be1a9b1aa7782e22a1398f919d5df50558433
++# renovate: datasource=github-release-attachments depName=sass/dart-sass
++ARG DART_SASS_AMD64=1.108.2@32d2eb5b83cbc180fce9657ff3c57401a9006c59eccfe0bfdde0aa755a66d42f
  
-@@ -810,12 +817,7 @@ def setup(
-                 f"orchestratord_version={get_tag(orchestratord_tag or tag)}",
-             ]
+ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     HTMLTEST_VERSION=${HTMLTEST_AMD64%@*} \
+@@ -374,10 +375,16 @@ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     && tar -xzf htmltest.tar.gz -C /usr/local/bin htmltest \
+     && rm htmltest.tar.gz \
+     && HUGO_VERSION=${HUGO_AMD64%@*} \
+-    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION#v}_Linux-64bit.tar.gz > hugo.tar.gz \
++    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_withdeploy_${HUGO_VERSION#v}_linux-amd64.tar.gz > hugo.tar.gz \
+     && echo "${HUGO_AMD64#*@} hugo.tar.gz" | sha256sum --check \
+     && tar -xzf hugo.tar.gz -C /usr/local/bin hugo \
+-    && rm hugo.tar.gz; \
++    && rm hugo.tar.gz \
++    && DART_SASS_VERSION=${DART_SASS_AMD64%@*} \
++    && curl -fsSL https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz > dart-sass.tar.gz \
++    && echo "${DART_SASS_AMD64#*@} dart-sass.tar.gz" | sha256sum --check \
++    && tar -xzf dart-sass.tar.gz -C /opt \
++    && ln -s /opt/dart-sass/sass /usr/local/bin/sass \
++    && rm dart-sass.tar.gz; \
+     fi
  
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            self.base_vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(os.environ)
+ # Install KinD, kubectl, helm & helm-docs
+```
+
+**File**: `ci/deploy_website/website.sh` (modified, +0/-3)
+```diff
+@@ -46,9 +46,6 @@ declare -A external_redirects=(
+     [docs/self-managed/v25.2/support/index.html]="https://materialize.com/support/"
+ )
  
-         if prefix == PREFIX_AWS_PERSISTENT:
-             delete_after = "2099-12-31T00:00:00Z"
-@@ -1453,12 +1455,7 @@ def workflow_gcp_temporary(c: Composition, parser: WorkflowArgumentParser) -> No
-                 f"orchestratord_version={get_tag(tag)}",
-             ]
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
+ if [[ "$BUILDKITE_ORGANIZATION_SLUG" == "materialize" ]] && [[ "$BUILDKITE_BRANCH" == self-managed-docs/* ]]; then
+     VERSION=${BUILDKITE_BRANCH#self-managed-docs/}
+```
+
+**File**: `ci/test/lint-docs.sh` (modified, +0/-3)
+```diff
+@@ -15,9 +15,6 @@ set -euo pipefail
  
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(os.environ)
+ . misc/shlib/shlib.bash
  
-         vars += [
-             "-var",
-@@ -1679,12 +1676,7 @@ def workflow_azure_temporary(c: Composition, parser: WorkflowArgumentParser) ->
-                 f"orchestratord_version={get_tag(tag)}",
-             ]
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ git clean -ffdX ci/www/public ci/www/preview
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --destination ../../ci/www/public/docs
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination ../../ci/www/public/docs/markdown-docs
+```
+
+**File**: `ci/test/preview-docs.sh` (modified, +0/-7)
+```diff
+@@ -18,13 +18,6 @@ if [[ "$BUILDKITE_PULL_REQUEST" = false ]]; then
+     exit 0
+ fi
  
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(venv_env)
+-# Hugo 0.152.2 has a data race between pages that include the same headless
+-# page, which aborts a build with "concurrent map iteration and map write"
+-# (QAR-260). Rendering pages on one worker avoids it.
+-# TODO: Remove this once ci/builder/Dockerfile installs Hugo 0.153.0 or later,
+-# which fixed the race.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
  
-         vars += [
-             "-var",
+ # Build main docs to public/
+```
+
+**File**: `doc/user/CONTRIBUTING.md` (modified, +2/-1)
+```diff
+@@ -34,7 +34,8 @@ to `git pull` the latest version of Materialize.
+ 
+ # View the docs locally
+ 
+-1. [Install Hugo](https://gohugo.io/getting-started/installing/).
++1. Install [Hugo](https://gohugo.io/getting-started/installing/) and
++   [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) to compile the site's stylesheets.
+ 
+ 1. Launch the site by running:
+ 
+```
+
+**File**: `doc/user/config.skill.toml` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ disable = true
+ [[module.mounts]]
+   source = "static"
+   target = "static"
+-  excludeFiles = ["**", "*"]
++  files = ["! **", "! *"]
+ 
+ # Skill-specific parameters
+ [params]
+```
+
+**File**: `doc/user/layouts/sitemap.xml` (modified, +4/-9)
+```diff
+@@ -9,7 +9,7 @@
+   by the Apache License, Version 2.0.
+ */ -}}
+ {{- /*
+-  Hugo's built-in sitemap template, from v0.152.2, with absolute URLs. The
++  Hugo's built-in sitemap template, from v0.170.1, with absolute URLs. The
+   sitemap protocol requires a full URL in every <loc>, and the built-in
+   template emits .Permalink, which has no host under a bare-path baseURL such
+   as "/docs".
+@@ -23,17 +23,12 @@
+     <loc>{{ partial "absolute-permalink.html" . }}</loc>{{ if not .Lastmod.IsZero }}
+     <lastmod>{{ safeHTML ( .Lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
+     <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
+-    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .Translations }}
++    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .AllTranslations }}
+     <xhtml:link
+                 rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
++                hreflang="{{ .Language.Locale }}"
+                 href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
+-    <xhtml:link
+-                rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
+-                href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
++                />{{ end }}{{ end }}
+   </url>
+     {{- end -}}
+   {{ end }}
 ```
 
 ---
 
-### Incident Patch 3: `71e76bb8` (2026-11-19)
-**Commit Message**: ci: Nightly fixes (2026-11-18) (#40893)
+### Incident Patch 3: `730cd6dc` (2026-11-23)
+**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.1 (#40997)
 
-Based on https://buildkite.com/materialize/nightly/builds/18771
+This PR contains the following updates:
 
-SLT: Follow-up to #38762
+| Package | Update | Change |
+|---|---|---|
+| [docker/buildx](https://redirect.github.com/docker/buildx) | patch |
+`v0.39.0` → `v0.39.1` |
 
-mz-deploy: Merge skew between #38762 & #38834
+---
 
-Test run: https://buildkite.com/materialize/nightly/builds/18785 (edit:
-green)
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
 
-**File**: `deny.toml` (modified, +6/-0)
+---
+
+### Release Notes
+
+<details>
+<summary>docker/buildx</summary>
+
+###
+[`v0.39.1`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.1)
+
+[Compare
+Source](https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1)
+
+buildx 0.39.1
+
+Welcome to the v0.39.1 release of buildx!
+
+Please try out the release binaries and report any issues at
+<https://github.com/docker/buildx/issues>.
+
+##### Contributors
+
+- Tõnis Tiigi
+
+##### Notable Changes
+
+- Fix regression in v0.39.0 where build could error if .dockerignore
+contained lots of entries
+
+##### Dependency Changes
+
+- **github.com/moby/buildkit**  v0.35.0 -> v0.35.1
+
+Previous release can be found at
+[v0.39.0](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
+
+</details>
+
+---
+
+### Configuration
+
+📅 **Schedule**: (in timezone Etc/UTC)
+
+- Branch creation
+  - 
+
+**File**: `ci/builder/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -309,6 +309,12 @@ ignore = [
-     "RUSTSEC-2024-0436",
-     # Bincode is unmaintained, the team considers version 1.3.3 a complete version of bincode that is not in need of any updates.
-     "RUSTSEC-2025-0141",
-+    # chrono is unmaintained with no patched release. Arrow and postgres-types
-+    # still depend on it.
-+    "RUSTSEC-2026-0543",
-+    # humantime is unmaintained with no patched release. console-subscriber
-+    # still depends on it.
-+    "RUSTSEC-2026-0542",
-     # Allows private key leakage through timing information
-     # rsa is required through iceberg-storage-opendal
-     "RUSTSEC-2023-0071",
-```
-
-**File**: `misc/python/materialize/cli/ci_annotate_errors.py` (modified, +20/-1)
-```diff
-@@ -133,6 +133,8 @@
-     | Assertion\ `.*'\ failed\.
-     | Invalid\ data\ in\ source\ errors,\ saw\ retractions
-     | \+\+\+\ Expected\ builds\ to\ be\ available,\ the\ build\ probably\ failed
-+    # cargo-deny advisories
-+    | ^error\[(?:vulnerability|unmaintained|unsound|notice|yanked)\]:[^\n]*(?:\n(?!error\[|warning\[)[^\n]+)*
-     )
-     .* $
-     """,
-@@ -491,7 +493,24 @@ def main() -> int:
+@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
+ ARG DOCKER_PUSHRM_VERSION=v1.9.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
  
-     if args.buildkite_log_until:
-         # Unlike output the caller captures, Buildkite's log has secrets redacted.
--        args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
-+        try:
-+            args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
-+        except Exception as e:
-+            if not args.test_result:
-+                raise
-+            print(f"Could not retrieve the Buildkite job log: {e}", file=sys.stderr)
-+            add_annotation_raw(
-+                style="error",
-+                markdown=(
-+                    f'<a href="#{html.escape(os.environ["BUILDKITE_JOB_ID"])}">'
-+                    f"{html.escape(get_suite_name())}</a> failed "
-+                    f"(exit status {args.test_result}).\n\n"
-+                    "Could not retrieve the job log for error analysis:\n"
-+                    f"<pre>{html.escape(str(e))}</pre>\n"
-+                    "See the linked job for the command output."
-+                ),
-+            )
-+            return args.test_result
+ RUN \
+     # 1. autouseradd
+@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
+ # renovate: datasource=github-releases depName=docker/compose
+ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
  
-     test_analytics_config = create_test_analytics_config_with_hostname(
-         args.cloud_hostname
-```
-
-**File**: `test/mz-deploy/mzcompose.py` (modified, +0/-2)
-```diff
-@@ -1336,8 +1336,6 @@ def workflow_avro_record_type(c: Composition, parser: WorkflowArgumentParser) ->
-         # What a version 1 lock file holds for this column: the pseudo-type
-         # token, with no way to rebuild the record. It has to load, and
-         # reconstruction has to say what to do about it.
--        # The container-created file can be owned by root, so replace it.
--        types_lock.unlink()
-         types_lock.write_text(
-             'version = 1\n\n[[table]]\nname = "app.ingest.ledger_entry"\ncolumns = [\n'
-             '    { name = "record", type = "record", nullable = true },\n]\n'
-```
-
-**File**: `test/sqllogictest/query_policy.slt` (modified, +6/-0)
-```diff
-@@ -223,12 +223,18 @@ DETAIL: Query policy "no_dataflows" rule "fast_only" applies to this query on cl
- HINT: Run EXPLAIN to inspect the query plan. Create an index that serves the query on this cluster, or use a cluster whose query policy permits this plan.
- 
- # Diagnostics remain available even when their introspection queries need dataflows.
-+statement ok
-+SET cluster_replica = r1;
-+
- statement ok
- EXPLAIN ANALYZE CLUSTER MEMORY;
- 
- statement ok
- EXPLAIN ANALYZE MEMORY FOR MATERIALIZED VIEW unindexed;
- 
-+statement ok
-+RESET cluster_replica;
-+
- # A persist fast-path read does not build a temporary dataflow.
- query II rowsort
- SELECT * FROM unindexed LIMIT 10;
+ RUN mkdir -p /usr/local/lib/docker/cli-plugins \
+     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40933** (2026-11-19): ci: Nightly fixes (2026-11-19) (@def-)
-- **PR #40932** (2026-11-19): workload-anonymize: rename query policy names in cluster options (@def-)
-- **PR #40930** (2026-11-19): storage: Decode bzip2 with libbz2-rs-sys instead of C libbz2 (@jasonhernandez)
-- **PR #40929** (2026-11-19): docs: release notes for v26.50.2, v26.49.2, v26.44.2 and v26.41.3 (@bosconi)
-- **PR #40924** (2026-11-19): release: mark v26.51, v26.50 as released (@materialize-bot)
-- **PR #40922** (2026-11-19): compute: give MV sink correction chunks their own compression floor (@DAlperin)
+- **PR #41015** (2026-11-23): skills: scope mz-commit checklist to pre-push, drop clippy (@alex-hunt-materialize)
+- **PR #41014** (2026-11-23): renovate: Fix digest lookups and WASM lockfile updates (@def-)
+- **PR #41010** (2026-11-23): repr: Preserve the sign when retrying wide decimal decoding (@def-)
+- **PR #41005** (2026-11-23): chore(deps): update dependency terraform-docs/terraform-docs to v0.25.1 (@renovate[bot])
+- **PR #41004** (closed): chore(deps): update dependency simple-scrollspy to v2.5.3 (@renovate[bot])
+- **PR #41003** (2026-11-23): chore(deps): update dependency mikefarah/yq to v4.54.3 (@renovate[bot])
 
 ---
 
@@ -1559,94 +1522,37 @@ green)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workload-replay: Confirm performance regressions
+## X. deps): update rust crate url to v2.5.9 [security]
 
 **RULE**:
-When implementing operations in `misc/python/materialize/workload_replay/executor.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6b3569ab`: workload-replay: Confirm performance regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328c9ab3`: deps): update rust crate url to v2.5.9 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/python/materialize/workload_replay/executor.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    without crashing. A performance failure must repeat for the same metric in
-    a fresh reference/current pair. Query errors are not retried.
-    def run(image: str | None) -> tuple[dict[str, Any], str]:
-        print(f"-- Running against {image or 'current materialized'}")
-                image=image,
-            stats = test(
-            version = c.query_mz_version()
-        return stats, version
-    if not compare_against:
-        _, new_version = run(None)
-    tag = resolve_tag(compare_against)
-    if tag is None:
-        raise ValueError(f"Could not resolve reference {compare_against}")
-    filename = posixpath.relpath(file, LOCATION)
-    pending: set[str] = set()
-    tables = []
-    # A fast baseline can also produce a false regression, so rerun both versions.
-    for attempt in range(1, 3):
-        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
-        stats_new, new_version = run(None)
-        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
-        plot_docker_stats_compare(
-            stats_old=stats_old,
-            stats_new=stats_new,
-            file=f"{filename}_attempt_{attempt}",
-            old_version=old_
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    without crashing.
-    import random
-    stats_old = None
-    old_version = None
-    if compare_against:
-        tag = resolve_tag(compare_against)
-        print(f"-- Running against materialized:{tag} (reference)")
-                image=f"{image_registry()}/materialized:{tag}",
-            stats_old = test(
-            old_version = c.query_mz_version()
-    print("-- Running against current materialized")
-    random.seed(seed)
-    with c.override(
-        Materialized(
-            image=None,
-            cluster_replica_size=cluster_replica_sizes,
-            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
-            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
-            additional_system_parameter_defaults=additional_system_parameter_defaults,
-        )
-    ):
-        stats_new = test(
-            c,
-            workload,
-            file,
-            factor_initial_data,
-            factor_ingestions,
-            factor_queries,
-            runtime,
-            verbose,
-            True,
-            True,
-            early_initial_data,
-            True,
-            True,
-            max_concurrent_queries,
-        )
-        new_version = c.query_mz_version()
-  
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6b3569ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328c9ab3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

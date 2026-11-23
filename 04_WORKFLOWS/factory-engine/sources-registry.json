@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T13:49:45.254Z",
-    "lastVerified": "2026-11-23T13:49:45.255Z",
+    "lastChecked": "2026-11-23T14:38:13.217Z",
+    "lastVerified": "2026-11-23T14:38:13.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T14:29:26.153Z",
-    "lastVerified": "2026-11-23T14:29:26.153Z",
+    "lastChecked": "2026-11-23T14:38:21.692Z",
+    "lastVerified": "2026-11-23T14:38:21.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1665,9 +1665,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-23T04:58:28.529Z",
+    "lastChecked": "2026-11-23T14:38:08.263Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-23T04:58:28.529Z"
+    "lastVerified": "2026-11-23T14:38:08.263Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4308,14 +4308,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T07:37:17.086Z",
-    "lastVerified": "2026-11-22T07:37:17.086Z",
+    "lastChecked": "2026-11-23T14:38:16.727Z",
+    "lastVerified": "2026-11-23T14:38:16.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "788ad3dabb650690a5a94f6c3cd7a81b23335956bbeefb34eeaadaa90e6008a9",
+    "contentHash": "ec4bf6fa9cf512c18f376c0c82396ba398976870cdc12329231582c4ec2ad959",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5086,9 +5086,9 @@
   "telemt-telemt": {
     "name": "telemt",
     "officialUrl": "https://github.com/telemt/telemt",
-    "lastChecked": "2026-11-22T01:43:49.139Z",
+    "lastChecked": "2026-11-23T14:37:58.234Z",
     "revisionIdentifier": "dac7aeee",
-    "lastVerified": "2026-11-22T01:43:49.139Z"
+    "lastVerified": "2026-11-23T14:37:58.234Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -5809,9 +5809,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-22T09:04:31.084Z",
+    "lastChecked": "2026-11-23T14:38:05.698Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-22T09:04:31.084Z"
+    "lastVerified": "2026-11-23T14:38:05.698Z"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -5854,12 +5854,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T00:49:39.024Z",
-    "lastVerified": "2026-11-19T00:49:39.024Z",
+    "lastChecked": "2026-11-23T14:38:00.855Z",
+    "lastVerified": "2026-11-23T14:38:00.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "ef3f1848c52a2dfe01b3cbc0b4b7971e3d5772341e58a521b25ee533603757ab",
+    "contentHash": "1a2889676cd13702a37af6c9e17922bb948104d03c39cb26c580139cb17a60fb",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10290,14 +10290,14 @@
     "officialUrl": "https://github.com/joreilly/Confetti",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-20T11:08:53.859Z",
-    "lastVerified": "2026-11-20T11:08:53.859Z",
+    "lastChecked": "2026-11-23T14:38:07.387Z",
+    "lastVerified": "2026-11-23T14:38:07.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
+    "contentHash": "37cdb031ae10024ce7d6cbee85dc6c3b5c74405b178a16c843f05ff0072e254b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

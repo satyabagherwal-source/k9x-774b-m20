@@ -12334,3 +12334,6 @@
 | `CYCLE-20261123-SY2A` | `2026-11-23T14:21:09.874Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`d915c223...`) |
 | `CYCLE-20261123-3C8G` | `2026-11-23T14:29:14.800Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`15f4b4ea...`) |
 | `CYCLE-20261123-3EBB` | `2026-11-23T14:29:17.495Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10051` | Yes (`a4025046...`) |
+| `CYCLE-20261123-EN3O` | `2026-11-23T14:38:02.100Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`1a288967...`) |
+| `CYCLE-20261123-ES7B` | `2026-11-23T14:38:08.711Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10052` | Yes (`37cdb031...`) |
+| `CYCLE-20261123-EZDH` | `2026-11-23T14:38:18.005Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10053` | Yes (`ec4bf6fa...`) |

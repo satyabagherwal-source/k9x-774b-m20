@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T03:28:57.455Z",
+  "timestamp": "2026-11-23T14:38:24.948Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-materializeinc-materialize-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [materializeinc-materialize-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T03:28:57.455Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:38:24.948Z`  
 > **Learning ID**: `LEARN-EVO-materializeinc-materialize-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `5c494ac8`  
+> **Source Version**: `d9c983d5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:28:49.532Z  
+> **Timestamp**: 2026-11-23T14:38:16.734Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:28:49.526Z  
+> **Harvest Timestamp**: 2026-11-23T14:38:16.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6407 stars
+- **Stars / Engagement**: 6411 stars
 
 ---
 
@@ -1106,11 +1106,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40969** (2026-11-20): **[librdkafka agent test] kafka: upgrade librdkafka to v2.16.0**
-  *Symptoms*: **Test run of mz-agents' librdkafka-release-agent; do not merge.** It replays the `v2.16.0` upgrade against MaterializeInc/materialize@`60cc748fd80eef17f9d6b444d4a39217f12db92b` (`2026-10-27T12:09:07-07:00`), seeing only what existed then. The base branch is `main` at `60cc748fd80eef17f9d6b444d4a39217f12db92b`. Review comments are welcome; the agent answers them for eight hours after each daily run.  Linear: [SS-608](https://linear.app/materializeinc/issue/SS-608/librdkafka-bump-fake-test-issue-upgrade-librdkafka-to-v2160) (fake test issue) Depends on: MaterializeInc/rust-rdkafka#39 (pinned to its head `13adee1`)  ### Motivation  Upgrades the vendored librdkafka from upstream v2.12.1 (plus one build fix) to [v2.16.0](https://github.com/confluentinc/librdkafka/releases/tag/v2.16.0), the latest stable release. It brings four releases of fixes, several of which are in code paths we use (re-bootstrap, `ALL_BROKERS_DOWN`, watermark/offset queries on client destroy, lost-assignment commits), plus bundled OpenSSL/libcurl CVE fixes.  ### Changes  * `Cargo.toml` `[patch.crates-io]`: `rdkafka` and `rdkafka-sys` now pin `rev = "13adee1ddd5d2008c205bec6c9c34a917c8e97a8"` (head of MaterializeInc/rust-rdkafka#39) instead of following the fork's default branch. * `Cargo.lock`: only the two rust-rdkafka entries change (`642daa6` → `13adee1`, `rdkafka-sys` `4.3.0+2.5.0` → `4.3.0+2.16.0`). No other crate moved. * `test/cargo-fuzz/Cargo.toml`: the same `rev` pins, because `bin/lint-cargo` requi
+- **Issue #41015** (2026-11-23): **skills: scope mz-commit checklist to pre-push, drop clippy**
+  *Symptoms*: The `mz-commit` skill told agents to run `bin/fmt`, `bin/lint`, and workspace clippy before every commit, including local commits that only checkpoint work in progress.  Scope the checklist to pushing a branch for review, and drop clippy, which CI already runs. `AGENTS.md` and the skills README are updated to match. No tests, docs only.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #40965** (2026-11-20): **ci: run the claude workflow with the read-only job token**
-  *Symptoms*: The Claude workflow now passes the job's `GITHUB_TOKEN` to `claude-code-action` instead of letting the action mint a Claude GitHub App token. The job token is scoped to `contents: read`, `pull-requests: write` and `actions: read`, so Claude can still read PRs and CI results and post replies, but cannot push branches or merge. The `gh` allowlist is narrowed to `gh pr view`, `gh pr diff` and `gh pr checks`, and `@claude` on plain issues no longer starts the job.  ### Risks  - Replies are posted as `github-actions[bot]` instead of the Claude app. - `@claude` on a plain issue is ignored. - `@claude` in PR reviews on fork PRs gets a read-only token from GitHub. The OAuth secret is already unavailable on those runs. - Rollback is reverting this one file.  ### Tests  actionlint passes. Not exercised end to end: needs an `@claude` comment on a PR after merge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #41014** (2026-11-23): **renovate: Fix digest lookups and WASM lockfile updates**
+  *Symptoms*: Based on Mend logs of 5 most recent runs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1127,22 +1127,15 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71f8f02e` (2026-11-20)
-**Commit Message**: chore(deps): update dependency @faker-js/faker to v10 [security] (#40860)
+### Incident Patch 1: `328c9ab3` (2026-11-23)
+**Commit Message**: chore(deps): update rust crate url to v2.5.9 [security] (#40995)
 
 This PR contains the following updates:
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+| Package | Type | Update | Change |
 |---|---|---|---|
-| [@faker-js/faker](https://fakerjs.dev)
-([source](https://redirect.github.com/faker-js/faker)) | `8.4.0` →
-`10.5.0` |
-![age](https://developer.mend.io/api/mc/badges/age/npm/@faker-js%2ffaker/10.5.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@faker-js%2ffaker/8.4.0/10.5.0?slim=true)
-|
+| [url](https://redirect.github.com/servo/rust-url) |
+workspace.dependencies | patch | `2.5.8` → `2.5.9` |
 
 ---
 
@@ -1152,443 +1145,361 @@ Dashboard for more information.
 
 ---
 
-### Faker: helpers.fake exploitable into arbritary code execution
-[CVE-2026-73231](https://nvd.nist.gov/vuln/detail/CVE-2026-73231) /
-[GHSA-qxc2-j82w-r537](https://redirect.github.com/advisories/GHSA-qxc2-j82w-r537)
+### Stack overflow in `Url::origin()` on nested `blob:` URLs
+
+[GHSA-hrj5-67jp-wqp9](https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9)
+/
+[RUSTSEC-2026-0592](https://rustsec.org/advisories/RUSTSEC-2026-0592.html)
 
 <details>
 <summary>More information</summary>
 
 #### Details
-##### Summary
+In `url` 2.5.8 and earlier, `Url::origin()` handled a `blob:` URL by
+parsing its path as another URL and calling itself on the result. It did
+so regardless of the inner URL's scheme, `blob` included. Each `blob:`
+prefix cost one stack frame, with no limit on nesting depth.
+`Url::parse()` accepts a URL with 10,000 `blob:` prefixes followed by
+`https://example.com/` (50,020 bytes in total); calling `Url::origin()`
+on it overflowed the default 2 MiB stack of a spawned thread.
 
-`faker.helpers.fake` can be tricked into arbritary code execution.
+A stack overflow aborts the whole process, and `
 
-##### Details
-
-fakeEval.resolveProperty resolves properties on functions itself instead
-of resolving the nested functio
-
-**File**: `ci/test/docs-widgets/package-lock.json` (modified, +17/-0)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,7 @@
-     "": {
-       "name": "docs-widgets-tests",
-       "dependencies": {
-+        "@faker-js/faker": "10.5.0",
-         "jsdom": "^31.0.0",
-         "vitest": "^5.0.0"
-       }
-@@ -61,6 +62,22 @@
-         }
-       }
-     },
-+    "node_modules/@faker-js/faker": {
-+      "version": "10.5.0",
-+      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
-+      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
-+      "funding": [
-+        {
-+          "type": "opencollective",
-+          "url": "https://opencollective.com/fakerjs"
-+        }
-+      ],
-+      "license": "MIT",
-+      "engines": {
-+        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
-+        "npm": ">=10"
-+      }
-+    },
-     "node_modules/@jridgewell/resolve-uri": {
-       "version": "3.1.3",
-       "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.3.tgz",
-```
-
-**File**: `ci/test/docs-widgets/package.json` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@
-     "test": "vitest"
-   },
-   "dependencies": {
-+    "@faker-js/faker": "10.5.0",
-     "jsdom": "^31.0.0",
-     "vitest": "^5.0.0"
-   }
-```
-
-**File**: `ci/test/docs-widgets/webhooks-datagen.test.js` (modified, +156/-137)
-```diff
-@@ -7,163 +7,182 @@
- // the Business Source License, use of this software will be governed
- // by the Apache License, Version 2.0.
+@@ -3721,9 +3721,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
  
--import { beforeEach, describe, it, expect, vi } from "vitest";
-+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
-+import { faker } from "@faker-js/faker";
- import { JSDOM } from "jsdom";
- import fs from "fs";
- import path from "path";
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -14562,9 +14562,9 @@ dependencies = [
  
--describe("Webhooks Data Generator", async () => {
-+describe("Webhooks Data Generator", () => {
-   let window, document;
--  let isGenerating = false;
-+  const uuid = /^[0-9a-f-]{36}$/;
-+  const fakerVersion = JSON.parse(
-+    fs.readFileSync(path.join(__dirname, "package.json"), "utf-8"),
-+  ).dependencies["@faker-js/faker"];
- 
--  beforeEach(async () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-     const htmlPath = path.join(
-       __dirname,
--      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html"
-+      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html",
-     );
--    const htmlContent = fs.readFileSync(htmlPath, "utf-8");
--    const dom = new JSDOM(htmlContent, {
--      runScripts: "dangerously",
--      resources: "usable",
-+    const dom = new JSDOM(fs.readFileSync(htmlPath, "utf-8"), {
-+      runScripts: "outside-only",
-       url: "http://localhost",
-     });
--
-     window = dom.window;
-     document = window.document;
--
--    // Wait for all the scripts and content to load
--    await vi.waitFor(() => {
--      if (document.readyState === "complete") {
--        return true;
--      } else {
--        throw new Error("Document not ready yet");
--      }
--    });
--  });
--
--  it("should initialize the DOM elements correctly", async () => {
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
--    const startButton = window.document.getElementById("startButton");
--    const stopButton = window.document.getElementById("stopButton");
--
--    await vi.waitFor(() => webhookURLInput && authPasswordInput && jsonSchemaTextarea && startButton && stopButton);
--
--    expect(webhookURLInput).not.toBeNull();
--    expect(authPasswordInput).not.toBeNull();
--    expect(jsonSchemaTextarea).not.toBeNull();
--    expect(startButton).not.toBeNull();
--    expect(stopButton).not.toBeNull();
--  });
--
--  it("should not start generation without valid URL and password", async () => {
--    const startButton = window.document.getElementById("startButton");
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--
--    // Leave the URL and password empty
--    webhookURLInput.value = "";
--    authPasswordInput.value = "";
--
--    startButton.click();
--
--    expect(startButton.style.display).not.toBe("none");
--  });
--
--  it("should enable the stop button when generation starts", async () => {
--    const startButton = window.document.getElementById("startButton");
--    const stopButton = window.document.getElementById("stopButton");
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--
--    webhookURLInput.value = "http://localhost";
--    authPasswordInput.value = "password";
--
--    startButton.click();
--
--    await vi.waitFor(() => !stopButton.disabled);
--
--    expect(stopButton.disabled).toBe(false);
--  });
--
--  it("should populate JSON schema based on selected use case", async () => {
--    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
--    const useCaseSelect = window.document.getElementById("useCaseSelect");
--
--    // Select a use case
--    useCaseSelect.value = "sensorData";
--    useCaseSelect.dispatchEvent(new window.Event("change"));
--
--    expect(jsonSchemaTextarea.value.trim()).not.toBe("");
--  });
--
--  it("should clear logs when the stop button is clicked", async () => {
--    const stopButton = window.document.getElementById("stopButton");
--    const logOutputDiv = window.document.getElementById("logOutput");
--
--    logOutputDiv.innerHTML = "<p>Log message</p>";
--
--    stopButton.click();
--
--    expect(logOutputDiv.innerHTML).toBe(logOutputDiv.innerHTML);
-+    window.faker = faker;
-+    window.fetch = vi.fn().mockResolvedValue({ ok: true });
-+    window.alert = vi.fn();
-+    window.console.error = vi.fn();
-+
-+    // JSDOM does not execute module scripts, so supply the real Faker instance
-+    // and evaluate the widget without its browser-only CDN import.
-+    const script = document.querySelector('script[type="module"]').textContent;
-+    const importStatement = script.match(
-+      /^\s*import \{ faker \} from 'https:\/\/esm\.sh\/@faker-js\/faker@([^']+)';/m,
-+    );
-+    expect(importStatement?.[1]).toBe(fakerVersion);
-+    window.eval(script.replace(importStatement[0], ""));
-+    document.getElement
-```
-
-**File**: `doc/user/layouts/shortcodes/plugins/webhooks-datagen.html` (modified, +15/-15)
-```diff
-@@ -29,13 +29,13 @@
-     <div class="json">
-       <textarea placeholder="JSON schema" id="jsonSchema" rows="5" cols="30" class="json-textarea">
- {
--  "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
--  "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
-+  "sensor_id": "faker.number.int({ max: 100, min: 1})",
-+  "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
-   "location": {
--      "latitude": "faker.datatype.number({ max: 90, min: -90})",
--      "longitude": "faker.datatype.number({ max: 180, min: -180})"
-+      "latitude": "faker.number.int({ max: 90, min: -90})",
-+      "longitude": "faker.number.int({ max: 180, min: -180})"
-   },
--  "temperature": "faker.datatype.float({ min: 20, max: 95 })"
-+  "temperature": "faker.number.float({ min: 20, max: 95 })"
- }
-       </textarea>
-       <div id="jsonError" class="error" style="display: none"></div>
-@@ -45,7 +45,7 @@
- </div>
- 
- <script type="module">
--  import { faker } from 'https://esm.sh/@faker-js/faker@8.4.0';
-+  import { faker } from 'https://esm.sh/@faker-js/faker@10.5.0';
- 
-   const webhookURLInput = document.getElementById("webhookURL");
-   const authPasswordInput = document.getElementById("authPassword");
-@@ -191,16 +191,16 @@
- 
-   const schemas = {
-     sensorData: `{
--      "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
--      "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
-+      "sensor_id": "faker.number.int({ max: 100, min: 1})",
-+      "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
-       "location": {
--          "latitude": "faker.datatype.number({ max: 90, min: -90})",
--          "longitude": "faker.datatype.number({ max: 180, min: -180})"
-+          "latitude": "faker.number.int({ max: 90, min: -90})",
-+          "longitude": "faker.number.int({ max: 180, min: -180})"
-       },
--      "temperature": "faker.datatype.float({ min: 20, max: 95 })"
-+      "temperature": "faker.number.float({ min: 20, max: 95 })"
-     }`,
-     userActivity: `{
--      "user_id": "faker.datatype.uuid()",
-+      "user_id": "faker.string.uuid()",
-       "event": "faker.helpers.arrayElement(['page_view', 'click', 'scroll', 'navigation'])",
-       "timestamp": "faker.date.recent()",
-       "page": {
-@@ -209,15 +209,15 @@
-       },
-       "interaction": {
-         "element": "faker.lorem.word()",
--        "time_spent": "faker.datatype.number({ min: 1, max: 120 })"
-+        "time_spent": "faker.number.int({ min: 1, max: 120 })"
-       }
-     }`,
-     ecommerceTransaction: `{
--      "user_id": "faker.datatype.uuid()",
-+      "user_id": "faker.string.uuid()",
-       "event": "faker.helpers.arrayElement(['add_to_cart', 'remove_from_cart', 'purchase', 'view_product'])",
-       "timestamp": "faker.date.recent()",
-       "product": {
--        "id": "faker.datatype.uuid()",
-+        "id": "faker.string.uuid()",
-         "name": "faker.commerce.productName()",
-         "category": "faker.commerce.department()",
-         "price": "faker.commerce.price()"
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 ---
 
-### Incident Patch 2: `24463bee` (2026-11-20)
-**Commit Message**: fix(deps): update dependency string-width to v9 (#40753)
+### Incident Patch 2: `be6d706d` (2026-11-23)
+**Commit Message**: renovate: Fix digest lookups and WASM lockfile updates (#41014)
+
+Based on Mend logs of 5 most recent runs.
+
+**File**: `.github/renovate.json5` (modified, +20/-3)
+```diff
+@@ -20,8 +20,8 @@
+   "constraints": {"rust": "1.98.1"},
+   "customDatasources": {
+     "gcloud": {
+-      "defaultRegistryUrlTemplate": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
+-      "transformTemplates": ["{\"releases\": [{\"version\": version}]}"]
++      "defaultRegistryUrlTemplate": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items(name,timeCreated)&maxResults=1000",
++      "transformTemplates": ["{\"releases\": [items.{\"version\": $split(name, '-')[3], \"releaseTimestamp\": timeCreated}]}"]
+     },
+     "inspector-sbomgen": {
+       "defaultRegistryUrlTemplate": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
+@@ -39,7 +39,7 @@
+         "/\\.(sh|bash|py)$/"
+       ],
+       "matchStrings": [
+-        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
++        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*(?:\\([ \\t]*\\n[ \\t]*)?[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
+         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[ \\t]*\\nprintf [\"'](?<currentValue>[^\"']+)"
+       ],
+       // Regex managers need a template to append a previously absent digest.
+@@ -190,6 +190,14 @@
+       "matchFileNames": ["misc/wasm/**/Cargo.toml"],
+       "additionalBranchPrefix": "cargo-wasm-"
+     },
++    {
++      // js-sys requires an exact wasm-bindgen version. Bumping the manifest
++      // lets Cargo resolve both crates together when updating the lock file.
++      "matchManagers": ["cargo"],
++      "matchFileNames": ["misc/wasm/**/Cargo.toml"],
++      "matchPackageNames": ["wasm-bindgen"],
++      "rangeStrategy": "bump"
++    },
+     {
+       "matchManagers": ["cargo"],
+       "matchFileNames": ["misc/materialize-sdk/**/Cargo.toml"],
+@@ -241,6 +249,15 @@
+       "matchDatasources": ["docker"],
+       "pinDigests": true
+     },
++    {
++      // Renovate checks the tag's age during lookup, then omits the timestamp
++      // from digest updates. Skip the duplicate branch check once lookup has
++      // returned a digest and cleared its pending checks.
++      "matchDatasources": ["docker"],
++      "matchUpdateTypes": ["digest", "pinDigest"],
++      "matchJsonata": ["$exists(newDigest) and $not(pendingChecks = true) and $not($exists(releaseTimestamp)) and minimumReleaseAgeBehaviour = 'timestamp-optional'"],
++      "minimumReleaseAge": null
++    },
+     {
+       // This tag also selects ZooKeeper and Schema Registry images, whose
+       // digests differ from Kafka's.
+```
+
+**File**: `ci/builder/Dockerfile` (modified, +12/-5)
+```diff
+@@ -356,16 +356,17 @@ RUN arch_gcloud=$(echo "$ARCH_GCC" | sed -e "s/aarch64/arm/" -e "s/amd64/x86_64/
+     && rm -rf /root/.cache/pip
+ 
+ # Install docs site dependencies. These are towards the end for the same reason
+-# as the Python dependencies. These are only supported on x86_64 at the moment.
+-# See: https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4
++# as the Python dependencies. The docs build runs on x86_64.
+ #
+ # On every Hugo version bump, compare doc/user/layouts/sitemap.xml with the new
+ # version's built-in sitemap template, which it copies, and port any changes.
+ 
+ # renovate: datasource=github-release-attachments depName=wjdp/htmltest
+ ARG HTMLTEST_AMD64=v0.17.0@775c597ee74899d6002cd2d93076f897f4ba68686bceabe2e5d72e84c57bc0fb
+ # renovate: datasource=github-release-attachments depName=gohugoio/hugo
+-ARG HUGO_AMD64=v0.152.2@08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a
++ARG HUGO_AMD64=v0.170.1@a1c81c53a8bc789f1af9494a6b6be1a9b1aa7782e22a1398f919d5df50558433
++# renovate: datasource=github-release-attachments depName=sass/dart-sass
++ARG DART_SASS_AMD64=1.108.2@32d2eb5b83cbc180fce9657ff3c57401a9006c59eccfe0bfdde0aa755a66d42f
+ 
+ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     HTMLTEST_VERSION=${HTMLTEST_AMD64%@*} \
+@@ -374,10 +375,16 @@ RUN if [ $ARCH_GCC = x86_64 ]; then \
+     && tar -xzf htmltest.tar.gz -C /usr/local/bin htmltest \
+     && rm htmltest.tar.gz \
+     && HUGO_VERSION=${HUGO_AMD64%@*} \
+-    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION#v}_Linux-64bit.tar.gz > hugo.tar.gz \
++    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_withdeploy_${HUGO_VERSION#v}_linux-amd64.tar.gz > hugo.tar.gz \
+     && echo "${HUGO_AMD64#*@} hugo.tar.gz" | sha256sum --check \
+     && tar -xzf hugo.tar.gz -C /usr/local/bin hugo \
+-    && rm hugo.tar.gz; \
++    && rm hugo.tar.gz \
++    && DART_SASS_VERSION=${DART_SASS_AMD64%@*} \
++    && curl -fsSL https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz > dart-sass.tar.gz \
++    && echo "${DART_SASS_AMD64#*@} dart-sass.tar.gz" | sha256sum --check \
++    && tar -xzf dart-sass.tar.gz -C /opt \
++    && ln -s /opt/dart-sass/sass /usr/local/bin/sass \
++    && rm dart-sass.tar.gz; \
+     fi
+ 
+ # Install KinD, kubectl, helm & helm-docs
+```
+
+**File**: `ci/deploy_website/website.sh` (modified, +0/-3)
+```diff
+@@ -46,9 +46,6 @@ declare -A external_redirects=(
+     [docs/self-managed/v25.2/support/index.html]="https://materialize.com/support/"
+ )
+ 
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
+ if [[ "$BUILDKITE_ORGANIZATION_SLUG" == "materialize" ]] && [[ "$BUILDKITE_BRANCH" == self-managed-docs/* ]]; then
+     VERSION=${BUILDKITE_BRANCH#self-managed-docs/}
+```
+
+**File**: `ci/test/lint-docs.sh` (modified, +0/-3)
+```diff
+@@ -15,9 +15,6 @@ set -euo pipefail
+ 
+ . misc/shlib/shlib.bash
+ 
+-# Works around a Hugo data race, see ci/test/preview-docs.sh.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ git clean -ffdX ci/www/public ci/www/preview
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --destination ../../ci/www/public/docs
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination ../../ci/www/public/docs/markdown-docs
+```
+
+**File**: `ci/test/preview-docs.sh` (modified, +0/-7)
+```diff
+@@ -18,13 +18,6 @@ if [[ "$BUILDKITE_PULL_REQUEST" = false ]]; then
+     exit 0
+ fi
+ 
+-# Hugo 0.152.2 has a data race between pages that include the same headless
+-# page, which aborts a build with "concurrent map iteration and map write"
+-# (QAR-260). Rendering pages on one worker avoids it.
+-# TODO: Remove this once ci/builder/Dockerfile installs Hugo 0.153.0 or later,
+-# which fixed the race.
+-export HUGO_NUMWORKERMULTIPLIER=1
+-
+ cd doc/user
+ 
+ # Build main docs to public/
+```
+
+**File**: `doc/user/CONTRIBUTING.md` (modified, +2/-1)
+```diff
+@@ -34,7 +34,8 @@ to `git pull` the latest version of Materialize.
+ 
+ # View the docs locally
+ 
+-1. [Install Hugo](https://gohugo.io/getting-started/installing/).
++1. Install [Hugo](https://gohugo.io/getting-started/installing/) and
++   [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) to compile the site's stylesheets.
+ 
+ 1. Launch the site by running:
+ 
+```
+
+**File**: `doc/user/config.skill.toml` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ disable = true
+ [[module.mounts]]
+   source = "static"
+   target = "static"
+-  excludeFiles = ["**", "*"]
++  files = ["! **", "! *"]
+ 
+ # Skill-specific parameters
+ [params]
+```
+
+**File**: `doc/user/layouts/sitemap.xml` (modified, +4/-9)
+```diff
+@@ -9,7 +9,7 @@
+   by the Apache License, Version 2.0.
+ */ -}}
+ {{- /*
+-  Hugo's built-in sitemap template, from v0.152.2, with absolute URLs. The
++  Hugo's built-in sitemap template, from v0.170.1, with absolute URLs. The
+   sitemap protocol requires a full URL in every <loc>, and the built-in
+   template emits .Permalink, which has no host under a bare-path baseURL such
+   as "/docs".
+@@ -23,17 +23,12 @@
+     <loc>{{ partial "absolute-permalink.html" . }}</loc>{{ if not .Lastmod.IsZero }}
+     <lastmod>{{ safeHTML ( .Lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
+     <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
+-    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .Translations }}
++    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .AllTranslations }}
+     <xhtml:link
+                 rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
++                hreflang="{{ .Language.Locale }}"
+                 href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
+-    <xhtml:link
+-                rel="alternate"
+-                hreflang="{{ .Language.LanguageCode }}"
+-                href="{{ partial "absolute-permalink.html" . }}"
+-                />{{ end }}
++                />{{ end }}{{ end }}
+   </url>
+     {{- end -}}
+   {{ end }}
+```
+
+---
+
+### Incident Patch 3: `730cd6dc` (2026-11-23)
+**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.1 (#40997)
 
 This PR contains the following updates:
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [string-width](https://redirect.github.com/sindresorhus/string-width)
-| [`^7.2.0` →
-`^9.0.0`](https://renovatebot.com/diffs/npm/string-width/7.2.0/9.0.0) |
-![age](https://developer.mend.io/api/mc/badges/age/npm/string-width/9.0.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/string-width/7.2.0/9.0.0?slim=true)
-|
+| Package | Update | Change |
+|---|---|---|
+| [docker/buildx](https://redirect.github.com/docker/buildx) | patch |
+`v0.39.0` → `v0.39.1` |
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
 
 ---
 
 ### Release Notes
 
 <details>
-<summary>sindresorhus/string-width (string-width)</summary>
+<summary>docker/buildx</summary>
 
 ###
-[`v9.0.0`](https://redirect.github.com/sindresorhus/string-width/releases/tag/v9.0.0)
+[`v0.39.1`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.1)
 
 [Compare
-Source](https://redirect.github.com/sindresorhus/string-width/compare/v8.3.0...v9.0.0)
+Source](https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1)
 
-##### Breaking
+buildx 0.39.1
 
-- Require Node.js 22
-[`ede59cf`](https://redirect.github.com/sindresorhus/string-width/commit/ede59cf)
+Welcome to the v0.39.1 release of buildx!
 
-##### Improvements
+Please try out the release binaries and report any issues at
+<https://github.com/docker/buildx/issues>.
 
-- Improve performance
-[`2a7fa3e`](https://redirect.github.com/sindresorhus/string-width/commit/2a7fa3e)
-[`429619c`](https://redirect.github.com/sindresorhus/string-wid
+##### Contributors
 
-**File**: `console/package.json` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@
-     "scroll-into-view-if-needed": "^3.1.0",
-     "semver": "^7.8.6",
-     "stream": "^0.0.3",
--    "string-width": "^7.2.0",
-+    "string-width": "^9.0.0",
-     "stripe": "^23.1.0",
-     "style-mod": "^4.1.4",
-     "ts-node": "^10.9.2",
-```
+- Tõnis Tiigi
 
-**File**: `console/yarn.lock` (modified, +13/-3)
-```diff
-@@ -7590,7 +7590,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0":
-+"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0, get-east-asian-width@npm:^1.7.0":
-   version: 1.7.0
-   resolution: "get-east-asian-width@npm:1.7.0"
-   checksum: 10c0/680a5f611a186e4a065291f31821f7e4ad7742625be814e05b8ab5535c6fa53562bc0333a83138fca5f2e1030ed960a561b2fd4629e0cff0dc68b19cf46d7c53
-@@ -9255,7 +9255,7 @@ __metadata:
-     semver: "npm:^7.8.6"
-     storybook: "npm:^10"
-     stream: "npm:^0.0.3"
--    string-width: "npm:^7.2.0"
-+    string-width: "npm:^9.0.0"
-     stripe: "npm:^23.1.0"
-     style-mod: "npm:^4.1.4"
-     terser: "npm:^5.51.2"
-@@ -11809,6 +11809,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"string-width@npm:^9.0.0":
-+  version: 9.0.0
-+  resolution: "string-width@npm:9.0.0"
-+  dependencies:
-+    get-east-asian-width: "npm:^1.7.0"
-+    strip-ansi: "npm:^7.2.0"
-+  checksum: 10c0/fe420883178c224a121e771d81aafc520606bae31be5fdc0f368ff5c3facdb427b659ee3ad85710b67fe6e2a7d4535d0332b61e096326ea0eb92c7b5cafa0b06
-+  languageName: node
-+  linkType: hard
-+
- "string.prototype.matchall@npm:^4.0.12":
-   version: 4.1.0
-   resolution: "string.prototype.matchall@npm:4.1.0"
-@@ -11888,7 +11898,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2":
-+"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2, strip-ansi@npm:^7.2.0":
-   version: 7.2.0
-   resolution: "strip-ansi@npm:7.2.0"
-   dependencies:
-```
+##### Notable Changes
+
+- Fix regression in v0.39.0 where build could error if .dockerignore
+contained lots of entries
+
+##### Dependency Changes
+
+- **github.com/moby/buildkit**  v0.35.0 -> v0.35.1
+
+Previous release can be found at
+[v0.39.0](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
+
+</details>
 
 ---
 
-### Incident Patch 3: `c517d7ce` (2026-11-20)
-**Commit Message**: fix(deps): update vscode dependencies (major) (#40756)
+### Configuration
 
-This PR contains the following updates:
+📅 **Schedule**: (in timezone Etc/UTC)
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[@types/node](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node)
-([source](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node))
-| [`^22.7.0` →
-`^26.0.0`](https://renovatebot.com/diffs/npm/@types%2fnode/22.20.5/26.6.6)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@types%2fnode/26.6.6?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@types%2fnode/22.20.5/26.6.6?slim=true)
-|
-| [@vscode/vsce](https://code.visualstudio.com)
-([source](https://redirect.github.com/Microsoft/vsce)) | [`^3.9.2` →
-`^4.0.0`](https://renovatebot.com/diffs/npm/@vscode%2fvsce/3.9.2/4.1.1)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@vscode%2fvsce/4.1.1?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vscode%2fvsce/3.9.2/4.1.1?slim=true)
-|
-| [typescript](https://www.typescriptlang.org/)
-([source](https://redir
+- Branch creation
+  - 
 
-**File**: `misc/vscode-ext/package.json` (modified, +4/-4)
+**File**: `ci/builder/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -66,13 +66,13 @@
-     ]
-   },
-   "dependencies": {
--    "vscode-languageclient": "^10.1.0"
-+    "vscode-languageclient": "^11.0.0"
-   },
-   "devDependencies": {
--    "@types/node": "^22.7.0",
-+    "@types/node": "^26.0.0",
-     "@types/vscode": "^1.88.0",
--    "@vscode/vsce": "^3.9.2",
-+    "@vscode/vsce": "^4.0.0",
-     "esbuild": "^0.28.1",
--    "typescript": "^5.9.3"
-+    "typescript": "^7.0.0"
-   }
- }
+@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
+ ARG DOCKER_PUSHRM_VERSION=v1.9.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
+ 
+ RUN \
+     # 1. autouseradd
+@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
+ # renovate: datasource=github-releases depName=docker/compose
+ ARG DOCKER_COMPOSE_VERSION=v5.8.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.39.0
++ARG DOCKER_BUILDX_VERSION=v0.39.1
+ 
+ RUN mkdir -p /usr/local/lib/docker/cli-plugins \
+     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40969** (closed): [librdkafka agent test] kafka: upgrade librdkafka to v2.16.0 (@bosconi)
-- **PR #40965** (2026-11-20): ci: run the claude workflow with the read-only job token (@jasonhernandez)
-- **PR #40956** (closed): http: Install the connection protocol layer at startup (@def-)
-- **PR #40952** (2026-11-20): storage: Fix dead early return in statistics snapshot (@def-)
-- **PR #40944** (2026-11-20): chore(deps): update dependency sqlalchemy to v2.1.9 (@renovate[bot])
-- **PR #40943** (2026-11-20): release: bump to version v26.53.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #41015** (2026-11-23): skills: scope mz-commit checklist to pre-push, drop clippy (@alex-hunt-materialize)
+- **PR #41014** (2026-11-23): renovate: Fix digest lookups and WASM lockfile updates (@def-)
+- **PR #41010** (2026-11-23): repr: Preserve the sign when retrying wide decimal decoding (@def-)
+- **PR #41005** (2026-11-23): chore(deps): update dependency terraform-docs/terraform-docs to v0.25.1 (@renovate[bot])
+- **PR #41004** (closed): chore(deps): update dependency simple-scrollspy to v2.5.3 (@renovate[bot])
+- **PR #41003** (2026-11-23): chore(deps): update dependency mikefarah/yq to v4.54.3 (@renovate[bot])
 
 ---
 
@@ -1608,47 +1519,37 @@ This PR contains the following updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency @faker-js/faker to v10 [security]
+## X. deps): update rust crate url to v2.5.9 [security]
 
 **RULE**:
-When implementing operations in `ci/test/docs-widgets/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71f8f02e`: deps): update dependency @faker-js/faker to v10 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328c9ab3`: deps): update rust crate url to v2.5.9 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/test/docs-widgets/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "@faker-js/faker": "10.5.0",
-    "node_modules/@faker-js/faker": {
-      "version": "10.5.0",
-      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
-      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
-      "funding": [
-        {
-          "type": "opencollective",
-          "url": "https://opencollective.com/fakerjs"
-        }
-      ],
-      "license": "MIT",
-      "engines": {
-        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
-        "npm": ">=10"
-      }
-    },
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71f8f02e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328c9ab3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

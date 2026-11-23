@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:29:17.505Z",
-  "total_cycles_completed": 11728,
-  "total_learnings_persisted": 11728,
-  "total_rules_promoted": 10887,
+  "last_updated": "2026-11-23T14:38:18.016Z",
+  "total_cycles_completed": 11731,
+  "total_learnings_persisted": 11731,
+  "total_rules_promoted": 10889,
   "history": [
-    {
-      "timestamp": "2026-11-22T16:57:29.350Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T16:57:39.958Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T17:12:16.400Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T17:14:08.486Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T14:29:17.505Z",
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:38:02.113Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:38:08.723Z",
+      "repository": "joreilly/Confetti",
+      "learningId": "learn-github-joreilly-confetti",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:38:18.016Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

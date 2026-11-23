@@ -4,24 +4,24 @@
 {
   "source_repository": "joreilly/Confetti",
   "source_url": "https://github.com/joreilly/Confetti",
-  "source_version": "f7be73d2",
+  "source_version": "4491acd8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T11:08:55.398Z",
+  "timestamp": "2026-11-23T14:38:08.997Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-joreilly-confetti",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [joreilly/Confetti](https://github.com/joreilly/Confetti) (Revision: `f7be73d2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T11:08:55.398Z`  
+> **Provenance**: Harvested from [joreilly/Confetti](https://github.com/joreilly/Confetti) (Revision: `4491acd8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:38:08.997Z`  
 > **Learning ID**: `learn-github-joreilly-confetti`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), E (Creative Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from joreilly/Confetti:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:08:53.859Z  
+> **Harvest Timestamp**: 2026-11-23T14:38:07.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -381,452 +381,227 @@ fun LocalDateTime.Companion.nowAtTimeZone(timeZone: TimeZone) =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `274766ff` (2026-11-16)
-**Commit Message**: Log AppFunction invocations for release builds (#2094)
+### Incident Patch 1: `4491acd8` (2026-11-23)
+**Commit Message**: build: bump livery, rc-players, and compose-ai-tools dependencies (#2098)
 
-* Log AppFunction invocations so agent calls can be confirmed in release builds
+* build: bump livery, rc-players, and compose-ai-tools dependencies
 
-Logcat from the Play build only showed the platform's allowlist and unfreeze
-lines, not which function Gemini called or whether it succeeded. Each function
-now logs its call, outcome and duration under the ConfettiAppFunctions tag via
-android.util.Log, which R8 keeps. Only IDs and result counts are logged, never
-session or user content.
+* fix: configure defaultAnimations on BuildLiveryCatalog tasks
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01XcDRQmXFy8nRzDWNT6FVtQ
+---------
 
-* Bump Android version to 290 for a test build with AppFunction logging
+Co-authored-by: Yuri Schimke <[REDACTED_EMAIL]>
 
-Built from this branch so Gemini calls can be checked in logcat before merging.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01XcDRQmXFy8nRzDWNT6FVtQ
-
-* Log expected AppFunction errors without a stack trace
-
-Errors the service raises for the agent (unknown conference, not signed in,
-server unreachable) are fully described by their message; in a minified build
-the stack trace that followed was a dozen lines of obfuscated frames. Keep the
-trace only for unexpected excep
-
-**File**: `androidApp/src/main/java/dev/johnoreilly/confetti/functions/ConfettiAppFunctionService.kt` (modified, +50/-9)
+**File**: `.github/workflows/compose-preview-publish.yml` (modified, +2/-2)
 ```diff
-@@ -1,9 +1,12 @@
- package dev.johnoreilly.confetti.functions
- 
-+import android.os.SystemClock
-+import android.util.Log
- import androidx.annotation.RequiresApi
- import androidx.appfunctions.AppFunctionAppUnknownException
- import androidx.appfunctions.AppFunctionDeclaration
- import androidx.appfunctions.AppFunctionElementNotFoundException
-+import androidx.appfunctions.AppFunctionException
- import androidx.appfunctions.AppFunctionPermissionRequiredException
- import androidx.appfunctions.AppFunctionSerializable
- import androidx.appfunctions.AppFunctionService
-@@ -17,6 +20,7 @@ import dev.johnoreilly.confetti.GetConferencesQuery
- import dev.johnoreilly.confetti.auth.Authentication
- import dev.johnoreilly.confetti.auth.User
- import dev.johnoreilly.confetti.fragment.SessionDetails
-+import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.withContext
- import kotlinx.datetime.toJavaLocalDateTime
-@@ -34,6 +38,10 @@ import java.time.LocalDateTime
-     appFunctionXmlFileName = "confetti_app_function_service",
- )
- abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinComponent {
-+    private companion object {
-+        const val TAG = "ConfettiAppFunctions"
-+    }
-+
-     private val repository: ConfettiRepository by inject()
-     private val appSettings: AppSettings by inject()
-     private val authentication: Authentication by inject()
-@@ -48,7 +56,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun addBookmark(sessionId: String, conferenceId: String? = null): Boolean =
--        withContext(Dispatchers.IO) {
-+        logged("addBookmark", "sessionId" to sessionId, "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             val user = requireSignedInUser()
-             repository.addBookmark(conference.id, user.uid, user, sessionId)
-@@ -64,7 +72,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun removeBookmark(sessionId: String, conferenceId: String? = null): Boolean =
--        withContext(Dispatchers.IO) {
-+        logged("removeBookmark", "sessionId" to sessionId, "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             val user = requireSignedInUser()
-             repository.removeBookmark(conference.id, user.uid, user, sessionId)
-@@ -79,7 +87,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun listSessions(conferenceId: String? = null): List<SessionResponse> =
--        withContext(Dispatchers.IO) {
-+        logged("listSessions", "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             val user = authentication.currentUser.value
-             val data = repository.sessions(conference.id, user?.uid, user, conference.fetchPolicy)
-@@ -98,7 +106,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun listBookmarks(conferenceId: String? = null): List<SessionResponse> =
--        withContext(Dispatchers.IO) {
-+        logged("listBookmarks", "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             val user = requireSignedInUser()
-             // Network first: bookmarks may have just been changed by addBookmark/removeBookmark
-@@ -119,7 +127,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun listSpeakers(conferenceId: String? = null): List<SpeakerProfileResponse> =
--        withContext(Dispatchers.IO) {
-+        logged("listSpeakers", "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             repository.conferenceData(conference.id, conference.fetchPolicy)
-                 .requireData("speakers")
-@@ -148,7 +156,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
-     suspend fun getVenue(conferenceId: String? = null): List<VenueResponse> =
--        withContext(Dispatchers.IO) {
-+        logged("getVenue", "conferenceId" to conferenceId) {
-             val conference = resolveConference(conferenceId)
-             repository.conferenceVenue(conference.id, conference.fetchPolicy)
-                 .requireData("the venue")
-@@ -169,7 +177,7 @@ abstract class BaseConfettiAppFunctionService : AppFunctionService(), KoinCompon
-      * @return The conference ID.
-      */
-     @AppFunctionDeclaration(isDescribedByKDoc = true)
--    suspend fun getConfe
+@@ -39,7 +39,7 @@ jobs:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+       - id: pr
+         run: echo "number=$(cat _compose_preview_handoff/_pr_number)" >> "$GITHUB_OUTPUT"
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           phase: publish
+           handoff-dir: _compose_preview_handoff
+@@ -64,7 +64,7 @@ jobs:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+       - id: pr
+         run: echo "number=$(cat _compose_preview_a11y_handoff/_pr_number)" >> "$GITHUB_OUTPUT"
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           phase: publish
+           handoff-dir: _compose_preview_a11y_handoff
 ```
 
-**File**: `fastlane/Fastfile` (modified, +1/-1)
+**File**: `.github/workflows/compose-preview.yml` (modified, +4/-4)
 ```diff
-@@ -4,7 +4,7 @@ default_platform :android
- 
- platform :android do
- 
--    androidVersionNum = 289
-+    androidVersionNum = 290
-     wearVersionNum = 337
- 
-     before_all do
+@@ -85,7 +85,7 @@ jobs:
+           cache-read-only: ${{ github.event_name == 'pull_request' }}
+       - name: Warm Gradle wrapper
+         run: ./gradlew help
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           # Pin the render CLI to the applied Gradle plugin version (single
+           # source of truth: composeai-preview in gradle/libs.versions.toml)
+@@ -131,7 +131,7 @@ jobs:
+           cache-read-only: ${{ github.event_name == 'pull_request' }}
+       - name: Warm Gradle wrapper
+         run: ./gradlew help
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           cli-version: catalog
+           catalog-key: composeai-preview
+@@ -166,7 +166,7 @@ jobs:
+           cache-read-only: true
+       - name: Warm Gradle wrapper
+         run: ./gradlew help
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           phase: render
+           handoff-dir: _compose_preview_handoff
+@@ -206,7 +206,7 @@ jobs:
+           cache-read-only: true
+       - name: Warm Gradle wrapper
+         run: ./gradlew help
+-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+         with:
+           phase: render
+           handoff-dir: _compose_preview_a11y_handoff
 ```
 
----
-
-### Incident Patch 2: `af122f93` (2026-11-16)
-**Commit Message**: build(livery): Wear designs on rc-players' Wear Material 3 (rc-creation-wear-material3) (#2093)
-
-:livery:wear-designs drew with the multiplatform port of AndroidX's
-remote-material3 that yschimke/remote-m3-catalog vendored (published to
-a Maven branch of its output repository), which that repository has now
-deleted. It moves to rc-players 3.7.0's Compose Multiplatform port,
-rc-creation-wear-material3, over the same creation API as
-:livery:catalog (rc-creation-compose, ee.schimke.composeai.rccreation.*).
-
-- rc-players 3.6.1 -> 3.7.0; the module's two custom repositories and
-  the remote-compose-cmp libraries are gone.
-- Imports move to ee.schimke.composeai.rccreation.*, with the fork's
-  spellings: RemoteAction, remote floats for offsets and weights,
-  RemoteImage(bitmap = ...) with RemoteContentScale, and named colours
-  from ARGB.
-
-
-Claude-Session: https://claude.ai/code/session_017xSuvrVeXwesXMhnGAujEB
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `gradle/libs.versions.toml` (modified, +2/-4)
+**File**: `.github/workflows/design-artifacts.yml` (modified, +1/-1)
 ```diff
-@@ -52,7 +52,6 @@ wear-compose = "1.7.1"
- # Wear's Remote Material 3, multiplatform: yschimke/remote-m3-catalog's port (vendor/), which runs on
- # the plain JVM, so :livery:wear-designs captures without Android. Its version names the AndroidX
- # change and patch set it was copied from (remote-compose-upstream.json there).
--remote-compose-cmp = "4307936-ps17-cmp10"
- wearPhoneInteractions = "1.1.1"
- work-runtime-ktx = "2.12.0"
- spring = "4.1.2"
-@@ -68,7 +67,7 @@ composeai-preview-annotations = "3.28.0"
+@@ -83,7 +83,7 @@ jobs:
+       # Install the compose-preview CLI, pinned to the applied plugin version
+       # (composeai-preview in gradle/libs.versions.toml) so the CLI and plugin
+       # stay in lockstep — exactly as compose-preview.yml does for the apply action.
+-      - uses: yschimke/compose-ai-tools/.github/actions/install@v2.94.0
++      - uses: yschimke/compose-ai-tools/.github/actions/install@v2.103.0
+         with:
+           version: catalog
+           catalog-key: composeai-preview
+```
+
+**File**: `.github/workflows/livery-templates.yml` (modified, +2/-5)
+```diff
+@@ -161,16 +161,13 @@ jobs:
+       fail-fast: false
+       matrix:
+         series: [confetti, droidcon, kotlinconf]
+-    # yschimke/livery#103's merge on main (base-artifact, name, preview-branch): its branch is gone.
+-    # TODO: pin to the first Livery release with it, and set livery-version to match, which also
+-    # brings the review's authored-size previews (until then the 0.15.0 CLI draws them 200dp high).
+-    uses: yschimke/livery/.github/workflows/catalog-review.yml@9db083184527401f4640214df8fc3d0ecacd74bb
++    uses: yschimke/livery/.github/workflows/catalog-review.yml@v0.22.0
+     with:
+       source: build/livery-review/${{ matrix.series }}
+       source-artifact: catalog-${{ matrix.series }}
+       base-artifact: catalog-${{ matrix.series }}-base
+       name: ${{ matrix.series }}
+-      livery-version: 0.15.0
++      livery-version: 0.22.0
+       previews: true
+       # The repository's older `livery-previews` branch (hand-made PR images) blocks livery-previews/*.
+       preview-branch: livery-review
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +4/-4)
+```diff
+@@ -62,12 +62,12 @@ screenshot = "0.0.1-alpha16"
+ # The plugin and the annotation library are versioned independently upstream (plugin 2.x,
+ # annotations 3.x), so they need separate keys: a shared key made Renovate point the plugin
+ # at an annotations-only version (3.17.1) that the plugin was never published as.
+-composeai-preview = "2.94.0"
+-composeai-preview-annotations = "3.28.0"
++composeai-preview = "2.103.0"
++composeai-preview-annotations = "3.28.2"
  koogAgents = "1.3.0"
  koogPromptExecutorAll = "1.2.0-beta"
- livery = "0.15.0"
--rc-players = "3.6.1"
-+rc-players = "3.7.0"
+-livery = "0.15.0"
+-rc-players = "3.7.0"
++livery = "0.22.0"
++rc-players = "3.12.0"
  
  
- androidx-appfunctions = "1.0.0-rc01"
-@@ -82,11 +81,10 @@ livery-render = { module = "ee.schimke.composeai:livery-render" }
- livery-publish = { module = "ee.schimke.composeai:livery-publish" }
- livery-capture-core = { module = "ee.schimke.composeai:livery-capture-core" }
- livery-wear-widgets = { module = "ee.schimke.composeai:livery-wear-widgets" }
--remote-compose-cmp-material3 = { module = "ee.schimke.remotecompose:remote-material3", version.ref = "remote-compose-cmp" }
--remote-compose-cmp-creation-compose = { module = "ee.schimke.remotecompose:remote-creation-compose", version.ref = "remote-compose-cmp" }
- rc-players-bom = { module = "ee.schimke.composeai:rc-players-bom", version.ref = "rc-players" }
- rc-player-compose = { module = "ee.schimke.composeai:rc-player-compose" }
- rc-remote-creation-compose = { module = "ee.schimke.composeai:rc-creation-compose" }
-+rc-creation-wear-material3 = { module = "ee.schimke.composeai:rc-creation-wear-material3" }
- # Wear widget containers (the watch's padding, corners and fill as named values) and per-target capture profiles.
- rc-widget-creation = { module = "ee.schimke.composeai:rc-widget-creation" }
- androidx-appfunctions = { module = "androidx.appfunctions:appfunctions", version.ref = "androidx-appfunctions" }
+ androidx-appfunctions = "1.0.0"
 ```
 
-**File**: `livery/wear-designs/build.gradle.kts` (modified, +6/-22)
+**File**: `livery/android/build.gradle.kts` (modified, +1/-0)
 ```diff
-@@ -2,10 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
- 
- // Confetti's Wear designs: each conference series' Livery designs as Wear variants (`variant` wear,
- // tagged `device=wear`), written with Wear's own Material 3 components as Remote Compose. They use
--// yschimke/remote-m3-catalog's multiplatform port of AndroidX's remote-material3 (vendor/ there),
--// which captures on the plain JVM like :livery:catalog, with no Android or Robolectric. That port
--// is in AndroidX's package rather than rc-players', so it is a module of its own, with its own
--// contract-checked values (WearValues) over livery-capture-core.
-+// rc-players' Compose Multiplatform port of AndroidX's remote-material3 (rc-creation-wear-material3,
-+// package ee.schimke.composeai.rccreation.wear.material3), which captures on the plain JVM like
-+// :livery:catalog, with no Android or Robolectric, and the same creation API (rc-creation-compose).
- //
- // captureWearDesigns writes each series' Wear designs into build/livery/wear/<series>/designs/, and
- // :livery:catalog's assembleLiveryCatalogs adds them to that series' catalog.
-@@ -24,25 +23,10 @@ java {
-     targetCompatibility = JavaVersion.VERSION_17
+@@ -99,6 +99,7 @@ val liveryCatalogTasks = liveryCatalogs.map { series ->
+         source.set(generatedLiveryCatalogs.dir(series))
+         assetsPath.set("livery/$series")
+         inspect.set(true)
++        defaultAnimations.set(false)
+         outputDir.set(layout.buildDirectory.dir("generated/livery/$series"))
+     }
  }
- 
--repositories {
--    // A module's own repositories replace the settings' ones, so those first.
--    google()
--    mavenCentral()
--    // The port, and the Wear Compose multiplatform port it uses for Wear's token types on the JVM:
--    // credential-free Maven trees on branches of their output repositories. Only for their groups.
--    exclusiveContent {
--        forRepository { maven("https://raw.githubusercontent.com/yschimke/remote-m3-catalog-out/remote-compose-cmp-maven/") }
--        filter { includeGroup("ee.schimke.remotecompose") }
--    }
--    exclusiveContent {
--        forRepository { maven("https://raw.githubusercontent.com/yschimke/wear-m3-catalog-out/wear-compose-cmp-maven/") }
--        filter { includeGroup("ee.schimke.wearcmp") }
--    }
--}
--
- dependencies {
--    implementation(libs.remote.compose.cmp.material3)
--    implementation(libs.remote.compose.cmp.creation.compose)
-+    implementation(platform(libs.rc.players.bom))
-+    implementation(libs.rc.creation.wear.material3)
-+    implementation(libs.rc.remote.creation.compose)
-     implementation(compose.desktop.currentOs)
-     implementation(platform(libs.livery.bom))
-     implementation(libs.livery.capture.core)
 ```
 
-**File**: `livery/wear-designs/src/main/kotlin/dev/johnoreilly/confetti/livery/wear/CaptureWearDesigns.kt` (modified, +4/-4)
+**File**: `livery/wear-designs/src/main/kotlin/dev/johnoreilly/confetti/livery/wear/WearDesigns.kt` (modified, +13/-13)
 ```diff
-@@ -1,9 +1,9 @@
- package dev.johnoreilly.confetti.livery.wear
- 
--import androidx.compose.remote.creation.compose.capture.RemoteCreationDisplayInfo
--import androidx.compose.remote.creation.compose.capture.RemoteDensity
--import androidx.compose.remote.creation.compose.capture.RemoteDensityBehavior
--import androidx.compose.remote.creation.compose.capture.captureCommonRemoteDocument
-+import ee.schimke.composeai.rccreation.compose.capture.RemoteCreationDisplayInfo
-+import ee.schimke.composeai.rccreation.compose.capture.RemoteDensity
-+import ee.schimke.composeai.rccreation.compose.capture.RemoteDensityBehavior
-+import ee.schimke.composeai.rccreation.compose.capture.captureCommonRemoteDocument
- import androidx.compose.runtime.Composable
- import ee.schimke.livery.capture.CapturedTemplate
- import ee.schimke.livery.capture.CatalogContracts
-```
-
-**File**: `livery/wear-designs/src/main/kotlin/dev/johnoreilly/confetti/livery/wear/WearBackdrops.kt` (modified, +16/-16)
-```diff
-@@ -1,22 +1,22 @@
- package dev.johnoreilly.confetti.livery.wear
- 
--import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
--import androidx.compose.remote.creation.compose.layout.RemoteOffset
--import androidx.compose.remote.creation.compose.layout.RemoteSize
--import androidx.compose.remote.creation.compose.shaders.RemoteBrush
--import androidx.compose.remote.creation.compose.shaders.linearGradient
--import androidx.compose.remote.creation.compose.shaders.radialGradient
--import androidx.compose.remote.creation.compose.shaders.solidColor
--import androidx.compose.remote.creation.compose.shaders.sweepGradient
--import androidx.compose.remote.creation.compose.state.RemoteColor
--import androidx.compose.remote.creation.compose.state.RemoteFloat
--import androidx.compose.remote.creation.compose.state.RemotePaint
--import androidx.compose.remote.creation.compose.state.rdp
--import androidx.compose.remote.creation.compose.state.rf
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteDrawScope
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteOffset
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteSize
-+import ee.schimke.composeai.rccreation.compose.shaders.RemoteBrush
-+import ee.schimke.composeai.rccreation.compose.shaders.linearGradient
-+import ee.schimke.composeai.rccreation.compose.shaders.radialGradient
-+import ee.schimke.composeai.rccreation.compose.shaders.solidColor
-+import ee.schimke.composeai.rccreation.compose.shaders.sweepGradient
-+import ee.schimke.composeai.rccreation.compose.state.RemoteColor
-+import ee.schimke.composeai.rccreation.compose.state.RemoteFloat
-+import ee.schimke.composeai.rccreation.compose.state.RemotePaint
-+import ee.schimke.composeai.rccreation.compose.state.rdp
-+import ee.schimke.composeai.rccreation.compose.state.rf
+@@ -22,10 +22,10 @@ import ee.schimke.composeai.rccreation.compose.state.rdp
+ import ee.schimke.composeai.rccreation.compose.state.rememberRemoteImageBitmap
+ import ee.schimke.composeai.rccreation.compose.state.rf
+ import ee.schimke.composeai.rccreation.compose.state.rs
++import ee.schimke.composeai.rccreation.compose.text.RemoteTextAlign
++import ee.schimke.composeai.rccreation.compose.text.RemoteTextOverflow
  import androidx.compose.runtime.Composable
  import androidx.compose.ui.graphics.Color
--import androidx.wear.compose.remote.material3.RemoteBorderStroke
--import androidx.wear.compose.remote.material3.RemoteMaterialTheme
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteBorderStroke
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteMaterialTheme
- 
- /*
-  * What sets each series apart on a watch beyond its colours: a backdrop drawn under a card's or a
-@@ -149,7 +149,7 @@ private fun RemoteDrawScope.piece(
- 
- private fun RemoteDrawScope.droidconPanel(colors: BackdropColors) {
-     // The rule down the start edge.
--    drawRect(paint(colors.primary), RemoteOffset(0f, 0f), RemoteSize(4.rdp.toPx(), height))
-+    drawRect(paint(colors.primary), RemoteOffset(0f.rf, 0f.rf), RemoteSize(4.rdp.toPx(), height))
-     // A dot matrix in the top-right corner, fading towards the text.
-     val step = 7.rdp.toPx()
-     val r = 1.2f.rdp.toPx()
-```
-
-**File**: `livery/wear-designs/src/main/kotlin/dev/johnoreilly/confetti/livery/wear/WearDesigns.kt` (modified, +29/-28)
-```diff
-@@ -1,34 +1,35 @@
- package dev.johnoreilly.confetti.livery.wear
- 
--import androidx.compose.remote.creation.compose.layout.RemoteAlignment
--import androidx.compose.remote.creation.compose.layout.RemoteArrangement
--import androidx.compose.remote.creation.compose.layout.RemoteBox
--import androidx.compose.remote.creation.compose.layout.RemoteColumn
--import androidx.compose.remote.creation.compose.layout.RemoteImage
--import androidx.compose.remote.creation.compose.layout.RemoteRow
--import androidx.compose.remote.creation.compose.modifier.RemoteModifier
--import androidx.compose.remote.creation.compose.modifier.background
--import androidx.compose.remote.creation.compose.modifier.clickable
--import androidx.compose.remote.creation.compose.modifier.clip
--import androidx.compose.remote.creation.compose.modifier.drawWithContent
--import androidx.compose.remote.creation.compose.modifier.fillMaxSize
--import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
--import androidx.compose.remote.creation.compose.modifier.padding
--import androidx.compose.remote.creation.compose.modifier.size
--import androidx.compose.remote.creation.compose.shapes.RemoteCircleShape
--import androidx.compose.remote.creation.compose.shapes.RemoteShape
--import androidx.compose.remote.creation.compose.state.rdp
--import androidx.compose.remote.creation.compose.state.rememberRemoteImageBitmap
--import androidx.compose.remote.creation.compose.state.rs
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteAlignment
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteArrangement
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteBox
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteColumn
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteContentScale
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteImage
-+import ee.schimke.composeai.rccreation.compose.layout.RemoteRow
-+import ee.schimke.composeai.rccreation.compose.modifier.RemoteModifier
-+import ee.schimke.composeai.rccreation.compose.modifier.background
-+import ee.schimke.composeai.rccreation.compose.modifier.clickable
-+import ee.schimke.composeai.rccreation.compose.modifier.clip
-+import ee.schimke.composeai.rccreation.compose.modifier.drawWithContent
-+import ee.schimke.composeai.rccreation.compose.modifier.fillMaxSize
-+import ee.schimke.composeai.rccreation.compose.modifier.fillMaxWidth
-+import ee.schimke.composeai.rccreation.compose.modifier.padding
-+import ee.schimke.composeai.rccreation.compose.modifier.size
-+import ee.schimke.composeai.rccreation.compose.shapes.RemoteCircleShape
-+import ee.schimke.composeai.rccreation.compose.shapes.RemoteShape
-+import ee.schimke.composeai.rccreation.compose.state.rdp
-+import ee.schimke.composeai.rccreation.compose.state.rememberRemoteImageBitmap
-+import ee.schimke.composeai.rccreation.compose.state.rf
-+import ee.schimke.composeai.rccreation.compose.state.rs
- import androidx.compose.runtime.Composable
- import androidx.compose.ui.graphics.Color
--import androidx.compose.ui.layout.ContentScale
- import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.text.style.TextOverflow
--import androidx.wear.compose.remote.material3.RemoteCardDefaults
--import androidx.wear.compose.remote.material3.RemoteMaterialTheme
--import androidx.wear.compose.remote.material3.RemoteText
--import androidx.wear.compose.remote.material3.RemoteTitleCard
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteCardDefaults
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteMaterialTheme
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteText
-+import ee.schimke.composeai.rccreation.wear.material3.RemoteTitleCard
- 
- /*
-  * Each series' designs for a watch: the same contracts as the phone's (session card, section
-@@ -137,7 +138,7 @@ fun WearSessionCard(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand)
-         title = { RemoteText(v.string("title"), maxLines = 2, overflow = TextOverflow.Ellipsis) },
+-import androidx.compose.ui.text.style.TextAlign
+-import androidx.compose.ui.text.style.TextOverflow
+ import ee.schimke.composeai.rccreation.wear.material3.RemoteCardDefaults
+ import ee.schimke.composeai.rccreation.wear.material3.RemoteMaterialTheme
+ import ee.schimke.composeai.rccreation.wear.material3.RemoteText
+@@ -135,13 +135,13 @@ fun WearSessionCard(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand)
+         border = outlineFor(brand.style, backdropColors()),
+         // The time on a line of its own (not the card's time slot, which on a watch leaves the
+         // title half the width): the title gets the card's full width.
+-        title = { RemoteText(v.string("title"), maxLines = 2, overflow = TextOverflow.Ellipsis) },
++        title = { RemoteText(v.string("title"), maxLines = 2, overflow = RemoteTextOverflow.Ellipsis) },
      ) {
          RemoteRow(RemoteModifier.fillMaxWidth(), verticalAlignment = RemoteAlignment.CenterVertically) {
--            RemoteColumn(RemoteModifier.weight(1f)) {
-+            RemoteColumn(RemoteModifier.weight(1f.rf)) {
-                 RemoteText(brand.style.timePrefix.rs + v.string("time"), color = colors.primary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                 RemoteText(v.string("speakers"), color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                 RemoteText(v.string("room"), color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
-@@ -230,10 +231,10 @@ fun WearSpeakerHeader(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand
-                 .padding(3.rdp),
-         ) {
-             RemoteImage(
--                remoteBitmap = rememberRemoteImageBitmap(url = "livery:value/photo"),
-+                bitmap = rememberRemoteImageBitmap(url = "livery:value/photo"),
-                 contentDe
-```
-
-**File**: `livery/wear-designs/src/main/kotlin/dev/johnoreilly/confetti/livery/wear/WearValues.kt` (modified, +11/-10)
-```diff
-@@ -1,13 +1,14 @@
- package dev.johnoreilly.confetti.livery.wear
- 
--import androidx.compose.remote.creation.compose.action.Action
--import androidx.compose.remote.creation.compose.action.hostAction
--import androidx.compose.remote.creation.compose.state.RemoteBoolean
--import androidx.compose.remote.creation.compose.state.RemoteColor
--import androidx.compose.remote.creation.compose.state.RemoteInt
--import androidx.compose.remote.creation.compose.state.RemoteString
--import androidx.compose.remote.creation.compose.state.rs
-+import ee.schimke.composeai.rccreation.compose.action.RemoteAction
-+import ee.schimke.composeai.rccreation.compose.action.hostAction
-+import ee.schimke.composeai.rccreation.compose.state.RemoteBoolean
-+import ee.schimke.composeai.rccreation.compose.state.RemoteColor
-+import ee.schimke.composeai.rccreation.compose.state.RemoteInt
-+import ee.schimke.composeai.rccreation.compose.state.RemoteString
-+import ee.schimke.composeai.rccreation.compose.state.rs
- import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.toArgb
- import ee.schimke.livery.capture.ContractChecks
- import ee.schimke.livery.protocol.Contract
- 
-@@ -29,10 +30,10 @@ class WearValues(val contract: Contract) {
- 
-     /** A colour input or a `theme.*` role; [fallback] draws until the host binds one. */
-     fun color(name: String, fallback: Color): RemoteColor =
--        RemoteColor.createNamedRemoteColor(name, checks.color(name)?.let(::Color) ?: fallback)
-+        RemoteColor.createNamedRemoteColor(name, checks.color(name) ?: fallback.toArgb())
- 
-     /** An action the contract declares, with no argument. */
--    fun action(name: String): Action {
-+    fun action(name: String): RemoteAction {
-         checks.actionPayload(name)
-         return hostAction(name.rs)
+             RemoteColumn(RemoteModifier.weight(1f.rf)) {
+-                RemoteText(brand.style.timePrefix.rs + v.string("time"), color = colors.primary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+-                RemoteText(v.string("speakers"), color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+-                RemoteText(v.string("room"), color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
++                RemoteText(brand.style.timePrefix.rs + v.string("time"), color = colors.primary, maxLines = 1, overflow = RemoteTextOverflow.Ellipsis)
++                RemoteText(v.string("speakers"), color = colors.onSurfaceVariant, maxLines = 1, overflow = RemoteTextOverflow.Ellipsis)
++                RemoteText(v.string("room"), color = colors.onSurfaceVariant, maxLines = 1, overflow = RemoteTextOverflow.Ellipsis)
+             }
+             RemoteBox(
+                 modifier = RemoteModifier.size(32.rdp, 32.rdp).clip(RemoteCircleShape).clickable(v.action("bookmark")),
+@@ -171,7 +171,7 @@ fun WearSection(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand) {
+             color = RemoteMaterialTheme.colorScheme.primary,
+             style = RemoteMaterialTheme.typography.labelMedium,
+             maxLines = 1,
+-            overflow = TextOverflow.Ellipsis,
++            overflow = RemoteTextOverflow.Ellipsis,
+         )
      }
-@@ -41,7 +42,7 @@ class WearValues(val contract: Contract) {
-      * An action whose one argument [arg] is a value of the document: its payload is
-      * `{"<arg>":"<value>"}`, built as the document plays (Livery maps a bare value only to `value`).
-      */
--    fun action(name: String, arg: String, value: RemoteString): Action {
-+    fun action(name: String, arg: String, value: RemoteString): RemoteAction {
-         checks.actionPayload(name, mapOf(arg to "x"))
-         return hostAction(name.rs, "{\"$arg\":\"".rs + value + "\"}".rs)
+ }
+@@ -195,12 +195,12 @@ fun WearSessionHeader(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand
+             v.string("title"),
+             color = colors.onSurface,
+             style = RemoteMaterialTheme.typography.titleMedium,
+-            textAlign = TextAlign.Center,
++            textAlign = RemoteTextAlign.Center,
+             maxLines = 3,
+-            overflow = TextOverflow.Ellipsis,
++            overflow = RemoteTextOverflow.Ellipsis,
+         )
+-        RemoteText(brand.style.timePrefix.rs + v.string("time"), color = colors.primary, textAlign = TextAlign.Center)
+-        RemoteText(v.string("room"), color = colors.onSurfaceVariant, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
++        RemoteText(brand.style.timePrefix.rs + v.string("time"), color = colors.primary, textAlign = RemoteTextAlign.Center)
++        RemoteText(v.string("room"), color = colors.onSurfaceVariant, textAlign = RemoteTextAlign.Center, maxLines = 1, overflow = RemoteTextOverflow.Ellipsis)
      }
+ }
+ 
+@@ -237,8 +237,8 @@ fun WearSpeakerHeader(v: WearValues, brand: WearBrand) = WearBrandTheme(v, brand
+                 contentScale = RemoteContentScale.Crop,
+             )
+         }
+-        RemoteText(v.string("name"), color = colors.onSurface, style = RemoteMaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
+-        RemoteText(v.string("tagline"), color = colors.onSurfaceVariant, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
++        RemoteText(v.string("name"), color = colors.onSurface, style = RemoteMaterialTheme.typography.titleMedium, textAlign = RemoteTextAlign.Center, maxLines = 2, overflow = RemoteTextOverflow.Ellipsis)
++        RemoteText(v.string("tagline"), color = colors.onSurfaceVariant, textAlign = RemoteTextAlign.Center, maxLines = 2, overflow = RemoteTextOverflow.Ellipsis)
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2098** (2026-11-23): build: bump livery, rc-players, and compose-ai-tools dependencies (@yschimke)
+- **PR #2097** (2026-11-22): Update AppFunctions to 1.0.0 stable (@joreilly)
 - **PR #2095** (2026-11-17): Add droidCon India 2026 (@SubhrajyotiSen)
 - **PR #2094** (2026-11-16): Log AppFunction invocations for release builds (@joreilly)
 - **PR #2093** (2026-11-16): build(livery): Wear designs on rc-players' Wear Material 3 (rc-creation-wear-material3) (@yschimke)
-- **PR #2091** (2026-11-16): feat(wear): the widget's illustrated backdrops, and layouts for every watch's container (@yschimke)
-- **PR #2090** (2026-11-15): feat(wear): a next-session Wear widget drawn from each series' Livery catalog (@yschimke)
-- **PR #2088** (2026-11-15): feat(wear): an sduiDebug variant for Wear, and Wear variants of the Livery designs (@yschimke)
+- **PR #2092** (closed): Update compose-ai-tools - autoclosed (@renovate[bot])
 
 ---
 
@@ -846,50 +621,33 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Log AppFunction invocations for release builds
+## X. build: bump livery, rc-players, and compose-ai-tools dependencies
 
 **RULE**:
-When implementing operations in `androidApp/src/main/java/dev/johnoreilly/confetti/functions/ConfettiAppFunctionService.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/compose-preview-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `274766ff`: Log AppFunction invocations for release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4491acd8`: build: bump livery, rc-players, and compose-ai-tools dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/src/main/java/dev/johnoreilly/confetti/functions/ConfettiAppFunctionService.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/compose-preview-publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import android.os.SystemClock
-import android.util.Log
-import androidx.appfunctions.AppFunctionException
-import kotlinx.coroutines.CancellationException
-    private companion object {
-        const val TAG = "ConfettiAppFunctions"
-    }
-
-        logged("addBookmark", "sessionId" to sessionId, "conferenceId" to conferenceId) {
-        logged("removeBookmark", "sessionId" to sessionId, "conferenceId" to conferenceId) {
-        logged("listSessions", "conferenceId" to conferenceId) {
-        logged("listBookmarks", "conferenceId" to conferenceId) {
-        logged("listSpeakers", "conferenceId" to conferenceId) {
-        logged("getVenue", "conferenceId" to conferenceId) {
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.103.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        withContext(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-    suspend fun getConfe
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.94.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `274766ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4491acd8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
