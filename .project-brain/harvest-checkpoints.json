@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T15:37:32.115Z",
+  "last_updated": "2026-11-23T15:45:54.943Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1580,14 +1580,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
-      "content_hash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
-      "verified_at": "2026-11-19T02:03:33.377Z",
+      "content_hash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
+      "verified_at": "2026-11-23T15:45:43.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T02:03:33.377Z"
+      "last_updated": "2026-11-23T15:45:43.243Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
-      "verified_at": "2026-11-23T13:06:58.697Z",
+      "content_hash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
+      "verified_at": "2026-11-23T15:45:54.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:06:58.697Z"
+      "last_updated": "2026-11-23T15:45:54.942Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

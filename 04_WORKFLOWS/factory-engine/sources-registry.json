@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T15:12:45.648Z",
-    "lastVerified": "2026-11-23T15:12:45.648Z",
+    "lastChecked": "2026-11-23T15:45:54.875Z",
+    "lastVerified": "2026-11-23T15:45:54.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T15:37:35.240Z",
-    "lastVerified": "2026-11-23T15:37:35.240Z",
+    "lastChecked": "2026-11-23T15:45:58.131Z",
+    "lastVerified": "2026-11-23T15:45:58.131Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2355,12 +2355,12 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T06:37:41.980Z",
-    "lastVerified": "2026-11-23T06:37:41.980Z",
+    "lastChecked": "2026-11-23T15:45:54.285Z",
+    "lastVerified": "2026-11-23T15:45:54.285Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
+    "contentHash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -4800,9 +4800,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-22T09:35:19.073Z",
+    "lastChecked": "2026-11-23T15:45:52.341Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-22T09:35:19.073Z"
+    "lastVerified": "2026-11-23T15:45:52.341Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -5521,9 +5521,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-22T03:03:09.782Z",
+    "lastChecked": "2026-11-23T15:45:39.882Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-22T03:03:09.782Z"
+    "lastVerified": "2026-11-23T15:45:39.882Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -6333,12 +6333,12 @@
     "officialUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T02:03:32.733Z",
-    "lastVerified": "2026-11-19T02:03:32.733Z",
+    "lastChecked": "2026-11-23T15:45:42.604Z",
+    "lastVerified": "2026-11-23T15:45:42.604Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
+    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6355,9 +6355,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-22T11:14:19.833Z",
+    "lastChecked": "2026-11-23T15:45:47.424Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-22T11:14:19.833Z"
+    "lastVerified": "2026-11-23T15:45:47.424Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -10509,9 +10509,9 @@
   "lessica-trollfools": {
     "name": "TrollFools",
     "officialUrl": "https://github.com/Lessica/TrollFools",
-    "lastChecked": "2026-11-20T13:40:08.932Z",
+    "lastChecked": "2026-11-23T15:45:44.883Z",
     "revisionIdentifier": "c5c87b85",
-    "lastVerified": "2026-11-20T13:40:08.932Z"
+    "lastVerified": "2026-11-23T15:45:44.883Z"
   },
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",

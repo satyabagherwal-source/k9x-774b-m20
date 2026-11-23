@@ -12389,3 +12389,5 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `04661852` | Multi-dimensional audit evidence | 2026-11-23T15:37:31.682Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a2f46a48` | Multi-dimensional audit evidence | 2026-11-23T15:37:32.103Z |
 | `learn-dom-d-5695d6c2` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-23T15:38:08.306Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-23T15:45:43.235Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ffead11c` | Multi-dimensional audit evidence | 2026-11-23T15:45:54.934Z |

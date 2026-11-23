@@ -12356,3 +12356,5 @@
 | `CYCLE-20261123-J5EM` | `2026-11-23T15:37:31.678Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10061` | Yes (`81aefc63...`) |
 | `CYCLE-20261123-J5QB` | `2026-11-23T15:37:32.099Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f926d677...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T15:38:08.306Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5695D6C2` [Domain D] | Yes (`6927344c...`) |
+| `CYCLE-20261123-TOOT` | `2026-11-23T15:45:43.229Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`155ded91...`) |
+| `CYCLE-20261123-TXPV` | `2026-11-23T15:45:54.931Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`285b0950...`) |

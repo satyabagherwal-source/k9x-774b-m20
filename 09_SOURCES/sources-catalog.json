@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
-    "lastHarvestedAt": "2026-11-19T02:03:33.369Z",
+    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
+    "lastHarvestedAt": "2026-11-23T15:45:43.235Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "8caa8775",
+    "sourceVersion": "ffead11c",
     "license": "Apache-2.0",
-    "contentHash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
-    "lastHarvestedAt": "2026-11-23T06:37:42.902Z",
+    "contentHash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
+    "lastHarvestedAt": "2026-11-23T15:45:54.934Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {

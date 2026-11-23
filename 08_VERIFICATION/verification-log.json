@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-XOZ3",
-    "timestamp": "2026-11-21T14:49:30.543Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "dcd38815877018ccb0e1d4d687b0752803c4c3f5019c3d08ad4322556c559113",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XUQN",
-    "timestamp": "2026-11-21T14:49:38.015Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XU5S",
     "timestamp": "2026-11-21T15:17:36.880Z",
     "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
@@ -7492,6 +7462,36 @@
     "contentHash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-TOOT",
+    "timestamp": "2026-11-23T15:45:43.229Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-TXPV",
+    "timestamp": "2026-11-23T15:45:54.931Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
