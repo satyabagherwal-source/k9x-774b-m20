@@ -12505,3 +12505,7 @@
 | `CYCLE-20261123-OUUV` | `2026-11-23T23:09:51.799Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10140` | Yes (`0d1a2325...`) |
 | `CYCLE-20261123-OZVK` | `2026-11-23T23:09:58.304Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9613` | Yes (`a0323c71...`) |
 | `CYCLE-20261123-P2MJ` | `2026-11-23T23:10:01.867Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10141` | Yes (`9a07cee7...`) |
+| `CYCLE-20261123-ZIQZ` | `2026-11-23T23:18:09.323Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`19e3c3ca...`) |
+| `CYCLE-20261123-ZL72` | `2026-11-23T23:18:12.494Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10142` | Yes (`4038f429...`) |
+| `CYCLE-20261123-ZRR8` | `2026-11-23T23:18:20.996Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10143` | Yes (`158ee86c...`) |
+| `CYCLE-20261123-ZUQL` | `2026-11-23T23:18:24.861Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10144` | Yes (`a10c808a...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "kgateway-dev/kgateway",
   "source_url": "https://github.com/kgateway-dev/kgateway",
-  "source_version": "8a71677f",
+  "source_version": "1a44dc2c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T20:57:53.629Z",
+  "timestamp": "2026-11-23T23:18:21.211Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kgateway-dev-kgateway",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `8a71677f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T20:57:53.629Z`  
+> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `1a44dc2c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T23:18:21.211Z`  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kgateway-dev/kgateway` (Commit: `8a71677f`)
+- **Target Repository**: `kgateway-dev/kgateway` (Commit: `1a44dc2c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:57:52.465Z  
+> **Harvest Timestamp**: 2026-11-23T23:18:20.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5747 stars
+- **Stars / Engagement**: 5751 stars
 
 ---
 
@@ -1152,679 +1152,1284 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a71677f` (2026-11-19)
-**Commit Message**: fix(trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent (#15051)
+### Incident Patch 1: `1a44dc2c` (2026-11-23)
+**Commit Message**: fix(status): make the status syncer the only writer of Gateway Accepted (#15027)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
+Co-authored-by: David Jumani <[REDACTED_EMAIL]>
 
-**File**: `pkg/kgateway/extensions2/plugins/trafficpolicy/extauth_policy.go` (modified, +16/-0)
+**File**: `pkg/deployer/deployer.go` (modified, +14/-1)
 ```diff
-@@ -60,6 +60,12 @@ type extAuthIR struct {
- type perProviderExtAuthConfig struct {
- 	provider       *TrafficPolicyGatewayExtensionIR
- 	perRouteConfig *envoy_ext_authz_v3.ExtAuthzPerRoute
-+	// mergeOrigins holds the IDs of the policies this config came from. It is only set
-+	// on copies made while merging, so that a field's merge origins can be rebuilt from
-+	// the configs that survive a merge; nil means the config has not been merged yet.
-+	// It is merge bookkeeping, not policy config.
-+	// +noKrtEquals
-+	mergeOrigins sets.Set[string]
+@@ -23,6 +23,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/apimachinery/pkg/util/yaml"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/apiclient"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
+@@ -174,6 +175,18 @@ func (d *Deployer) RenderManifest(ns, name string, vals map[string]any) ([]byte,
+ 	return []byte(release.Manifest), nil
  }
  
- var _ PolicySubIR = &extAuthIR{}
-@@ -212,3 +218,13 @@ func (p *trafficPolicyPluginGwPass) handleExtAuth(filterChain string, pCtxTypedF
- 		AddAuthMetadataIfNeeded(pCtxTypedFilterConfig, ExtAuthEnabledFilterName, p.enableAuthMetadata)
- 	}
- }
-+
-+func (c *perProviderExtAuthConfig) getMergeOrigins() sets.Set[string] {
-+	return c.mergeOrigins
-+}
-+
-+func (c *perProviderExtAuthConfig) withMergeOrigins(origins sets.Set[string]) *perProviderExtAuthConfig {
-+	cp := *c
-+	cp.mergeOrigins = origins
-+	return &cp
-+}
-```
-
-**File**: `pkg/kgateway/extensions2/plugins/trafficpolicy/extproc_policy.go` (modified, +16/-0)
-```diff
-@@ -40,6 +40,12 @@ type perProviderExtProcConfig struct {
- 	provider       *TrafficPolicyGatewayExtensionIR
- 	perRouteConfig *envoy_ext_proc_v3.ExtProcPerRoute
- 	filterStage    filters.FilterStage[filters.WellKnownFilterStage]
-+	// mergeOrigins holds the IDs of the policies this config came from. It is only set
-+	// on copies made while merging, so that a field's merge origins can be rebuilt from
-+	// the configs that survive a merge; nil means the config has not been merged yet.
-+	// It is merge bookkeeping, not policy config.
-+	// +noKrtEquals
-+	mergeOrigins sets.Set[string]
- }
- 
- var _ PolicySubIR = &extprocIR{}
-@@ -256,3 +262,13 @@ func convertFilterStageSpec(
- 		return filters.DuringStage(stage)
- 	}
- }
-+
-+func (c *perProviderExtProcConfig) getMergeOrigins() sets.Set[string] {
-+	return c.mergeOrigins
-+}
-+
-+func (c *perProviderExtProcConfig) withMergeOrigins(origins sets.Set[string]) *perProviderExtProcConfig {
-+	cp := *c
-+	cp.mergeOrigins = origins
-+	return &cp
-+}
-```
-
-**File**: `pkg/kgateway/extensions2/plugins/trafficpolicy/merge.go` (modified, +94/-18)
-```diff
-@@ -11,6 +11,7 @@ import (
- 	"google.golang.org/protobuf/proto"
- 	"google.golang.org/protobuf/types/known/anypb"
- 	"google.golang.org/protobuf/types/known/wrapperspb"
-+	"k8s.io/apimachinery/pkg/util/sets"
- 
- 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/utils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
-@@ -77,6 +78,47 @@ func copyForMerge[T any](in *T) *T {
- 	return &cp
- }
- 
-+// providerConfig is a per-provider config of a merged sub-IR (extAuth, extProc) that
-+// records which policies it came from, so that a merge that drops some of a field's
-+// configs can tell which policies still contribute to the field.
-+type providerConfig[T any] interface {
-+	getMergeOrigins() sets.Set[string]
-+	withMergeOrigins(sets.Set[string]) T
-+}
-+
-+// fieldMergeOrigins returns the policies that contribute field of p2: p2Ref if set,
-+// otherwise p2's own merge origins for field.
-+func fieldMergeOrigins(field string, p2Ref *ir.AttachedPolicyRef, p2MergeOrigins ir.MergeOrigins) sets.Set[string] {
-+	if p2Ref != nil {
-+		return sets.New(p2Ref.ID())
-+	}
-+	return p2MergeOrigins[field].Clone()
-+}
-+
-+// withMergeOrigins returns a new slice of cfgs in which each config that has no merge
-+// origins yet is replaced by a copy attributed to origins. A config without merge
-+// origins has not been through a merge that combined configs, so all of the field's
-+// origins are its own. The configs in cfgs are never modified.
-+func withMergeOrigins[T providerConfig[T]](cfgs []T, origins sets.Set[string]) []T {
-+	out := make([]T, len(cfgs))
-+	for i, cfg := range cfgs {
-+		if cfg.getMergeOrigins() == nil {
-+			cfg = cfg.withMergeOrigins(origins.Clone())
++// objectGVK returns obj's GVK from the scheme, falling back to its TypeMeta for a type the
++// scheme does not know. TypeMeta alone is empty on some informer paths, and the GVK ends up in
++// errors reported in status, which must not change from one attempt to the next.
++func (d *Deployer) objectGVK(obj client.Object) schema.GroupVersionKind {
++	if d.scheme != nil {
++		if gvk, err := apiutil.GVKForObject(obj, d.scheme); err == nil {
++			return gvk
 +		}
-+		out[i] = cfg
 +	}
-+	return out
++	return obj.GetObjectKind().GroupVersionKind()
 +}
 +
-+// unionMergeOrigins returns the policies that contribute to cfgs.
-+func unionMergeOrigins[T providerConfig[T]](cfgs []T) sets.Set[string] {
-+	out := sets.New[string]()
-+	for _, cfg := range cfgs {
-+		out = out.Union(cfg.getMergeOrigins())
-+	}
-+	return out
-+}
-+
- // copyWithFilterConfig returns a copy of cfg carrying filterConfig, for the dynamic
- // module sub-IRs (transformation, httpACL) whose merged output is a rewritten
- // FilterConfig on an otherwise identical per-route config.
-@@ -202,7 +244,10 @@ func mergeExtProc(
- 		if p2.spec.extProc.providerNames.Len() > 0 && !p1.spec.extProc.providerNames.IsSuperset(p2.spec.extProc.providerNames) {
- 			// Always Concat so that the original slice in the IR is never modified
- 			// Note: p1 is preferred over p2 (slice order)
--			p1.spec.extProc.perProviderConfig = slices.Concat(p1.spec.extProc.perProviderConfig, p2.spec.extProc.perProviderConfig)
-+			p1.spec.extProc.perProviderConfig = slices.Concat(
-+				withMergeOrigins(p1.spec.extProc.perProviderConfig, mergeOrigins["extProc"]),
-+				withMergeOrigins(p2.spec.extProc.perProviderConfig, fieldMergeOrigins("extProc", p2Ref, p2MergeOrigins)),
-+			)
- 			// Always Clone so that the original slice in the IR is never modified
- 			tmp := p1.spec.extProc.providerNames.Clone()
- 			tmp.Insert(p2.spec.extProc.providerNames.UnsortedList()...)
-@@ -215,19 +260,32 @@ func mergeExtProc(
- 		}
- 
- 	case policy.OverridableDeepMerge:
-+		// Disabling all providers conflicts with enabling any of them, so there is nothing
-+		// to deep merge: p2 is preferred over p1
-+		if p1.spec.extProc != nil && p1.spec.extProc.disableAllProviders != p2.spec.extProc.disableAllProviders {
-+			opts.Strategy = policy.OverridableShallowMerge
-+			defaultMerge(p1, p2, p2Ref, p2MergeOrigins, opts, mergeOrigins, accessor, "extProc")
-+			return
-+		}
- 		p1.spec.extProc = copyForMerge(p1.spec.extProc)
--		// p2 will always have just 1 item in its providerNames, and if p1 contains that then
--		// it implies that this provider was already considered from a higher priority policy,
--		// so ignore it
--		if p2.spec.extProc.providerNames.Len() > 0 && !p1.spec.extProc.providerNames.IsSuperset(p2.spec.extProc.providerNames) {
--			// Always Concat so that the original slice in the IR is never modified
-+		if p2.spec.extProc.providerNames.Len() > 0 {
-+			// p2 is preferred over p1, so if both configure the same provider then p2's config
-+			// replaces p1's. withMergeOrigins always returns a new slice, so the original
-+			// slice in the IR is never modified
-+			p1Only := slices.DeleteFunc(withMergeOrigins(p1.spec.extProc.perProviderConfig, mergeOrigins["extProc"]), func(cfg *perProviderExtProcConfig) bool {
-+				return p2.spec.extProc.providerNames.Has(providerName(cfg.provider))
-+			})
- 			// Note: p2 is preferred over p1 (slice order)
--			p1.spec.extProc.perProviderConfig = slices.Concat(p2.spec.extProc.perProviderConfig, p1.spec.extProc.perProviderConfig)
-+			p1.spec.extProc.perProviderConfig = slices.Concat(
-+				withMergeOrigins(p2.spec.extProc.perProviderConfig, fieldMergeOrigins("extProc", p2Ref, p2MergeOrigins)),
-+				p1Only,
-+			)
- 			// Always Clone so that the original slice in the IR is never modified
- 			tmp := p1.spec.extProc.providerNames.Clone()
- 			tmp.Insert(p2.spec.extProc.provider
+ // GetObjsToDeploy does the following:
+ //
+ // * uses HelmValuesGenerator to perform lookup/merging etc to get a final set of helm values
+@@ -189,7 +202,7 @@ func (d *Deployer) RenderManifest(ns, name string, vals map[string]any) ([]byte,
+ func (d *Deployer) GetObjsToDeploy(ctx context.Context, obj client.Object) ([]client.Object, error) {
+ 	vals, err := d.helmValues.GetValues(ctx, obj)
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName(), err)
++		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", d.objectGVK(obj).String(), obj.GetNamespace(), obj.GetName(), err)
+ 	}
+ 	if vals == nil {
+ 		return nil, nil
 ```
 
-**File**: `pkg/kgateway/extensions2/plugins/trafficpolicy/merge_test.go` (modified, +251/-0)
+**File**: `pkg/deployer/deployer_internal_test.go` (modified, +34/-0)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	envoymatchingv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/common/matching/v3"
- 	bufferv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/buffer/v3"
- 	envoy_ext_authz_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/ext_authz/v3"
-+	envoy_ext_proc_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/ext_proc/v3"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"google.golang.org/protobuf/types/known/wrapperspb"
-@@ -311,6 +312,256 @@ func TestMergePoliciesDoesNotMutateSourceIRs(t *testing.T) {
- 	})
+@@ -3,6 +3,7 @@ package deployer
+ import (
+ 	"bytes"
+ 	"context"
++	"errors"
+ 	"log/slog"
+ 	"testing"
+ 
+@@ -14,6 +15,8 @@ import (
+ 	"k8s.io/client-go/tools/cache"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
++
++	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
+ )
+ 
+ // staticValues is a HelmValuesGenerator that always returns the same values.
+@@ -54,3 +57,34 @@ func TestGetObjsToDeployDoesNotLogValues(t *testing.T) {
+ 	assert.Contains(t, logs.String(), "got deployer helm values", "the debug line should still be logged")
+ 	assert.NotContains(t, logs.String(), secret)
+ }
++
++// failingValues is a HelmValuesGenerator whose GetValues always fails.
++type failingValues struct{}
++
++func (failingValues) GetValues(context.Context, client.Object) (map[string]any, error) {
++	return nil, errors.New("invalid parameters")
++}
++
++func (failingValues) GetCacheSyncHandlers() []cache.InformerSynced {
++	return nil
++}
++
++// TestGetObjsToDeployErrorNamesKindStably guards the helm values error, which the Gateway
++// status reports: it must name the object's kind, and must not depend on whether the object
++// came with its TypeMeta set, which differs between informer paths.
++func TestGetObjsToDeployErrorNamesKindStably(t *testing.T) {
++	scheme := runtime.NewScheme()
++	require.NoError(t, gwv1.Install(scheme))
++	d := NewDeployer("test", scheme, nil, nil, failingValues{},
++		func(client.Object) (string, string) { return "test", "default" })
++
++	withoutTypeMeta := &gwv1.Gateway{ObjectMeta: metav1.ObjectMeta{Name: "gw", Namespace: "default"}}
++	withTypeMeta := withoutTypeMeta.DeepCopy()
++	withTypeMeta.SetGroupVersionKind(wellknown.GatewayGVK)
++
++	_, errWithout := d.GetObjsToDeploy(t.Context(), withoutTypeMeta)
++	_, errWith := d.GetObjsToDeploy(t.Context(), withTypeMeta)
++	require.EqualError(t, errWithout,
++		"failed to get helm values for object gateway.networking.k8s.io/v1, Kind=Gateway default/gw: invalid parameters")
++	require.EqualError(t, errWith, errWithout.Error(), "the message must not depend on TypeMeta")
++}
+```
+
+**File**: `pkg/kgateway/controller/controller.go` (modified, +5/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/collections"
++	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
+ )
+ 
+ // rateLimiter uses token bucket for overall rate limiting and exponential backoff for per-item rate limiting
+@@ -50,6 +51,10 @@ type GatewayConfig struct {
+ 	AdditionalGatewayClasses map[string]*deployer.GatewayClassInfo
+ 	// CertWatcher is the shared certificate watcher for xDS TLS
+ 	CertWatcher *certwatcher.CertWatcher
++	// GatewayParametersStatus receives the deployer's verdict on each Gateway's parameters,
++	// which the status syncer reports as the Gateway's Accepted=False/InvalidParameters.
++	// Without it, invalid parameters are not reported.
++	GatewayParametersStatus *reports.GatewayParametersStatus
  }
  
-+// TestMergeDeepMergeConflictUsesPreferredPolicy covers the conflicts a deep merge cannot
-+// combine: p1 (the child) must win with AugmentedDeepMerge (DeepMergePreferChild) and p2
-+// (the parent) with OverridableDeepMerge (DeepMergePreferParent).
-+func TestMergeDeepMergeConflictUsesPreferredPolicy(t *testing.T) {
-+	p1Ref := &ir.AttachedPolicyRef{Name: "child", Namespace: "team1"}
-+	p2Ref := &ir.AttachedPolicyRef{Name: "parent", Namespace: "infra"}
-+
-+	merge := func(p1, p2 *TrafficPolicy, strategy policy.MergeStrategy, field string) ir.MergeOrigins {
-+		origins := ir.MergeOrigins{field: sets.New(p1Ref.ID())}
-+		MergeTrafficPolicies(p1, p2, p2Ref, nil, policy.MergeOptions{Strategy: strategy}, origins, TrafficPolicyMergeOpts{})
-+		return origins
+ type HelmValuesGeneratorOverrideFunc func(inputs *deployer.Inputs) deployer.HelmValuesGenerator
+```
+
+**File**: `pkg/kgateway/controller/controller_test.go` (modified, +85/-8)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	"k8s.io/client-go/rest"
+ 	"k8s.io/client-go/tools/clientcmd"
+ 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
++	"k8s.io/client-go/util/retry"
+ 	ctrl "sigs.k8s.io/controller-runtime"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/config"
+@@ -79,6 +80,7 @@ type ControllerSuite struct {
+ 	client          client.Client //nolint:forbidigo // can use client.Client in envtest
+ 	kubeconfigPath  string
+ 	managerErr      chan error
++	paramsStatus    *reports.GatewayParametersStatus
+ }
+ 
+ func TestControllerSuite(t *testing.T) {
+@@ -293,16 +295,89 @@ func (s *ControllerSuite) TestInvalidGatewayParameters() {
+ 	err = s.client.Create(ctx, gw)
+ 	s.Require().NoError(err)
+ 
++	// The status writer, which this suite does not run, reports the failed verdict as
++	// Accepted=False/InvalidParameters.
+ 	s.Require().EventuallyWithT(func(c *assert.CollectT) {
+-		err := s.client.Get(ctx, types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace}, gw)
+-		require.NoError(c, err, "error getting Gateway")
++		verdict := s.verdictFor(types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace})
++		require.NotNil(c, verdict, "the deployer should publish its verdict")
++		require.Contains(c, verdict.Err(), "InvalidKindName")
++		require.Equal(c, int64(1), verdict.ObservedGeneration())
++	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's failed verdict")
++}
+ 
+-		condition := meta.FindStatusCondition(gw.Status.Conditions, string(gwv1.GatewayConditionAccepted))
+-		require.NotNil(c, condition)
+-		require.Equal(c, metav1.ConditionFalse, condition.Status)
+-		require.Equal(c, string(gwv1.GatewayReasonInvalidParameters), condition.Reason)
+-		require.Equal(c, gw.Generation, condition.ObservedGeneration)
+-	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for Gateway to have GatewayReasonInvalidParameters")
++// TestInvalidGatewayParametersClearedWithoutValidPorts tests that fixing the parametersRef
++// removes the Gateway's parameters error even when the Gateway still has no valid ports.
++func (s *ControllerSuite) TestInvalidGatewayParametersClearedWithoutValidPorts() {
++	ctx := context.Background()
++	gwp := &kgateway.GatewayParameters{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "reserved-port-gwp",
++			Namespace: "default",
++		},
++		Spec: kgateway.GatewayParametersSpec{
++			Kube: &kgateway.KubernetesProxyConfig{},
++		},
 +	}
-+
-+	t.Run("field without a deep merge", func(t *testing.T) {
-+		childDisable := &apiKeyAuthIR{disable: true}
-+		parentAuth := &apiKeyAuthIR{}
-+
-+		p1 := &TrafficPolicy{spec: trafficPolicySpecIr{apiKeyAuth: childDisable}}
-+		p2 := &TrafficPolicy{spec: trafficPolicySpecIr{apiKeyAuth: parentAuth}}
-+		origins := merge(p1, p2, policy.AugmentedDeepMerge, "apiKeyAuth")
-+		assert.Same(t, childDisable, p1.spec.apiKeyAuth)
-+		assert.Equal(t, []string{p1Ref.ID()}, origins.Get("apiKeyAuth"))
-+
-+		p1 = &TrafficPolicy{spec: trafficPolicySpecIr{apiKeyAuth: childDisable}}
-+		origins = merge(p1, p2, policy.OverridableDeepMerge, "apiKeyAuth")
-+		assert.Same(t, parentAuth, p1.spec.apiKeyAuth)
-+		assert.Equal(t, []string{p2Ref.ID()}, origins.Get("apiKeyAuth"))
-+
-+		// the parent does not set the field, so there is no conflict
-+		p1 = &TrafficPolicy{spec: trafficPolicySpecIr{apiKeyAuth: childDisable}}
-+		origins = merge(p1, &TrafficPolicy{}, policy.OverridableDeepMerge, "apiKeyAuth")
-+		assert.Same(t, childDisable, p1.spec.apiKeyAuth)
-+		assert.Equal(t, []string{p1Ref.ID()}, origins.Get("apiKeyAuth"))
++	gw := &gwv1.Gateway{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "reserved-port-gw",
++			Namespace: "default",
++		},
++		Spec: gwv1.GatewaySpec{
++			GatewayClassName: gwv1.ObjectName(gatewayClassName),
++			Infrastructure: &gwv1.GatewayInfrastructure{
++				ParametersRef: &gwv1.LocalParametersReference{
++					Group: kgateway.GroupName,
++					Kind:  "InvalidKindName",
++					Name:  gwp.Name,
++				},
++			},
++			Listeners: []gwv1.Listener{{
++				Name:     "listener",
++				Protocol: "HTTP",
++				// A reserved port: once the parameters resolve, there are no valid ports to deploy.
++				Port: 9091,
++			}},
++		},
++	}
++	s.Require().NoError(s.client.Create(ctx, gwp))
++	s.Require().NoError(s.client.Create(ctx, gw))
++	s.T().Cleanup(func() {
++		s.NoError(s.client.Delete(ctx, gw))
++		s.NoError(s.client.Delete(ctx, gwp))
 +	})
 +
-+	provider := &TrafficPolicyGatewayExtensionIR{Name: "provider"}
-+	otherProvider := &TrafficPolicyGatewayExtensionIR{Name: "other-provider"}
++	nn := types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace}
++	s.Require().EventuallyWithT(func(c *assert.CollectT) {
++		verdict := s.verdictFor(nn)
++		require.NotNil(c, verdict, "the deployer should publish its verdict")
++		require.NotEmpty(c, verdict.Err(), "the verdict should be a failure")
++	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's failed verdict")
 +
-+	t.Run("extAuth", func(t *testing.T) {
-+		policyFor := func(cfgs ...*perProviderExtAuthConfig) *TrafficPolicy {
-+			names := sets.New[string]()
-+			for _, cfg := range cfgs {
-+				names.Insert(providerName(cfg.provider))
-+			}
-+			return &TrafficPolicy{spec: trafficPolicySpecIr{extAuth: &extAuthIR{perProviderConfig: cfgs, providerNames: names}}}
++	s.Require().NoError(retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		if err := s.client.Get(ctx, nn, gw); err != nil {
++			return err
 +		}
-+		disabled := func() *TrafficPolicy {
-+			return &TrafficPolicy{spec: trafficPolicySpecIr{extAuth: &extAuthIR{disableAllProviders: true}}}
++		gw.Spec.Infrastructure.ParametersRef.Kind = gwv1.Kind(wellknown.GatewayParametersGVK.Kind)
++		return s.client.Update(ctx, gw)
++	}))
++
++	s.Require().EventuallyWithT(func(c *assert.CollectT) {
++		verdict := s.verdictFor(nn)
++		require.NotNil(c, verdict, "the deployer should publish its verdict")
++		require.Empty(c, verdict.Err(), "fixing the parametersRef should make the verdict a success")
++		require.Equal(c, int64(2), verdict.ObservedGeneration(), "the verdict should be for the fixed generation")
++	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's successful verdict")
++}
++
++// verdictFor reads the deployer's verdict for gw from the status contributions it publishes.
++func (s *ControllerSuite) verdictFor(gw types.NamespacedName) *reports.GatewayParametersReport {
++	for _, contribution := range s.paramsStatus.Contributions().List() {
++		if contribution.Target.NamespacedName == gw && contribution.GatewayParameters != nil {
++			return contribution.GatewayParameters
 +		}
-+		parentCfg := &perProviderExtAuthConfig{provider: provider}
-+
-+		p1 := disabled()
-+		origins := merge(p1, policyFor(parentCfg), policy.OverridableDeepMerge, "extAuth")
-+		assert.False(t, p1.spec.extAuth.disableAllProviders, "child must not disable the parent's provider")
-+		assert.Equal(t, []*perProviderExtAuthConfig{parentCfg}, p1.spec.extAuth.perProviderConfig)
-+		assert.Equal(t, []string{p2Ref.ID()}, origins.Get("extAuth"))
-+
-+		p1 = policyFor(&perProviderExtAuthConfig{provider: otherProvider})
-+		origins = merge(p1, disabled(), policy.OverridableDeepMerge, "extAuth")
-+		assert.True(t, p1.spec.extAuth.disableAllProviders, "parent disables the child's provider")
-+		assert.Equal(t, []string{p2Ref.ID()}, origins.Get("extAuth"))
-+
-+		p1 = disabled()
-+		merge(p1, policyFor(parentCfg), policy.AugmentedDeepMerge, "extAuth")
-+		assert.True(t, p1.spec.extAuth.disableAllProviders, "child may disable the parent's provider when preferred")
-+
-+		childCfg := &perProviderExtAuthConfig{provider: provider, perRouteConfig: &envoy_ext_authz_v3.ExtAuthzPerRoute{}}
-+		childOnlyCfg := &perProviderExtAuthConfig{provider: otherProvider}
-+		child := policyFor(childCfg, childOnlyCfg)
-+		p1 = &TrafficPolicy{spec: trafficPolicySpecIr{extAuth: child.spec.extAuth}}
-+		origins = merge(p1, policyFor(parentCfg), policy.OverridableDeepMerge, "extAuth")
-+		assert.Equal(t, []*perProviderExtAuthConfig{parentCfg, childOnlyCfg}, withoutMergeOrigins(p1.spec.extAuth.perProviderConfig),
-+			"parent's config replaces the child's for the provider they share")
-+		assert.ElementsMatch(t, []string{p1Ref.ID(), p2Ref.ID()}, origins.Get("extAuth"))
-+		assert.Equal(t, []*perProviderExtAuthConfig{childCfg, childOnlyCfg}, child.spec.extAuth.perProviderConfig,
-+			"child IR must be unchanged after merging")
-+
-+		p1 = policyFor(childCfg)
-+		origins = merge(p1, poli
-```
-
----
-
-### Incident Patch 2: `4bb4b1d0` (2026-11-19)
-**Commit Message**: fix(listener): match the listener hostname on TCPRoute filter chains (#15053)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/translator/listener/gateway_listener_translator.go` (modified, +6/-0)
-```diff
-@@ -719,10 +719,16 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
- 			tlsConfig.AlpnProtocols = []string{string(annotations.AllowEmptyAlpnProtocols)}
- 		}
++	}
++	return nil
+ }
  
-+		// On a TLS listener the filter chain must only serve the listener's hostname, as the
-+		// Envoy listener is shared with the other listeners of the port. Empty for TCP listeners.
-+		var matcher ir.FilterChainMatch
-+		matcher.SniDomains = slices.Clone(tc.sniDomains)
-+
- 		return &ir.TcpIR{
- 			FilterChainCommon: ir.FilterChainCommon{
- 				FilterChainName: tcpHostName,
- 				StatPrefix:      buildStatPrefix("tcp", tc.parents.listener.Port, tRoute.Namespace, tRoute.Name),
-+				Matcher:         matcher,
- 				TLS:             tlsConfig,
- 			},
- 			BackendRefs:      backends,
+ // TestGatewayClassStatus tests the Status conditions on GatewayClass
+@@ -689,6 +764,7 @@ func (s *ControllerSuite) startContr
 ```
 
-**File**: `pkg/kgateway/translator/listener/gateway_listener_translator_test.go` (modified, +159/-0)
+**File**: `pkg/kgateway/controller/gw_controller.go` (modified, +18/-45)
+```diff
+@@ -17,7 +17,6 @@ import (
+ 	"istio.io/istio/pkg/kube/krt"
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	corev1 "k8s.io/api/core/v1"
+-	"k8s.io/apimachinery/pkg/api/meta"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/runtime"
+@@ -67,6 +66,11 @@ type gatewayReconciler struct {
+ 
+ 	controllerExtension pluginsdk.GatewayControllerExtension
+ 
++	// paramsStatus is where Reconcile reports whether each Gateway's objects could be built
++	// from its parameters. The Gateway status writer turns a failure into
++	// Accepted=False/InvalidParameters; this controller never writes that condition itself.
++	paramsStatus *reports.GatewayParametersStatus
++
+ 	queue controllers.Queue
+ }
+ 
+@@ -97,6 +101,7 @@ func NewGatewayReconciler(
+ 	r.gwParamClient = gwParams.GetGatewayParametersClient()
+ 
+ 	r.queue = controllers.NewQueue("GatewayController", controllers.WithReconciler(r.Reconcile), controllers.WithMaxAttempts(math.MaxInt), controllers.WithRateLimiter(rateLimiter))
++	r.paramsStatus = cfg.GatewayParametersStatus
+ 
+ 	// Gateway event handler
+ 	r.gwClient.AddEventHandler(
+@@ -275,6 +280,7 @@ func (r *gatewayReconciler) Reconcile(req types.NamespacedName) (rErr error) {
+ 	if gw == nil || gw.GetDeletionTimestamp() != nil {
+ 		// ignore the event if the Gateway is not found. A subsequent event should handle this if needed
+ 		logger.Debug("gateway not found, skipping reconciliation", "ref", req)
++		r.paramsStatus.Remove(req)
+ 		return nil
+ 	}
+ 
+@@ -287,49 +293,31 @@ func (r *gatewayReconciler) Reconcile(req types.NamespacedName) (rErr error) {
+ 	// Only reconcile Gateways for our controller
+ 	if gwc.Spec.ControllerName != gwv1.GatewayController(r.controllerName) {
+ 		// Not our GatewayClass at all
++		r.paramsStatus.Remove(req)
+ 		return nil
+ 	}
+ 	if wellknown.IsRetiredWaypointClass(gwc) {
+ 		logger.Debug("ignoring Gateway of a retired waypoint GatewayClass", "ref", req, "gwclass", gwc.Name)
++		r.paramsStatus.Remove(req)
+ 		return nil
+ 	}
+ 
+ 	logger.Info("reconciling Gateway", "ref", req)
+ 	ctx := r.ctx
+ 	objs, err := r.deployer.GetObjsToDeploy(ctx, gw)
+-	if err != nil {
+-		if errors.Is(err, internaldeployer.ErrNoValidPorts) {
+-			// status is reported from translator, so return normally
+-			return err
+-		}
++	// ErrNoValidPorts is only returned once the GatewayParameters resolve, so the parameters
++	// are valid; the listener ports' own status is reported from the translator.
++	noValidPorts := errors.Is(err, internaldeployer.ErrNoValidPorts)
++	if err != nil && !noValidPorts {
+ 		// if we fail to either reference a valid GatewayParameters or
+ 		// the GatewayParameters configuration leads to issues building the
+ 		// objects, we want to set the status to InvalidParameters.
+-		condition := metav1.Condition{
+-			Type:               string(gwv1.GatewayConditionAccepted),
+-			Status:             metav1.ConditionFalse,
+-			ObservedGeneration: gw.Generation,
+-			Reason:             string(gwv1.GatewayReasonInvalidParameters),
+-			Message:            err.Error(),
+-		}
+-		if statusErr := r.updateGatewayStatusWithRetry(ctx, gw, condition); statusErr != nil {
+-			return fmt.Errorf("failed to update status for Gateway %s: %w", req, statusErr)
+-		}
++		r.paramsStatus.Set(req, gw.Generation, err)
++		return err
++	}
++	r.paramsStatus.Set(req, gw.Generation, nil)
++	if noValidPorts {
+ 		return err
+-	} else if existing := meta.FindStatusCondition(gw.Status.Conditions, string(gwv1.GatewayConditionAccepted)); existing != nil &&
+-		existing.Status == metav1.ConditionFalse &&
+-		existing.Reason == string(gwv1.GatewayReasonInvalidParameters) {
+-		// set the status Accepted=true if it had been set to false due to InvalidParameters
+-		condition := metav1.Condition{
+-			Type:               string(gwv1.GatewayConditionAccepted),
+-			Status:             metav1.ConditionTrue,
+-			ObservedGeneration: gw.Generation,
+-			Reason:             string(gwv1.GatewayReasonAccepted),
+-			Message:            reports.GatewayAcceptedMessage,
+-		}
+-		if statusErr := r.updateGatewayStatusWithRetry(ctx, gw, condition); statusErr != nil {
+-			return fmt.Errorf("failed to update status for Gateway %s: %w", req, statusErr)
+-		}
+ 	}
+ 	objs = r.deployer.SetNamespaceAndOwnerWithGVK(gw, wellknown.GatewayGVK, objs)
+ 	err = r.deployer.DeployObjsWithSource(ctx, objs, gw)
+@@ -492,21 +480,6 @@ func updateGatewayAddresses(
+ 	)
+ }
+ 
+-// updateGatewayStatusWithRetry attempts to update the Gateway status with retry logic
+-// to handle transient failures when updating the status subresource
+-func (r *gatewayReconciler) updateGatewayStatusWithRetry(ctx context.Context, gw *gwv1.Gateway, condition metav1.Condition) error {
+-	return updateGatewayStatusWithRetryFunc(
+-		ctx,
+-		r.gwClient,
+-		client.ObjectKeyFromObject(gw),
+-		func(latest *gwv1.Gateway) (gwv1.GatewayStatus, bool) {
+-			newStatus := latest.Status.DeepCopy()
+-			meta.SetStatusCondition(&newStatus.Conditions, condition)
+-			return *newStatus, true
+-		},
+-	)
+-}
+-
+ // setupTLSCertificateWatch
+```
+
+**File**: `pkg/kgateway/controller/start.go` (modified, +18/-9)
 ```diff
 @@ -5,6 +5,7 @@ import (
  	"errors"
- 	"time"
+ 	"maps"
+ 	"net/http"
++	"slices"
+ 	"strings"
+ 	"sync/atomic"
  
-+	"github.com/onsi/gomega/types"
- 	"go.uber.org/mock/gomock"
- 	"istio.io/istio/pkg/kube/krt"
- 	corev1 "k8s.io/api/core/v1"
-@@ -87,6 +88,9 @@ func tlsToIr(tlsRoute *gwv1a2.TLSRoute) *ir.TlsRouteIR {
- 		SourceObject: tlsRoute,
- 		ParentRefs:   tlsRoute.Spec.ParentRefs,
+@@ -34,6 +35,7 @@ import (
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/collections"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/krtutil"
++	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/namespaces"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/validator"
+@@ -103,10 +105,11 @@ type StartConfig struct {
+ // It is intended to be run in a goroutine as the function will block until the supplied
+ // context is cancelled
+ type ControllerBuilder struct {
+-	proxySyncer *proxy_syncer.ProxySyncer
+-	cfg         StartConfig
+-	mgr         ctrl.Manager
+-	commoncol   *collections.CommonCollections
++	proxySyncer  *proxy_syncer.ProxySyncer
++	cfg          StartConfig
++	mgr          ctrl.Manager
++	commoncol    *collections.CommonCollections
++	paramsStatus *reports.GatewayParametersStatus
+ 
+ 	ready atomic.Bool
+ }
+@@ -147,6 +150,10 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
+ 	// This only effects metrics in the resources subsystem and is not required for other metrics.
+ 	metrics.StartResourceSyncMetricsProcessing(ctx)
+ 
++	// The deployer reports its verdict on each Gateway's parameters through the status
++	// contribution pipeline, so only the status syncer writes the Gateway's Accepted condition.
++	paramsStatus := reports.NewGatewayParametersStatus(cfg.KrtOptions.ToOptions("GatewayParametersStatus")...)
++
+ 	// Create the proxy syncer for the Gateway API resources
+ 	setupLog.Info("initializing proxy syncer")
+ 	proxySyncer := proxy_syncer.NewProxySyncer(
+@@ -159,7 +166,7 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
+ 		cfg.SetupOpts.Cache,
+ 		cfg.Validator,
+ 		cfg.XDSClientState,
+-		cfg.StatusSyncerOptions...,
++		append(slices.Clone(cfg.StatusSyncerOptions), proxy_syncer.WithStatusContributions(paramsStatus.Contributions()))...,
+ 	)
+ 	proxySyncer.Init(ctx, cfg.KrtOptions)
+ 	if err := cfg.Manager.Add(proxySyncer); err != nil {
+@@ -189,10 +196,11 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
+ 
+ 	setupLog.Info("starting controller builder")
+ 	cb := &ControllerBuilder{
+-		proxySyncer: proxySyncer,
+-		cfg:         cfg,
+-		mgr:         cfg.Manager,
+-		commoncol:   cfg.CommonCollections,
++		proxySyncer:  proxySyncer,
++		cfg:          cfg,
++		mgr:          cfg.Manager,
++		commoncol:    cfg.CommonCollections,
++		paramsStatus: paramsStatus,
  	}
-+	for _, h := range tlsRoute.Spec.Hostnames {
-+		routeir.Hostnames = append(routeir.Hostnames, string(h))
+ 
+ 	// wait for the ControllerBuilder to Start
+@@ -270,6 +278,7 @@ func (c *ControllerBuilder) Build(ctx context.Context) error {
+ 		CommonCollections:        c.commoncol,
+ 		GatewayClassName:         c.cfg.GatewayClassName,
+ 		CertWatcher:              c.cfg.SetupOpts.CertWatcher,
++		GatewayParametersStatus:  c.paramsStatus,
+ 	}
+ 
+ 	setupLog.Info("creating base gateway controller")
+```
+
+**File**: `pkg/kgateway/proxy_syncer/option.go` (modified, +13/-0)
+```diff
+@@ -1,14 +1,17 @@
+ package proxy_syncer
+ 
+ import (
++	"istio.io/istio/pkg/kube/krt"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/statussync"
++	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
+ )
+ 
+ type statusSyncerConfig struct {
+ 	statusRegistrations   []StatusRegistration
+ 	policyTargetResolvers policyTargetResolvers
++	statusContributions   []krt.Collection[reports.StatusContribution]
+ }
+ 
+ // StatusSyncerOption configures the status pipeline. The same options are passed to both
+@@ -45,6 +48,16 @@ func WithStatusRegistration(registration StatusRegistration) StatusSyncerOption
+ 	}
+ }
+ 
++// WithStatusContributions adds status contributions produced outside translation, such as
++// the Gateway deployer's GatewayParametersStatus, to the ones the status syncer reduces.
++func WithStatusContributions(contributions krt.Collection[reports.StatusContribution]) StatusSyncerOption {
++	return func(cfg *statusSyncerConfig) {
++		if contributions != nil {
++			cfg.statusContributions = append(cfg.statusContributions, contributions)
++		}
 +	}
- 	if len(tlsRoute.Spec.Rules) == 0 {
- 		return routeir
++}
++
+ // WithPolicyTargetResolver checks policy targetRefs of kind gk with resolver, so a ref naming
+ // an object that does not exist is reported as TargetNotFound on the policy's StatusSummary
+ // ancestor. kgateway already resolves the Gateway API kinds, Service, Backend, and the alias
+```
+
+**File**: `pkg/kgateway/proxy_syncer/proxy_syncer.go` (modified, +5/-2)
+```diff
+@@ -74,6 +74,8 @@ type ProxySyncer struct {
+ 
+ 	// extraPolicyTargetResolvers are the resolvers registered with WithPolicyTargetResolver.
+ 	extraPolicyTargetResolvers policyTargetResolvers
++	// extraStatusContributions are the contributions registered with WithStatusContributions.
++	extraStatusContributions []krt.Collection[reports.StatusContribution]
+ 
+ 	waitForSync []cache.InformerSynced
+ 	ready       atomic.Bool
+@@ -231,6 +233,7 @@ func NewProxySyncer(
+ 		translator:                 translator.NewCombinedTranslator(ctx, mergedPlugins, commonCols, validator),
+ 		plugins:                    mergedPlugins,
+ 		extraPolicyTargetResolvers: optCfg.policyTargetResolvers,
++		extraStatusContributions:   optCfg.statusContributions,
  	}
-@@ -1131,6 +1135,161 @@ var _ = Describe("Translator TCPRoute Listener", func() {
- 			tcpListener := translatedListener.TcpFilterChain[0]
- 			Expect(tcpListener.FilterChainCommon.TLS).NotTo(BeNil())
- 			Expect(tcpListener.FilterChainCommon.TLS.AlpnProtocols).To(Equal([]string{string(annotations.AllowEmptyAlpnProtocols)}))
-+			Expect(tcpListener.FilterChainCommon.Matcher.SniDomains).To(Equal([]string{"example.com"}))
-+		})
-+
-+		Context("with several routes on the port", func() {
-+			var (
-+				parentRefs  []gwv1.ParentReference
-+				backendRefs []gwv1.BackendRef
-+			)
-+
-+			BeforeEach(func() {
-+				parentRefs = []gwv1.ParentReference{
-+					{
-+						Name:      gwv1.ObjectName("test-gateway"),
-+						Namespace: new(gwv1.Namespace("default")),
-+						Kind:      new(gwv1.Kind(wellknown.GatewayKind)),
-+					},
-+				}
-+				backendRefs = []gwv1.BackendRef{
-+					{
-+						BackendObjectReference: gwv1.BackendObjectReference{
-+							Name:      "backend-svc1",
-+							Namespace: new(gwv1.Namespace("default")),
-+							Port:      new(gwv1.PortNumber(3001)),
-+						},
-+					},
-+				}
-+
-+				certPEM, keyPEM, err := k8scert.GenerateSelfSignedCertKey("example.com", nil, nil)
-+				Expect(err).NotTo(HaveOccurred())
-+
-+				queries.EXPECT().
-+					GetSecretForRef(
-+						gomock.Any(),
-+						gomock.Any(),
-+						wellknown.GatewayGVK.GroupKind(),
-+						"default",
-+						gomock.Eq(tlsSecretRef),
-+					).
-+					Return(&ir.Secret{
-+						ObjectSource: ir.ObjectSource{
-+							Group:     "",
-+							Kind:      "Secret",
-+							Namespace: "default",
-+							Name:      string(tlsSecretRef.Name),
-+						},
-+						Data: map[string][]byte{
-+							corev1.TLSCertKey:       certPEM,
-+							corev1.TLSPrivateKeyKey: keyPEM,
-+						},
-+					}, nil).
-+					AnyTimes()
-+			})
-+
-+			It("should match only the hostname of the listener the TCPRoute is attached to", func() {
-+				By("Creating a second TLS listener on the same port with another hostname")
-+				otherListener := *gwListener.DeepCopy()
-+				otherListener.Name = "bar-tls-tcproute"
-+				otherListener.Hostname = new(gwv1.Hostname("other.example.com"))
-+
-+				route := tcpRoute("tcp-route")
-+				route.Spec = gwv1a2.TCPRouteSpec{
-+					CommonRouteSpec: gwv1.CommonRouteSpec{ParentRefs: parentRefs},
-+					Rules:           []gwv1a2.TCPRouteRule{{BackendRefs: backendRefs}},
-+				}
-+				otherRoute := tcpRoute("other-tcp-route")
-+				otherRoute.Spec = *route.Spec.DeepCopy()
-+
-+				ml.AppendTlsListener(lisToIr(gwListener), []*query.RouteInfo{{Object: tcpToIr(route)}}, listenerReporter)
-+				ml.AppendTlsListener(lisToIr(otherListener), []*query.RouteInfo{{Object: tcpToIr(otherRoute)}}, statusReporter.Gateway(gateway).Listener(&otherListener))
-+				Expect(ml.Listeners).To(HaveLen(1))
-+
-+				By("Validating that each TCPRoute's filter chain matches its own listener's hostname")
-+				translatedListener := ml.Listeners[0].TranslateListener(krt.TestingDummyContext{}, ctx, queries, statusReporter)
-+				haveChain := func(name, sni string) types.GomegaMatcher {
-+					return SatisfyAll(
-+						WithTransform(func(c ir.TcpIR) string { return c.FilterChainName }, ContainSubstring(name)),
-+						WithTransform(func(c ir.TcpIR) []string { return c.Matcher.SniDomains }, Equal([]string{sni})),
-+					)
-+				}
-+				Expect(translatedListener.TcpFilterChain).To(ConsistOf(
-+					haveChain("default.tcp-route", "example.com"),
-+					haveChain("default.other-tcp-route", "other.example.com"),
-+				))
-+			})
-+
-+			It("should accept the oldest route and reject conflicting routes with the same SNI domains", func() {
-+				By("Creating routes that all resolve to the listener's hostname, with different CreationTimestamps")
-+				olderRoute := tcpRoute("older-tcp-route")
-+				olderRoute.CreationTimestamp = metav1.NewTime(time.Now().Add(-time.Hour))
-+				olderRoute.Spec = gwv1a2.TCPRouteSpec{
-+					CommonRouteSpec: gwv1.CommonRouteSpec{ParentRefs: parentRefs},
-+					Rules:           []gwv1a2.TCPRouteRule{{BackendRefs: backendRefs}},
-+				}
-+
-+				newerRoute := tcpRoute("newer-tcp-route")
-+				newerRoute.CreationTimestamp = metav1.Now()
-+				newerRoute.Spec = *olderRoute.Spec.DeepCopy()
-+
-+				newerTLSRoute := tlsRoute("newer-tls-route")
-+				newerTLSRoute.CreationTimestamp = metav1.Now()
-+				newerTLSRoute.Spec = gwv1a2.TLSRouteSpec{
-+					CommonRouteSpec: gwv1.CommonRouteSpec{ParentRefs: parentRefs},
-+					Rules:           []gwv1a2.TLSRouteRule{{BackendRefs: backendRefs}},
-+				}
-+
-+				// newer first, to prove ordering is by timestamp not slice order.
+ }
+ 
+@@ -432,12 +435,12 @@ func (s *ProxySyncer) Init(ctx context.Context, krtopts krtutil.KrtOptions) {
+ 	// ancestors from Gateway translation, Backend translation, and targetRef
+ 	// resolution naturally reduce under the same policy key without a competing
+ 	// singleton writer.
+-	s.statusContributions = krt.JoinCollection([]krt.Collection[reports.StatusContribution]{
++	s.statusContributions = krt.JoinCollection(append([]krt.Collection[reports.StatusContribution]{
+ 		gatewayStatusContributions(translationOutputs, krtopts),
+ 		backendPolicyContributions,
+ 		backendContributions,
+ 		policyTargetContributions,
+-	}, krtopts.ToOptions("StatusContributions")...)
++	}, s.extraStatusContributions...), krtopts.ToOptions("StatusContributions")...)
+ 
+ 	s.waitForSync = []cache.InformerSynced{
+ 		s.commonCols.HasSynced,
 ```
 
 ---
 
-### Incident Patch 3: `58d0b2dd` (2026-11-19)
-**Commit Message**: Warn when lacking controller memory limits (#15047)
+### Incident Patch 2: `7e1298a7` (2026-11-23)
+**Commit Message**: fix(translator): accept TCP/TLS routes only on attached parentRefs (#15045)
 
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
-Co-authored-by: Ebel Thomas Seiko <[REDACTED_EMAIL]>
+Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `install/helm/kgateway/templates/NOTES.txt` (modified, +14/-0)
+**File**: `pkg/kgateway/translator/gateway/gateway_translator_test.go` (modified, +22/-0)
 ```diff
-@@ -17,3 +17,17 @@ To learn how to access and use kgateway, please visit the official documentation
- To uninstall the kgateway deployment:
+@@ -1438,6 +1438,17 @@ func TestBasic(t *testing.T) {
+ 		})
+ 	})
  
-   helm uninstall {{ .Release.Name }} --namespace {{ .Release.Namespace }}
-+{{- /* Mirror the controller resources fallback in deployment.yaml. A LimitRange can still supply a limit that the chart cannot see. */}}
-+{{- $controllerResources := ternary .Values.controller.resources .Values.resources (not (kindIs "invalid" .Values.controller.resources)) | default dict }}
-+{{- $goMemLimitPercent := int .Values.controller.goMemLimitPercent }}
-+{{- if and (ne $goMemLimitPercent 0) (not (get (get $controllerResources "limits" | default dict) "memory")) }}
++	t.Run("tcp route accepted only on the parentRefs attached to the listener", func(t *testing.T) {
++		test(t, translatorTestCase{
++			inputFiles: []string{"tcp-routing/unmatched-parentref.yaml"},
++			outputFile: "tcp-routing/unmatched-parentref.yaml",
++			gwNN: types.NamespacedName{
++				Namespace: "default",
++				Name:      "example-gateway",
++			},
++		})
++	})
 +
-+WARNING: controller.goMemLimitPercent is {{ $goMemLimitPercent }}, but these values set no memory limit
-+on the controller container. Unless a LimitRange supplies one, the percentage has
-+no container limit to apply to and GOMEMLIMIT normally remains unconstrained.
-+Set controller.resources.limits.memory.
-+{{- if and (kindIs "invalid" .Values.controller.resources) .Values.resources }}
-+controller.resources replaces the deprecated top-level resources as a whole, so move
-+its other settings there too.
-+{{- end }}
-+{{- end }}
+ 	t.Run("tcp gateway with basic routing", func(t *testing.T) {
+ 		test(t, translatorTestCase{
+ 			inputFiles: []string{"tcp-routing/basic.yaml"},
+@@ -1526,6 +1537,17 @@ func TestBasic(t *testing.T) {
+ 		})
+ 	})
+ 
++	t.Run("tls route accepted only on the parentRefs attached to the listener", func(t *testing.T) {
++		test(t, translatorTestCase{
++			inputFiles: []string{"tls-routing/unmatched-parentref.yaml"},
++			outputFile: "tls-routing/unmatched-parentref.yaml",
++			gwNN: types.NamespacedName{
++				Namespace: "default",
++				Name:      "example-gateway",
++			},
++		})
++	})
++
+ 	t.Run("tls gateway with basic routing", func(t *testing.T) {
+ 		test(t, translatorTestCase{
+ 			inputFiles: []string{"tls-routing/basic.yaml"},
 ```
 
-**File**: `install/helm/kgateway/values.yaml` (modified, +1/-1)
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/tcp-routing/unmatched-parentref.yaml` (added, +52/-0)
 ```diff
-@@ -84,7 +84,7 @@ controller:
-   securityContext: null
-   # -- Configure resource requests and limits for the controller container.
-   resources: null
--  # -- Keep Go-runtime-managed memory at this percentage of the controller container's live cgroup memory limit. Memory used by Envoy subprocesses during strict validation is not covered by GOMEMLIMIT, so that configuration may require additional headroom. The cgroup limit is refreshed every 30 seconds to follow in-place container resizes. Valid values are 1-100. A value of 0 preserves the startup-time resourceFieldRef behavior, which uses the container memory limit when set and otherwise uses node allocatable memory. With a nonzero value and no finite cgroup limit, GOMEMLIMIT remains unconstrained and a warning is logged. 90 is the recommended starting point. A lower value such as 80 may be appropriate when significant memory is allocated outside the Go runtime or when additional OOM headroom is needed.
-+  # -- Keep Go-runtime-managed memory at this percentage of the controller container's live cgroup memory limit. Memory used by Envoy subprocesses during strict validation is not covered by GOMEMLIMIT, so that configuration may require additional headroom. The cgroup limit is refreshed every 30 seconds to follow in-place container resizes. Valid values are 1-100. A value of 0 preserves the startup-time resourceFieldRef behavior, which uses the container memory limit when set and otherwise uses node allocatable memory. A nonzero value is meant for a container with a memory limit (`controller.resources.limits.memory`, or a LimitRange default). Without one, GOMEMLIMIT normally remains unconstrained and a warning is logged. On cgroup v1 the percentage is instead applied to the node's memory limit for all pods, with no warning. 90 is the recommended starting point. A lower value such as 80 may be appropriate when significant memory is allocated outside the Go runtime or when additional OOM headroom is needed.
-   goMemLimitPercent: 0
-   # -- Set node selector labels for controller pod scheduling.
-   nodeSelector: null
+@@ -0,0 +1,52 @@
++# The TCPRoute is attached to the tcp listener through two parentRefs (by
++# sectionName and by Gateway name); both are accepted. Its other parentRefs
++# must keep the status of their own attachment and must not be reported as
++# accepted by the tcp listener:
++# - sectionName "missing" does not exist on the Gateway (NoMatchingParent).
++# - sectionName "http" is an HTTP listener, which does not match a TCPRoute
++#   (NoMatchingParent).
++# - other-gateway is not translated here, so it gets no status entry.
++apiVersion: gateway.networking.k8s.io/v1
++kind: TCPRoute
++metadata:
++  name: example-tcp-route
++spec:
++  parentRefs:
++  - name: example-gateway
++    sectionName: tcp
++  - name: example-gateway
++  - name: example-gateway
++    sectionName: missing
++  - name: example-gateway
++    sectionName: http
++  - name: other-gateway
++  rules:
++  - backendRefs:
++    - name: example-tcp-svc
++      port: 8080
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: Gateway
++metadata:
++  name: example-gateway
++spec:
++  gatewayClassName: example-gateway-class
++  listeners:
++  - name: tcp
++    protocol: TCP
++    port: 8080
++  - name: http
++    protocol: HTTP
++    port: 8081
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: example-tcp-svc
++spec:
++  selector:
++    app: example
++  ports:
++    - protocol: TCP
++      port: 8080
++      targetPort: 80
 ```
 
-**File**: `pkg/goruntime/memory.go` (modified, +7/-1)
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/tls-routing/unmatched-parentref.yaml` (added, +57/-0)
 ```diff
-@@ -65,7 +65,13 @@ func configureMemoryLimit(ctx context.Context, provider memlimit.Provider, refre
- 		return nil
+@@ -0,0 +1,57 @@
++# The TLSRoute is attached to the tls listener through two parentRefs (by
++# sectionName and by Gateway name); both are accepted. Its other parentRefs
++# must keep the status of their own attachment and must not be reported as
++# accepted by the tls listener:
++# - sectionName "missing" does not exist on the Gateway (NoMatchingParent).
++# - sectionName "http" is an HTTP listener, which does not match a TLSRoute
++#   (NoMatchingParent).
++# - other-gateway is not translated here, so it gets no status entry.
++apiVersion: gateway.networking.k8s.io/v1
++kind: TLSRoute
++metadata:
++  name: example-tls-route
++spec:
++  parentRefs:
++  - name: example-gateway
++    sectionName: tls
++  - name: example-gateway
++  - name: example-gateway
++    sectionName: missing
++  - name: example-gateway
++    sectionName: http
++  - name: other-gateway
++  hostnames:
++  - "example.com"
++  rules:
++  - backendRefs:
++    - name: example-tls-svc
++      port: 443
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: Gateway
++metadata:
++  name: example-gateway
++spec:
++  gatewayClassName: example-gateway-class
++  listeners:
++  - name: tls
++    protocol: TLS
++    hostname: "example.com"
++    tls:
++      mode: Passthrough
++    port: 8443
++  - name: http
++    protocol: HTTP
++    port: 8081
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: example-tls-svc
++spec:
++  selector:
++    app: example
++  ports:
++    - protocol: TCP
++      port: 443
++      targetPort: 8443
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/tcp-routing/unmatched-parentref.yaml` (added, +218/-0)
+```diff
+@@ -0,0 +1,218 @@
++Clusters:
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_default_example-tcp-svc_8080
++  type: EDS
++Listeners:
++- address:
++    socketAddress:
++      address: '::'
++      ipv4Compat: true
++      portValue: 8080
++  filterChains:
++  - filters:
++    - name: envoy.filters.network.tcp_proxy
++      typedConfig:
++        '@type': type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
++        cluster: kube_default_example-tcp-svc_8080
++        statPrefix: tcp_8080_default_example-tcp-route
++    name: listener~8080-default.example-tcp-route-rule-0
++  name: listener~8080
++- address:
++    socketAddress:
++      address: '::'
++      ipv4Compat: true
++      portValue: 8081
++  filterChains:
++  - filters:
++    - name: envoy.filters.network.http_connection_manager
++      typedConfig:
++        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++        httpFilters:
++        - name: envoy.filters.http.router
++          typedConfig:
++            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++        mergeSlashes: true
++        normalizePath: true
++        rds:
++          configSource:
++            ads: {}
++            resourceApiVersion: V3
++          routeConfigName: listener~8081
++        statPrefix: http_8081
++        useRemoteAddress: true
++    name: listener~8081
++  name: listener~8081
++Routes:
++- ignorePortInHostMatching: true
++  name: listener~8081
++Statuses:
++  gateways:
++    default/example-gateway:
++      conditions:
++      - lastTransitionTime: null
++        message: Successfully accepted Gateway
++        reason: Accepted
++        status: "True"
++        type: Accepted
++      - lastTransitionTime: null
++        message: Successfully programmed Gateway
++        reason: Programmed
++        status: "True"
++        type: Programmed
++      - lastTransitionTime: null
++        message: Successfully resolved all Gateway references
++        reason: ResolvedRefs
++        status: "True"
++        type: ResolvedRefs
++      listeners:
++      - attachedRoutes: 2
++        conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Listener
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully verified that Listener has no conflicts
++          reason: NoConflicts
++          status: "False"
++          type: Conflicted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Listener
++          reason: Programmed
++          status: "True"
++          type: Programmed
++        name: tcp
++        supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: TCPRoute
++      - attachedRoutes: 0
++        conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Listener
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully verified that Listener has no conflicts
++          reason: NoConflicts
++          status: "False"
++          type: Conflicted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Listener
++          reason: Programmed
++          status: "True"
++          type: Programmed
++        name: http
++        supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: HTTPRoute
++        - group: gateway.networking.k8s.io
++          kind: GRPCRoute
++  tcpRoutes:
++    default/example-tcp-route:
++      parents:
++      - conditions:
++        - lastTransitionTime: null
++          message: ""
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Route
++          reason: Programmed
++          status: "True"
++          type: kgateway.dev/Programmed
++        controllerName: kgateway
++        parentRef:
++          group: ""
++          kind: ""
++          name: example-gateway
++      - conditions:
++        - lastTransitionTime: null
++          message: ""
++          reason: NoMatchingParent
++          status: "False"
++          type: Accepted
++        - lastTransitionTime: null
++          messag
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/tls-routing/unmatched-parentref.yaml` (added, +225/-0)
+```diff
+@@ -0,0 +1,225 @@
++Clusters:
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_default_example-tls-svc_443
++  type: EDS
++Listeners:
++- address:
++    socketAddress:
++      address: '::'
++      ipv4Compat: true
++      portValue: 8081
++  filterChains:
++  - filters:
++    - name: envoy.filters.network.http_connection_manager
++      typedConfig:
++        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++        httpFilters:
++        - name: envoy.filters.http.router
++          typedConfig:
++            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++        mergeSlashes: true
++        normalizePath: true
++        rds:
++          configSource:
++            ads: {}
++            resourceApiVersion: V3
++          routeConfigName: listener~8081
++        statPrefix: http_8081
++        useRemoteAddress: true
++    name: listener~8081
++  name: listener~8081
++- address:
++    socketAddress:
++      address: '::'
++      ipv4Compat: true
++      portValue: 8443
++  filterChains:
++  - filterChainMatch:
++      serverNames:
++      - example.com
++    filters:
++    - name: envoy.filters.network.tcp_proxy
++      typedConfig:
++        '@type': type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
++        cluster: kube_default_example-tls-svc_443
++        statPrefix: tls_8443_default_example-tls-route
++    name: listener~8443-default.example-tls-route-rule-0
++  listenerFilters:
++  - name: envoy.filters.listener.tls_inspector
++    typedConfig:
++      '@type': type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
++  name: listener~8443
++Routes:
++- ignorePortInHostMatching: true
++  name: listener~8081
++Statuses:
++  gateways:
++    default/example-gateway:
++      conditions:
++      - lastTransitionTime: null
++        message: Successfully accepted Gateway
++        reason: Accepted
++        status: "True"
++        type: Accepted
++      - lastTransitionTime: null
++        message: Successfully programmed Gateway
++        reason: Programmed
++        status: "True"
++        type: Programmed
++      - lastTransitionTime: null
++        message: Successfully resolved all Gateway references
++        reason: ResolvedRefs
++        status: "True"
++        type: ResolvedRefs
++      listeners:
++      - attachedRoutes: 2
++        conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Listener
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully verified that Listener has no conflicts
++          reason: NoConflicts
++          status: "False"
++          type: Conflicted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Listener
++          reason: Programmed
++          status: "True"
++          type: Programmed
++        name: tls
++        supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: TLSRoute
++      - attachedRoutes: 0
++        conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Listener
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully verified that Listener has no conflicts
++          reason: NoConflicts
++          status: "False"
++          type: Conflicted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Listener
++          reason: Programmed
++          status: "True"
++          type: Programmed
++        name: http
++        supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: HTTPRoute
++        - group: gateway.networking.k8s.io
++          kind: GRPCRoute
++  tlsRoutes:
++    default/example-tls-route:
++      parents:
++      - conditions:
++        - lastTransitionTime: null
++          message: ""
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Route
++          reason: Programmed
++          status: "True"
++          type: kgateway.dev/Programmed
++        controllerName: kgateway
++        parentRef:
++          group: ""
++          kind: ""
++      
+```
+
+**File**: `pkg/kgateway/translator/listener/gateway_listener_translator.go` (modified, +39/-16)
+```diff
+@@ -266,6 +266,13 @@ func (ml *MergedListeners) AppendTlsListener(
+ 	if len(routeInfos) == 0 {
+ 		appendFilterChain(nil, listenerSNIDomains(listener))
+ 	} else {
++		// The same route can be attached through more than one parentRef; group
++		// its entries, first entry first.
++		attachments := make(map[routeKey][]*query.RouteInfo, len(routeInfos))
++		for _, ri := range routeInfos {
++			key := keyOfRoute(ri)
++			attachments[key] = append(attachments[key], ri)
++		}
+ 		var conflicted []conflictedRoute
+ 		for i, owned := range resolveTLSRouteSNIDomains(listener, routeInfos) {
+ 			if len(owned.lost) > 0 {
+@@ -275,9 +282,10 @@ func (ml *MergedListeners) AppendTlsListener(
+ 					partial:   owned.ok,
+ 				})
+ 			}
+-			// A duplicate shares the filter chain of its first entry.
++			// A duplicate shares the filter chain of its first entry, so it is
++			// added to that chain's routes to have its parentRef reported.
+ 			if owned.ok && !owned.duplicate {
+-				appendFilterChain([]*query.RouteInfo{routeInfos[i]}, owned.sniDomains)
++				appendFilterChain(attachments[keyOfRoute(routeInfos[i])], owned.sniDomains)
+ 			}
+ 		}
+ 		// Every lost SNI domain has a winning route, so there is at least one
+@@ -634,7 +642,8 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
+ 	// by CreationTimestamp wins; any others are rejected with Accepted=False.
+ 	//
+ 	// Note: after #13694, AppendTlsListener creates one filter chain per
+-	// TLSRoute, so this path is only reached with len > 1 for TCPRoutes.
++	// TLSRoute, so for TLSRoutes len > 1 only means the same route is attached
++	// through more than one parentRef.
+ 	r := slices.MinFunc(parent.routesWithHosts, func(a, b *query.RouteInfo) int {
+ 		return a.Object.GetSourceObject().GetCreationTimestamp().Compare(b.Object.GetSourceObject().GetCreationTimestamp().Time)
+ 	})
+@@ -674,13 +683,7 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
+ 			return nil
+ 		}
+ 
+-		// Collect ParentRefReporters for the TCPRoute
+-		parentRefReporters := make([]reports.ParentRefReporter, 0, len(tRoute.ParentRefs))
+-		for _, parentRef := range tRoute.ParentRefs {
+-			parentRefReporter := reporter.Route(tRoute.SourceObject).ParentRef(&parentRef)
+-			parentRefReporter.SetCondition(condition)
+-			parentRefReporters = append(parentRefReporters, parentRefReporter)
+-		}
++		parentRefReporters := acceptAttachedParentRefs(r, parent.routesWithHosts, condition, reporter)
+ 
+ 		// Ensure unique names by appending the rule index to the TCPRoute name
+ 		tcpHostName := fmt.Sprintf("%s-%s.%s-rule-%d", parentName, tRoute.Namespace, tRoute.Name, 0)
+@@ -755,12 +758,7 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
+ 			return nil
+ 		}
+ 
+-		parentRefReporters := make([]reports.ParentRefReporter, 0, len(tRoute.ParentRefs))
+-		for _, parentRef := range tRoute.ParentRefs {
+-			parentRefReporter := reporter.Route(tRoute.SourceObject).ParentRef(&parentRef)
+-			parentRefReporter.SetCondition(condition)
+-			parentRefReporters = append(parentRefReporters, parentRefReporter)
+-		}
++		parentRefReporters := acceptAttachedParentRefs(r, parent.routesWithHosts, condition, reporter)
+ 
+ 		// Ensure unique names by appending the rule index to the TLSRoute name
+ 		tcpHostName := fmt.Sprintf("%s-%s.%s-rule-%d", parentName, tRoute.Namespace, tRoute.Name, 0)
+@@ -818,6 +816,31 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
  	}
- 	if limit == math.MaxInt64 {
--		logger.Warn("container has no finite memory limit; AUTOMEMLIMIT will not constrain the Go runtime until a limit is available")
-+		// On cgroup v2 a private cgroup namespace hides the pod and node-level
-+		// ancestors, so a container without its own limit reads as unlimited.
-+		logger.Warn(
-+			"container has no finite memory limit, so AUTOMEMLIMIT leaves GOMEMLIMIT unconstrained until one is available; "+
-+				"set a container memory limit for it to take effect",
-+			"automemlimit", autoMemoryLimit,
-+		)
- 	}
- 	return nil
  }
+ 
++// acceptAttachedParentRefs sets the condition on each parentRef through which
++// the winning route is attached to this listener, and returns their reporters.
++// The route can reach the listener through more than one parentRef. Its other
++// parentRefs (another listener, another Gateway, or no matching parent) carry
++// the status of their own attachment and must not be touched here.
++func acceptAttachedParentRefs(
++	winner *query.RouteInfo,
++	routesWithHosts []*query.RouteInfo,
++	condition reports.RouteCondition,
++	reporter reports.Reporter,
++) []reports.ParentRefReporter {
++	winnerKey := keyOfRoute(winner)
++	routeReporter := reporter.Route(winner.Object.GetSourceObject())
++	var parentRefReporters []reports.ParentRefReporter
++	for _, ri := range routesWithHosts {
++		if keyOfRoute(ri) != winnerKey {
++			continue
++		}
++		parentRefReporter := routeReporter.ParentRef(&ri.ParentRef)
++		parentRefReporter.SetCondition(condition)
++		parentRefReporters = append(parentRefReporters, parentRefReporter)
++	}
++	return parentRefReporters
++}
++
+ // rejectConflictingRoute sets Programmed=False on the specific listener
+ // attachment of a route that lost to another route attached to the same
+ // listener.
 ```
 
-**File**: `pkg/goruntime/memory_test.go` (modified, +31/-0)
+---
+
+### Incident Patch 3: `a3b7117a` (2026-11-23)
+**Commit Message**: fix(metrics): keep kgateway metrics when builtin default metrics are enabled (#14862)
+
+Signed-off-by: omar <[REDACTED_EMAIL]>
+
+**File**: `pkg/metrics/metrics.go` (modified, +46/-4)
 ```diff
-@@ -1,8 +1,10 @@
- package goruntime
+@@ -3,11 +3,13 @@ package metrics
  
  import (
-+	"bytes"
- 	"context"
- 	"errors"
-+	"log/slog"
- 	"math"
- 	"os"
- 	"runtime/debug"
-@@ -140,12 +142,30 @@ func TestConfigureMemoryLimitWithoutContainerLimit(t *testing.T) {
- 	t.Setenv(AutoMemoryLimitEnv, "0.9")
- 	restoreMemoryLimit(t)
+ 	"reflect"
++	"slices"
+ 	"sync"
+ 	"sync/atomic"
  
-+	logs := captureLogs(t)
-+
- 	err := configureMemoryLimit(context.Background(), func() (uint64, error) {
- 		return 0, memlimit.ErrNoLimit
- 	}, 0)
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	"github.com/prometheus/client_golang/prometheus/collectors"
++	dto "github.com/prometheus/client_model/go"
+ 	"istio.io/istio/pkg/kube/krt"
+ 	"sigs.k8s.io/controller-runtime/pkg/metrics"
+ )
+@@ -22,6 +24,10 @@ var (
+ 	registry     RegistererGatherer = prometheus.NewRegistry()
+ 	registryLock                    = sync.RWMutex{}
  
- 	require.NoError(t, err)
- 	require.Equal(t, int64(math.MaxInt64), debug.SetMemoryLimit(-1))
-+	require.Contains(t, logs.String(), "level=WARN", "missing limit should warn")
-+	require.Contains(t, logs.String(), "set a container memory limit", "warning should say how to fix it")
-+	require.Contains(t, logs.String(), "automemlimit=0.9")
-+}
++	// ctrlRegistry is controller-runtime's registry, which its packages
++	// register their metrics into at init.
++	ctrlRegistry = metrics.Registry
 +
-+func TestConfigureMemoryLimitWithContainerLimitDoesNotWarn(t *testing.T) {
-+	unsetEnv(t, "GOMEMLIMIT")
-+	t.Setenv(AutoMemoryLimitEnv, "0.9")
-+	restoreMemoryLimit(t)
-+	logs := captureLogs(t)
-+
-+	err := configureMemoryLimit(context.Background(), memlimit.Limit(1_000), 0)
-+
-+	require.NoError(t, err)
-+	require.Equal(t, int64(900), debug.SetMemoryLimit(-1))
-+	require.NotContains(t, logs.String(), "level=WARN", "a finite container limit should not warn")
- }
+ 	// DefaultBuckets defines the default buckets used for histograms.
+ 	DefaultBuckets = prometheus.DefBuckets
+ )
+@@ -379,17 +385,53 @@ func SetRegistry(useBuiltinRegistry bool, r RegistererGatherer) {
+ 	registryLock.Lock()
+ 	defer registryLock.Unlock()
  
- func TestConfigureMemoryLimitRecoversFromInitialProviderError(t *testing.T) {
-@@ -173,6 +193,17 @@ func TestConfigureMemoryLimitRecoversFromInitialProviderError(t *testing.T) {
- 	}, time.Second, time.Millisecond)
- }
- 
-+// captureLogs redirects the package logger to the returned buffer for the
-+// duration of the test.
-+func captureLogs(t *testing.T) *bytes.Buffer {
-+	t.Helper()
-+	var logs bytes.Buffer
-+	previous := logger
-+	logger = slog.New(slog.NewTextHandler(&logs, nil))
-+	t.Cleanup(func() { logger = previous })
-+	return &logs
-+}
++	if !isNil(r) {
++		registry = r
++	}
 +
- func restoreMemoryLimit(t *testing.T) {
- 	t.Helper()
- 	previous := debug.SetMemoryLimit(-1)
-```
-
-**File**: `test/helm/helm_version_test.go` (modified, +104/-0)
-```diff
-@@ -12,6 +12,10 @@ import (
+ 	if !useBuiltinRegistry {
+ 		metrics.Registry = registry
++		return
+ 	}
  
- 	"github.com/google/go-cmp/cmp"
- 	"github.com/stretchr/testify/require"
-+	"helm.sh/helm/v3/pkg/action"
-+	"helm.sh/helm/v3/pkg/chart/loader"
-+	"helm.sh/helm/v3/pkg/storage"
-+	"helm.sh/helm/v3/pkg/storage/driver"
- 	appsv1 "k8s.io/api/apps/v1"
- 	corev1 "k8s.io/api/core/v1"
- 	"sigs.k8s.io/yaml"
-@@ -562,6 +566,106 @@ func TestControllerGoMemLimitPercent(t *testing.T) {
+-	if isNil(r) {
+-		registry = metrics.Registry
+-	} else {
+-		registry = r
++	// Keep controller-runtime's registry for its own registrations, and serve
++	// its metrics alongside ours, which are already registered in registry.
++	metrics.Registry = &builtinRegistry{
++		RegistererGatherer: ctrlRegistry,
++		kgateway:           registry,
  	}
  }
  
-+func TestControllerGoMemLimitPercentNotes(t *testing.T) {
-+	const (
-+		warning  = "WARNING: controller.goMemLimitPercent is 90"
-+		moveHint = "controller.resources replaces the deprecated top-level resources"
-+	)
++// builtinRegistry registers into controller-runtime's registry and gathers
++// from both controller-runtime's registry and the kgateway registry.
++type builtinRegistry struct {
++	metrics.RegistererGatherer
++	kgateway prometheus.Gatherer
++}
 +
-+	for _, test := range []struct {
-+		name         string
-+		valuesYAML   string
-+		wantWarning  bool
-+		wantMoveHint bool
-+	}{
-+		{
-+			name: "stays quiet by default",
-+		},
-+		{
-+			name: "stays quiet without a percentage",
-+			valuesYAML: `controller:
-+  goMemLimitPercent: null
-+`,
-+		},
-+		{
-+			name: "warns without a memory limit",
-+			valuesYAML: `controller:
-+  goMemLimitPercent: 90
-+`,
-+			wantWarning: true,
-+		},
-+		{
-+			name: "warns when only other limits are set",
-+			valuesYAML: `controller:
-+  goMemLimitPercent: 90
-+  resources:
-+    limits:
-+      cpu: "1"
-+    requests:
-+      memory: 1Gi
-+`,
-+			wantWarning: true,
-+		},
-+		{
-+			name: "stays quiet with a controller memory limit",
-+			valuesYAML: `controller:
-+  goMemLimitPercent: 90
-+  resources:
-+    limits:
-+      memory: 1Gi
-+`,
-+		},
-+		{
-+			name: "stays quiet with a deprecated top-level memory limit",
-+			valuesYAML: `resources:
-+  limits:
-+    memory: 1Gi
-+controller:
-+  goMemLimitPercent: 90
-+`,
-+		},
-+		{
-+			name: "says controller.resources replaces deprecated top-level resources",
-+			valuesYAML: `resources:
-+  requests:
-+    memory: 128Mi
-+controller:
-+  goMemLimitPercent: 90
-+`,
-+			wantWarning:  true,
-+			wantMoveHint: true,
-+		},
++// Gather skips kgateway metric families that controller-runtime already
++// gathers, such as the go and process collectors that both register.
++func (b *builtinRegistry) Gather() ([]*dto.MetricFamily, error) {
++	ctrlFamilies, ctrlErr := b.RegistererGatherer.Gather()
++	ctrlNames := make(map[string]struct{}, len(ctrlFamilies))
++	for _, f := range ctrlFamilies {
++		ctrlNames[f.GetName()] = struct{}{}
++	}
++
++	return prometheus.Gatherers{
++		prometheus.GathererFunc(func() ([]*dto.MetricFamily, error) {
++			return ctrlFamilies, ctrlErr
++		}),
++		prometheus.GathererFunc(func() ([]*dto.MetricFamily, error) {
++			families, err := b.kgateway.Gather()
++			return slices.DeleteFunc(families, func(f *dto.MetricFamily) bool {
++				_, ok := ctrlNames[f.GetName()]
++				return ok
++			}), err
++		}),
++	}.Gather()
++}
++
+ // isNil checks if the provided interface contains nil or a nil value.
+ func isNil(arg any) bool {
+ 	if v := reflect.ValueOf(arg); !v.IsValid() || ((v.Kind() == reflect.Pointer ||
+```
+
+**File**: `pkg/metrics/registry_internal_test.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++package metrics
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/prometheus/client_golang/prometheus"
++	"github.com/prometheus/client_golang/prometheus/collectors"
++	"github.com/prometheus/client_golang/prometheus/promhttp"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	clientmetrics "k8s.io/client-go/tools/metrics"
++	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
++
++	// Registers controller-runtime's controller metrics, including its own go
++	// and process collectors, as kgateway's manager does.
++	_ "sigs.k8s.io/controller-runtime/pkg/controller"
++)
++
++func TestSetRegistryBuiltinKeepsInitRegisteredMetrics(t *testing.T) {
++	oldRegistry, oldCtrlRegistry := registry, ctrlmetrics.Registry
++	t.Cleanup(func() {
++		registry, ctrlmetrics.Registry = oldRegistry, oldCtrlRegistry
++	})
++
++	// Recreate the package init state, since other tests replace registry.
++	local := prometheus.NewRegistry()
++	local.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
++	local.MustRegister(collectors.NewGoCollector())
++	registry = local
++	g := NewGauge(GaugeOpts{Name: "registry_test_info", Help: "test"}, []string{"label"})
++	g.Set(1, Label{Name: "label", Value: "value"})
++
++	// controller-runtime registers rest_client_requests_total at init.
++	clientmetrics.RequestResult.Increment(context.Background(), "200", "GET", "example.com")
++
++	SetRegistry(true, nil)
++
++	assert.Same(t, local, Registry(), "kgateway metrics should keep using the local registry")
++
++	// Serve the registry the way controller-runtime's metrics server does.
++	srv := httptest.NewServer(promhttp.HandlerFor(ctrlmetrics.Registry, promhttp.HandlerOpts{
++		ErrorHandling: promhttp.HTTPErrorOnError,
++	}))
++	defer srv.Close()
++	resp, err := http.Get(srv.URL)
++	require.NoError(t, err)
++	defer resp.Body.Close()
++	body, err := io.ReadAll(resp.Body)
++	require.NoError(t, err)
++	require.Equal(t, http.StatusOK, resp.StatusCode, "metrics endpoint should not fail: %s", body)
++
++	for _, name := range []string{
++		"kgateway_registry_test_info",
++		"rest_client_requests_total",
++		"go_goroutines",
++		"process_cpu_seconds_total",
 +	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			notes := renderHelmNotes(t, "kgateway", test.valuesYAML)
-+			require.Equal(t, test.wantWarning, strings.Contains(notes, warning), "missing memory limit warning in notes:\n%s", notes)
-+			require.Equal(t, test.wantMoveHint, strings.Contains(notes, moveHint), "deprecated resources hint in notes:\n%s", notes)
-+		})
++		assert.Contains(t, string(body), "\n# TYPE "+name+" ", "%s should be served", name)
 +	}
 +}
-+
-+// renderHelmNotes renders the chart's NOTES.txt. The helm CLI prints notes only
-+// for an install, which needs a reachable cluster even as a dry run, so this
-+// goes through the Helm library in client-only mode instead.
-+func renderHelmNotes(t *testing.T, chartName string, valuesYAML string) string {
-+	t.Helper()
-+
-+	chart, err := loader.Load(filepath.Join("..", "..", "install", "helm", chartName))
-+	require.NoError(t, err, "failed to load helm chart")
-+
-+	values := map[string]any{}
-+	require.NoError(t, yaml.Unmarshal([]byte(valuesYAML), &values), "failed to parse values")
-+
-+	install := action.NewInstall(&action.Configuration{Releases: storage.Init(driver.NewMemory())})
-+	install.ReleaseName = "test-release"
-+	install.Namespace = "default"
-+	install.DryRun = true
-+	install.ClientOnly = true
-+	release, err := install.Run(chart, values)
-+	require.NoError(t, err, "failed to render helm chart")
-+	return release.Info.Notes
-+}
-+
- func TestControllerXdsScoping(t *testing.T) {
- 	xdsScopingEnv := []string{
- 		"KGW_XDS_SCOPING_MODE",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1833,7 +2438,7 @@ Co-authored-by: Ebel Thomas Seiko <[REDACTED_EMAIL]>
 - **PR #15051** (2026-11-19): fix(trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent (@puertomontt)
 - **PR #15050** (2026-11-19): fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector (@puertomontt)
 - **PR #15047** (2026-11-19): Warn when lacking controller memory limits (@chandler-solo)
-- **PR #15042** (2026-11-13): test(e2e): check ConsistentlyObjectsNotExist objects in one window (@puertomontt)
+- **PR #15045** (2026-11-23): fix(translator): accept TCP/TLS routes only on attached parentRefs (@puertomontt)
 
 ---
 
@@ -1853,46 +2458,44 @@ Co-authored-by: Ebel Thomas Seiko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent
+## X. status): make the status syncer the only writer of Gateway Accepted
 
 **RULE**:
-When implementing operations in `pkg/kgateway/extensions2/plugins/trafficpolicy/extauth_policy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/deployer/deployer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a71677f`: trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a44dc2c`: status): make the status syncer the only writer of Gateway Accepted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/extensions2/plugins/trafficpolicy/extauth_policy.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/deployer/deployer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// mergeOrigins holds the IDs of the policies this config came from. It is only set
-	// on copies made while merging, so that a field's merge origins can be rebuilt from
-	// the configs that survive a merge; nil means the config has not been merged yet.
-	// It is merge bookkeeping, not policy config.
-	// +noKrtEquals
-	mergeOrigins sets.Set[string]
-
-func (c *perProviderExtAuthConfig) getMergeOrigins() sets.Set[string] {
-	return c.mergeOrigins
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+// objectGVK returns obj's GVK from the scheme, falling back to its TypeMeta for a type the
+// scheme does not know. TypeMeta alone is empty on some informer paths, and the GVK ends up in
+// errors reported in status, which must not change from one attempt to the next.
+func (d *Deployer) objectGVK(obj client.Object) schema.GroupVersionKind {
+	if d.scheme != nil {
+		if gvk, err := apiutil.GVKForObject(obj, d.scheme); err == nil {
+			return gvk
+		}
+	}
+	return obj.GetObjectKind().GroupVersionKind()
 }
 
-func (c *perProviderExtAuthConfig) withMergeOrigins(origins sets.Set[string]) *perProviderExtAuthConfig {
-	cp := *c
-	cp.mergeOrigins = origins
-	return &cp
-}
+		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", d.objectGVK(obj).String(), obj.GetNamespace(), obj.GetName(), err)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName(), err)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a71677f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a44dc2c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T15:09:18.874Z",
+  "timestamp": "2026-11-23T23:18:28.477Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T15:09:18.874Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:18:28.477Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 87%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zed-industries-zed-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `d31d1074`  
+> **Source Version**: `e224d55b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:09:06.339Z  
+> **Timestamp**: 2026-11-23T23:18:11.453Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:09:06.332Z  
+> **Harvest Timestamp**: 2026-11-23T23:18:11.447Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95511 stars
+- **Stars / Engagement**: 95577 stars
 
 ---
 
@@ -2362,1650 +2362,852 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4fe0be1` (2026-11-22)
-**Commit Message**: gpui: Composite native views into the scene on macOS (#67311)
+### Incident Patch 1: `78edf1df` (2026-11-23)
+**Commit Message**: agent_ui: Search threads by their displayed title (#67317)
 
 ## Summary
 
-Adds `NativeView` to GPUI: an element that places a platform view (an
-`NSView` on macOS) in a window and composites it with the rest of the
-scene, so that GPUI content can be drawn both under and over it. Delta
-uses this to show a `WKWebView` in a pane tab with GPUI dialogs and
-toolbars drawn over the page.
+Thread history search matches `ThreadMetadata::title`, but rows show
+`display_title()`, which prefers the user-set title. Renamed threads
+don't match their displayed title and still match their old one. Search
+and the project picker prompt now use `display_title()`.
 
-What it covers on macOS:
+Closes #61761
 
-- **Compositing.** The native view sits behind the window's Metal layer,
-and the renderer cuts a hole in the scene where the view shows, so GPUI
-elements painted after it appear above it. The window's layer is
-non-opaque only while a scene shows a native view.
-- **Keyboard input.** Keys go to a focused native view first. An
-embedder can reserve actions that must keep working whatever the view
-does with keys, including the first key of a multi-key binding. AppKit
-controls beside a native view keep their own input.
-- **Pointer.** GPUI elements over a native view block clicks to it, and
-the native view chooses the cursor while the pointer is over an
-unobscured part of it.
-- **Accessibility.** VoiceOver can reach a native view that is shown.
+## Testing
 
-Other platforms get the element and a no
+- To reproduce, rename a thread that isn't open, then search for the new
+title. Renaming an open Zed Agent thread also updates `title`, so it
+doesn't show the bug.
+- `test_filter_matches_displayed_title` fails without this change.
+- `cargo test -p agent_ui --lib` and `./script/clippy -p agent_ui` pass.
 
-**File**: `crates/gpui/Cargo.toml` (modified, +11/-0)
-```diff
-@@ -192,6 +192,9 @@ http_client = { workspace = true, features = ["test-support"] }
- proptest.workspace = true
- reqwest_client = { workspace = true, features = ["test-support"] }
- 
-+[target.'cfg(target_os = "macos")'.dev-dependencies]
-+objc2.workspace = true
-+
- [target.'cfg(target_family = "wasm")'.dev-dependencies]
- gpui_web.workspace = true
- wasm-bindgen.workspace = true
-@@ -208,6 +211,14 @@ ignored = [
- ]
- ignored-paths = ["src/_ownership_and_data_flow.rs", "benches/focus_cleanup.rs"]
- 
-+[[example]]
-+name = "native_view"
-+path = "examples/native_view.rs"
-+
-+[[example]]
-+name = "native_view_appkit_field"
-+path = "examples/native_view_appkit_field.rs"
-+
- [[example]]
- name = "hello_world"
- path = "examples/hello_world.rs"
-```
+## Self-review
 
-**File**: `crates/gpui/examples/native_view.rs` (added, +571/-0)
-```diff
-@@ -0,0 +1,571 @@
-+//! Shows a live `WKWebView` composited into a GPUI window on macOS.
-+//!
-+//! Things to try:
-+//! - Press `cmd-shift-p` while typing in the page. The palette opens across the page's
-+//!   edge, takes keyboard input, and `escape` returns the caret to the same page field.
-+//! - Click the palette's button where it overlaps the page, then scroll the exposed page.
-+//! - Click the page while the palette is open, which dismisses the palette.
-+//! - Click the GPUI text box, type, then click back into the page.
-+//! - Click an empty part of the page and press some keys. The page sees every key first,
-+//!   and the sidebar lists the ones it left for GPUI. It keeps `cmd-k` for itself, while
-+//!   `cmd-shift-p` is reserved, so it opens the palette whatever the page does.
-+//! - Drag the divider, then load the other page or toggle the page's colors, and drag it
-+//!   again. The strip that shows for a frame where the page is catching up takes the
-+//!   page's own background color.
-+
-+#[cfg(target_os = "macos")]
-+#[path = "example_support/fonts.rs"]
-+mod example_support;
-+
-+#[cfg(target_os = "macos")]
-+mod example {
-+    use futures::{StreamExt as _, channel::mpsc};
-+    use gpui::{
-+        App, Context, FocusHandle, KeyBinding, KeyDownEvent, MouseButton, MouseMoveEvent,
-+        NativeView, Pixels, Rgba, Task, Window, WindowOptions, actions, anchored, deferred, div,
-+        point, prelude::*, px, rgb,
-+    };
-+    use objc2::{
-+        class, msg_send,
-+        rc::{Allocated, Retained},
-+        runtime::{AnyClass, AnyObject, ClassBuilder, Sel},
-+        sel,
-+    };
-+    use std::{
-+        ffi::{CStr, c_char, c_void},
-+        ptr::{self, NonNull},
-+        sync::OnceLock,
-+    };
-+
-+    #[link(name = "WebKit", kind = "framework")]
-+    unsafe extern "C" {}
-+
-+    actions!(native_view_example, [TogglePalette, DismissPalette]);
-+
-+    /// Runs in every page and reports its background color, so that GPUI can show
-+    /// that color wherever the web view is still catching up with its element.
-+    ///
-+    /// It reports again when the color changes, which a page does by restyling
-+    /// its root elements, changing its stylesheets, or following the system's
-+    /// appearance. Checks are limited to one per frame, and only run after one
-+    /// of those happens.
-+    const REPORT_BACKGROUND: &CStr = cr#"(function () {
-+  let reported = null;
-+  let scheduled = false;
-+  function report() {
-+    scheduled = false;
-+    const transparent = "rgba(0, 0, 0, 0)";
-+    let color = getComputedStyle(document.body).backgroundColor;
-+    if (color === transparent) {
-+      color = getComputedStyle(document.documentElement).backgroundColor;
-+    }
-+    if (color === transparent) {
-+      color = "rgb(255, 255, 255)";
-+    }
-+    if (color !== reported) {
-+      reported = color;
-+      window.webkit.messageHandlers.background.postMessage(color);
-+    }
-+  }
-+  function schedule() {
-+    if (!scheduled) {
-+      scheduled = true;
-+      requestAnimationFrame(report);
-+    }
-+  }
-+  report();
-+  window.addEventListener("load", schedule);
-+  const observer = new MutationObserver(schedule);
-+  observer.observe(document.documentElement, { attributes: true });
-+  observer.observe(document.body, { attributes: true });
-+  observer.observe(document.head, { attributes: true, childList: true, subtree: true });
-+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", schedule);
-+  for (const element of [document.documentElement, document.body]) {
-+    element.addEventListener("transitionend", schedule);
-+  }
-+})();"#;
-+
-+    const OTHER_PAGE: &CStr = cr#"<!doctype html>
-+<html>
-+  <body style="font: 15px -apple-system; margin: 24px; color: #eee; background: #204060">
-+    <h2>Another page</h2>
-+    <p><input placeholder="Type here" size="36" /></p>
-+  </body>
-+</html>"#;
-+
-+    const PAGE: &CStr = cr#"<!doctype html>
-+<html>
-+  <body style="font: 15px -apple-system; margin: 24px; color: #222; background: #fdf6e3">
-+    <h2>A live WKWebView</h2>
-+    <p>
-+      <input placeholder="Type here, then press cmd-shift-p" size="36" autofocus />
-+    </p>
-+    <p><textarea rows="3" cols="38">A textarea with some text to select.</textarea></p>
-+    <p contenteditable style="border: 1px solid #999; padding: 6px">An editable paragraph.</p>
-+    <p><a href="https://example.com">A link, for the pointing-hand cursor</a></p>
-+    <p id="kept">This page keeps cmd-k for itself.</p>
-+    <button onclick="this.textContent = 'Clicked ' + (++window.clicks || (window.clicks = 1))">
-+      A page button
-+    </button>
-+    <button onclick="document.body.style.background = window.dark ? '#fdf6e3' : '#30343a'; document.body.style.color = window.dark ? '#222' : '#ddd'; window.dark = !window.dark">
-+      Toggle the page's colors
-+    </button>
-+    <script>
-+      document.addEventListener("keydown", (event) => {
-+        if (event.metaKey && event.key === "k") {
-+          event.preventDefault();
-+          window.keptCou
-```
-
-**File**: `crates/gpui/examples/native_view_appkit_field.rs` (added, +226/-0)
-```diff
-@@ -0,0 +1,226 @@
-+//! Shows that an AppKit control outside GPUI keeps keyboard input beside a native view.
-+//!
-+//! The window holds a `WKWebView` and, in its top right corner, an `NSTextView`
-+//! that GPUI knows nothing about. Click that field and type: the text goes into
-+//! it, and the line at the top says which of the three has keyboard input.
-+//!
-+//! A second after it opens, the example also gives the field keyboard input
-+//! itself and prints whether the field still had it half a second later.
-+
-+#[cfg(target_os = "macos")]
-+#[path = "example_support/fonts.rs"]
-+mod example_support;
-+
-+#[cfg(target_os = "macos")]
-+mod example {
-+    use gpui::{
-+        App, Context, Focusable as _, NativeView, Task, Window, WindowOptions, div, prelude::*, px,
-+        rgb,
-+    };
-+    use objc2::{
-+        class, msg_send,
-+        rc::{Allocated, Retained},
-+        runtime::{AnyObject, Bool},
-+    };
-+    use objc2_core_foundation::{CGPoint, CGRect, CGSize};
-+    use std::{
-+        ffi::{CStr, c_void},
-+        ptr::{self, NonNull},
-+        time::Duration,
-+    };
-+
-+    #[link(name = "WebKit", kind = "framework")]
-+    unsafe extern "C" {}
-+
-+    const PAGE: &CStr = cr#"<!doctype html>
-+<html>
-+  <body style="font: 15px -apple-system; margin: 24px">
-+    <p><input placeholder="A field in the page" size="36" autofocus /></p>
-+  </body>
-+</html>"#;
-+
-+    #[derive(Clone, Copy, PartialEq)]
-+    enum KeyboardInput {
-+        AppKitField,
-+        Page,
-+        Gpui,
-+    }
-+
-+    struct Example {
-+        web_view: NativeView,
-+        web_view_object: Retained<AnyObject>,
-+        appkit_field: Retained<AnyObject>,
-+        keyboard_input: KeyboardInput,
-+        _watch: Task<()>,
-+    }
-+
-+    impl Example {
-+        fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
-+            // SAFETY: These are AppKit and WebKit classes used as documented, on
-+            // the main thread.
-+            let (web_view_object, appkit_field) = unsafe {
-+                let web_view: Allocated<AnyObject> = msg_send![class!(WKWebView), alloc];
-+                let web_view: Retained<AnyObject> = msg_send![web_view, init];
-+                let _: *mut AnyObject = msg_send![
-+                    &*web_view,
-+                    loadHTMLString: &*ns_string(PAGE),
-+                    baseURL: ptr::null::<AnyObject>()
-+                ];
-+                // A text view takes keyboard input itself, where a text field
-+                // would pass it to an editor that AppKit manages.
-+                let frame = CGRect::new(CGPoint::new(0., 0.), CGSize::new(220., 22.));
-+                let field: Allocated<AnyObject> = msg_send![class!(NSTextView), alloc];
-+                let field: Retained<AnyObject> = msg_send![field, initWithFrame: frame];
-+                let _: () = msg_send![&*field, setString: &*ns_string(c"An AppKit field")];
-+                (web_view, field)
-+            };
-+            // SAFETY: The pointer is the live web view, which is in no view hierarchy.
-+            let web_view = unsafe {
-+                NativeView::new(
-+                    NonNull::from(&*web_view_object).cast::<c_void>(),
-+                    window,
-+                    cx,
-+                )
-+            }
-+            .expect("this example only runs where native views are composited");
-+            // SAFETY: Attaching the web view put it in the GPUI window, whose
-+            // content view is live, on the main thread.
-+            unsafe {
-+                let ns_window: *mut AnyObject = msg_send![&*web_view_object, window];
-+                let content_view: *mut AnyObject = msg_send![ns_window, contentView];
-+                let bounds: CGRect = msg_send![content_view, bounds];
-+                let is_flipped: bool = msg_send![content_view, isFlipped];
-+                let size = CGSize::new(220., 22.);
-+                let top = if is_flipped {
-+                    8.
-+                } else {
-+                    bounds.size.height - size.height - 8.
-+                };
-+                let origin = CGPoint::new(bounds.size.width - size.width - 8., top);
-+                let _: () = msg_send![&*appkit_field, setFrame: CGRect::new(origin, size)];
-+                // Keeps the field in the corner as the window resizes:
-+                // `NSViewMinXMargin`, with `NSViewMaxYMargin` or `NSViewMinYMargin`.
-+                let mask: usize = if is_flipped { 1 | 32 } else { 1 | 8 };
-+                let _: () = msg_send![&*appkit_field, setAutoresizingMask: mask];
-+                let _: () = msg_send![content_view, addSubview: &*appkit_field];
-+            }
-+            window.focus(&web_view.focus_handle(cx), cx);
-+
-+            let watch = cx.spawn(async move |this, cx| {
-+                let mut elapsed = Duration::ZERO;
-+                let step = Duration::from_millis(250);
-+                loop {
-+                    cx.background_executor().timer(step).await;
-+                    elapsed += step;
-+           
-```
-
-**File**: `crates/gpui/src/elements/div.rs` (modified, +55/-9)
-```diff
-@@ -2114,10 +2114,6 @@ impl Element for Div {
-             (child_max - child_min).into()
-         };
- 
--        if let Some(scroll_handle) = self.interactivity.tracked_scroll_handle.as_ref() {
--            scroll_handle.scroll_to_active_item();
--        }
--
-         self.interactivity.prepaint(
-             global_id,
-             inspector_id,
-@@ -2543,14 +2539,22 @@ impl Interactivity {
- 
-         if let Some(scroll_offset) = self.scroll_offset.as_ref() {
-             let mut scroll_to_bottom = false;
--            let mut tracked_scroll_handle = self
-+            if let Some(scroll_handle) = self.tracked_scroll_handle.as_ref() {
-+                {
-+                    let mut scroll_handle_state = scroll_handle.0.borrow_mut();
-+                    scroll_handle_state.overflow = style.overflow;
-+                    // Scrolling to an item needs this frame's bounds and overflow.
-+                    // What the handle remembers is from the last frame, and is
-+                    // empty the first time the element is drawn.
-+                    scroll_handle_state.bounds = bounds;
-+                    scroll_to_bottom = mem::take(&mut scroll_handle_state.scroll_to_bottom);
-+                }
-+                scroll_handle.scroll_to_active_item();
-+            }
-+            let tracked_scroll_handle = self
-                 .tracked_scroll_handle
-                 .as_ref()
-                 .map(|handle| handle.0.borrow_mut());
--            if let Some(scroll_handle_state) = tracked_scroll_handle.as_deref_mut() {
--                scroll_handle_state.overflow = style.overflow;
--                scroll_to_bottom = mem::take(&mut scroll_handle_state.scroll_to_bottom);
--            }
- 
-             let rem_size = window.rem_size();
-             // Taffy lays the box out with the padding snapped to the device pixel
-@@ -5778,6 +5782,48 @@ mod tests {
-         assert_eq!(scroll_handle.max_offset().y, px(0.));
-     }
- 
-+    #[gpui::test]
-+    fn test_scrolls_to_an_item_requested_before_the_first_frame(cx: &mut TestAppContext) {
-+        struct Strip {
-+            scroll_handle: ScrollHandle,
-+        }
-+
-+        impl Render for Strip {
-+            fn render(
-+                &mut self,
-+                _window: &mut Window,
-+                _cx: &mut Context<Self>,
-+            ) -> impl IntoElement {
-+                div().size_full().child(
-+                    div()
-+                        .id("strip")
-+                        .flex()
-+                        .h(px(20.))
-+                        .w(px(100.))
-+                        .overflow_x_scroll()
-+                        .track_scroll(&self.scroll_handle)
-+                        .children((0..5).map(|_| div().flex_none().w(px(40.)).h_full())),
-+                )
-+            }
-+        }
-+
-+        // The handle has never been drawn, so it knows neither its element's
-+        // bounds nor that the element scrolls.
-+        let scroll_handle = ScrollHandle::new();
-+        scroll_handle.scroll_to_item(4);
-+        let window: AnyWindowHandle = cx
-+            .add_window({
-+                let scroll_handle = scroll_handle.clone();
-+                move |_, _| Strip { scroll_handle }
-+            })
-+            .into();
-+        cx.update_window(window, |_, window, cx| window.draw(cx).clear(cx))
-+            .unwrap();
-+
-+        // Five 40px items in a 100px strip: the last one ends at 200px.
-+        assert_eq!(scroll_handle.offset().x, px(-100.));
-+    }
-+
-     struct ContentSizedGrid;
- 
-     impl Render for ContentSizedGrid {
-```
-
-**File**: `crates/gpui/src/key_dispatch.rs` (modified, +1/-1)
-```diff
-@@ -445,7 +445,7 @@ impl DispatchTree {
-         }
-     }
- 
--    fn bindings_for_input(
-+    pub(crate) fn bindings_for_input(
-         &self,
-         input: &[Keystroke],
-         dispatch_path: &SmallVec<[DispatchNodeId; 32]>,
-```
-
-**File**: `crates/gpui/src/platform.rs` (modified, +46/-0)
-```diff
-@@ -1365,6 +1365,46 @@ pub trait PlatformWindow: HasWindowHandle + HasDisplayHandle {
-     fn on_should_close(&self, callback: Box<dyn FnMut() -> bool>);
-     fn on_hit_test_window_control(&self, callback: Box<dyn FnMut() -> Option<WindowControlArea>>);
-     fn on_close(&self, callback: Box<dyn FnOnce()>);
-+
-+    /// Adds a platform view beneath the window's rendered content, hidden
-+    /// until a drawn scene contains a [`PaintNativeView`](crate::PaintNativeView)
-+    /// for it. Dropping the returned value removes the view from the window.
-+    /// Returns `None` when the platform cannot composite native views.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `view` must point to a live view of the kind this platform embeds,
-+    /// which is not in another view hierarchy.
-+    unsafe fn attach_native_view(
-+        &self,
-+        _id: crate::NativeViewId,
-+        _view: std::ptr::NonNull<std::ffi::c_void>,
-+    ) -> Option<Box<dyn std::any::Any>> {
-+        None
-+    }
-+    /// Gives keyboard input to the native view, or back to the window's own
-+    /// content for `None`.
-+    fn set_focused_native_view(&self, _id: Option<crate::NativeViewId>) {}
-+    /// Registers the callback that decides whether a mouse event at a
-+    /// position belongs to a native view instead of the window's content.
-+    fn on_hit_test_native_view(
-+        &self,
-+        _callback: Box<dyn FnMut(Point<Pixels>) -> Option<crate::NativeViewId>>,
-+    ) {
-+    }
-+    /// Registers the callback invoked when the user moves keyboard input to
-+    /// a native view through the platform, such as by clicking in it.
-+    fn on_native_view_focused(&self, _callback: Box<dyn FnMut(crate::NativeViewId)>) {}
-+    /// Registers the callback offered each key press before the native view
-+    /// that has keyboard input, which returns whether it used the key.
-+    ///
-+    /// The native view receives the keys it doesn't use, and the ones the
-+    /// view doesn't use either arrive afterwards as ordinary input.
-+    fn on_key_down_before_native_view(
-+        &self,
-+        _callback: Box<dyn FnMut(crate::KeyDownEvent) -> bool>,
-+    ) {
-+    }
-     fn on_appearance_changed(&self, callback: Box<dyn FnMut()>);
-     fn on_button_layout_changed(&self, _callback: Box<dyn FnMut()>) {}
-     fn draw(&self, scene: &Scene);
-@@ -2211,6 +2251,12 @@ impl PlatformInputHandler {
-         self.handler.apple_press_and_hold_enabled()
-     }
- 
-+    /// Ends a composition from inside an update, where [`Self::unmark_text`]
-+    /// cannot borrow the app.
-+    pub(crate) fn unmark_text_during_update(&mut self, window: &mut Window, cx: &mut App) {
-+        self.handler.unmark_text(window, cx);
-+    }
-+
-     pub fn dispatch_input(&mut self, input: &str, window: &mut Window, cx: &mut App) {
-         self.handler.replace_text_in_range(None, input, window, cx);
-     }
-```
-
-**File**: `crates/gpui/src/platform/test/window.rs` (modified, +95/-5)
-```diff
-@@ -1,10 +1,10 @@
- use crate::{
-     AnyWindowHandle, Bounds, Decorations, DevicePixels, DispatchEventResult, DisplayId, GpuSpecs,
--    HeadlessAtlas, Pixels, Platform, PlatformAtlas, PlatformDisplay, PlatformHeadlessRenderer,
--    PlatformInput, PlatformInputHandler, PlatformWindow, Point, PromptButton, RequestFrameOptions,
--    Scene, Size, TestDisplay, TestPlatform, TextInputConfiguration, TextInputStateChange,
--    WindowAppearance, WindowBackgroundAppearance, WindowBounds, WindowControlArea, WindowInsets,
--    WindowParams, WindowVisibility,
-+    HeadlessAtlas, KeyDownEvent, NativeViewId, Pixels, Platform, PlatformAtlas, PlatformDisplay,
-+    PlatformHeadlessRenderer, PlatformInput, PlatformInputHandler, PlatformWindow, Point,
-+    PromptButton, RequestFrameOptions, Scene, Size, TestDisplay, TestPlatform,
-+    TextInputConfiguration, TextInputStateChange, WindowAppearance, WindowBackgroundAppearance,
-+    WindowBounds, WindowControlArea, WindowInsets, WindowParams, WindowVisibility,
- };
- use gpui_util::ResultExt as _;
- #[cfg(any(test, feature = "test-support"))]
-@@ -32,6 +32,11 @@ pub(crate) struct TestWindowState {
-     pub(crate) should_close_handler: Option<Box<dyn FnMut() -> bool>>,
-     close_callback: Option<Box<dyn FnOnce()>>,
-     hit_test_window_control_callback: Option<Box<dyn FnMut() -> Option<WindowControlArea>>>,
-+    attached_native_views: Rc<Cell<usize>>,
-+    focused_native_view: Option<NativeViewId>,
-+    hit_test_native_view_callback: Option<Box<dyn FnMut(Point<Pixels>) -> Option<NativeViewId>>>,
-+    native_view_focused_callback: Option<Box<dyn FnMut(NativeViewId)>>,
-+    key_down_before_native_view_callback: Option<Box<dyn FnMut(KeyDownEvent) -> bool>>,
-     input_callback: Option<Box<dyn FnMut(PlatformInput) -> DispatchEventResult>>,
-     active_status_change_callback: Option<Box<dyn FnMut(bool)>>,
-     visibility: WindowVisibility,
-@@ -123,6 +128,11 @@ impl TestWindow {
-             moved_callback: None,
-             display_changed_callback: None,
-             appearance_change_callback: None,
-+            attached_native_views: Rc::new(Cell::new(0)),
-+            focused_native_view: None,
-+            hit_test_native_view_callback: None,
-+            native_view_focused_callback: None,
-+            key_down_before_native_view_callback: None,
-             request_frame_callback: None,
-             frame_wake_count: Rc::new(Cell::new(0)),
-             frame_scheduled: false,
-@@ -258,6 +268,47 @@ impl TestWindow {
-         self.simulate_resize(size);
-     }
- 
-+    /// How many native views are attached to the window.
-+    pub fn attached_native_view_count(&self) -> usize {
-+        self.0.lock().attached_native_views.get()
-+    }
-+
-+    /// The native view the window last gave keyboard input to.
-+    pub fn focused_native_view(&self) -> Option<NativeViewId> {
-+        self.0.lock().focused_native_view
-+    }
-+
-+    /// Asks the window which native view a mouse event at `position` reaches.
-+    pub fn hit_test_native_view(&self, position: Point<Pixels>) -> Option<NativeViewId> {
-+        let mut callback = self.0.lock().hit_test_native_view_callback.take()?;
-+        let id = callback(position);
-+        self.0.lock().hit_test_native_view_callback = Some(callback);
-+        id
-+    }
-+
-+    /// Acts as if the user pressed a key while a native view had keyboard input,
-+    /// and returns whether the window used the key before the view saw it.
-+    pub fn simulate_key_down_before_native_view(&self, event: KeyDownEvent) -> bool {
-+        let Some(mut callback) = self.0.lock().key_down_before_native_view_callback.take() else {
-+            return false;
-+        };
-+        let handled = callback(event);
-+        self.0.lock().key_down_before_native_view_callback = Some(callback);
-+        handled
-+    }
-+
-+    /// Acts as if the user moved keyboard input to a native view through the platform.
-+    pub fn simulate_native_view_focused(&self, id: NativeViewId) {
-+        let mut lock = self.0.lock();
-+        lock.focused_native_view = Some(id);
-+        let Some(mut callback) = lock.native_view_focused_callback.take() else {
-+            return;
-+        };
-+        drop(lock);
-+        callback(id);
-+        self.0.lock().native_view_focused_callback = Some(callback);
-+    }
-+
-     pub(crate) fn simulate_active_status_change(&self, active: bool) {
-         let mut lock = self.0.lock();
-         let Some(mut callback) = lock.active_status_change_callback.take() else {
-@@ -577,6 +628,45 @@ impl PlatformWindow for TestWindow {
-         self.0.lock().hit_test_window_control_callback = Some(callback);
-     }
- 
-+    /// Counts the view as attached without ever reading `_view`, so tests may
-+    /// pass a dangling pointer.
-+    unsafe fn attach_native_view(
-+        &self,
-+        _id: NativeViewId,
-+        _view: std::ptr::NonNull<std::ffi::c_void>,
-+    ) -> Option<Box<dyn std::any::Any>> {
-+        struct Attachment(Rc<Cell<usize>>);
-+
-+        impl Drop for Attachment {
-+            
-```
-
-**File**: `crates/gpui/src/scene.rs` (modified, +155/-3)
-```diff
-@@ -5,8 +5,8 @@ use schemars::JsonSchema;
- use serde::{Deserialize, Serialize};
- 
- use crate::{
--    AtlasTextureId, AtlasTile, Background, Bounds, ContentMask, Corners, Edges, Hsla, Path,
--    PathTiles, Pixels, Point, Radians, ScaledPixels, Size, TimedTransformation,
-+    AtlasTextureId, AtlasTile, Background, Bounds, ContentMask, Corners, Edges, HitboxId, Hsla,
-+    NativeViewId, Path, PathTiles, Pixels, Point, Radians, ScaledPixels, Size, TimedTransformation,
-     bounds_tree::BoundsTree,
- };
- use smallvec::SmallVec;
-@@ -43,6 +43,9 @@ struct Layer {
-     bounds: Bounds<ScaledPixels>,
-     max_kind: PrimitiveKind,
-     max_shared_kind: PrimitiveKind,
-+    /// Whether a native view was painted in the layer, which then can't be
-+    /// drawn as one: what was painted after the view has to cover it.
-+    has_native_view: bool,
- }
- 
- #[derive(Default)]
-@@ -60,6 +63,7 @@ pub struct Scene {
-     pub subpixel_sprites: Vec<SubpixelSprite>,
-     pub polychrome_sprites: Vec<PolychromeSprite>,
-     pub surfaces: Vec<PaintSurface>,
-+    pub native_views: Vec<PaintNativeView>,
-     animations: Vec<SpriteAnimation>,
- }
- 
-@@ -78,6 +82,7 @@ impl Scene {
-         self.subpixel_sprites.clear();
-         self.polychrome_sprites.clear();
-         self.surfaces.clear();
-+        self.native_views.clear();
-         self.animations.clear();
-     }
- 
-@@ -133,7 +138,8 @@ impl Scene {
-             primitives: SmallVec::new(),
-             bounds: Bounds::default(),
-             max_kind: PrimitiveKind::Shadow,
--            max_shared_kind: PrimitiveKind::Surface,
-+            max_shared_kind: PrimitiveKind::NativeView,
-+            has_native_view: false,
-         });
-         self.paint_operations.push(PaintOperation::StartLayer);
-     }
-@@ -152,6 +158,10 @@ impl Scene {
-         if layer.primitives.is_empty() {
-             return;
-         }
-+        if layer.has_native_view {
-+            self.insert_layer_around_native_views(layer);
-+            return;
-+        }
-         let order =
-             self.primitive_bounds
-                 .insert(layer.bounds, layer.max_kind, layer.max_shared_kind);
-@@ -163,6 +173,50 @@ impl Scene {
-         }
-     }
- 
-+    /// Inserts a layer that a native view was painted in.
-+    ///
-+    /// A layer's primitives share one place in the drawing order, where they
-+    /// are drawn by kind and not in the order they were painted. A native
-+    /// view erases what is drawn before it, so the layer is inserted in parts:
-+    /// what was painted before each view, the view, and what was painted after.
-+    fn insert_layer_around_native_views(&mut self, layer: Layer) {
-+        let mut part = Vec::new();
-+        for index in layer.primitives.into_iter().flatten() {
-+            let PaintOperation::Primitive(primitive) = &self.paint_operations[index] else {
-+                continue;
-+            };
-+            let primitive = primitive.clone();
-+            if primitive.kind() == PrimitiveKind::NativeView {
-+                self.insert_layer_part(std::mem::take(&mut part));
-+                self.insert_layer_part(vec![primitive]);
-+            } else {
-+                part.push(primitive);
-+            }
-+        }
-+        self.insert_layer_part(part);
-+    }
-+
-+    fn insert_layer_part(&mut self, primitives: Vec<Primitive>) {
-+        let Some(first) = primitives.first() else {
-+            return;
-+        };
-+        let mut bounds = first.clipped_bounds();
-+        let mut max_kind = PrimitiveKind::Shadow;
-+        let mut max_shared_kind = PrimitiveKind::NativeView;
-+        for primitive in &primitives {
-+            let kind = primitive.kind();
-+            bounds = bounds.join(&primitive.clipped_bounds());
-+            max_kind = max_kind.max(kind);
-+            max_shared_kind = max_shared_kind.min(kind.max_shared_kind());
-+        }
-+        let order = self
-+            .primitive_bounds
-+            .insert(bounds, max_kind, max_shared_kind);
-+        for primitive in primitives {
-+            self.push_primitive(primitive, order);
-+        }
-+    }
-+
-     pub fn insert_primitive(&mut self, primitive: impl Into<Primitive>) {
-         self.try_insert_primitive(primitive.into());
-     }
-@@ -181,6 +235,7 @@ impl Scene {
-             layer.bounds = layer.bounds.join(&clipped_bounds);
-             layer.max_kind = layer.max_kind.max(kind);
-             layer.max_shared_kind = layer.max_shared_kind.min(kind.max_shared_kind());
-+            layer.has_native_view |= kind == PrimitiveKind::NativeView;
-             let index = self.paint_operations.len();
-             match layer.primitives.last_mut() {
-                 Some(range) if range.end == index => range.end += 1,
-@@ -221,6 +276,10 @@ impl Scene {
-                 surface.order = order;
-                 self.surfaces.push(surface);
-             }
-+            Primitive::NativeView(native_view) => self.native_views.push(PaintNativeView {
-+                order,
-+                ..native_view
-+            }),
-         }
-     }
- 
-@@ -261
-```
-
----
-
-### Incident Patch 2: `d31d1074` (2026-11-22)
-**Commit Message**: gpui: Fix focus, key equivalent and mouse issues with native views (#67316)
-
-## Summary
-
-Follow-up to #67311, fixing issues a review found in GPUI's native view
-support after it merged. All of them affect only windows that show a
-native view.
-
-- **A native view that declines keyboard input could recurse without
-end.** AppKit answers `YES` to `makeFirstResponder:` even when the view
-declines, leaving the window itself as first responder, and GPUI then
-asked the same view again from inside the request. The window now checks
-where first responder ended up, gives keyboard input to the GPUI view
-when the native view didn't take it, and doesn't ask that view again
-until it takes input itself or GPUI's focus moves. Reconciling makes at
-most two requests.
-- **With two native views, a key equivalent could be performed by the
-one without keyboard input.** The window asked its superclass, which
-searches the whole view hierarchy. It now offers the key equivalent to
-the view that holds first responder, and native views sit in a container
-that declines key equivalents so AppKit's own search no longer reaches
-them.
-- **A native view painted more than once left an invisible input
-blocker.** Every 
-
-**File**: `crates/gpui/src/scene.rs` (modified, +59/-7)
-```diff
-@@ -322,13 +322,7 @@ impl Scene {
-         self.surfaces.sort_by_key(|surface| surface.order);
-         self.native_views
-             .sort_by_key(|native_view| native_view.order);
--        // A platform view can only be in one place, which is where it was painted first.
--        let mut shown = Vec::new();
--        self.native_views.retain(|native_view| {
--            let is_first = !shown.contains(&native_view.id);
--            shown.push(native_view.id);
--            is_first
--        });
-+        self.keep_first_painted_native_views();
- 
-         // Sorting moved the sprites, so animations learn where theirs ended up.
-         if !self.animations.is_empty() {
-@@ -340,6 +334,34 @@ impl Scene {
-         }
-     }
- 
-+    /// Drops every occurrence of a native view but the one painted first,
-+    /// because a platform view can only be in one place.
-+    ///
-+    /// That is the occurrence whose hitbox takes the view's mouse input. It
-+    /// isn't always the first in the drawing order, which depends on what each
-+    /// occurrence overlaps.
-+    fn keep_first_painted_native_views(&mut self) {
-+        let native_views = &self.native_views;
-+        let is_repeated = native_views.iter().enumerate().any(|(index, native_view)| {
-+            native_views[..index]
-+                .iter()
-+                .any(|earlier| earlier.id == native_view.id)
-+        });
-+        if !is_repeated {
-+            return;
-+        }
-+        let mut first_painted: Vec<(NativeViewId, HitboxId)> = Vec::new();
-+        for operation in &self.paint_operations {
-+            if let PaintOperation::Primitive(Primitive::NativeView(native_view)) = operation
-+                && !first_painted.iter().any(|(id, _)| *id == native_view.id)
-+            {
-+                first_painted.push((native_view.id, native_view.hitbox_id));
-+            }
-+        }
-+        self.native_views
-+            .retain(|native_view| first_painted.contains(&(native_view.id, native_view.hitbox_id)));
-+    }
-+
-     #[cfg_attr(
-         all(
-             any(target_os = "linux", target_os = "freebsd"),
-@@ -1349,6 +1371,36 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn a_native_view_painted_twice_is_kept_where_it_was_painted_first() {
-+        let native_view = |hitbox_id: HitboxId, x: f32| PaintNativeView {
-+            order: 0,
-+            id: NativeViewId::for_test(1),
-+            hitbox_id,
-+            bounds: square(x),
-+            content_mask: ContentMask { bounds: square(x) },
-+            background: Hsla::default(),
-+        };
-+        let first_hitbox = HitboxId::placeholder();
-+        let second_hitbox = first_hitbox.next();
-+        let mut scene = Scene::default();
-+        // The quad can't be drawn with the underline it covers, so the first
-+        // occurrence, painted over both, is drawn after the second, which
-+        // overlaps nothing.
-+        scene.insert_primitive(underline(0.));
-+        scene.insert_primitive(quad(0.));
-+        scene.insert_primitive(native_view(first_hitbox, 0.));
-+        scene.insert_primitive(native_view(second_hitbox, 20.));
-+        scene.finish();
-+
-+        let shown = scene
-+            .native_views
-+            .iter()
-+            .map(|native_view| native_view.bounds)
-+            .collect::<Vec<_>>();
-+        assert_eq!(shown, [square(0.)]);
-+    }
-+
-     #[test]
-     fn layers_are_drawn_in_paint_order() {
-         // A quad painted after a layer goes above it.
-```
-
-**File**: `crates/gpui/src/window.rs` (modified, +31/-27)
-```diff
-@@ -835,7 +835,7 @@ impl HitboxId {
-         window.mouse_hit_test.ids.contains(&self)
-     }
- 
--    fn next(self) -> HitboxId {
-+    pub(crate) fn next(self) -> HitboxId {
-         HitboxId(self.0.wrapping_add(1))
-     }
- }
-@@ -6719,35 +6719,39 @@ impl Window {
-         let started_at = cx.background_executor().now();
-         let task = self.spawn(cx, async move |cx| {
-             cx.background_executor.timer(remaining).await;
--            cx.update(move |window, cx| {
--                let Some(currently_pending) = window
--                    .pending_input
--                    .take()
--                    .filter(|pending| pending.focus == window.focus)
--                else {
--                    return;
--                };
-+            cx.update(move |window, cx| window.flush_pending_input(cx))
-+                .with_context(|| {
-+                    format!(
-+                        "handling pending input timeout for window {:?}",
-+                        cx.window_handle().window_id()
-+                    )
-+                })
-+                .log_err();
-+        });
-+        (started_at, task)
-+    }
- 
--                let node_id = window.focus_node_id_in_rendered_frame(window.focus);
--                let dispatch_path = window.rendered_frame.dispatch_tree.dispatch_path(node_id);
-+    /// Ends a pending multi-key binding as its timeout does, dispatching what
-+    /// the keys pressed so far are bound to on their own.
-+    fn flush_pending_input(&mut self, cx: &mut App) {
-+        let Some(currently_pending) = self
-+            .pending_input
-+            .take()
-+            .filter(|pending| pending.focus == self.focus)
-+        else {
-+            return;
-+        };
- 
--                let to_replay = window
--                    .rendered_frame
--                    .dispatch_tree
--                    .flush_dispatch(currently_pending.keystrokes, &dispatch_path);
-+        let node_id = self.focus_node_id_in_rendered_frame(self.focus);
-+        let dispatch_path = self.rendered_frame.dispatch_tree.dispatch_path(node_id);
- 
--                window.pending_input_changed(cx);
--                window.replay_pending_input(to_replay, cx)
--            })
--            .with_context(|| {
--                format!(
--                    "handling pending input timeout for window {:?}",
--                    cx.window_handle().window_id()
--                )
--            })
--            .log_err();
--        });
--        (started_at, task)
-+        let to_replay = self
-+            .rendered_frame
-+            .dispatch_tree
-+            .flush_dispatch(currently_pending.keystrokes, &dispatch_path);
-+
-+        self.pending_input_changed(cx);
-+        self.replay_pending_input(to_replay, cx)
-     }
- 
-     fn finish_dispatch_key_event(
-```
-
-**File**: `crates/gpui/src/window/native_view.rs` (modified, +103/-21)
-```diff
-@@ -1,9 +1,9 @@
- use crate::{Action, KeyBinding, KeyDownEvent, PlatformInput};
- use crate::{
-     AnyWindowHandle, App, Bounds, Element, ElementId, FocusHandle, FocusId, Focusable,
--    GlobalElementId, Hitbox, HitboxBehavior, Hsla, InspectorElementId, InteractiveElement,
--    IntoElement, LayoutId, PaintNativeView, ParentElement, Pixels, Point, Style, Styled, Window,
--    div,
-+    GlobalElementId, Hitbox, HitboxBehavior, HitboxId, Hsla, InspectorElementId,
-+    InteractiveElement, IntoElement, LayoutId, PaintNativeView, ParentElement, Pixels, Point,
-+    Style, Styled, Window, div,
- };
- use anyhow::{Context as _, Result};
- use collections::HashSet;
-@@ -73,6 +73,9 @@ pub(crate) struct NativeViewState {
-     window: AnyWindowHandle,
-     focus_handle: FocusHandle,
-     background: Cell<Hsla>,
-+    /// The hitbox of the occurrence that shows the view, which is the one
-+    /// painted first in a frame that paints the view more than once.
-+    shown_hitbox: Cell<Option<HitboxId>>,
-     reserved_actions: RefCell<HashSet<TypeId>>,
-     _attachment: Box<dyn Any>,
- }
-@@ -107,6 +110,7 @@ impl NativeView {
-             window: window.handle,
-             focus_handle: cx.focus_handle(),
-             background: Cell::new(Hsla::transparent_black()),
-+            shown_hitbox: Cell::new(None),
-             reserved_actions: RefCell::default(),
-             _attachment: attachment,
-         });
-@@ -203,8 +207,34 @@ impl Element for NativeViewElement {
-         window: &mut Window,
-         _cx: &mut App,
-     ) -> Option<Hitbox> {
--        (self.0.0.window == window.handle)
--            .then(|| window.insert_hitbox(bounds, HitboxBehavior::BlockMouse))
-+        let state = &self.0.0;
-+        if state.window != window.handle {
-+            return None;
-+        }
-+        // The view is only where it is painted first, so a later occurrence
-+        // must not keep mouse input from what is behind it. It still has a
-+        // hitbox, which becomes the view's if a frame reuses this occurrence
-+        // after the first one has gone. An occurrence that is clipped away
-+        // paints nothing, and doesn't count as the first.
-+        let is_visible = !bounds.intersect(&window.content_mask().bounds).is_empty();
-+        let is_shown_elsewhere = state.shown_hitbox.get().is_some_and(|shown| {
-+            window
-+                .next_frame
-+                .hitboxes
-+                .iter()
-+                .any(|hitbox| hitbox.id == shown)
-+        });
-+        let shows_view = is_visible && !is_shown_elsewhere;
-+        let behavior = if shows_view {
-+            HitboxBehavior::BlockMouse
-+        } else {
-+            HitboxBehavior::Normal
-+        };
-+        let hitbox = window.insert_hitbox(bounds, behavior);
-+        if shows_view {
-+            state.shown_hitbox.set(Some(hitbox.id));
-+        }
-+        Some(hitbox)
-     }
- 
-     fn paint(
-@@ -309,17 +339,16 @@ impl Window {
-         let node_id = self.focus_node_id_in_rendered_frame(self.focus);
-         let dispatch_path = self.rendered_frame.dispatch_tree.dispatch_path(node_id);
-         let dispatch_tree = &self.rendered_frame.dispatch_tree;
--        // A key that doesn't continue what is pending is left for the view like
--        // any other. Dispatching it here as well would dispatch it twice when
--        // the view then leaves it.
--        let continues_pending = self.pending_input_keystrokes().is_some_and(|pending| {
-+        let pending = self.pending_input_keystrokes();
-+        let is_pending = pending.is_some();
-+        let continues_pending = pending.is_some_and(|pending| {
-             let mut input = pending.to_vec();
-             input.push(event.keystroke.clone());
-             let (bindings, is_pending, _) =
-                 dispatch_tree.bindings_for_input(&input, &dispatch_path);
-             is_pending || !bindings.is_empty()
-         });
--        if !continues_pending {
-+        let is_reserved = !continues_pending && {
-             let input = std::slice::from_ref(&event.keystroke);
-             let (bindings, _, context_stack) =
-                 dispatch_tree.bindings_for_input(input, &dispatch_path);
-@@ -329,14 +358,22 @@ impl Window {
-             };
-             // The first key of a longer binding is reserved too, or the view
-             // could keep that key and the binding would never begin.
--            let is_reserved = bindings.first().is_some_and(is_reserved)
-+            bindings.first().is_some_and(is_reserved)
-                 || dispatch_tree
-                     .possible_next_bindings_for_input(input, &context_stack)
-                     .iter()
--                    .any(is_reserved);
--            if !is_reserved {
--                return false;
--            }
-+                    .any(is_reserved)
-+        };
-+        if is_pending && !continues_pending {
-+            // The pending binding ends here, as it would in the window's own
-+            // content. Left pending, it would be completed by a later key eve
-```
-
-**File**: `crates/gpui_macos/src/window/native_views.rs` (modified, +225/-27)
-```diff
-@@ -32,6 +32,7 @@ use std::{
-     ffi::c_void,
-     ptr::{self, NonNull},
-     rc::{Rc, Weak},
-+    sync::OnceLock,
- };
- 
- type HitTestCallback = Box<dyn FnMut(Point<Pixels>) -> Option<NativeViewId>>;
-@@ -44,9 +45,16 @@ pub(super) struct NativeViews {
-     /// The view a mouse-down event is being delivered to, which may take
-     /// first responder even though GPUI has not focused it yet.
-     clicked: Option<NativeViewId>,
--    /// Whether GPUI was told of a mouse press that went to a native view, and
--    /// is owed the release.
--    pressed_in_view: bool,
-+    /// The view that was asked to take keyboard input and didn't. It isn't
-+    /// asked again until it takes keyboard input itself or GPUI's focus moves,
-+    /// and the GPUI view has keyboard input in its place.
-+    declined: Option<NativeViewId>,
-+    /// Set while first responder is being matched to GPUI's focus, so that
-+    /// the requests this makes don't each start matching it again.
-+    reconciling: bool,
-+    /// The mouse buttons, by number, whose presses went to a native view. GPUI
-+    /// was told of each press, and is owed its release.
-+    buttons_pressed_in_view: Vec<isize>,
-     /// The keys, by key code, whose presses GPUI took ahead of a native view.
-     /// Their releases are GPUI's too, and not the view's, which never saw them
-     /// pressed.
-@@ -139,6 +147,7 @@ impl NativeViews {
-         self.focused.map(|id| FocusedNativeView {
-             id,
-             shown: self.shown(id).is_some(),
-+            declined: self.declined == Some(id),
-         })
-     }
- 
-@@ -148,6 +157,20 @@ impl NativeViews {
-             .any(|attached| attached.placement.is_some())
-     }
- 
-+    fn note_button_pressed_in_view(&mut self, button: isize) {
-+        if !self.buttons_pressed_in_view.contains(&button) {
-+            self.buttons_pressed_in_view.push(button);
-+        }
-+    }
-+
-+    /// Returns whether GPUI is owed the release of `button`, which settles it.
-+    fn take_button_pressed_in_view(&mut self, button: isize) -> bool {
-+        let count = self.buttons_pressed_in_view.len();
-+        self.buttons_pressed_in_view
-+            .retain(|pressed| *pressed != button);
-+        self.buttons_pressed_in_view.len() != count
-+    }
-+
-     /// What `responder` is to the window whose own view is `gpui_view`.
-     fn holder(
-         &self,
-@@ -244,7 +267,7 @@ pub(super) unsafe fn attach(
-     // runs on the main thread. The window state is unlocked because AppKit calls
-     // back into the window as its view hierarchy changes.
-     let container = unsafe {
--        let container: Retained<NSView> = msg_send![class!(NSView), new];
-+        let container: Retained<NSView> = msg_send![container_class(), new];
-         let _: () = msg_send![&*container, setClipsToBounds: true];
-         container.setHidden(true);
-         container.addSubview(&view);
-@@ -269,6 +292,33 @@ pub(super) unsafe fn attach(
-     }))
- }
- 
-+/// The class of the view each native view is put inside.
-+fn container_class() -> &'static AnyClass {
-+    static CONTAINER_CLASS: OnceLock<&'static AnyClass> = OnceLock::new();
-+    CONTAINER_CLASS.get_or_init(|| {
-+        let name = c"GPUINativeViewContainer";
-+        let Some(mut decl) = ClassBuilder::new(name, class!(NSView)) else {
-+            // Another copy of GPUI in this process has registered the class.
-+            return AnyClass::get(name).unwrap_or(class!(NSView));
-+        };
-+        // SAFETY: The function signature matches the selector's Objective-C signature.
-+        unsafe {
-+            decl.add_method(
-+                sel!(performKeyEquivalent:),
-+                container_perform_key_equivalent as extern "C" fn(_, Sel, *mut AnyObject) -> Bool,
-+            );
-+        }
-+        decl.register()
-+    })
-+}
-+
-+/// Keeps a key equivalent from the native view inside, which AppKit would
-+/// otherwise offer it whether or not the view has keyboard input. The window
-+/// offers key equivalents to the view that has keyboard input itself.
-+extern "C" fn container_perform_key_equivalent(_: &AnyObject, _: Sel, _: *mut AnyObject) -> Bool {
-+    Bool::NO
-+}
-+
- /// Shows the scene's native view background behind the window's content.
- ///
- /// A view's frame change reaches the screen a frame or two before the scene
-@@ -531,6 +581,8 @@ struct FocusedNativeView {
-     /// Whether it is on screen. A view can be focused before it is shown, and
-     /// stays focused when it is hidden.
-     shown: bool,
-+    /// Whether it was asked to take keyboard input and didn't.
-+    declined: bool,
- }
- 
- /// A view keyboard input is moved to so that it matches GPUI's focus.
-@@ -547,13 +599,14 @@ fn input_target_for_focus(
-     current: InputHolder,
- ) -> Option<InputTarget> {
-     let (target, holder) = match focused {
--        Some(FocusedNativeView { id, shown: true }) => {
--            (InputTarget::NativeView(id), InputHolder::NativeView(id))
--        }
--        // A hidden view can't take keyboard input until it is shown.
--
-```
-
----
-
-### Incident Patch 3: `29de395f` (2026-11-22)
-**Commit Message**: workspace: Support relative search using `./` and `../` prefix (#57638)
-
-Introduce support in `workspace: open files` to resolve relative path
-prefixes starting with `./` (or `.\` on Windows) and `../` to the
-current or parent directory of the currently opened buffer. If no file
-is associated with the active buffer or it cannot be detected, the path
-defaults to the workspace project root.
-
-
-[workspace-open-dot-for-current-directory.webm](https://github.com/user-attachments/assets/e18828ab-8c91-4e8a-aef8-171a6ccbaa2b)
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
 
 Release Notes:
 
-- Added support for starting search from the active buffer's directory
-in the `workspace: open files` prompt by typing `./` or `../` for the
-parent directory.
+- Fixed thread history search not finding renamed threads
 
----------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +2/-0)
+https://github.com/user-attachments/assets/cdc517cd-9080-4cfd-a94c-ef1b03caa4a4
+
+**File**: `crates/agent_ui/src/threads_archive_view.rs` (modified, +44/-12)
 ```diff
-@@ -12230,6 +12230,7 @@ dependencies = [
- name = "open_path_prompt"
- version = "0.1.0"
- dependencies = [
-+ "clock",
-  "editor",
-  "file_icons",
-  "futures 0.3.34",
-@@ -12238,6 +12239,7 @@ dependencies = [
-  "menu",
-  "picker",
-  "project",
-+ "rpc",
-  "serde",
-  "serde_json",
-  "settings",
-```
-
-**File**: `crates/open_path_prompt/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -5,6 +5,9 @@ publish.workspace = true
- edition.workspace = true
- license = "GPL-3.0-or-later"
+@@ -7,7 +7,7 @@ use crate::agent_connection_store::AgentConnectionStore;
+ use crate::thread_metadata_store::{
+     ThreadId, ThreadMetadata, ThreadMetadataStore, worktree_info_from_thread_paths,
+ };
+-use crate::{Agent, ArchiveSelectedThread, DEFAULT_THREAD_TITLE, RemoveSelectedThread};
++use crate::{Agent, ArchiveSelectedThread, RemoveSelectedThread};
  
-+[features]
-+test-support = []
-+
- [dependencies]
- file_icons.workspace = true
- futures.workspace = true
-@@ -20,8 +23,10 @@ util.workspace = true
- workspace.workspace = true
+ use agent::ThreadStore;
+ use agent_client_protocol::v2::schema as acp;
+@@ -300,12 +300,8 @@ impl ThreadsArchiveView {
  
- [dev-dependencies]
-+clock.workspace = true
- editor = {workspace = true, features = ["test-support"]}
- gpui = {workspace = true, features = ["test-support"]}
-+rpc = {workspace = true, features = ["test-support"]}
- serde_json.workspace = true
- theme = {workspace = true, features = ["test-support"]}
- theme_settings.workspace = true
-```
-
-**File**: `crates/open_path_prompt/src/open_path_prompt.rs` (modified, +415/-19)
-```diff
-@@ -7,9 +7,9 @@ use file_finder_settings::FileFinderSettings;
- use file_icons::FileIcons;
- use futures::channel::oneshot;
- use fuzzy::{CharBag, StringMatch, StringMatchCandidate};
--use gpui::{Action, HighlightStyle, StyledText, Task};
-+use gpui::{Action, Entity, HighlightStyle, StyledText, Subscription, Task};
- use picker::{Picker, PickerDelegate};
--use project::{DirectoryItem, DirectoryLister};
-+use project::{DirectoryItem, DirectoryLister, Worktree};
- use settings::SettingsStore;
- use settings::{ProjectPanelSortMode, Settings};
- use std::{
-@@ -45,13 +45,18 @@ pub struct OpenPathDelegate {
-         Arc<dyn Fn(&mut Window, &mut Context<Picker<Self>>) -> Option<AnyElement> + 'static>,
-     hidden_entries: bool,
-     sort_mode: ProjectPanelSortMode,
-+    relative_to: PathBuf,
-+    /// Watches a project root that `relative_to` was derived from before it was known whether
-+    /// the root is a directory or a single file.
-+    unresolved_root: Option<Subscription>,
- }
- 
- impl OpenPathDelegate {
-     pub fn new(
-         tx: oneshot::Sender<Option<Vec<PathBuf>>>,
-         lister: DirectoryLister,
-         creating_path: bool,
-+        relative_to: PathBuf,
-         cx: &App,
-     ) -> Self {
-         Self::with_confirmation(
-@@ -61,6 +66,7 @@ impl OpenPathDelegate {
-             lister,
-             creating_path,
-             OpenPathPromptMode::SelectPath,
-+            relative_to,
-             cx,
+         for session in sessions {
+             let highlight_positions = if !query.is_empty() {
+-                let title = session
+-                    .title
+-                    .as_ref()
+-                    .map(|t| t.as_ref())
+-                    .unwrap_or(DEFAULT_THREAD_TITLE);
+-                if let Some(positions) = fuzzy_match_positions(&query, title) {
++                let title = session.display_title();
++                if let Some(positions) = fuzzy_match_positions(&query, &title) {
+                     positions
+                 } else {
+                     // If title didn't match, also try matching the project name
+@@ -1319,11 +1315,7 @@ impl PickerDelegate for ProjectPickerDelegate {
+     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
+         format!(
+             "Associate the \"{}\" thread with...",
+-            self.thread
+-                .title
+-                .as_ref()
+-                .map(|t| t.as_ref())
+-                .unwrap_or(DEFAULT_THREAD_TITLE)
++            self.thread.display_title()
          )
+         .into()
      }
-@@ -110,7 +116,7 @@ impl OpenPathDelegate {
-         }
-     }
- 
--    #[cfg(test)]
-+    #[cfg(any(test, feature = "test-support"))]
-     pub fn collect_match_candidates(&self) -> Vec<String> {
-         match &self.directory_state {
-             DirectoryState::List { entries, .. } => self
-@@ -146,6 +152,7 @@ impl OpenPathDelegate {
-         tx: oneshot::Sender<Option<OpenPathPromptResult>>,
-         lister: DirectoryLister,
-         mode: OpenPathPromptMode,
-+        relative_to: PathBuf,
-         cx: &App,
-     ) -> Self {
-         let delegate = Self::with_confirmation(
-@@ -155,6 +162,7 @@ impl OpenPathDelegate {
-             lister,
-             false,
-             mode,
-+            relative_to,
-             cx,
+@@ -2043,4 +2035,44 @@ mod tests {
+             [(51, 51), (100, 100), (100, 100), (100, 100), (100, 0)]
          );
-         if mode == OpenPathPromptMode::SelectPath {
-@@ -198,6 +206,7 @@ impl OpenPathDelegate {
-         lister: DirectoryLister,
-         creating_path: bool,
-         mode: OpenPathPromptMode,
-+        relative_to: PathBuf,
-         cx: &App,
-     ) -> Self {
-         let path_style = lister.path_style(cx);
-@@ -225,9 +234,46 @@ impl OpenPathDelegate {
-             render_footer: Arc::new(|_, _| None),
-             hidden_entries: false,
-             sort_mode,
-+            relative_to,
-+            unresolved_root: None,
-         }
      }
- 
-+    /// Resolves `./` and `../` against the directory of `root` once it is known whether `root`
-+    /// is a single file, refreshing the listing when that changes the base directory.
-+    fn track_unresolved_root(
-+        picker: &mut Picker<Self>,
-+        root: Entity<Worktree>,
-+        window: &mut Window,
-+        cx: &mut Context<Picker<Self>>,
-+    ) {
-+        let subscription = cx.observe_in(&root, window, |picker, root, window, cx| {
-+            let delegate = &mut picker.delegate;
-+            let Some(directory) =
-+                OpenPathPrompt::root_directory(root.read(cx), delegate.path_style)
-+            else {
-+                return;
-+            };
-+            delegate.unresolved_root = None;
-+            if directory == delegate.relative_to {
-+                return;
-+            }
-+            delegate.relative_to = directory;
-+            // The listing is cached by the query, which no longer resolves to the same directory.
-+            let create = matches!(
-+                delegate.directory_state,
-+                DirectoryState::Create { .. } | DirectoryState::None { create: true }
-+            );
-+            delegate.directory_state = DirectoryState::None { create };
-+            picker.refresh(window, cx);
++
++    #[gpui::test]
++    async fn test_filter_matches_displayed_title(cx: &mut gpui::TestAppContext) {
++        crate::test_support::init_test(cx);
++        cx.update(ThreadMetadataStore::init_global);
++        cx.run_until_parked();
++        let metadata = ThreadMetadata {
++            thread_id: ThreadId::new(),
++            session_id: Some(acp::SessionId::new("session")),
++            agent_id: agent::ZED_AGENT_ID.clone(),
++            title: Some("Generated".into()),
++            title_override: Some("Renamed".into()),
++            updated_at: Utc::now(),
++            created_at: None,
++            interacted_at: None,
++            worktree_paths: Default::default(),
++            remote_connection: None,
++            archived: false,
++        };
++        cx.update(|cx| {
++            ThreadMetadataStore::global(cx).update(cx, |store, cx| store.save(metadata, cx))
 +        });
-+        picker.delegate.unresolved_root = Some(subscription);
-+    }
++        let view = cx.add_window(|window, cx| {
++            let workspace = WeakEntity::new_invalid();
++            let connections = WeakEntity::new_invalid();
++            let servers = WeakEntity::new_invalid();
++            ThreadsArchiveView::new(workspace, connections, servers, window, cx)
++        });
 +
-+    fn resolve_path(&self, path: &str) -> String {
-+        resolve_relative_path(path, &self.relative_to, self.path_style)
-+    }
-+
-     fn current_dir(&self) -> &'static str {
-         match self.path_style {
-             PathStyle::Unix => "./",
-@@ -236,6 +282,23 @@ impl OpenPathDelegate {
-     }
- }
- 
-+/// Directory that `./` and `../` queries resolve against, see [`OpenPathPrompt::relative_to`].
-+struct RelativeBase {
-+    directory: PathBuf,
-+    /// The project root `directory` was derived from, when it was not known yet whether that
-+    /// root is a single file.
-+    unresolved_root: Option<Entity<Worktree>>,
-+}
-+
-+impl RelativeBase {
-+    fn resolved(directory: PathBuf) -> Self {
-+        Self {
-+            directory,
-+            unresolved_root: None,
++        for (query, expected) in [("renamed", true), ("generated", false)] {
++            view.update(cx, |view, window, cx| {
++                view.filter_editor
++                    .update(cx, |editor, cx| editor.set_text(query, window, cx));
++            })
++            .unwrap();
++            cx.run_until_parked();
++            let found = view.read_with(cx, |view, _| !view.items.is_empty());
++            assert_eq!(found.unwrap(), expected, "query: {query}");
 +        }
 +    }
-+}
-+
- #[derive(Debug)]
- enum DirectoryState {
-     List {
-@@ -274,12 +337,93 @@ impl OpenPathPrompt {
-     ) {
-         workspace.set_p
+ }
 ```
 
-**File**: `crates/open_path_prompt/src/open_path_prompt_tests.rs` (modified, +299/-3)
+---
+
+### Incident Patch 2: `d9089f4e` (2026-11-23)
+**Commit Message**: ui: Re-render spinner labels only as often as their glyph changes (#67261)
+
+## Summary
+
+`SpinnerLabel` and `LoadingLabel` request a frame on every display
+refresh, though their text changes only 4–17.5 times a second. Each
+frame re-renders every view above the label: in the agent panel,
+`ThreadView`, `ConversationView`, `AgentPanel`, and `Workspace`. So
+while a turn waits on the model, a confirmation, or a subagent, Zed
+renders at the display's refresh rate, or at 30 fps when the window
+doesn't have focus.
+
+Both labels now render only when their text changes:
+
+- `Animation::with_steps`, like CSS `steps()`, advances an animation in
+equal steps and re-renders it when the next step starts. It counts steps
+in integers on the animation's clock, so each step renders on time
+however long Zed has run, and synced animations step, and render,
+together.
+- `SpinnerLabel` takes one step per glyph on the shared clock, so all
+spinners render together. `LoadingLabel` takes four steps a second after
+its reveal.
+
+CPU time of the Zed process while a thread waits, in ms per second, main
+→ this PR:
+
+| State | 60 Hz | 120 Hz | 144 Hz | 240 Hz | Unfocused, 120 Hz |
+|---|---|---|---|---|---|
+| Waiting for
+
+**File**: `crates/gpui/src/elements/animation.rs` (modified, +150/-29)
 ```diff
-@@ -9,7 +9,7 @@ use picker::{Picker, PickerDelegate};
- use project::{DirectoryLister, DisableAiSettings, Project};
- use serde_json::json;
- use settings::{Settings, SettingsStore};
--use util::path;
-+use util::{path, paths::PathStyle};
- use workspace::{
-     AppState, MultiWorkspace, OpenOptions, OpenPathPromptMode, Workspace, item::test::TestItem,
-     prompt_for_open_path_and_open,
-@@ -419,6 +419,38 @@ async fn test_create_confirmation_keeps_the_checked_destination(cx: &mut TestApp
+@@ -1,9 +1,9 @@
+ use scheduler::Instant;
+-use std::{cell::Cell, rc::Rc, time::Duration};
++use std::{cell::Cell, num::NonZeroUsize, rc::Rc, time::Duration};
+ 
+ use crate::{
+     AnyElement, App, Element, ElementId, GlobalElementId, InspectorElementId, IntoElement,
+-    ParentElement, SpringAnimation, SpringConfig, SpringPlayback, SpringState, SpringTarget,
++    ParentElement, SpringAnimation, SpringConfig, SpringPlayback, SpringState, SpringTarget, Task,
+     Window,
+ };
+ 
+@@ -25,6 +25,9 @@ pub struct Animation {
+     /// The maximum number of times per second this animation re-renders.
+     /// When `None`, the animation re-renders on every frame.
+     pub max_fps: Option<f32>,
++    /// The number of equal steps this animation advances in. See [`Animation::with_steps`].
++    /// When `None`, the animation advances continuously.
++    pub steps: Option<NonZeroUsize>,
+ }
+ 
+ impl Animation {
+@@ -37,6 +40,7 @@ impl Animation {
+             synced: false,
+             easing: Rc::new(linear),
+             max_fps: None,
++            steps: None,
+         }
      }
+ 
+@@ -70,6 +74,15 @@ impl Animation {
+         self.max_fps = Some(max_fps);
+         self
+     }
++
++    /// Advance in `steps` equal steps instead of continuously, like CSS `steps()`.
++    /// The animator receives `0`, then `1 / steps`, and so on. The animation
++    /// re-renders only when it steps, so [`Self::with_max_fps`] has no effect.
++    /// A `steps` of zero is ignored.
++    pub fn with_steps(mut self, steps: usize) -> Self {
++        self.steps = NonZeroUsize::new(steps);
++        self
++    }
+ }
+ 
+ /// An extension trait for adding the animation wrapper to both Elements and Components
+@@ -221,6 +234,36 @@ struct AnimationState {
+     /// Whether a throttled re-render (see [`Animation::with_max_fps`]) is
+     /// already scheduled, so overlapping renders don't stack extra timers.
+     delayed_frame_pending: Rc<Cell<bool>>,
++    /// The re-render scheduled for the next step (see [`Animation::with_steps`])
++    /// and when it is due.
++    step_wake: Option<(Instant, Task<()>)>,
++}
++
++impl AnimationState {
++    /// Re-renders the current view at `instant`, unless a re-render is already due by then.
++    fn render_at(&mut self, instant: Instant, window: &Window, cx: &App) {
++        let now = cx.background_executor().now();
++        if let Some((due, _)) = &self.step_wake
++            && now < *due
++            && *due <= instant
++        {
++            return;
++        }
++        let view = window.current_view();
++        let wake = window.spawn(cx, async move |cx| {
++            // A timer can fire early, and a render before `instant` would repeat the last one.
++            loop {
++                let delay = instant.saturating_duration_since(cx.background_executor().now());
++                if delay.is_zero() {
++                    break;
++                }
++                cx.background_executor().timer(delay).await;
++            }
++            cx.update(move |_, cx| cx.notify(view)).ok();
++        });
++        // Replacing a wake that was due later drops it, which cancels its timer.
++        self.step_wake = Some((instant, wake));
++    }
+ }
+ 
+ struct SpringElementState {
+@@ -383,47 +426,65 @@ impl<E: IntoElement + 'static> Element for AnimationElement<E> {
+         cx: &mut App,
+     ) -> (crate::LayoutId, Self::RequestLayoutState) {
+         window.with_element_state(global_id.unwrap(), |state, window| {
++            let now = cx.background_executor().now();
+             let mut state = state.unwrap_or_else(|| AnimationState {
+-                start: cx.background_executor().now(),
++                start: now,
+                 animation_ix: 0,
+                 delayed_frame_pending: Rc::new(Cell::new(false)),
++                step_wake: None,
+             });
+-            let (animation_ix, delta, done) = if cx.reduce_motion() {
++            let (animation_ix, delta, done, next_step) = if cx.reduce_motion() {
+                 let animation_ix = self.animations.len() - 1;
+                 let delta = if self.animations[animation_ix].oneshot {
+                     1.0
+                 } else {
+                     0.0
+                 };
+-                (animation_ix, delta, true)
++                (animation_ix, delta, true, None)
+             } else {
+                 let animation_ix = state.animation_ix;
+                 let duration = self.animations[animation_ix].duration;
+ 
+                 let elapsed = if self.animations[animation_ix].synced && !duration.is_zero() {
+-                    let elapsed = cx.background_executor().now() - cx.synced_animation_epoch;
++                    let elapsed = now - cx.synced_animation_epoch;
+                     // Reduce modulo the duration before f32 conversion, which loses sub-second precision at scale.
+                     Duration::from_nanos((elapsed.as_nanos() % duration.as_nanos()) as u64)
+                 } else {
+-                    cx.background_executor().now() - state.start
++          
+```
+
+**File**: `crates/ui/src/components/label/loading_label.rs` (modified, +4/-1)
+```diff
+@@ -88,7 +88,10 @@ impl RenderOnce for LoadingLabel {
+             "loading_label",
+             vec![
+                 Animation::new(Duration::from_secs(1)),
+-                Animation::new(Duration::from_secs(1)).repeat(),
++                // After the reveal, only the trailing dots change, four times a second.
++                Animation::new(Duration::from_secs(1))
++                    .repeat()
++                    .with_steps(4),
+             ],
+             move |mut label, animation_ix, delta| {
+                 match animation_ix {
+```
+
+**File**: `crates/ui/src/components/label/spinner_label.rs` (modified, +49/-2)
+```diff
+@@ -166,9 +166,13 @@ impl RenderOnce for SpinnerLabel {
+ 
+         self.base.with_animation(
+             self.variant.animation_id(),
+-            Animation::new(duration).repeat(),
++            // Each render also re-renders the views containing the spinner, so render only when
++            // the glyph changes. A shared clock lets spinners change, and render, together.
++            Animation::new(duration)
++                .repeat_synced()
++                .with_steps(frames.len()),
+             move |mut label, delta| {
+-                let frame_index = (delta * frames.len() as f32) as usize % frames.len();
++                let frame_index = (delta * frames.len() as f32).round() as usize % frames.len();
+ 
+                 label.set_text(frames[frame_index]);
+                 label
+@@ -208,3 +212,46 @@ impl Component for SpinnerLabel {
+         example_group(examples).into_any_element()
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use gpui::TestAppContext;
++    use std::{cell::Cell, rc::Rc};
++
++    struct SpinnerView {
++        renders: Rc<Cell<usize>>,
++    }
++
++    impl Render for SpinnerView {
++        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
++            self.renders.set(self.renders.get() + 1);
++            div().child(SpinnerLabel::new())
++        }
++    }
++
++    #[gpui::test]
++    fn test_spinner_renders_only_as_often_as_its_glyph_changes(cx: &mut TestAppContext) {
++        cx.update(|cx| {
++            let settings_store = settings::SettingsStore::test(cx);
++            cx.set_global(settings_store);
++            theme_settings::init(theme::LoadThemes::JustBase, cx);
++        });
++        let renders = Rc::new(Cell::new(0));
++        let (_, cx) = cx.add_window_view({
++            let renders = renders.clone();
++            |_, _| SpinnerView { renders }
++        });
++        cx.run_until_parked();
++        let initial_renders = renders.get();
++
++        // One second of a 100 Hz display, during which the glyph changes 10 times.
++        for _ in 0..100 {
++            cx.executor().advance_clock(Duration::from_millis(10));
++            cx.update(|window, cx| window.simulate_next_frame(cx));
++            cx.run_until_parked();
++        }
++
++        assert_eq!(renders.get() - initial_renders, 10);
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `e224d55b` (2026-11-23)
+**Commit Message**: project: Fix stale completion position in remote projects (#67247)
+
+## Summary
+
+I ran into this while testing #67091 in a dev container, but it's
+independent of that PR and reproduces on main: requesting completions in
+a remote project (SSH, WSL, dev containers) and editing the buffer
+before the request was sent (e.g. typing or deleting quickly after
+completions trigger) could crash debug builds with `point ... is beyond
+the end of the line`.
+
+Since #42723, `LspStore::completions` builds the `GetCompletions` proto
+requests inside `cx.spawn`, so the cursor position (a `PointUtf16`) is
+only turned into an anchor on a later tick, after the edit may already
+have changed the buffer. In release builds there is no panic, but the
+request is sent for whatever that point now refers to in the edited
+buffer (clamped if it's past the end of the line), so the server can
+return completions for the wrong position.
+
+Completions without an edit range used to be dropped when the request
+position was out of range, which an anchor can't be.
+Instead, `LspStore::completions` now records the word being completed
+when completions are requested, and checks it once after all language
+servers answer, in local
+
+**File**: `crates/project/src/lsp_command.rs` (modified, +145/-58)
+```diff
+@@ -1,8 +1,8 @@
+ pub mod signature_help;
+ 
+ use crate::{
+-    CodeAction, CompletionSource, CoreCompletion, CoreCompletionResponse, DocumentColor,
+-    DocumentHighlight, DocumentSymbol, Hover, HoverBlock, HoverBlockKind, InlayHint,
++    CodeAction, CompletionResponse, CompletionSource, CoreCompletion, CoreCompletionResponse,
++    DocumentColor, DocumentHighlight, DocumentSymbol, Hover, HoverBlock, HoverBlockKind, InlayHint,
+     InlayHintLabel, InlayHintLabelPart, InlayHintLabelPartTooltip, InlayHintTextEdits,
+     InlayHintTooltip, Location, LocationLink, LspAction, LspPullDiagnostics, MarkupContent,
+     PrepareRenameResponse, ProjectPath, ProjectTransaction, PulledDiagnostics, ResolveState,
+@@ -231,7 +231,7 @@ pub(crate) struct GetHover {
+ 
+ #[derive(Debug)]
+ pub(crate) struct GetCompletions {
+-    pub position: PointUtf16,
++    pub position: Anchor,
+     pub context: CompletionContext,
+     pub server_id: Option<lsp::LanguageServerId>,
+ }
+@@ -3157,6 +3157,92 @@ impl GetCompletions {
+     }
+ }
+ 
++pub(crate) struct RequestedCompletionToken {
++    position: Anchor,
++    version: Global,
++    prefix: Range<Anchor>,
++    separator: Anchor,
++}
++
++impl RequestedCompletionToken {
++    pub(crate) fn new(position: Anchor, snapshot: &BufferSnapshot) -> Self {
++        let offset = position.to_offset(snapshot);
++        let token_start = completion_token_range(snapshot, offset).start;
++        let prefix_end = snapshot.anchor_before(offset);
++        let prefix_start = if token_start < offset {
++            snapshot.anchor_after(token_start)
++        } else {
++            prefix_end
++        };
++        Self {
++            position,
++            version: snapshot.version().clone(),
++            prefix: prefix_start..prefix_end,
++            separator: snapshot.anchor_before(token_start),
++        }
++    }
++
++    pub(crate) fn retain_valid_completions(
++        &self,
++        responses: &mut [CompletionResponse],
++        snapshot: &BufferSnapshot,
++    ) {
++        if snapshot.version() == &self.version {
++            return;
++        }
++        let ranges = self.fallback_ranges(snapshot);
++        for response in responses {
++            let completions_count = response.completions.len();
++            response.completions.retain_mut(|completion| {
++                let CompletionSource::Lsp {
++                    insert_range,
++                    lsp_completion,
++                    lsp_defaults,
++                    ..
++                } = &mut completion.source
++                else {
++                    return true;
++                };
++                if completion_text_edit(lsp_completion, lsp_defaults.as_deref()).is_some() {
++                    return true;
++                }
++                let Some((replace_range, fallback_insert_range)) = ranges.clone() else {
++                    return false;
++                };
++                *insert_range = Some(fallback_insert_range);
++                completion.replace_range = replace_range;
++                true
++            });
++            if response.completions.len() != completions_count {
++                response.is_incomplete = true;
++            }
++        }
++    }
++
++    fn fallback_ranges(&self, snapshot: &BufferSnapshot) -> Option<(Range<Anchor>, Range<Anchor>)> {
++        let offset = self.position.to_offset(snapshot);
++        let prefix_start = self.prefix.start.to_offset(snapshot);
++        let separator_kept = self.separator.is_valid(snapshot);
++        let prefix_kept =
++            self.prefix.start.is_valid(snapshot) || self.prefix.end.is_valid(snapshot);
++        let classifier = snapshot
++            .char_classifier_at(offset)
++            .scope_context(Some(CharScopeContext::Completion));
++        let prefix_is_word = snapshot
++            .chars_for_range(prefix_start..offset)
++            .all(|character| classifier.is_word(character));
++        let token = completion_token_range(snapshot, offset);
++        let joined_across_deleted_separator = token.start < prefix_start && !separator_kept;
++        (prefix_kept && prefix_is_word && !joined_across_deleted_separator).then(|| {
++            let start = snapshot.anchor_before(token.start.min(prefix_start));
++            (
++                start..snapshot.anchor_after(token.end),
++                start..self.position,
++            )
++        })
++    }
++}
++
+ #[async_trait(?Send)]
+ impl LspCommand for GetCompletions {
+     type Response = CoreCompletionResponse;
+@@ -3177,12 +3263,13 @@ impl LspCommand for GetCompletions {
+     fn to_lsp(
+         &self,
+         path: &Path,
+-        _: &Buffer,
++        buffer: &Buffer,
+         _: &Arc<LanguageServer>,
+         _: &App,
+     ) -> Result<lsp::CompletionParams> {
++        let position = self.position.to_point_utf16(&buffer.snapshot());
+         Ok(lsp::CompletionParams {
+-            text_document_position: make_lsp_text_document_position(path, self.position)?,
++            text_document_position: make_lsp_text_document_position(path, pos
+```
+
+**File**: `crates/project/src/lsp_store.rs` (modified, +13/-3)
+```diff
+@@ -7915,7 +7915,7 @@ impl LspStore {
+     pub fn completions(
+         &self,
+         buffer: &Entity<Buffer>,
+-        position: PointUtf16,
++        position: Anchor,
+         context: CompletionContext,
+         cx: &mut Context<Self>,
+     ) -> Task<Result<Vec<CompletionResponse>>> {
+@@ -7944,6 +7944,7 @@ impl LspStore {
+                 return Task::ready(Ok(Vec::new()));
+             }
+ 
++            let requested_token = RequestedCompletionToken::new(position, &snapshot);
+             let language = buffer.read(cx).language().cloned();
+ 
+             let buffer = buffer.clone();
+@@ -7999,7 +8000,11 @@ impl LspStore {
+                         })
+                         .collect::<Vec<_>>(),
+                 );
+-                Ok(requests.await.into_iter().flatten().collect::<Vec<_>>())
++                let mut responses = requests.await.into_iter().flatten().collect::<Vec<_>>();
++                buffer.read_with(cx, |buffer, _| {
++                    requested_token.retain_valid_completions(&mut responses, &buffer.snapshot())
++                });
++                Ok(responses)
+             })
+         } else if let Some(local) = self.as_local() {
+             let snapshot = buffer.read(cx).snapshot();
+@@ -8018,6 +8023,7 @@ impl LspStore {
+                 context: context.clone(),
+                 server_id: None,
+             };
++            let requested_token = RequestedCompletionToken::new(position, &snapshot);
+             let server_ids: Vec<_> = buffer.update(cx, |buffer, cx| {
+                 local
+                     .language_servers_for_buffer(buffer, cx)
+@@ -8108,7 +8114,11 @@ impl LspStore {
+ 
+                 let responses: Vec<Option<CompletionResponse>> = join_all(futures).await;
+ 
+-                Ok(responses.into_iter().flatten().collect())
++                let mut responses = responses.into_iter().flatten().collect::<Vec<_>>();
++                buffer.read_with(cx, |buffer, _| {
++                    requested_token.retain_valid_completions(&mut responses, &buffer.snapshot())
++                });
++                Ok(responses)
+             })
+         } else {
+             Task::ready(Err(anyhow!("No upstream client or local language server")))
+```
+
+**File**: `crates/project/src/project.rs` (modified, +2/-2)
+```diff
+@@ -4808,14 +4808,14 @@ impl Project {
+         })
+     }
+ 
+-    pub fn completions<T: ToOffset + ToPointUtf16>(
++    pub fn completions<T: ToOffset>(
+         &self,
+         buffer: &Entity<Buffer>,
+         position: T,
+         context: CompletionContext,
+         cx: &mut Context<Self>,
+     ) -> Task<Result<Vec<CompletionResponse>>> {
+-        let position = position.to_point_utf16(buffer.read(cx));
++        let position = buffer.read(cx).anchor_after(position);
+         self.lsp_store.update(cx, |lsp_store, cx| {
+             lsp_store.completions(buffer, position, context, cx)
+         })
+```
+
+**File**: `crates/project/tests/integration/dynamic_registration.rs` (modified, +1/-1)
+```diff
+@@ -458,7 +458,7 @@ async fn test_completion_resolve_uses_matching_dynamic_registration(cx: &mut gpu
+         .update(cx, |lsp_store, cx| {
+             lsp_store.completions(
+                 &buffer,
+-                PointUtf16::new(0, 0),
++                buffer.read(cx).anchor_after(PointUtf16::new(0, 0)),
+                 lsp::CompletionContext {
+                     trigger_kind: lsp::CompletionTriggerKind::INVOKED,
+                     trigger_character: None,
+```
+
+**File**: `crates/project/tests/integration/project_tests.rs` (modified, +316/-3)
+```diff
+@@ -40,9 +40,9 @@ use itertools::Itertools;
+ use language::{
+     Buffer, BufferEvent, Diagnostic, DiagnosticEntry, DiagnosticEntryRef, DiagnosticMessage,
+     DiagnosticSet, DiagnosticSourceKind, DiskState, FakeLspAdapter, Language, LanguageAwareStyling,
+-    LanguageConfig, LanguageMatcher, LanguageName, LineEnding, ManifestName, ManifestProvider,
+-    ManifestQuery, OffsetRangeExt, Point, ToPoint, Toolchain, ToolchainList, ToolchainLister,
+-    ToolchainMetadata,
++    LanguageConfig, LanguageConfigOverride, LanguageMatcher, LanguageName, LineEnding,
++    ManifestName, ManifestProvider, ManifestQuery, OffsetRangeExt, Override, Point, ToPoint,
++    Toolchain, ToolchainList, ToolchainLister, ToolchainMetadata,
+     language_settings::{
+         Formatter, FormatterList, LanguageSettings, LanguageSettingsContent, LineEndingSetting,
+     },
+@@ -8729,6 +8729,296 @@ async fn test_completions_without_edit_ranges(cx: &mut gpui::TestAppContext) {
+     );
  }
  
 +#[gpui::test]
-+async fn test_create_confirmation_of_relative_query_against_verbatim_base(cx: &mut TestAppContext) {
-+    let app_state = init_test(cx);
-+    app_state
-+        .fs
-+        .as_fake()
-+        .insert_tree(path!("/root"), json!({}))
-+        .await;
++async fn test_completions_without_edit_ranges_after_concurrent_edits(
++    cx: &mut gpui::TestAppContext,
++) {
++    init_test(cx);
 +
-+    let project = Project::test(app_state.fs.clone(), [path!("/root").as_ref()], cx).await;
-+    let (picker, cx) = build_open_path_prompt(project, true, false, cx);
-+    picker.update_in(cx, |picker, _, _| {
-+        picker.delegate.path_style = util::paths::PathStyle::Windows;
-+        picker.delegate.relative_to = PathBuf::from(r"\\?\C:\root");
++    let fs = FakeFs::new(cx.executor());
++    fs.insert_tree(path!("/dir"), json!({ "a.ts": "" })).await;
++    let project = Project::test(fs, [path!("/dir").as_ref()], cx).await;
++    let language_registry = project.read_with(cx, |project, _| project.languages().clone());
++    language_registry.add(typescript_lang());
++    let mut fake_language_servers = language_registry.register_fake_lsp(
++        "TypeScript",
++        FakeLspAdapter {
++            capabilities: lsp::ServerCapabilities {
++                completion_provider: Some(lsp::CompletionOptions::default()),
++                ..lsp::ServerCapabilities::default()
++            },
++            ..FakeLspAdapter::default()
++        },
++    );
++    let (buffer, _handle) = project
++        .update(cx, |project, cx| {
++            project.open_local_buffer_with_lsp(path!("/dir/a.ts"), cx)
++        })
++        .await
++        .expect("open buffer with the language server");
++    let fake_server = fake_language_servers
++        .next()
++        .await
++        .expect("start the language server");
++    cx.executor().run_until_parked();
++    fake_server.set_request_handler::<lsp::request::Completion, _, _>(|_, _| async move {
++        Ok(Some(lsp::CompletionResponse::Array(vec![
++            lsp::CompletionItem {
++                label: String::from("foobar"),
++                ..lsp::CompletionItem::default()
++            },
++        ])))
 +    });
 +
-+    insert_query(r".\nested\new.txt", &picker, cx).await;
++    let long_word = "a".repeat(128);
++    let long_word_continued = format!("{long_word}a");
++    for (text, position, edit, expected_ranges) in [
++        ("keep foo", 8, (4..8, ""), None),
++        ("keep foo bar", 8, (0..0, "x\n"), Some(("foo", "foo"))),
++        ("keep foo bar", 8, (8..8, " baz"), None),
++        ("keep foo bar", 7, (5..5, " "), Some(("foo", "fo"))),
++        ("keep 𝒳oo bar", 11, (5..5, "\t"), Some(("𝒳oo", "𝒳oo"))),
++        ("foobar", 4, (3..4, ""), Some(("fooar", "foo"))),
++        ("foo", 3, (0..1, ""), Some(("oo", "oo"))),
++        ("bar", 3, (0..0, "foo"), Some(("foobar", "foobar"))),
++        ("keep foo bar", 8, (4..5, ""), None),
++        ("keep foo bar", 8, (8..9, ""), Some(("foobar", "foo"))),
++        ("keep   bar", 6, (5..6, ""), None),
++        (
++            long_word.as_str(),
++            128,
++            (128..128, "a"),
++            Some((long_word_continued.as_str(), long_word_continued.as_str())),
++        ),
++        ("foo.", 4, (4..4, "b"), Some(("b", "b"))),
++        ("foo.", 4, (3..4, ""), None),
++    ] {
++        buffer.update(cx, |buffer, cx| buffer.set_text(text, cx));
++        let completions = project.update(cx, |project, cx| {
++            let completions =
++                project.completions(&buffer, position, DEFAULT_COMPLETION_CONTEXT, cx);
++            buffer.update(cx, |buffer, cx| buffer.edit([edit.clone()], None, cx));
++            completions
++        });
++        let completions = completions.await.expect("request completions");
++        assert_eq!(
++            completion_edit_texts(completions, &buffer, cx),
++            expected_ranges
++                .into_iter()
++                .map(|(replaced, inserted)| (replaced.to_string(), Some(inserted.to_string())))
++                .collect::<Vec<_>>(),
++            "completions in {text:?} after edit {edit:?}",
++        );
++    }
++}
 +
-+    let (tx, receiver) = futures::channel::oneshot::channel();
-+    picker.update_in(cx, |picker, window, cx| {
-+        picker.delegate.on_confirm = Some(Box::new(move |result| {
-+            tx.send(result.map(|result| result.paths)).ok();
-+        }));
-+        picker.delegate.confirm(false, window, cx);
++#[gpui::test]
++async fn test_completions_without_edit_ranges_after_reparse(cx: &mut gpui::TestAppContext) {
++    init_test(cx);
++
++    let fs = FakeFs::new(cx.executor());
++    fs.insert_tree(path!("/dir"), json!({ "a.ts": "" })).await;
++    let project = Project::test(fs, [path!("/dir").as_ref()], cx).await;
++    let language_registry = project.read_with(cx, |project, _| project.languages().clone());
++    language_registry.add(Arc::new(
++        Language::new(
++            LanguageConfig {
++                name: LanguageName::new("TypeScript"),
++                matcher: Ar
+```
+
+**File**: `crates/remote_server/src/remote_editing_tests.rs` (modified, +105/-0)
+```diff
+@@ -1768,6 +1768,111 @@ async fn test_remote_lsp(cx: &mut TestAppContext, server_cx: &mut TestAppContext
+     })
+ }
+ 
++#[gpui::test]
++async fn test_remote_completions_with_concurrent_edit(
++    cx: &mut TestAppContext,
++    server_cx: &mut TestAppContext,
++) {
++    let fs = FakeFs::new(server_cx.executor());
++    fs.insert_tree(
++        path!("/code/project"),
++        json!({ "lib.rs": "let x = foo.bar\n" }),
++    )
++    .await;
++    let (project, headless) = init_test(&fs, cx, server_cx).await;
++    let capabilities = lsp::ServerCapabilities {
++        completion_provider: Some(lsp::CompletionOptions::default()),
++        ..lsp::ServerCapabilities::default()
++    };
++    project.update(cx, |project, _| {
++        project.languages().add(rust_lang());
++        project.languages().register_fake_lsp_adapter(
++            "Rust",
++            FakeLspAdapter {
++                name: "rust-analyzer",
++                capabilities: capabilities.clone(),
++                ..FakeLspAdapter::default()
++            },
++        );
++    });
++    let mut fake_servers = server_cx.update(|cx| {
++        headless.read(cx).languages.register_fake_lsp_server(
++            LanguageServerName(SharedString::from("rust-analyzer")),
++            capabilities,
++            Some(Box::new(|fake_server| {
++                fake_server.set_request_handler::<lsp::request::Completion, _, _>(
++                    |params, _| async move {
++                        assert_eq!(
++                            params.text_document_position.position,
++                            lsp::Position::new(0, 8)
++                        );
++                        Ok(Some(CompletionResponse::Array(vec![
++                            lsp::CompletionItem {
++                                label: "boop".to_string(),
++                                text_edit: Some(lsp::CompletionTextEdit::Edit(lsp::TextEdit {
++                                    range: lsp::Range::new(
++                                        lsp::Position::new(0, 8),
++                                        lsp::Position::new(0, 8),
++                                    ),
++                                    new_text: "boop".to_string(),
++                                })),
++                                ..lsp::CompletionItem::default()
++                            },
++                            lsp::CompletionItem {
++                                label: "stale".to_string(),
++                                ..lsp::CompletionItem::default()
++                            },
++                        ])))
++                    },
++                );
++            })),
++        )
++    });
++    let worktree_id = project
++        .update(cx, |project, cx| {
++            project.find_or_create_worktree(path!("/code/project"), true, cx)
++        })
++        .await
++        .expect("worktree should open")
++        .0
++        .read_with(cx, |worktree, _| worktree.id());
++    let (buffer, _handle) = project
++        .update(cx, |project, cx| {
++            project.open_buffer_with_lsp((worktree_id, rel_path("lib.rs")), cx)
++        })
++        .await
++        .expect("buffer should open with LSP");
++    fake_servers.next().await.expect("LSP should start");
++    cx.run_until_parked();
++
++    let completions = project.update(cx, |project, cx| {
++        let completions = project.completions(
++            &buffer,
++            Point::new(0, 15),
++            CompletionContext {
++                trigger_kind: CompletionTriggerKind::INVOKED,
++                trigger_character: None,
++            },
++            cx,
++        );
++        // Edit the buffer before the spawned request task runs, invalidating the requested position.
++        buffer.update(cx, |buffer, cx| {
++            buffer.edit([(Point::new(0, 8)..Point::new(0, 15), "")], None, cx);
++        });
++        completions
 +    });
 +
++    let completions = completions.await.expect("completions should succeed");
 +    assert_eq!(
-+        receiver.await.unwrap(),
-+        Some(vec![PathBuf::from(r"\\?\C:\root\nested\new.txt")]),
++        completions
++            .into_iter()
++            .flat_map(|response| response.completions)
++            .map(|completion| completion.label.text)
++            .collect::<Vec<_>>(),
++        vec!["boop".to_string()]
 +    );
 +}
 +
  #[gpui::test]
- async fn test_open_path_prompt_panics_with_stale_highlight_positions(cx: &mut TestAppContext) {
-     let app_state = init_test(cx);
-@@ -824,8 +856,10 @@ fn build_open_path_prompt(
-         cx.add_window_view(|window, cx| MultiWorkspace::test_new(project, window, cx));
-     let workspace = multi_workspace.read_with(cx, |mw, _| mw.workspace().clone());
-     (
--        workspace.update_in(cx, |_, window, cx| {
--            let delegate = OpenPathDelegate::new(tx, lister.clone(), creating_path, cx);
-+        workspace.update_in(cx, |workspace, window, cx| {
-+            let relative_to = OpenPathPrompt::relative_to(workspace, &lister, creating_path, cx);
-+            let delegate =
-+                OpenPathDelegate::new(tx, lister.clone(), creating_path, relative_to.directory, cx);
-             let delegate = if show_hidden {
-                 delegate.show_hidden()
-             } else {
-@@ -913,3 +947,265 @@ fn open_path_prompt(
-     });
-     cx.run_until_parked();
- }
-+
-+#[gpui::test]
-+async fn test_open_path_prompt_relative_to(cx: &mut TestAppContext) {
-+    let app_state = init_test(cx);
-+    app_state
-+        .fs
-+        .as_fake()
-+        .insert_tree(
-+            path!("/root"),
-+            json!({
-+                "file_in_root": "Content",
-+                "subdir": {
-+                    "file_in_subdir": "Content",
-+                }
-+            }),
-+        )
-+        .await;
-+    cx.update_global::<SettingsStore, _>(|store, cx| {
-+        store.update_user_settings(cx, |settings| {
-+            settings.workspace.use_system_path_prompts = Some(false);
-+        });
-+    });
-+
-+    let project = Project::test(app_state.fs.clone(), [path!("/root").as_ref()], cx).await;
-+    let (multi_workspace, cx) =
-+        cx.add_window_view(|window, cx| MultiWorkspace::test_new(project, window, cx));
-+    let workspace = multi_workspace.read_with(cx, |mw, _| mw.workspace().clone());
-+    workspace.update_in(cx, |workspace, window, cx| {
-+        OpenPathPrompt::register(workspace, Some(window), cx)
-+    });
-+    workspace
-+        .update_in(cx, |workspace, window, cx| {
-+            workspace.open_abs_path(
-+                PathBuf::from(path!("/root/subdir/file_in_subdir")),
-+                OpenOptions::default(),
-+                window,
-+                cx,
-+            )
-+        })
-+        .await
-+        .unwrap();
-+
-+    open_path_prompt(&workspace, false, cx);
-+    let picker = workspace.read_with(cx, |workspace, cx| {
-+        workspace
-+            .active_modal::<Picker<OpenPathDelegate>>(cx)
-+            .unwrap()
-+    });
-+
-+    #[cfg(not(windows))]
-+    let expected_separator = "./";
-+    #[cfg(windows)]
-+    let expected_separator = ".\\";
-+
-+    insert_query("./", &picker, cx).await;
-+    assert_eq!(
-+        collect_match_candidates(&picker, cx),
-+        vec![expected_separator, "file_in_subdir"]
-+    );
-+
-+    insert_query("../", &picker, cx).await;
-+    assert_eq!(
-+        collect_match_candidates(&picker, cx),
-+        vec![expected_separator, "subdir", "file_in_root"]
-+    );
-+}
-+
-+#[gpui::test]
-+async fn test_open_path_prompt_relative_to_file_root(cx: &mut TestAppContext) {
-+    let app_state = init_test(cx);
-+    app_state
-+        .fs
-+        .as_fake()
-+        .insert_tree(
-+            path!("/repro"),
-+            json!({
-+                "a.txt": "
-```
-
-**File**: `crates/project/src/project.rs` (modified, +3/-3)
-```diff
-@@ -1170,9 +1170,9 @@ impl DirectoryLister {
- 
-     pub fn path_style(&self, cx: &App) -> PathStyle {
-         match self {
--            Self::Local(project, ..) | Self::Project(project, ..) => {
--                project.read(cx).path_style(cx)
--            }
-+            // A local lister browses this machine's file system, even for a remote project.
-+            Self::Local(..) => PathStyle::local(),
-+            Self::Project(project) => project.read(cx).path_style(cx),
-         }
-     }
- }
-```
-
-**File**: `crates/recent_projects/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@ fs.workspace = true
- gpui = { workspace = true, features = ["test-support"] }
- http_client.workspace = true
- language = { workspace = true, features = ["test-support"] }
-+open_path_prompt = { workspace = true, features = ["test-support"] }
- picker = { workspace = true, features = ["test-support"] }
- project = { workspace = true, features = ["test-support"] }
- release_channel.workspace = true
-```
-
-**File**: `crates/recent_projects/src/remote_servers.rs` (modified, +66/-1)
-```diff
-@@ -392,7 +392,11 @@ impl ProjectPicker {
-     ) -> Entity<Self> {
-         let (tx, rx) = oneshot::channel();
-         let lister = project::DirectoryLister::Project(project.clone());
--        let delegate = open_path_prompt::OpenPathDelegate::new(tx, lister, false, cx).show_hidden();
-+        // The project is freshly connected and has no worktrees yet, so resolve
-+        // `./` and `../` against the remote home directory, never the client's cwd.
-+        let relative_to = PathBuf::from(home_dir.to_string());
-+        let delegate = open_path_prompt::OpenPathDelegate::new(tx, lister, false, relative_to, cx)
-+            .show_hidden();
- 
-         let picker = cx.new(|cx| {
-             let picker = Picker::uniform_list(delegate, window, cx).embedded();
-@@ -3150,6 +3154,7 @@ mod filter_tests {
- mod tests {
-     use super::*;
-     use gpui::TestAppContext;
-+    use util::path;
- 
-     fn init_test(cx: &mut TestAppContext) -> Arc<AppState> {
-         cx.update(|cx| {
-@@ -3308,4 +3313,64 @@ mod tests {
-         assert_eq!(connections[0].projects.len(), 1);
-         assert!(connections[new_index.0].projects.is_empty());
-     }
-+
-+    #[gpui::test]
-+    async fn test_project_picker_resolves_dot_relative_to_home_dir(cx: &mut TestAppContext) {
-+        let app_state = init_test(cx);
-+        app_state
-+            .fs
-+            .as_fake()
-+            .insert_tree(
-+                path!("/remote/home"),
-+                serde_json::json!({
-+                    "remote_file": "Content",
-+                    "sub": {},
-+                }),
-+            )
-+            .await;
-+
-+        // A freshly connected remote project has no worktrees yet.
-+        let project = Project::test(app_state.fs.clone(), [], cx).await;
-+        let (workspace, cx) =
-+            cx.add_window_view(|window, cx| Workspace::test_new(project.clone(), window, cx));
-+
-+        let modal = workspace.update_in(cx, |_workspace, window, cx| {
-+            let weak = cx.weak_entity();
-+            cx.new(|cx| {
-+                RemoteServerProjects::project_picker(
-+                    false,
-+                    ServerIndex::Ssh(SshServerIndex(0)),
-+                    remote::MockConnectionOptions { id: 0 }.into(),
-+                    project.clone(),
-+                    RemotePathBuf::from_str(path!("/remote/home"), PathStyle::local()),
-+                    window,
-+                    cx,
-+                    weak,
-+                )
-+            })
-+        });
-+        cx.run_until_parked();
-+
-+        let picker = modal.read_with(cx, |modal, cx| match &modal.mode {
-+            Mode::ProjectPicker(project_picker) => project_picker.read(cx).picker.clone(),
-+            _ => panic!("expected project picker mode"),
-+        });
-+        picker.update_in(cx, |picker, window, cx| {
-+            picker.set_query("./", window, cx);
-+        });
-+        cx.run_until_parked();
-+
-+        let candidates =
-+            picker.read_with(cx, |picker, _| picker.delegate.collect_match_candidates());
-+        assert!(
-+            candidates
-+                .iter()
-+                .any(|candidate| candidate == "remote_file"),
-+            "`./` should resolve against the remote home dir, got {candidates:?}"
-+        );
-+        assert!(
-+            candidates.iter().any(|candidate| candidate == "sub"),
-+            "`./` should resolve against the remote home dir, got {candidates:?}"
-+        );
-+    }
- }
-```
-
-**File**: `crates/remote_connection/src/remote_connection.rs` (modified, +2/-0)
-```diff
-@@ -257,6 +257,8 @@ impl RemoteConnectionModal {
-             RemoteConnectionOptions::Mock(options) => {
-                 (format!("mock-{}", options.id), None, false, false)
-             }
-+            #[allow(unreachable_patterns)]
-+            _ => unreachable!(),
-         };
-         Self {
-             prompt: cx.new(|cx| {
+ async fn test_remote_completion_resolve_edit_ranges(
+     cx: &mut TestAppContext,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67328** (closed): Download remote servers from fork GitHub releases (@belizariogr)
-- **PR #67327** (2026-11-22): google_ai: Add long decode support (@reflectronic)
-- **PR #67316** (2026-11-22): gpui: Fix focus, key equivalent and mouse issues with native views (@nathansobo)
-- **PR #67314** (2026-11-22): google_ai: Generate globally unique tool call IDs (@reflectronic)
-- **PR #67313** (2026-11-22): sandbox_linux: More permissive mkdir (@cameron1024)
-- **PR #67311** (2026-11-22): gpui: Composite native views into the scene on macOS (@nathansobo)
+- **PR #67377** (2026-11-23): gpui: Fix a panic when an animation chain gets shorter (@ptweezy)
+- **PR #67376** (2026-11-23): gpui: Fix unit tests building without test-support (@ptweezy)
+- **PR #67371** (2026-11-23): gpui: Schedule chained animations by their own frame cap (@ptweezy)
+- **PR #67370** (2026-11-23): linux_sandbox: Fix network checks in sandbox (@cameron1024)
+- **PR #67368** (2026-11-23): acp_thread: Normalize line endings in v2 terminal output (@benbrandt)
+- **PR #67367** (2026-11-23): rust: Adopt `trim_{prefix,suffix}` (@tidely)
 
 ---
 
@@ -4025,41 +3227,69 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpui: Composite native views into the scene on macOS
+## X. agent_ui: Search threads by their displayed title
 
 **RULE**:
-When implementing operations in `crates/gpui/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/agent_ui/src/threads_archive_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4fe0be1`: gpui: Composite native views into the scene on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78edf1df`: agent_ui: Search threads by their displayed title. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/threads_archive_view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[target.'cfg(target_os = "macos")'.dev-dependencies]
-objc2.workspace = true
+use crate::{Agent, ArchiveSelectedThread, RemoveSelectedThread};
+                let title = session.display_title();
+                if let Some(positions) = fuzzy_match_positions(&query, &title) {
+            self.thread.display_title()
 
-[[example]]
-name = "native_view"
-path = "examples/native_view.rs"
-
-[[example]]
-name = "native_view_appkit_field"
-path = "examples/native_view_appkit_field.rs"
-
+    #[gpui::test]
+    async fn test_filter_matches_displayed_title(cx: &mut gpui::TestAppContext) {
+        crate::test_support::init_test(cx);
+        cx.update(ThreadMetadataStore::init_global);
+        cx.run_until_parked();
+        let metadata = ThreadMetadata {
+            thread_id: ThreadId::new(),
+            session_id: Some(acp::SessionId::new("session")),
+            agent_id: agent::ZED_AGENT_ID.clone(),
+            title: Some("Generated".into()),
+            title_override: Some("Renamed".into()),
+            updated_at: Utc::now(),
+            created_at: None,
+            interacted_at: None,
+            worktree_paths: Default::default(),
+            remote_connection: None,
+            archived: false,
+        };
+        cx.update(|cx| {
+            ThreadMetadataStore::global(cx).update(cx, |store, cx| store.save(metadata, cx))
+        });
+        let view = cx.add_window(|window, cx| {
+            let workspace = WeakEntity::
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use crate::{Agent, ArchiveSelectedThread, DEFAULT_THREAD_TITLE, RemoveSelectedThread};
+                let title = session
+                    .title
+                    .as_ref()
+                    .map(|t| t.as_ref())
+                    .unwrap_or(DEFAULT_THREAD_TITLE);
+                if let Some(positions) = fuzzy_match_positions(&query, title) {
+            self.thread
+                .title
+                .as_ref()
+                .map(|t| t.as_ref())
+                .unwrap_or(DEFAULT_THREAD_TITLE)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4fe0be1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78edf1df` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

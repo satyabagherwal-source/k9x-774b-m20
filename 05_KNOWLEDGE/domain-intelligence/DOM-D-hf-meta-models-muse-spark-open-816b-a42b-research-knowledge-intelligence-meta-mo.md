@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
   "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T17:07:13.069Z",
+  "timestamp": "2026-11-23T23:18:09.541Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meta-models/Muse-Spark-Open-816B-A42B](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B) (Revision: `hf-meta-mo`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T17:07:13.069Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:18:09.541Z`  
 > **Learning ID**: `learn-huggingface-meta-models-muse-spark-open-816b-a42b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:06:41.042Z  
+> **Harvest Timestamp**: 2026-11-23T23:18:08.698Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 14408 downloads | 761 likes
+- **Stars / Engagement**: 11055 downloads | 767 likes
 
 ---
 

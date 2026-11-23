@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T23:10:01.876Z",
-  "total_cycles_completed": 11892,
-  "total_learnings_persisted": 11892,
-  "total_rules_promoted": 10986,
+  "last_updated": "2026-11-23T23:18:24.869Z",
+  "total_cycles_completed": 11896,
+  "total_learnings_persisted": 11896,
+  "total_rules_promoted": 10989,
   "history": [
-    {
-      "timestamp": "2026-11-23T07:28:47.285Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:36:43.902Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:37:00.650Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:44:58.999Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T07:45:06.607Z",
       "repository": "prof18/feed-flow",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T23:10:01.876Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:18:09.333Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:18:12.503Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:18:21.004Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T23:18:24.869Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

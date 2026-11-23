@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T23:10:01.879Z",
+  "last_updated": "2026-11-23T23:18:24.872Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
-      "verified_at": "2026-11-19T17:07:12.842Z",
+      "content_hash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
+      "verified_at": "2026-11-23T23:18:09.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:07:12.842Z"
+      "last_updated": "2026-11-23T23:18:09.335Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
-      "verified_at": "2026-11-20T20:57:53.440Z",
+      "content_hash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
+      "verified_at": "2026-11-23T23:18:21.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:57:53.440Z"
+      "last_updated": "2026-11-23T23:18:21.007Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
-      "verified_at": "2026-11-22T21:41:02.925Z",
+      "content_hash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
+      "verified_at": "2026-11-23T23:18:24.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:41:02.925Z"
+      "last_updated": "2026-11-23T23:18:24.872Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
-      "verified_at": "2026-11-22T15:09:07.401Z",
+      "content_hash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
+      "verified_at": "2026-11-23T23:18:12.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:09:07.401Z"
+      "last_updated": "2026-11-23T23:18:12.506Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

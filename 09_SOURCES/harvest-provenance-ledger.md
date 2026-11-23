@@ -12538,3 +12538,7 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `4a6f9c61` | Multi-dimensional audit evidence | 2026-11-23T23:09:51.803Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `39fe0cb3` | Multi-dimensional audit evidence | 2026-11-23T23:09:58.308Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `69961019` | Multi-dimensional audit evidence | 2026-11-23T23:10:01.871Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-23T23:18:09.327Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `e224d55b` | Multi-dimensional audit evidence | 2026-11-23T23:18:12.498Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `1a44dc2c` | Multi-dimensional audit evidence | 2026-11-23T23:18:20.999Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `72e14334` | Multi-dimensional audit evidence | 2026-11-23T23:18:24.864Z |

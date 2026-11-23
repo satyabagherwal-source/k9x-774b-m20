@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T23:10:07.372Z",
+  "last_updated": "2026-11-23T23:18:30.009Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24258,
+  "total_items": 24266,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "09c8c207",
-      "content_hash": "d0c5bf9d90e1d3b9dd49acb8ef35eea038dd360a7af104eba4b7d2b1c38d5c78",
+      "source_version": "72e14334",
+      "content_hash": "fecd8d8634cf427123c68d3507ea34074a0eb959c05c463a952288cdbac32c02",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:41:03.285Z"
+      "persisted_at": "2026-11-23T23:18:25.240Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "09c8c207",
-      "content_hash": "935cec6f9459fd9062d72635e64861f88138c021d7e559dc0603e0d63dc1db3a",
+      "source_version": "72e14334",
+      "content_hash": "52827e0f1ec66778eac7d07c10367475adb8dedd06351f6ee8d30fc104046da3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:41:03.441Z"
+      "persisted_at": "2026-11-23T23:18:25.398Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -227276,8 +227276,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "8a71677f",
-      "content_hash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
+      "source_version": "1a44dc2c",
+      "content_hash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -227295,6 +227295,11 @@
           "number": 9639,
           "title": "prefer the parent on conflicts under DeepMergePreferParent",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10143,
+          "title": "make the status syncer the only writer of Gateway Accepted",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227302,7 +227307,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:57:53.241Z",
+      "verified_at": "2026-11-23T23:18:20.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227356,10 +227361,10 @@
       "relative_path": "08_VERIFICATION/kgateway-dev-kgateway-verification-protocol-empirical-defect-shield-for-kgateway.md",
       "title": "Verification Protocol: Empirical Defect Shield for kgateway-dev/kgateway",
       "repository": "kgateway-dev/kgateway",
-      "source_version": "8a71677f",
-      "content_hash": "830a9c0d4c5d79ad8e8ce3c35b68d16e0f111466d8e61e4fd95b4a3bc60aa33c",
+      "source_version": "1a44dc2c",
+      "content_hash": "54dcb93bb1f54dcb266a8e025044dbe33bf2e7bd187e8111b794b21ac8c6d466",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:57:53.921Z"
+      "persisted_at": "2026-11-23T23:18:21.522Z"
     },
     "learn-github-materializeinc-materialize": {
       "learning_id": "learn-github-materializeinc-materialize",
@@ -227576,9 +227581,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kgateway-dev-kgateway-learnings",
       "repository": "kgateway-dev-kgateway-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c1e3052529b828d615e8cd0c060b555a296d8d1829ca0ee9e6fe1102d930000",
+      "content_hash": "ac87b688f01fc1022f686e244face795a70111e82e84399ba3efb085b4e0bc0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:58:25.095Z"
+      "persisted_at": "2026-11-23T23:18:30.009Z"
     },
     "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf": {
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
@@ -233862,8 +233867,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "d31d1074",
-      "content_hash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
+      "source_version": "e224d55b",
+      "content_hash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -233901,6 +233906,11 @@
           "number": 9939,
           "title": "Composite native views into the scene on macOS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10142,
+          "title": "Search threads by their displayed title",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233908,7 +233918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:09:07.178Z",
+      "verified_at": "2026-11-23T23:18:12.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233950,10 +233960,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "d31d1074",
-      "content_hash": "697fa98ceae1692331e9d22571235b9aad4ca2367913d002bd24c6f2d9e0138f",
+      "source_version": "e224d55b",
+      "content_hash": "9225685d69a3041705c33090d865461bb60779ae28050c44b16ced6fb55ee057",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T15:09:07.787Z"
+      "persisted_at": "2026-11-23T23:18:12.901Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -233962,10 +233972,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "d31d1074",
-      "content_hash": "36c85ed1ce9555ba4623bac5ad75a8da088d80212b0fdc766952691d63936336",
+      "source_version": "e224d55b",
+      "content_hash": "a53f2ab51f4610c0923adf3d36d86b3cbca4aa334cd5a8188d9188048b1eb2b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:09:07.965Z"
+      "persisted_at": "2026-11-23T23:18:13.089Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -233987,9 +233997,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "9212ffeb92ca3cd26bc5aed23b383843831a925875d581f49a6e99f75ecf831e",
+      "content_hash": "cd5aac873f93cb7f8306f894d181754e59f9368375724f229b91350c28a67aff",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T15:09:19.171Z"
+      "persisted_at": "2026-11-23T23:18:28.750Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -233999,9 +234009,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "d1401fb62835dd185b7efb177cc96238e032e525a0731f20ddbc65cc734b6a5b",
+      "content_hash": "4ffcaa540a73cdd7556ccd49ffb79f559fef9c52e29e7d190bd8125dc4be2e34",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:09:19.353Z"
+      "persisted_at": "2026-11-23T23:18:28.908Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -242759,8 +242769,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "09c8c207",
-      "content_hash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
+      "source_version": "72e14334",
+      "content_hash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -242803,6 +242813,11 @@
           "number": 9996,
           "title": "Clear HasMoreResult for empty retrieve results",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10144,
+          "title": "record replicated idempotency keys on the secondary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242810,7 +242825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:41:02.733Z",
+      "verified_at": "2026-11-23T23:18:24.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243710,7 +243725,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
+      "content_hash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [],
@@ -243719,7 +243734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:07:12.597Z",
+      "verified_at": "2026-11-23T23:18:09.109Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243736,9 +243751,9 @@
       "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "778445d172d9c51b545e51ab0c41e4ae2384bcc3a31856308457750b256d2ffb",
+      "content_hash": "8c7102ebc9fc61d18d0a6cef6cbad674330b485c4bd20d3a03d3005ad1485274",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:07:13.070Z"
+      "persisted_at": "2026-11-23T23:18:09.542Z"
     },
     "learn-github-nativescript-nativescript": {
       "learning_id": "learn-github-nativescript-nativescript",
@@ -243862,9 +243877,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
       "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
       "source_version": "HEAD",
-      "content_hash": "4829d4ee8abe40cb463c02abb5ca530a5649e9db0eb458728595e80e738cb611",
+      "content_hash": "3c7ea8001b4400d38ddfc1c0c0efc70348732319620b5861aa75d13185a25d8a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:07:54.438Z"
+      "persisted_at": "2026-11-23T23:18:29.258Z"
     },
     "candidate_directive-ios-never-re-attach-torn-down-listview-item-views": {
       "item_id": "candidate_directive-ios-never-re-attach-torn-down-listview-item-views",
@@ -309586,10 +309601,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kgateway-dev-kgateway-technical-construction-intelligence-kgateway-dev-kgateway-.md",
       "title": "Technical Construction Intelligence: kgateway-dev/kgateway Core Invariants",
       "repository": "kgateway-dev/kgateway",
-      "source_version": "8a71677f",
-      "content_hash": "1d1982832e860d640b373b00a24e42b13f7d74f9a64ce438af40a79fe74af1ee",
+      "source_version": "1a44dc2c",
+      "content_hash": "c87096dfe7ec18b4fa597825d376d99d5f5f732daf7eba4ce7b2fd88a6d28d73",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:57:53.774Z"
+      "persisted_at": "2026-11-23T23:18:21.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor",
@@ -309623,9 +309638,9 @@
       "title": "Technical Construction Intelligence: kgateway-dev-kgateway-learnings Core Invariants",
       "repository": "kgateway-dev-kgateway-learnings",
       "source_version": "HEAD",
-      "content_hash": "1df6500ce6fb821245868dc41081c2554157a6e6f242164a0b889a50292705b8",
+      "content_hash": "3c1d88b772110772fdeb991c04c82c026a074c078a445ce83853a54aa66f988a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:58:24.941Z"
+      "persisted_at": "2026-11-23T23:18:29.853Z"
     },
     "rule-9640": {
       "learning_id": "rule-9640",
@@ -330749,6 +330764,108 @@
       "content_hash": "9b5b096c470a56265684659cf80b112ecbc4efc48681a954c5bbebed8732ff8e",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T23:10:07.067Z"
+    },
+    "rule-10142": {
+      "learning_id": "rule-10142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10142,
+      "title": "Search threads by their displayed title",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "e224d55b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:18:12.287Z"
+    },
+    "candidate_directive-search-threads-by-their-displayed-title": {
+      "item_id": "candidate_directive-search-threads-by-their-displayed-title",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZLDH-search-threads-by-their-displayed-title.md",
+      "title": "Search threads by their displayed title",
+      "repository": "zed-industries/zed",
+      "source_version": "e224d55b",
+      "content_hash": "aa523f0f1aeb6cd7b14afa5483e8e87f646fabab6e75f1240e2bc324c76287df",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-23T23:18:12.729Z"
+    },
+    "rule-10143": {
+      "learning_id": "rule-10143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10143,
+      "title": "make the status syncer the only writer of Gateway Accepted",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "1a44dc2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:18:20.808Z"
+    },
+    "candidate_directive-make-the-status-syncer-the-only-writer-of-gateway-accepted": {
+      "item_id": "candidate_directive-make-the-status-syncer-the-only-writer-of-gateway-accepted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZRX6-make-the-status-syncer-the-only-writer-of-gateway-accepted.md",
+      "title": "make the status syncer the only writer of Gateway Accepted",
+      "repository": "kgateway-dev/kgateway",
+      "source_version": "1a44dc2c",
+      "content_hash": "07a489ea1f8bf7e1759fa925516e7fa9c029e7e1a161f1652b9bba9f93ab453c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:18:21.211Z"
+    },
+    "rule-10144": {
+      "learning_id": "rule-10144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10144,
+      "title": "record replicated idempotency keys on the secondary",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "72e14334",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:18:24.673Z"
+    },
+    "candidate_directive-record-replicated-idempotency-keys-on-the-secondary": {
+      "item_id": "candidate_directive-record-replicated-idempotency-keys-on-the-secondary",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZUWP-record-replicated-idempotency-keys-on-the-secondary.md",
+      "title": "record replicated idempotency keys on the secondary",
+      "repository": "milvus-io/milvus",
+      "source_version": "72e14334",
+      "content_hash": "40de532461eee36ba48285a02750ee4530536c2e52cb1071b54b3799168bc899",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:18:25.085Z"
+    },
+    "candidate_directive-agent_ui-search-threads-by-their-displayed-title": {
+      "item_id": "candidate_directive-agent_ui-search-threads-by-their-displayed-title",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZXM0-agent_ui-search-threads-by-their-displayed-title.md",
+      "title": "agent_ui: Search threads by their displayed title",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4867a8fa6045565324f1ca8e582c08617797b1f3714e62bbbd0e74861de427e6",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-23T23:18:28.589Z"
+    },
+    "candidate_directive-status-make-the-status-syncer-the-only-writer-of-gateway-accepted": {
+      "item_id": "candidate_directive-status-make-the-status-syncer-the-only-writer-of-gateway-accepted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZYGU-status-make-the-status-syncer-the-only-writer-of-gateway-accepted.md",
+      "title": "status): make the status syncer the only writer of Gateway Accepted",
+      "repository": "kgateway-dev-kgateway-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac222de17153a1dcaff07f96c36e28d48caeb1ab2504d6ef76564cef31fc7d5a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:18:29.697Z"
     }
   },
   "ai-builder-brain": {

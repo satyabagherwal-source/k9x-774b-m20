@@ -4,24 +4,24 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "09c8c207",
+  "source_version": "72e14334",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T21:41:03.129Z",
+  "timestamp": "2026-11-23T23:18:25.082Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `09c8c207`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T21:41:03.129Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `72e14334`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T23:18:25.082Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io/milvus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T21:41:01.947Z  
+> **Harvest Timestamp**: 2026-11-23T23:18:23.862Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46718 stars
+- **Stars / Engagement**: 46726 stars
 
 ---
 
@@ -1561,14 +1561,11 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55814** (2026-11-22): **fix: Clear HasMoreResult for empty retrieve results**
-  *Symptoms*: issue: #55795  Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The second commit adjusts a unit test that depended on the bug, which was failing #55796's C++ unit tests.  ## Problem  A resumed query iterator can return an empty page and stop early (`test_query_iterator_normal`, `assert 2000 == 4000`).  - `RetrieveResult::has_more_result` defaults to `true`. When execution produces no rows, the empty-result branch of `ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it. A growing segment with no rows visible at the snapshot timestamp returns 0 rows with `has_more_result=true`. - The QueryNode reduce ORs the flag of every segment result, the empty ones included. A worker whose segments are all empty returns 0 rows with `HasMoreResult=true`. - The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on by default) ends the page at a drained child that reports more results, so it does not skip that child's later rows. For a child with no rows the page is empty, and the client stops iterating. - The batch reduce drops empty results before merging, so it is not affected.  The test inserts rows after saving the checkpoint, so the resumed query always sees a growing segment with no visible rows. It fails only when that segment is the only one on its worker, which depends on placement and flush timing.  ## Fix  Set `has_more_result=false` in the empty-result branch. A result with no rows is not truncated, so the flag was wrong; the stre
+- **Issue #55829** (2026-11-23): **fix: format RPC context for QueryView streaming errors**
+  *Symptoms*: ## What type of PR is this?  - [x] Bug Fix  ## Which issue(s) this PR fixes  Fixes #55827 (regression from #55219)  ## Description  `NewServiceStreamClientInterceptor` attaches `viewpb.RPCRequestContext` to `SearchOnViewStream` and `QueryOnViewStream` errors, just like the unary interceptor does for `SearchOnView` and `QueryOnView`. However, `formatRPCContext` in `internal/views/queryclient/error.go` only switched on the unary method names, causing streaming QueryView errors to hit `default: return err` and drop the `"fail to search on QueryNode <id>: "` / `"fail to query on QueryNode <id>: "` prefix.  This broke all 6 index variants of `test_search_invalid_params_type` on `master` nightly suites (`milvus-e2e-master` and `cardinal-e2e-master`) once #55219 enabled streaming reduction by default.  ### Changes - Handle `ViewQueryService_SearchOnViewStream_FullMethodName` and `ViewQueryService_QueryOnViewStream_FullMethodName` in `formatRPCContext` (`internal/views/queryclient/error.go`). - Add streaming method cases for both QueryNode and StreamingNode to `TestToMilvusErrorFormatsRPCContext` (`internal/views/queryclient/error_test.go`).  ### Verification - `golangci-lint fmt --diff --enable {gci,gofmt,gofumpt,goimports}`: no diff on all 4 formatters. - Remote Go UT (`milvus-dev-cli go-ut local . -b master -t ./internal/views/queryclient -k 'TestToMilvusError'`, task `go-ut-local-wenxing-fix-queryview-d1fa78a-c89227464cd654a8-u482`): PASS (`ok github.com/milvus-io/milvus/internal
 
-- **Issue #55791** (2026-11-21): **fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client**
-  *Symptoms*: issue: #55002 pr: #55003  #55004 bumped `github.com/andybalholm/brotli` to v1.2.7 in the root `go.mod` on 3.0 but left `tests/go_client` at v1.1.0. `tests/go_client` replaces `github.com/milvus-io/milvus` with the repo root, so its `go.mod` has to select the same version. Without that, golangci-lint cannot load the module (`no go files to analyze: running go mod tidy may solve the problem`), and the static-check step of Code-Check fails on every 3.0 PR.  This applies the `tests/go_client` part of #55003. Only `tests/go_client/go.mod` and `go.sum` change.  ### Validation On this branch, in `tests/go_client`: - `GOFLAGS=-mod=readonly go list -tags L0,L1,L2,test ./...` succeeds. - `golangci-lint run --build-tags L0,L1,L2,test --config .golangci.yml` (v2.11.3, the CI version) reports `0 issues`. With the current 3.0 `tests/go_client` it fails with the error above.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5eb0ed25563fe772c6341aea81b23e2fa31c3c69","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T02:57:29.051777Z">2026-11-21T02:57:29.051777Z</relative-time> | `5eb0ed2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[tests/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/tests/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
+- **Issue #55828** (2026-11-23): **test: fix remaining chaos cleanup hooks for pytest 8**
+  *Symptoms*: ## What type of PR is this?  - [x] Test  ## Description  Follow-up to #55501 (`test: fix chaos cleanup hook for pytest 8`), which updated `tests/python_client/chaos/test_chaos_apply.py` from legacy `def teardown(self)` to `def teardown_method(self)`.  Six remaining chaos test files still defined `def teardown(self)`, which pytest 8 silently ignores. In `chaos-test-kafka-cron` build 4770 and `chaos-test-wp-cron` build 2934, when `test_chaos_apply_to_determined_pod.py` failed after creating a `PodChaos` CR, cleanup never ran and leaked `PodChaos` CRs (`test-etcd-leader-pod-kill-1795307084`, `test-etcd-followers-pod-kill-1795354005`) into `chaos-testing`.  ### Changes - Rename `def teardown(self)` to `def teardown_method(self)` in:   - `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py`   - `tests/python_client/chaos/test_chaos_apply_multi_replicas.py`   - `tests/python_client/chaos/test_chaos_apply_to_coord.py`   - `tests/python_client/chaos/test_chaos.py`   - `tests/python_client/chaos/test_chaos_bulk_insert.py`   - `tests/python_client/chaos/test_load_with_checker.py` - Guard attribute lookups with `getattr(...)` and non-empty `meta_name` checks so teardown does not mask an earlier failure with `AttributeError` when a test fails before creating a chaos CR.  ### Verification - `python -m py_compile` on all 6 files: PASS. - `ruff check --select E,F,W`: 0 warnings on touched lines. - Isolated pytest lifecycle verification using the real `TestChaosApply.teardown_met
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1585,70 +1582,1092 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09c8c207` (2026-11-22)
-**Commit Message**: fix: Clear HasMoreResult for empty retrieve results (#55814)
+### Incident Patch 1: `f81b4bca` (2026-11-23)
+**Commit Message**: fix: record replicated idempotency keys on the secondary (#54903)
 
-issue: #55795
+issue: #54572
 
-Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The
-second commit adjusts a unit test that depended on the bug, which was
-failing #55796's C++ unit tests.
+### Problem
 
-## Problem
+A replicated Insert carries the source cluster's idempotency key and
+insert result, but the secondary recorded neither. The idempotency
+interceptor appended it without touching the window, and the summary
+observer stored it as keyless. After a planned switchover, the promoted
+cluster had no entry for the key. A client retry took the Owner path,
+allocated new autoIDs and appended a second copy (32 -> 64 rows in the
+issue).
 
-A resumed query iterator can return an empty page and stop early
-(`test_query_iterator_normal`, `assert 2000 == 4000`).
+### Fix
 
-- `RetrieveResult::has_more_result` defaults to `true`. When execution
-produces no rows, the empty-result branch of
-`ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it.
-A growing segment with no rows visible at the snapshot timestamp returns
-0 rows with `has_more_result=true`.
-- The QueryNode reduce ORs the flag of every segment result, the empty
-ones included. A worker whose segments are all empty returns 0 rows with
-`HasMoreResult=true`.
-- The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on
-by default) ends the page at a drained child that reports more results,
-so it does not skip that child's later rows. For a child with no rows
-the page is empty, and the client stops iterating.
-- The batch reduce drops empty results before merging, so it is not
-affected.
+The secondary records replicated keys but never checks against them.
 
-The te
+- The window is never read for a replicated message. The interceptor
+still appends every replicated message unconditionally. So the hazards
+the design doc lists for deduplicating a replicated write locally (a
+demotion, or a legal key reuse after the source evicted the key) cannot
+occur.
+- The window is written after the append. The new `Window.Record` stores
+key -> result and replaces an entry already held for the key
+(last-wins). `Complete` and `Record` share one `storeLocked`, so bytes
+and commit order stay consistent.
+- A replicated transaction buffers its body results and records on the
+c
 
-**File**: `internal/core/src/query/ExecPlanNodeVisitor.cpp` (modified, +1/-0)
+**File**: `docs/design-docs/design_docs/20260604-idempotent_write.md` (modified, +72/-10)
 ```diff
-@@ -322,6 +322,7 @@ ExecPlanNodeVisitor::setupRetrieveResult(
-                 tmp_retrieve_result.field_data_[i] = std::move(data_array);
-             }
-         }
-+        tmp_retrieve_result.has_more_result = false;
-         retrieve_result_opt_ = std::move(tmp_retrieve_result);
-         return;
-     }
+@@ -91,8 +91,11 @@ cannot be done correctly for autoID collections at all.
+   sent (`client/milvusclient`), but REST, pymilvus and raw gRPC callers reach the server,
+   where it is dropped silently. Deleting the same rows twice is already effectively a
+   no-op; `Upsert` needs its delete leg deduped as well, which is a separate design.
+-- Cross-cluster dedup. Replicated writes bypass the window entirely (see
+-  [Replication and CDC](#replication-and-cdc)).
++- Cross-cluster dedup of replicated writes. A replicated write is never deduplicated
++  against the local window; it is only recorded there, so that a client retry after a
++  planned switchover can reuse the result while the secondary retains the key (see
++  [Replication and CDC](#replication-and-cdc)). Keys that replication had not delivered
++  before a force promote are not recovered.
+ - Unbounded retention. Duplicate visibility is a bounded window (see
+   [Retention](#retention)).
+ 
+@@ -466,17 +469,75 @@ be recovered from WALSummary.
+ 
+ ## Replication and CDC
+ 
+-Replicated messages **bypass the window entirely**. The replicate stream has its own
++Replicated messages are **recorded in the window but never checked against it**.
++
++The window is never read for a replicated message. The replicate stream has its own
+ exactly-once delivery via source-timetick checkpoints, and the idempotency key inside a
+ replicated message belongs to the *source* cluster's window history. Deduplicating
+ against the local window would silently drop replicated writes whenever the key happens
+ to sit in this cluster's window — after a demotion, or after the source released the key
+-and a client legally re-issued it.
+-
+-The recovery observer applies the same rule: a replicated write becomes a *keyless*
+-committed write in Summary, so a foreign key can never materialize a local dedup
+-entry. Its local WAL positions still participate in Summary persistence and
+-checkpoint gating.
++and a client legally re-issued it. So a replicated message is appended unconditionally.
++
++The window is written after the append. A replicated Insert carries the source's key and
++its `idempotent_result` header; a replicated transaction carries them on its bodies and
++its commit, and the interceptor merges the body results on the commit exactly as it does
++for a native transaction. The recorded entry replaces an entry already held for the key:
++when the source evicted the key and a client legally reused it, the newer write is the one
++a retry must see. The recovery observer applies the same rule, so a window rebuilt from
++Summary carries the replicated keys too, and restore already keeps the newest record per
++key.
++
++During a **planned switchover**, each PChannel appends `AlterReplicateConfig`
++after its preceding replicated writes have updated the window. A client retry on the
++promoted cluster returns the original primary keys if its window still holds the entry.
++Each cluster enforces its own idle TTL and byte budget. A duplicate hit on the old
++primary refreshes only that cluster's entry, so the secondary can evict the key sooner.
++Routing lines up because row *i* goes to shard `i % n` on every attempt and a secondary
++names its VChannels by PChannel index.
++
++A native request releases the role lock while waiting for function resources, segment
++readiness, or another owner of the same key. If the topology changed during the wait,
++the request checks the current role and window again before it can append.
++
++After a **force promote**, replication may also have missed writes. A retry appends
++again when the promoted cluster has no entry for the key.
++
++Recording is best effort. A replicated write must land even when its key cannot be
++remembered. A replicated transaction is recorded only when the buffer holds a result for
++every body, that is, when the buffered count equals the commit's `BodyCnt`. On a restart the
++replicate side recovers an open replicated transaction from the WAL and ignores the resent
++bodies it already holds; the interceptor restores the buffered results of those bodies from
++the same `TxnBuffer`, so the commit still finds every body. The buffer is released only
++after the commit lands, so a rejected commit that the source replays also finds the earlier
++bodies.
++
++A replicated body is buffered with an infinite keepalive, no matter what keepalive the
++source stamped on it. The source owns a replicated transaction's lifecycle, so the buffer
++is reclaimed only once the txn session leaves the txn manager — never by a timetick-based
++expiry. That matters on a restart: the reopened WAL places the vchannel MVCC at the
++recovery timetick, which can sit far beyond a body's timetick plus the source keepalive,
++and would otherwise delete the very results the restore just filled, leaving the commit
++unrecordable and the key forgotten.
++
++When a replicated write lands but cannot be recorded (a malformed result header, an
++incomplete transaction, or a commit without `BodyCnt`), the entry he
 ```
 
-**File**: `internal/core/src/segcore/RetrieveCandidatesTest.cpp` (modified, +0/-3)
+**File**: `internal/streamingnode/server/wal/adaptor/preparation_test.go` (modified, +71/-2)
 ```diff
-@@ -296,9 +296,6 @@ TEST_P(RetrieveCandidatesTest, BudgetsAndCancellation) {
-     auto offsets_only =
-         segment->Retrieve(nullptr, plan.get(), 100, kRows * 8, false);
-     EXPECT_EQ(offsets_only->offset_size(), kRows);
--    // No visible rows: the offsets fit, but serialized metadata exceeds budget.
--    ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 1, 1, false); },
--               InvalidParameter);
-     ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 100, 0, false); },
-                UnexpectedError);
-     folly::CancellationSource cancellation;
+@@ -9,12 +9,16 @@ import (
+ 	"github.com/bytedance/mockey"
+ 	"github.com/stretchr/testify/require"
+ 
++	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/idempotency"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/redo"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/replicate"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/replicate/replicates"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
+ 	"github.com/milvus-io/milvus/internal/util/fileresource"
+ 	"github.com/milvus-io/milvus/internal/util/function"
+ 	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
+@@ -69,11 +73,16 @@ func installPreparationTestInterceptor(t *testing.T, w *walAdaptorImpl) function
+ 	redoInterceptor := redo.NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{
+ 		ShardManager: &preparationTestShardManager{},
+ 	})
+-	idempotencyInterceptor := idempotency.NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{})
++	rm, err := replicates.RecoverReplicateManager(&replicates.ReplicateManagerRecoverParam{
++		ChannelInfo: w.Channel(), CurrentClusterID: "local", InitialRecoverSnapshot: &recovery.RecoverySnapshot{},
++	})
++	require.NoError(t, err)
++	param := &interceptors.InterceptorBuildParam{ReplicateManager: rm}
++	idempotencyInterceptor := idempotency.NewInterceptorBuilder().Build(param)
+ 	t.Cleanup(redoInterceptor.Close)
+ 	t.Cleanup(idempotencyInterceptor.Close)
+ 	w.interceptorBuildResult.Interceptor = interceptors.NewChainedInterceptor(
+-		idempotencyInterceptor, redoInterceptor, w.interceptorBuildResult.Interceptor, &preparationTestInterceptor{})
++		idempotencyInterceptor, redoInterceptor, w.interceptorBuildResult.Interceptor, replicate.NewInterceptorBuilder().Build(param), &preparationTestInterceptor{})
+ 	return manager
+ }
+ 
+@@ -197,6 +206,66 @@ func TestAppendPreparationReleasesWALLockAndHonorsCancellation(t *testing.T) {
+ 	}
+ }
+ 
++func TestAppendRechecksRoleAfterPreparation(t *testing.T) {
++	mockey.PatchConvey("demotion can finish while owner and duplicate wait", t, func() {
++		var persisted atomic.Int32
++		w := newFenceTestWAL(t, newFirstTimeTickWALImpls(func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
++			persisted.Add(1)
++			return finishFenceTestAppend(ctx, 1), nil
++		}))
++		manager := installPreparationTestInterceptor(t, w)
++		defer manager.Close()
++		started, resume := make(chan struct{}), make(chan struct{})
++		var once sync.Once
++		release := func() { once.Do(func() { close(resume) }) }
++		defer release()
++		mockey.Mock(fileresource.Acquire).To(func(context.Context, []int64, ...string) (*fileresource.Resources, error) {
++			close(started)
++			<-resume
++			return &fileresource.Resources{}, nil
++		}).Build()
++		mockey.Mock(function.BuildEmbeddingRunner).Return(&preparationTestRunner{}, nil).Build()
++		mockey.Mock((*preparationTestRunner).Close).Return().Build()
++		waiterJoined := make(chan struct{})
++		var original func(*idempotency.PendingEntry, context.Context, message.MutableMessage) idempotency.PendingResult
++		mockey.Mock((*idempotency.PendingEntry).Wait).Origin(&original).To(func(p *idempotency.PendingEntry, ctx context.Context, msg message.MutableMessage) idempotency.PendingResult {
++			close(waiterJoined)
++			return original(p, ctx, msg)
++		}).Build()
++		result := make(chan error, 2)
++		insert := func() {
++			_, err := w.Append(t.Context(), newPreparationTestInsert("same-key"))
++			result <- err
++		}
++		go insert()
++		waitFenceTestSignal(t, started)
++		go insert()
++		waitFenceTestSignal(t, waiterJoined)
++		config := &commonpb.ReplicateConfiguration{
++			Clusters: []*commonpb.MilvusCluster{
++				{ClusterId: "local", Pchannels: []string{w.Channel().Name}},
++				{ClusterId: "peer", Pchannels: []string{"peer-channel"}},
++			},
++			CrossClusterTopology: []*commonpb.CrossClusterTopology{{SourceClusterId: "peer", TargetClusterId: "local"}},
++		}
++		ddl := make(chan error, 1)
++		go func() {
++			_, err := w.Append(t.Context(), message.NewAlterReplicateConfigMessageBuilderV2().WithAllVChannel().
++				WithHeader(&message.AlterReplicateConfigMessageHeader{ReplicateConfiguration: config}).
++				WithBody(&message.AlterReplicateConfigMessageBody{}).MustBuildMutable())
++			ddl <- err
++		}()
++		require.NoError(t, waitFenceTestError(t, ddl))
++		release()
++		for range 2 {
++			err := waitFenceTestError(t, result)
++			require.Error(t, err)
++			require.True(t, status.AsStreamingError(err).IsReplicateViolation())
++		}
++		require.EqualValues(t, 1, persisted.Load())
++	})
++}
++
+ func TestAppendResumesAfte
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/idempotency_interceptor.go` (modified, +230/-33)
+```diff
+@@ -2,7 +2,9 @@ package idempotency
+ 
+ import (
+ 	"context"
++	"sync"
+ 
++	"github.com/cockroachdb/errors"
+ 	"github.com/pingcap/failpoint"
+ 
+ 	walpoint "github.com/milvus-io/milvus/internal/streamingnode/server/wal/failpoint"
+@@ -15,11 +17,13 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/replicateutil"
+-	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+ )
+ 
+ const interceptorName = "idempotency"
+ 
++// Consumed inside DoAppend before the caller sees an append outcome.
++var errTopologyChanged = errors.New("topology changed while append was waiting")
++
+ var (
+ 	_ interceptors.Interceptor            = (*idempotencyInterceptor)(nil)
+ 	_ interceptors.InterceptorWithMetrics = (*idempotencyInterceptor)(nil)
+@@ -29,8 +33,13 @@ type idempotencyInterceptor struct {
+ 	config WindowConfig
+ 	cache  *windowManager
+ 
+-	windows                *typeutil.ConcurrentMap[string, *Window]
+ 	txnInsertResultBuffers *idempotencyutils.TxnInsertResultBuffers
++	// A replicated append holds exclusive admission from checkpoint acceptance
++	// through publication of its results. Native writes share admission across
++	// their role check, window decision and append. Redo and duplicate waits
++	// release admission before blocking and check the generation on resumption.
++	replicatedMu       sync.RWMutex
++	topologyGeneration uint64
+ 	// txnActive reports whether a txn session is still tracked by the txn
+ 	// manager; a duplicate commit only synthesizes a rollback for a txn that is
+ 	// positively known to be still open. nil means "unknown" and skips the
+@@ -78,21 +87,24 @@ func newIdempotencyInterceptorWithParam(config WindowConfig, param *interceptors
+ 	}
+ 	cache := newWindowManager(config)
+ 	cache.start()
+-	return &idempotencyInterceptor{
++	interceptor := &idempotencyInterceptor{
+ 		cache:                  cache,
+-		windows:                typeutil.NewConcurrentMap[string, *Window](),
+ 		txnInsertResultBuffers: idempotencyutils.NewTxnInsertResultBuffers(currentTimeTick, txnActive),
+ 		txnActive:              txnActive,
+ 		replicateRole:          replicateRole,
+ 		config:                 config,
+ 	}
++	if param != nil && param.InitialRecoverSnapshot != nil {
++		interceptor.restoreReplicatedTxnBuffers(param.InitialRecoverSnapshot.TxnBuffer)
++	}
++	return interceptor
+ }
+ 
+ func newIdempotencyInterceptorWithSnapshots(config WindowConfig, snapshots map[string]*idempotencyview.Snapshot, param *interceptors.InterceptorBuildParam) *idempotencyInterceptor {
+ 	interceptor := newIdempotencyInterceptorWithParam(config, param)
+ 	interceptor.cache.mu.Lock()
+ 	for vchannel, window := range interceptor.cache.restore(snapshots) {
+-		interceptor.windows.Insert(vchannel, window)
++		interceptor.cache.registerRecoveredWindow(vchannel, window)
+ 	}
+ 	interceptor.cache.mu.Unlock()
+ 	return interceptor
+@@ -102,24 +114,104 @@ func newIdempotencyInterceptorWithRecovery(config WindowConfig, snapshot *idempo
+ 	interceptor := newIdempotencyInterceptorWithParam(config, param)
+ 	interceptor.cache.mu.Lock()
+ 	for vc, window := range interceptor.cache.restoreOrdered(snapshot) {
+-		interceptor.windows.Insert(vc, window)
++		interceptor.cache.registerRecoveredWindow(vc, window)
+ 	}
+ 	interceptor.cache.mu.Unlock()
+ 	return interceptor
+ }
+ 
++// restoreReplicatedTxnBuffers buffers the insert results of the bodies of every
++// open replicated transaction in txnBuffer. On a restart the replicate side
++// recovers such a transaction from the same TxnBuffer (recoverSecondaryState)
++// and ignores the resent bodies it already holds, so those bodies never pass
++// through appendTxnBodyWithInsertResult again. Native transactions are skipped:
++// the producer rebuilds them under a new txnID instead of resending them.
++func (impl *idempotencyInterceptor) restoreReplicatedTxnBuffers(txnBuffer *utility.TxnBuffer) {
++	if txnBuffer == nil {
++		return
++	}
++	for _, builder := range txnBuffer.GetUncommittedMessageBuilder() {
++		begin, bodies := builder.Messages()
++		if begin.ReplicateHeader() == nil {
++			continue
++		}
++		for _, body := range bodies {
++			if body.MessageType() != message.MessageTypeInsert {
++				continue
++			}
++			insertMsg, err := message.AsImmutableInsertMessageV1(body)
++			if err != nil {
++				continue
++			}
++			result, ok := message.IdempotentInsertResultFromInsertHeader(insertMsg.Header())
++			if !ok || message.ValidateIdempotentInsertResult(result) != nil {
++				continue
++			}
++			impl.txnInsertResultBuffers.Restore(body, result)
++		}
++	}
++}
++
+ func (impl *idempotencyInterceptor) DoAppend(ctx context.Context, msg message.MutableMessage, append interceptors.Append) (message.MessageID, error) {
+-	// Replicated messages bypass the idempotency window entirely: the replicate
+-	// stream has its own exactly-once delivery (source-timetick checkpoints),
+-	// and the idempotency key inside a replicated header belongs to the SOURCE
+-	// cluster's window histo
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/idempotency_interceptor_test.go` (modified, +696/-21)
+```diff
+@@ -27,9 +27,11 @@ import (
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/timetick/mvcc"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/txn"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/metricsutil"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
+ 	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
+ 	"github.com/milvus-io/milvus/pkg/v3/metrics"
++	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/streamingpb"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
+@@ -39,6 +41,12 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+ )
+ 
++func testWindow(t *testing.T, impl *idempotencyInterceptor, vc string) *Window {
++	w := impl.cache.acquireWindow(vc)
++	t.Cleanup(w.release)
++	return w
++}
++
+ func newInterceptor(config WindowConfig) *idempotencyInterceptor {
+ 	return newIdempotencyInterceptor(config)
+ }
+@@ -117,28 +125,77 @@ func TestInterceptorBypassesReplicatedInsert(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.True(t, replicatedID.EQ(msgID))
+ 	require.Equal(t, 2, appendCount)
++}
+ 
+-	// A replicated insert with a fresh key must leave no trace in the window: a
+-	// later native insert reusing that key is still the owner and appends.
+-	ctx = utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
+-	_, err = interceptor.DoAppend(ctx, withTestReplicateHeader(newIdempotentInsertMessage(t, "v1", "key-2")), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
++// A replicated insert is recorded after it lands, so a client retry on this
++// cluster after a promotion answers with the source cluster's primary keys
++// instead of appending a second copy.
++func TestInterceptorRecordsReplicatedInsert(t *testing.T) {
++	interceptor := newInterceptor(WindowConfig{})
++	insertResult := &messagespb.IdempotentInsertResult{
++		RowOffsets: []uint32{0, 1},
++		Ids: &schemapb.IDs{
++			IdField: &schemapb.IDs_IntId{IntId: &schemapb.LongArray{Data: []int64{100, 101}}},
++		},
++	}
++
++	appendCount := 0
++	replicatedID := newTestMessageID(12)
++	replicatedLastConfirmed := newTestMessageID(11)
++	ctx := utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
++	_, err := interceptor.DoAppend(ctx, withTestReplicateHeader(newIdempotentInsertMessageWithInsertResult(t, "v1", "key-2", insertResult)), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
+ 		appendCount++
+-		return newTestMessageID(12), nil
++		utility.ReplaceAppendResultTimeTick(ctx, 200)
++		utility.ReplaceAppendResultLastConfirmedMessageID(ctx, replicatedLastConfirmed)
++		return replicatedID, nil
+ 	})
+ 	require.NoError(t, err)
+-	require.Equal(t, 3, appendCount)
++	require.Equal(t, 1, appendCount)
+ 
+-	nativeID := newTestMessageID(13)
+ 	ctx = utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
+-	msgID, err = interceptor.DoAppend(ctx, newIdempotentInsertMessage(t, "v1", "key-2"), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
++	msgID, err := interceptor.DoAppend(ctx, newIdempotentInsertMessage(t, "v1", "key-2"), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
+ 		appendCount++
+-		utility.ReplaceAppendResultTimeTick(ctx, 200)
+-		utility.ReplaceAppendResultLastConfirmedMessageID(ctx, newTestMessageID(12))
+-		return nativeID, nil
++		return newTestMessageID(13), nil
+ 	})
+ 	require.NoError(t, err)
+-	require.True(t, nativeID.EQ(msgID))
+-	require.Equal(t, 4, appendCount)
++	require.Equal(t, 1, appendCount)
++	require.True(t, replicatedID.EQ(msgID))
++
++	extra := utility.GetExtraAppendResult(ctx)
++	require.Equal(t, uint64(200), extra.TimeTick)
++	require.True(t, replicatedLastConfirmed.EQ(extra.LastConfirmedMessageID))
++	require.True(t, proto.Equal(insertResult, extra.Extra.(*messagespb.IdempotentInsertResult)))
++}
++
++// A replicated insert whose key the window already holds replaces the entry:
++// the source evicted the key and a client legally reused it, so the newer
++// write is what a retry must see.
++func TestInterceptorReplicatedInsertOverwritesSameKey(t *testing.T) {
++	interceptor := newInterceptor(WindowConfig{})
++
++	appendCount := 0
++	appendAt := func(timetick uint64, id int64) func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
++		return func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
++			appendCount++
++			utility.ReplaceAppendResultTimeTick(ctx, timetick)
++			utility.ReplaceAppendResultLastConfirmedMessageID(ctx, newTestMessageID(id-1))
++			return newTestMessageID(id), nil
++		}
++	}
++	ctx := utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
++	_, err := interceptor.DoAppend(ctx,
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/metrics.go` (modified, +9/-0)
+```diff
+@@ -41,9 +41,18 @@ func observeWindowEviction(vchannel string, count int) {
+ // do not accumulate forever in the registry as the interceptor tears down. The
+ // series are keyed by (node_id, vchannel); vchannel encodes its pchannel.
+ func deleteWindowMetrics(vchannel string) {
++	deleteWindowGauges(vchannel)
++	deleteWindowCounters(vchannel)
++}
++
++func deleteWindowGauges(vchannel string) {
+ 	nodeID := paramtable.GetStringNodeID()
+ 	metrics.WALIdempotencyWindowEntries.DeleteLabelValues(nodeID, vchannel)
+ 	metrics.WALIdempotencyWindowInflight.DeleteLabelValues(nodeID, vchannel)
++}
++
++func deleteWindowCounters(vchannel string) {
++	nodeID := paramtable.GetStringNodeID()
+ 	metrics.WALIdempotencyDuplicateTotal.DeleteLabelValues(nodeID, vchannel)
+ 	metrics.WALIdempotencyEvictionTotal.DeleteLabelValues(nodeID, vchannel)
+ }
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/retention_test.go` (modified, +42/-1)
+```diff
+@@ -17,15 +17,18 @@
+ package idempotency
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"sync"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/prometheus/client_golang/prometheus/testutil"
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/idempotencyview"
++	"github.com/milvus-io/milvus/pkg/v3/metrics"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+ )
+@@ -123,14 +126,19 @@ func TestPChannelRetentionIdleCleanupAndShutdown(t *testing.T) {
+ 		Now: func() time.Time { return time.Unix(0, clock.Load()) },
+ 	})
+ 	defer interceptor.Close()
+-	w := interceptor.window("idle")
++	w := interceptor.cache.acquireWindow("idle")
+ 	for i := 0; i < 600; i++ {
+ 		completeKey(t, w, IdempotencyKey(fmt.Sprint(i)), uint64(i+1))
+ 	}
+ 	require.Equal(t, 600, w.Len())
++	w.release()
+ 	clock.Add(int64(20 * time.Millisecond))
+ 	require.Eventually(t, func() bool { return w.Len() == 0 }, 5*time.Second, 5*time.Millisecond,
+ 		"expired records must be reclaimed without another append")
++	interceptor.cache.mu.Lock()
++	_, found := interceptor.cache.windows["idle"]
++	interceptor.cache.mu.Unlock()
++	require.False(t, found)
+ 	interceptor.cache.shutdown()
+ 	select {
+ 	case <-interceptor.cache.done:
+@@ -139,6 +147,39 @@ func TestPChannelRetentionIdleCleanupAndShutdown(t *testing.T) {
+ 	}
+ }
+ 
++func TestEmptyWindowRemainsRegisteredWhileInUse(t *testing.T) {
++	paramtable.Init()
++	m := newWindowManager(WindowConfig{MaxSize: 1})
++	const vc = "pending-window"
++	owner := m.acquireWindow(vc)
++	msg := newIdempotentInsertMessage(t, vc, "key")
++	pending := owner.Begin("key", msg).Pending
++	waiter := m.acquireWindow(vc)
++	require.Same(t, pending, waiter.Begin("key", msg).Pending)
++	owner.Complete(pending, CommitResult{CommitTimeTick: 1}, msg)
++	owner.release()
++	require.Zero(t, waiter.Len(), "the record exceeds the byte budget")
++	again := m.acquireWindow(vc)
++	require.Same(t, waiter, again)
++	again.release()
++	require.NotNil(t, pending.Wait(context.Background(), msg).Entry)
++	waiter.release()
++	require.NotContains(t, m.windows, vc)
++	node := paramtable.GetStringNodeID()
++	require.False(t, metrics.WALIdempotencyWindowEntries.DeleteLabelValues(node, vc))
++	require.False(t, metrics.WALIdempotencyWindowInflight.DeleteLabelValues(node, vc))
++	require.EqualValues(t, 1, testutil.ToFloat64(metrics.WALIdempotencyDuplicateTotal.WithLabelValues(node, vc)))
++	require.EqualValues(t, 1, testutil.ToFloat64(metrics.WALIdempotencyEvictionTotal.WithLabelValues(node, vc)))
++	next := m.acquireWindow(vc)
++	completeKey(t, next, "other", 2)
++	next.release()
++	require.EqualValues(t, 2, testutil.ToFloat64(metrics.WALIdempotencyEvictionTotal.WithLabelValues(node, vc)))
++	m.dropVChannel(vc)
++	require.NotContains(t, m.idleCounters, vc)
++	require.False(t, metrics.WALIdempotencyDuplicateTotal.DeleteLabelValues(node, vc))
++	require.False(t, metrics.WALIdempotencyEvictionTotal.DeleteLabelValues(node, vc))
++}
++
+ func TestPChannelRetentionConcurrentWindows(t *testing.T) {
+ 	m := newWindowManager(WindowConfig{TTL: time.Hour, MaxSize: 512, MinCount: 2})
+ 	var wg sync.WaitGroup
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/utils/txn_insert_results_buffer.go` (modified, +61/-2)
+```diff
+@@ -48,7 +48,34 @@ func (bs *TxnInsertResultBuffers) Add(msg message.MutableMessage, result *messag
+ 	if !hasTxnKey {
+ 		return
+ 	}
+-	expiredTimeTick := txnExpiredTimeTick(msg.TxnContext(), timeTick)
++	bs.add(key, bufferTxnContext(msg.TxnContext(), msg.ReplicateHeader() != nil), result, timeTick)
++}
++
++// Restore records the insert result of a txn body that is already in the WAL,
++// for a transaction that is still open after a restart.
++func (bs *TxnInsertResultBuffers) Restore(body message.ImmutableMessage, result *messagespb.IdempotentInsertResult) {
++	txnCtx := body.TxnContext()
++	if txnCtx == nil {
++		return
++	}
++	bs.add(txnKey{vchannel: body.VChannel(), txnID: txnCtx.TxnID}, bufferTxnContext(txnCtx, body.ReplicateHeader() != nil), result, body.TimeTick())
++}
++
++// bufferTxnContext returns the txn context whose keepalive bounds a body's
++// buffered result. A replicated body carries the source cluster's finite
++// keepalive, but the source owns a replicated transaction's lifecycle: it cannot
++// expire locally, so its buffer is reclaimed only through the txn-active check,
++// never by a keepalive measured from a body timetick that a restart leaves far
++// behind.
++func bufferTxnContext(txnCtx *message.TxnContext, replicated bool) *message.TxnContext {
++	if txnCtx == nil || !replicated || txnCtx.Keepalive == message.TxnKeepaliveInfinite {
++		return txnCtx
++	}
++	return &message.TxnContext{TxnID: txnCtx.TxnID, Keepalive: message.TxnKeepaliveInfinite}
++}
++
++func (bs *TxnInsertResultBuffers) add(key txnKey, txnCtx *message.TxnContext, result *messagespb.IdempotentInsertResult, timeTick uint64) {
++	expiredTimeTick := txnExpiredTimeTick(txnCtx, timeTick)
+ 	currentTimeTick, hasCurrentTimeTick := bs.vchannelTimeTick(key.vchannel)
+ 
+ 	bs.mu.Lock()
+@@ -85,6 +112,30 @@ func (bs *TxnInsertResultBuffers) Build(msg message.MutableMessage) *messagespb.
+ 	return builder.build()
+ }
+ 
++// BuildIfComplete merges buffered insert results for a txn commit message, but
++// only when every body of the transaction contributed one: the number of
++// buffered results must equal bodyCnt, the body count the commit carries. It
++// returns nil when bodyCnt is 0 (unknown) or when results are missing, for
++// example after a restart emptied the buffer while the transaction itself
++// survived. A caller that records the result must not record a partial one,
++// which would answer a later retry with missing primary keys.
++func (bs *TxnInsertResultBuffers) BuildIfComplete(msg message.MutableMessage, bodyCnt uint64) *messagespb.IdempotentInsertResult {
++	key, hasTxnKey := keyOfTxnMessage(msg)
++	if !hasTxnKey || bodyCnt == 0 {
++		return nil
++	}
++	currentTimeTick, hasCurrentTimeTick := bs.vchannelTimeTick(key.vchannel)
++
++	bs.mu.Lock()
++	defer bs.mu.Unlock()
++	bs.clearExpiredLocked(key.vchannel, currentTimeTick, hasCurrentTimeTick)
++	builder := bs.builders[key.vchannel][key.txnID]
++	if builder == nil || uint64(len(builder.insertResults)) != bodyCnt {
++		return nil
++	}
++	return builder.build()
++}
++
+ // Remove drops buffered insert results for a transaction.
+ func (bs *TxnInsertResultBuffers) Remove(msg message.MutableMessage) {
+ 	key, hasTxnKey := keyOfTxnMessage(msg)
+@@ -101,6 +152,13 @@ func (bs *TxnInsertResultBuffers) Remove(msg message.MutableMessage) {
+ 	bs.clearExpiredLocked(key.vchannel, currentTimeTick, hasCurrentTimeTick)
+ }
+ 
++// Clear releases buffered results after a PChannel-wide transaction abort.
++func (bs *TxnInsertResultBuffers) Clear() {
++	bs.mu.Lock()
++	defer bs.mu.Unlock()
++	clear(bs.builders)
++}
++
+ // RemoveVChannel drops every buffered transaction result for a reclaimed
+ // vchannel. DropCollection is the last message for that vchannel, so normal
+ // Add/Build/Remove-triggered sweeping will not get another chance to run.
+@@ -126,7 +184,8 @@ func (bs *TxnInsertResultBuffers) clearExpiredLocked(vchannel string, currentTim
+ 		// manager. These transactions ended without a commit/rollback message
+ 		// reaching the interceptor (abort, expiry, failover), so the
+ 		// timetick-based expiry below cannot reclaim them -- in particular it
+-		// never fires for infinite-keepalive (replicated) transactions.
++		// never fires for replicated transactions, whose bodies are buffered
++		// with an infinite keepalive (bufferTxnContext).
+ 		if bs.txnActive != nil && !bs.txnActive(txnID) {
+ 			delete(builders, txnID)
+ 			continue
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/idempotency/utils/txn_insert_results_buffer_test.go` (modified, +65/-0)
+```diff
+@@ -11,6 +11,8 @@ import (
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
++	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
+ )
+ 
+ func newTestTxnMessage(t *testing.T, vchannel string, txnID message.TxnID) message.MutableMessage {
+@@ -23,6 +25,18 @@ func newTestTxnMessage(t *testing.T, vchannel string, txnID message.TxnID) messa
+ 		WithTxnContext(message.TxnContext{TxnID: txnID, Keepalive: 10 * time.Second})
+ }
+ 
++func replicatedTestTxnBody(t *testing.T, vchannel string, txnID message.TxnID) message.MutableMessage {
++	t.Helper()
++	return newTestTxnMessage(t, vchannel, txnID).
++		WithReplicateHeader(&message.ReplicateHeader{
++			ClusterID:              "source-cluster",
++			MessageID:              walimplstest.NewTestMessageID(1),
++			LastConfirmedMessageID: walimplstest.NewTestMessageID(1),
++			TimeTick:               1,
++			VChannel:               vchannel,
++		})
++}
++
+ func intIDsResult(offsets []uint32, data ...int64) *messagespb.IdempotentInsertResult {
+ 	return &messagespb.IdempotentInsertResult{
+ 		RowOffsets: offsets,
+@@ -42,6 +56,23 @@ func TestTxnInsertResultBuffersDropsEmptyVChannel(t *testing.T) {
+ 	require.Empty(t, buffers.builders, "an empty vchannel buffer must be dropped so the map does not leak one entry per vchannel")
+ }
+ 
++// BuildIfComplete merges only when every body contributed: a partial merge would
++// answer a later retry with missing primary keys.
++func TestTxnInsertResultBuffersBuildIfCompleteRequiresEveryBody(t *testing.T) {
++	buffers := NewTxnInsertResultBuffers(nil, nil)
++	msg := newTestTxnMessage(t, "v1", 1)
++	buffers.Add(msg, intIDsResult([]uint32{0}, 100), 0)
++
++	require.Nil(t, buffers.BuildIfComplete(msg, 2), "one of two bodies is buffered")
++	require.Nil(t, buffers.BuildIfComplete(msg, 0), "an unknown body count cannot prove completeness")
++	require.Nil(t, buffers.BuildIfComplete(newTestTxnMessage(t, "v1", 2), 1), "nothing is buffered for this txn")
++
++	buffers.Add(msg, intIDsResult([]uint32{1}, 101), 0)
++	merged := buffers.BuildIfComplete(msg, 2)
++	require.NotNil(t, merged)
++	require.ElementsMatch(t, []int64{100, 101}, merged.GetIds().GetIntId().GetData())
++}
++
+ func TestTxnInsertResultBuffersRemoveVChannel(t *testing.T) {
+ 	buffers := NewTxnInsertResultBuffers(nil, nil)
+ 	msg1 := newTestTxnMessage(t, "v1", 1)
+@@ -102,3 +133,37 @@ func TestTxnInsertResultBuffersConcurrentAddBuildRemove(t *testing.T) {
+ 	wg.Wait()
+ 	require.Empty(t, buffers.builders, "all txns removed: the vchannel buffer must be dropped")
+ }
++
++// A WAL reopen places the vchannel MVCC at the recovery timetick, which can sit
++// far ahead of a body written more than one keepalive before the restart. A
++// replicated body must survive that timetick: the source owns the transaction's
++// lifecycle, so its buffer is reclaimed only through the txn-active check.
++func TestTxnInsertResultBuffersReplicatedBodySurvivesAheadMVCC(t *testing.T) {
++	currentTimeTick := tsoutil.ComposeTS(20000, 0)
++	buffers := NewTxnInsertResultBuffers(func(string) (uint64, bool) {
++		return currentTimeTick, true
++	}, nil)
++
++	restored := replicatedTestTxnBody(t, "v1", 7).WithTimeTick(tsoutil.ComposeTS(0, 11))
++	buffers.Restore(restored.IntoImmutableMessage(walimplstest.NewTestMessageID(11)), intIDsResult([]uint32{0}, 100))
++	require.NotNil(t, buffers.BuildIfComplete(restored, 1),
++		"a restored replicated body must not expire just because the recovery MVCC is ahead")
++
++	added := replicatedTestTxnBody(t, "v1", 8).WithTimeTick(tsoutil.ComposeTS(0, 11))
++	buffers.Add(added, intIDsResult([]uint32{0}, 200), tsoutil.ComposeTS(0, 11))
++	require.NotNil(t, buffers.BuildIfComplete(added, 1),
++		"a replicated body buffered live must also ignore a MVCC that moved ahead")
++}
++
++// The same ahead MVCC still reclaims a native body: only replicated transactions
++// are immune to timetick-based expiry.
++func TestTxnInsertResultBuffersNativeBodyExpiresWhenMVCCAhead(t *testing.T) {
++	currentTimeTick := tsoutil.ComposeTS(20000, 0)
++	buffers := NewTxnInsertResultBuffers(func(string) (uint64, bool) {
++		return currentTimeTick, true
++	}, nil)
++
++	msg := newTestTxnMessage(t, "v1", 7).WithTimeTick(tsoutil.ComposeTS(0, 11))
++	buffers.Add(msg, intIDsResult([]uint32{0}, 100), tsoutil.ComposeTS(0, 11))
++	require.Nil(t, buffers.Build(msg))
++}
+```
+
+---
+
+### Incident Patch 2: `548817d2` (2026-11-23)
+**Commit Message**: build(deps): upgrade Go to 1.26.11 and golang.org/x/crypto to v0.59.0 for CVEs (#55781)
+
+## Summary
+
+Fix the High-severity Go stdlib CVE and the x/crypto openpgp advisory
+reported by the daily image scan
+(`milvusdb/milvus:master-20261119-20746425`).
+
+| CVE | Component | Installed | Fixed | Severity |
+|-----|-----------|-----------|-------|----------|
+| CVE-2026-97054 | Go stdlib | v1.26.10 | 1.26.11 / 1.27.4 | High |
+| GO-2026-5932 | golang.org/x/crypto (openpgp) | v0.58.0 | v0.59.0 |
+Advisory |
+
+- CVE-2026-97054: Go stdlib vulnerability fixed in 1.26.11 / 1.27.4.
+- GO-2026-5932: `golang.org/x/crypto/openpgp` is unmaintained and unsafe
+by design; removed in x/crypto v0.59.0. Milvus itself only imports
+`x/crypto/bcrypt` (not openpgp), so this clears the scanner finding and
+drops the unsafe package from the module graph.
+
+## Change scope
+
+Bump the Go toolchain `1.26.10` -> `1.26.11`:
+
+- `go.mod` / `pkg/go.mod` / `tests/go_client/go.mod`
+- builder images:
+`build/docker/builder/cpu/{ubuntu22.04,ubuntu20.04,ubuntu24.04,amazonlinux2023,rockylinux9}/Dockerfile`,
+`build/docker/builder/gpu/{ubuntu22.04,ubuntu20.04}/Dockerfile`
+- `build/docker/meta-migration/builder/Dockerfile`,
+`build/rpm/s
+
+**File**: `.github/workflows/mac.yaml` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ jobs:
+       - name: Setup Go environment
+         uses: actions/setup-go@v4
+         with:
+-          go-version: '1.26.10'
++          go-version: '1.26.11'
+           cache: false
+       - name: Download Caches
+         uses: ./.github/actions/macos-cache-restore
+```
+
+**File**: `.github/workflows/publish-krte-images.yaml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ jobs:
+         working-directory: build/docker/krte
+         run: |
+           export TAG=${{ steps.extracter.outputs.version }}-${{ steps.extracter.outputs.sha_short }}
+-          docker build --build-arg IMAGE_ARG="milvusdb/krte:$TAG" --build-arg GO_VERSION=1.26.10 -t "milvusdb/krte:$TAG" .
++          docker build --build-arg IMAGE_ARG="milvusdb/krte:$TAG" --build-arg GO_VERSION=1.26.11 -t "milvusdb/krte:$TAG" .
+       - name: Docker Push
+         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' )&& github.repository == 'milvus-io/milvus'
+         continue-on-error: true
+```
+
+**File**: `build/docker/builder/cpu/amazonlinux2023/Dockerfile` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     go clean --modcache && \
+     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
+```
+
+**File**: `build/docker/builder/cpu/rockylinux9/Dockerfile` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     go clean --modcache && \
+     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
+```
+
+**File**: `build/docker/builder/cpu/ubuntu20.04/Dockerfile` (modified, +1/-1)
+```diff
+@@ -56,7 +56,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     go clean --modcache && \
+     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
+```
+
+**File**: `build/docker/builder/cpu/ubuntu22.04/Dockerfile` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     go clean --modcache && \
+     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
+```
+
+**File**: `build/docker/builder/cpu/ubuntu24.04/Dockerfile` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     go clean --modcache && \
+     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
+```
+
+**File**: `build/docker/builder/gpu/ubuntu20.04/Dockerfile` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ ENV GOPATH /go
+ ENV GOROOT /usr/local/go
+ ENV GO111MODULE on
+ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
+-RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
++RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
+     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
+     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOROOT}/bin v2.11.3 && \
+     # export GO111MODULE=on && go get github.com/quasilyte/go-ruleguard/cmd/ruleguard@v0.2.1 && \
+```
+
+---
+
+### Incident Patch 3: `aa17fe45` (2026-11-23)
+**Commit Message**: test: fix remaining chaos cleanup hooks for pytest 8 (#55828)
+
+## What type of PR is this?
+
+- [x] Test
+
+## Description
+
+Follow-up to #55501 (`test: fix chaos cleanup hook for pytest 8`), which
+updated `tests/python_client/chaos/test_chaos_apply.py` from legacy `def
+teardown(self)` to `def teardown_method(self)`.
+
+Six remaining chaos test files still defined `def teardown(self)`, which
+pytest 8 silently ignores. In `chaos-test-kafka-cron` build 4770 and
+`chaos-test-wp-cron` build 2934, when
+`test_chaos_apply_to_determined_pod.py` failed after creating a
+`PodChaos` CR, cleanup never ran and leaked `PodChaos` CRs
+(`test-etcd-leader-pod-kill-1795307084`,
+`test-etcd-followers-pod-kill-1795354005`) into `chaos-testing`.
+
+### Changes
+- Rename `def teardown(self)` to `def teardown_method(self)` in:
+  - `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py`
+  - `tests/python_client/chaos/test_chaos_apply_multi_replicas.py`
+  - `tests/python_client/chaos/test_chaos_apply_to_coord.py`
+  - `tests/python_client/chaos/test_chaos.py`
+  - `tests/python_client/chaos/test_chaos_bulk_insert.py`
+  - `tests/python_client/chaos/test_load_with_checker.py`
+- Guard attribute lookups with `getatt
+
+**File**: `tests/python_client/chaos/test_chaos.py` (modified, +12/-9)
+```diff
+@@ -121,15 +121,18 @@ def init_health_checkers(self):
+         }
+         self.health_checkers = checkers
+ 
+-    def teardown(self):
+-        chaos_res = CusResource(
+-            kind=self._chaos_config["kind"],
+-            group=constants.CHAOS_GROUP,
+-            version=constants.CHAOS_VERSION,
+-            namespace=constants.CHAOS_NAMESPACE,
+-        )
+-        meta_name = self._chaos_config.get("metadata", None).get("name", None)
+-        chaos_res.delete(meta_name, raise_ex=False)
++    def teardown_method(self):
++        chaos_config = getattr(self, "_chaos_config", None)
++        if chaos_config:
++            chaos_res = CusResource(
++                kind=chaos_config["kind"],
++                group=constants.CHAOS_GROUP,
++                version=constants.CHAOS_VERSION,
++                namespace=constants.CHAOS_NAMESPACE,
++            )
++            meta_name = chaos_config.get("metadata", {}).get("name", None)
++            if meta_name:
++                chaos_res.delete(meta_name, raise_ex=False)
+         sleep(2)
+         log.info(f"Alive threads: {threading.enumerate()}")
+ 
+```
+
+**File**: `tests/python_client/chaos/test_chaos_apply_multi_replicas.py` (modified, +4/-2)
+```diff
+@@ -250,8 +250,10 @@ def reconnect(self):
+         if connections.has_connection("default") is False:
+             raise Exception("no connections")
+ 
+-    def teardown(self):
+-        for chaos_config in self.chaos_configs:
++    def teardown_method(self):
++        for chaos_config in getattr(self, "chaos_configs", []):
++            if not chaos_config:
++                continue
+             chaos_res = CusResource(
+                 kind=chaos_config["kind"],
+                 group=constants.CHAOS_GROUP,
+```
+
+**File**: `tests/python_client/chaos/test_chaos_apply_to_coord.py` (modified, +12/-9)
+```diff
+@@ -46,15 +46,18 @@ def reconnect(self):
+         if connections.has_connection("default") is False:
+             raise Exception("no connections")
+ 
+-    def teardown(self):
+-        chaos_res = CusResource(
+-            kind=self.chaos_config["kind"],
+-            group=constants.CHAOS_GROUP,
+-            version=constants.CHAOS_VERSION,
+-            namespace=constants.CHAOS_NAMESPACE,
+-        )
+-        meta_name = self.chaos_config.get("metadata", None).get("name", None)
+-        chaos_res.delete(meta_name, raise_ex=False)
++    def teardown_method(self):
++        chaos_config = getattr(self, "chaos_config", None)
++        if chaos_config:
++            chaos_res = CusResource(
++                kind=chaos_config["kind"],
++                group=constants.CHAOS_GROUP,
++                version=constants.CHAOS_VERSION,
++                namespace=constants.CHAOS_NAMESPACE,
++            )
++            meta_name = chaos_config.get("metadata", {}).get("name", None)
++            if meta_name:
++                chaos_res.delete(meta_name, raise_ex=False)
+         sleep(2)
+ 
+     def test_chaos_apply(self, chaos_type, role_type, target_component, chaos_duration, chaos_interval):
+```
+
+**File**: `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py` (modified, +4/-3)
+```diff
+@@ -51,7 +51,7 @@ def reconnect(self):
+         if connections.has_connection("default") is False:
+             raise Exception("no connections")
+ 
+-    def teardown(self):
++    def teardown_method(self):
+         chaos_config = getattr(self, "chaos_config", None)
+         if chaos_config:
+             chaos_res = CusResource(
+@@ -60,8 +60,9 @@ def teardown(self):
+                 version=constants.CHAOS_VERSION,
+                 namespace=constants.CHAOS_NAMESPACE,
+             )
+-            meta_name = chaos_config.get("metadata", None).get("name", None)
+-            chaos_res.delete(meta_name, raise_ex=False)
++            meta_name = chaos_config.get("metadata", {}).get("name", None)
++            if meta_name:
++                chaos_res.delete(meta_name, raise_ex=False)
+         sleep(2)
+ 
+     def test_chaos_apply(self, chaos_type, target_pod, chaos_duration, chaos_interval, wait_signal):
+```
+
+**File**: `tests/python_client/chaos/test_chaos_bulk_insert.py` (modified, +12/-9)
+```diff
+@@ -132,15 +132,18 @@ def prepare_bulk_insert(self, nb=3000):
+         self.health_checkers[Op.bulk_insert].update(schema=schema, files=files)
+         log.info("prepare data for bulk load done")
+ 
+-    def teardown(self):
+-        chaos_res = CusResource(
+-            kind=self._chaos_config["kind"],
+-            group=constants.CHAOS_GROUP,
+-            version=constants.CHAOS_VERSION,
+-            namespace=constants.CHAOS_NAMESPACE,
+-        )
+-        meta_name = self._chaos_config.get("metadata", None).get("name", None)
+-        chaos_res.delete(meta_name, raise_ex=False)
++    def teardown_method(self):
++        chaos_config = getattr(self, "_chaos_config", None)
++        if chaos_config:
++            chaos_res = CusResource(
++                kind=chaos_config["kind"],
++                group=constants.CHAOS_GROUP,
++                version=constants.CHAOS_VERSION,
++                namespace=constants.CHAOS_NAMESPACE,
++            )
++            meta_name = chaos_config.get("metadata", {}).get("name", None)
++            if meta_name:
++                chaos_res.delete(meta_name, raise_ex=False)
+         sleep(2)
+         log.info(f"Alive threads: {threading.enumerate()}")
+ 
+```
+
+**File**: `tests/python_client/chaos/test_load_with_checker.py` (modified, +12/-9)
+```diff
+@@ -99,15 +99,18 @@ def prepare_bulk_insert(self, nb=30000, row_based=True):
+         self.health_checkers[Op.bulk_insert].update(schema=schema, files=files, row_based=row_based)
+         log.info("prepare data for bulk insert done")
+ 
+-    def teardown(self):
+-        chaos_res = CusResource(
+-            kind=self._chaos_config["kind"],
+-            group=constants.CHAOS_GROUP,
+-            version=constants.CHAOS_VERSION,
+-            namespace=constants.CHAOS_NAMESPACE,
+-        )
+-        meta_name = self._chaos_config.get("metadata", None).get("name", None)
+-        chaos_res.delete(meta_name, raise_ex=False)
++    def teardown_method(self):
++        chaos_config = getattr(self, "_chaos_config", None)
++        if chaos_config:
++            chaos_res = CusResource(
++                kind=chaos_config["kind"],
++                group=constants.CHAOS_GROUP,
++                version=constants.CHAOS_VERSION,
++                namespace=constants.CHAOS_NAMESPACE,
++            )
++            meta_name = chaos_config.get("metadata", {}).get("name", None)
++            if meta_name:
++                chaos_res.delete(meta_name, raise_ex=False)
+         sleep(2)
+         log.info(f"Alive threads: {threading.enumerate()}")
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55814** (2026-11-22): fix: Clear HasMoreResult for empty retrieve results (@xiaofan-luan)
-- **PR #55791** (2026-11-21): fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client (@xiaofan-luan)
-- **PR #55785** (2026-11-21): enhance: [cp3.0] Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
-- **PR #55784** (2026-11-21): enhance: Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
-- **PR #55779** (2026-11-20): test: use unary QueryView RPCs in Proxy auto-load retry fixtures (@sijie-ni-0214)
-- **PR #55763** (2026-11-21): test: fix exact-distance controls in Paimon HNSW refresh test (@zhuwenxing)
+- **PR #55829** (2026-11-23): fix: format RPC context for QueryView streaming errors (@zhuwenxing)
+- **PR #55828** (2026-11-23): test: fix remaining chaos cleanup hooks for pytest 8 (@zhuwenxing)
+- **PR #55826** (2026-11-23): build(deps): [3.0] bump milvus-storage for independent writer buffer release (@xaxys)
+- **PR #55824** (2026-11-23): fix: [cp 3.0] retain unhandled WAL messages after consumer reconnect (@chyezh)
+- **PR #55822** (2026-11-23): fix: retain unhandled WAL messages after consumer reconnect (@chyezh)
+- **PR #55817** (2026-11-22): enhance: Read the schema snapshot in the growing segment load path (@xiaofan-luan)
 
 ---
 
@@ -1668,31 +2687,55 @@ The te
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clear HasMoreResult for empty retrieve results
+## X. record replicated idempotency keys on the secondary
 
 **RULE**:
-When implementing operations in `internal/core/src/query/ExecPlanNodeVisitor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design-docs/design_docs/20260604-idempotent_write.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09c8c207`: Clear HasMoreResult for empty retrieve results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f81b4bca`: record replicated idempotency keys on the secondary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/query/ExecPlanNodeVisitor.cpp`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/20260604-idempotent_write.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        tmp_retrieve_result.has_more_result = false;
+- Cross-cluster dedup of replicated writes. A replicated write is never deduplicated
+  against the local window; it is only recorded there, so that a client retry after a
+  planned switchover can reuse the result while the secondary retains the key (see
+  [Replication and CDC](#replication-and-cdc)). Keys that replication had not delivered
+  before a force promote are not recovered.
+Replicated messages are **recorded in the window but never checked against it**.
+
+The window is never read for a replicated message. The replicate stream has its own
+and a client legally re-issued it. So a replicated message is appended unconditionally.
+
+The window is written after the append. A replicated Insert carries the source's key and
+its `idempotent_result` header; a replicated transaction carries them on its bodies and
+its commit, and the interceptor merges the body results on the commit exactly as it does
+for a native transaction. The recorded entry replaces an entry already held for the key:
+when the source evicted the key and a client legally reused it, the newer write is the one
+a retry must see. The recovery observer applies the same rule, so a window rebuilt from
+Summary carries the repli
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Cross-cluster dedup. Replicated writes bypass the window entirely (see
+  [Replication and CDC](#replication-and-cdc)).
+Replicated messages **bypass the window entirely**. The replicate stream has its own
+and a client legally re-issued it.
+
+The recovery observer applies the same rule: a replicated write becomes a *keyless*
+committed write in Summary, so a foreign key can never materialize a local dedup
+entry. Its local WAL positions still participate in Summary persistence and
+checkpoint gating.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09c8c207` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f81b4bca` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

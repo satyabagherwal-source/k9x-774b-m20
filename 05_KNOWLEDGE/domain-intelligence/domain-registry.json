@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T23:10:07.067Z",
+  "last_updated": "2026-11-23T23:18:29.853Z",
   "total_records": 2465,
   "domains": {
     "A": {
@@ -9492,8 +9492,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "d0c5bf9d90e1d3b9dd49acb8ef35eea038dd360a7af104eba4b7d2b1c38d5c78",
-      "created_at": "2026-11-22T21:41:03.285Z"
+      "content_hash": "fecd8d8634cf427123c68d3507ea34074a0eb959c05c463a952288cdbac32c02",
+      "created_at": "2026-11-23T23:18:25.240Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -16810,8 +16810,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "697fa98ceae1692331e9d22571235b9aad4ca2367913d002bd24c6f2d9e0138f",
-      "created_at": "2026-11-22T15:09:07.787Z"
+      "content_hash": "9225685d69a3041705c33090d865461bb60779ae28050c44b16ced6fb55ee057",
+      "created_at": "2026-11-23T23:18:12.901Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -16819,8 +16819,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "9212ffeb92ca3cd26bc5aed23b383843831a925875d581f49a6e99f75ecf831e",
-      "created_at": "2026-11-22T15:09:19.171Z"
+      "content_hash": "cd5aac873f93cb7f8306f894d181754e59f9368375724f229b91350c28a67aff",
+      "created_at": "2026-11-23T23:18:28.750Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -19802,8 +19802,8 @@
       "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-research-knowledge-intelligence-meta-mo.md",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "content_hash": "778445d172d9c51b545e51ab0c41e4ae2384bcc3a31856308457750b256d2ffb",
-      "created_at": "2026-11-19T17:07:13.070Z"
+      "content_hash": "8c7102ebc9fc61d18d0a6cef6cbad674330b485c4bd20d3a03d3005ad1485274",
+      "created_at": "2026-11-23T23:18:09.542Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
@@ -19868,8 +19868,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-learnings-research-knowledge-intelligen.md",
       "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
-      "content_hash": "4829d4ee8abe40cb463c02abb5ca530a5649e9db0eb458728595e80e738cb611",
-      "created_at": "2026-11-19T17:07:54.438Z"
+      "content_hash": "3c7ea8001b4400d38ddfc1c0c0efc70348732319620b5861aa75d13185a25d8a",
+      "created_at": "2026-11-23T23:18:29.258Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
@@ -36855,8 +36855,8 @@
       "title": "Technical Construction Intelligence: kgateway-dev/kgateway Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kgateway-dev-kgateway-technical-construction-intelligence-kgateway-dev-kgateway-.md",
       "repository": "kgateway-dev/kgateway",
-      "content_hash": "1d1982832e860d640b373b00a24e42b13f7d74f9a64ce438af40a79fe74af1ee",
-      "created_at": "2026-11-20T20:57:53.774Z"
+      "content_hash": "c87096dfe7ec18b4fa597825d376d99d5f5f732daf7eba4ce7b2fd88a6d28d73",
+      "created_at": "2026-11-23T23:18:21.369Z"
     },
     "DOM-D-F66E1D4B": {
       "record_id": "DOM-D-F66E1D4B",
@@ -36915,8 +36915,8 @@
       "title": "Technical Construction Intelligence: kgateway-dev-kgateway-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kgateway-dev-kgateway-learnings-technical-construction-intelligence-kgateway-dev.md",
       "repository": "kgateway-dev-kgateway-learnings",
-      "content_hash": "1df6500ce6fb821245868dc41081c2554157a6e6f242164a0b889a50292705b8",
-      "created_at": "2026-11-20T20:58:24.941Z"
+      "content_hash": "3c1d88b772110772fdeb991c04c82c026a074c078a445ce83853a54aa66f988a",
+      "created_at": "2026-11-23T23:18:29.853Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",

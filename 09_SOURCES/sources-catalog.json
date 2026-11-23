@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
-    "lastHarvestedAt": "2026-11-19T17:07:12.831Z",
+    "contentHash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
+    "lastHarvestedAt": "2026-11-23T23:18:09.327Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "8a71677f",
+    "sourceVersion": "1a44dc2c",
     "license": "Apache-2.0",
-    "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
-    "lastHarvestedAt": "2026-11-20T20:57:53.432Z",
+    "contentHash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
+    "lastHarvestedAt": "2026-11-23T23:18:20.999Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "09c8c207",
+    "sourceVersion": "72e14334",
     "license": "Apache-2.0",
-    "contentHash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
-    "lastHarvestedAt": "2026-11-22T21:41:02.918Z",
+    "contentHash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
+    "lastHarvestedAt": "2026-11-23T23:18:24.864Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "d31d1074",
+    "sourceVersion": "e224d55b",
     "license": "NOASSERTION",
-    "contentHash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
-    "lastHarvestedAt": "2026-11-22T15:09:07.393Z",
+    "contentHash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
+    "lastHarvestedAt": "2026-11-23T23:18:12.498Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

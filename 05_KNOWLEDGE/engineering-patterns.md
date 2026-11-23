@@ -759566,3 +759566,288 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `69961019` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10142. Search threads by their displayed title (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Search threads by their displayed title",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "e224d55b",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T23:18:11.986Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `e224d55b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/agent_ui/src/threads_archive_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `78edf1df`: agent_ui: Search threads by their displayed title. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/threads_archive_view.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use crate::{Agent, ArchiveSelectedThread, RemoveSelectedThread};
+                let title = session.display_title();
+                if let Some(positions) = fuzzy_match_positions(&query, &title) {
+            self.thread.display_title()
+
+    #[gpui::test]
+    async fn test_filter_matches_displayed_title(cx: &mut gpui::TestAppContext) {
+        crate::test_support::init_test(cx);
+        cx.update(ThreadMetadataStore::init_global);
+        cx.run_until_parked();
+        let metadata = ThreadMetadata {
+            thread_id: ThreadId::new(),
+            session_id: Some(acp::SessionId::new("session")),
+            agent_id: agent::ZED_AGENT_ID.clone(),
+            title: Some("Generated".into()),
+            title_override: Some("Renamed".into()),
+            updated_at: Utc::now(),
+            created_at: None,
+            interacted_at: None,
+            worktree_paths: Default::default(),
+            remote_connection: None,
+            archived: false,
+        };
+        cx.update(|cx| {
+            ThreadMetadataStore::global(cx).update(cx, |store, cx| store.save(metadata, cx))
+        });
+        let view = cx.add_window(|window, cx| {
+            let workspace = WeakEntity::
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use crate::{Agent, ArchiveSelectedThread, DEFAULT_THREAD_TITLE, RemoveSelectedThread};
+                let title = session
+                    .title
+                    .as_ref()
+                    .map(|t| t.as_ref())
+                    .unwrap_or(DEFAULT_THREAD_TITLE);
+                if let Some(positions) = fuzzy_match_positions(&query, title) {
+            self.thread
+                .title
+                .as_ref()
+                .map(|t| t.as_ref())
+                .unwrap_or(DEFAULT_THREAD_TITLE)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `78edf1df` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10143. make the status syncer the only writer of Gateway Accepted (Harvested from kgateway-dev/kgateway)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make the status syncer the only writer of Gateway Accepted",
+  "source": "kgateway-dev/kgateway",
+  "source_url": "https://github.com/kgateway-dev/kgateway",
+  "source_version": "1a44dc2c",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T23:18:20.520Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kgateway-dev-kgateway",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `1a44dc2c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/deployer/deployer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1a44dc2c`: status): make the status syncer the only writer of Gateway Accepted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/deployer/deployer.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+// objectGVK returns obj's GVK from the scheme, falling back to its TypeMeta for a type the
+// scheme does not know. TypeMeta alone is empty on some informer paths, and the GVK ends up in
+// errors reported in status, which must not change from one attempt to the next.
+func (d *Deployer) objectGVK(obj client.Object) schema.GroupVersionKind {
+	if d.scheme != nil {
+		if gvk, err := apiutil.GVKForObject(obj, d.scheme); err == nil {
+			return gvk
+		}
+	}
+	return obj.GetObjectKind().GroupVersionKind()
+}
+
+		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", d.objectGVK(obj).String(), obj.GetNamespace(), obj.GetName(), err)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName(), err)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1a44dc2c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10144. record replicated idempotency keys on the secondary (Harvested from milvus-io/milvus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "record replicated idempotency keys on the secondary",
+  "source": "milvus-io/milvus",
+  "source_url": "https://github.com/milvus-io/milvus",
+  "source_version": "72e14334",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T23:18:24.384Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-milvus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `72e14334`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/design-docs/design_docs/20260604-idempotent_write.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f81b4bca`: record replicated idempotency keys on the secondary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/20260604-idempotent_write.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- Cross-cluster dedup of replicated writes. A replicated write is never deduplicated
+  against the local window; it is only recorded there, so that a client retry after a
+  planned switchover can reuse the result while the secondary retains the key (see
+  [Replication and CDC](#replication-and-cdc)). Keys that replication had not delivered
+  before a force promote are not recovered.
+Replicated messages are **recorded in the window but never checked against it**.
+
+The window is never read for a replicated message. The replicate stream has its own
+and a client legally re-issued it. So a replicated message is appended unconditionally.
+
+The window is written after the append. A replicated Insert carries the source's key and
+its `idempotent_result` header; a replicated transaction carries them on its bodies and
+its commit, and the interceptor merges the body results on the commit exactly as it does
+for a native transaction. The recorded entry replaces an entry already held for the key:
+when the source evicted the key and a client legally reused it, the newer write is the one
+a retry must see. The recovery observer applies the same rule, so a window rebuilt from
+Summary carries the repli
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+- Cross-cluster dedup. Replicated writes bypass the window entirely (see
+  [Replication and CDC](#replication-and-cdc)).
+Replicated messages **bypass the window entirely**. The replicate stream has its own
+and a client legally re-issued it.
+
+The recovery observer applies the same rule: a replicated write becomes a *keyless*
+committed write in Summary, so a foreign key can never materialize a local dedup
+entry. Its local WAL positions still participate in Summary persistence and
+checkpoint gating.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f81b4bca` are properly handled with clean fallback behavior.

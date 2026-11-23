@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-XXSO",
-    "timestamp": "2026-11-22T02:29:32.376Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XZ4I",
-    "timestamp": "2026-11-22T02:29:34.098Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-BSCN",
-    "timestamp": "2026-11-22T02:40:18.503Z",
-    "repository": "dosco/deeporg",
-    "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-E2WO",
-    "timestamp": "2026-11-22T02:42:05.496Z",
-    "repository": "PrunaAI/P-Image-OSS-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-SCX7",
     "timestamp": "2026-11-22T02:53:11.659Z",
     "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
@@ -7490,6 +7430,66 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZIQZ",
+    "timestamp": "2026-11-23T23:18:09.323Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZL72",
+    "timestamp": "2026-11-23T23:18:12.494Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZRR8",
+    "timestamp": "2026-11-23T23:18:20.996Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZUQL",
+    "timestamp": "2026-11-23T23:18:24.861Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
