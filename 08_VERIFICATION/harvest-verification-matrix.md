@@ -12270,3 +12270,6 @@
 | `CYCLE-20261123-00YP` | `2026-11-23T05:06:47.905Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10023` | Yes (`4df84ffe...`) |
 | `CYCLE-20261123-MN24` | `2026-11-23T05:24:22.972Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10024` | Yes (`5db88b5e...`) |
 | `CYCLE-20261123-QKPO` | `2026-11-23T05:27:26.556Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10025, Rule 10026, Rule 10027` | Yes (`f20faf0a...`) |
+| `CYCLE-20261123-0RIN` | `2026-11-23T05:35:21.935Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`56a0e798...`) |
+| `CYCLE-20261123-11M0` | `2026-11-23T05:35:35.016Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`028d93ba...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T05:36:07.201Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-38571EB1` [Domain D] | Yes (`9865d1ae...`) |

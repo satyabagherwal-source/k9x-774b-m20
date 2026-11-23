@@ -12303,3 +12303,6 @@ Every entry in this ledger must capture:
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `90197327` | Multi-dimensional audit evidence | 2026-11-23T05:06:47.909Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `d7bc0dc4` | Multi-dimensional audit evidence | 2026-11-23T05:24:22.977Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-23T05:27:26.560Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-23T05:35:21.940Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `82707de5` | Multi-dimensional audit evidence | 2026-11-23T05:35:35.021Z |
+| `learn-dom-d-38571eb1` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-23T05:36:07.201Z |

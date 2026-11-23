@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T23:16:24.407Z",
+  "updated_at": "2026-11-23T05:36:07.198Z",
   "statistics": {
-    "total_nodes": 478,
+    "total_nodes": 479,
     "total_edges": 202,
     "domain_distribution": {
-      "D": 291,
+      "D": 292,
       "M": 1,
       "H": 85,
       "J": 22,
@@ -10680,6 +10680,28 @@
       ],
       "created_at": "2026-11-22T23:16:24.407Z",
       "updated_at": "2026-11-22T23:16:24.407Z"
+    },
+    "DOM-D-38571EB1": {
+      "id": "DOM-D-38571EB1",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): cilium/cilium",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://cilium-cilium/cilium-cilium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T05:35:38.467Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cilium-cilium)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-23T05:36:07.198Z",
+      "updated_at": "2026-11-23T05:36:07.198Z"
     }
   },
   "edges": [

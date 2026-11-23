@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T04:45:02.071Z",
-    "lastVerified": "2026-11-23T04:45:02.071Z",
+    "lastChecked": "2026-11-23T05:35:33.333Z",
+    "lastVerified": "2026-11-23T05:35:33.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T05:27:30.121Z",
-    "lastVerified": "2026-11-23T05:27:30.121Z",
+    "lastChecked": "2026-11-23T05:35:37.949Z",
+    "lastVerified": "2026-11-23T05:35:37.949Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1923,14 +1923,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T22:06:30.577Z",
-    "lastVerified": "2026-11-22T22:06:30.577Z",
+    "lastChecked": "2026-11-23T05:35:34.503Z",
+    "lastVerified": "2026-11-23T05:35:34.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2837,9 +2837,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-22T03:25:02.119Z",
+    "lastChecked": "2026-11-23T05:35:30.807Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-22T03:25:02.119Z"
+    "lastVerified": "2026-11-23T05:35:30.807Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -3920,9 +3920,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-11-21T21:48:50.919Z",
+    "lastChecked": "2026-11-23T05:35:18.397Z",
     "revisionIdentifier": "097582e3",
-    "lastVerified": "2026-11-21T21:48:50.919Z"
+    "lastVerified": "2026-11-23T05:35:18.397Z"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -4359,9 +4359,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-22T04:38:53.576Z",
+    "lastChecked": "2026-11-23T05:35:25.819Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-22T04:38:53.576Z"
+    "lastVerified": "2026-11-23T05:35:25.819Z"
   },
   "helixdb-helix-db": {
     "name": "helix-db",
@@ -4403,12 +4403,12 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T19:51:55.601Z",
-    "lastVerified": "2026-11-18T19:51:55.601Z",
+    "lastChecked": "2026-11-23T05:35:21.178Z",
+    "lastVerified": "2026-11-23T05:35:21.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "af129810d409b5afcbd8653331daae0de6c15160da73202007ee5c669bb7ddc7",
+    "contentHash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9792,9 +9792,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-11-20T04:48:24.015Z",
+    "lastChecked": "2026-11-23T05:35:23.425Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-11-20T04:48:24.015Z"
+    "lastVerified": "2026-11-23T05:35:23.425Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",

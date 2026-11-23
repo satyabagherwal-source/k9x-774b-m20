@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:27:26.565Z",
-  "total_cycles_completed": 11668,
-  "total_learnings_persisted": 11668,
+  "last_updated": "2026-11-23T05:35:35.027Z",
+  "total_cycles_completed": 11670,
+  "total_learnings_persisted": 11670,
   "total_rules_promoted": 10856,
   "history": [
-    {
-      "timestamp": "2026-11-22T09:47:27.488Z",
-      "repository": "ConceptCountry/qwen-concept-27b",
-      "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T09:47:33.364Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T10:03:41.787Z",
       "repository": "Abiray/MiniMax-H3-Image-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:35:21.946Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:35:35.027Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

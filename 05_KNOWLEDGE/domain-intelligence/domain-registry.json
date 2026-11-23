@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T05:27:32.677Z",
-  "total_records": 2393,
+  "last_updated": "2026-11-23T05:36:08.508Z",
+  "total_records": 2394,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 925,
+      "total": 926,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -991,7 +991,8 @@
         "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
         "DOM-D-9C50727D",
-        "DOM-D-8BD6649E"
+        "DOM-D-8BD6649E",
+        "DOM-D-38571EB1"
       ]
     },
     "E": {
@@ -8136,8 +8137,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "dcddb7041eb904aeb69c57bc18fccd605d615daee857ab73c1cfb4931c51588f",
-      "created_at": "2026-11-22T22:06:32.015Z"
+      "content_hash": "7ac029680e856bdc056b55c506c135ca734567de0e7b99cd76c5e8e7588fd12b",
+      "created_at": "2026-11-23T05:35:35.252Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8154,8 +8155,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "02531824632b7cffb9de278144a0bb6bfc7e7e8093452cd39ec40fd2ed788313",
-      "created_at": "2026-11-22T22:06:38.851Z"
+      "content_hash": "224db2bc315c0a53215cb5027c7ded17bb961941ec094c5038e7705f807f8a83",
+      "created_at": "2026-11-23T05:36:07.837Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -9126,8 +9127,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a752dbdf07120c94b279ee7c8d5eeb38d908cc1c055ebd7d370d2cfce580a6ef",
-      "created_at": "2026-11-23T00:39:39.574Z"
+      "content_hash": "46443322f45cb97cdb19700eef17d06d2b4d635284918742578949e0898db932",
+      "created_at": "2026-11-23T05:36:08.508Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12432,8 +12433,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-research-knowledge-intelligence-minimaxai-minimax-h3-cor.md",
       "repository": "MiniMaxAI/MiniMax-H3",
-      "content_hash": "51e35de722e43b509f80f10cd5fe54633132a4aefe11abfdb31ea699bfce2ff0",
-      "created_at": "2026-11-18T19:51:56.401Z"
+      "content_hash": "e31ff09bf19ee91ac2fea8bd723355a641aac35bec5e299f2df45ad13476cada",
+      "created_at": "2026-11-23T05:35:22.162Z"
     },
     "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
@@ -12501,8 +12502,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-learnings-research-knowledge-intelligence-hf-minimaxai-m.md",
       "repository": "hf-minimaxai-minimax-h3-learnings",
-      "content_hash": "6c70564c5f049aad069d660cb450493db05ec416a3c36b54c0f3d32411bc412b",
-      "created_at": "2026-11-18T19:52:16.324Z"
+      "content_hash": "97d0632f039646b1d581550273570169534adfbcf7d125c696d379844955ccbf",
+      "created_at": "2026-11-23T05:35:38.293Z"
     },
     "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants",
@@ -40225,6 +40226,48 @@
       "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
       "content_hash": "8a42c360d93f28906759fa7e9567c12ce1ab53b1540861487fce830fb456c9c0",
       "created_at": "2026-11-23T05:27:31.040Z"
+    },
+    "DOM-D-38571EB1": {
+      "record_id": "DOM-D-38571EB1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): cilium/cilium",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  \n> **Source Version**: `82707de5`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "9865d1ae203070394a7f57d01044cb9081191260c1a574d2447daa06e877325c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu",
+      "provenance": {
+        "source_uri": "project://cilium-cilium/cilium-cilium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T05:35:38.467Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cilium-cilium)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of cilium-cilium"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T05:36:07.169Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T05:27:32.947Z",
+  "last_updated": "2026-11-23T05:36:08.701Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "965d58cd",
-      "content_hash": "dcddb7041eb904aeb69c57bc18fccd605d615daee857ab73c1cfb4931c51588f",
+      "source_version": "82707de5",
+      "content_hash": "7ac029680e856bdc056b55c506c135ca734567de0e7b99cd76c5e8e7588fd12b",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T22:06:32.015Z"
+      "persisted_at": "2026-11-23T05:35:35.252Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "02531824632b7cffb9de278144a0bb6bfc7e7e8093452cd39ec40fd2ed788313",
+      "content_hash": "224db2bc315c0a53215cb5027c7ded17bb961941ec094c5038e7705f807f8a83",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T22:06:38.851Z"
+      "persisted_at": "2026-11-23T05:36:07.837Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a752dbdf07120c94b279ee7c8d5eeb38d908cc1c055ebd7d370d2cfce580a6ef",
+      "content_hash": "46443322f45cb97cdb19700eef17d06d2b4d635284918742578949e0898db932",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:39:39.574Z"
+      "persisted_at": "2026-11-23T05:36:08.508Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b82cc1c820de1cfe865594415fb928d59d2003b63605a28c23eb31087beeffa4",
+      "content_hash": "b5df66db30f62cf5205a7cd3a9e32a7993549c90a668880482c1f6219986b4d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:39:39.742Z"
+      "persisted_at": "2026-11-23T05:36:08.701Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214247,8 +214247,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "965d58cd",
-      "content_hash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
+      "source_version": "82707de5",
+      "content_hash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214353,7 +214353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:06:31.214Z",
+      "verified_at": "2026-11-23T05:35:34.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220981,7 +220981,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "af129810d409b5afcbd8653331daae0de6c15160da73202007ee5c669bb7ddc7",
+      "content_hash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [],
@@ -220990,7 +220990,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:51:55.999Z",
+      "verified_at": "2026-11-23T05:35:21.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221007,9 +221007,9 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3 Core Invariants",
       "repository": "MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "51e35de722e43b509f80f10cd5fe54633132a4aefe11abfdb31ea699bfce2ff0",
+      "content_hash": "e31ff09bf19ee91ac2fea8bd723355a641aac35bec5e299f2df45ad13476cada",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:51:56.401Z"
+      "persisted_at": "2026-11-23T05:35:22.162Z"
     },
     "learn-github-pingcap-tidb": {
       "learning_id": "learn-github-pingcap-tidb",
@@ -221175,9 +221175,9 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-learnings Core Invariants",
       "repository": "hf-minimaxai-minimax-h3-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c70564c5f049aad069d660cb450493db05ec416a3c36b54c0f3d32411bc412b",
+      "content_hash": "97d0632f039646b1d581550273570169534adfbcf7d125c696d379844955ccbf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:52:16.324Z"
+      "persisted_at": "2026-11-23T05:35:38.293Z"
     },
     "candidate_directive-config-recognize-runtime-exit-tails-in-diagnostic-goroutine-profiles": {
       "item_id": "candidate_directive-config-recognize-runtime-exit-tails-in-diagnostic-goroutine-profiles",
@@ -318847,13 +318847,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GHAM-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1RB1-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ec6e8ca749139929fbfd33bf19978705f59d0a22699497dcf8ee3cc9d23e4f2",
+      "content_hash": "926b4e377def3438ab06e17d6ab67b2e44d63344da2ae0fd35cc25e0de8a72f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:39:39.409Z"
+      "persisted_at": "2026-11-23T05:36:08.323Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

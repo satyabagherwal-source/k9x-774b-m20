@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T05:06:52.954Z",
+  "updated_at": "2026-11-23T05:36:07.259Z",
   "stats": {
-    "total_discovered": 7768,
-    "approved_pending_harvest": 7349,
+    "total_discovered": 7769,
+    "approved_pending_harvest": 7350,
     "harvested_count": 0,
     "rejected_count": 419,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7339,
+      "COMMUNITY_AND_EXPERT": 7340,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167986,6 +167986,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
         "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-EE9A3A9257A1": {
+      "id": "SRC-EE9A3A9257A1",
+      "url": "https://redirect.github.com/renovatebot/renovate",
+      "title": "https://redirect.github.com/renovatebot/renovate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:36:07.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }
