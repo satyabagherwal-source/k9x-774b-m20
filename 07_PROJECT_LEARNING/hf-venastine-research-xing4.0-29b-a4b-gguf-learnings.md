@@ -3,7 +3,7 @@
 > **Source Version**: `hf-venastine`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:00:08.881Z  
+> **Timestamp**: 2026-11-23T13:54:35.105Z  
 > **Learning ID**: `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF](https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:00:08.552Z  
+> **Harvest Timestamp**: 2026-11-23T13:49:32.744Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 24416 downloads | 792 likes
+- **Stars / Engagement**: 19093 downloads | 791 likes
 
 ---
 

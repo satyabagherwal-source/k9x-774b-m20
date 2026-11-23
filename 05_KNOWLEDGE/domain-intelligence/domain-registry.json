@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T13:25:07.504Z",
+  "last_updated": "2026-11-23T13:54:40.359Z",
   "total_records": 2417,
   "domains": {
     "A": {
@@ -8811,8 +8811,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "4ed45f53c8a8eab0920d82b56c366e56d72acd687a6bd73bad732f9c4ac79f78",
-      "created_at": "2026-11-22T07:56:43.409Z"
+      "content_hash": "5cc3ee2bcc71dd3769f0428770d579b14295e546eaf2f0cc34950a273236cab8",
+      "created_at": "2026-11-23T13:50:04.820Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8889,8 +8889,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "e43d894b358693f1fe49582d8445f5746dfc186dd6d5eaf12cc6c35aba57c49c",
-      "created_at": "2026-11-22T07:56:48.102Z"
+      "content_hash": "05fc7bfdf6e6f3719e558846a9e54944e3cea1da585b3a34ee4e8ff039372322",
+      "created_at": "2026-11-23T13:54:39.580Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -14116,8 +14116,8 @@
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "7071f11715307edbf06462b344adcc25fa4a9295acb6b76d8ec6beb5e7c600ce",
-      "created_at": "2026-11-18T03:39:36.355Z"
+      "content_hash": "566a830a2bdd9b27f4902ca5e6f0865010457134f21983767fbf35fabfdde164",
+      "created_at": "2026-11-23T13:49:48.676Z"
     },
     "DOM-D-2C3ED23B": {
       "record_id": "DOM-D-2C3ED23B",
@@ -14185,8 +14185,8 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-learnings-technical-construction-intelligence-pixeltable-p.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "3500e0887fb9849c5d915083de186a9dc785ee9c635ee8f3233290bca23aec2b",
-      "created_at": "2026-11-18T03:39:43.002Z"
+      "content_hash": "9d61bd9357219b3c2e0b388496423dadd344a1fd65df1c0989765b75e6ec8612",
+      "created_at": "2026-11-23T13:54:40.359Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
@@ -14644,8 +14644,8 @@
       "title": "Research & Knowledge Intelligence: Venastine-Research/Xing4.0-29B-A4B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-research-knowledge-intelligence-venas.md",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "content_hash": "aa00fe07506165ba0e7f1f0dd75bb26e6181efd74b7ef17dd03578d4835dae2e",
-      "created_at": "2026-11-19T00:00:09.677Z"
+      "content_hash": "65b6ab7eea28f5ba20714284452bfba4c16ab28f2b5c1c8ee48c69e7c0c6f8d7",
+      "created_at": "2026-11-23T13:54:35.819Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
@@ -14704,8 +14704,8 @@
       "title": "Research & Knowledge Intelligence: hf-venastine-research-xing4.0-29b-a4b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-learnings-research-knowledge-intellig.md",
       "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings",
-      "content_hash": "e0cd8b2876c2f76ddbd8d0dc819afabb9e71bc50b5454b65ab0866e3c2ab5ae9",
-      "created_at": "2026-11-19T00:00:29.436Z"
+      "content_hash": "f683e0e77315a8391df9485185f37815c3a350ac5e5933899eb4aea2abaf3f69",
+      "created_at": "2026-11-23T13:54:38.882Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `056c7016`  
+> **Source Version**: `caec4119`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:58:05.155Z  
+> **Timestamp**: 2026-11-23T13:49:47.239Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:58:05.151Z  
+> **Harvest Timestamp**: 2026-11-23T13:49:47.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1152,14 +1152,11 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2035** (2026-11-20): **Replace the retired fal-ai/fast-sdxl model in the fal test, docstring and notebook**
-  *Symptoms*: ## Failure  Scheduled `tests` run on `main`: https://github.com/pixeltable/pixeltable/actions/runs/44653753220  - standard+ (ubuntu-26.04, 3.11): `tests/functions/test_fal.py::TestFal::test_fast_sdxl` - notebooks+ (ubuntu-26.04, 3.11): `working-with-fal.ipynb`  Both fail with `FalClientHTTPError: This endpoint is deprecated and no longer available.` fal.ai has retired `fal-ai/fast-sdxl`. The other `TestFal` tests, which call `fal-ai/flux/schnell`, passed in the same job.  ## Change  - `tests/functions/test_fal.py`: `test_fast_sdxl` becomes `test_image_size_and_steps` and calls `fal-ai/flux/schnell`. It still passes `image_size='square_hd'` and asserts a 1024x1024 image. `num_inference_steps` goes from 25 to 8, since `flux/schnell` accepts 1 to 12. - `pixeltable/functions/fal.py`: the second `run()` example uses `fal-ai/flux/schnell` with 8 steps. - `working-with-fal.ipynb`:   - "Advanced image generation with Fast SDXL" becomes "Controlling generation parameters". It runs `fal-ai/flux/schnell` with per-row `steps` and `seed` columns. `negative_prompt` is gone, since FLUX models don't accept it.   - The outputs of its three code cells are cleared, since the saved ones came from `fast-sdxl`.   - The model list drops `fal-ai/fast-sdxl` and `fal-ai/stable-diffusion-v3-medium`. fal.ai's model API returns `Endpoint(s) not found` for the latter.   - The tips drop the `fast-sdxl` recommendation, and the negative-prompt tip now applies only to models that accept a `negative_prompt` in
-  **Post-Mortem & Fix Analysis**:
-  > <a href="https://app.reviewnb.com/pixeltable/pixeltable/pull/2035"><img alt="Review Notebooks" height="32" src="https://raw.githubusercontent.com/ReviewNB/support/master/images/button_review_notebooks.png"></a>  **Notebooks changed:**  - <picture><img alt="" title="Lines added and removed" src="https://raw.githubusercontent.com/ReviewNB/support/master/images/diff-pmn.svg"></picture> [`working-with-fal.ipynb`](https://app.reviewnb.com/pixeltable/pixeltable/pull/2035/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fal.ipynb) in *`docs/release/howto/providers`*  Review visual diffs and comment on any notebook cell. All comments sync back to this PR.  ---   <i>Powered by <a href='https://www.reviewnb.com/?utm_source=gh'>ReviewNB</a></i>
-  > agents review
+- **Issue #2039** (2026-11-22): **Fix merge queue flakiness: restore Config after the db submission tests**
+  *Symptoms*: ## Problem  Merge queue jobs fail now and then with `AuthorizationError: A Pixeltable API key or sign-in is required to reach Pixeltable Cloud` in tests that don't use Pixeltable Cloud, for example 4 `test_table_model.py` tests in [this job](https://github.com/pixeltable/pixeltable/actions/runs/44952590542/job/136993653458). All 4 ran on one xdist worker, and the same tests passed on the other workers.  The `project` fixture in `tests/serving/test_db_submission.py` reinitializes `Config` with a temporary project root and never restores it. Since #1970, `test_local_database` writes a `pixeltable.udf` setting for `string.format`, `video.clip` and `string.swapcase` into that project. A later test on the same worker that calls one of those UDFs is routed to the UDF servers. The endpoint lookup needs a Pixeltable Cloud credential, which CI doesn't have, so the test fails. It happens only when xdist puts `test_local_database` and such a test on the same worker, in that order.  ## Change  The fixture restores the original project root on teardown, as `project_env` in `tests/conftest.py` already does.  ## Testing  - In one process, `test_local_database` followed by `test_table_model_basic[operational-local-]`: the second test fails on `main` and passes with this change. - `tests/serving/test_db_submission.py` passes (19 tests). - ruff and mypy pass on the changed file.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #2033** (2026-11-21): **Replace retired fal-ai/fast-sdxl with fal-ai/flux/schnell**
-  *Symptoms*: Scheduled `tests` run on `main`: https://github.com/pixeltable/pixeltable/actions/runs/44653753220  ## Cause  fal.ai retired `fal-ai/fast-sdxl`. The queue result request now returns `410 Gone` / `FalClientHTTPError: This endpoint is deprecated and no longer available.` That failed:  - `tests/functions/test_fal.py::TestFal::test_fast_sdxl` (`standard+, ubuntu-26.04, 3.11`) - `working-with-fal.ipynb` (`notebooks+, ubuntu-26.04, 3.11`)  In the same run, `fal-ai/flux/schnell` passed in `test_text_to_image`, `test_text_to_image_with_url` and `test_multiple_images`.  ## Change  - `test_fast_sdxl` is now `test_image_size_and_steps`. It sends the same `image_size: square_hd` input to `fal-ai/flux/schnell`, with `num_inference_steps` set to 8 because Schnell accepts 1 to 12, and still checks for a 1024x1024 image. - The second `run()` example in the `fal.run()` docstring now uses `fal-ai/flux/schnell`. - In the notebook, the "Fast SDXL" section now shows the same `image_size` and `num_inference_steps` parameters with FLUX Schnell. `negative_prompt` is gone because Schnell does not support it. The model list and tips no longer mention `fast-sdxl`. - I cleared the image output of the results cell because it contained SDXL images. The notebook needs a re-run with a fal.ai key to refill that output.  ## Checks  - `tool/check_notebooks.py docs/release` passes. `py_compile` passes on both changed Python files. - Not run here: Ruff, mypy and nbqa are not installed in this environment, and th
+- **Issue #2037** (2026-11-22): **Cut the peak memory of the heaviest scheduled-run tests**
+  *Symptoms*: ## Problem  Since #1900 (2026-11-16), the scheduled `standard` jobs also run the Hugging Face model and dataset tests. On the `ubuntu-24.04` runners this fills swap. A comparison of 4 runs on each side of #1900, on pytest 9.0.3 with `xdist_group` working:  | | Max swap used | Lowest available memory | |---|---|---| | Just before #1900 (`890b85ab9`) | 0-106 MB | 2.6-3.4 GB | | #1900 (`9c30a9a64`) | 3 GB (all of it), in all 4 runs | 2.0-2.5 GB |  At that point a runner is lost with "The runner has received a shutdown signal" in some runs, not all. pytest 9.2 made it worse from 11-18 to 11-19 by splitting the `large_model` group across workers (#2015, #2016).  The same memory pressure is a likely trigger for the macOS hangs. In 4 of 4 hangs caught in CI, a worker's `send()` on its Postgres Unix socket had just failed with `ENOBUFS`, on the socket that then hung. libpq treats that error as a lost connection: it drops the query and waits forever for a reply. In the two runs with macOS memory sampling, the `ENOBUFS` errors came during memory-compressor spikes (for example, compressed memory rising from 1.0 to 2.8 GB within 16 s).  ## Change  The tests with the largest single-test memory increases, measured per test in the #1900 runs above:  | Test | Increase (RSS after) | Change | |---|---|---| | `test_image_to_image` | +4.1 GB (6.4 GB) | `hf-internal-testing/tiny-sd-pipe` instead of Stable Diffusion v1.5; input resized to 256x192 | | `test_text_to_image` | +3.7 GB (7.5 GB) | `hf-i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,100 +1173,170 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6acecbd1` (2026-11-21)
-**Commit Message**: fix(io): reject lossy float-to-int coercion in import_pandas (#1922)
+### Incident Patch 1: `6b606968` (2026-11-22)
+**Commit Message**: Cut the peak memory of the heaviest scheduled-run tests (#2037)
 
-Fixes #1886
+## Problem
 
-## Summary
+Since #1900 (2026-11-16), the scheduled `standard` jobs also run the
+Hugging Face model and dataset tests. On the `ubuntu-24.04` runners this
+fills swap. A comparison of 4 runs on each side of #1900, on pytest
+9.0.3 with `xdist_group` working:
 
-`import_pandas()` (and the CSV/Excel importers built on it) silently
-truncated non-integral floats with `int(val)` when a float-dtype column
-was declared as an int type, e.g. through `schema_overrides={'pk':
-pxt.Int}`. The import reported `0 errors` and the truncated value became
-the stored value (and the row identity when the column is the primary
-key).
+| | Max swap used | Lowest available memory |
+|---|---|---|
+| Just before #1900 (`890b85ab9`) | 0-106 MB | 2.6-3.4 GB |
+| #1900 (`9c30a9a64`) | 3 GB (all of it), in all 4 runs | 2.0-2.5 GB |
 
-## Root cause
+At that point a runner is lost with "The runner has received a shutdown
+signal" in some runs, not all. pytest 9.2 made it worse from 11-18 to
+11-19 by splitting the `large_model` group across workers (#2015,
+#2016).
 
-`df_infer_schema()` accepts the declared override without a dtype check,
-and `_df_row_to_pxt_row` then takes the int branch and calls `int(val)`,
-which truncates toward zero. The pandas path does not go through
-`ColumnType.create_literal`, so nothing else rejects the value; the
-row/dict insert path does reject it.
+The same memory pressure is a likely trigger for the macOS hangs. In 4
+of 4 hangs caught in CI, a worker's `send()` on its Postgres Unix socket
+had just failed with `ENOBUFS`, on the socket that then hung. libpq
+treats that error as a lost connection: it drops the query and waits
+forever for a reply. In the two runs with macOS memory sampling, the
+`ENOBUFS` errors came during memory-compressor spikes (for example,
+compressed memory rising from 1.0 to 2.8 GB within 
 
-## Fix
-
-In the int branch of `_df_row_to_pxt_row`, a float that is not integral
-now raises `RequestError(INVALID_TYPE)` naming the column and value,
-matching the dict insert path. Integral floats (`1.0`) still convert
-losslessly, and NaN is still mapped to `None` before this branch.
-
-## Tests
-
-New `test_import_pandas_lossy_float_to_int` checks that `[1.9, 2.1]`
-declared as `pxt.Int` raises, and that `[1.0, 2.0]`
-
-**File**: `pixeltable/io/pandas.py` (modified, +7/-2)
+**File**: `tests/functions/test_huggingface.py` (modified, +7/-4)
 ```diff
-@@ -215,16 +215,21 @@ def _df_prepare_column(data: pd.Series, col_type: ts.ColumnType) -> Iterable[Any
-             # Preserve scalar conversion for datetime cases a pandas column operation cannot handle.
-             pass
+@@ -223,6 +223,7 @@ def test_detr_for_segmentation(self, uses_db: None, sample_file_server: SampleFi
+         assert len(result['segments_info']) > 0
+         assert 'label_text' in result['segments_info'][0]
  
--    return [_df_convert_value(val, col_type) for val in data]
-+    return [_df_convert_value(val, col_type, str(data.name)) for val in data]
++    @pytest.mark.resource_intensive
+     def test_sam3_for_segmentation(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+         skip_test_if_not_installed('transformers', 'torchvision')
+         skip_test_if_no_sam3()
+@@ -359,6 +360,7 @@ def test_sam3_for_video_segmentation(self, uses_db: None) -> None:
+         )
+         assert v_fps.count() == 4
  
++    @pytest.mark.resource_intensive
+     def test_sam3_for_segmentation_no_detections(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+         skip_test_if_not_installed('transformers', 'torchvision')
+         skip_test_if_no_sam3()
+@@ -650,7 +652,7 @@ def test_text_to_image(self, uses_db: None) -> None:
+         t.add_computed_column(
+             image=text_to_image(
+                 t.prompt,
+-                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
++                model_id='hf-internal-testing/tiny-sd-pipe',
+                 height=256,
+                 width=256,
+                 seed=42,
+@@ -673,19 +675,20 @@ def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServe
+         test_prompt = 'turn this into a red circle'
  
--def _df_convert_value(val: Any, col_type: ts.ColumnType) -> Any:
-+def _df_convert_value(val: Any, col_type: ts.ColumnType, col_name: str) -> Any:
-     if col_type.is_float_type():
-         return float(val)
-     if isinstance(val, float) and np.isnan(val):
-         # Float NaN remains a float value; in other column types it represents a missing cell.
-         return None
-     if col_type.is_int_type():
-+        if isinstance(val, (float, np.floating)) and not float(val).is_integer():
-+            raise excs.RequestError(
-+                excs.ErrorCode.INVALID_TYPE,
-+                f'Value {val!r} in column `{col_name}` cannot be converted to int without loss of precision',
-+            )
-         return int(val)
-     if col_type.is_bool_type():
-         return bool(val)
+         # Test with Stable Diffusion
++        t.add_computed_column(small_img=t.img.resize((256, 192)))
+         t.add_computed_column(
+             modified_image=image_to_image(
+-                t.img,
++                t.small_img,
+                 t.prompt,
+-                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
++                model_id='hf-internal-testing/tiny-sd-pipe',
+                 model_kwargs={'strength': 0.5, 'num_inference_steps': 10},
+             )
+         )
+ 
+         validate_update_status(
+             t.insert(img=sample_file_server.url(SAMPLE_IMAGE_FILE_PATH), prompt=test_prompt), expected_rows=1
+         )
+-        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
++        res = t.select(t.modified_image, width=t.small_img.width, height=t.small_img.height).collect()[0]
+         img = res['modified_image']
+         assert img.size == (res['width'], res['height'])
+         assert np.asarray(img).std() > 0
 ```
 
-**File**: `tests/io/test_pandas.py` (modified, +14/-0)
+**File**: `tests/io/test_hf_datasets.py` (modified, +2/-0)
 ```diff
-@@ -383,6 +383,20 @@ def test_pandas_errors(self, db_root: DatabaseRoot) -> None:
-             )
-         assert 'Primary key column `ts_n` cannot contain null values.' in str(exc_info.value)
+@@ -335,6 +335,7 @@ def test_import_images(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         res = t.select(t.image.localpath).collect()
+         assert all(pathlib.Path(row['image_localpath']).exists() for row in res)
  
-+    def test_import_pandas_lossy_float_to_int(self, db_root: DatabaseRoot) -> None:
-+        p = db_root.make_catalog_path
-+
-+        # a non-integral float must not be silently truncated when the column is declared as an int
-+        df = pd.DataFrame({'pk': [1.9, 2.1], 'v': ['a', 'b']})
-+        with pxt_raises(pxt.ErrorCode.INVALID_TYPE) as exc_info:
-+            _ = pxt.io.import_pandas(p('lossy'), df, schema_overrides={'pk': ts.IntType()}, primary_key='pk')
-+        assert 'cannot be converted to int without loss' in str(exc_info.value)
-+
-+        # integral floats are still converted losslessly
-+        df = pd.DataFrame({'pk': [1.0, 2.0], 'v': ['a', 'b']})
-+        t = pxt.io.import_pandas(p('lossless'), df, schema_overrides={'pk': ts.IntType()}, primary_key='pk')
-+        assert sorted(r['pk'] for r in t.collect()) == [1, 2]
-+
++    @pytest.mark.resource_intensive
+     @pytest.mark.parametrize('streaming', [False, True])
+     def test_import_arrays(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         skip_test_if_not_installed('datasets')
+@@ -544,6 +545,7 @@ def test_import_nested_struct(self, streaming: bool, db_root: DatabaseRoot) -> N
+         assert all(isinstance(row['context']['title'], list) for row in res)
+         assert all(isinstance(row['context']['sentences'], list) for row in res)
  
- def _assert_equals_with_nans(a: list[float], b: list[float]) -> bool:
-     assert len(a) == len(b)
++    @pytest.mark.resource_intensive
+     @pytest.mark.parametrize('streaming', [False, True])
+     def test_import_arraynd(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         """Test dataset with Array2D and Array3D features."""
+```
+
+---
+
+### Incident Patch 2: `846eebcd` (2026-11-22)
+**Commit Message**: Fix merge queue flakiness: restore Config after the db submission tests (#2039)
+
+## Problem
+
+Merge queue jobs fail now and then with `AuthorizationError: A
+Pixeltable API key or sign-in is required to reach Pixeltable Cloud` in
+tests that don't use Pixeltable Cloud, for example 4
+`test_table_model.py` tests in [this
+job](https://github.com/pixeltable/pixeltable/actions/runs/44952590542/job/136993653458).
+All 4 ran on one xdist worker, and the same tests passed on the other
+workers.
+
+The `project` fixture in `tests/serving/test_db_submission.py`
+reinitializes `Config` with a temporary project root and never restores
+it. Since #1970, `test_local_database` writes a `pixeltable.udf` setting
+for `string.format`, `video.clip` and `string.swapcase` into that
+project. A later test on the same worker that calls one of those UDFs is
+routed to the UDF servers. The endpoint lookup needs a Pixeltable Cloud
+credential, which CI doesn't have, so the test fails. It happens only
+when xdist puts `test_local_database` and such a test on the same
+worker, in that order.
+
+## Change
+
+The fixture restores the original project root on teardown, as
+`project_env` in `tests/conftest.py` already does.
+
+## Test
+
+**File**: `tests/serving/test_db_submission.py` (modified, +4/-2)
+```diff
+@@ -212,15 +212,17 @@ def _receipt(**fields: Any) -> GenerationReceipt:
+ 
+ 
+ @pytest.fixture
+-def project(init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
++def project(init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+     # a released pxt: a development build of an unpinned project is refused before packaging
+     monkeypatch.setattr(pxt, '__version__', '0.7.15')
+     (tmp_path / 'pixeltable.toml').write_text(f'[[pixeltable.database]]\nname = "{_DB_URI}"\n', encoding='utf-8')
+     (tmp_path / 'app.py').write_text('x = 1\n')
+     (tmp_path / 'requirements.txt').write_text('pandas\n')
++    original = Config.get().project_root
+     Config.init(reinit=True, project_root=tmp_path)
+     monkeypatch.setattr(receipts, 'POLL_INTERVAL', 0.0)
+-    return tmp_path
++    yield tmp_path
++    Config.init(reinit=True, project_root=original)
+ 
+ 
+ def _serve(monkeypatch: pytest.MonkeyPatch, control_plane: _ControlPlane) -> None:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2039** (2026-11-22): Fix merge queue flakiness: restore Config after the db submission tests (@sergey-mkhitaryan)
+- **PR #2037** (2026-11-22): Cut the peak memory of the heaviest scheduled-run tests (@sergey-mkhitaryan)
 - **PR #2035** (2026-11-20): Replace the retired fal-ai/fast-sdxl model in the fal test, docstring and notebook (@sergey-mkhitaryan)
 - **PR #2033** (closed): Replace retired fal-ai/fast-sdxl with fal-ai/flux/schnell (@claude[bot])
 - **PR #2032** (2026-11-22): [PXT-1737] Validate video_splitter segment_times and mode (@sergey-mkhitaryan)
 - **PR #2031** (2026-11-21): [PXT-1399] Document PDF separator support in document_splitter (@sergey-mkhitaryan)
-- **PR #2030** (2026-11-20): [PXT-1428] Truncate exception text and input values in row error messages (@sergey-mkhitaryan)
-- **PR #2029** (2026-11-21): [PXT-1832] Add if_exists to export_parquet() (@sergey-mkhitaryan)
 
 ---
 
@@ -1289,35 +1356,37 @@ declared as `pxt.Int` raises, and that `[1.0, 2.0]`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. io): reject lossy float-to-int coercion in import_pandas
+## X. Cut the peak memory of the heaviest scheduled-run tests
 
 **RULE**:
-When implementing operations in `pixeltable/io/pandas.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/functions/test_huggingface.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6acecbd1`: io): reject lossy float-to-int coercion in import_pandas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b606968`: Cut the peak memory of the heaviest scheduled-run tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/io/pandas.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/functions/test_huggingface.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    return [_df_convert_value(val, col_type, str(data.name)) for val in data]
-def _df_convert_value(val: Any, col_type: ts.ColumnType, col_name: str) -> Any:
-        if isinstance(val, (float, np.floating)) and not float(val).is_integer():
-            raise excs.RequestError(
-                excs.ErrorCode.INVALID_TYPE,
-                f'Value {val!r} in column `{col_name}` cannot be converted to int without loss of precision',
-            )
+    @pytest.mark.resource_intensive
+    @pytest.mark.resource_intensive
+                model_id='hf-internal-testing/tiny-sd-pipe',
+        t.add_computed_column(small_img=t.img.resize((256, 192)))
+                t.small_img,
+                model_id='hf-internal-testing/tiny-sd-pipe',
+        res = t.select(t.modified_image, width=t.small_img.width, height=t.small_img.height).collect()[0]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    return [_df_convert_value(val, col_type) for val in data]
-def _df_convert_value(val: Any, col_type: ts.ColumnType) -> Any:
+                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
+                t.img,
+                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
+        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6acecbd1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b606968` are properly handled with clean fallback behavior.

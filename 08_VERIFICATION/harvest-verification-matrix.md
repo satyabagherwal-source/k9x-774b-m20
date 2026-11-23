@@ -12322,3 +12322,6 @@
 | `CYCLE-20261123-R05D` | `2026-11-23T13:23:40.033Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`39713a76...`) |
 | `CYCLE-20261123-RX5T` | `2026-11-23T13:24:22.817Z` | `inclusionAI/LingSante-3.1-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md` | Yes (`483bbd5e...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T13:25:05.024Z` | `hf-inclusionai-lingsante-3.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ED1762B4` [Domain D] | Yes (`c678e5c2...`) |
+| `CYCLE-20261123-OM7T` | `2026-11-23T13:49:48.281Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10046` | Yes (`0c7ef924...`) |
+| `CYCLE-20261123-OYOI` | `2026-11-23T13:50:04.434Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10047` | Yes (`0812a5f9...`) |
+| `CYCLE-20261123-URXB` | `2026-11-23T13:54:35.615Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b2a36bda...`) |

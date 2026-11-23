@@ -4,24 +4,24 @@
 {
   "source_repository": "pixeltable/pixeltable",
   "source_url": "https://github.com/pixeltable/pixeltable",
-  "source_version": "b7363f1f",
+  "source_version": "caec4119",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T03:39:36.173Z",
+  "timestamp": "2026-11-23T13:49:48.503Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pixeltable-pixeltable",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `b7363f1f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T03:39:36.173Z`  
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `caec4119`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T13:49:48.503Z`  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pixeltable/pixeltable:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:39:34.688Z  
+> **Harvest Timestamp**: 2026-11-23T13:49:47.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1061,6 +1061,8 @@ def evict_modules(root: Path) -> None:
         if resolved.is_relative_to(root):
             registry.deregister_module(name)
             sys.modules.pop(name, None)
+    # the next import can bring code that differs from the version of the UDF servers' project
+    Env.drop_udf_endpoints()
 
 
 def _prohibited_write_msg(file: str, subject: str, exc: ProhibitedWriteError) -> str:
@@ -1155,9 +1157,7 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
             errors.append(f'{fn_path}: cannot be resolved to a known module')
             continue
         file = getattr(resolved, '__file__', None)
-        if file is None or not Path(file).resolve().is_relative_to(project_root):
-            continue  # an installed module
-        top_level = fn_
+        if file is None o
 ```
 
 
@@ -1166,13 +1166,11 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1988** (2026-11-18): **Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16)**
-  *Symptoms*: ## Problem  In a `pip-install-tests` run on `main` ([run 44197090253](https://github.com/pixeltable/pixeltable/actions/runs/44197090253)), both jobs that install `mcp` failed with `AlreadyExistsError: Path 'test_tbl' is an existing table`. The failures hit Parallel's tests and, on 3.13, the `TestString` tests after them.  Each job's first error came in the teardown of a test that left a Parallel MCP session open: `test_free_tier` on 3.11, `test_free_rate_limit_is_retried[429]` on 3.13. `_configure()`'s cleanup calls `reset_runtime()`, which raised `asyncio.CancelledError: Cancelled via cancel scope`. That aborted the cleanup, left `test_tbl` behind, and every later `create_table('test_tbl')` failed.  How it happens: - `Runtime.close()` cancels every pending task on its own loop before it closes clients (`runtime.py:273-280`). That includes `_ParallelMcpClient`'s connection task, waiting in `disconnect.wait()`. - From anyio 4.16, the task then ends in cancellation. As it unwinds, anyio's task group also cancels the session-ending `DELETE`. - `close_clients()` then calls `_ParallelMcpClient.close()`, whose `await connection` re-raises that cancellation. `try_close()` catches only `Exception`, so it escapes `reset_runtime()`.  It depends on anyio's version, not on load:  | Code | anyio | `test_free_rate_limit_is_retried` | |---|---|---| | `main` | 4.14.2 (`uv.lock`) | passes | | `main` | 4.16.0 (what the run installed) | `CancelledError` in teardown | | this PR | 4.16.0 | passes
-  **Post-Mortem & Fix Analysis**:
-  > agent review
+- **Issue #2039** (2026-11-22): **Fix merge queue flakiness: restore Config after the db submission tests**
+  *Symptoms*: ## Problem  Merge queue jobs fail now and then with `AuthorizationError: A Pixeltable API key or sign-in is required to reach Pixeltable Cloud` in tests that don't use Pixeltable Cloud, for example 4 `test_table_model.py` tests in [this job](https://github.com/pixeltable/pixeltable/actions/runs/44952590542/job/136993653458). All 4 ran on one xdist worker, and the same tests passed on the other workers.  The `project` fixture in `tests/serving/test_db_submission.py` reinitializes `Config` with a temporary project root and never restores it. Since #1970, `test_local_database` writes a `pixeltable.udf` setting for `string.format`, `video.clip` and `string.swapcase` into that project. A later test on the same worker that calls one of those UDFs is routed to the UDF servers. The endpoint lookup needs a Pixeltable Cloud credential, which CI doesn't have, so the test fails. It happens only when xdist puts `test_local_database` and such a test on the same worker, in that order.  ## Change  The fixture restores the original project root on teardown, as `project_env` in `tests/conftest.py` already does.  ## Testing  - In one process, `test_local_database` followed by `test_table_model_basic[operational-local-]`: the second test fails on `main` and passes with this change. - `tests/serving/test_db_submission.py` passes (19 tests). - ruff and mypy pass on the changed file.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #1983** (2026-11-18): **[PXT-1795] Fix FastAPIRouter docstring to reflect both use cases**
-  *Symptoms*: ## Summary  - The `FastAPIRouter` class docstring incorrectly said the router is only for apps that already have a FastAPI server, and to use `pxt service` otherwise - In reality, `pxt service` itself serves `FastAPIRouter` objects, so users always need a router regardless of which path they take - Updated the docstring to clarify: `FastAPIRouter` declares routes over tables or models; `pxt service` runs it standalone, or an existing FastAPI app mounts it via `include_router()` after `bind()`  Fixes [PXT-1795](https://pixeltable.atlassian.net/jira/browse/PXT-1795).  🤖 Generated with [Claude Code](https://claude.com/claude-code)  [PXT-1795]: https://pixeltable.atlassian.net/browse/PXT-1795?atlOrigin=eyJpIjoiNWRkNTljNzYxNjVmNDY3MDlhMDU5Y2ZhYzA5YTRkZjUiLCJwIjoiZ2l0aHViLWNvbS1KU1cifQ
+- **Issue #2037** (2026-11-22): **Cut the peak memory of the heaviest scheduled-run tests**
+  *Symptoms*: ## Problem  Since #1900 (2026-11-16), the scheduled `standard` jobs also run the Hugging Face model and dataset tests. On the `ubuntu-24.04` runners this fills swap. A comparison of 4 runs on each side of #1900, on pytest 9.0.3 with `xdist_group` working:  | | Max swap used | Lowest available memory | |---|---|---| | Just before #1900 (`890b85ab9`) | 0-106 MB | 2.6-3.4 GB | | #1900 (`9c30a9a64`) | 3 GB (all of it), in all 4 runs | 2.0-2.5 GB |  At that point a runner is lost with "The runner has received a shutdown signal" in some runs, not all. pytest 9.2 made it worse from 11-18 to 11-19 by splitting the `large_model` group across workers (#2015, #2016).  The same memory pressure is a likely trigger for the macOS hangs. In 4 of 4 hangs caught in CI, a worker's `send()` on its Postgres Unix socket had just failed with `ENOBUFS`, on the socket that then hung. libpq treats that error as a lost connection: it drops the query and waits forever for a reply. In the two runs with macOS memory sampling, the `ENOBUFS` errors came during memory-compressor spikes (for example, compressed memory rising from 1.0 to 2.8 GB within 16 s).  ## Change  The tests with the largest single-test memory increases, measured per test in the #1900 runs above:  | Test | Increase (RSS after) | Change | |---|---|---| | `test_image_to_image` | +4.1 GB (6.4 GB) | `hf-internal-testing/tiny-sd-pipe` instead of Stable Diffusion v1.5; input resized to 256x192 | | `test_text_to_image` | +3.7 GB (7.5 GB) | `hf-i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1189,859 +1187,170 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34cb37cd` (2026-11-17)
-**Commit Message**: Run every ffmpeg invocation with -nostdin and stdin=DEVNULL (#1972)
+### Incident Patch 1: `6b606968` (2026-11-22)
+**Commit Message**: Cut the peak memory of the heaviest scheduled-run tests (#2037)
 
-The merge queue's `standard, windows-2025, 3.11` job timed out ([run
-43958988160](https://github.com/pixeltable/pixeltable/actions/runs/43958988160/job/133621168998)).
-`test_ffmpeg_filter` started at 22:08:44 and never finished. The
-30-minute faulthandler dump shows the worker's main thread waiting in
-`subprocess.run()` for the `ffmpeg` that `ffmpeg_filter()` started. Both
-of `subprocess`'s reader threads were still blocked on `ffmpeg`'s stdout
-and stderr, so those pipes were still open after 30 minutes.
+## Problem
+
+Since #1900 (2026-11-16), the scheduled `standard` jobs also run the
+Hugging Face model and dataset tests. On the `ubuntu-24.04` runners this
+fills swap. A comparison of 4 runs on each side of #1900, on pytest
+9.0.3 with `xdist_group` working:
+
+| | Max swap used | Lowest available memory |
+|---|---|---|
+| Just before #1900 (`890b85ab9`) | 0-106 MB | 2.6-3.4 GB |
+| #1900 (`9c30a9a64`) | 3 GB (all of it), in all 4 runs | 2.0-2.5 GB |
+
+At that point a runner is lost with "The runner has received a shutdown
+signal" in some runs, not all. pytest 9.2 made it worse from 11-18 to
+11-19 by splitting the `large_model` group across workers (#2015,
+#2016).
+
+The same memory pressure is a likely trigger for the macOS hangs. In 4
+of 4 hangs caught in CI, a worker's `send()` on its Postgres Unix socket
+had just failed with `ENOBUFS`, on the socket that then hung. libpq
+treats that error as a lost connection: it drops the query and waits
+forever for a reply. In the two runs with macOS memory sampling, the
+`ENOBUFS` errors came during memory-compressor spikes (for example,
+compressed memory rising from 1.0 to 2.8 GB within 
+
+**File**: `tests/functions/test_huggingface.py` (modified, +7/-4)
+```diff
+@@ -223,6 +223,7 @@ def test_detr_for_segmentation(self, uses_db: None, sample_file_server: SampleFi
+         assert len(result['segments_info']) > 0
+         assert 'label_text' in result['segments_info'][0]
+ 
++    @pytest.mark.resource_intensive
+     def test_sam3_for_segmentation(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+         skip_test_if_not_installed('transformers', 'torchvision')
+         skip_test_if_no_sam3()
+@@ -359,6 +360,7 @@ def test_sam3_for_video_segmentation(self, uses_db: None) -> None:
+         )
+         assert v_fps.count() == 4
+ 
++    @pytest.mark.resource_intensive
+     def test_sam3_for_segmentation_no_detections(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+         skip_test_if_not_installed('transformers', 'torchvision')
+         skip_test_if_no_sam3()
+@@ -650,7 +652,7 @@ def test_text_to_image(self, uses_db: None) -> None:
+         t.add_computed_column(
+             image=text_to_image(
+                 t.prompt,
+-                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
++                model_id='hf-internal-testing/tiny-sd-pipe',
+                 height=256,
+                 width=256,
+                 seed=42,
+@@ -673,19 +675,20 @@ def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServe
+         test_prompt = 'turn this into a red circle'
+ 
+         # Test with Stable Diffusion
++        t.add_computed_column(small_img=t.img.resize((256, 192)))
+         t.add_computed_column(
+             modified_image=image_to_image(
+-                t.img,
++                t.small_img,
+                 t.prompt,
+-                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
++                model_id='hf-internal-testing/tiny-sd-pipe',
+                 model_kwargs={'strength': 0.5, 'num_inference_steps': 10},
+             )
+         )
+ 
+         validate_update_status(
+             t.insert(img=sample_file_server.url(SAMPLE_IMAGE_FILE_PATH), prompt=test_prompt), expected_rows=1
+         )
+-        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
++        res = t.select(t.modified_image, width=t.small_img.width, height=t.small_img.height).collect()[0]
+         img = res['modified_image']
+         assert img.size == (res['width'], res['height'])
+         assert np.asarray(img).std() > 0
+```
+
+**File**: `tests/io/test_hf_datasets.py` (modified, +2/-0)
+```diff
+@@ -335,6 +335,7 @@ def test_import_images(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         res = t.select(t.image.localpath).collect()
+         assert all(pathlib.Path(row['image_localpath']).exists() for row in res)
+ 
++    @pytest.mark.resource_intensive
+     @pytest.mark.parametrize('streaming', [False, True])
+     def test_import_arrays(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         skip_test_if_not_installed('datasets')
+@@ -544,6 +545,7 @@ def test_import_nested_struct(self, streaming: bool, db_root: DatabaseRoot) -> N
+         assert all(isinstance(row['context']['title'], list) for row in res)
+         assert all(isinstance(row['context']['sentences'], list) for row in res)
+ 
++    @pytest.mark.resource_intensive
+     @pytest.mark.parametrize('streaming', [False, True])
+     def test_import_arraynd(self, streaming: bool, db_root: DatabaseRoot) -> None:
+         """Test dataset with Array2D and Array3D features."""
+```
+
+---
+
+### Incident Patch 2: `846eebcd` (2026-11-22)
+**Commit Message**: Fix merge queue flakiness: restore Config after the db submission tests (#2039)
+
+## Problem
+
+Merge queue jobs fail now and then with `AuthorizationError: A
+Pixeltable API key or sign-in is required to reach Pixeltable Cloud` in
+tests that don't use Pixeltable Cloud, for example 4
+`test_table_model.py` tests in [this
+job](https://github.com/pixeltable/pixeltable/actions/runs/44952590542/job/136993653458).
+All 4 ran on one xdist worker, and the same tests passed on the other
+workers.
+
+The `project` fixture in `tests/serving/test_db_submission.py`
+reinitializes `Config` with a temporary project root and never restores
+it. Since #1970, `test_local_database` writes a `pixeltable.udf` setting
+for `string.format`, `video.clip` and `string.swapcase` into that
+project. A later test on the same worker that calls one of those UDFs is
+routed to the UDF servers. The endpoint lookup needs a Pixeltable Cloud
+credential, which CI doesn't have, so the test fails. It happens only
+when xdist puts `test_local_database` and such a test on the same
+worker, in that order.
 
 ## Change
 
-Every `ffmpeg` invocation now goes through `av_utils.run_ffmpeg()`,
-which passes `-nostdin` and `stdin=subprocess.DEVNULL`. There were 9
-call sites: `get_max_volume_db()`, `run_ffmpeg_cmdline()`, 4 in
-`video/editing.py`, 2 in `video/iterators.py` and the `-encoders` probe
-in `env.py`. Before this change none of them redirected stdin.
+The fixture restores the original project root on teardown, as
+`project_env` in `tests/conftest.py` already does.
 
-By default, `ffmpeg` polls stdin for keyboard commands (`q`, `c`, `d`,
-...) and prompts on stdin before it overwrites an existing output. With
-an inherited terminal or open pipe, it can consume input meant for its
-parent or block. With `-nostdin`, an existing output file 
+## Test
 
-**File**: `pixeltable/env.py` (modified, +3/-2)
+**File**: `tests/serving/test_db_submission.py` (modified, +4/-2)
 ```diff
-@@ -11,7 +11,6 @@
- import math
- import os
- import shutil
--import subprocess
- import threading
- import types
- import typing
-@@ -872,6 +871,8 @@ def _determine_default_video_encoder(self) -> str | None:
-         - the user might prefer a hardware-accelerated encoder (eg, h264_nvenc or h264_videotoolbox)
-         - allow user override via a config option 'video_encoder'
-         """
-+        from pixeltable.utils.av import run_ffmpeg
-+
-         # look for available encoders, in this order
-         candidates = [
-             'libx264',  # GPL, best quality
-@@ -880,7 +881,7 @@ def _determine_default_video_encoder(self) -> str | None:
- 
-         try:
-             # Get list of available encoders
--            result = subprocess.run(['ffmpeg', '-encoders'], capture_output=True, text=True, timeout=10, check=True)
-+            result = run_ffmpeg(['-encoders'], timeout=10)
- 
-             if result.returncode == 0:
-                 available_encoders = result.stdout
-```
-
-**File**: `pixeltable/functions/video/editing.py` (modified, +8/-12)
-```diff
-@@ -1,5 +1,4 @@
- import glob
--import logging
- import subprocess
- from pathlib import Path
- from typing import Any, Literal
-@@ -17,8 +16,6 @@
- 
- from .iterators import VideoSegment
- 
--_logger = logging.getLogger(__name__)
--
- 
- @pxt.uda(requires_order_by=True)
- class make_video(pxt.Aggregator):
-@@ -431,7 +428,7 @@ def segment_video(
-     if mode == 'accurate':
-         # Use ffmpeg -f segment for accurate segmentation with re-encoding
-         output_pattern = f'{base_path}_segment_%04d.mp4'
--        cmd = av_utils.ffmpeg_segment_cmd(
-+        cmd = av_utils.ffmpeg_segment_args(
-             str(video),
-             output_pattern,
-             segment_duration=duration,
-@@ -441,7 +438,7 @@ def segment_video(
-         )
- 
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             output_paths = sorted(glob.glob(f'{base_path}_segment_*.mp4'))
-             # TODO: is this actually an error?
-             # if len(output_paths) == 0:
-@@ -469,9 +466,9 @@ def segment_video(
-                 else:
-                     target_duration = None  # the rest
-                 segment_path = f'{base_path}_segment_{len(output_paths)}.mp4'
--                cmd = av_utils.ffmpeg_clip_cmd(str(video), segment_path, start_time, target_duration)
-+                cmd = av_utils.ffmpeg_clip_output_args(str(video), segment_path, start_time, target_duration)
- 
--                _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+                _ = av_utils.run_ffmpeg(cmd)
-                 segment_duration = av_utils.get_video_duration(segment_path)
-                 if segment_duration is None:
-                     # a generated segment whose duration we cannot read
-@@ -574,10 +571,9 @@ def _concat_videos(
- 
-     try:
-         # First attempt: fast copy without re-encoding (works for compatible formats)
--        cmd = ['ffmpeg', '-f', 'concat', '-safe', '0', '-i', str(filelist_path), '-c', 'copy', '-y', str(output_path)]
--        _logger.debug(f'_concat_videos(): {" ".join(cmd)}')
-+        cmd = ['-f', 'concat', '-safe', '0', '-i', str(filelist_path), '-c', 'copy', '-y', str(output_path)]
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             return str(output_path)
-         except subprocess.CalledProcessError:
-             # Expected for mixed formats - continue to fallback
-@@ -600,7 +596,7 @@ def _concat_videos(
-         # - [0:a:0][1:a:0] - audio stream 0 from inputs 0 and 1
-         # - concat=n=2:v=0:a=1[outa] - concat 2 inputs, 0 video, 1 audio stream, output to [outa]
- 
--        cmd = ['ffmpeg']
-+        cmd = []
-         for video in videos:
-             cmd.extend(['-i', video])
- 
-@@ -621,7 +617,7 @@ def _concat_videos(
-             cmd.extend(['-c:a', 'aac'])
-         cmd.extend(['-pix_fmt', 'yuv420p', str(output_path)])
- 
--        _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        _ = av_utils.run_ffmpeg(cmd)
-         return str(output_path)
- 
-     except subprocess.CalledProcessError as e:
-```
-
-**File**: `pixeltable/functions/video/iterators.py` (modified, +4/-4)
-```diff
-@@ -516,8 +516,8 @@ def video_splitter(
-                     target_duration = None  # the rest of the video
- 
-                 segment_path = str(TempStore.create_path(extension='.mp4'))
--                cmd = av_utils.ffmpeg_clip_cmd(video, segment_path, start_time, target_duration)
--                _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+                cmd = av_utils.ffmpeg_clip_output_args(video, segment_path, start_time, target_duration)
-+                _ = av_utils.run_ffmpeg(cmd)
- 
-                 # use the actual duration
-                 actual_duration = av_utils.get_video_duration(segment_path)
-@@ -563,7 +563,7 @@ def video_splitter(
-         base_path = TempStore.create_path(extension='')
-         # Use ffmpeg -f segment for accurate segmentation with re-encoding
-         output_pattern = f'{base_path}_segment_%04d.mp4'
--        cmd = av_utils.ffmpeg_segment_cmd(
-+        cmd = av_utils.ffmpeg_segment_args(
-             video,
-             output_pattern,
-             segment_duration=duration,
-@@ -572,7 +572,7 @@ def video_splitter(
-             video_encoder_args=video_encoder_args,
-         )
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             output_paths = sorted(glob.glob(f'{base_path}_segment_*.mp4'))
-             # TODO: is this actually an error?
-             # if len(output_paths) == 0:
-```
-
-**File**: `pixeltable/utils/av.py` (modified, +24/-13)
-```diff
-@@ -121,9 +121,9 @@ def get_max_volume_db(path: str) -> float | None:
-     Env.get().require_binary('ffmpeg')
-     # -vn/-sn/-dn: ignore non-audio streams; -f null -: discard the output, we only want stderr.
-     # Explicit -loglevel info so volumedetect's report reaches us regardless of the build default.
--    cmd = ['ffmpeg', '-i', path, '-vn', '-sn', '-dn', '-af', 'volumedetect', '-f', 'null', '-loglevel', 'info', '-']
-+    args = ['-i', path, '-vn', '-sn', '-dn', '-af', 'volumedetect', '-f', 'null', '-loglevel', 'info', '-']
-     try:
--        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        result = run_ffmpeg(args)
-     except subprocess.CalledProcessError as e:
-         handle_ffmpeg_error(e)
-     # Stderr lines look like: "[Parsed_volumedetect_0 @ 0x...] max_volume: -6.0 dB"
-@@ -211,6 +211,20 @@ def estimate_segment_duration(path: str, approx_decoded_bytes: int) -> float | N
-     return frames_per_segment / fps
+@@ -212,15 +212,17 @@ def _receipt(**fields: Any) -> GenerationReceipt:
  
  
-+def run_ffmpeg(args: list[str], timeout: float | None = None) -> subprocess.CompletedProcess[str]:
-+    """
-+    Run ffmpeg with args and capture its output; raises subprocess.CalledProcessError on a nonzero exit status.
-+
-+    By default ffmpeg polls stdin for keyboard commands and prompts there before overwriting an output file; with an
-+    inherited stdin that is a terminal or an open pipe, it can consume another reader's input or block forever.
-+    -nostdin turns both off (ffmpeg then refuses to overwrite and writes nothing), and DEVNULL keeps the caller's stdin
-+    out of the child.
-+    """
-+    cmd = ['ffmpeg', '-nostdin', *args]
-+    _logger.debug(f'running ffmpeg commandline: {" ".join(cmd)}')
-+    return subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True, text=True, check=True, timeout=timeout)
-+
-+
- def handle_ffmpeg_error(e: subprocess.CalledProcessError) -> NoReturn:
-     error_msg = f'ffmpeg failed with return code {e.returncode}'
-     if e.stderr is not None:
-@@ -230,21 +244,20 @@ def run_ffmpeg_cmdline(
- 
-     If encode_video==True, command is expected to encode video and requires video encoder args
-     """
--    cmd = ['ffmpeg', *ffmpeg_args]
-+    args = list(ffmpeg_args)
-     if encode_video:
--        append_video_encoder(cmd, video_encoder, video_encoder_args)
-+        append_video_encoder(args, video_encoder, video_encoder_args)
-     # loglevel=error: avoid excessive logging
--    cmd += ['-loglevel', 'error', output_path]
-+    args += ['-loglevel', 'error', output_path]
- 
-     try:
--        _logger.debug(f'running ffmpeg commandline: {" ".join(cmd)}')
--        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        result = run_ffmpeg(args)
-         output_file = Path(output_path)
-         if not output_file.exists() or output_file.stat().st_size == 0:
-             stderr_output = result.stderr.strip() if result.stderr is not None else ''
-             raise pxt.RequestError(
-                 pxt.ErrorCode.INVALID_DATA_FORMAT,
--                f'ffmpeg failed to create output file for commandline: {" ".join(cmd)}\n{stderr_output}',
-+                f'ffmpeg failed to create output file for commandline: {" ".join(result.args)}\n{stderr_output}',
-             )
-         return output_path
-     except subprocess.CalledProcessError as e:
-@@ -319,7 +332,7 @@ def ffmpeg_clip_args(
-     return cmd
+ @pytest.fixture
+-def project(init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
++def project(init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+     # a released pxt: a development build of an unpinned project is refused before packaging
+     monkeypatch.setattr(pxt, '__version__', '0.7.15')
+     (tmp_path / 'pixeltable.toml').write_text(f'[[pixeltable.database]]\nname = "{_DB_URI}"\n', encoding='utf-8')
+     (tmp_path / 'app.py').write_text('x = 1\n')
+     (tmp_path / 'requirements.txt').write_text('pandas\n')
++    original = Config.get().project_root
+     Config.init(reinit=True, project_root=tmp_path)
+     monkeypatch.setattr(receipts, 'POLL_INTERVAL', 0.0)
+-    return tmp_path
++    yield tmp_path
++    Config.init(reinit=True, project_root=original)
  
  
--def ffmpeg_clip_cmd(
-+def ffmpeg_clip_output_args(
-     input_path: str,
-     output_path: str,
-     start_time: float,
-@@ -329,29 +342,27 @@ def ffmpeg_clip_cmd(
-     video_encoder_args: dict[str, Any] | None = None,
- ) -> list[str]:
-     return [
--        'ffmpeg',
-         *ffmpeg_clip_args(input_path, start_time, duration, fast, video_encoder, video_encoder_args),
-         '-loglevel',
-         'error',
-         output_path,
-     ]
- 
- 
--def ffmpeg_segment_cmd(
-+def ffmpeg_segment_args(
-     input_path: str,
-     output_pattern: str,
-     segment_duration: float | None = None,
-     segment_times: list[float] | None = None,
-     video_encoder: str | None = None,
-     video_encoder_args: dict[str, Any] | None = None,
- ) -> list[str]:
--    """Commandline for frame-accurate segmentation"""
-+    """ffmpeg arguments for frame-accurate segmentation"""
-     assert (segment_duration is None) != (segment_times is None)
-     if video_encoder is None:
-         video_encoder = Env.get().default_video_encoder
- 
-     cmd = [
--        'ffmpeg',
-         '-i',
-         input_path,
-         '-map',
-```
-
-**File**: `tests/test_video.py` (modified, +27/-15)
-```diff
-@@ -2220,7 +2220,7 @@ def test_scene_detect_spans_video(self, uses_db: None, tmp_path: Path) -> None:
- 
-     @pytest.mark.db_roots('local', reason='reads Env default video encoder config')
-     def test_default_video_codec(self, uses_db: None) -> None:
--        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True, check=False)
-+        result = av_utils.run_ffmpeg(['-version'])
-         print(f'ffmpeg -version:\n{result.stdout}')
- 
-         default_encoder = Env.get().default_video_encoder
-@@ -2317,20 +2317,8 @@ def test_mix_audio_errors(self, uses_db: None, tmp_path: Path) -> None:
-     def test_mix_audio_duration_modes(self, uses_db: None, tmp_path: Path) -> None:
-         def make_audio(duration: float, name: str) -> str:
-             out = tmp_path / f'{name}.m4a'
--            subprocess.run(
--                [
--                    'ffmpeg',
--                    '-f',
--                    'lavfi',
--                    '-i',
--                    f'sine=frequency=220:duration={duration}',
--                    '-c:a',
--                    'aac',
--                    '-y',
--                    str(out),
--                ],
--                capture_output=True,
--                check=True,
-+            av_utils.run_ffmpeg(
-+                ['-f', 'lavfi', '-i', f'sine=frequency=220:duration={duration}', '-c:a', 'aac', '-y', str(out)]
-             )
-             return str(out)
- 
-@@ -2638,6 +2626,30 @@ def test_transition_errors(self, uses_db: None, tmp_path: Path) -> None:
-         with pxt_raises(pxt.ErrorCode.UNSUPPORTED_OPERATION, match=r'transition duration.*exceeds duration'):
-             u2.select(transition(u2.v1, u2.v2, duration=1.0)).collect()
- 
-+    def test_run_ffmpeg_ignores_stdin(self, tmp_path: Path) -> None:
-+        """ffmpeg's overwrite prompt must neither read nor wait on the caller's stdin."""
-+        output_path = tmp_path / 'existing.mp4'
-+        output_path.touch()
-+        read_fd, write_fd = os.pipe()
-+        os.write(write_fd, b'y\n')
-+        os.close(write_fd)
-+        saved_stdin = os.dup(0)
-+        os.dup2(read_fd, 0)
-+        try:
-+            # a refused overwrite exits with status 1 before ffmpeg 6.1 and 0 from 6.1 on
-+            stderr = av_utils.run_ffmpeg(
-+                ['-i', get_video_files()[0], '-c', 'copy', str(output_path)], timeout=60
-+            ).stderr
-+        except subprocess.CalledProcessError as e:
-+            stderr = e.stderr
-+        finally:
-+            os.dup2(saved_stdin, 0)
-+            os.close(saved_stdin)
-+        assert 'already exists' in stderr
-+        assert output_path.stat().st_size == 0
-+        assert os.read(read_fd, 2) == b'y\n'
-+        os.close(read_fd)
-+
-     @pytest.mark.db_roots('local', reason='pure UDF test')
-     def test_ffmpeg_filter(self, uses_db: None) -> None:
-         video_filepaths = get_video_files()
-```
-
-**File**: `tests/utils.py` (modified, +7/-7)
-```diff
-@@ -53,7 +53,7 @@
- from pixeltable.service import management_client, proxy_daemon
- from pixeltable.telemetry import SubscriberRegistry
- from pixeltable.types import ColumnSpec
--from pixeltable.utils import sha256sum
-+from pixeltable.utils import av as av_utils, sha256sum
- from pixeltable.utils.console_output import ConsoleMessageFilter, ConsoleOutputHandler
- from pixeltable.utils.filecache import FileCache
- from pixeltable.utils.local_store import LocalStore, TempStore
-@@ -593,7 +593,7 @@ def generate_test_video(
-     pix_fmt: str = 'yuv420p',
- ) -> str:
-     """Create test video with specific properties using ffmpeg and return its path"""
--    cmd = ['ffmpeg', '-f', 'lavfi', '-i', f'testsrc=duration={duration}:size={size}:rate={fps}']
-+    cmd = ['-f', 'lavfi', '-i', f'testsrc=duration={duration}:size={size}:rate={fps}']
-     if has_audio:
-         cmd.extend(['-f', 'lavfi', '-i', f'sine=frequency=440:duration={duration}'])
-     if Env.get().default_video_encoder is not None:
-@@ -603,7 +603,7 @@ def generate_test_video(
-         cmd.extend(['-c:a', 'aac'])
-     output_path = tmp_path / f'{uuid4()}.mp4'
-     cmd.extend(['-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
-@@ -616,25 +616,25 @@ def generate_color_video(
-     Each segment is a (color, fps) pair; segments with different fps produce a variable frame rate video. The first
-     frame is at start_time.
-     """
--    cmd = ['ffmpeg']
-+    cmd: list[str] = []
-     for color, fps in segments:
-         cmd.extend(['-f', 'lavfi', '-i', f'color=c={color}:s=64x64:r={fps}:d=1'])
-     inputs = ''.join(f'[{i}]' for i in range(len(segments)))
-     cmd.extend(['-filter_complex', f'{inputs}concat=n={len(segments)}:v=1', '-fps_mode', 'passthrough'])
-     cmd.extend(['-output_ts_offset', str(start_time), '-c:v', 'libx264', '-pix_fmt', 'yuv420p'])
-     output_path = tmp_path / f'{uuid4()}.{extension}'
-     cmd.extend(['-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
- def generate_tone_audio(tmp_path: Path, extension: str, start_time: float = 0.0) -> str:
-     """Create a 2-second 440 Hz tone whose first sample is at start_time and return its path."""
-     codec = 'libopus' if extension == 'webm' else 'flac'
-     output_path = tmp_path / f'{uuid4()}.{extension}'
--    cmd = ['ffmpeg', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=2']
-+    cmd = ['-f', 'lavfi', '-i', 'sine=frequency=440:duration=2']
-     cmd.extend(['-output_ts_offset', str(start_time), '-c:a', codec, '-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
-```
-
----
-
-### Incident Patch 2: `67876f91` (2026-11-17)
-**Commit Message**: Dump a hung test's child processes at faulthandler_timeout (#1975)
-
-Follow-up to #1972. When a test reaches `faulthandler_timeout` (1800 s),
-a new `pytest_runtest_protocol` wrapper in `tests/conftest.py` lists the
-xdist worker's child processes, right after pytest's own stack dump. For
-each child it shows pid, status, thread count, command line, and CPU
-time sampled twice, 10 s apart. The list goes to the same stderr dup as
-pytest's stack dump, so it appears in the job log on every OS.
-
-Why: in the Windows `ffmpeg` hang ([run
-43958988160](https://github.com/pixeltable/pixeltable/actions/runs/43958988160/job/133621168998)),
-the stack dump showed the worker blocked in `subprocess.run()`, waiting
-for EOF on `ffmpeg`'s pipes. That stack looks the same whether `ffmpeg`
-was spinning, blocked, or gone while another process held a copy of its
-pipe handles. The SIGUSR1 watchdog from #1941 also skips Windows. With
-this dump, the next such timeout tells the cases apart:
-- CPU time rising: the child is busy (a spin or livelock).
-- CPU time flat: the child is blocked (for example, a deadlock).
-- No such child: the child exited, and a leaked handle is holding the
-pipe open.
-
-Example, from a test
-
-**File**: `tests/conftest.py` (modified, +49/-0)
-```diff
-@@ -14,15 +14,18 @@
- import signal
- import sys
- import threading
-+import time
- import urllib.parse
- import uuid
- from typing import Any, Callable, Generator, Iterator, get_args
- 
-+import psutil
- import pytest
- import requests
- import sqlalchemy as sql
- import tenacity
- from _pytest.config import Config as PytestConfig, argparsing
-+from _pytest.faulthandler import fault_handler_stderr_fd_key
- from filelock import FileLock
- from sqlalchemy import text
- 
-@@ -170,6 +173,52 @@ def _clear_model_caches() -> None:
-         ctypes.CDLL('libc.so.6').malloc_trim(0)
- 
- 
-+@pytest.hookimpl(wrapper=True)
-+def pytest_runtest_protocol(item: pytest.Item) -> Generator[None, object, object]:
-+    """At faulthandler_timeout, after pytest's stack dump, a dump of this process's child processes.
-+
-+    A main thread blocked on a subprocess looks the same in the stack dump whether the child is spinning, blocked, or
-+    gone while another process holds its pipes. The SIGUSR1 dump in CI also skips Windows.
-+    """
-+    timer: threading.Timer | None = None
-+    timeout = float(item.config.getini('faulthandler_timeout') or 0)
-+    if timeout > 0:
-+        fd = item.config.stash[fault_handler_stderr_fd_key]
-+        timer = threading.Timer(timeout, _dump_child_processes, args=(item, fd))
-+        timer.daemon = True
-+        timer.start()
-+    try:
-+        return (yield)  # noqa: B901
-+    finally:
-+        if timer is not None:
-+            timer.cancel()
-+
-+
-+def _dump_child_processes(item: pytest.Item, fd: int) -> None:
-+    children = psutil.Process().children(recursive=True)
-+    cpu_before: dict[int, float] = {}
-+    for child in children:
-+        with contextlib.suppress(psutil.Error):
-+            cpu_before[child.pid] = sum(child.cpu_times()[:2])
-+    # CPU time rising over the interval means a busy child; flat means a blocked one
-+    time.sleep(10)
-+    lines = [f'Child processes of pid {os.getpid()} in {item.nodeid}:']
-+    for child in children:
-+        try:
-+            with child.oneshot():
-+                cpu = f'{cpu_before.get(child.pid, float("nan")):.1f}s -> {sum(child.cpu_times()[:2]):.1f}s'
-+                lines.append(
-+                    f'  pid {child.pid} {child.status()}, cpu {cpu}, {child.num_threads()} threads: '
-+                    + ' '.join(child.cmdline())
-+                )
-+        except psutil.Error as e:
-+            lines.append(f'  pid {child.pid}: {e!r}')
-+    if len(children) == 0:
-+        lines.append('  none')
-+    with contextlib.suppress(OSError):
-+        os.write(fd, ('\n'.join(lines) + '\n').encode())
-+
-+
- def pytest_runtest_teardown(item: pytest.Item) -> None:
-     if IN_CI:
-         _free_disk_space()
-```
-
----
-
-### Incident Patch 3: `cb05f733` (2026-11-17)
-**Commit Message**: Stream conduit rows into a single insert plan (#1956)
-
-An insert from a source with several record batches (Parquet row groups
-or files, Hugging Face datasets) created one version per batch on the
-table and on every view below it. `revert()` undid only the last batch,
-the intermediate versions were states no operation produced, and every
-view was loaded once per batch.
-
-**Cause.** `InsertableTable._insert_table_data_source()` called
-`TableVersion.insert()` once per `TableDataConduit.valid_row_batch()`
-batch.
-
-**Fix.** The batches are gone at the source:
-- `TableDataConduit.rows()` yields one row dict at a time. Parquet
-streams `iter_tuples2()` without `list()`; Hugging Face still converts
-each Arrow chunk column-wise, then yields rows from the converted
-columns; pandas, row-dict and Pydantic sources yield rows prepared
-before the plan runs (see below).
-- The new `RowDataNode` turns that stream into `DataRowBatch`es of
-`ctx.batch_size` rows (1024 for inserts, the value `SqlDataNode` uses; 0
-still means a single batch, which `compute()` relies on). It replaces
-`InMemoryDataNode`, since a list of rows is just another stream.
-- The whole insert is one plan, so `TableVersion.insert()` c
-
-**File**: `pixeltable/catalog/insertable_table.py` (modified, +9/-20)
-```diff
-@@ -161,11 +161,10 @@ def _insert_table_data_source(
-         return_rows: bool = False,
-         skip_existing_keys: bool = False,
-     ) -> pxt.UpdateStatus:
--        """Insert row batches into this table from a `TableDataConduit`."""
-+        """Insert the rows of a `TableDataConduit` into this table."""
-         from pixeltable.io.table_data_conduit import QueryTableDataConduit
- 
-         start_ts = time.perf_counter()
--        status = pxt.UpdateStatus()
-         query = data_source.pxt_query if isinstance(data_source, QueryTableDataConduit) else None
-         read_tbl_keys = query.referenced_tbl_keys() if query is not None else None
-         # ON CONFLICT DO NOTHING skips a concurrent writer's key only under READ COMMITTED, not REPEATABLE READ
-@@ -180,24 +179,14 @@ def _insert_table_data_source(
-             # in on_error='abort' mode the exec raises the internal ExprEvalError on the first failing cell;
-             # convert it to a user-facing Error (on_error='ignore' records per-cell errors and never raises)
-             try:
--                if query is not None:
--                    status += self._tbl_version.get().insert(
--                        source=None,
--                        query=query,
--                        print_stats=print_stats,
--                        fail_on_exception=fail_on_exception,
--                        skip_existing_keys=skip_existing_keys,
--                    )
--                else:
--                    for row_batch in data_source.valid_row_batch():
--                        status += self._tbl_version.get().insert(
--                            source=row_batch,
--                            query=None,
--                            print_stats=print_stats,
--                            fail_on_exception=fail_on_exception,
--                            return_rows=return_rows,
--                            skip_existing_keys=skip_existing_keys,
--                        )
-+                status = self._tbl_version.get().insert(
-+                    source=data_source.rows() if query is None else None,
-+                    query=query,
-+                    print_stats=print_stats,
-+                    fail_on_exception=fail_on_exception,
-+                    return_rows=return_rows,
-+                    skip_existing_keys=skip_existing_keys,
-+                )
-             except excs.ExprEvalError as e:
-                 excs.raise_from_expr_eval_err(e)
- 
-```
-
-**File**: `pixeltable/catalog/insertable_table_proxy.py` (modified, +7/-4)
-```diff
-@@ -90,7 +90,9 @@ def insert(
-                 data_source.src_pk = []
-                 data_source.infer_schema()
-                 data_source.prepare_for_insert_into_table()
--                rows = self._convert_local_paths(row for batch in data_source.valid_row_batch() for row in batch)
-+                # TODO: this materializes all rows of the source to send them in one request; streaming them to the
-+                # daemon would bound the client's memory
-+                rows = self._convert_local_paths(data_source.rows())
-                 return self._dispatch(
-                     'insert',
-                     {
-@@ -148,9 +150,10 @@ def insert(
-         elif isinstance(data_source, PandasTableDataConduit):
-             data_source.src_pk = []
-             data_source.infer_schema()
--            data_source.prepare_for_insert_into_table()  # populates valid_rows (df -> pxt-native dicts)
--            assert data_source.valid_rows is not None
--            rows = data_source.valid_rows
-+            data_source.prepare_for_insert_into_table()
-+            # TODO: this materializes all rows of the source to send them in one request; streaming them to the
-+            # daemon would bound the client's memory
-+            rows = list(data_source.rows())
-         else:
-             raise excs.RequestError(
-                 excs.ErrorCode.UNSUPPORTED_OPERATION,
-```
-
-**File**: `pixeltable/catalog/local_table.py` (modified, +3/-1)
-```diff
-@@ -288,7 +288,9 @@ def compute(
-                 # the compute plan checks for the required columns that the outputs read
-                 data_source.reqd_col_names.clear()
-                 data_source.prepare_for_insert_into_table()
--                input_rows = [row for batch in data_source.valid_row_batch() for row in batch]
-+                # TODO: this materializes all input rows; streaming them into the compute plan (RowDataNode accepts a
-+                # stream) would bound memory, but create_compute_plan() currently validates and filters a list
-+                input_rows = list(data_source.rows())
- 
-                 output_cols = path.columns()
-                 if output_md is not None:
-```
-
-**File**: `pixeltable/catalog/table_proxy.py` (modified, +3/-1)
-```diff
-@@ -402,7 +402,9 @@ def _pydantic_to_rows(
-         if not check_required:
-             converter.reqd_col_names.clear()
-         converter.prepare_for_insert_into_table()
--        return converter.pxt_rows
-+        # TODO: this materializes all rows to send them in one request; streaming them to the daemon would bound the
-+        # client's memory
-+        return list(converter.rows())
- 
-     def update(
-         self,
-```
-
-**File**: `pixeltable/catalog/table_version.py` (modified, +2/-2)
-```diff
-@@ -1295,15 +1295,15 @@ def _create_schema_version(self) -> None:
- 
-     def insert(
-         self,
--        source: list[dict[str, Any]] | SqlDataSource | None,
-+        source: Iterable[dict[str, Any]] | SqlDataSource | None,
-         query: Query | None,
-         print_stats: bool = False,
-         fail_on_exception: bool = True,
-         return_rows: bool = False,
-         skip_existing_keys: bool = False,
-     ) -> UpdateStatus:
-         """
--        Insert rows into this table from an explicit list of dicts, a Query, or a SqlDataSource.
-+        Insert rows into this table from a stream of row dicts, a Query, or a SqlDataSource.
- 
-         With skip_existing_keys, a row whose primary key is already in the table is not inserted.
-         """
-```
-
-**File**: `pixeltable/exec/__init__.py` (modified, +1/-1)
-```diff
-@@ -12,8 +12,8 @@
- from .exec_plan import ExecPlan
- from .expr_eval import ExprEvalNode
- from .filter_node import FilterNode
--from .in_memory_data_node import InMemoryDataNode
- from .object_store_save_node import ObjectStoreSaveNode
-+from .row_data_node import RowDataNode
- from .row_update_node import RowUpdateNode
- from .sql_data_node import SqlDataNode
- from .sql_node import SqlAggregationNode, SqlJoinNode, SqlLookupNode, SqlNode, SqlSampleNode, SqlScanNode
-```
-
-**File**: `pixeltable/exec/cache_prefetch_node.py` (modified, +23/-7)
-```diff
-@@ -25,19 +25,20 @@ class CachePrefetchNode(ExecNode):
-     """Brings files with external URLs into the cache
- 
-     TODO:
--    - Process a row at a time and limit the number of in-flight rows to control memory usage
-     - Create asyncio.Tasks to consume our input in order to increase concurrency.
-     """
- 
-     QUEUE_DEPTH_HIGH_WATER = 50  # target number of in-flight requests
-     QUEUE_DEPTH_LOW_WATER = 20  # target number of in-flight requests
-     BATCH_SIZE = 16
-+    MAX_BUFFERED_ROWS = 2048
-     MAX_WORKERS = 15
- 
-     retain_input_order: bool  # if True, return rows in the exact order they were received
-     file_col_info: list[exprs.ColumnSlotIdx]
- 
-     # execution state
-+    num_input_rows: int
-     num_returned_rows: int
-     progress_reporter: ProgressReporter | None
- 
-@@ -71,7 +72,13 @@ def __init__(
-     def queued_work(self) -> int:
-         return len(self.in_flight_requests)
- 
-+    @property
-+    def num_buffered_rows(self) -> int:
-+        # we can't rely on ready_rows because it includes placeholders for in-flight rows
-+        return self.num_input_rows - self.num_returned_rows
-+
-     def _init_exec_state(self) -> None:
-+        self.num_input_rows = 0
-         self.num_returned_rows = 0
-         self.ready_rows = deque()
-         self.in_flight_rows = {}
-@@ -91,6 +98,8 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             input_batch = await anext(input_iter)
-             if input_batch is None:
-                 self.input_finished = True
-+            else:
-+                self.num_input_rows += len(input_batch)
-             return input_batch
-         except StopAsyncIteration:
-             self.input_finished = True
-@@ -100,22 +109,29 @@ async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         async with contextlib.aclosing(aiter(self.input)) as input_iter:
-             with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-                 while True:
--                    # Create work to fill the queue to the high water mark,
--                    # without overrunning the in-flight row limit.
--                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                    # Fetch whole batches; buffered rows can overshoot the limit by less than one input batch.
-+                    while (
-+                        not self.input_finished
-+                        and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER
-+                        and self.num_buffered_rows < self.MAX_BUFFERED_ROWS
-+                    ):
-                         input_batch = await self.get_input_batch(input_iter)
-                         if input_batch is not None:
-                             self.__process_input_batch(input_batch, executor)
- 
--                    # Wait for enough completions to enable more queueing or if we're done
-+                    # Wait for queue capacity, end-of-input work, or a blocked output at the row limit.
-                     while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
--                        self.input_finished and self.queued_work > 0
-+                        self.queued_work > 0
-+                        and (
-+                            self.input_finished
-+                            or (self.num_buffered_rows >= self.MAX_BUFFERED_ROWS and not self.__has_ready_batch())
-+                        )
-                     ):
-                         done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-                         self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
- 
-                     # Emit results to meet batch size requirements or empty the in-flight row queue
--                    if self.__has_ready_batch() or (
-+                    while self.__has_ready_batch() or (
-                         len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-                     ):
-                         # create DataRowBatch from the first BATCH_SIZE ready rows
-```
-
-**File**: `pixeltable/exec/object_store_save_node.py` (modified, +23/-9)
-```diff
-@@ -32,14 +32,12 @@ class ObjectStoreSaveNode(ExecNode):
-             src_path -> [dest1, dest2, ...]
-                 dest1: [row_location1, row_location2, ...]
-     Paths with multiple destinations are removed from the TempStore only after all destination copies are complete.
--
--    TODO:
--    - Process a row at a time and limit the number of in-flight rows to control memory usage
-     """
- 
-     QUEUE_DEPTH_HIGH_WATER = 50  # target number of in-flight requests
-     QUEUE_DEPTH_LOW_WATER = 20  # target number of in-flight requests
-     BATCH_SIZE = 16
-+    MAX_BUFFERED_ROWS = 2048
-     MAX_WORKERS = 15
- 
-     class WorkDesignator(NamedTuple):
-@@ -64,6 +62,7 @@ class WorkItem(NamedTuple):
-     file_col_info: list[exprs.ColumnSlotIdx]
- 
-     # execution state
-+    num_input_rows: int
-     num_returned_rows: int
- 
-     # ready_rows: rows that are ready to be returned, ordered by row idx;
-@@ -103,7 +102,13 @@ def __init__(self, file_col_info: list[exprs.ColumnSlotIdx], input: ExecNode, re
-     def queued_work(self) -> int:
-         return len(self.in_flight_requests)
- 
-+    @property
-+    def num_buffered_rows(self) -> int:
-+        # we can't rely on ready_rows because it includes placeholders for in-flight rows
-+        return self.num_input_rows - self.num_returned_rows
-+
-     def _init_exec_state(self) -> None:
-+        self.num_input_rows = 0
-         self.num_returned_rows = 0
-         self.ready_rows = deque()
-         self.in_flight_rows = {}
-@@ -123,6 +128,8 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             input_batch = await anext(input_iter)
-             if input_batch is None:
-                 self.input_finished = True
-+            else:
-+                self.num_input_rows += len(input_batch)
-             return input_batch
-         except StopAsyncIteration:
-             self.input_finished = True
-@@ -132,22 +139,29 @@ async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         async with contextlib.aclosing(aiter(self.input)) as input_iter:
-             with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-                 while True:
--                    # Create work to fill the queue to the high water mark,
--                    # without overrunning the in-flight row limit.
--                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                    # Fetch whole batches; buffered rows can overshoot the limit by less than one input batch.
-+                    while (
-+                        not self.input_finished
-+                        and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER
-+                        and self.num_buffered_rows < self.MAX_BUFFERED_ROWS
-+                    ):
-                         input_batch = await self.get_input_batch(input_iter)
-                         if input_batch is not None:
-                             self.__process_input_batch(input_batch, executor)
- 
--                    # Wait for enough completions to enable more queueing or if we're done
-+                    # Wait for queue capacity, end-of-input work, or a blocked output at the row limit.
-                     while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
--                        self.input_finished and self.queued_work > 0
-+                        self.queued_work > 0
-+                        and (
-+                            self.input_finished
-+                            or (self.num_buffered_rows >= self.MAX_BUFFERED_ROWS and not self.__has_ready_batch())
-+                        )
-                     ):
-                         done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-                         self.__process_completions(done)
- 
-                     # Emit results to meet batch size requirements or empty the in-flight row queue
--                    if self.__has_ready_batch() or (
-+                    while self.__has_ready_batch() or (
-                         len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-                     ):
-                         # create DataRowBatch from the first BATCH_SIZE ready rows
+ def _serve(monkeypatch: pytest.MonkeyPatch, control_plane: _ControlPlane) -> None:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1988** (2026-11-18): Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16) (@aaron-siegel)
-- **PR #1983** (2026-11-18): [PXT-1795] Fix FastAPIRouter docstring to reflect both use cases (@sergey-mkhitaryan)
-- **PR #1976** (2026-11-17): Select notebook tests with the pytest test-tier markers (@aaron-siegel)
-- **PR #1975** (2026-11-17): Dump a hung test's child processes at faulthandler_timeout (@aaron-siegel)
-- **PR #1974** (2026-11-17): Raise the proxy daemon's keep-alive to 60 s so a stall can't reset the next request (@aaron-siegel)
-- **PR #1972** (2026-11-17): Run every ffmpeg invocation with -nostdin and stdin=DEVNULL (@aaron-siegel)
+- **PR #2039** (2026-11-22): Fix merge queue flakiness: restore Config after the db submission tests (@sergey-mkhitaryan)
+- **PR #2037** (2026-11-22): Cut the peak memory of the heaviest scheduled-run tests (@sergey-mkhitaryan)
+- **PR #2035** (2026-11-20): Replace the retired fal-ai/fast-sdxl model in the fal test, docstring and notebook (@sergey-mkhitaryan)
+- **PR #2033** (closed): Replace retired fal-ai/fast-sdxl with fal-ai/flux/schnell (@claude[bot])
+- **PR #2032** (2026-11-22): [PXT-1737] Validate video_splitter segment_times and mode (@sergey-mkhitaryan)
+- **PR #2031** (2026-11-21): [PXT-1399] Document PDF separator support in document_splitter (@sergey-mkhitaryan)
 
 ---
 
@@ -2061,34 +1370,40 @@ still means a single batch, which `compute()` relies on). It replaces
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run every ffmpeg invocation with -nostdin and stdin=DEVNULL
+## X. Cut the peak memory of the heaviest scheduled-run tests
 
 **RULE**:
-When implementing operations in `pixeltable/env.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/functions/test_huggingface.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34cb37cd`: Run every ffmpeg invocation with -nostdin and stdin=DEVNULL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b606968`: Cut the peak memory of the heaviest scheduled-run tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/env.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/functions/test_huggingface.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        from pixeltable.utils.av import run_ffmpeg
-
-            result = run_ffmpeg(['-encoders'], timeout=10)
+    @pytest.mark.resource_intensive
+    @pytest.mark.resource_intensive
+                model_id='hf-internal-testing/tiny-sd-pipe',
+        t.add_computed_column(small_img=t.img.resize((256, 192)))
+                t.small_img,
+                model_id='hf-internal-testing/tiny-sd-pipe',
+        res = t.select(t.modified_image, width=t.small_img.width, height=t.small_img.height).collect()[0]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-import subprocess
-            result = subprocess.run(['ffmpeg', '-encoders'], capture_output=True, text=True, timeout=10, check=True)
+                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
+                t.img,
+                model_id='stable-diffusion-v1-5/stable-diffusion-v1-5',
+        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34cb37cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b606968` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

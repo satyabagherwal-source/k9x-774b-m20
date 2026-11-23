@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T13:25:07.258Z",
+  "last_updated": "2026-11-23T13:54:40.193Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49181,6 +49181,46 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AA54BE-test-transport-give-the-quic-breaker-bac.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-UVGH",
+      "directive_title": "Cut the peak memory of the heaviest scheduled-run tests",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UVGH-cut-the-peak-memory-of-the-heaviest-scheduled-run-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-UUUW",
+      "directive_title": "build(deps): bump minor dependency versions",
+      "source_repo": "gocd-gocd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UUUW-build-deps-bump-minor-dependency-versions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0A42C2",
+      "directive_title": "build(deps): bump minor dependency versions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0A42C2-build-deps-bump-minor-dependency-version.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-FD7C91",
+      "directive_title": "Cut the peak memory of the heaviest scheduled-run tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pixeltable-pixeltable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FD7C91-cut-the-peak-memory-of-the-heaviest-sche.md",
       "staged_date": "2026-11-23"
     }
   ]

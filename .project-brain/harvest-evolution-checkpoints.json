@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T13:25:07.963Z",
+  "last_updated": "2026-11-23T13:54:40.830Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T09:29:54.071Z",
@@ -1098,7 +1098,7 @@
       "staged_for_review": 1
     },
     "gocd-gocd-learnings.md": {
-      "processed_at": "2026-11-22T07:56:47.451Z",
+      "processed_at": "2026-11-23T13:54:39.068Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-22T06:58:10.016Z",
+      "processed_at": "2026-11-23T13:54:39.906Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2468,7 +2468,7 @@
       "staged_for_review": 0
     },
     "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md": {
-      "processed_at": "2026-11-19T00:00:29.210Z",
+      "processed_at": "2026-11-23T13:54:38.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3763,7 +3763,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3378,
+  "total_dossiers_evaluated": 3381,
   "total_canonical_promoted": 484,
-  "total_staged_for_review": 2541
+  "total_staged_for_review": 2543
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T13:25:07.758Z",
+  "last_updated": "2026-11-23T13:54:40.686Z",
   "total_verified_learnings": 9081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23965,
+  "total_items": 23969,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "6b628d04",
-      "content_hash": "4ed45f53c8a8eab0920d82b56c366e56d72acd687a6bd73bad732f9c4ac79f78",
+      "source_version": "cb301ad6",
+      "content_hash": "5cc3ee2bcc71dd3769f0428770d579b14295e546eaf2f0cc34950a273236cab8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:56:43.409Z"
+      "persisted_at": "2026-11-23T13:50:04.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "6b628d04",
-      "content_hash": "8a2cb48b772da27a4fe8920f181c12e2bcbb0d9c055ab11581814a6b64e5b14d",
+      "source_version": "cb301ad6",
+      "content_hash": "14944a93dee2c6cd3fa364269e83add1b2b5e7e4862cde283e5528b6c6f085c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:56:43.561Z"
+      "persisted_at": "2026-11-23T13:50:04.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "e43d894b358693f1fe49582d8445f5746dfc186dd6d5eaf12cc6c35aba57c49c",
+      "content_hash": "05fc7bfdf6e6f3719e558846a9e54944e3cea1da585b3a34ee4e8ff039372322",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:56:48.102Z"
+      "persisted_at": "2026-11-23T13:54:39.580Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "daf47daa5eafc70ff4fb056b17d0c5e53cad575a0e38478e0b31bc12beaf3e7c",
+      "content_hash": "c8a93f3a7e6800490bc29d2610e97c8a4929dca7990a5b56c1a4ce76f42a6338",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:56:48.265Z"
+      "persisted_at": "2026-11-23T13:54:39.749Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -225875,8 +225875,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "056c7016",
-      "content_hash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
+      "source_version": "caec4119",
+      "content_hash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -225929,6 +225929,11 @@
           "number": 9902,
           "title": "reject lossy float-to-int coercion in import_pandas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10046,
+          "title": "Cut the peak memory of the heaviest scheduled-run tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225936,7 +225941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:58:05.960Z",
+      "verified_at": "2026-11-23T13:49:48.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225978,10 +225983,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "b7363f1f",
-      "content_hash": "7071f11715307edbf06462b344adcc25fa4a9295acb6b76d8ec6beb5e7c600ce",
+      "source_version": "caec4119",
+      "content_hash": "566a830a2bdd9b27f4902ca5e6f0865010457134f21983767fbf35fabfdde164",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:39:36.355Z"
+      "persisted_at": "2026-11-23T13:49:48.676Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona",
@@ -225990,10 +225995,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "056c7016",
-      "content_hash": "8b31c5ce93310eb0decb1c2a82e182ef130bd682d5f6e3fbe2123fb5a06aa2ba",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:58:06.690Z"
+      "source_version": "caec4119",
+      "content_hash": "be2b33a700c1efa088c300950a407fcf549572f986170420fb6debbce0e35a47",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T13:49:48.850Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -226002,10 +226007,10 @@
       "relative_path": "08_VERIFICATION/pixeltable-pixeltable-verification-protocol-empirical-defect-shield-for-pixeltab.md",
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable/pixeltable",
       "repository": "pixeltable/pixeltable",
-      "source_version": "056c7016",
-      "content_hash": "5d3f1ae17929574cf53a0546a2a047da494f72e02455f1c50c69ad25b03a80be",
+      "source_version": "caec4119",
+      "content_hash": "c0cc3ec8d3e9a13862f59416ce41e242b344176d45b5de72cf8540d5150e083c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:58:06.840Z"
+      "persisted_at": "2026-11-23T13:49:48.996Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
@@ -226051,9 +226056,9 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "3500e0887fb9849c5d915083de186a9dc785ee9c635ee8f3233290bca23aec2b",
+      "content_hash": "9d61bd9357219b3c2e0b388496423dadd344a1fd65df1c0989765b75e6ec8612",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:39:43.002Z"
+      "persisted_at": "2026-11-23T13:54:40.359Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona",
@@ -226063,9 +226068,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6323828b6964d107f4ba4f76abc8e8800e97963d119369be79d0b528b22e420",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:58:10.673Z"
+      "content_hash": "a50bdf367382a0df173a891376aa2843894188a64e96837edf43414bd0cc46f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T13:54:40.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -226075,9 +226080,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "140f8ad0e51673109830d7035d1fbd8a7ac9a17cdf78d5d4b5486df20714f9d1",
+      "content_hash": "43ee783759b19744bac6d643399efae6e74a0b5ae4bd72a4b42af3d0b459afd8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:58:10.811Z"
+      "persisted_at": "2026-11-23T13:54:40.686Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -227379,7 +227384,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "e717ecb93ce086d0eff0297cf7081d5dffd9372091ab945a1ab9896e00b41247",
+      "content_hash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [],
@@ -227388,7 +227393,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:00:09.193Z",
+      "verified_at": "2026-11-23T13:54:35.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227405,9 +227410,9 @@
       "title": "Research & Knowledge Intelligence: Venastine-Research/Xing4.0-29B-A4B-GGUF Core Invariants",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "aa00fe07506165ba0e7f1f0dd75bb26e6181efd74b7ef17dd03578d4835dae2e",
+      "content_hash": "65b6ab7eea28f5ba20714284452bfba4c16ab28f2b5c1c8ee48c69e7c0c6f8d7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:00:09.677Z"
+      "persisted_at": "2026-11-23T13:54:35.819Z"
     },
     "learn-github-helixdb-helix-db": {
       "learning_id": "learn-github-helixdb-helix-db",
@@ -227520,9 +227525,9 @@
       "title": "Research & Knowledge Intelligence: hf-venastine-research-xing4.0-29b-a4b-gguf-learnings Core Invariants",
       "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0cd8b2876c2f76ddbd8d0dc819afabb9e71bc50b5454b65ab0866e3c2ab5ae9",
+      "content_hash": "f683e0e77315a8391df9485185f37815c3a350ac5e5933899eb4aea2abaf3f69",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:00:29.436Z"
+      "persisted_at": "2026-11-23T13:54:38.882Z"
     },
     "candidate_directive-docs-fix-audit-findings-across-helixdb-cloud-cli-and-foundry": {
       "item_id": "candidate_directive-docs-fix-audit-findings-across-helixdb-cloud-cli-and-foundry",
@@ -239099,8 +239104,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "6b628d04",
-      "content_hash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
+      "source_version": "cb301ad6",
+      "content_hash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -239143,6 +239148,11 @@
           "number": 9913,
           "title": "build(deps): bump org.dbunit:dbunit",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10047,
+          "title": "build(deps): bump minor dependency versions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239150,7 +239160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:56:42.854Z",
+      "verified_at": "2026-11-23T13:50:04.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -326432,6 +326442,58 @@
       "content_hash": "c01f0551af2c28cb9fd4df7e584e7f750112f5ba402a753ec0897ea75dd496e0",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T13:25:06.622Z"
+    },
+    "rule-10046": {
+      "learning_id": "rule-10046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10046,
+      "title": "Cut the peak memory of the heaviest scheduled-run tests",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "caec4119",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:49:48.067Z"
+    },
+    "candidate_directive-cut-the-peak-memory-of-the-heaviest-scheduled-run-tests": {
+      "item_id": "candidate_directive-cut-the-peak-memory-of-the-heaviest-scheduled-run-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UVGH-cut-the-peak-memory-of-the-heaviest-scheduled-run-tests.md",
+      "title": "Cut the peak memory of the heaviest scheduled-run tests",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d785363444e70d45bc7c20ef81dab26dbba22559dab31bd91bcf6bd5d2f5a4c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T13:54:40.193Z"
+    },
+    "rule-10047": {
+      "learning_id": "rule-10047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10047,
+      "title": "build(deps): bump minor dependency versions",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "cb301ad6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:50:04.227Z"
+    },
+    "candidate_directive-build-deps-bump-minor-dependency-versions": {
+      "item_id": "candidate_directive-build-deps-bump-minor-dependency-versions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UUUW-build-deps-bump-minor-dependency-versions.md",
+      "title": "build(deps): bump minor dependency versions",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1052b4eb4341edf36405f1c9cc2c2f071c1adf98acd13892a47605f7ea2d93df",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T13:54:39.416Z"
     }
   },
   "ai-builder-brain": {

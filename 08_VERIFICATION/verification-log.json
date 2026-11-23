@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-Q104",
-    "timestamp": "2026-11-21T11:55:35.188Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-KWAO",
-    "timestamp": "2026-11-21T12:19:35.424Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-KXUW",
-    "timestamp": "2026-11-21T12:19:37.448Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-L10B",
     "timestamp": "2026-11-21T12:19:41.531Z",
     "repository": "dkhamsing/open-source-ios-apps",
@@ -7490,6 +7445,51 @@
     "repository": "inclusionAI/LingSante-3.1-flash",
     "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
     "contentHash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-OM7T",
+    "timestamp": "2026-11-23T13:49:48.281Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-OYOI",
+    "timestamp": "2026-11-23T13:50:04.434Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-URXB",
+    "timestamp": "2026-11-23T13:54:35.615Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

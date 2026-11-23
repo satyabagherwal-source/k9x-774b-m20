@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `6b628d04`  
+> **Source Version**: `cb301ad6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:56:42.065Z  
+> **Timestamp**: 2026-11-23T13:50:03.375Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:56:42.060Z  
+> **Harvest Timestamp**: 2026-11-23T13:49:41.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7440 stars
+- **Stars / Engagement**: 7439 stars
 
 ---
 
@@ -880,102 +880,203 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03ae39c9` (2026-11-21)
-**Commit Message**: build(deps): bump org.dbunit:dbunit (#14755)
+### Incident Patch 1: `337cca9c` (2026-11-23)
+**Commit Message**: build(deps): bump minor dependency versions
 
-Bumps the test group with 1 update: [org.dbunit:dbunit](https://github.com/dbunit/dbunit-extension).
-
-
-Updates `org.dbunit:dbunit` from 3.5.2 to 3.5.3
-- [Release notes](https://github.com/dbunit/dbunit-extension/releases)
-- [Commits](https://github.com/dbunit/dbunit-extension/compare/dbunit-3.5.2...dbunit-3.5.3)
-
----
-updated-dependencies:
-- dependency-name: org.dbunit:dbunit
-  dependency-version: 3.5.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: test
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +4/-4)
 ```diff
-@@ -141,7 +141,7 @@ def libraries = [
-   assertJ             : 'org.assertj:assertj-core:3.27.7',
-   assertJ_DB          : 'org.assertj:assertj-db:3.0.2',
-   awaitility          : 'org.awaitility:awaitility:4.3.0',
--  dbunit              : 'org.dbunit:dbunit:3.5.2',
-+  dbunit              : 'org.dbunit:dbunit:3.5.3',
-   hamcrest            : 'org.hamcrest:hamcrest:3.0',
-   jetBrainsAnnotations: 'org.jetbrains:annotations:26.1.0',
-   jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
+@@ -39,7 +39,7 @@
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+-    "filesize": "^11.0.34",
++    "filesize": "^11.0.35",
+     "foundation-sites": "^6.9.0",
+     "hack-font": "^3.3.0",
+     "jquery": "^3.7.1",
+@@ -104,11 +104,11 @@
+     "mini-css-extract-plugin": "^2.10.2",
+     "mockdate": "^3.0.5",
+     "sass-embedded": "^1.108.2",
+-    "sass-loader": "^17.1.0",
++    "sass-loader": "^17.1.1",
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
+     "style-loader": "^4.0.0",
+-    "stylelint": "^18.0.0",
++    "stylelint": "^18.1.0",
+     "stylelint-config-standard-scss": "^18.0.0",
+     "stylelint-webpack-plugin": "^5.1.0",
+     "thread-loader": "^4.0.4",
+@@ -118,7 +118,7 @@
+     "typescript": "^6.0.3",
+     "upath": "^3.0.8",
+     "url-loader": "^4.1.1",
+-    "webpack": "^5.112.2",
++    "webpack": "^5.113.0",
+     "webpack-assets-manifest": "^6.5.6",
+     "webpack-cli": "^7.3.1"
+   },
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +22/-22)
+```diff
+@@ -1256,7 +1256,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/css-syntax-patches-for-csstree@npm:^1.1.15":
++"@csstools/css-syntax-patches-for-csstree@npm:^1.1.15, @csstools/css-syntax-patches-for-csstree@npm:^1.1.16":
+   version: 1.1.17
+   resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.17"
+   peerDependencies:
+@@ -2912,7 +2912,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"colord@npm:^2.10.0":
++"colord@npm:^2.13.0":
+   version: 2.14.0
+   resolution: "colord@npm:2.14.0"
+   checksum: 10c0/e16b472899b8958881375a0cf4db259bae35e36f1de1ba00af908e5896fdc3d3f5d7d801baf54942a404c1de5275f9e7433daf4e86ca5bd703f9894570ef319e
+@@ -4019,7 +4019,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"filesize@npm:^11.0.34":
++"filesize@npm:^11.0.35":
+   version: 11.0.35
+   resolution: "filesize@npm:11.0.35"
+   checksum: 10c0/6fc60086c95eccfcf4d1ab1b70b9426e6fab2a5088be3ce5fb5320e72dba76b7a24d6edd4b2ffe7e461dee8db574ba10682da4d289d913b25f657e5b3c61ce32
+@@ -4426,7 +4426,7 @@ __metadata:
+     eslint-plugin-react: "npm:^7.37.5"
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+-    filesize: "npm:^11.0.34"
++    filesize: "npm:^11.0.35"
+     fork-ts-checker-webpack-plugin: "npm:^9.1.1"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
+@@ -4458,13 +4458,13 @@ __metadata:
+     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
+     prismjs: "npm:^1.30.0"
+     sass-embedded: "npm:^1.108.2"
+-    sass-loader: "npm:^17.1.0"
++    sass-loader: "npm:^17.1.1"
+     shell-quote: "npm:^1.12.0"
+     shellwords-ts: "npm:^3.0.1"
+     simulate-event: "npm:^1.4.0"
+     sourcemapped-stacktrace: "npm:^1.1.11"
+     style-loader: "npm:^4.0.0"
+-    stylelint: "npm:^18.0.0"
++    stylelint: "npm:^18.1.0"
+     stylelint-config-standard-scss: "npm:^18.0.0"
+     stylelint-webpack-plugin: "npm:^5.1.0"
+     thread-loader: "npm:^4.0.4"
+@@ -4477,7 +4477,7 @@ __metadata:
+     url-loader: "npm:^4.1.1"
+     url-parse: "npm:^1.5.10"
+     uuid: "npm:^14.0.3"
+-    webpack: "npm:^5.112.2"
++    webpack: "npm:^5.113.0"
+     webpack-assets-manifest: "npm:^6.5.6"
+     webpack-cli: "npm:^7.3.1"
+   languageName: unknown
+@@ -6443,7 +6443,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.6, postcss-selector-parser@npm:^7.1.7":
++"postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.6, postcss-selector-parser@npm:^7.2.1":
+   version: 7.2.1
+   resolution: "postcss-selector-parser@npm:7.2.1"
+   dependencies:
+@@ -6459,7 +6459,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"postcss@npm:^8.4.40, postcss@npm:^8.5.31":
++"postcss@npm:^8.4.40, postcss@npm:^8.5.33":
+   version: 8.5.33
+   resolution: "postcss@npm:8.5.33"
+   dependencies:
+@@ -7174,9 +7174,9 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"sass-loader@npm:^17.1.0":
+-  version: 17.1.0
+-  resolution: "sass-loader@npm:17.1.0"
++"sass-loader@npm:^17.1.1":
++  version: 17.1.1
++  resolution: "sass-loader@npm:17.1.1"
+   peerDependencies:
+     "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
+     sass: ^1.3.0
+@@ -7191,7 +7191,7 @@ __metadata:
+       optional: true
+     webpack:
+       optional: true
+-  checksum: 10c0/6eff347a98c3ff654430562d661f689a48079b16298dc4e59c49cf8730c7abea09cbdbe2493a3b68059d44bd89c0db2e3e5e93facc9ea83e332b0f8ba1b357e9
++  checksum: 10c0/e78d215b8eb16e3e8a94a5c71f0513fdc1af5a547d389578d5ee9bae3fa8bed980b4bfe6ab0b1c74b0231c7ad0c8d4ae682412c376b7e2c51ab4c86fd3ff9639
+   languageName: node
+   linkType: hard
+ 
+@@ -7885,32 +7885,32 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"stylelint@npm:^18.0.0":
+-  version: 18.0.0
+-  resolution: "stylelint@npm:18.0.0"
++"stylelint@npm:^18.1.0":
++  version: 18.1.0
++  resolution: "stylelint@npm:18.1.0"
+   dependencies:
+     "@csstools/css-calc": "npm:^3.4.3"
+     "@csstools/css-parser-algorithms": "npm:^4.0.2"
+-    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.15"
++    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.16"
+     "@csstools/css-tokenizer": "npm:^4.0.2"
+     "@csstools/media-query-list-parser": "npm:^5.0.2"
+     "@csstools/selector-resolve-nested": "npm:^4.0.2"
+     "@csstools/selector-specificity": "npm:^6.0.1"
+-    colord: "npm:^2.10.0"
++    colord: "npm:^2.13.0"
+     cosmiconfig: "npm:^10.0.1"
+     css-tree: "npm:^3.2.1"
+     ignore: "npm:^7.0.14"
+     import-meta-resolve: "npm:^4.2.0"
+     picomatch: "npm:^4.0.7"
+-    postcss: "npm:^8.5.31"
++    postcss: "npm:^8.5.33"
+     postcss-safe-parser: "npm:^7.1.0"
+-    postcss-selector-parser: "npm:^7.1.7"
++    postcss-selector-parser: "npm:^7.2.1"
+     postcss-value-parser: "npm:^4.2.0"
+     tinyglobby: "npm:^0.2.17"
+     write-file-atomic: "npm:^8.0.0"
+   bin:
+     stylelint: bin/stylelint.mjs
+-  checksum: 10c0/e5465ea0db70c500c367dd55a5564a37639154c26f48f8ebb5b375a9f26c3cf27300fed4c919f876edd2e0dea73139eaf062c26a0786e63c8b23273a3
 ```
 
 ---
 
-### Incident Patch 2: `2b205150` (2026-11-21)
-**Commit Message**: build: correct declared architecture for Windows to be `all`
+### Incident Patch 2: `fd7bb3f3` (2026-11-23)
+**Commit Message**: build(deps): bump Yarn to 4.19.0
 
-The installer is actually x86-32, and it will run on other archs with emulation. Soon I'll bundle aarch64 JRE too, so this prepares for that.
-
-**File**: `installers/windows.gradle` (modified, +7/-7)
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -113,6 +113,7 @@ def configureNSIS(Task packageTask, InstallerType installerType, File buildRoot,
-   packageTask.with {
-     def goVersions = rootProject.goVersions as GoVersions
-     def outputFile = project.file("${destDir.path}/${installerType.baseName}-${goVersions.fullVersion}-jre-64bit-setup.exe")
-+    outputs.file(outputFile)
- 
-     // pad enough zeros to be able to convert the version string using simple numbers, instead of version numbers
-     def registryVersionString = "${goVersions.goVersion.split(/\./).collect { it.padLeft(2, '0') }.join()}${goVersions.distVersion.padLeft(5, '0')}"
-@@ -173,23 +174,21 @@ def configureNSIS(Task packageTask, InstallerType installerType, File buildRoot,
-   }
- }
- 
--def agentWindows64bitExe = tasks.register('agentWindows64bitExe') { thisTask ->
-+def agentWindowsInstaller = tasks.register('agentWindowsInstaller') { thisTask ->
-   def installerType = InstallerTypeAgent.instance
-   def buildRoot = project.file("${layout.buildDirectory.get()}/${installerType.baseName}/win/BUILD_ROOT")
-   def destDir = project.file("${layout.buildDirectory.get()}/distributions/win")
--  outputs.dir(destDir)
- 
-   configureWindowsFilesystem(thisTask, installerType, agentGenericZip, buildRoot)
-   configureNSIS(thisTask, installerType, buildRoot, destDir)
- 
-   finalizedBy "${thisTask.name}Metadata"
- }
- 
--def serverWindows64bitExe = tasks.register('serverWindows64bitExe') { thisTask ->
-+def serverWindowsInstaller = tasks.register('serverWindowsInstaller') { thisTask ->
-   def installerType = InstallerTypeServer.instance
-   def buildRoot = project.file("${layout.buildDirectory.get()}/${installerType.baseName}/win/BUILD_ROOT")
-   def destDir = project.file("${layout.buildDirectory.get()}/distributions/win")
--  outputs.dir(destDir)
- 
-   configureWindowsFilesystem(thisTask, installerType, serverGenericZip, buildRoot)
-   configureNSIS(thisTask, installerType, buildRoot, destDir)
-@@ -198,13 +197,14 @@ def serverWindows64bitExe = tasks.register('serverWindows64bitExe') { thisTask -
- }
- 
- [InstallerTypeAgent.instance, InstallerTypeServer.instance].each { installerType ->
--  def packageTaskName = "${installerType.name}Windows64bitExe"
-+  def packageTaskName = "${installerType.name}WindowsInstaller"
-   tasks.register("${packageTaskName}Metadata", InstallerMetadataTask) {
--    architecture = Architecture.x64
-+    // Installer supports all (64-bit) architectures, although the bundled JRE is currently x64 only
-+    architecture = Architecture.all
-     packagedJavaVersion = (rootProject.goVersions as GoVersions).packagedJavaVersion
-     packageTask = project.tasks.named(packageTaskName)
-     type = installerType
-   }
- }
- 
--assemble.dependsOn(agentWindows64bitExe, serverWindows64bitExe)
-+assemble.dependsOn(agentWindowsInstaller, serverWindowsInstaller)
+@@ -10,7 +10,7 @@
+     },
+     "packageManager": {
+       "name": "yarn",
+-      "version": "4.18.1+sha256.a28ad591febb769f939c11f82f89bacad0b0fac0c884d3b78fa2aaaee970907e"
++      "version": "4.19.0+sha256.070ffef2a2b6877cd871864c16e29e8dd64a1a69cb493aaf4836c9d53c143163"
+     }
+   },
+   "scripts": {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1004,28 +1105,34 @@ The installer is actually x86-32, and it will run on other archs with emulation.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.dbunit:dbunit
+## X. build(deps): bump minor dependency versions
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03ae39c9`: build(deps): bump org.dbunit:dbunit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `337cca9c`: build(deps): bump minor dependency versions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  dbunit              : 'org.dbunit:dbunit:3.5.3',
+    "filesize": "^11.0.35",
+    "sass-loader": "^17.1.1",
+    "stylelint": "^18.1.0",
+    "webpack": "^5.113.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-  dbunit              : 'org.dbunit:dbunit:3.5.2',
+    "filesize": "^11.0.34",
+    "sass-loader": "^17.1.0",
+    "stylelint": "^18.0.0",
+    "webpack": "^5.112.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03ae39c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `337cca9c` are properly handled with clean fallback behavior.

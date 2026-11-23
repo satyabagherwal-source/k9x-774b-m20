@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T13:24:22.834Z",
+  "last_updated": "2026-11-23T13:54:35.628Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "e717ecb93ce086d0eff0297cf7081d5dffd9372091ab945a1ab9896e00b41247",
-      "verified_at": "2026-11-19T00:00:09.453Z",
+      "content_hash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
+      "verified_at": "2026-11-23T13:54:35.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:00:09.453Z"
+      "last_updated": "2026-11-23T13:54:35.627Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
-      "verified_at": "2026-11-22T06:58:06.161Z",
+      "content_hash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
+      "verified_at": "2026-11-23T13:49:48.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:58:06.161Z"
+      "last_updated": "2026-11-23T13:49:48.294Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
-      "verified_at": "2026-11-22T07:56:43.050Z",
+      "content_hash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
+      "verified_at": "2026-11-23T13:50:04.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:56:43.050Z"
+      "last_updated": "2026-11-23T13:50:04.447Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
