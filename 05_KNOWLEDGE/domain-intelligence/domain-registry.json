@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T05:51:55.228Z",
+  "last_updated": "2026-11-23T05:59:57.082Z",
   "total_records": 2394,
   "domains": {
     "A": {
@@ -9127,8 +9127,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "46443322f45cb97cdb19700eef17d06d2b4d635284918742578949e0898db932",
-      "created_at": "2026-11-23T05:36:08.508Z"
+      "content_hash": "0f6589ea20a81f647d2679aeccc73e505bab31ed7f076598bd0b1ef3648d2f2c",
+      "created_at": "2026-11-23T05:59:57.082Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12625,8 +12625,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-research-knowledge-intelligence-deepseek-ai-deeps.md",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "content_hash": "26f6e4de7ab65477fa0a80f48fab362aecf954adea25e4c26b1c9e8296e1471b",
-      "created_at": "2026-11-18T20:37:35.031Z"
+      "content_hash": "91eda5a4fcfd390121746cde1072b8467922bed1a3a523adf9645f2c3e671e5c",
+      "created_at": "2026-11-23T05:59:43.658Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
@@ -12712,8 +12712,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-learnings-research-knowledge-intelligence-hf-deep.md",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
-      "content_hash": "e43bde4fcd3ffbbe08ea98d57ee9b88c407514e0135a264f30af67ddb38c1510",
-      "created_at": "2026-11-18T20:38:00.001Z"
+      "content_hash": "9413cc5faf9801c560a938394e24e4c94b4f26c3dc6ad71d8b2c02d2d50d2010",
+      "created_at": "2026-11-23T05:59:56.401Z"
     },
     "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
@@ -21486,8 +21486,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "repository": "fujiapple852/trippy",
-      "content_hash": "abe6b0fb6d85a2916db2ba54d50e46ba630f1da0c7a71dc0423e827c7e9fe392",
-      "created_at": "2026-11-20T06:10:48.692Z"
+      "content_hash": "b87e501edc9b24a5620abf352985d530ae21aaa2551b63bb5b8f2dd8e55a525a",
+      "created_at": "2026-11-23T05:59:45.976Z"
     },
     "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants",
@@ -21495,8 +21495,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-learnings-quality-verification-intelligence-fujiapple852-tri.md",
       "repository": "fujiapple852-trippy-learnings",
-      "content_hash": "7fda6da62f5153654f1005187c3c8b394844a2db9ae56df7458af3e30221265b",
-      "created_at": "2026-11-20T06:11:30.464Z"
+      "content_hash": "c0f2ab4ae4e986ae2c8a3cab803b9500d764d3ed4f83d4e10361542788b5f79d",
+      "created_at": "2026-11-23T05:59:55.827Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",

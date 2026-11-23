@@ -12310,3 +12310,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T05:51:40.216Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `bea1c714` | Multi-dimensional audit evidence | 2026-11-23T05:51:40.319Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `54f0eb95` | Multi-dimensional audit evidence | 2026-11-23T05:51:48.056Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-23T05:59:43.441Z |
+| `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `938605ba` | Multi-dimensional audit evidence | 2026-11-23T05:59:45.551Z |

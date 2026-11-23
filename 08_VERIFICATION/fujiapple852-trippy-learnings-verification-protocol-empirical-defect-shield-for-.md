@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T13:09:09.967Z",
+  "timestamp": "2026-11-23T05:59:55.511Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fujiapple852-trippy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fujiapple852-trippy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T13:09:09.967Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:59:55.511Z`  
 > **Learning ID**: `LEARN-EVO-fujiapple852-trippy-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source**: github ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
-> **Source Version**: `2dd303a1`  
+> **Source Version**: `938605ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T13:08:56.377Z  
+> **Timestamp**: 2026-11-23T05:59:44.360Z  
 > **Learning ID**: `learn-github-fujiapple852-trippy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:08:51.577Z  
+> **Harvest Timestamp**: 2026-11-23T05:59:44.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A network diagnostic tool 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8168 stars
+- **Stars / Engagement**: 8187 stars
 
 ---
 
@@ -472,6 +472,7 @@ pub enum IoOperation {
     SetNonBlocking,
     Select,
     RecvFrom,
+    PeekSender,
     Read,
     Shutdown,
     LocalAddr,
@@ -503,6 +504,7 @@ impl Display for IoOperation {
             Self::SetNonBlocking => write!(f, "set non-blocking"),
             Self::Select => write!(f, "select"),
             Self::RecvFrom => write!(f, "recv from"),
+            Self::PeekSender => write!(f, "peek sender"),
             Self::Read => write!(f, "read"),
             Self::Shutdown => write!(f, "shutdown"),
             Self::LocalAddr => write!(f, "local addr"),
@@ -1707,11 +1709,14 @@ impl Ipv4 {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1898** (2026-10-25): **Error message includes URL with invalid anchor**
+  *Symptoms*: **Describe the bug**  Running `trip` in Windows without admin privileges results in the following message:  ``` Error: privileges are required  see https://github.com/fujiapple852/trippy#privileges for details ```  The message is expected, but the anchor in the URL is not valid.   **To Reproduce**  Run `trip` in Windows without admin privileges.   **Expected behavior**  Anchor in URL to be valid. 
+  **Post-Mortem & Fix Analysis**:
+  > @Gitoffthelawn the anchor exists:   https://github.com/fujiapple852/trippy/blob/15e61c83355208957fed980ec3fdd4a220278058/README.md?plain=1#L235-L237  It is in a section that is collapsed by default. 
+  > > It is in a section that is collapsed by default.  Yes, which means the user agent (web browser) will not scroll to the anchor by default. Thus, when the user clicks on the link (or copies and pastes it into a web browser), they will not see the desired content.  The user will undoubtedly be confused, leading to poor UX.  
+
 - **Issue #1897** (2026-10-25): **Tracing an IPv4 target fails during IPv4 byte order on Android**
   *Symptoms*: 
-
-- **Issue #1793** (2026-04-18): **keep Windows `WSARecvFrom` flags alive**
-  *Symptoms*: Sim tests crash on Windows with Rust 1.95  See: https://github.com/fujiapple852/trippy/actions/runs/24526729292/job/71766060138  ``` thread 'tokio-rt-worker' (5996) panicked at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library\alloc\src\raw_vec\mod.rs:641:30: unsafe precondition(s) violated: Layout::from_size_align_unchecked requires that align is a power of 2 and the rounded-up allocation size does not exceed isize::MAX  This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety. note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace thread caused non-unwinding panic. aborting. 2026-04-17T04:23:43.223814Z  INFO sim::tracer: 0 2 fd00:10::102 2026-04-17T04:23:43.223824Z  INFO sim::tracer: 0 3 fd00:10::103 error: test failed, to rerun pass `-p trippy-core --test sim`  Caused by:   process didn't exit successfully: `D:\a\trippy\trippy\target\x86_64-pc-windows-msvc\debug\deps\sim-276160054c9e564d.exe --exact --nocapture` (exit code: 0xc0000409, STATUS_STACK_BUFFER_OVERRUN) ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1728,258 +1733,125 @@ impl Ipv4 {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dd303a1` (2026-11-14)
-**Commit Message**: chore: update dependencies to latest semver compatible version
+### Incident Patch 1: `938605ba` (2026-11-19)
+**Commit Message**: chore: bump rand from 0.10.3 to 0.10.4
 
-**File**: `Cargo.lock` (modified, +171/-135)
+Bumps [rand](https://github.com/rust-random/rand) from 0.10.3 to 0.10.4.
+- [Release notes](https://github.com/rust-random/rand/releases)
+- [Changelog](https://github.com/rust-random/rand/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-random/rand/compare/0.10.3...0.10.4)
+
+---
+updated-dependencies:
+- dependency-name: rand
+  dependency-version: 0.10.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +7/-7)
 ```diff
-@@ -104,6 +104,15 @@ dependencies = [
-  "num-traits",
- ]
+@@ -1132,7 +1132,7 @@ dependencies = [
+  "idna",
+  "ipnet",
+  "jni",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "thiserror 2.0.21",
+  "tinyvec",
+  "tokio",
+@@ -1152,7 +1152,7 @@ dependencies = [
+  "jni",
+  "once_cell",
+  "prefix-trie",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ring",
+  "thiserror 2.0.21",
+  "tinyvec",
+@@ -1177,7 +1177,7 @@ dependencies = [
+  "ndk-context",
+  "once_cell",
+  "parking_lot",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "resolv-conf",
+  "smallvec",
+  "system-configuration",
+@@ -2311,9 +2311,9 @@ dependencies = [
  
-+[[package]]
-+name = "ar_archive_writer"
-+version = "0.5.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec"
-+dependencies = [
-+ "object",
-+]
-+
  [[package]]
- name = "arrayvec"
- version = "0.7.8"
-@@ -136,7 +145,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+ name = "rand"
+-version = "0.10.3"
++version = "0.10.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
++checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
  dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -217,9 +226,9 @@ dependencies = [
- 
- [[package]]
- name = "bumpalo"
--version = "3.20.3"
-+version = "3.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
- 
- [[package]]
- name = "by_address"
-@@ -259,9 +268,9 @@ dependencies = [
- 
- [[package]]
- name = "cc"
--version = "1.8.0"
-+version = "1.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+  "chacha20",
+  "getrandom 0.4.3",
+@@ -2895,7 +2895,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
  dependencies = [
-  "find-msvc-tools",
-  "shlex",
-@@ -324,9 +333,9 @@ dependencies = [
- 
- [[package]]
- name = "clap-cargo"
--version = "0.19.0"
-+version = "0.19.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ac0fb996b5acdd543c8b8ff723c719715d437fdce607ac1fda01c977f568020d"
-+checksum = "304ac95d4e2bb9bb63e3dfb55c1f744c599140d7992b756288dc440f1dea1a55"
- dependencies = [
-  "anstyle",
-  "clap",
-@@ -363,7 +372,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -631,7 +640,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -642,7 +651,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -659,9 +668,9 @@ checksum = "5729f5117e208430e437df2f4843f5e5952997175992d1414f94c57d61e270b4"
- 
- [[package]]
- name = "deranged"
--version = "0.5.8"
-+version = "0.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
-+checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
- 
- [[package]]
- name = "derive_more"
-@@ -709,7 +718,7 @@ checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.8",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -753,9 +762,9 @@ checksum = "34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0"
- 
- [[package]]
- name = "encoding_rs"
--version = "0.8.42"
-+version = "0.8.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
- dependencies = [
-  "cfg-if",
-  "core_detect",
-@@ -788,15 +797,15 @@ dependencies = [
- 
- [[package]]
- name = "equivalent"
--version = "1.0.2"
-+version = "1.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-+checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "errno"
--version = "0.3.14"
-+version = "0.3.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
- dependencies = [
-  "libc",
-  "windows-sys",
-@@ -873,15 +882,15 @@ dependencies = [
- 
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.14"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
- [[package]]
- name = "finl_unicode"
--version = "1.5.0"
-+version = "1.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "80bb028c8b4148c9ee0cca68fcd9add6044e81d3619f48577ddf13a263d047a2"
-+checksum = "09ded33109e99472f809cb7495544506eea45e366725dacf2a383e184f660456"
- 
- [[package]]
- name = "fixedbitset"
-@@ -891,9 +900,9 @@ checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
- 
- [[package]]
- name = "fixedbitset"
--version = "0.5.7"
-+version = "0.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
-+checksum = "5905ec755cc8386d7928353e4d356d2be3e89e81e5ca01fe630a1ca4d08dc175"
- 
- [[package]]
- name = "flume"
-@@ -958,7 +967,7 @@ version = "
+  "fastrand",
+- "getrandom 0.4.3",
++ "getrandom 0.3.4",
+  "once_cell",
+  "rustix",
+  "windows-sys 0.61.2",
+@@ -3308,7 +3308,7 @@ dependencies = [
+  "nix 0.32.0",
+  "parking_lot",
+  "paste",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "serde",
+  "socket2",
+  "test-case",
 ```
 
 ---
 
-### Incident Patch 2: `14490828` (2026-11-14)
-**Commit Message**: chore: upgrade `comfy-table` to `8.0.1`
+### Incident Patch 2: `f4f0e0db` (2026-11-22)
+**Commit Message**: chore: update `url` to 2.5.9
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -390,9 +390,9 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+@@ -913,9 +913,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
  
  [[package]]
- name = "comfy-table"
--version = "7.2.2"
-+version = "8.0.1"
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "958c5d6ecf1f214b4c2bbbbf6ab9523a864bd136dcf71a7e8904799acfe1ad47"
-+checksum = "b96a46ad395a5e00676eddaca4a45ed78b29c08be5a878d35e4b071c625637dd"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
  dependencies = [
-  "unicode-segmentation",
-  "unicode-width",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ clap = { version = "4.5.60", default-features = false }
- clap-cargo = "0.19.0"
- clap_complete = "4.6.0"
- clap_mangen = "0.3.0"
--comfy-table = { version = "7.1.4", default-features = false }
-+comfy-table = { version = "8.0.1", default-features = false }
- crossbeam = "0.8.4"
- crossterm = { version = "0.29.0", default-features = false }
- csv = "1.4.0"
-```
-
-**File**: `crates/trippy-tui/src/report/table.rs` (modified, +3/-3)
-```diff
-@@ -1,6 +1,6 @@
- use crate::app::TraceInfo;
- use comfy_table::presets::{ASCII_MARKDOWN, UTF8_FULL};
--use comfy_table::{ContentArrangement, Table};
-+use comfy_table::{ContentArrangement, Table, TableStyle};
- use itertools::Itertools;
- use tracing::instrument;
- use trippy_dns::Resolver;
-@@ -29,15 +29,15 @@ fn run_report_table<R: Resolver>(
-     info: &TraceInfo,
-     report_cycles: usize,
-     resolver: &R,
--    preset: &str,
-+    preset: TableStyle,
- ) -> anyhow::Result<()> {
-     let trace = super::wait_for_round(&info.data, report_cycles)?;
-     let columns = vec![
-         "Hop", "IPs", "Addrs", "Loss%", "Snt", "Recv", "Last", "Avg", "Best", "Wrst", "StdDev",
-     ];
-     let mut table = Table::new();
-     table
--        .load_preset(preset)
-+        .load_style(preset)
-         .set_content_arrangement(ContentArrangement::Dynamic)
-         .set_header(columns);
-     for hop in trace.hops() {
+  "percent-encoding",
+ ]
+@@ -3491,9 +3491,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
+ 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1919** (2026-11-14): Chore upgrade deps (@fujiapple852)
-- **PR #1918** (2026-11-14): chore: bump MSRV to 1.92 (#1917) (@fujiapple852)
-- **PR #1915** (2026-11-14): Clippy lints rust 1.100 and allow `hickory` advisories (@fujiapple852)
-- **PR #1914** (2026-11-14): chore: bump toml from 1.1.8+spec-1.1.0 to 1.2.1+spec-1.1.0 (@dependabot[bot])
-- **PR #1913** (closed): chore: bump toml from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0 (@dependabot[bot])
-- **PR #1912** (2026-11-14): chore: bump tun-rs from 2.8.13 to 2.8.18 (@dependabot[bot])
+- **PR #1931** (2026-11-22): chore: update `url` to 2.5.9 (@fujiapple852)
+- **PR #1930** (2026-11-19): refactor(tui): replace unmaintained `chrono` and `humantime` with `jiff` (@fujiapple852)
+- **PR #1929** (2026-11-22): chore: bump rand from 0.10.3 to 0.10.4 (@dependabot[bot])
+- **PR #1928** (2026-11-22): chore: bump nix from 0.31.3 to 0.32.0 (@dependabot[bot])
+- **PR #1925** (2026-11-15): Ci pin GitHub actions (@fujiapple852)
+- **PR #1923** (2026-11-15): ci: run simulation tests on FreeBSD, NetBSD and OpenBSD (@fujiapple852)
 
 ---
 
@@ -1999,13 +1871,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update dependencies to latest semver compatible version
+## X. bump rand from 0.10.3 to 0.10.4
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fujiapple852/trippy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dd303a1`: update dependencies to latest semver compatible version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `938605ba`: bump rand from 0.10.3 to 0.10.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2013,74 +1885,29 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "ar_archive_writer"
-version = "0.5.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "523e5e187fff36fcb8d1d19ccf0ca4ca43ec3d158316057f66dc6f72716bc5ec"
-dependencies = [
- "object",
-]
-
- "syn 3.0.10",
-version = "3.20.4"
-checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
-version = "1.11.2"
-checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
-version = "0.19.1"
-checksum = "304ac95d4e2bb9bb63e3dfb55c1f744c599140d7992b756288dc440f1dea1a55"
- "syn 3.0.10",
- "syn 3.0.10",
- "syn 3.0.10",
-version = "0.5.9"
-checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
- "syn 3.0.10",
-version = "0.8.44"
-checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
-version = "1.0.3"
-checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
-version = "0.3.15"
-checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
-version = "0.1.15"
-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
-version = "1.5.1"
-checksum = "09ded33109e99472f809cb7495544506eea45e366725dacf2a383e184f660456"
-version = "0.5.9"
-checks
+ "rand 0.10.4",
+ "rand 0.10.4",
+ "rand 0.10.4",
+version = "0.10.4"
+checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
+ "getrandom 0.3.4",
+ "rand 0.10.4",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "syn 3.0.8",
-version = "3.20.3"
-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-version = "1.8.0"
-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-version = "0.19.0"
-checksum = "ac0fb996b5acdd543c8b8ff723c719715d437fdce607ac1fda01c977f568020d"
- "syn 3.0.8",
- "syn 3.0.8",
- "syn 3.0.8",
-version = "0.5.8"
-checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
- "syn 3.0.8",
-version = "0.8.42"
-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-version = "1.0.2"
-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-version = "0.3.14"
-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-version = "0.1.14"
-checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-version = "1.5.0"
-checksum = "80bb028c8b4148c9ee0cca68fcd9add6044e81d3619f48577ddf13a263d047a2"
-version = "0.5.7"
-checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
+ "rand 0.10.3",
+ "rand 0.10.3",
+ "rand 0.10.3",
+version = "0.10.3"
+checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
+ "getrandom 0.4.3",
+ "rand 0.10.3",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dd303a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `938605ba` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

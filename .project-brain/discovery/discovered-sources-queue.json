@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T05:51:54.719Z",
+  "updated_at": "2026-11-23T05:59:55.265Z",
   "stats": {
-    "total_discovered": 7789,
-    "approved_pending_harvest": 7367,
+    "total_discovered": 7790,
+    "approved_pending_harvest": 7368,
     "harvested_count": 0,
     "rejected_count": 422,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7359,
+      "COMMUNITY_AND_EXPERT": 7360,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -168427,6 +168427,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
         "fileName": "dosco-deeporg-learnings.md"
+      }
+    },
+    "SRC-52983EA2F539": {
+      "id": "SRC-52983EA2F539",
+      "url": "https://github.com/fujiapple852/trippy/blob/15e61c83355208957fed980ec3fdd4a220278058/README.md?plain=1",
+      "title": "https://github.com/fujiapple852/trippy/blob/15e61c83355208957fed980ec3fdd4a220278058/README.md?plain=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:59:55.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
       }
     }
   }

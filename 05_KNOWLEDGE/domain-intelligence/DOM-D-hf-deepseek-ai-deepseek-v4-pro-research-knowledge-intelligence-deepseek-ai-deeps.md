@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
   "source_version": "hf-deepseek-ai-deepseek-v4-pro",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T20:37:35.030Z",
+  "timestamp": "2026-11-23T05:59:43.658Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4-Pro](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro) (Revision: `hf-deepsee`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T20:37:35.030Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:59:43.658Z`  
 > **Learning ID**: `learn-huggingface-deepseek-ai-deepseek-v4-pro`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:37:33.990Z  
+> **Harvest Timestamp**: 2026-11-23T05:59:42.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 320194 downloads | 5720 likes
+- **Stars / Engagement**: 297005 downloads | 5732 likes
 
 ---
 

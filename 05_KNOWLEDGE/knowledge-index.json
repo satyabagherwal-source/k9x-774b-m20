@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T05:51:55.631Z",
+  "last_updated": "2026-11-23T05:59:57.276Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23886,
+  "total_items": 23888,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "46443322f45cb97cdb19700eef17d06d2b4d635284918742578949e0898db932",
+      "content_hash": "0f6589ea20a81f647d2679aeccc73e505bab31ed7f076598bd0b1ef3648d2f2c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:36:08.508Z"
+      "persisted_at": "2026-11-23T05:59:57.082Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5df66db30f62cf5205a7cd3a9e32a7993549c90a668880482c1f6219986b4d7",
+      "content_hash": "f2f643ed9eb5819e44c9003e1c4a7b815d4ff45bc6a4a01367e31684fa4525a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:36:08.701Z"
+      "persisted_at": "2026-11-23T05:59:57.276Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -221560,7 +221560,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
+      "content_hash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [],
@@ -221569,7 +221569,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T20:37:34.512Z",
+      "verified_at": "2026-11-23T05:59:43.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221586,9 +221586,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "26f6e4de7ab65477fa0a80f48fab362aecf954adea25e4c26b1c9e8296e1471b",
+      "content_hash": "91eda5a4fcfd390121746cde1072b8467922bed1a3a523adf9645f2c3e671e5c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:37:35.031Z"
+      "persisted_at": "2026-11-23T05:59:43.658Z"
     },
     "learn-github-graphprotocol-graph-node": {
       "learning_id": "learn-github-graphprotocol-graph-node",
@@ -221928,9 +221928,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
       "source_version": "HEAD",
-      "content_hash": "e43bde4fcd3ffbbe08ea98d57ee9b88c407514e0135a264f30af67ddb38c1510",
+      "content_hash": "9413cc5faf9801c560a938394e24e4c94b4f26c3dc6ad71d8b2c02d2d50d2010",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:38:00.001Z"
+      "persisted_at": "2026-11-23T05:59:56.401Z"
     },
     "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry": {
       "item_id": "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry",
@@ -248000,14 +248000,19 @@
       "slug": "fujiapple852-trippy",
       "platform": "github",
       "source_url": "https://github.com/fujiapple852/trippy",
-      "source_version": "42a3508e",
-      "content_hash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
+      "source_version": "938605ba",
+      "content_hash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
       "dossier_path": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "promoted_rules": [
         {
           "number": 8615,
           "title": "update dependencies to latest semver compatible version",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10029,
+          "title": "bump rand from 0.10.3 to 0.10.4",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -248016,7 +248021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:10:48.256Z",
+      "verified_at": "2026-11-23T05:59:45.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248058,10 +248063,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "repository": "fujiapple852/trippy",
-      "source_version": "42a3508e",
-      "content_hash": "abe6b0fb6d85a2916db2ba54d50e46ba630f1da0c7a71dc0423e827c7e9fe392",
+      "source_version": "938605ba",
+      "content_hash": "b87e501edc9b24a5620abf352985d530ae21aaa2551b63bb5b8f2dd8e55a525a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:10:48.692Z"
+      "persisted_at": "2026-11-23T05:59:45.976Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy",
@@ -248070,10 +248075,10 @@
       "relative_path": "08_VERIFICATION/fujiapple852-trippy-verification-protocol-empirical-defect-shield-for-fujiapple8.md",
       "title": "Verification Protocol: Empirical Defect Shield for fujiapple852/trippy",
       "repository": "fujiapple852/trippy",
-      "source_version": "2dd303a1",
-      "content_hash": "2bf86d260d1dbe9a0d9e9c567608468536e90451ee733bd659fc574471371796",
+      "source_version": "938605ba",
+      "content_hash": "7b565b4948ac287d16496225420ecf8e880317ba26f4a04b05d4420b299ff9ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:08:57.575Z"
+      "persisted_at": "2026-11-23T05:59:46.165Z"
     },
     "rule-8616": {
       "learning_id": "rule-8616",
@@ -248135,9 +248140,9 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "repository": "fujiapple852-trippy-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fda6da62f5153654f1005187c3c8b394844a2db9ae56df7458af3e30221265b",
+      "content_hash": "c0f2ab4ae4e986ae2c8a3cab803b9500d764d3ed4f83d4e10361542788b5f79d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:11:30.464Z"
+      "persisted_at": "2026-11-23T05:59:55.827Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings",
@@ -248147,9 +248152,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fujiapple852-trippy-learnings",
       "repository": "fujiapple852-trippy-learnings",
       "source_version": "HEAD",
-      "content_hash": "76491694d4743a981766d1844d769667561cf05ad92f6ca1e07ab7fc44bd7646",
+      "content_hash": "2d19fef95475e9c290481dd505e8882738e944fdc02082edc72de3241a61ee54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:10.266Z"
+      "persisted_at": "2026-11-23T05:59:56.016Z"
     },
     "candidate_directive-statistics-keep-same-upper-groups-together-at-global-histogram-cuts": {
       "item_id": "candidate_directive-statistics-keep-same-upper-groups-together-at-global-histogram-cuts",
@@ -318852,13 +318857,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1RB1-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WDLO-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "926b4e377def3438ab06e17d6ab67b2e44d63344da2ae0fd35cc25e0de8a72f0",
+      "content_hash": "8737eb4cd853a3f2f1b61f08df77cba624714c4250b2c09e4333f5d6e70fc0e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:36:08.323Z"
+      "persisted_at": "2026-11-23T05:59:56.896Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -325292,6 +325297,32 @@
       "content_hash": "7d483f23f63d9c2e5131c42704e569df5454e28305437256164ecb7a8e1dba06",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T05:51:55.453Z"
+    },
+    "rule-10029": {
+      "learning_id": "rule-10029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10029,
+      "title": "bump rand from 0.10.3 to 0.10.4",
+      "source_url": "https://github.com/fujiapple852/trippy",
+      "source_version": "938605ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:59:45.308Z"
+    },
+    "candidate_directive-bump-rand-from-0-10-3-to-0-10-4": {
+      "item_id": "candidate_directive-bump-rand-from-0-10-3-to-0-10-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WCMU-bump-rand-from-0-10-3-to-0-10-4.md",
+      "title": "bump rand from 0.10.3 to 0.10.4",
+      "repository": "fujiapple852-trippy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "699e5d3f5a2ded48307f5e0f30c17054eca2212e82383b9e4163f111cd89b852",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T05:59:55.642Z"
     }
   },
   "ai-builder-brain": {

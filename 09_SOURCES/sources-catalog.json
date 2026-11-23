@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
-    "lastHarvestedAt": "2026-11-18T20:37:34.790Z",
+    "contentHash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
+    "lastHarvestedAt": "2026-11-23T05:59:43.441Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -4493,10 +4493,10 @@
     "repository": "fujiapple852/trippy",
     "platform": "github",
     "sourceUrl": "https://github.com/fujiapple852/trippy",
-    "sourceVersion": "42a3508e",
+    "sourceVersion": "938605ba",
     "license": "Apache-2.0",
-    "contentHash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
-    "lastHarvestedAt": "2026-11-20T06:10:48.483Z",
+    "contentHash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
+    "lastHarvestedAt": "2026-11-23T05:59:45.551Z",
     "learningId": "learn-github-fujiapple852-trippy"
   },
   "builderio-builder": {

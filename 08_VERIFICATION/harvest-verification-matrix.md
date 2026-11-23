@@ -12277,3 +12277,5 @@
 | `CYCLE-20261123-LQCX` | `2026-11-23T05:51:40.209Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`1947692b...`) |
 | `CYCLE-20261123-LQFT` | `2026-11-23T05:51:40.313Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10013` | Yes (`a439ce05...`) |
 | `CYCLE-20261123-LWER` | `2026-11-23T05:51:48.051Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10028` | Yes (`d42a823a...`) |
+| `CYCLE-20261123-W37W` | `2026-11-23T05:59:43.436Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`542d2f8f...`) |
+| `CYCLE-20261123-W4UI` | `2026-11-23T05:59:45.546Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10029` | Yes (`47c4ffc0...`) |

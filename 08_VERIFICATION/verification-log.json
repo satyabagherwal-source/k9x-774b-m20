@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-IJTF",
-    "timestamp": "2026-11-21T06:13:50.931Z",
-    "repository": "nitrojs/nitro",
-    "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-ILPA",
-    "timestamp": "2026-11-21T06:13:53.374Z",
-    "repository": "wquguru/cicada",
-    "learningId": "learn-github-wquguru-cicada",
-    "contentHash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-IR05",
     "timestamp": "2026-11-21T06:14:00.245Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-W37W",
+    "timestamp": "2026-11-23T05:59:43.436Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-W4UI",
+    "timestamp": "2026-11-23T05:59:45.546Z",
+    "repository": "fujiapple852/trippy",
+    "learningId": "learn-github-fujiapple852-trippy",
+    "contentHash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

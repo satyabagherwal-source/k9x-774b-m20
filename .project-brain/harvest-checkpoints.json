@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T05:51:48.067Z",
+  "last_updated": "2026-11-23T05:59:45.561Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
-      "verified_at": "2026-11-18T20:37:34.801Z",
+      "content_hash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
+      "verified_at": "2026-11-23T05:59:43.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:37:34.801Z"
+      "last_updated": "2026-11-23T05:59:43.450Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -6861,14 +6861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fujiapple852-trippy",
-      "content_hash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
-      "verified_at": "2026-11-20T06:10:48.491Z",
+      "content_hash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
+      "verified_at": "2026-11-23T05:59:45.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:10:48.491Z"
+      "last_updated": "2026-11-23T05:59:45.560Z"
     },
     "BuilderIO/builder": {
       "repository": "BuilderIO/builder",
