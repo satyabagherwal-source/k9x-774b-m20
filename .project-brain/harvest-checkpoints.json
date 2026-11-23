@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T15:29:07.770Z",
+  "last_updated": "2026-11-23T15:37:32.115Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1565,14 +1565,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
-      "verified_at": "2026-11-19T01:55:00.159Z",
+      "content_hash": "b9dd4156a7bf1e93cad58a66bd0c8ee24afeb0f4271b9c91baf66d79d56f602f",
+      "verified_at": "2026-11-23T15:37:14.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:55:00.159Z"
+      "last_updated": "2026-11-23T15:37:14.163Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
-      "verified_at": "2026-11-23T13:23:40.103Z",
+      "content_hash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
+      "verified_at": "2026-11-23T15:37:32.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:23:40.103Z"
+      "last_updated": "2026-11-23T15:37:32.114Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "53f007c9f3ddad6a8e5276e580c0122f060f3d948724cb2171eb2cd423588609",
-      "verified_at": "2026-11-19T16:33:27.999Z",
+      "content_hash": "81aefc6307a53563056718ea3c6d239b5efdb560738d11dda8fe39c36e13d03b",
+      "verified_at": "2026-11-23T15:37:31.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:33:27.999Z"
+      "last_updated": "2026-11-23T15:37:31.691Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",

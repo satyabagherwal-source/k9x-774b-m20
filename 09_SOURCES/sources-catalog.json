@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
-    "lastHarvestedAt": "2026-11-19T01:55:00.150Z",
+    "contentHash": "b9dd4156a7bf1e93cad58a66bd0c8ee24afeb0f4271b9c91baf66d79d56f602f",
+    "lastHarvestedAt": "2026-11-23T15:37:14.154Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5779103e",
+    "sourceVersion": "a2f46a48",
     "license": "Apache-2.0",
-    "contentHash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
-    "lastHarvestedAt": "2026-11-23T13:23:40.038Z",
+    "contentHash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
+    "lastHarvestedAt": "2026-11-23T15:37:32.103Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "c4919869",
+    "sourceVersion": "04661852",
     "license": "MIT",
-    "contentHash": "53f007c9f3ddad6a8e5276e580c0122f060f3d948724cb2171eb2cd423588609",
-    "lastHarvestedAt": "2026-11-19T16:33:27.992Z",
+    "contentHash": "81aefc6307a53563056718ea3c6d239b5efdb560738d11dda8fe39c36e13d03b",
+    "lastHarvestedAt": "2026-11-23T15:37:31.682Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:29:07.767Z",
-  "total_cycles_completed": 11745,
-  "total_learnings_persisted": 11745,
-  "total_rules_promoted": 10896,
+  "last_updated": "2026-11-23T15:37:32.111Z",
+  "total_cycles_completed": 11748,
+  "total_learnings_persisted": 11748,
+  "total_rules_promoted": 10897,
   "history": [
-    {
-      "timestamp": "2026-11-22T18:00:29.010Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:12:22.252Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:21:24.296Z",
-      "repository": "KORMo-VL/KORMo-Web-11B",
-      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T18:21:28.010Z",
       "repository": "matthart1983/netwatch",
@@ -1403,6 +1382,27 @@
       "repository": "skyzh/mini-lsm",
       "learningId": "learn-github-skyzh-mini-lsm",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:37:14.160Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:37:31.688Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:37:32.111Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

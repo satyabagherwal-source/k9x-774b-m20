@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T15:29:11.005Z",
-    "lastVerified": "2026-11-23T15:29:11.005Z",
+    "lastChecked": "2026-11-23T15:37:35.240Z",
+    "lastVerified": "2026-11-23T15:37:35.240Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,22 +366,21 @@
     "lastVerified": "2026-11-22T21:32:06.745Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T15:04:32.916Z",
-    "lastVerified": "2026-11-23T15:04:32.916Z",
+    "lastChecked": "2026-11-23T15:37:31.528Z",
+    "lastVerified": "2026-11-23T15:37:31.528Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
+    "contentHash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5779103e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2259,22 +2258,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy",
+    "name": "mitmproxy/mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T06:22:22.716Z",
-    "lastVerified": "2026-11-23T06:22:22.716Z",
+    "lastChecked": "2026-11-23T15:37:30.555Z",
+    "lastVerified": "2026-11-23T15:37:30.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "53f007c9f3ddad6a8e5276e580c0122f060f3d948724cb2171eb2cd423588609",
+    "contentHash": "81aefc6307a53563056718ea3c6d239b5efdb560738d11dda8fe39c36e13d03b",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c4919869"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -4736,9 +4734,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-22T09:25:58.365Z",
+    "lastChecked": "2026-11-23T15:37:23.054Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-22T09:25:58.365Z"
+    "lastVerified": "2026-11-23T15:37:23.054Z"
   },
   "actix-actix-web": {
     "name": "actix-web",
@@ -5468,9 +5466,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-22T02:53:08.085Z",
+    "lastChecked": "2026-11-23T15:37:10.654Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-22T02:53:08.085Z"
+    "lastVerified": "2026-11-23T15:37:10.654Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -6279,12 +6277,12 @@
     "officialUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T01:54:59.655Z",
-    "lastVerified": "2026-11-19T01:54:59.655Z",
+    "lastChecked": "2026-11-23T15:37:13.338Z",
+    "lastVerified": "2026-11-23T15:37:13.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
+    "contentHash": "b9dd4156a7bf1e93cad58a66bd0c8ee24afeb0f4271b9c91baf66d79d56f602f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6301,9 +6299,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-22T10:54:53.849Z",
+    "lastChecked": "2026-11-23T15:37:18.099Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-22T10:54:53.849Z"
+    "lastVerified": "2026-11-23T15:37:18.099Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -10497,9 +10495,9 @@
   "oblador-hush": {
     "name": "hush",
     "officialUrl": "https://github.com/oblador/hush",
-    "lastChecked": "2026-11-20T13:26:34.674Z",
+    "lastChecked": "2026-11-23T15:37:15.646Z",
     "revisionIdentifier": "2e96f4f7",
-    "lastVerified": "2026-11-20T13:26:34.674Z"
+    "lastVerified": "2026-11-23T15:37:15.646Z"
   },
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",

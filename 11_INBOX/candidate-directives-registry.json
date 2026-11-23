@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:29:13.424Z",
+  "last_updated": "2026-11-23T15:37:37.235Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49578,6 +49578,26 @@
       "source_repo": "skyzh-mini-lsm",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C9C270-add-the-built-with-raft-badge-to-the-rea.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-J9OV",
+      "directive_title": "Update to aioquic 1.9.0",
+      "source_repo": "mitmproxy-mitmproxy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J9OV-update-to-aioquic-1-9-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-487CEC",
+      "directive_title": "Update to aioquic 1.9.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mitmproxy-mitmproxy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-487CEC-update-to-aioquic-1-9-0.md",
       "staged_date": "2026-11-23"
     }
   ]

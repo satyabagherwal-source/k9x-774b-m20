@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-5MGY",
-    "timestamp": "2026-11-21T14:27:40.930Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5S6U",
-    "timestamp": "2026-11-21T14:27:48.342Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5XHN",
-    "timestamp": "2026-11-21T14:27:55.211Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XOZ3",
     "timestamp": "2026-11-21T14:49:30.543Z",
     "repository": "unsloth/flint-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-IRVQ",
+    "timestamp": "2026-11-23T15:37:14.150Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "b9dd4156a7bf1e93cad58a66bd0c8ee24afeb0f4271b9c91baf66d79d56f602f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-J5EM",
+    "timestamp": "2026-11-23T15:37:31.678Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "81aefc6307a53563056718ea3c6d239b5efdb560738d11dda8fe39c36e13d03b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-J5QB",
+    "timestamp": "2026-11-23T15:37:32.099Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T15:29:13.595Z",
-  "total_records": 2426,
+  "last_updated": "2026-11-23T15:38:08.983Z",
+  "total_records": 2427,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 935,
+      "total": 936,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1001,7 +1001,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants",
         "DOM-D-864519D2",
-        "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants",
+        "DOM-D-5695D6C2"
       ]
     },
     "E": {
@@ -8418,8 +8419,8 @@
       "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
       "repository": "mitmproxy/mitmproxy",
-      "content_hash": "48c085bec4790bf564210ade9b6daf17a8a8a6220e0708bfcd657eb49064e995",
-      "created_at": "2026-11-19T16:33:28.330Z"
+      "content_hash": "f749e2ab98e8b3b1ac0a1f40a7c30cdd2223f86edae4c6830eb9d3b639db2d3a",
+      "created_at": "2026-11-23T15:37:32.137Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
@@ -8496,8 +8497,8 @@
       "title": "Architecture Intelligence: mitmproxy-mitmproxy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-learnings-architecture-intelligence-mitmproxy-mitmproxy-lear.md",
       "repository": "mitmproxy-mitmproxy-learnings",
-      "content_hash": "dd67b7964e0b01dacedc6fc9dfd26dfa1cb6eff4844e0fc61f3158fedf01f430",
-      "created_at": "2026-11-15T06:45:49.544Z"
+      "content_hash": "14006fb5628d0648a641eaff9cbbdd0ef7bd53df114c8817ad8068911690d4f6",
+      "created_at": "2026-11-23T15:37:37.413Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
@@ -15505,8 +15506,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "dfa05567875f5dccfe620a374d4f726638ffbaa22a09459336ff58efea3b1e5e",
-      "created_at": "2026-11-23T13:23:40.607Z"
+      "content_hash": "b2bb64dce88468e383046b30af21089e3024b9d92bee0faa6c3cb2fa1f19a719",
+      "created_at": "2026-11-23T15:37:32.377Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15643,8 +15644,8 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-26B-A4B-it Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-research-knowledge-intelligence-google-gemma-4-26b-.md",
       "repository": "google/gemma-4-26B-A4B-it",
-      "content_hash": "f33e9043e0fda05ca355847e03c660ca7f54b7af05017be772e1035dfcd3e086",
-      "created_at": "2026-11-19T01:55:00.352Z"
+      "content_hash": "3039fbb5767ff78adbc6b14191561fe12ff4ba121faa8cb557d8c4e6fcbaef0d",
+      "created_at": "2026-11-23T15:37:14.385Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
@@ -15730,8 +15731,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-26b-a4b-it-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-learnings-research-knowledge-intelligence-hf-google.md",
       "repository": "hf-google-gemma-4-26b-a4b-it-learnings",
-      "content_hash": "ef653f6487fdfd67143cef0ad440d1b3ba16dc3c79aabef29679ee89d2606997",
-      "created_at": "2026-11-19T01:55:43.275Z"
+      "content_hash": "d53f37e97129d4c08b58a3a2fe37414ec93d4fbd387e5f06755169e6063216c7",
+      "created_at": "2026-11-23T15:37:35.637Z"
     },
     "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants",
@@ -15955,8 +15956,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "f08a0f00038912eee1af17b4db257233c869fafee2ae1b454864b21c42b99154",
-      "created_at": "2026-11-23T00:31:38.617Z"
+      "content_hash": "043d4f9a08d42de2e064926f60006ce0583c9dfb86bd617ab04043b41220e15d",
+      "created_at": "2026-11-23T15:38:08.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -40720,6 +40721,48 @@
       "repository": "skyzh-mini-lsm-learnings",
       "content_hash": "33e25a826b0b9228059b94ab442c41bebe84a80be14e956de623c4d8ac2141bb",
       "created_at": "2026-11-23T15:29:13.595Z"
+    },
+    "DOM-D-5695D6C2": {
+      "record_id": "DOM-D-5695D6C2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  \n> **Source Version**: `a2f46a48`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "6927344c8dacacd4d0d11af8eb89241411250ab0953a89df5b9957362fe3a928",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T15:37:37.923Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nucleoidai-nucleoid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T15:38:08.260Z"
     }
   }
 }

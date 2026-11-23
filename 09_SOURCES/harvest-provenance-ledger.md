@@ -12385,3 +12385,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhaliq-minimax-h3-image-character-swap` | `https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap` | `hf-akhaliq` | Multi-dimensional audit evidence | 2026-11-23T15:28:52.449Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `0345103e` | Multi-dimensional audit evidence | 2026-11-23T15:29:05.209Z |
 | `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `d665497b` | Multi-dimensional audit evidence | 2026-11-23T15:29:07.762Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T15:37:14.154Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `04661852` | Multi-dimensional audit evidence | 2026-11-23T15:37:31.682Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a2f46a48` | Multi-dimensional audit evidence | 2026-11-23T15:37:32.103Z |
+| `learn-dom-d-5695d6c2` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-23T15:38:08.306Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T00:31:38.259Z",
+  "timestamp": "2026-11-23T15:38:08.855Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T00:31:38.259Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:38:08.855Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `abc138d4`  
+> **Source Version**: `a2f46a48`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T00:31:30.460Z  
+> **Timestamp**: 2026-11-23T15:37:31.532Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:31:30.453Z  
+> **Harvest Timestamp**: 2026-11-23T15:37:31.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1609,396 +1609,20 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abc138d4` (2026-11-23)
-**Commit Message**: Draft NUC 138 Reactive Secant
+### Incident Patch 1: `a2f46a48` (2026-11-23)
+**Commit Message**: Resume NUC 135 Kotlin Negated Membership Operator
 
-Category: Utility enhancement.
-Add only native Math.sec(value), exactly 1.0 / first.cos() after existing intrinsic conversion, with radians and unchanged eager arguments, supplied-Undefined gate, dependencies, shadowing, rollback and legacy syntax.
-Continuous mode; one unbiased live-registry draw selected Utility enhancement, index2 of5. Immutable accepted reciprocal-cosine counterparts and independent token comparison remain required. No hint, scoring or strategy learner configured.
+Renews the claim on NUC 135, which this continuous /nuc-proposal cycle
+allocated in d0894711 (Draft NUC 135 Kotlin Negated Membership
+Operator, 22-Nov-2026 14:45:52 -05:00) and is still completing: the
+candidate is frozen and goes to independent evaluation next. The
+allocation was 19 h 51 min old at this claim, past the 12-hour renewal
+point. The claim changes no file.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -139,6 +139,7 @@ Created: 31-Jul-2026
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Accepted |
-+| [138](nuc-0138.md) | Reactive Secant | Draft |
- 
- ### Reasoning enhancement
- 
-@@ -329,6 +330,7 @@ Created: 31-Jul-2026
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
-+| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
-```
 
-**File**: `docs/nuc-0138.md` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+# NUC 138 -- Reactive Secant
-+
-+```
-+NUC: 138
-+Title: Reactive Secant
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 23-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Add only native static `Math.sec(value)`, taking radians and naming the
-+  accepted `1 / Math.cos(value)` composition.
-+- Intrinsically convert the first argument, then compute exactly
-+  `1.0 / first.cos()`, retaining cosine and reciprocal rounding rather than
-+  introducing angle normalization, pole shortcuts or another numerical model.
-+- Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
-+  extras, dependencies, deferral, shadowing, rollback and every accepted form.
-+- This continuous cycle selected Utility enhancement with one unbiased draw
-+  from the live eligible registry, index 2 among five categories. Paired
-+  lexer-token comparison and every hard criterion remain mandatory.
-+
-+## Motivation
-+
-+- Geometry and declarative trigonometric models use secant as the reciprocal
-+  of cosine; a named helper expresses that operation in live properties
-+  without repeating its surrounding division.
-+- Accepted cosine and division already provide an executable counterpart,
-+  while the accepted native runtime rejects `Math.sec(0)` as an unknown
-+  function and returns `1` for `1 / Math.cos(0)`.
-+- Extend one existing unary dispatcher arm without changing the parser,
-+  public Rust API, dependencies, options, versions or ARC implementation.
-+
-+## Rationale
-+
-+- Pending isolated preparation against the pushed allocation and immutable
-+  accepted-syntax baseline.
-+
-+## Specification
-+
-+- Pending isolated preparation; preserve all existing corpus identities,
-+  canonical assertions, expected returns and executed coverage.
-+
-+## Errors
-+
-+- Pending isolated preparation of the exact inherited diagnostics and the
-+  formerly unsupported native `sec` call boundary.
-+
-+## Reference Implementation
-+
-+- Pending isolated prototype and independent evaluation.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `809c9cc2` (2026-11-22)
-**Commit Message**: NUC 137 Floating-Point Absolute Value Alias
-
-Accepted under the automatic acceptance rule: all three hard criteria pass
-and the fresh independent evaluator returned Accepted with zero core issues.
-Integrate the unchanged frozen Math.fabs alias of Math.abs and its synchronized
-cases, reference, exports and two new synthesized records. Only derived
-historical corpus-count/tail-offset pins and caller outcome metadata change.
-
-No compile errors: cargo build --all-targets, warning-denied cargo clippy
---all-targets -- -D warnings, cargo fmt --check and rustdoc pass independently
-and on the integrated tree. Full cargo test --no-fail-fast passes 3926 tests,
-zero failures, with all 25 original ignored entries retained. Exact scoped
-inspection retains every one of 3943 accepted identities/multiplicities plus
-eight additions. All 1280 pinned accepted sources replay with protected
-assertions, expected returns and diagnostics; 6379 old assertions execute.
-New normative programs execute all 11 assertions. Backward compatibility and
-all 52 frozen non-outcome implementation-file pins are preserved.
-
-Continuous / Language compatibility. Token comparison is categorically
-skipped language_compatibili
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
-```diff
-@@ -858,3 +858,4 @@
- {"id":"spec-0858","description":"Nucleoid collects and selects lists with Ruby method names","code":"values = [1, 2, 3]\nfactor = 2\nthreshold = 1\ndef project(value) => [value, value * factor]\ncollected = values.collect(project)\nselected = values.select(value -> value > threshold)\nsnapshot = collected.value\nassert(collected, values.map(project))\nassert(selected, values.filter(value -> value > threshold))\nassert(collected, [[1, 2], [2, 4], [3, 6]])\nassert(selected, [2, 3])\nvalues.push(4)\nfactor = 3\nthreshold = 2\nassert(collected, [[1, 3], [2, 6], [3, 9], [4, 12]])\nassert(selected, [3, 4])\nassert(snapshot, [[1, 2], [2, 4], [3, 6]])\ndef project(value) => value + factor\nassert(collected, [4, 5, 6, 7])\nassert(values, [1, 2, 3, 4])\nassert([].collect(value -> missing), [])\nassert([].select(value -> missing), [])\nmixed = [\"\", 0, false, \"yes\", 7, []]\nassert(mixed.select(value -> value), [\"yes\", 7, []])\n[collected, selected]","return":"[[4,5,6,7],[3,4]]"}
- {"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.name)\nchosen = Item.select(item -> item.score >= limit)\nassert([names, chosen], [[], []])\nfirst = Item(\"one\", 4)\nsecond = Item(\"two\", 8)\nassert(names, [\"one\", \"two\"])\nassert(chosen, [second])\nfirst.score = 9\nlimit = 8\nassert(chosen, [first, second])\nthird = Item(\"three\", 2)\nassert(names, [\"one\", \"two\", \"three\"])\nassert(Item.collect(item -> item.score), Item.map(item -> item.score))\nassert(Item.select(item -> item.score), Item.filter(item -> item.score))\ndelete third.name\ndelete third.score\ndelete third\nassert(names, [\"one\", \"two\"])\nassert(chosen, [first, second])\nclass Group(items):\n    this.items = items\n$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)\ngroup = Group([first, second])\nassert(group.names, [\"one\", \"two\"])\nsecond.score = 1\nassert([chosen, group.names], [[first], [\"one\"]])\nnames","return":"[\"one\",\"two\"]"}
- {"id":"spec-0860","description":"Nucleoid preserves collection alias errors and rollback","code":"failure = \"\"\ntry:\n    [].collect()\ncatch error:\n    failure = error\nassert(failure, TypeError(\"map expects a function\"))\nclass Empty\ntry:\n    Empty.select(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"filter expects a function\"))\nnames = [\"a\", \"b\"]\nmapped = names.collect(name -> name.toUpperCase())\nkept = names.select(name -> name.toUpperCase() != \"\")\ntry:\n    names.push(7)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([names, mapped, kept], [[\"a\", \"b\"], [\"A\", \"B\"], [\"a\", \"b\"]])\nnames.push(\"c\")\nassert([mapped, kept], [[\"A\", \"B\", \"C\"], [\"a\", \"b\", \"c\"]])\n[mapped, kept]","return":"[[\"A\",\"B\",\"C\"],[\"a\",\"b\",\"c\"]]"}
-+{"id":"spec-0861","description":"Nucleoid computes floating point absolute values with fabs","code":"values = [-3.5, 0, -0]\nmagnitudes = values.map(value -> Math.fabs(value))\nassert(magnitudes, [3.5, 0, 0])\nassert(magnitudes, values.map(value -> Math.abs(value)))\nassert(1 / Math.fabs(-0), Number.POSITIVE_INFINITY)\nassert(Math.fabs(Number.NEGATIVE_INFINITY), Number.POSITIVE_INFINITY)\nassert(Number.isNaN(Math.fabs(Number.NaN)), true)\nassert(Number.isNaN(Math.fabs()), true)\nassert([Math.fabs(\" -4 \"), Math.fabs([-2]), Math.fabs(null), Math.fabs(true)], [4, 2, 0, 1])\nassert(Math.fabs(-3, \"ignored\", Number.NaN), 3)\nmagnitudes","return":"[3.5,0,0]"}
-```
-
-**File**: `dataset/nucleoid.synth.137.jsonl` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+{"id":"synth-137-0001","description":"Nucleoid keeps travelled distances live with floating point absolute values","code":"offsets = [-2, 5, -7]\ndistances = offsets.map(offset -> Math.fabs(offset))\nassert(distances, [2, 5, 7])\nassert(distances, offsets.map(offset -> Math.abs(offset)))\noffsets.push(-4)\nassert(distances, [2, 5, 7, 4])\ndistances.sum()","return":"18"}
-+{"id":"synth-137-0002","description":"Nucleoid derives independent reading magnitudes with fabs class rules","code":"class Reading(sample):\n    this.sample = sample\n$Reading.magnitude = Math.fabs($Reading.sample)\nfirst = Reading(-3)\nsecond = Reading(2)\nassert([first.magnitude, second.magnitude], [3, 2])\nfirst.sample = -4\nassert([first.magnitude, second.magnitude], [4, 2])\n[first.magnitude, second.magnitude]","return":"[4,2]"}
-```
-
-**File**: `docs/README.md` (modified, +42/-0)
-```diff
-@@ -2686,6 +2686,10 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   writable list receiver in place; see
-   [In-place list sorting](#in-place-list-sorting).
- - `Math.max` and `Math.min` propagate `NaN`, including when an argument cannot be coerced to a number.
-+- The [NUC 137 candidate](nuc-0137.md) adds `Math.fabs(value)` as exactly
-+  the existing `Math.abs(value)` operation, preserving intrinsic coercion,
-+  the supplied-Undefined gate and all accepted call behavior. See the
-+  [absolute-value alias](#floating-point-absolute-value-alias).
- - The [NUC 100 candidate](nuc-0100.md) adds only unshadowed static
-   `Math.cot(value)`, exactly `1 / Math.tan(value)` with radians as input.
-   After the existing any-supplied-Undefined gate and intrinsic first-input
-@@ -3506,6 +3510,44 @@ ratio
- 
- ---
- 
-+## Floating-point absolute value alias
-+
-+### Nucleoid keeps fabs absolute values live
-+
-+```
-+reading = -3.5
-+def magnitude(value) => Math.fabs(value)
-+absolute = magnitude(reading)
-+assert(absolute, 3.5)
-+reading = -0
-+assert(1 / absolute, Number.POSITIVE_INFINITY)
-+reading = 4
-+assert(absolute, Math.abs(reading))
-+absolute
-+```
-+
-+- This is the complete new `tests/reference.md` program without its title
-+  and expected-return metadata; it returns `4`. The [NUC 137 candidate](nuc-0137.md)
-+  and [root contract](../nucleoid.spec.md#floating-point-absolute-value-alias)
-+  add a familiar floating-point absolute-value name, not new math semantics
-+  or complete C, C++ or Python argument compatibility.
-+- Both names share `first.abs()` after Math's existing any-supplied-Undefined
-+  gate and intrinsic first-input conversion. Omission gives numeric NaN.
-+  Finite values, subnormals, both zero/infinity signs and NaN payloads retain
-+  the accepted absolute-value operation.
-+- All expressions evaluate once left to right; ignored extras retain reads,
-+  effects, strict errors and the Undefined gate without numeric conversion.
-+  Literal-null coercion, live-null/parameter deferral, named functions,
-+  class rules, deletion/recovery and transactional rollback are unchanged.
-+- Conversion never calls or tracks shadowable Number or Math.abs. Ordinary
-+  names/properties, `.Math` members and namespace shadowing keep lookup.
-+  `Math.fabs` value reads remain Undefined, like `Math.abs`, not callable
-+  native references. Lists, populations, numbers and strings gain no methods.
-+- Other math names, exact errors, accepted syntax, AST/source spelling,
-+  public Rust APIs, dependencies and versions remain unchanged.
-+
-+---
-+
- ## Reactive inverse interpolation
- 
- ### Unclamped inverse interpolation relationships stay live
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -180,7 +180,7 @@ Created: 31-Jul-2026
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
--| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Draft |
-+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
- 
- ### Documentation
- 
-@@ -328,7 +328,7 @@ Created: 31-Jul-2026
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
--| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Draft |
-+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0137.md` (modified, +215/-6)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 137
- Title: Floating-Point Absolute Value Alias
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 22-Nov-2026
-@@ -43,20 +43,229 @@ Created: 22-Nov-2026
- 
- ## Rationale
- 
--Pending fresh isolated preparation after this Draft allocation is pushed.
-+- This is name compatibility within the confirmed Language compatibility
-+  category, not a new numerical utility or a promise of complete foreign
-+  argument compatibility.
-+- [Python's math.fabs](https://docs.python.org/3/library/math.html#math.fabs)
-+  and [C's fabs](https://en.cppreference.com/w/c/numeric/math/fabs) motivate
-+  the spelling; Nucleoid retains its own accepted numeric model and calls.
-+- Extend the accepted `abs` alternative in the unary math dispatcher.
-+  Sharing `first.abs()` preserves the same host operation, including
-+  signed-zero and NaN payload bits, without a second computation.
-+- Do not lower the parser's name or call a shadowable `Math.abs` or `Number`.
-+  The AST, graph and rendered source keep the written `fabs` spelling.
-+- Reject global aliases, `fabsf`, `fabsl`, `fmod`, other math aliases,
-+  additional receivers, callable native method values, flags and dependencies.
- 
- ## Specification
- 
--Pending fresh isolated preparation against the pinned accepted revision.
-+- Wherever accepted call resolution reaches the native Math namespace,
-+  `Math.fabs(value)` selects exactly the existing `Math.abs(value)` operation.
-+  Existing namespace-reference call forms retain their routing.
-+- All supplied argument expressions evaluate once, left to right, through
-+  the existing call path before math dispatch. Ignored extras retain their
-+  reads, dependencies, effects and strict errors.
-+- The math wrapper first returns `Undefined` if any supplied value is
-+  `Undefined`, including an extra. This already succeeds for the previously
-+  unsupported `fabs` name and remains unchanged.
-+- Otherwise intrinsically convert only the first supplied value with
-+  `Value::to_number`; omission supplies numeric `NaN`. Then apply
-+  `first.abs()`. Extras are not numerically converted.
-+- Preserve accepted number, boolean, string, list, date and nonnumeric
-+  coercions. Literal null converts to zero; live-null and parameter-null
-+  deferral remain distinct and unchanged.
-+- Both zero signs produce positive zero, both infinity signs produce
-+  positive infinity, and NaNs retain the accepted absolute-value operation's
-+  payload behavior. Finite values, including subnormals, share that operation.
-+- Named functions, class rules, receiver and scope handling, propagation,
-+  deletion/recovery and transactional rollback are inherited unchanged.
-+- Ordinary `fabs` identifiers and properties, user callable properties,
-+  ordinary `.Math` members and Math namespace shadowing keep their behavior.
-+  Reading `Math.fabs` as a value remains `Undefined`, like `Math.abs`; it is
-+  not a bound first-class native function.
-+- Lists, class populations, numbers, strings and every other receiver gain
-+  no `abs` or `fabs` method. Other math names and errors remain unchanged.
-+- The only changed successful call result is for a formerly unsupported
-+  native `Math.fabs` call whose supplied values pass the existing gate.
-+  No accepted successful result or syntax is replaced.
-+- The root [absolute-value contract](../nucleoid.spec.md#floating-point-absolute-value-alias)
-+  and `Nucleoid computes floating point absolute values with fabs` specify
-+  the new operation. `Nucleoid keeps fabs absolute values live` in
-+  `tests/reference.md` is mirrored in the language reference.
-+- The lexer and parser already accept `fabs` as an ordinary member name.
-+  `docs/nucleoid.ebnf` is unchanged because no accepted syntax changes.
-+- This caller-owned continuous cycle categorically skips token comparison
-+  as `language_compatibility`, not as a passed or zero-case gate. Runtime
-+  applicability is not applicable; runtime applicability/reason/evidence
-+  inputs remain absent. Every behavior, coverage, compatibility and
-+  development obligation remains.
- 
- ## Errors
- 
--Pending fresh isolated preparation.
-+- No new arity, type, numeric or range errors are introduced.
-+- A resolved native `Math.fabs(-3)` no longer raises
-+  `TypeError("Math.fabs is not a function")`; the existing any-`Undefined`
-+  result for that name remains unchanged.
-+- Strict undefined argument reads keep
-+  `ReferenceError("<name> is not defined")`, even after an earlier
-+  `Undefined` argument. Earlier argument errors still stop later evaluation.
-+- `Math.random()` retains `TypeError("Math.random is not supported")`;
-+  other unsupported Math names retain
-+  `TypeError("Math.<name> is not a function")`.
-+- A numeric `Math = 7` still raises
-+  `TypeError("number.fabs is not a function")` on `Math.fabs(1)`.
-+  `[-3].fabs()` still raises
-+  `TypeError("[-3].fabs is not a function")`. Other receiv
-```
-
-**File**: `nucleoid.spec.md` (modified, +37/-0)
-```diff
-@@ -28887,4 +28887,41 @@ names.push("c")
- assert([mapped, kept], [["A", "B", "C"], ["a", "b", "c"]])
- [mapped, kept]
- # return: [["A","B","C"],["a","b","c"]]
-+
-+---
-+
-+# Nucleoid computes floating point absolute values with fabs
-+
-+values = [-3.5, 0, -0]
-+magnitudes = values.map(value -> Math.fabs(value))
-+assert(magnitudes, [3.5, 0, 0])
-+assert(magnitudes, values.map(value -> Math.abs(value)))
-+assert(1 / Math.fabs(-0), Number.POSITIVE_INFINITY)
-+assert(Math.fabs(Number.NEGATIVE_INFINITY), Number.POSITIVE_INFINITY)
-+assert(Number.isNaN(Math.fabs(Number.NaN)), true)
-+assert(Number.isNaN(Math.fabs()), true)
-+assert([Math.fabs(" -4 "), Math.fabs([-2]), Math.fabs(null), Math.fabs(true)], [4, 2, 0, 1])
-+assert(Math.fabs(-3, "ignored", Number.NaN), 3)
-+magnitudes
-+# return: [3.5,0,0]
- ```
-+
-+## Floating-point absolute value alias
-+
-+- The NUC 137 candidate adds only the familiar `Math.fabs(value)` name for
-+  the existing `Math.abs(value)` operation, not foreign argument semantics.
-+- Wherever accepted call resolution reaches native Math, both names share
-+  `first.abs()`, including finite/subnormal values, positive-zero results
-+  for either zero sign, positive infinity for either infinity sign, and the
-+  accepted NaN payload behavior.
-+- Every supplied expression evaluates once left to right. The existing
-+  any-supplied-`Undefined` gate runs before intrinsic `Value::to_number`
-+  conversion of the first input; omission supplies numeric NaN. Extras
-+  retain effects, dependencies and strict errors without numeric conversion.
-+- Literal null retains zero coercion; live-null and parameter deferral,
-+  named/class-rule liveness, deletion/recovery and rollback are unchanged.
-+- Do not consult shadowable Number or Math.abs. Ordinary identifiers,
-+  properties, `.Math` members and namespace shadowing remain ordinary.
-+  Native method value reads remain Undefined, not callable references.
-+- No global aliases, additional receivers, other math names, flags,
-+  parser/lexer changes, public API changes or dependencies are introduced.
-```
-
-**File**: `src/builtins/numeric.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ fn numeric_argument(arguments: &[Value], index: usize) -> f64 {
- 
- fn math_unary(name: &str, first: f64) -> Option<f64> {
-     Some(match name {
--        "abs" => first.abs(),
-+        "abs" | "fabs" => first.abs(),
-         "ceil" => first.ceil(),
-         "floor" => first.floor(),
-         "fract" => {
-```
-
-**File**: `tests/case_conversion_aliases.rs` (modified, +2/-2)
-```diff
-@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
-         }
-     }
-     assert_eq!(assertions, 23);
--    assert_eq!(cases, 1280);
-+    assert_eq!(cases, 1282);
- }
- 
- #[test]
-@@ -442,7 +442,7 @@ fn the_appended_cases_stand_after_nuc_117_and_before_nuc_103() {
-         let index = cases.iter().position(|case| case.title == title).unwrap();
-         assert_eq!(
-             index,
--            cases.len() - 18 - usize::from(title == REFERENCE_TITLE),
-+            cases.len() - 18 - 2 * usize::from(title == REFERENCE_TITLE),
-             "{title}"
-         );
-         assert_eq!(cases[index - 1].title, previous);
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -2020,38 +1644,6 @@ skipped language_compatibili
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 138 Reactive Secant
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `abc138d4`: Draft NUC 138 Reactive Secant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [138](nuc-0138.md) | Reactive Secant | Draft |
-| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abc138d4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

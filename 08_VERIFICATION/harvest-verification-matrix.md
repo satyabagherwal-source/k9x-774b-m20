@@ -12352,3 +12352,7 @@
 | `CYCLE-20261123-80RH` | `2026-11-23T15:28:52.445Z` | `akhaliq/MiniMax-H3-Image-Character-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md` | Yes (`c91a311f...`) |
 | `CYCLE-20261123-8ALX` | `2026-11-23T15:29:05.205Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10059` | Yes (`c8c4a18f...`) |
 | `CYCLE-20261123-8CKT` | `2026-11-23T15:29:07.757Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10060` | Yes (`36b424e6...`) |
+| `CYCLE-20261123-IRVQ` | `2026-11-23T15:37:14.150Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`b9dd4156...`) |
+| `CYCLE-20261123-J5EM` | `2026-11-23T15:37:31.678Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10061` | Yes (`81aefc63...`) |
+| `CYCLE-20261123-J5QB` | `2026-11-23T15:37:32.099Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f926d677...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T15:38:08.306Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5695D6C2` [Domain D] | Yes (`6927344c...`) |
