@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T13:38:50.710Z",
+  "last_updated": "2026-11-24T13:47:30.083Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
-      "verified_at": "2026-11-21T21:40:19.383Z",
+      "content_hash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
+      "verified_at": "2026-11-24T13:47:21.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:40:19.383Z"
+      "last_updated": "2026-11-24T13:47:21.883Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
-      "verified_at": "2026-11-23T17:20:51.853Z",
+      "content_hash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
+      "verified_at": "2026-11-24T13:47:30.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:20:51.853Z"
+      "last_updated": "2026-11-24T13:47:30.083Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",

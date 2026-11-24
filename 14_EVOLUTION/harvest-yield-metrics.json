@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:38:50.698Z",
-  "total_cycles_completed": 12054,
-  "total_learnings_persisted": 12054,
-  "total_rules_promoted": 11125,
+  "last_updated": "2026-11-24T13:47:30.071Z",
+  "total_cycles_completed": 12056,
+  "total_learnings_persisted": 12056,
+  "total_rules_promoted": 11127,
   "history": [
-    {
-      "timestamp": "2026-11-23T21:04:49.668Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:04:57.324Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T21:14:35.325Z",
       "repository": "xevrion/hatchzip",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T13:38:50.698Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:47:21.870Z",
+      "repository": "i18next/react-i18next",
+      "learningId": "learn-github-i18next-react-i18next",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:47:30.071Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

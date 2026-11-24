@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T13:38:56.468Z",
+  "last_updated": "2026-11-24T13:48:13.916Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24647,
+  "total_items": 24652,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d45143a7fe491849a343cf0973bbc7b1aceaa5c00a069b720c0e77c4b94e513b",
+      "content_hash": "d7b2f7fc8f14f12a37e14ab3fca901970ad3a023bb918a213f002293483bb215",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:38:56.283Z"
+      "persisted_at": "2026-11-24T13:48:13.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a7b29ba2a58f59df3f648d5adc39cae21cb210262d8e740eb901b76779cf88e",
+      "content_hash": "7db442284f481c58187eb4543ed19f1c739d9a078aeeccf31faaac2bf057d483",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:38:56.468Z"
+      "persisted_at": "2026-11-24T13:48:13.916Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -222990,8 +222990,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "def28df2",
-      "content_hash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
+      "source_version": "cbb61e6f",
+      "content_hash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [
@@ -223009,6 +223009,11 @@
           "number": 9848,
           "title": "Empirical Invariant Guard in react-i18next.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10270,
+          "title": "homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223016,7 +223021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:40:19.175Z",
+      "verified_at": "2026-11-24T13:47:21.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223058,10 +223063,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "repository": "i18next/react-i18next",
-      "source_version": "def28df2",
-      "content_hash": "7d5515073cb98758d8d1bbaf87e79abfc45549ccd4dde2354cc4032120dc57db",
+      "source_version": "cbb61e6f",
+      "content_hash": "77bdac0905dc0c7b25768c2f78934f9881fa1ae59e2c53bb4e737e23bb2b5a68",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:40:19.746Z"
+      "persisted_at": "2026-11-24T13:47:22.421Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next",
@@ -223070,10 +223075,10 @@
       "relative_path": "08_VERIFICATION/i18next-react-i18next-verification-protocol-empirical-defect-shield-for-i18next-.md",
       "title": "Verification Protocol: Empirical Defect Shield for i18next/react-i18next",
       "repository": "i18next/react-i18next",
-      "source_version": "def28df2",
-      "content_hash": "e36411be1b98d1b165621386f3ce645409a77592795db73935e73177711c1fe6",
+      "source_version": "cbb61e6f",
+      "content_hash": "461745cec6a7738e3b877152a793062c2dcc93cf04e89a1ff978259abbc99fc6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:40:19.897Z"
+      "persisted_at": "2026-11-24T13:47:22.657Z"
     },
     "learn-github-siderolabs-talos": {
       "learning_id": "learn-github-siderolabs-talos",
@@ -223630,9 +223635,9 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d742ce0f97f4410e6e8a47c75fa2dd629d7e128806431491cd745c5e0b3d4d8",
+      "content_hash": "f1fd939782d1487b203a09360d5271242f96908c00c562a2491c0b51e8b2459f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:41:00.286Z"
+      "persisted_at": "2026-11-24T13:48:11.269Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning",
@@ -223642,9 +223647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for i18next-react-i18next-learnings",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "923cac3a321a23410ebb2ba4036207d2e83e1ac6ab6f0ce550a3503d2b6fc75b",
+      "content_hash": "b4c81e1fa4d9e0b37fbb51f683310cc863ef9e2ba4baff10487b73d852c946ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:41:00.463Z"
+      "persisted_at": "2026-11-24T13:48:11.498Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -254180,8 +254185,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "0d551770",
-      "content_hash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
+      "source_version": "00f96061",
+      "content_hash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -254224,6 +254229,11 @@
           "number": 10081,
           "title": "Use AST and dialect options for PostgreSQL SQL handling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10271,
+          "title": "prepared statement parameter index validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254231,7 +254241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:20:51.585Z",
+      "verified_at": "2026-11-24T13:47:29.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254273,10 +254283,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "2436670d",
-      "content_hash": "d536573e11a8a29da9b3c7678a94f4b8efccc70f01eb7e668a81cf1fb0f35412",
+      "source_version": "00f96061",
+      "content_hash": "5fde4bdd36d6b5b7c39c23cbfb49dea44cabebb71aee272b53082acac78a52a1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T12:57:02.775Z"
+      "persisted_at": "2026-11-24T13:47:30.578Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere",
@@ -254285,10 +254295,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "0d551770",
-      "content_hash": "f77fa1f8929700e29455680fedb4fa3a266267e2694986abf56cd645c98718e3",
+      "source_version": "00f96061",
+      "content_hash": "f6069e32180f6758e4f6a36eaa364a66dabcc6955d7198f8a009549884c02fdb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:20:52.577Z"
+      "persisted_at": "2026-11-24T13:47:30.816Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -254358,9 +254368,9 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbb859de149b237ea8e841f064a2d3bdfb9974c73ab89db5a507aeeb0836671e",
+      "content_hash": "0129b7ebe3d8aa99c9812b9e121fb86f7f27f985664b03a9c014be439714ab44",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T13:01:54.603Z"
+      "persisted_at": "2026-11-24T13:48:12.536Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning",
@@ -254370,9 +254380,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-shardingsphere-learnings",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "b2ad5e5c9c3111c8c87ab690b9ae3d6f5edd1f836fb0ec8f786ad4acd60bc9e4",
+      "content_hash": "692f389fede45df2acecf978fe95351cf9926fd3a7e3f14e7f54adba0a43785c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T13:01:54.767Z"
+      "persisted_at": "2026-11-24T13:48:12.765Z"
     },
     "learn-huggingface-liconstudio-minimax-h3-vbvr": {
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
@@ -320033,13 +320043,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QHNN-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2FOB-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18563234d77856ba9abb06d916486670acccbb76ad91a84c0edf5907b53a299e",
+      "content_hash": "438f56b9fc42f8304af48f5d57599bc8912c5442daa0b5c408a39de3933c8b22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:38:56.103Z"
+      "persisted_at": "2026-11-24T13:48:13.419Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -336429,6 +336439,70 @@
       "content_hash": "f7c26416ba31888c1dc785e983c04c1acf5099d77be85805178c638579688352",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T13:38:54.410Z"
+    },
+    "rule-10270": {
+      "learning_id": "rule-10270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10270,
+      "title": "homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+      "source_url": "https://github.com/i18next/react-i18next",
+      "source_version": "cbb61e6f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:47:21.570Z"
+    },
+    "candidate_directive-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18": {
+      "item_id": "candidate_directive-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1C4L-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18.md",
+      "title": "homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+      "repository": "i18next/react-i18next",
+      "source_version": "cbb61e6f",
+      "content_hash": "0dc692bf30ce04843edd4a3f5c3ecbb46b32aec39f46b0f5e2f3a538ee3769cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:47:22.150Z"
+    },
+    "rule-10271": {
+      "learning_id": "rule-10271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10271,
+      "title": "prepared statement parameter index validation",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "00f96061",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:47:29.779Z"
+    },
+    "candidate_directive-prepared-statement-parameter-index-validation": {
+      "item_id": "candidate_directive-prepared-statement-parameter-index-validation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2ETH-prepared-statement-parameter-index-validation.md",
+      "title": "prepared statement parameter index validation",
+      "repository": "apache-shardingsphere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10641e9297c7ef267451e6476f3c8d0fc66a918b19dcba0c8bc04003ca64d27d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T13:48:12.309Z"
+    },
+    "candidate_directive-docs-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18": {
+      "item_id": "candidate_directive-docs-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2DUE-docs-homepage-and-readme-point-to-www-i18next-com-react-and-docs-prs-go-to-i18.md",
+      "title": "docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+      "repository": "i18next-react-i18next-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad6573bc57ebf74cc7136038020dd15ea7c375f99476c28f2ac3dc600384f83f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:48:11.031Z"
     }
   },
   "ai-builder-brain": {

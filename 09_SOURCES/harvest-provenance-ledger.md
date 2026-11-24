@@ -12715,3 +12715,6 @@ Every entry in this ledger must capture:
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `776d2ee8` | Multi-dimensional audit evidence | 2026-11-24T13:30:21.706Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `984b16cb` | Multi-dimensional audit evidence | 2026-11-24T13:30:23.866Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d67e8468` | Multi-dimensional audit evidence | 2026-11-24T13:38:50.692Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `cbb61e6f` | Multi-dimensional audit evidence | 2026-11-24T13:47:21.863Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `00f96061` | Multi-dimensional audit evidence | 2026-11-24T13:47:30.064Z |
+| `learn-dom-h-23b9b1a9` | `project://i18next-react-i18next` | `cbb61e6f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | 2026-11-24T13:48:09.884Z |

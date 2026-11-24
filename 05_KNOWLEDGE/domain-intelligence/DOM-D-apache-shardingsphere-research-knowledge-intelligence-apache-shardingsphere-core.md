@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/shardingsphere",
   "source_url": "https://github.com/apache/shardingsphere",
-  "source_version": "2436670d",
+  "source_version": "00f96061",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T12:57:02.603Z",
+  "timestamp": "2026-11-24T13:47:30.342Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-shardingsphere",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `2436670d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T12:57:02.603Z`  
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `00f96061`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T13:47:30.342Z`  
 > **Learning ID**: `learn-github-apache-shardingsphere`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/shardingsphere:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T12:57:01.228Z  
+> **Harvest Timestamp**: 2026-11-24T13:47:28.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20832 stars
+- **Stars / Engagement**: 20836 stars
 
 ---
 
@@ -1448,13 +1448,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40539** (2026-11-22): **Fix Oracle unparenthesized function binding for dummy table queries**
+- **Issue #40545** (2026-11-24): **Fix prepared statement parameter index validation**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  The existing dialect SQL option declares Oracle’s dummy table. Unresolved identifiers are allowed only in strictly scoped query blocks without local metadata, and the new exemption remains isolated to the current query block.  ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  Two independent complete assessments and coordinator confirmation passed. All 685 tests, compilation, coding-standard checks, and license checks passed.  ### Coverage  Standalone local candidate based on ef1f458117c02ffbe8b93b90e7672eb3eafd7856, covering the complete cumulative delta across all 10 files. Code scope only; CI was not reviewed, and native Oracle execution was not verified.
+  > ### Summary  This PR fixes PreparedStatement accepting out-of-range parameter indexes. The concrete statement class reuses the parsed parameter count and throws a standard SQLException before modifying the parameter list, preserving valid bindings and batching behavior.  ### Result  Review Result: Mergeable  No blocking issues or required changes found. This assessment covers code correctness only.  ### Evidence  - All 59 relevant tests passed at the reviewed head, with 4/4 branches covered in the new validation method. - All 4 changed Java files passed Spotless and Checkstyle. - Adding throws SQLException may require exception handling updates in external source code that calls setters through concrete implementation types. External downstream compilation was not verified.  ### Coverage  [PR #40545](https://github.com/apache/shardingsphere/pull/40545), head `f6ee5a8a8ded`: all 4 changed files and related call paths reviewed. Two independent reviews and coordinator verification complet
 
-- **Issue #40538** (2026-11-21): **Fix PostgreSQL keyword identifier compatibility**
-  *Symptoms*: 
+- **Issue #40543** (2026-11-23): **Use AST and dialect options for PostgreSQL SQL handling**
+  *Symptoms*: Follow-up to #40533.  Changes proposed in this pull request:  - Resolve the proposed-row alias for insert conflict binding through the dialect SQL option. PostgreSQL exposes `excluded`, and openGauss keeps its existing duplicate-key assignment behavior. - Carry the PostgreSQL `TABLE` shorthand from the parsed projection AST through binding and encrypted SQL rewrite. The SQL builder reads the resulting token metadata. - Cover the dialect option, parser metadata, and encrypted rewrite with tests.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [x] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [x] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  Documentation and release notes are not applicable to this behavior-preserving refactor. The code-correctness 
+  **Post-Mortem & Fix Analysis**:
+  > ### Summary  The change carries PostgreSQL `TABLE` shorthand metadata from the parsed AST through binding and encrypted SQL rewrite. The insert binder uses the dialect SQL option for proposed-row aliases and resolves it once per conflict insert.  ### Result  Review Result: Mergeable  No blocking code-correctness issues were found in the review round.  ### Evidence  - The parser and projection binder preserve the shorthand marker. The encrypted rewrite regression test verifies the generated `SELECT … FROM` SQL. - PostgreSQL binding continues to resolve `EXCLUDED`. The openGauss option retains whole-row projection and its existing duplicate-key binding behavior. - `./mvnw clean install -B -T1C -Pcheck` passed, including 2,109 PostgreSQL parser cases and 193 encryption rewrite cases.  ### Coverage  One review round covered all 17 changed files in `23ff77a48e91`. The verdict covers code correctness and local verification. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1471,316 +1473,385 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2436670d` (2026-11-22)
-**Commit Message**: Fix Oracle unparenthesized function binding for dummy table queries (#40539)
+### Incident Patch 1: `00f96061` (2026-11-24)
+**Commit Message**: Fix prepared statement parameter index validation (#40545)
 
-* Fix Oracle unparenthesized function binding for dummy table queries
+* Fix prepared statement parameter index validation
 
-* Fix Oracle unparenthesized function binding for dummy table queries
+* Use native SQLException for invalid parameter indexes
 
-**File**: `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java` (modified, +11/-0)
+* Remove custom parameter index error codes
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java` (modified, +48/-41)
 ```diff
-@@ -17,6 +17,8 @@
- 
- package org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql;
- 
-+import java.util.Optional;
-+
- /**
-  * Dialect SQL option.
-  */
-@@ -30,4 +32,13 @@ public interface DialectSQLOption {
-     default boolean isSupportWholeRowProjection() {
-         return false;
-     }
-+    
-+    /**
-+     * Get dummy table name.
-+     *
-+     * @return dummy table name, or empty if not declared
-+     */
-+    default Optional<String> getDummyTableName() {
-+        return Optional.empty();
-+    }
- }
-```
-
-**File**: `database/connector/core/src/test/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/DialectDatabaseMetaDataTest.java` (modified, +1/-0)
-```diff
-@@ -129,6 +129,7 @@ void assertGetSQLOption() {
-         DialectSQLOption actual = dialectDatabaseMetaData.getSQLOption();
-         assertThat(actual, isA(DefaultSQLOption.class));
-         assertFalse(actual.isSupportWholeRowProjection());
-+        assertThat(actual.getDummyTableName(), is(Optional.empty()));
+@@ -49,167 +49,167 @@ public abstract class AbstractPreparedStatementAdapter extends AbstractUnsupport
+     private final List<Object> parameters = new ArrayList<>();
+     
+     @Override
+-    public final void setNull(final int parameterIndex, final int sqlType) {
++    public final void setNull(final int parameterIndex, final int sqlType) throws SQLException {
+         setParameter(parameterIndex, null);
      }
      
-     @Test
+     @Override
+-    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) {
++    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
+         setParameter(parameterIndex, null);
+     }
+     
+     @Override
+-    public final void setBoolean(final int parameterIndex, final boolean x) {
++    public final void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setByte(final int parameterIndex, final byte x) {
++    public final void setByte(final int parameterIndex, final byte x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setShort(final int parameterIndex, final short x) {
++    public final void setShort(final int parameterIndex, final short x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setInt(final int parameterIndex, final int x) {
++    public final void setInt(final int parameterIndex, final int x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setLong(final int parameterIndex, final long x) {
++    public final void setLong(final int parameterIndex, final long x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setFloat(final int parameterIndex, final float x) {
++    public final void setFloat(final int parameterIndex, final float x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setDouble(final int parameterIndex, final double x) {
++    public final void setDouble(final int parameterIndex, final double x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setString(final int parameterIndex, final String x) {
++    public final void setString(final int parameterIndex, final String x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) {
++    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setDate(final int parameterIndex, final Date x) {
++    public final void setDate(final int parameterIndex, final Date x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) {
++    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setTime(final int parameterIndex, final Time x) {
++    public final void setTime(final int parameterIndex, final Time x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) {
++    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setTimestamp(final int parameterIndex, final Timestamp x) {
++    public final void setTimestamp(final int parameterIndex, final Timestamp x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) {
++    public final void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setBytes(final int parameterIndex, final byte[] x) {
++    public final void setBytes(final int parameterIndex, final byte[] x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setBlob(final int parameterIndex, final Blob x) {
++    public final void setBlob(final int parameterIndex, final Blob x) throws SQLException {
+         setParameter(parameterIndex, x);
+     }
+     
+     @Override
+-    public final void setBlob(fin
 ```
 
-**File**: `database/connector/dialect/oracle/src/main/java/org/apache/shardingsphere/database/connector/oracle/metadata/database/OracleDatabaseMetaData.java` (modified, +7/-0)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatement.java` (modified, +8/-0)
 ```diff
-@@ -29,10 +29,12 @@
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.index.DialectIndexOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.pagination.DialectPaginationOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.schema.DialectSchemaOption;
-+import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql.DialectSQLOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.transaction.DDLCommitPolicy;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.transaction.DialectTransactionOption;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleDataTypeOption;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleFunctionOption;
-+import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleSQLOption;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleSchemaOption;
- 
- import java.util.Collections;
-@@ -101,6 +103,11 @@ public DialectFunctionOption getFunctionOption() {
-         return new OracleFunctionOption();
+@@ -174,6 +174,14 @@ private boolean isStatementsCacheable() {
+                 && !HintManager.isInstantiated();
      }
      
 +    @Override
-+    public DialectSQLOption getSQLOption() {
-+        return new OracleSQLOption();
++    protected void setParameter(final int parameterIndex, final Object value) throws SQLException {
++        int parameterCount = getParameterMetaData().getParameterCount();
++        ShardingSpherePreconditions.checkState(parameterIndex >= 1 && parameterIndex <= parameterCount,
++                () -> new SQLException(String.format("Parameter index '%d' is out of range. Number of parameters: %d.", parameterIndex, parameterCount)));
++        super.setParameter(parameterIndex, value);
 +    }
 +    
      @Override
-     public String getDatabaseType() {
-         return "Oracle";
+     public ResultSet executeQuery() throws SQLException {
+         try {
 ```
 
-**File**: `database/connector/dialect/oracle/src/main/java/org/apache/shardingsphere/database/connector/oracle/metadata/database/option/OracleSQLOption.java` (added, +33/-0)
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/adapter/PreparedStatementAdapterTest.java` (modified, +25/-25)
 ```diff
-@@ -0,0 +1,33 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.database.connector.oracle.metadata.database.option;
-+
-+import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql.DialectSQLOption;
-+
-+import java.util.Optional;
-+
-+/**
-+ * SQL option of Oracle.
-+ */
-+public final class OracleSQLOption implements DialectSQLOption {
-+    
-+    @Override
-+    public Optional<String> getDummyTableName() {
-+        return Optional.of("DUAL");
-+    }
-+}
+@@ -71,73 +71,73 @@ void setUp() throws SQLException {
+         when(connection.getContextManager().getMetaDataContexts().getMetaData().getProps()).thenReturn(new ConfigurationProperties(new Properties()));
+         when(connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(
+                 connection.getCurrentDatabaseName()).getProtocolType()).thenReturn(TypedSPILoader.getService(DatabaseType.class, "SQL92"));
+-        shardingSpherePreparedStatement = new ShardingSpherePreparedStatement(connection, "SELECT 1", null);
++        shardingSpherePreparedStatement = new ShardingSpherePreparedStatement(connection, "SELECT ?, ?, ?, ?, ?", null);
+     }
+     
+     @Test
+-    void assertSetNull() {
++    void assertSetNull() throws SQLException {
+         shardingSpherePreparedStatement.setNull(1, Types.VARCHAR);
+         shardingSpherePreparedStatement.setNull(2, Types.VARCHAR, "");
+         assertParameter(shardingSpherePreparedStatement, 1, null);
+         assertParameter(shardingSpherePreparedStatement, 2, null);
+     }
+     
+     @Test
+-    void assertSetBoolean() {
++    void assertSetBoolean() throws SQLException {
+         shardingSpherePreparedStatement.setBoolean(1, true);
+         assertParameter(shardingSpherePreparedStatement, 1, true);
+     }
+     
+     @Test
+-    void assertSetByte() {
++    void assertSetByte() throws SQLException {
+         shardingSpherePreparedStatement.setByte(1, (byte) 0);
+         assertParameter(shardingSpherePreparedStatement, 1, (byte) 0);
+     }
+     
+     @Test
+-    void assertSetShort() {
++    void assertSetShort() throws SQLException {
+         shardingSpherePreparedStatement.setShort(1, (short) 0);
+         assertParameter(shardingSpherePreparedStatement, 1, (short) 0);
+     }
+     
+     @Test
+-    void assertSetInt() {
++    void assertSetInt() throws SQLException {
+         shardingSpherePreparedStatement.setInt(1, 0);
+         assertParameter(shardingSpherePreparedStatement, 1, 0);
+     }
+     
+     @Test
+-    void assertSetLong() {
++    void assertSetLong() throws SQLException {
+         shardingSpherePreparedStatement.setLong(1, 0L);
+         assertParameter(shardingSpherePreparedStatement, 1, 0L);
+     }
+     
+     @Test
+-    void assertSetFloat() {
++    void assertSetFloat() throws SQLException {
+         shardingSpherePreparedStatement.setFloat(1, 0.0F);
+         assertParameter(shardingSpherePreparedStatement, 1, 0.0F);
+     }
+     
+     @Test
+-    void assertSetDouble() {
++    void assertSetDouble() throws SQLException {
+         shardingSpherePreparedStatement.setDouble(1, 0.0D);
+         assertParameter(shardingSpherePreparedStatement, 1, 0.0D);
+     }
+     
+     @Test
+-    void assertSetString() {
++    void assertSetString() throws SQLException {
+         shardingSpherePreparedStatement.setString(1, "0");
+         assertParameter(shardingSpherePreparedStatement, 1, "0");
+     }
+     
+     @Test
+-    void assertSetBigDecimal() {
++    void assertSetBigDecimal() throws SQLException {
+         shardingSpherePreparedStatement.setBigDecimal(1, BigDecimal.ZERO);
+         assertParameter(shardingSpherePreparedStatement, 1, BigDecimal.ZERO);
+     }
+     
+     @Test
+-    void assertSetDate() {
++    void assertSetDate() throws SQLException {
+         Date date = new Date(0L);
+         shardingSpherePreparedStatement.setDate(1, date);
+         shardingSpherePreparedStatement.setDate(2, date, Calendar.getInstance());
+@@ -146,7 +146,7 @@ void assertSetDate() {
+     }
+     
+     @Test
+-    void assertSetTime() {
++    void assertSetTime() throws SQLException {
+         Time time = new Time(0L);
+         shardingSpherePreparedStatement.setTime(1, time);
+         shardingSpherePreparedStatement.setTime(2, time, Calendar.getInstance());
+@@ -155,7 +155,7 @@ void assertSetTime() {
+     }
+     
+     @Test
+-    void assertSetTimestamp() {
++    void assertSetTimestamp() throws SQLException {
+         Timestamp timestamp = new Timestamp(0L);
+         shardingSpherePreparedStatement.setTimestamp(1, timestamp);
+         shardingSpherePreparedStatement.setTimestamp(2, timestamp, Calendar.getInstance());
+@@ -164,13 +164,13 @@ void assertSetTimestamp() {
+     }
+     
+     @Test
+-    void assertSetBytes() {
++    void assertSetBytes() throws SQLException {
+         shardingSpherePreparedStatement.setBytes(1, new byte[]{});
+         assertParameter(shardingSpherePreparedStatement, 1, new byte[]{});
+     }
+     
+     @Test
+-    void assertSetBlob() throws IOException {
++    void assertSetBlob() throws IOException, SQLException {
+         try (InputStream inputStream = new ByteArrayInputStream(new byte[]{})) {
+             shardingSpherePreparedStatement.setBlob(1, (Blob) null);
+             shardingSpherePreparedStatement.setBlob(2, inputStream);
+@@ -182,7 +182,7 @@ void assertSetBlob() throws IOException {
+     }
+     
+     @Test
+-    void assertSetClob() {
++    void assertSetClob() throws SQLException {
+         Reader reader = new StringReader("value");
+         sh
 ```
 
-**File**: `database/connector/dialect/oracle/src/test/java/org/apache/shardingsphere/database/connector/oracle/metadata/database/OracleDatabaseMetaDataTest.java` (modified, +9/-0)
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatementTest.java` (modified, +65/-12)
 ```diff
-@@ -27,12 +27,14 @@
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.pagination.DialectPaginationOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.schema.DialectSchemaOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.schema.DialectSchemaSemantics;
-+import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql.DialectSQLOption;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.transaction.DDLCommitPolicy;
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.transaction.DialectTransactionOption;
- import org.apache.shardingsphere.database.connector.core.spi.DatabaseTypedSPILoader;
+@@ -18,12 +18,12 @@
+ package org.apache.shardingsphere.driver.jdbc.core.statement;
+ 
+ import lombok.SneakyThrows;
+-import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.DialectDatabaseMetaData;
  import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleDataTypeOption;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleFunctionOption;
-+import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleSQLOption;
- import org.apache.shardingsphere.database.connector.oracle.metadata.database.option.OracleSchemaOption;
- import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
- import org.junit.jupiter.api.Test;
-@@ -125,4 +127,11 @@ void assertGetAlterTableOption() {
-     void assertGetFunctionOption() {
-         assertThat(dialectDatabaseMetaData.getFunctionOption(), isA(OracleFunctionOption.class));
-     }
-+    
-+    @Test
-+    void assertGetSQLOption() {
-+        DialectSQLOption actual = dialectDatabaseMetaData.getSQLOption();
-+        assertThat(actual, isA(OracleSQLOption.class));
-+        assertThat(actual.getDummyTableName(), is(Optional.of("DUAL")));
-+    }
- }
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/ColumnSegmentBinder.java` (modified, +7/-6)
-```diff
-@@ -108,7 +108,8 @@ public static ColumnSegment bind(final ColumnSegment segment, final SegmentType
-         if (!inputColumnSegment.isPresent() && isUnparenthesizedFunction(segment, parentSegmentType, binderContext)) {
-             return segment;
-         }
--        ShardingSpherePreconditions.checkState(inputColumnSegment.isPresent() || isSkipColumnBind(tableSegmentBinderContexts, outerTableBinderContexts.values()),
-+        ShardingSpherePreconditions.checkState(inputColumnSegment.isPresent()
-+                || isSkipColumnBind(tableSegmentBinderContexts, outerTableBinderContexts.values(), tableBinderContexts.values()),
-                 () -> new ColumnNotFoundException(segment.getExpression(), SEGMENT_TYPE_MESSAGES.getOrDefault(parentSegmentType, UNKNOWN_SEGMENT_TYPE_MESSAGE)));
-         ColumnSegment result = copy(columnSegment);
-         inputColumnSegment.ifPresent(optional -> result.setVariable(optional.isVariable()));
-@@ -123,8 +124,7 @@ public static ColumnSegment bind(final ColumnSegment segment, final SegmentType
-         return result;
-     }
-     
--    private static Optional<ColumnSegment> createNestedObjectColumnSegment(final ColumnSegment segment, final SegmentType parentSegmentType,
--                                                                           final SQLStatementBinderContext binderContext,
-+    private static Optional<ColumnSegment> createNestedObjectColumnSegment(final ColumnSegment segment, final SegmentType parentSegmentType, final SQLStatementBinderContext binderContext,
-                                                                            final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
-                                                                            final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts) {
-         if (!segment.getOwner().isPresent()) {
-@@ -398,14 +398,15 @@ private static ColumnSegment createVariableColumnSegment(final ColumnSegment seg
-         return result;
-     }
-     
--    private static boolean isSkipColumnBind(final Collection<TableSegmentBinderContext> tableBinderContexts, final Collection<TableSegmentBinderContext> outerBinderContexts) {
-+    private static boolean isSkipColumnBind(final Collection<TableSegmentBinderContext> tableBinderContexts, final Collection<TableSegmentBinderContext> outerBinderContexts,
-+                                            final Collection<TableSegmentBinderContext> localBinderContexts) {
-         for (TableSegmentBinderContext each : tableBinderContexts) {
-             if (each instanceof FunctionTableSegmentBinderContext) {
-                 return true;
-             }
-             if (each instanceof SimpleTableSegmentBinderContext) {
-                 SimpleTableSegmentBinderContext binderContext = (SimpleTableSegmentBinderContext) each;
--                return binderContext.isContainsDBLink() || binderContext.isSkipColumnBind();
-+                return binderContext.isContainsDBLink() || binderContext.isSkipColumnBind() && (!binderContext.getOriginalTableName().isPresent() || localBinderContexts.contains(each));
-             }
-         }
-         for (TableSegmentBinderContext each : outerBinderContexts) {
-@@ -414,7 +415,7 @@ private static boolean isSkipColumnBind(final Collection<TableSegmentBinderConte
-             }
-             if (each instanceof SimpleTableSegmentBinderContext) {
-                 SimpleTableSegmentBinderContext binderContext = (SimpleTableSegmentBinderContext) each;
--                return binderContext.isContainsDBLink() || binderContext.isSkipColumnBind();
-+                return binderContext.isContainsDBLink() || binderContext.isSkipColumnBind() && !binderContext.getOriginalTableName().isPresent();
-             }
-         }
-         return false;
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/from/type/SimpleTableSegmentBinder.java` (modified, +19/-0)
-```diff
-@@ -30,6 +30,7 @@
- import org.apache.shardingsphere.database.exception.core.exception.syntax.database.NoDatabaseSelectedException;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
+ import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
  import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.table.TableExistsException;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- import org.apache.shardingsphere.infra.binder.engine.segment.SegmentType;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.expression.ExpressionSegmentBinder;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.context.TableSegmentBinderContext;
-@@ -69,9 +70,11 @@
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.view.AlterViewStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.view.CreateViewStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.view.DropViewStatement;
-+import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.SelectStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.UpdateStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
+ import org.apache.shardingsphere.distsql.statement.type.rul.sql.ParseStatement;
++import org.apache.shardingsphere.driver.executor.engine.batch.preparedstatement.DriverExecuteBatchExecutor;
+ import org.apache.shardingsphere.driver.executor.engine.facade.DriverExecutorFacade;
+ import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
+ import org.apache.shardingsphere.driver.jdbc.core.resultset.GeneratedKeysResultSet;
+@@ -81,11 +81,69 @@
+ import static org.mockito.Mockito.mockConstruction;
+ import static org.mockito.Mockito.mockStatic;
+ import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.spy;
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
++import static org.mockito.Mockito.withSettings;
  
-+import javax.annotation.Nullable;
- import java.util.Collection;
- import java.util.Collections;
- import java.util.LinkedList;
-@@ -447,6 +450,10 @@ private static Optional<SimpleTableSegmentBinderContext> createSimpleTableBinder
-         }
-         SimpleTableSegmentBinderContext result = new SimpleTableSegmentBinderContext(Collections.emptyList(), TableSourceType.TEMPORARY_TABLE);
-         result.setSkipColumnBind(binderContext.getHintValueContext().isSkipMetadataValidate() && segment.getOwner().isPresent());
-+        if (isDummyTable(segment, schema, binderContext)) {
-+            result.setOriginalTableName(tableName);
-+            result.setSkipColumnBind(true);
-+        }
-         segment.getDbLink().ifPresent(optional -> result.setContainsDBLink(true));
-         return Optional.of(result);
-     }
-@@ -504,4 +511,16 @@ private static ColumnSegment createColumnSegment(final SimpleTableSegment segmen
-                 new ColumnSegmentBoundInfo(new TableSegmentBoundInfo(databaseName, schemaName), tableName, new IdentifierValue(column.getName(), quoteCharacter), TableSourceType.PHYSICAL_TABLE));
-         return result;
-     }
-+    
-+    @HighFrequencyInvocation
-+    private static boolean isDummyTable(final SimpleTableSegment segment, @Nullable final ShardingSphereSchema schema, final SQLStatementBinderContext binderContext) {
-+        if (!(binderContext.getSqlStatement() instanceof SelectStatement) || ((SelectStatement) binderContext.getSqlStatement()).getFrom().orElse(null) != segment
-+                || segment.getOwner().isPresent() || segment.getDbLink().isPresent() || QuoteCharacter.NONE != segment.getTableName().getIdentifier().getQuoteCharacter()) {
-+            return false;
-+        }
-+        String tableName = segment.getTableName().getIdentifier().getValue();
-+        return new DatabaseTypeRegistry(binderContext.getSqlStatement().getDatabaseType()).getDialectDatabaseMetaData().getSQLOption().getDummyTableName()
-+                .filter(each -> each.equalsIgnoreCase(tableName)).isPresent()
-+                && (null == schema || !schema.containsView(tableName));
-+    }
- }
-```
-
-**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/ColumnSegmentBinderTest.java` (modified, +37/-0)
-```diff
-@@ -48,7 +48,9 @@
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.params.ParameterizedTest;
- import org.junit.jupiter.params.provider.Arguments;
-+import org.junit.jupiter.params.provider.CsvSource;
- import org.junit.jupiter.params.provider.MethodSource;
-+import org.junit.jupiter.params.provider.ValueSource;
- import org.mockito.MockedConstruction;
- 
- import java.util.Arrays;
-@@ -170,6 +172,41 @@ private static Stream<Arguments> unresolvedSourceOwnerCases() {
-                 Arguments.of("skipped non-function source", ImmutableMultimap.of(CaseInsensitiveString.of("foo_source"), skippedSource)));
-     }
+ class ShardingSpherePreparedStatementTest {
      
-+    @ParameterizedTest(name = "owner={0}")
-+    @ValueSource(strings = {"foo_outer", "foo_unknown", ""})
-+    void assertBindSkippedOuterSource(final String owner) {
-+        SimpleTableSegmentBinderContext outerContext = new SimpleTableSegmentBinderContext(Collections.emptyList(), TableSourceType.TEMPORARY_TABLE, new IdentifierValue("DUAL"));
-+        outerContext.setSkipColumnBind(true);
-+        ColumnSegment column = new ColumnSegment(0, 6, new IdentifierValue("foo_key"));
-+        if (!owner.isEmpty()) {
-+            column.setOwner(new OwnerSegment(0, owner.length() - 1, new IdentifierValue(owner)));
-+        }
-+        assertThrows(ColumnNotFoundException.class, () -> ColumnSegmentBinder.bind(column, SegmentType.PROJECTION, createBinderContext(), LinkedHashMultimap.create(),
-+                ImmutableMultimap.of(CaseInsensitiveString.of("foo_outer"), outerContext)));
++    @ParameterizedTest(name = "parameter index {0}")
++    @MethodSource("provideInvalidParameterIndexes")
++    void assertSetObjectWithInvalidIndex(final int parameterIndex) throws SQLException {
++        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
++        preparedStatement.setObject(1, 10);
++        preparedStatement.setObject(2, 10);
++        preparedStatement.setObject(3, null);
++        SQLException actual = assertThrows(SQLException.class, () -> preparedStatement.setObject(parameterIndex, 1));
++        assertThat(actual.getMessage(), is(String.format("Parameter index '%d' is out of range. Number of parameters: 3.", parameterIndex)));
++        assertThat(preparedStatement.getParameters(), is(Arrays.asList(10, 10, null)));
++    }
++    
++    private ShardingSpherePreparedStatement createPreparedStatementWithParameters() throws SQLException {
++        SQLStatement sqlStatement = spy(new SQLStatement(TypedSPILoader.getService(DatabaseType.class, "SQL92")));
++        when(sqlStatement.getParameterCount()).thenReturn(3);
++        return createPreparedStatementWithSQLStatement(sqlStatement);
++    }
++    
++    private static Stream<Integer> provideInvalidParameterIndexes() {
++        return Stream.of(-1, 0, 4);
 +    }
 +    
 +    @Test
-+    void assertBindSkippedLocalDummySource() {
-+        SimpleTableSegmentBinderContext context = new SimpleTableSegmentBinderContext(Collections.emptyList(), TableSourceType.TEMPORARY_TABLE, new IdentifierValue("DUAL"));
-+        context.setSkipColumnBind(true);
-+        ColumnSegment actual = ColumnSegmentBinder.bind(new ColumnSegment(0, 6, new IdentifierValue("foo_key")), SegmentType.PROJECTION, createBinderContext(),
-+                ImmutableMultimap.of(CaseInsensitiveString.of("foo_dummy"), context), LinkedHashMultimap.create());
-+        assertThat(actual.getColumnBoundInfo().getOriginalColumn().getValue(), is("foo_key"));
++    void assertSetObjectWithoutParameters() throws SQLException {
++        ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
++        SQLException actual = assertThrows(SQLException.class, () -> preparedStatement.setObject(1, 1));
++        assertThat(actual.getMessage(), is("Parameter index '1' is out of range. Number of parameters: 0."));
++        assertTrue(preparedStatement.getParameters().isEmpty());
 +    }
 +    
-+    @ParameterizedTest(name = "DBLink={0}, hint={1}, owner={2}")
-+    @CsvSource({"true, false, foo_outer", "true, false, foo_unknown", "false, true, foo_outer", "false, true, foo_unknown"})
-+    void assertBindLegacySkippedOuterSource(final boolean containsDBLink, final boolean skipMetadataValidate, final String owner) {
-+        SimpleTableSegmentBinderContext outerContext = new SimpleTableSegmentBinderContext(Collections.emptyList(), TableSourceType.TEMPORARY_TABLE);
-+        outerContext.setContainsDBLink(containsDBLink);
-+        outerContext.setSkipColumnBind(skipMetadataValidate);
-+        ColumnSegment column = new ColumnSegment(0, 6, new IdentifierValue("foo_key"));
-+        column.setOwner(new OwnerSegment(0, owner.length() - 1, new IdentifierValue(owner)));
-+        ColumnSegment actual = ColumnSegmentBinder.bind(column, SegmentType.PROJECTION, createBinderContext(), LinkedHashMultimap.create(),
-+                ImmutableMultimap.of(CaseInsensitiveString.of("foo_outer"), outerContext));
-+        assertThat(actual.getColumnBoundInfo().getOriginalColumn().getValue(), is("foo_key"));
++    @Test
++    void assertSetObjectOutOfOrderAndRepeatedly() throws SQLException {
++        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
++        preparedStatement.setObject(3, "foo_status");
++        assertThat(preparedStatement.getParameters(), is(Arrays.asList(null, null, "foo_status")));
++        preparedStatement.setObject(1, 10);
++        preparedStatement.setObject(2, 10);
++        preparedStatement.setObject(1, 11);
++        preparedStatement.setObject(3, null);
++        assertThat(preparedStatement.getParameters(), is(Arrays.asList(11, 10, null)));
++    }
++    
++    @Test
++    void assertAddBatchAfterInvalidParameterIndex() throws SQLException, ReflectiveOperationException {
++        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
++        DriverExecuteBatchExecutor batchExecutor = mock(DriverExecuteBatchExecutor.class);
++        Plugins.getMemberAccessor().set(ShardingSpherePreparedStatement.class.getDeclaredField("executeBatchExecutor"), preparedStatement, batchExecutor);
++        preparedStatement.setObject(1, 10);
++        preparedStatement.setObject(2, 10);
++        preparedStatement.setObject(3, null);
++        assertThrows(SQLException.class, () -> preparedStatement.setObject(4, 1));
++        preparedStatement.addBatch();
++        verify(batchExecutor).addBatch(argThat(actual -> actual.getParameters().equals(Arrays.asList(10, 10, null))), same(preparedStatement.getUsedDatabase()));
++        assertTrue(preparedStatement.getParameters().isEmpty());
 +    }
 +    
      @Test
-     void assertBindAmbiguousLocalOrderByColumnBeforeOuter() {
-         SQLStatementBinderContext binderContext = createBinderContext();
+     void assertGetQueryTimeoutBeforeExecution() throws SQLException {
+         ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
+@@ -256,12 +314,10 @@ void assertExecuteUpdateWhenPostgreSQLTra
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40545** (2026-11-24): Fix prepared statement parameter index validation (@terrymanu)
+- **PR #40543** (2026-11-23): Use AST and dialect options for PostgreSQL SQL handling (@strongduanmu)
 - **PR #40539** (2026-11-22): Fix Oracle unparenthesized function binding for dummy table queries (@terrymanu)
 - **PR #40538** (2026-11-21): Fix PostgreSQL keyword identifier compatibility (@terrymanu)
 - **PR #40537** (2026-11-21): Add regression coverage for unsupported Javadoc parameter nullability (@terrymanu)
 - **PR #40536** (2026-11-21): Align SQL federation XML loading with existing JAXB tests (@terrymanu)
-- **PR #40532** (2026-11-20): Move shared pipeline job types to API (@sandynz)
-- **PR #40529** (2026-11-19): Refactor SingleRule attribute initialization (@strongduanmu)
 
 ---
 
@@ -1800,41 +1871,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Oracle unparenthesized function binding for dummy table queries
+## X. prepared statement parameter index validation
 
 **RULE**:
-When implementing operations in `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2436670d`: Oracle unparenthesized function binding for dummy table queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00f96061`: prepared statement parameter index validation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.util.Optional;
-
-    
-    /**
-     * Get dummy table name.
-     *
-     * @return dummy table name, or empty if not declared
-     */
-    default Optional<String> getDummyTableName() {
-        return Optional.empty();
-    }
+    public final void setNull(final int parameterIndex, final int sqlType) throws SQLException {
+    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
+    public final void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
+    public final void setByte(final int parameterIndex, final byte x) throws SQLException {
+    public final void setShort(final int parameterIndex, final short x) throws SQLException {
+    public final void setInt(final int parameterIndex, final int x) throws SQLException {
+    public final void setLong(final int parameterIndex, final long x) throws SQLException {
+    public final void setFloat(final int parameterIndex, final float x) throws SQLException {
+    public final void setDouble(final int parameterIndex, final double x) throws SQLException {
+    public final void setString(final int parameterIndex, final String x) throws SQLException {
+    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
+    public final void setDate(final int parameterIndex, final Date x) throws SQLException {
+    public final void setDate(final
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    public final void setNull(final int parameterIndex, final int sqlType) {
+    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) {
+    public final void setBoolean(final int parameterIndex, final boolean x) {
+    public final void setByte(final int parameterIndex, final byte x) {
+    public final void setShort(final int parameterIndex, final short x) {
+    public final void setInt(final int parameterIndex, final int x) {
+    public final void setLong(final int parameterIndex, final long x) {
+    public final void setFloat(final int parameterIndex, final float x) {
+    public final void setDouble(final int parameterIndex, final double x) {
+    public final void setString(final int parameterIndex, final String x) {
+    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) {
+    public final void setDate(final int parameterIndex, final Date x) {
+    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) {
+    public final void setTime(final int parameterIndex, final Time x) {
+    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) {
+    public final vo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2436670d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00f96061` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

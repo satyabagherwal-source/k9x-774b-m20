@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "def28df2",
+    "sourceVersion": "cbb61e6f",
     "license": "MIT",
-    "contentHash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
-    "lastHarvestedAt": "2026-11-21T21:40:19.374Z",
+    "contentHash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
+    "lastHarvestedAt": "2026-11-24T13:47:21.863Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "0d551770",
+    "sourceVersion": "00f96061",
     "license": "Apache-2.0",
-    "contentHash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
-    "lastHarvestedAt": "2026-11-23T17:20:51.843Z",
+    "contentHash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
+    "lastHarvestedAt": "2026-11-24T13:47:30.064Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {

@@ -12682,3 +12682,6 @@
 | `CYCLE-20261124-FGQT` | `2026-11-24T13:30:21.701Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10267` | Yes (`5bee2fab...`) |
 | `CYCLE-20261124-FIEU` | `2026-11-24T13:30:23.862Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10268` | Yes (`07409b9f...`) |
 | `CYCLE-20261124-QDHC` | `2026-11-24T13:38:50.688Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10269` | Yes (`443fc7a1...`) |
+| `CYCLE-20261124-1BWJ` | `2026-11-24T13:47:21.859Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10270` | Yes (`b2e1c81c...`) |
+| `CYCLE-20261124-1I8C` | `2026-11-24T13:47:30.060Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10271` | Yes (`aee5d064...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T13:48:09.884Z` | `i18next-react-i18next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-23B9B1A9` [Domain H] | Yes (`d97e5809...`) |

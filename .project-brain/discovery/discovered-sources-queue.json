@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T13:30:30.166Z",
+  "updated_at": "2026-11-24T13:48:11.897Z",
   "stats": {
-    "total_discovered": 8629,
-    "approved_pending_harvest": 8176,
+    "total_discovered": 8638,
+    "approved_pending_harvest": 8185,
     "harvested_count": 0,
     "rejected_count": 453,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8172,
+      "COMMUNITY_AND_EXPERT": 8181,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 124,
       "ENGINEERING_BLOGS": 7,
@@ -186690,6 +186690,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-65A1A56859D7": {
+      "id": "SRC-65A1A56859D7",
+      "url": "https://github.com/i18next/react-i18next-gitbook",
+      "title": "https://github.com/i18next/react-i18next-gitbook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-72FF3C61ED5D": {
+      "id": "SRC-72FF3C61ED5D",
+      "url": "https://www.i18next.com/react",
+      "title": "https://www.i18next.com/react",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-9009AC874BF8": {
+      "id": "SRC-9009AC874BF8",
+      "url": "https://github.com/i18next/www",
+      "title": "https://github.com/i18next/www",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-0474200A33E9": {
+      "id": "SRC-0474200A33E9",
+      "url": "https://github.com/i18next/i18next-gitbook",
+      "title": "https://github.com/i18next/i18next-gitbook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-14E47C347B90": {
+      "id": "SRC-14E47C347B90",
+      "url": "https://react.i18next.com/latest/trans-component",
+      "title": "https://react.i18next.com/latest/trans-component",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-49D6C682AD1A": {
+      "id": "SRC-49D6C682AD1A",
+      "url": "https://www.i18next.com/react/latest/trans-component",
+      "title": "https://www.i18next.com/react/latest/trans-component",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-14382B98DF1A": {
+      "id": "SRC-14382B98DF1A",
+      "url": "https://github.com/i18next/react-i18next/issues",
+      "title": "https://github.com/i18next/react-i18next/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-FD1275128DF4": {
+      "id": "SRC-FD1275128DF4",
+      "url": "https://github.com/i18next/i18next-browser-languageDetector",
+      "title": "https://github.com/i18next/i18next-browser-languageDetector",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:10.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-72F272045D02": {
+      "id": "SRC-72F272045D02",
+      "url": "https://github.com/apache/shardingsphere/pull/40545",
+      "title": "https://github.com/apache/shardingsphere/pull/40545",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:48:11.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
       }
     }
   }

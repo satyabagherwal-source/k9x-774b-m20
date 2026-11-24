@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-R5SY",
-    "timestamp": "2026-11-22T18:44:02.722Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-R8KK",
-    "timestamp": "2026-11-22T18:44:06.308Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-26FJ",
     "timestamp": "2026-11-22T18:52:36.751Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-1BWJ",
+    "timestamp": "2026-11-24T13:47:21.859Z",
+    "repository": "i18next/react-i18next",
+    "learningId": "learn-github-i18next-react-i18next",
+    "contentHash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-1I8C",
+    "timestamp": "2026-11-24T13:47:30.060Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

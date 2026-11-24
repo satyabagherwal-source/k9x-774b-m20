@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:38:56.283Z",
-  "total_records": 2525,
+  "last_updated": "2026-11-24T13:48:13.674Z",
+  "total_records": 2526,
   "domains": {
     "A": {
       "total": 22,
@@ -1597,7 +1597,7 @@
       ]
     },
     "H": {
-      "total": 602,
+      "total": 603,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2200,7 +2200,8 @@
         "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar",
         "DOM-H-E38FCD3B",
         "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants",
+        "DOM-H-23B9B1A9"
       ]
     },
     "I": {
@@ -9258,8 +9259,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d45143a7fe491849a343cf0973bbc7b1aceaa5c00a069b720c0e77c4b94e513b",
-      "created_at": "2026-11-24T13:38:56.283Z"
+      "content_hash": "d7b2f7fc8f14f12a37e14ab3fca901970ad3a023bb918a213f002293483bb215",
+      "created_at": "2026-11-24T13:48:13.674Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13221,8 +13222,8 @@
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "repository": "i18next/react-i18next",
-      "content_hash": "7d5515073cb98758d8d1bbaf87e79abfc45549ccd4dde2354cc4032120dc57db",
-      "created_at": "2026-11-21T21:40:19.746Z"
+      "content_hash": "77bdac0905dc0c7b25768c2f78934f9881fa1ae59e2c53bb4e737e23bb2b5a68",
+      "created_at": "2026-11-24T13:47:22.421Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants",
@@ -13343,8 +13344,8 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-learnings-technical-construction-intelligence-i18next-reac.md",
       "repository": "i18next-react-i18next-learnings",
-      "content_hash": "0d742ce0f97f4410e6e8a47c75fa2dd629d7e128806431491cd745c5e0b3d4d8",
-      "created_at": "2026-11-21T21:41:00.286Z"
+      "content_hash": "f1fd939782d1487b203a09360d5271242f96908c00c562a2491c0b51e8b2459f",
+      "created_at": "2026-11-24T13:48:11.269Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -23288,8 +23289,8 @@
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "d536573e11a8a29da9b3c7678a94f4b8efccc70f01eb7e668a81cf1fb0f35412",
-      "created_at": "2026-11-22T12:57:02.775Z"
+      "content_hash": "5fde4bdd36d6b5b7c39c23cbfb49dea44cabebb71aee272b53082acac78a52a1",
+      "created_at": "2026-11-24T13:47:30.578Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
@@ -23315,8 +23316,8 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-learnings-research-knowledge-intelligence-apache-shardings.md",
       "repository": "apache-shardingsphere-learnings",
-      "content_hash": "bbb859de149b237ea8e841f064a2d3bdfb9974c73ab89db5a507aeeb0836671e",
-      "created_at": "2026-11-22T13:01:54.603Z"
+      "content_hash": "0129b7ebe3d8aa99c9812b9e121fb86f7f27f985664b03a9c014be439714ab44",
+      "created_at": "2026-11-24T13:48:12.536Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
@@ -42369,6 +42370,54 @@
       "repository": "fabio-rovai-open-ontologies-learnings",
       "content_hash": "f7e7fd93bbee313a5662cc6179b307a6a6128e9e25b1debc8a06e80f2376a14e",
       "created_at": "2026-11-24T13:21:17.915Z"
+    },
+    "DOM-H-23B9B1A9": {
+      "record_id": "DOM-H-23B9B1A9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        },
+        {
+          "letter": "I",
+          "id": "content_information",
+          "name": "Content & Information Intelligence"
+        }
+      ],
+      "title": "docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+      "content": "When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d97e58092b762f4313da3ee33e204959c821597d41ad27a6e9804da1455016c3",
+      "summary": "Prevents defects observed in production commit `cbb61e6f`: docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18n -> When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurr",
+      "provenance": {
+        "source_uri": "project://i18next-react-i18next/i18next-react-i18next-learnings.md",
+        "source_version": "cbb61e6f",
+        "observed_at": "2026-11-24T13:47:20.600Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (i18next-react-i18next)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of i18next-react-i18next"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H",
+          "I"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.62,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T13:48:09.842Z"
     }
   }
 }

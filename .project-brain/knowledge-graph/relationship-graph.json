@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T12:54:40.832Z",
+  "updated_at": "2026-11-24T13:48:09.881Z",
   "statistics": {
-    "total_nodes": 504,
-    "total_edges": 208,
+    "total_nodes": 505,
+    "total_edges": 209,
     "domain_distribution": {
       "D": 305,
       "M": 1,
-      "H": 92,
+      "H": 93,
       "J": 22,
       "K": 30,
       "L": 8,
@@ -20,7 +20,7 @@
       "I": 12
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 204,
+      "CONSTRAINED_BY_ARCHITECTURE": 205,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11258,6 +11258,29 @@
       ],
       "created_at": "2026-11-24T12:54:40.832Z",
       "updated_at": "2026-11-24T12:54:40.832Z"
+    },
+    "DOM-H-23B9B1A9": {
+      "id": "DOM-H-23B9B1A9",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18",
+      "summary": "Prevents defects observed in production commit `cbb61e6f`: docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18n -> When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurr",
+      "confidence": 0.62,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://i18next-react-i18next/i18next-react-i18next-learnings.md",
+        "source_version": "cbb61e6f",
+        "observed_at": "2026-11-24T13:47:20.600Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (i18next-react-i18next)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "I"
+      ],
+      "created_at": "2026-11-24T13:48:09.881Z",
+      "updated_at": "2026-11-24T13:48:09.881Z"
     }
   },
   "edges": [
@@ -13340,6 +13363,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-E38FCD3B [H] with Domain F",
       "created_at": "2026-11-24T12:54:40.832Z"
+    },
+    {
+      "id": "EDGE-74F406249C76",
+      "sourceId": "DOM-H-23B9B1A9",
+      "targetId": "NODE-I-domain-bridge-i",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-23B9B1A9 [H] with Domain I",
+      "created_at": "2026-11-24T13:48:09.881Z"
     }
   ]
 }

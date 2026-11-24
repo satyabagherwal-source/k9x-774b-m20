@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T13:38:53.998Z",
-    "lastVerified": "2026-11-24T13:38:53.998Z",
+    "lastChecked": "2026-11-24T13:47:33.515Z",
+    "lastVerified": "2026-11-24T13:47:33.515Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,12 +140,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "stakater-reloader": {
-    "name": "stakater/Reloader",
+    "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T18:16:00.633Z",
-    "lastVerified": "2026-11-23T18:16:00.633Z",
+    "lastChecked": "2026-11-24T13:47:17.635Z",
+    "lastVerified": "2026-11-24T13:47:17.635Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stakater-reloader",
@@ -154,7 +154,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6002095f"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -377,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T13:12:40.608Z",
-    "lastVerified": "2026-11-24T13:12:40.608Z",
+    "lastChecked": "2026-11-24T13:47:25.187Z",
+    "lastVerified": "2026-11-24T13:47:25.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1341,9 +1342,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-24T08:05:37.465Z",
+    "lastChecked": "2026-11-24T13:47:20.115Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-24T08:05:37.465Z"
+    "lastVerified": "2026-11-24T13:47:20.115Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3363,14 +3364,14 @@
     "officialUrl": "https://github.com/i18next/react-i18next",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-21T21:40:18.347Z",
-    "lastVerified": "2026-11-21T21:40:18.347Z",
+    "lastChecked": "2026-11-24T13:47:20.375Z",
+    "lastVerified": "2026-11-24T13:47:20.375Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
+    "contentHash": "b2e1c81c204bce403fa95b811bcd014b4107d7760ea2461b055fad4163cba31d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4364,9 +4365,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-23T06:53:48.358Z",
+    "lastChecked": "2026-11-24T13:47:10.095Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-23T06:53:48.358Z"
+    "lastVerified": "2026-11-24T13:47:10.095Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -5556,14 +5557,14 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-23T17:20:50.578Z",
-    "lastVerified": "2026-11-23T17:20:50.578Z",
+    "lastChecked": "2026-11-24T13:47:28.825Z",
+    "lastVerified": "2026-11-24T13:47:28.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
+    "contentHash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10367,9 +10368,9 @@
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",
     "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
-    "lastChecked": "2026-11-20T11:08:45.672Z",
+    "lastChecked": "2026-11-24T13:47:12.723Z",
     "revisionIdentifier": "a7fc287e",
-    "lastVerified": "2026-11-20T11:08:45.672Z"
+    "lastVerified": "2026-11-24T13:47:12.723Z"
   },
   "joreilly-confetti": {
     "name": "joreilly/Confetti",

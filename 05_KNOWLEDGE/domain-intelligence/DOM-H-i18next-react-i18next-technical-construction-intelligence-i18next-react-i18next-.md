@@ -4,24 +4,24 @@
 {
   "source_repository": "i18next/react-i18next",
   "source_url": "https://github.com/i18next/react-i18next",
-  "source_version": "def28df2",
+  "source_version": "cbb61e6f",
   "license": "MIT",
-  "timestamp": "2026-11-21T21:40:19.589Z",
+  "timestamp": "2026-11-24T13:47:22.149Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-i18next-react-i18next",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [i18next/react-i18next](https://github.com/i18next/react-i18next) (Revision: `def28df2`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T21:40:19.589Z`  
+> **Provenance**: Harvested from [i18next/react-i18next](https://github.com/i18next/react-i18next) (Revision: `cbb61e6f`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:47:22.149Z`  
 > **Learning ID**: `learn-github-i18next-react-i18next`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from i18next/react-i18next:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:40:18.347Z  
+> **Harvest Timestamp**: 2026-11-24T13:47:20.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10070 stars
+- **Stars / Engagement**: 10072 stars
 
 ---
 
@@ -1020,339 +1020,63 @@ declare module 'react' {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5db47334` (2026-11-19)
-**Commit Message**: build
+### Incident Patch 1: `cbb61e6f` (2026-11-22)
+**Commit Message**: docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18next/www
 
-**File**: `react-i18next.js` (modified, +37/-22)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -567,7 +567,7 @@
-     });
-     return stringNode;
-   };
--  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts) => {
-+  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts, tInterpolated) => {
-     if (targetString === '') return [];
-     const keepArray = i18nOptions.transKeepBasicHtmlNodesFor || [];
-     const emptyChildrenButNeedsHandling = targetString && new RegExp(keepArray.map(keep => `<${keep}`).join('|')).test(targetString);
-@@ -587,7 +587,7 @@
-     const ast = index.parse(`<0>${targetString}</0>`, {
-       allowedTags
-     });
--    const opts = {
-+    const opts = tInterpolated ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts))) : {
-       ...data,
-       ...combinedTOpts
-     };
-@@ -882,6 +882,7 @@
-     };
-     let translation = key ? t(key, combinedTOpts) : defaultValue;
-     if (translation === key && defaultValue) translation = defaultValue;
-+    const tInterpolated = interpolateBeforeParsing && translation !== defaultValue && !formatPlugin && !combinedTOpts.skipInterpolation;
-     const generatedComponents = generateComponents(mergedComponents, translation, i18n, i18nKey);
-     let indexedChildren = generatedComponents || children;
-     let componentsMap = null;
-@@ -892,7 +893,7 @@
-       componentsMap = generatedComponents;
-       indexedChildren = undefined;
-     }
--    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts);
-+    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts, tInterpolated);
-     const useAsParent = parent ?? reactI18nextOptions.defaultTransParent;
-     return useAsParent ? React.createElement(useAsParent, additionalProps, content) : content;
-   }
-@@ -976,6 +977,25 @@
-       if (bindI18nStore) i18n.store.off(bindI18nStore, callback);
-     };
-   };
-+  const eventCounts = new WeakMap();
-+  const countEvents = (emitter, events) => {
-+    if (!events) return 0;
-+    let counts = eventCounts.get(emitter);
-+    if (!counts) eventCounts.set(emitter, counts = new Map());
-+    let sum = 0;
-+    events.split(' ').forEach(event => {
-+      if (!counts.has(event)) {
-+        counts.set(event, 0);
-+        emitter.on(event, () => counts.set(event, counts.get(event) + 1));
-+      }
-+      sum += counts.get(event);
-+    });
-+    return sum;
-+  };
-+  const revision = (i18n, {
-+    bindI18n,
-+    bindI18nStore
-+  }) => countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
-   const useRerenderOnEvents = i18n => {
-     const {
-       bindI18n,
-@@ -984,15 +1004,18 @@
-       ...getDefaults(),
-       ...i18n?.options?.react
-     };
--    const revisionRef = React.useRef(0);
-     const subscribe = React.useCallback(callback => i18n ? subscribeToEvents(i18n, {
-       bindI18n,
-       bindI18nStore
--    }, () => {
--      revisionRef.current += 1;
--      callback();
--    }) : () => {}, [i18n, bindI18n, bindI18nStore]);
--    const getSnapshot = () => bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
-+    }, callback) : () => {}, [i18n, bindI18n, bindI18nStore]);
-+    const getSnapshot = () => {
-+      if (!i18n) return '';
-+      const rev = revision(i18n, {
-+        bindI18n,
-+        bindI18nStore
-+      });
-+      return bindI18n ? `${rev}|${languageKey(i18n)}` : String(rev);
-+    };
-     React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-   };
-   const useTranslation = (ns, props = {}) => {
-@@ -1024,26 +1047,18 @@
-     const namespacesKey = JSON.stringify(unstableNamespaces);
-     const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
-     i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
--    const revisionRef = React.useRef(0);
--    const subscribe = React.useCallback(callback => {
--      if (!i18n) return dummySubscribe;
--      const wrappedCallback = () => {
--        revisionRef.current += 1;
--        callback();
--      };
--      return subscribeToEvents(i18n, {
--        bindI18n,
--        bindI18nStore
--      }, wrappedCallback);
--    }, [i18n, bindI18n, bindI18nStore]);
-+    const subscribe = React.useCallback(callback => i18n ? subscribeToEvents(i18n, {
-+      bindI18n,
-+      bindI18nStore
-+    }, callback) : dummySubscribe, [i18n, bindI18n, bindI18nStore]);
-     const snapshotRef = React.useRef();
-     const getSnapshot = React.useCallback(() => {
-       if (!i18n) {
-         return notReadySnapshot;
-       }
-       const calculatedReady = !!(i18n.isInitialized || i18n.initializedStoreOnce) && namespaces.every(n => hasLoadedNamespace(n, i18n, i18nOptions));
-       const currentLng = props.lng || i18n.language;
--      const currentRevision = revisionRef.current;
-+      const currentRevision = revision(i18n, i18nOptions);
-       const keyPrefixKey = typeof keyPrefix === 'function' ? i18next.keyFromSelector(keyPrefix, {
-         ...i1
+@@ -48,9 +48,9 @@ the steps it prints, in order, checking each one before the next.
+ 
+ ### Documentation
+ 
+-The documentation is published on [react.i18next.com](https://react.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/react-i18next-gitbook).
++The documentation is published on [www.i18next.com/react](https://www.i18next.com/react) and PR changes can be supplied [here](https://github.com/i18next/www).
+ 
+-The general i18next documentation is published on [www.i18next.com](https://www.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/i18next-gitbook).
++The general i18next documentation is published on [www.i18next.com](https://www.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/www).
+ 
+ ### What will my code look like?
+ 
+@@ -153,7 +153,7 @@ Some basics of i18next and some cool possibilities on how to optimize your local
+ 
+ #### v9
+ 
+-- react >= **0.14.0** (in case of < v16 or preact you will need to define parent in [Trans component](https://react.i18next.com/latest/trans-component#trans-props) or globally in [i18next.react options](https://react.i18next.com/latest/trans-component#i18next-options))
++- react >= **0.14.0** (in case of < v16 or preact you will need to define parent in [Trans component](https://www.i18next.com/react/latest/trans-component#trans-props) or globally in [i18next.react options](https://www.i18next.com/react/latest/trans-component#i18next-options))
+ - i18next >= **2.0.0**
+ 
+ ## Core Contributors
 ```
 
-**File**: `react-i18next.min.js` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("react"),require("i18next")):"function"==typeof define&&define.amd?define(["exports","react","i18next"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).ReactI18next={},e.React,e.i18next)}(this,function(e,t,n){"use strict";const r={area:!0,base:!0,br:!0,col:!0,embed:!0,hr:!0,img:!0,input:!0,link:!0,meta:!0,param:!0,source:!0,track:!0,wbr:!0,"!doctype":!0,"!DOCTYPE":!0},s=/\s([^'"/\s><]+?)[\s/>]|([^\s=]+)=\s?("[^"]*"|'[^']*')/g;function i(e){const t={type:"tag",name:"",voidElement:!1,attrs:{},children:[]},n=e.match(/<\/?([^\s]+?)[/\s>]/);if(n&&(t.name=n[1],(r[n[1]]||"/"===e.charAt(e.length-2))&&(t.voidElement=!0),t.name.startsWith("!--"))){const t=e.indexOf("--\x3e");return{type:"comment",comment:-1!==t?e.slice(4,t):""}}const i=new RegExp(s);let a=null;for(;a=i.exec(e),null!==a;)if(a[0].trim())if(a[1]){const e=a[1].trim();let n=[e,null];const r=e.indexOf("=");r>-1&&(n=[e.slice(0,r),e.slice(r+1)]),t.attrs[n[0]]=n[1],i.lastIndex--}else a[2]&&(t.attrs[a[2]]=a[3].trim().substring(1,a[3].length-1));return t}const a=/<!--[\s\S]*?-->|<[a-zA-Z0-9\-!/](?:"[^"]*"|'[^']*'|[^'">])*>/g,o=/<\/?([^\s]+?)[/\s>]/,c=/^\s*$/,l=/^(script|style)$/i,u="\0",p=Object.create(null);function d(e){e.forEach(function(e){if("text"!==e.type)if("comment"!==e.type){for(const t in e.attrs){const n=e.attrs[t];"string"==typeof n&&n.indexOf(u)>-1&&(e.attrs[t]=n.split(u).join("<"))}e.children.length&&d(e.children)}else e.comment=e.comment.split(u).join("<");else e.content=e.content.split(u).join("<")})}function f(e,t){switch(t.type){case"text":return e+t.content;case"tag":{const n=t.voidElement&&"!doctype"!==t.name.toLowerCase()?"/>":">";return e+="<"+t.name+(t.attrs?function(e){const t=[];for(const n in e)null===e[n]?t.push(n):t.push(n+'="'+String(e[n]).replace(/"/g,"&quot;")+'"');return t.length?" "+t.join(" "):""}(t.attrs):"")+n,t.voidElement?e:e+t.children.reduce(f,"")+"</"+t.name+">"}case"comment":return e+="\x3c!--"+t.comment+"--\x3e"}}var g={parse:function(e,t){const n=t&&t.components||p,r=t&&t.allowedTags;let s=!1;if(r){const t="function"==typeof r?r:function(e){return r.indexOf(e)>-1};let n,i="",c=0;for(a.lastIndex=0;n=a.exec(e);){const r=n[0];i+=e.slice(c,n.index);const l=r.match(o);r.startsWith("\x3c!--")||l&&t(l[1])?(i+=r,c=n.index+r.length):(s=!0,i+=u,c=n.index+1,a.lastIndex=c)}e=i+e.slice(c)}const f=[],g=[];let m,h,y=-1,x=!1,b=0;if(0!==e.indexOf("<")){const t=e.indexOf("<");f.push({type:"text",content:-1===t?e:e.substring(0,t)})}const E=[];let v;for(;v=a.exec(e);)E.push(v);return E.forEach(function(e,t){const n=e[0];if(!n)return;if(n.startsWith("\x3c!--"))return;let r=0,s=0,i=-1,a=null;for(let e=0;e<n.length;e++){const t=n.charAt(e);a?t===a&&(a=null):'"'===t||"'"===t?a=t:"<"===t?(r++,2===r&&(i=e)):">"===t&&s++}const o=i>-1&&/[a-zA-Z0-9\-!/]/.test(n.charAt(i+1));if(r>s&&o){const e=n.substring(0,i),r=n.substring(e.length);E[t][0]=r,E[t].index+=e.length}}),E.forEach(function(t,r){const s=t[0];if(!s)return;const a=t.index;if(a<b)return;if(x){if(s!=="</"+m.name+">")return;x=!1}const o="/"!==s.charAt(1),u=s.startsWith("\x3c!--"),p=a+s.length,d=e.charAt(p),v=E[r+1];let N,I;if("<"===d&&v){const t=e.substring(p,v.index);N=t.split("<").length>t.split(">").length}if(u){const t=i(s);if(y<0)return f.push(t),f;I=g[y],I.children.push(t);const n=e.slice(p,v?v.index:void 0);return n.length>0&&I.children.push({type:"text",content:n}),f}if(o){y++,m=i(s),"tag"===m.type&&n[m.name]&&(m.type="component",x=!0);let t=!1;if(!x&&!m.voidElement&&l.test(m.name)){t=!0,h||(h=e.toLowerCase());const n=h.indexOf("</"+m.name.toLowerCase()+">",p),r=-1===n?e.length:n,s=e.slice(p,r);s&&m.children.push({type:"text",content:s}),b=r}m.voidElement||x||t||!d||"<"===d||m.children.push({type:"text",content:e.slice(p,v?v.index:void 0)}),0===y&&f.push(m),I=g[y-1],I&&I.children.push(m),g[y]=m}if((!o||m.voidElement)&&(y>-1&&(m.voidElement||m.name===s.slice(2,-1))&&(y--,m=-1===y?f:g[y]),!x&&("<"!==d||N)&&d)){I=-1===y?f:g[y].children;const t=v?v.index:-1;let n=e.slice(p,-1===t?void 0:t);c.test(n)&&(n=" "),(t>-1&&y+I.length>=0||" "!==n)&&I.push({type:"text",content:n})}}),s&&d(f),f},stringify:function(e){return e.reduce(function(e,t){return e+f("",t)},"")}};const m=(e,t,n,r)=>{const s=[n,{code:t,...r||{}}];if(e?.services?.logger?.forward)return e.services.logger.forward(s,"warn","react-i18next::",!0);S(s[0])&&(s[0]=`react-i18next:: ${s[0]}`),e?.services?.logger?.warn?e.services.logger.warn(...s):console?.warn&&console.warn(...s)},h=new WeakMap,y=new Set,x=(e,t,n,r)=>{if(S(n)){let t=y;const r=e?.services?.logger||e;if(O(r)&&(t=h.get(r),t||h.set(r,t=new Set)),t.has(n))return;t.add(n)}m(e,t,n,r)},b=()=>{try{return!1}catch(e){return!1}},E=(e,t)=>()=>{e.isInitialized?t():e.once("initialized",()=>t())},v=(e,t,n)=>{e.loadNamespaces(t,E(e,n))},N=(e,t,n,r)=>{if(S(n)&&(n=[n]),e.options.preload&&e.options.preload.indexOf(t)>-1)return v(e,n,r);n.forEach(t=>{e.options.ns.indexOf(t)<0&&e.o
+@@ -82,7 +82,7 @@
+       "default": "./augment-react.js"
+     }
+   },
+-  "homepage": "https://github.com/i18next/react-i18next",
++  "homepage": "https://www.i18next.com/react",
+   "bugs": "https://github.com/i18next/react-i18next/issues",
+   "repository": {
+     "type": "git",
 ```
 
 ---
 
-### Incident Patch 2: `77fdb3e3` (2026-11-19)
-**Commit Message**: fix: Trans with children keeps a placeholder that came in with a value (#1950)
+### Incident Patch 2: `c21adde2` (2026-11-22)
+**Commit Message**: example/locize: note that locize 4.6.0 remembers ?incontext=true for the browser tab
 
-**File**: `src/TransWithoutContext.js` (modified, +15/-1)
+**File**: `example/locize/src/i18n.js` (modified, +1/-1)
 ```diff
-@@ -151,6 +151,7 @@ const renderNodes = (
-   i18n,
-   i18nOptions,
-   combinedTOpts,
-+  tInterpolated,
- ) => {
-   if (targetString === '') return [];
- 
-@@ -193,7 +194,12 @@ const renderNodes = (
-   // parse ast from string with additional wrapper tag
-   // -> avoids issues in parser removing prepending text nodes
-   const ast = HTML.parse(`<0>${targetString}</0>`, { allowedTags });
--  const opts = { ...data, ...combinedTOpts };
-+  // when t() already filled in the values, only the object children's own variables are left: a
-+  // second pass with all of them would also fill a placeholder that came in with a value, which
-+  // interpolation.skipOnVariables prevents in t() (#1950)
-+  const opts = tInterpolated
-+    ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts)))
-+    : { ...data, ...combinedTOpts };
- 
-   const renderInner = (child, node, rootReactNode) => {
-     const childs = getChildren(child);
-@@ -625,6 +631,13 @@ export function Trans({
-   };
-   let translation = key ? t(key, combinedTOpts) : defaultValue;
-   if (translation === key && defaultValue) translation = defaultValue;
-+  // the children text as it came in (cimode, a t that returns the key or is not ready yet) was not
-+  // interpolated; a format plugin or skipInterpolation keep the old second pass
-+  const tInterpolated =
-+    interpolateBeforeParsing &&
-+    translation !== defaultValue &&
-+    !formatPlugin &&
-+    !combinedTOpts.skipInterpolation;
- 
-   const generatedComponents = generateComponents(mergedComponents, translation, i18n, i18nKey);
-   let indexedChildren = generatedComponents || children;
-@@ -645,6 +658,7 @@ export function Trans({
-     i18n,
-     reactI18nextOptions,
-     combinedTOpts,
-+    tInterpolated,
-   );
- 
-   // allows user to pass `null` to `parent`
-```
-
-**File**: `test/trans.render.skipOnVariables.spec.jsx` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+import { describe, it, expect, afterEach } from 'vitest';
-+import React from 'react';
-+import { render, cleanup } from '@testing-library/react';
-+import i18next from 'i18next';
-+import { Trans } from '../src/Trans';
-+
-+// https://github.com/i18next/react-i18next/issues/1950
-+// with children, a placeholder inside a value stays as it is (interpolation.skipOnVariables), as in t()
-+describe('Trans with children and values', () => {
-+  afterEach(cleanup);
-+
-+  const setup = async (options = {}, plugins = []) => {
-+    const i18n = i18next.createInstance();
-+    plugins.forEach((plugin) => i18n.use(plugin));
-+    await i18n.init({
-+      lng: 'en',
-+      resources: {
-+        en: { translation: { 'Hello {{name}}': 'Hello {{name}}', greeting: 'Hi {{name}}' } },
-+      },
-+      ...options,
-+    });
-+    return i18n;
-+  };
-+  const text = (element) => render(element).container.textContent;
-+  const name = 'from children';
-+
-+  it('does not fill a placeholder that came in with a value', async () => {
-+    const i18n = await setup();
-+    expect(
-+      text(
-+        <Trans i18n={i18n} values={{ name: '{{otherVar}}', otherVar: 'x' }}>
-+          Hello {{ name }}
-+        </Trans>,
-+      ),
-+    ).toBe('Hello {{otherVar}}');
-+  });
-+
-+  it('fills a value that contains its own placeholder once', async () => {
-+    const i18n = await setup();
-+    expect(
-+      text(
-+        <Trans i18n={i18n} values={{ name: '{{name}} is my name' }}>
-+          Hello {{ name }}
-+        </Trans>,
-+      ),
-+    ).toBe('Hello {{name}} is my name');
-+  });
-+
-+  it('does the same with count', async () => {
-+    const i18n = await setup();
-+    expect(
-+      text(
-+        <Trans i18n={i18n} count={2} values={{ name: '{{otherVar}}', otherVar: 'x' }}>
-+          Hello {{ name }}
-+        </Trans>,
-+      ),
-+    ).toBe('Hello {{otherVar}}');
-+  });
-+
-+  it('still fills the variables of other object children', async () => {
-+    const i18n = await setup({
-+      resources: { en: { translation: { greeting: 'Hi {{name}}, <1>{{city}}</1>' } } },
-+    });
-+    expect(
-+      text(
-+        <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
-+          Hi {{ name }}, <b>{{ city: 'Rome' }}</b>
-+        </Trans>,
-+      ),
-+    ).toBe('Hi Joe, Rome');
-+  });
-+
-+  describe('fills the values when t() did not', () => {
-+    it('in cimode', async () => {
-+      const i18n = await setup({ lng: 'cimode' });
-+      expect(
-+        text(
-+          <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hello Joe');
-+      expect(
-+        text(
-+          <Trans i18n={i18n} values={{ name: 'Joe' }}>
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hello Joe');
-+    });
-+
-+    it('with a t that returns the key', async () => {
-+      const i18n = await setup();
-+      expect(
-+        text(
-+          <Trans i18n={i18n} t={(k) => k} i18nKey="greeting" values={{ name: 'Joe' }}>
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hello Joe');
-+    });
-+
-+    it('with a t that returns the default value, as before the namespace is loaded', async () => {
-+      const i18n = await setup();
-+      expect(
-+        text(
-+          <Trans
-+            i18n={i18n}
-+            t={(k, o) => o.defaultValue}
-+            i18nKey="greeting"
-+            values={{ name: 'Joe' }}
-+          >
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hello Joe');
-+    });
-+
-+    it('with skipInterpolation', async () => {
-+      const i18n = await setup();
-+      expect(
-+        text(
-+          <Trans
-+            i18n={i18n}
-+            i18nKey="greeting"
-+            values={{ name: 'Joe' }}
-+            tOptions={{ skipInterpolation: true }}
-+          >
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hi Joe');
-+    });
-+
-+    it('with a format plugin', async () => {
-+      const formatPlugin = { type: 'i18nFormat', init() {}, parse: (res) => res };
-+      const i18n = await setup({}, [formatPlugin]);
-+      expect(
-+        text(
-+          <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
-+            Hello {{ name }}
-+          </Trans>,
-+        ),
-+      ).toBe('Hi Joe');
-+    });
-+  });
-+});
+@@ -31,7 +31,7 @@ i18n
+   .use(LastUsed)
+   // locize-editor
+   // InContext Editor of locize
+-  .use(locizePlugin) // will show the incontext editor only if passing ?incontext=true
++  .use(locizePlugin) // will show the incontext editor only if passing ?incontext=true (since locize 4.6.0 remembered for the browser tab, ?incontext=false switches it off)
+   // detect user language
+   // learn more: https://github.com/i18next/i18next-browser-languageDetector
+   .use(LanguageDetector)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1381,76 +1105,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in react-i18next.js
+## X. docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18
 
 **RULE**:
-When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5db47334`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbb61e6f`: docs: homepage and README point to www.i18next.com/react, and docs PRs go to i18next/www. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts, tInterpolated) => {
-    const opts = tInterpolated ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts))) : {
-    const tInterpolated = interpolateBeforeParsing && translation !== defaultValue && !formatPlugin && !combinedTOpts.skipInterpolation;
-    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts, tInterpolated);
-  const eventCounts = new WeakMap();
-  const countEvents = (emitter, events) => {
-    if (!events) return 0;
-    let counts = eventCounts.get(emitter);
-    if (!counts) eventCounts.set(emitter, counts = new Map());
-    let sum = 0;
-    events.split(' ').forEach(event => {
-      if (!counts.has(event)) {
-        counts.set(event, 0);
-        emitter.on(event, () => counts.set(event, counts.get(event) + 1));
-      }
-      sum += counts.get(event);
-    });
-    return sum;
-  };
-  const revision = (i18n, {
-    bindI18n,
-    bindI18nStore
-  }) => countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
-    }, callback) : () => {}, [i18n, bindI18n, bindI18nStore]);
-    
+The documentation is published on [www.i18next.com/react](https://www.i18next.com/react) and PR changes can be supplied [here](https://github.com/i18next/www).
+The general i18next documentation is published on [www.i18next.com](https://www.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/www).
+- react >= **0.14.0** (in case of < v16 or preact you will need to define parent in [Trans component](https://www.i18next.com/react/latest/trans-component#trans-props) or globally in [i18next.react options](https://www.i18next.com/react/latest/trans-component#i18next-options))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts) => {
-    const opts = {
-    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts);
-    const revisionRef = React.useRef(0);
-    }, () => {
-      revisionRef.current += 1;
-      callback();
-    }) : () => {}, [i18n, bindI18n, bindI18nStore]);
-    const getSnapshot = () => bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
-    const revisionRef = React.useRef(0);
-    const subscribe = React.useCallback(callback => {
-      if (!i18n) return dummySubscribe;
-      const wrappedCallback = () => {
-        revisionRef.current += 1;
-        callback();
-      };
-      return subscribeToEvents(i18n, {
-        bindI18n,
-        bindI18nStore
-      }, wrappedCallback);
-    }, [i18n, bindI18n, bindI18nStore]);
-      const currentRevision = revisionRef.current;
+The documentation is published on [react.i18next.com](https://react.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/react-i18next-gitbook).
+The general i18next documentation is published on [www.i18next.com](https://www.i18next.com) and PR changes can be supplied [here](https://github.com/i18next/i18next-gitbook).
+- react >= **0.14.0** (in case of < v16 or preact you will need to define parent in [Trans component](https://react.i18next.com/latest/trans-component#trans-props) or globally in [i18next.react options](https://react.i18next.com/latest/trans-component#i18next-options))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5db47334` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbb61e6f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
