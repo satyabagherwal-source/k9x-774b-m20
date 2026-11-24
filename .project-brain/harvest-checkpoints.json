@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T18:09:11.350Z",
+  "last_updated": "2026-11-24T18:17:37.851Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
-      "verified_at": "2026-11-19T07:37:33.661Z",
+      "content_hash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
+      "verified_at": "2026-11-24T18:17:37.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:37:33.661Z"
+      "last_updated": "2026-11-24T18:17:37.850Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",

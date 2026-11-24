@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T18:00:44.363Z",
+  "updated_at": "2026-11-24T18:17:41.439Z",
   "stats": {
-    "total_discovered": 8816,
-    "approved_pending_harvest": 8341,
+    "total_discovered": 8818,
+    "approved_pending_harvest": 8343,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8337,
+      "COMMUNITY_AND_EXPERT": 8339,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -190654,6 +190654,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-72B1F31B2866": {
+      "id": "SRC-72B1F31B2866",
+      "url": "https://github.com/tickernelz/opencode-mem/issues/518",
+      "title": "https://github.com/tickernelz/opencode-mem/issues/518",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:17:41.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-15219E8A0CBF": {
+      "id": "SRC-15219E8A0CBF",
+      "url": "https://github.com/oven-sh/bun/issues/28008",
+      "title": "https://github.com/oven-sh/bun/issues/28008",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:17:41.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
       }
     }
   }

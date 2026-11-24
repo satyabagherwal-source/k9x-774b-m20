@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `94a849ca`  
+> **Source Version**: `e38c8744`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T07:37:32.730Z  
+> **Timestamp**: 2026-11-24T18:17:36.676Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T07:37:32.615Z  
+> **Harvest Timestamp**: 2026-11-24T18:17:36.560Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1878 stars
+- **Stars / Engagement**: 1887 stars
 
 ---
 
@@ -36,6 +36,240 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `src/services/embedding-worker-protocol.ts`
+```
+/**
+ * JSON-line IPC between the embedding parent and the local-ONNX subprocess.
+ *
+ * On Windows, loading `onnxruntime-node` inside the OpenCode/Bun host segfaults
+ * (#518 / oven-sh/bun#28008). The parent keeps the protocol; the child alone
+ * loads transformers + ORT and is SIGKILL'd on dispose so NAPI finalizers
+ * never run in the host address space.
+ */
+
+export type EmbeddingWorkerWarmupRequest = {
+  id: number;
+  type: "warmup";
+  model: string;
+  cacheDir: string;
+  pooling: string;
+  dtype?: string;
+};
+
+export type EmbeddingWorkerEmbedRequest = {
+  id: number;
+  type: "embed";
+  text: string;
+  pooling: string;
+};
+
+export type EmbeddingWorkerDisposeRequest = {
+  id: number;
+  type: "dispose";
+};
+
+export type EmbeddingWorkerRequest =
+  EmbeddingWorkerWarmupRequest | EmbeddingWorkerEmbedRequest | EmbeddingWorkerDisposeRequest;
+
+export type EmbeddingWorkerOkResponse = {
+  id: number;
+  ok: true;
+  vector?: number[];
+};
+
+export type EmbeddingWorkerErrorResponse = {
+  id: number;
+  ok: false;
+  error: string;
+};
+
+export type EmbeddingWorkerResponse = EmbeddingWorkerOkResponse | EmbeddingWorkerErrorResponse;
+
+export function parseWorkerResponse(line: string): EmbeddingWorkerResponse {
+  const parsed = JSON.parse(line) as EmbeddingWorkerResponse;
+  if (typeof parsed?.id !== "number" || typeof parsed?.ok !== "boolean") {
+    throw new Error(`embedding-worker: invalid response: ${line.slice(0, 200)}`);
+  }
+  return parsed;
+}
+
+```
+
+### Core Architecture Module: `src/services/embedding-worker.ts`
+```
+/**
+ * Local-ONNX embedding worker process.
+ *
+ * Run with `OPENCODE_MEM_EMBEDDING_WORKER=1` (or as `import.meta.main`). Loads
+ * `@huggingface/transformers` / `onnxruntime-node` only in this address space.
+ * The parent SIGKILLs us on shutdown so ORT's NAPI finalizer never runs in the
+ * OpenCode/Bun host (#518).
+ */
+
+import { createInterface } from "node:readline";
+import { join } from "node:path";
+import {
+  prepareOnnxruntimeForTransformers,
+  formatOnnxruntimeInitError,
+} from "./onnxruntime-resolve.js";
+import { createRuntimeRequire } from "./runtime-require.js";
+import {
+  getTransformersPackageSpecifier,
+  resolveTransformersCjsEntry,
+} from "./transformers-resolve.js";
+import type {
+  EmbeddingWorkerRequest,
+  EmbeddingWorkerResponse,
+} from "./embedding-worker-protocol.js";
+
+const requireFromHere = createRuntimeRequire(import.meta);
+
+type Pipe = {
+  (text: string, opts: { pooling: string; normalize: boolean }): Promise<{ data: Float32Array }>;
+  dispose?: () => Promise<void>;
+};
+
+let pipe: Pipe | null = null;
+
+function send(response: EmbeddingWorkerResponse): void {
+  process.stdout.write(`${JSON.stringify(response)}\n`);
+}
+
+// Keep stdout reserved for JSON-line IPC; route casual logs to stderr.
+console.log = (...args: unknown[]) => {
+  process.stderr.write(`${args.map(String).join(" ")}\n`);
+};
+console.info = console.log;
+console.debug = console.log;
+
+async function loadPipeline(model: string, cacheDir: string, dtype?: string): Promise<Pipe> {
+  const transformersSpecifier = getTransformersPackageSpecifier();
+  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
+  const transformersEntry = resolveTransformersCjsEntry({
+    requireFn: requireFromHere,
+    specifier: transformersSpecifier,
+    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
+  });
+
+  prepareOnnxruntimeForTransformers();
+  const mod = requireFromHere(transformersEntry) as typeof import("@huggingface/transformers");
+  mod.env.allowLocalModels = true;
+  mod.env.allowRemoteModels = true;
+  mod.env.cacheDir = cacheDir;
+  try {
+    (mod.env as any).backends.onnx.wasm.numThreads = 1;
+  } catch {
+    // Optional; wasm settings may be absent under the node ORT backend.
+  }
+
+  // Parent resolves dtype (config / cache probe) before spawn.
+  const created = await mod.pipeline("feature-extraction", model, {
+    ...(dtype ? { dtype: dtype as "fp32" | "fp16" | "q8" | "auto" } : {}),
+  });
+  return created as unknown as Pipe;
+}
+
+async function handle(request: EmbeddingWorkerRequest): Promise<void> {
+  try {
+    switch (request.type) {
+      case "warmup": {
+        if (pipe?.dispose) {
+          try {
+            await pipe.dispose();
+          } catch {
+            // Replace the previous pipeline even if dispose fails.
+          }
+        }
+        pipe = await loadPipeline(
+          request.model,
+          request.cacheDir || join(process.cwd(), ".cache"),
+          request.dtype
+        );
+        send({ id: request.id, ok: true });
+        return;
+      }
+      case "embed": {
+        if (!pipe) {
+          send({ id: request.id, ok: false, error: "embedding-worker: not warmed up" });
+          return;
+        }
+        const output = await pipe(request.text, {
+          pooling: request.pooling,
+          normalize: true,
+        });
+        send({ id: request.id, ok: true, vector: Array.from(output.data) });
+        return;
+      }
+      case "dispose": {
+        const current = pipe;
+        pipe = null;
+        if (current?.dispose) {
+          try {
+            await current.dispose();
+          } catch {
+            // Parent will SIGKILL us; best-effort dispose only.
+          }
+        }
+        send({ id: request.id, ok: true });
+        return;
+      }
+      default: {
+        const unknown = request as { id?: number };
+        send({
+          id: typeof unknown.id === "number" ? unknown.id : -1,
+          ok: false,
+          error: "embedding-worker: unknown request type",
+        });
+      }
+    }
+  } catch (error) {
+    const rewritten = formatOnnxruntimeInitError(error);
+    send({
+      id: request.id,
+      ok: false,
+      error: rewritten.message,
+    });
+  }
+}
+
+export async function runEmbeddingWorker(): Promise<void> {
+  const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
+  for await (const line of rl) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    let request: EmbeddingWorkerRequest;
+    try {
+      request = JSON.parse(trimmed) as EmbeddingWorkerRequest;
+    } catch (error) {
+      send({
+        id: -1,
+        ok: false,
+        error: `embedding-worker: invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+      });
+      continue;
+    }
+    await handle(request);
+  }
+}
+
+const isWorkerMain =
+  process.env.OPENCODE_MEM_EMBEDDING_WORKER === "1" ||
+  (typeof import.meta !== "undefined" &&
+    Boolean((import.meta as ImportMeta & { main?: boolean }).main));
+
+if (isWorkerMain) {
+  void runEmbeddingWorker().catch((error) => {
+    send({
+      id: -1,
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    process.exitCode = 1;
+  });
+}
+
+```
 
 ### Core Architecture Module: `src/services/turso/engine-migrator.ts`
 ```
@@ -843,153 +1077,6 @@ console.log("wrote", out, `${resvg.width}x${resvg.height}`);
 
 ```
 
-### Core Architecture Module: `web/src/lib/profile-utils.ts`
-```
-import { jsonrepair } from "jsonrepair";
-import type { ProfileItem, UserProfile } from "./types";
-
-export type ProfileField = "preferences" | "patterns" | "workflows";
-
-export type ProfileDataSlice = NonNullable<UserProfile["profileData"]>;
-
-export type CleanupItem = ProfileItem & { _id: string; _type: "pref" | "pat" | "wf" };
-
-export function parseProfileField(field: unknown): ProfileItem[] {
-  if (!field) return [];
-  let result: unknown = field;
-  let lastResult: unknown = null;
-  while (typeof result === "string" && result !== lastResult) {
-    lastResult = result;
-    try {
-      result = JSON.parse(jsonrepair(result));
-    } catch {
-      break;
-    }
-  }
-  if (!Array.isArray(result)) return [];
-  const flattened: ProfileItem[] = [];
-  const walk = (item: unknown) => {
-    if (Array.isArray(item)) item.forEach(walk);
-    else if (item && typeof item === "object") flattened.push(item as ProfileItem);
-  };
-  walk(result);
-  return flattened;
-}
-
-/** Normalize profileData whether it arrives as object or JSON string. */
-export function normalizeProfileData(raw: unknown): ProfileDataSlice | null {
-  if (!raw) return null;
-  let data: unknown = raw;
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(jsonrepair(data));
-    } catch {
-      return null;
-    }
-  }
-  if (!data || typeof data !== "object") return null;
-  const obj = data as ProfileDataSlice;
-  return {
-    preferences: parseProfileField(obj.preferences),
-    patterns: parseProfileField(obj.patterns),
-    workflows: parseProfileField(obj.workflows),
-  };
-}
-
-/** Flat list with stable pref_/pat_/wf_ ids for AI cleanup selection. */
-export function flattenProfileItems(pd: ProfileDataSlice | null | undefined): CleanupItem[] {
-  if (!pd) return [];
-  const prefs = (pd.preferences || []).map((p, i) => ({
-    ...p,
-    _id: `pref_${i}`,
-    _type: "pref" as const,
-  }));
-  const pats = (pd.patterns || []).map((p, i) => ({
-    ...p,
-    _id: `pat_${i}`,
-    _type: "pat" as const,
-  }));
-  const wfs = (pd.workflows || []).map((w, i) => ({
-    ...w,
-    _id: `wf_${i}`,
-    _type: "wf" as const,
-  }));
-  return [...prefs, ...pats, ...wfs];
-}
-
-function parseProfileItemId(id: string): { prefix: string; index: number } | null {
-  if (!id.includes("_")) return null;
-  const [prefix, idxStr] = id.split("_");
-  const index = parseInt(idxStr, 10);
-  if (Number.isNaN(index)) return null;
-  return { prefix, index };
-}
-
-function itemAt(profileData: ProfileDataSlice | undefined, id: string): ProfileItem | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || !profileData) return null;
-  if (parsed.prefix === "pref") return profileData.preferences?.[parsed.index] ?? null;
-  if (parsed.prefix === "pat") return profileData.patterns?.[parsed.index] ?? null;
-  if (parsed.prefix === "wf") return profileData.workflows?.[parsed.index] ?? null;
-  return null;
-}
-
-export function findDescById(id: string, profileData?: ProfileDataSlice): string | null {
-  return itemAt(profileData, id)?.description ?? null;
-}
-
-export function findStepsById(id: string, profileData?: ProfileDataSlice): string[] | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || parsed.prefix !== "wf") return null;
-  return itemAt(profileData, id)?.steps || null;
-}
-
-export function profileTypeLabel(
-  id: string,
-  labels: { pref: string; pat: string; wf: string }
-): string {
-  const parsed = parseProfileItemId(id);
-  if (!parsed) return "?";
-  if (parsed.prefix === "pref") return labels.pref;
-  if (parsed.prefix === "pat") return labels.pat;
-  if (parsed.prefix === "wf") return labels.wf;
-  return "?";
-}
-
-export function confidencePct(item: Pick<ProfileItem, "confidence">): number {
-  return Math.round((item.confidence || 0) * 1000) / 10;
-}
-
-export function evidenceTitle(item: ProfileItem): string {
-  if (!item.evidence) return "";
-  return Array.isArray(item.evidence) ? item.evidence.join("\n") : item.evidence;
-}
-
-export function evidenceCount(item: ProfileItem): number {
-  if (!item.evidence) return 0;
-  return Array.isArray(item.evidence) ? item.evidence.length : 1;
-}
-
-```
-
-### Core Architecture Module: `web/src/lib/set-utils.ts`
-```
-/** Immutable Set toggle helper — returns a new Set. */
-export function toggleInSet<T>(set: Set<T>, value: T, checked: boolean): Set<T> {
-  const next = new Set(set);
-  if (checked) next.add(value);
-  else next.delete(value);
-  return next;
-}
-
-export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
-  const next = new Set(set);
-  next.delete(value);
-  return next;
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1017,533 +1104,984 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e704b90c` (2026-11-18)
-**Commit Message**: fix(config): make external profile cleanup timeout configurable (#510)
+### Incident Patch 1: `a755b1da` (2026-11-24)
+**Commit Message**: fix(embedding): isolate Windows local ONNX in a Node subprocess (#521)
 
-Hardcoded 60s aborted slow OpenAI-compatible cleanup before the Web UI's
-180s budget. Add userProfileCleanupTimeoutMs (default 60s, clamp
-10s..600s), derive Node HTTP idle from it, and raise the /ai-cleanup
-frontend fetch to cover the max backend deadline.
+* fix(embedding): isolate Windows local ONNX in a Node subprocess
 
-**File**: `.github/i18n/README.ar.md` (modified, +3/-1)
+Bun hosts segfault when onnxruntime-node loads in-process on Windows
+(#518). Run the transformers/ORT pipeline in a Node child over JSON-line
+IPC and SIGKILL it on dispose so NAPI finalizers never run in OpenCode.
+
+* fix(embedding): harden Windows ONNX subprocess isolation
+
+Add start mutex, spawn error handling, request timeouts, package-root
+cwd/NODE_PATH, Bun-child fallback when Node is missing, stdout filtering,
+and one-shot re-warmup after a worker crash so #518 stays host-safe.
+
+* fix(embedding): harden worker discovery for OpenCode hosts
+
+Resolve the embedding worker via import.meta.path/dirname when url is
+empty (#210), search standard Node/Bun install paths beyond PATH, walk
+up to the package root for node_modules, and SIGKILL a wedged child on
+request timeout.
+
+* fix(embedding): run Windows ONNX worker via OpenCode BUN_BE_BUN
+
+When Node/Bun are not on PATH, re-exec process.execPath with BUN_BE_BUN=1
+so a Bun --compile host (OpenCode standalone) acts as the Bun CLI and
+runs the embedding worker without a separate runtime install (#518).
+
+**File**: `README.md` (modified, +3/-0)
 ```diff
-@@ -561,7 +561,9 @@ memory({ mode: "import", inputPath: "./memories.json" });
+@@ -476,6 +476,8 @@ Changing `embeddingModel`, dimensions, pooling, or task prefixes can require re-
  
- اختياريًا ثبّت متغير استدلال للنموذج بـ `"opencodeVariant": "xhigh"` (مثلًا لـ grok-4.7). يُطبَّق على استدعاءات LLM الداخلية للمكون الإضافي (ملخصات الالتقاط التلقائي، تعلّم الملف، تنظيف الملف)، بما في ذلك عندما يكون `opencodeModel` هو `"inherit"`، حتى يمكن للعمل الخلفي استخدام مستوى استدلال مختلف عن الجلسة التفاعلية.
+ Remote embeddings bypass the local ONNX runtime on supported hosts. The plugin still needs the local database binding listed under [Prerequisites](#prerequisites).
  
--نماذج الاستدلال البطيئة (أو مطالبات الملف الكبيرة جدًا) يمكن أن تتجاوز ميزانية المخرجات المنظمة الافتراضية البالغة 90 ثانية. عيّن `"opencodeTimeoutMs"` (بالمللي ثانية) لتمديدها لاستدعاءات المخرجات المنظمة الداخلية (ملخصات الالتقاط التلقائي، تعلّم الملف) — مثلًا `"opencodeTimeoutMs": 180000` لمدة 3 دقائق. تُقيَّد القيم إلى 10000..600000؛ يبقى الافتراضي 90000. تُحوَّل السلاسل الرقمية. يستخدم تنظيف الملف مهلة منفصلة أطول.
-+نماذج الاستدلال البطيئة (أو مطالبات الملف الكبيرة جدًا) يمكن أن تتجاوز ميزانية المخرجات المنظمة الافتراضية البالغة 90 ثانية. عيّن `"opencodeTimeoutMs"` (بالمللي ثانية) لتمديدها لاستدعاءات المخرجات المنظمة الداخلية (ملخصات الالتقاط التلقائي، تعلّم الملف) — مثلًا `"opencodeTimeoutMs": 180000` لمدة 3 دقائق. تُقيَّد القيم إلى 10000..600000؛ يبقى الافتراضي 90000. تُحوَّل السلاسل الرقمية.
++**Windows + OpenCode/Bun:** Local embeddings run `onnxruntime-node` in a **subprocess** (never inside the OpenCode host) so Bun↔ORT NAPI segfaults cannot take down `opencode serve` ([#518](https://github.com/tickernelz/opencode-mem/issues/518), [oven-sh/bun#28008](https://github.com/oven-sh/bun/issues/28008)). Runtime order: Node.js → Bun on PATH → the OpenCode binary itself via `BUN_BE_BUN=1` (Bun ≥ 1.2.16; no separate Node install required). Or set `embeddingApiUrl` + `embeddingApiKey` for remote embeddings. Override with `OPENCODE_MEM_EMBEDDING_SUBPROCESS=0` (in-process, not recommended on Windows) or `=1` (force subprocess on other OSes). The parent `SIGKILL`s the worker on dispose/idle/timeout and re-spawns after a worker crash.
 +
-+مهل تنظيف الملف منفصلة: تنظيف API الخارجي/اليدوي افتراضيًا 60 ثانية عبر `"userProfileCleanupTimeoutMs"` (نفس التقييد 10000..600000؛ مثلًا `"userProfileCleanupTimeoutMs": 180000`). يحتفظ تنظيف جلسة OpenCode بميزانية ثابتة 300 ثانية. تُشتق مهلة خمول HTTP في Node كـ `max(userProfileCleanupTimeoutMs, 300000) + 30000`، ويسمح جلب واجهة الويب لـ `/ai-cleanup` حتى 630 ثانية حتى لا تقطع أي طبقة الموعد النهائي الخارجي المرفوع.
+ On supported platforms, `opencode-mem` pins `onnxruntime-node@1.31.1` (Ort::Env teardown fix from `1.24.1` / #225) and loads transformers through a CJS resolve shim so OpenCode nested installs keep that binding. Transformers is resolved to an absolute path before that shim is installed so OpenCode's Bun `--compile` host does not fail with `Cannot find module '@huggingface/transformers' from ''`. After upgrading, clear OpenCode's nested plugin cache (`~/.cache/opencode/packages/opencode-mem@*`) and reinstall.
  
- المزودون المدعومون: أي مزود يدرجه `opencode providers list` (مثل `anthropic`، `openai`، `github-copilot`، `openrouter`، ...).
+ ### Memory Scope
+@@ -768,6 +770,7 @@ Troubleshooting:
+ - For `opencodeProvider` / `opencodeModel` (e.g. DeepSeek V4 thinking), OpenCode still sends forced `tool_choice` for structured output. opencode-mem disables thinking on the internal `opencode-mem-structured` agent (and re-applies that in `chat.params` after variant merge) so auto-capture and profile learning can complete. Your interactive chat agent is unchanged. If capture still fails with a thinking/`tool_choice` error, pick a non-thinking model for `opencodeModel` or configure a complete manual fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture uses OpenCode with your authenticated `anthropic` provider. Forced `format: json_schema` often loops with Claude-auth, so opencode-mem uses an auth-preserving **text-JSON** path for `opencodeProvider: "anthropic"` (no forced `StructuredOutput` tools; reply is parsed with Zod). A step watchdog still aborts runaway internal sessions after 2 steps. If capture still fails, configure a complete manual Anthropic API-key fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth cannot be reused outside OpenCode.
+ - **Unsupported platforms:** If the plugin fails to load a native binding, check the [native database requirements](#prerequisites). For containers that use musl, use a glibc-based Linux image. MLX is not supported.
++- **Windows segfault in `onnxruntime_binding.node`:** Local embeddings run ORT in a subprocess (#518), using Node, Bun, or the OpenCode binary (`BUN_BE_BUN=1`). If that still fails, configure remote embeddings (`embeddingApiUrl` + `embeddingApiKey`).
+ 
+ ## Public Subpath Exports
  
 ```
 
-**File**: `.github/i18n/README.de.md` (modified, +3/-1)
+**File**: `src/services/embedding-subprocess.ts` (added, +442/-0)
 ```diff
-@@ -563,7 +563,9 @@ Das Plugin stellt strukturierte Output-Requests an die Session-API von opencode,
- 
- Optional eine Reasoning-Variante des Modells mit `"opencodeVariant": "xhigh"` pinnen (z. B. für grok-4.7). Sie gilt für die internen LLM-Aufrufe des Plugins (Auto-Capture-Zusammenfassungen, Profil-Lernen, Profil-Cleanup), auch wenn `opencodeModel` `"inherit"` ist, sodass Hintergrundarbeit ein anderes Reasoning-Level als die interaktive Sitzung nutzen kann.
- 
--Langsame Reasoning-Modelle (oder sehr große Profil-Prompts) können das Standard-Budget von 90 s für strukturierte Ausgabe überschreiten. `"opencodeTimeoutMs"` (Millisekunden) setzen, um es für interne Structured-Output-Aufrufe (Auto-Capture-Zusammenfassungen, Profil-Lernen) zu verlängern — z. B. `"opencodeTimeoutMs": 180000` für 3 Minuten. Werte werden auf 10000..600000 geklemmt; der Standard bleibt 90000. Numerische Strings werden coerced. Profil-Cleanup nutzt ein separates, längeres Timeout.
-+Langsame Reasoning-Modelle (oder sehr große Profil-Prompts) können das Standard-Budget von 90 s für strukturierte Ausgabe überschreiten. `"opencodeTimeoutMs"` (Millisekunden) setzen, um es für interne Structured-Output-Aufrufe (Auto-Capture-Zusammenfassungen, Profil-Lernen) zu verlängern — z. B. `"opencodeTimeoutMs": 180000` für 3 Minuten. Werte werden auf 10000..600000 geklemmt; der Standard bleibt 90000. Numerische Strings werden coerced.
+@@ -0,0 +1,442 @@
++/**
++ * Parent-side handle for the local-ONNX embedding subprocess (#518).
++ *
++ * Spawns a Node (preferred) or Bun child that runs `embedding-worker` so
++ * `onnxruntime-node` never loads in the OpenCode/Bun host. Dispose uses
++ * SIGKILL so ORT's NAPI finalizer cannot crash the host on Windows.
++ */
 +
-+Profil-Cleanup-Timeouts sind separat: externes/manuelles API-Cleanup defaultet auf 60 s über `"userProfileCleanupTimeoutMs"` (gleiche Klemme 10000..600000; z. B. `"userProfileCleanupTimeoutMs": 180000`). OpenCode-Session-Cleanup behält ein festes 300-s-Budget. Das Node-HTTP-Idle-Timeout wird als `max(userProfileCleanupTimeoutMs, 300000) + 30000` abgeleitet, und der Web-UI-Fetch für `/ai-cleanup` erlaubt bis 630 s, damit keine Schicht ein erhöhtes externes Deadline unterbietet.
- 
- Unterstützte Provider: jeder von `opencode providers list` gelistete Provider (z. B. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
- 
++import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
++import { createInterface } from "node:readline";
++import { fileURLToPath } from "node:url";
++import { existsSync } from "node:fs";
++import { homedir } from "node:os";
++import { basename, dirname, join } from "node:path";
++import { log, safeLog } from "./logger.js";
++import {
++  parseWorkerResponse,
++  type EmbeddingWorkerRequest,
++  type EmbeddingWorkerResponse,
++} from "./embedding-worker-protocol.js";
++
++export type EmbeddingSubprocessWarmup = {
++  model: string;
++  cacheDir: string;
++  pooling: string;
++  dtype?: string;
++};
++
++type Pending = {
++  resolve: (value: EmbeddingWorkerResponse) => void;
++  reject: (error: Error) => void;
++  timer: ReturnType<typeof setTimeout>;
++};
++
++type PluginImportMeta = ImportMeta & {
++  path?: string;
++  dirname?: string;
++  dir?: string;
++};
++
++const DEFAULT_REQUEST_TIMEOUT_MS = 60_000;
++
++function which(cmd: string): string | null {
++  const pathEnv = process.env.PATH ?? process.env.Path ?? "";
++  const ext =
++    process.platform === "win32"
++      ? (process.env.PATHEXT ?? ".EXE;.CMD;.BAT").split(";").filter(Boolean)
++      : [""];
++  const sep = process.platform === "win32" ? ";" : ":";
++  for (const dir of pathEnv.split(sep)) {
++    if (!dir) continue;
++    for (const e of ext) {
++      const candidate = join(dir, `${cmd}${e}`);
++      if (existsSync(candidate)) return candidate;
++    }
++  }
++  return null;
++}
++
++/** PATH plus well-known install locations (OpenCode sandboxes often omit PATH entries). */
++export function resolveRuntimeCandidates(cmd: "node" | "bun"): string[] {
++  const found: string[] = [];
++  const seen = new Set<string>();
++  const add = (path: string | null | undefined) => {
++    if (!path || seen.has(path) || !existsSync(path)) return;
++    seen.add(path);
++    found.push(path);
++  };
++
++  add(which(cmd));
++
++  const home = homedir();
++  const local = process.env.LOCALAPPDATA;
++  const pf = process.env.ProgramFiles ?? "C:\\Program Files";
++  const pf86 = process.env["ProgramFiles(x86)"] ?? "C:\\Program Files (x86)";
++
++  if (cmd === "node") {
++    if (process.platform === "win32") {
++      add(join(pf, "nodejs", "node.exe"));
++      add(join(pf86, "nodejs", "node.exe"));
++      if (local) add(join(local, "Programs", "nodejs", "node.exe"));
++    } else {
++      add("/usr/local/bin/node");
++      add("/usr/bin/node");
++      add(join(home, ".nvm", "current", "bin", "node"));
++    }
++  } else {
++    if (process.platform === "win32") {
++      add(join(home, ".bun", "bin", "bun.exe"));
++      if (local) add(join(local, "bun", "bin", "bun.exe"));
++    } else {
++      add(join(home, ".bun", "bin", "bun"));
++      add("/usr/local/bin/bun");
++    }
++  }
++
++  return found;
++}
++
++function isBunOrNodeExecutable(path: string): boolean {
++  const name = basename(path).toLowerCase();
++  return name === "bun" || name === "bun.exe" || name === "node" || name === "node.exe";
++}
++
++export type EmbeddingWorkerRuntime = {
++  /** Executable to spawn (node, bun, or a bun --compile host such as opencode.exe). */
++  command: string;
++  /** Extra argv before the worker script path. */
++  args: string[];
++  /** Extra env for the child (merged over process.env). */
++  env: Record<string, string>;
++};
++
++/**
++ * Prefer Node so ORT runs outside Bun's NAPI host (#518). Fall back to a Bun
++ * *subprocess* (still isolated from the OpenCode host) when Node is missing —
++ * a child segfault kills only the worker, not `opencode serve`.
++ *
++ * When only a Bun `--compile` host is available (typical OpenCode standalone
++ * install with no Node/Bun on PATH), re-exec `process.execPath` with
++ * `BUN_BE_BUN=1` so the child acts as the Bun CLI and can run our worker
++ * script (Bun ≥ 1.2.16; OpenCode 2.3.x ships Bun 1.4.x).
++ */
++export function resolveEmbeddingWorkerRuntime(): EmbeddingWorkerRuntime | null {
++  const node = resolveRuntimeCandidates("node")[0];
++  if (node) return { command: node, args: [], env: {} };
++
++  const bun = resolveRuntimeCandidates("bun")[0];
++  if (bun) return { command: bun, args: [], env: {} };
++
++  if (typeof process.versions.bun === "string" && process.execPath) {
++    // OpenCode.exe / other bun --compile hosts: ignore the bundled entrypoint
++    // and run our worker as plain `bun <script>`.
++    return {
++      command: process.execPath,
++      args: [],
++      env: { BUN_BE_BUN: "1" },
++    };
++  }
++
++  if (typeof process.versions.node === "string" && isBunOrNodeExecutable(process.execPath)) {
++    return { command: process.execPath, args: [], env: {} };
++  }
++
++  return null;
++}
++
++/** Directories that may contain the sibling embedding-worker script
 ```
 
-**File**: `.github/i18n/README.fr.md` (modified, +3/-1)
+**File**: `src/services/embedding-worker-protocol.ts` (added, +54/-0)
 ```diff
-@@ -496,7 +496,9 @@ Le plugin émet des requêtes à sortie structurée vers l'API de session d'open
- 
- Optionnellement, épinglez une variante de raisonnement du modèle avec `"opencodeVariant": "xhigh"` (p. ex. pour grok-4.7). Elle s'applique aux appels LLM internes du plugin (résumés d'auto-capture, apprentissage du profil, nettoyage du profil), y compris quand `opencodeModel` vaut `"inherit"`, pour que le travail d'arrière-plan puisse utiliser un niveau de raisonnement différent de la session interactive.
- 
--Les modèles de raisonnement lents (ou les très gros prompts de profil) peuvent dépasser le budget de sortie structurée par défaut de 90 s. Définissez `"opencodeTimeoutMs"` (millisecondes) pour l'étendre pour les appels internes à sortie structurée (résumés d'auto-capture, apprentissage du profil) — p. ex. `"opencodeTimeoutMs": 180000` pour 3 minutes. Les valeurs sont bornées à 10000..600000 ; le défaut reste 90000. Les chaînes numériques sont converties. Le nettoyage du profil utilise un timeout séparé, plus long.
-+Les modèles de raisonnement lents (ou les très gros prompts de profil) peuvent dépasser le budget de sortie structurée par défaut de 90 s. Définissez `"opencodeTimeoutMs"` (millisecondes) pour l'étendre pour les appels internes à sortie structurée (résumés d'auto-capture, apprentissage du profil) — p. ex. `"opencodeTimeoutMs": 180000` pour 3 minutes. Les valeurs sont bornées à 10000..600000 ; le défaut reste 90000. Les chaînes numériques sont converties.
+@@ -0,0 +1,54 @@
++/**
++ * JSON-line IPC between the embedding parent and the local-ONNX subprocess.
++ *
++ * On Windows, loading `onnxruntime-node` inside the OpenCode/Bun host segfaults
++ * (#518 / oven-sh/bun#28008). The parent keeps the protocol; the child alone
++ * loads transformers + ORT and is SIGKILL'd on dispose so NAPI finalizers
++ * never run in the host address space.
++ */
 +
-+Les timeouts de nettoyage du profil sont séparés : le nettoyage API externe/manuel vaut 60 s par défaut via `"userProfileCleanupTimeoutMs"` (même borne 10000..600000 ; p. ex. `"userProfileCleanupTimeoutMs": 180000`). Le nettoyage via session OpenCode garde un budget fixe de 300 s. Le timeout d'inactivité HTTP Node est dérivé comme `max(userProfileCleanupTimeoutMs, 300000) + 30000`, et le fetch Web UI de `/ai-cleanup` autorise jusqu'à 630 s pour qu'aucune couche ne sous-coupe une échéance externe relevée.
- 
- Fournisseurs pris en charge : tout fournisseur listé par `opencode providers list` (p. ex. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
- 
++export type EmbeddingWorkerWarmupRequest = {
++  id: number;
++  type: "warmup";
++  model: string;
++  cacheDir: string;
++  pooling: string;
++  dtype?: string;
++};
++
++export type EmbeddingWorkerEmbedRequest = {
++  id: number;
++  type: "embed";
++  text: string;
++  pooling: string;
++};
++
++export type EmbeddingWorkerDisposeRequest = {
++  id: number;
++  type: "dispose";
++};
++
++export type EmbeddingWorkerRequest =
++  EmbeddingWorkerWarmupRequest | EmbeddingWorkerEmbedRequest | EmbeddingWorkerDisposeRequest;
++
++export type EmbeddingWorkerOkResponse = {
++  id: number;
++  ok: true;
++  vector?: number[];
++};
++
++export type EmbeddingWorkerErrorResponse = {
++  id: number;
++  ok: false;
++  error: string;
++};
++
++export type EmbeddingWorkerResponse = EmbeddingWorkerOkResponse | EmbeddingWorkerErrorResponse;
++
++export function parseWorkerResponse(line: string): EmbeddingWorkerResponse {
++  const parsed = JSON.parse(line) as EmbeddingWorkerResponse;
++  if (typeof parsed?.id !== "number" || typeof parsed?.ok !== "boolean") {
++    throw new Error(`embedding-worker: invalid response: ${line.slice(0, 200)}`);
++  }
++  return parsed;
++}
 ```
 
-**File**: `.github/i18n/README.nl.md` (modified, +3/-1)
+**File**: `src/services/embedding-worker.ts` (added, +170/-0)
 ```diff
-@@ -567,7 +567,9 @@ De plugin stuurt structured-output-verzoeken naar de session-API van opencode in
- 
- Optioneel kun je een model-reasoningvariant vastzetten met `"opencodeVariant": "xhigh"` (bijv. voor grok-4.7). Die wordt toegepast op de interne LLM-calls van de plugin (auto-capture-samenvattingen, profiel-leren, profielopschoning), ook wanneer `opencodeModel` `"inherit"` is, zodat achtergrondwerk een ander reasoningniveau kan gebruiken dan de interactieve sessie.
- 
--Trage reasoningmodellen (of zeer grote profielprompts) kunnen het standaard 90 s structured-output-budget overschrijden. Stel `"opencodeTimeoutMs"` (milliseconden) in om het te verlengen voor interne structured-output-calls (auto-capture-samenvattingen, profiel-leren) — bijv. `"opencodeTimeoutMs": 180000` voor 3 minuten. Waarden worden geclampt tot 10000..600000; de standaard blijft 90000. Numerieke strings worden gecoeerd. Profielopschoning gebruikt een aparte, langere timeout.
-+Trage reasoningmodellen (of zeer grote profielprompts) kunnen het standaard 90 s structured-output-budget overschrijden. Stel `"opencodeTimeoutMs"` (milliseconden) in om het te verlengen voor interne structured-output-calls (auto-capture-samenvattingen, profiel-leren) — bijv. `"opencodeTimeoutMs": 180000` voor 3 minuten. Waarden worden geclampt tot 10000..600000; de standaard blijft 90000. Numerieke strings worden gecoeerd.
+@@ -0,0 +1,170 @@
++/**
++ * Local-ONNX embedding worker process.
++ *
++ * Run with `OPENCODE_MEM_EMBEDDING_WORKER=1` (or as `import.meta.main`). Loads
++ * `@huggingface/transformers` / `onnxruntime-node` only in this address space.
++ * The parent SIGKILLs us on shutdown so ORT's NAPI finalizer never runs in the
++ * OpenCode/Bun host (#518).
++ */
 +
-+Profielopschonings-timeouts zijn apart: externe/handmatige API-opschoning default naar 60 s via `"userProfileCleanupTimeoutMs"` (zelfde clamp 10000..600000; bijv. `"userProfileCleanupTimeoutMs": 180000`). OpenCode-sessie-opschoning houdt een vast 300 s-budget. De Node HTTP-idle-timeout wordt afgeleid als `max(userProfileCleanupTimeoutMs, 300000) + 30000`, en de Web UI-fetch voor `/ai-cleanup` staat tot 630 s toe zodat geen laag een verhoogde externe deadline ondermijnt.
- 
- Ondersteunde providers: elke provider uit `opencode providers list` (bijv. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
- 
++import { createInterface } from "node:readline";
++import { join } from "node:path";
++import {
++  prepareOnnxruntimeForTransformers,
++  formatOnnxruntimeInitError,
++} from "./onnxruntime-resolve.js";
++import { createRuntimeRequire } from "./runtime-require.js";
++import {
++  getTransformersPackageSpecifier,
++  resolveTransformersCjsEntry,
++} from "./transformers-resolve.js";
++import type {
++  EmbeddingWorkerRequest,
++  EmbeddingWorkerResponse,
++} from "./embedding-worker-protocol.js";
++
++const requireFromHere = createRuntimeRequire(import.meta);
++
++type Pipe = {
++  (text: string, opts: { pooling: string; normalize: boolean }): Promise<{ data: Float32Array }>;
++  dispose?: () => Promise<void>;
++};
++
++let pipe: Pipe | null = null;
++
++function send(response: EmbeddingWorkerResponse): void {
++  process.stdout.write(`${JSON.stringify(response)}\n`);
++}
++
++// Keep stdout reserved for JSON-line IPC; route casual logs to stderr.
++console.log = (...args: unknown[]) => {
++  process.stderr.write(`${args.map(String).join(" ")}\n`);
++};
++console.info = console.log;
++console.debug = console.log;
++
++async function loadPipeline(model: string, cacheDir: string, dtype?: string): Promise<Pipe> {
++  const transformersSpecifier = getTransformersPackageSpecifier();
++  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
++  const transformersEntry = resolveTransformersCjsEntry({
++    requireFn: requireFromHere,
++    specifier: transformersSpecifier,
++    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
++  });
++
++  prepareOnnxruntimeForTransformers();
++  const mod = requireFromHere(transformersEntry) as typeof import("@huggingface/transformers");
++  mod.env.allowLocalModels = true;
++  mod.env.allowRemoteModels = true;
++  mod.env.cacheDir = cacheDir;
++  try {
++    (mod.env as any).backends.onnx.wasm.numThreads = 1;
++  } catch {
++    // Optional; wasm settings may be absent under the node ORT backend.
++  }
++
++  // Parent resolves dtype (config / cache probe) before spawn.
++  const created = await mod.pipeline("feature-extraction", model, {
++    ...(dtype ? { dtype: dtype as "fp32" | "fp16" | "q8" | "auto" } : {}),
++  });
++  return created as unknown as Pipe;
++}
++
++async function handle(request: EmbeddingWorkerRequest): Promise<void> {
++  try {
++    switch (request.type) {
++      case "warmup": {
++        if (pipe?.dispose) {
++          try {
++            await pipe.dispose();
++          } catch {
++            // Replace the previous pipeline even if dispose fails.
++          }
++        }
++        pipe = await loadPipeline(
++          request.model,
++          request.cacheDir || join(process.cwd(), ".cache"),
++          request.dtype
++        );
++        send({ id: request.id, ok: true });
++        return;
++      }
++      case "embed": {
++        if (!pipe) {
++          send({ id: request.id, ok: false, error: "embedding-worker: not warmed up" });
++          return;
++        }
++        const output = await pipe(request.text, {
++          pooling: request.pooling,
++          normalize: true,
++        });
++        send({ id: request.id, ok: true, vector: Array.from(output.data) });
++        return;
++      }
++      case "dispose": {
++        const current = pipe;
++        pipe = null;
++        if (current?.dispose) {
++          try {
++            await current.dispose();
++          } catch {
++            // Parent will SIGKILL us; best-effort dispose only.
++          }
++        }
++        send({ id: request.id, ok: true });
++        return;
++      }
++      default: {
++        const unknown = request as { id?: number };
++        send({
++          id: typeof unknown.id === "number" ? unknown.id : -1,
++          ok: false,
++          error: "embedding-worker: unknown request type",
++        });
++      }
++    }
++  } catch (error) {
++    const rewritten = formatOnnxruntimeInitError(error);
++    send({
++      id: request.id,
++      ok: false,
++      error: rewritten.message,
++    });
++  }
++}
++
++export async function runEmbeddingWorker(): Promise<void> {
++  const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
++  for await (const line of rl) {
++    const trimmed = line.trim();
++    if (!trimmed) continue;
++    let request: EmbeddingWorkerRequest;
++    try {
++      request = JSON.parse(trimmed) as EmbeddingWorkerRequest;
++    } catch (error) {
++      send({
++        id: -1,
++        ok: false,
++        error: `embedding-worker: invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
++      });
++      continue;
++    }
++    await handle(request);
++  }
++}
++
++const isWorkerMain =
++  process.env.OPENCODE_ME
 ```
 
-**File**: `.github/i18n/README.tr.md` (modified, +3/-1)
+**File**: `src/services/embedding.ts` (modified, +65/-2)
 ```diff
-@@ -565,7 +565,9 @@ Eklenti, sağlayıcı uç noktalarını doğrudan çağırmak yerine yapılandı
+@@ -11,6 +11,7 @@ import {
+   getTransformersPackageSpecifier,
+   resolveTransformersCjsEntry,
+ } from "./transformers-resolve.js";
++import { EmbeddingSubprocessClient, shouldUseEmbeddingSubprocess } from "./embedding-subprocess.js";
  
- İsteğe bağlı olarak `"opencodeVariant": "xhigh"` ile bir model muhakeme varyantını sabitleyin (örn. grok-4.7 için). Eklentinin dahili LLM çağrılarına uygulanır (otomatik yakalama özetleri, profil öğrenme, profil temizleme); `opencodeModel` `"inherit"` olsa bile, böylece arka plan çalışması etkileşimli oturumdan farklı bir muhakeme düzeyi kullanabilir.
+ const requireFromHere = createRuntimeRequire(import.meta);
  
--Yavaş muhakeme modelleri (veya çok büyük profil prompt’ları) varsayılan 90 sn yapılandırılmış çıktı bütçesini aşabilir. Dahili yapılandırılmış çıktı çağrıları (otomatik yakalama özetleri, profil öğrenme) için uzatmak üzere `"opencodeTimeoutMs"` (milisaniye) ayarlayın — örn. 3 dakika için `"opencodeTimeoutMs": 180000`. Değerler 10000..600000’e sıkıştırılır; varsayılan 90000 kalır. Sayısal dizgeler zorlanır. Profil temizleme ayrı, daha uzun bir zaman aşımı kullanır.
-+Yavaş muhakeme modelleri (veya çok büyük profil prompt’ları) varsayılan 90 sn yapılandırılmış çıktı bütçesini aşabilir. Dahili yapılandırılmış çıktı çağrıları (otomatik yakalama özetleri, profil öğrenme) için uzatmak üzere `"opencodeTimeoutMs"` (milisaniye) ayarlayın — örn. 3 dakika için `"opencodeTimeoutMs": 180000`. Değerler 10000..600000’e sıkıştırılır; varsayılan 90000 kalır. Sayısal dizgeler zorlanır.
+@@ -344,6 +345,7 @@ export async function fetchRemoteEmbeddingWithRetry(
+ 
+ export class EmbeddingService {
+   private pipe: any = null;
++  private subprocess: EmbeddingSubprocessClient | null = null;
+   private initPromise: Promise<void> | null = null;
+   public isWarmedUp: boolean = false;
+   /** Set when warmup fails permanently; prevents "initializing forever" (#184). */
+@@ -356,6 +358,8 @@ export class EmbeddingService {
+   private pendingDispose: string | null = null;
+   /** Bumped by dispose so a slow initialize cannot resurrect a released pipeline. */
+   private generation = 0;
++  /** Windows hosts keep local ONNX in a Node child (#518); elsewhere in-process. */
++  private readonly useSubprocess = shouldUseEmbeddingSubprocess();
+ 
+   static getInstance(): EmbeddingService {
+     if (!(globalThis as any)[GLOBAL_EMBEDDING_KEY]) {
+@@ -395,9 +399,21 @@ export class EmbeddingService {
+     this.generation++;
+     const pipe = this.pipe;
+     this.pipe = null;
++    const subprocess = this.subprocess;
++    this.subprocess = null;
+     this.isWarmedUp = false;
+     this.initPromise = null;
+     this.initError = null;
++    // Windows/Bun: SIGKILL the child so ORT's NAPI finalizer never runs in-host (#518).
++    if (subprocess) {
++      subprocess.dispose(reason);
++      safeLog("Embedding model released", {
++        reason,
++        model: CONFIG.embeddingModel,
++        via: "subprocess",
++      });
++      return;
++    }
+     if (pipe?.dispose) {
+       try {
+         await pipe.dispose();
+@@ -432,8 +448,6 @@ export class EmbeddingService {
+ 
+       // Local model path
+       const generation = this.generation;
+-      const { pipeline } = await ensureTransformersLoaded();
+-      // Explicit config wins; otherwise auto-resolve from model declaration / cache (#393).
+       const dtype = CONFIG.embeddingDtype ?? resolveLocalOnnxDtype(CONFIG.embeddingModel);
+       if (dtype) {
+         log("Resolved local ONNX dtype for embedding warmup", {
+@@ -442,6 +456,35 @@ export class EmbeddingService {
+           source: CONFIG.embeddingDtype ? "config" : "auto",
+         });
+       }
 +
-+Profil temizleme zaman aşımları ayrıdır: harici/manuel API temizleme `"userProfileCleanupTimeoutMs"` ile varsayılan 60 sn’dir (aynı 10000..600000 sıkıştırma; örn. `"userProfileCleanupTimeoutMs": 180000`). OpenCode oturum temizliği sabit 300 sn bütçesini korur. Node HTTP boşta kalma zaman aşımı `max(userProfileCleanupTimeoutMs, 300000) + 30000` olarak türetilir ve Web UI `/ai-cleanup` fetch’i 630 sn’ye kadar izin verir; böylece hiçbir katman yükseltilmiş harici son tarihi altından kesmez.
- 
- Desteklenen sağlayıcılar: `opencode providers list` tarafından listelenen herhangi bir sağlayıcı (örn. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
- 
++      if (this.useSubprocess) {
++        // Keep onnxruntime-node out of the OpenCode/Bun host on Windows (#518).
++        void progressCallback;
++        const client = new EmbeddingSubprocessClient();
++        await client.warmup({
++          model: CONFIG.embeddingModel,
++          cacheDir: join(CONFIG.storagePath, ".cache"),
++          pooling: CONFIG.embeddingPooling,
++          ...(dtype ? { dtype } : {}),
++        });
++        if (generation !== this.generation) {
++          client.dispose("stale-generation");
++          return;
++        }
++        this.subprocess = client;
++        this.isWarmedUp = true;
++        this.initError = null;
++        this.scheduleIdleDispose();
++        log("Embedding model warmed up", {
++          model: CONFIG.embeddingModel,
++          pooling: CONFIG.embeddingPooling,
++          dtype: dtype ?? null,
++          via: "subprocess",
++        });
++        return;
++      }
++
++      const { pipeline } = await ensureTransformersLoaded();
+       const pipe = await pipeline("feature-extraction", CONFIG.embeddingModel, {
+         ...(dtype ? { dtype } : {}),
+         progress_callback: progressCallback,
+@@ -495,6 +538,26 @@ export class EmbeddingService {
+       if (CONFIG.embeddingApiUrl && CONFIG.embeddingApiKey) {
+         const data: any = await fetchRemoteEmbeddingWithRetry(fetch, input);
+         result = new Float32Array(data.data[0].embedding);
++      } else if (this.subprocess) {
++        const subprocess = this.subprocess;
++        try {
++          result = await subprocess.embed(input, CONFIG.embeddingPooling);
++        } catch (error) {
++          // Worker may have been SIGKILL'd / segfaulted; drop sticky warmup and
++          // re-spawn once so a single child death does not poison the host (#518).
++          if (subprocess.isReady) throw error;
++          subprocess.dispose("worker-exit");
++          if (this.subprocess === subprocess) this.subprocess = null;
++          this.isWarmedUp = false;
++          this.initPromise = null;
++          this.initError = null;
++          await this.warmup();
++          const restarted: EmbeddingSubprocessClient | null = this.subprocess;
++          if (!restarted) {
++            throw error instanceof Error ? error : new Error(String(error));
++          }
++          result = await restarted.embed(input, CONFIG.embeddingPooling);
++        }
+       } else {
+         const pipe = this.pipe;
+         if (!pipe) {
 ```
 
-**File**: `.github/i18n/README.zh.md` (modified, +3/-1)
+**File**: `tests/embedding-subprocess.test.ts` (added, +163/-0)
 ```diff
-@@ -536,7 +536,9 @@ memory({ mode: "import", inputPath: "./memories.json" });
- 
- 可选地用 `"opencodeVariant": "xhigh"` 固定模型推理变体（例如用于 grok-4.7）。它会应用于插件的内部 LLM 调用（自动捕获摘要、画像学习、画像清理），包括当 `opencodeModel` 为 `"inherit"` 时，以便后台工作可以使用与交互式会话不同的推理级别。
- 
--慢速推理模型（或非常大的画像提示）可能超过默认的 90 秒结构化输出预算。设置 `"opencodeTimeoutMs"`（毫秒）可为内部结构化输出调用（自动捕获摘要、画像学习）延长 — 例如 `"opencodeTimeoutMs": 180000` 表示 3 分钟。值钳制在 10000..600000；默认保持 90000。数字字符串会被强制转换。画像清理使用单独的、更长的超时。
-+慢速推理模型（或非常大的画像提示）可能超过默认的 90 秒结构化输出预算。设置 `"opencodeTimeoutMs"`（毫秒）可为内部结构化输出调用（自动捕获摘要、画像学习）延长 — 例如 `"opencodeTimeoutMs": 180000` 表示 3 分钟。值钳制在 10000..600000；默认保持 90000。数字字符串会被强制转换。
+@@ -0,0 +1,163 @@
++import { afterEach, describe, expect, it } from "bun:test";
++import { join } from "node:path";
++import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import {
++  collectEmbeddingWorkerDirs,
++  EmbeddingSubprocessClient,
++  resolveEmbeddingWorkerPackageRoot,
++  resolveEmbeddingWorkerRuntime,
++  resolveEmbeddingWorkerScript,
++  shouldUseEmbeddingSubprocess,
++} from "../src/services/embedding-subprocess.js";
++import { parseWorkerResponse } from "../src/services/embedding-worker-protocol.js";
 +
-+画像清理超时是单独的：外部/手动 API 清理默认 60 秒，通过 `"userProfileCleanupTimeoutMs"`（同样钳制在 10000..600000；例如 `"userProfileCleanupTimeoutMs": 180000`）。OpenCode 会话清理保持固定的 300 秒预算。Node HTTP 空闲超时按 `max(userProfileCleanupTimeoutMs, 300000) + 30000` 推导，Web UI 对 `/ai-cleanup` 的 fetch 最多允许 630 秒，这样任一层都不会低于提高后的外部截止时间。
- 
- 支持的提供商：`opencode providers list` 列出的任何提供商（例如 `anthropic`、`openai`、`github-copilot`、`openrouter` 等）。
- 
++const originalSubprocessEnv = process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++const originalPlatform = process.platform;
++
++afterEach(() => {
++  if (originalSubprocessEnv === undefined) {
++    delete process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++  } else {
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = originalSubprocessEnv;
++  }
++  Object.defineProperty(process, "platform", { value: originalPlatform });
++});
++
++describe("shouldUseEmbeddingSubprocess", () => {
++  it("defaults to true on win32 and false elsewhere", () => {
++    delete process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++    Object.defineProperty(process, "platform", { value: "win32" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(true);
++    Object.defineProperty(process, "platform", { value: "darwin" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(false);
++  });
++
++  it("honours OPENCODE_MEM_EMBEDDING_SUBPROCESS overrides", () => {
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = "1";
++    Object.defineProperty(process, "platform", { value: "darwin" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(true);
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = "0";
++    Object.defineProperty(process, "platform", { value: "win32" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(false);
++  });
++});
++
++describe("resolveEmbeddingWorkerRuntime", () => {
++  it("falls back to process.execPath with BUN_BE_BUN when no node/bun on PATH", () => {
++    // Under bun test we always have a bun-capable execPath.
++    const runtime = resolveEmbeddingWorkerRuntime();
++    expect(runtime).not.toBeNull();
++    expect(runtime!.command.length).toBeGreaterThan(0);
++    // Prefer real node/bun when present; otherwise OpenCode-style self re-exec.
++    if (runtime!.env.BUN_BE_BUN === "1") {
++      expect(runtime!.command).toBe(process.execPath);
++    }
++  });
++});
++
++describe("EmbeddingSubprocessClient readiness", () => {
++  it("rejects embed before warmup and after worker exit", async () => {
++    const runtime = resolveEmbeddingWorkerRuntime();
++    if (!runtime) return;
++
++    const client = new EmbeddingSubprocessClient({
++      runtime,
++      scriptPath: join(import.meta.dir, "fixtures", "embedding-worker-fake.mjs"),
++      requestTimeoutMs: 5_000,
++    });
++
++    expect(client.isReady).toBe(false);
++    await expect(client.embed("x", "mean")).rejects.toThrow(/not warmed up/);
++
++    await client.warmup({ model: "fake", cacheDir: "/tmp", pooling: "mean" });
++    expect(client.isReady).toBe(true);
++    expect(Array.from(await client.embed("ab", "mean"))).toEqual([2, 3, 4]);
++
++    client.dispose("test-exit");
++    expect(client.isReady).toBe(false);
++  });
++});
++
++describe("parseWorkerResponse", () => {
++  it("accepts ok and error payloads", () => {
++    expect(parseWorkerResponse(JSON.stringify({ id: 1, ok: true, vector: [1, 2] }))).toEqual({
++      id: 1,
++      ok: true,
++      vector: [1, 2],
++    });
++    expect(parseWorkerResponse(JSON.stringify({ id: 2, ok: false, error: "boom" }))).toEqual({
++      id: 2,
++      ok: false,
++      error: "boom",
++    });
++  });
++});
++
++describe("resolveEmbeddingWorkerScript anchors", () => {
++  it("finds the worker via import.meta.path when url is unusable", () => {
++    const root = mkdtempSync(join(tmpdir(), "opencode-mem-worker-"));
++    const services = join(root, "dist", "services");
++    mkdirSync(services, { recursive: true });
++    writeFileSync(join(root, "package.json"), JSON.stringify({ name: "opencode-mem" }));
++    const worker = join(services, "embedding-worker.js");
++    writeFileSync(worker, "export {}\n");
++
++    const resolved = resolveEmbeddingWorkerScript({
++      url: "",
++      path: join(services, "embedding-subprocess.js"),
++    } as ImportMeta & { path?: string });
++    expect(resolved).toBe(worker);
++    expect(resolveEmbeddingWorkerPackageRoot(resolved)).toBe(root);
++  });
++
++  it("collects dirs without throwing on a bad import.meta.url", () => {
++    const dirs = collectEmbeddingWorkerDirs({
++      url: "not-a-file-url",
++      path: "/tmp/opencode-mem/dist/services/embedding-subprocess.js",
++    } as ImportMeta & { path?: string });
++    expect(
++      dirs.some((dir) => dir.includes("dist/services") || dir.includes("dist\\services"))
++    ).toBe(true);
++  });
++});
++
++describe("EmbeddingSubprocessClient with fake worker", () => {
++  it("warms up, embeds, and SIGKILLs on dispose", async () => {
++    const runtime = resol
 ```
 
-**File**: `README.md` (modified, +3/-1)
+**File**: `tests/fixtures/embedding-worker-fake.mjs` (added, +44/-0)
 ```diff
-@@ -624,7 +624,9 @@ The plugin issues structured-output requests to opencode's session API instead o
- 
- Optionally pin a model reasoning variant with `"opencodeVariant": "xhigh"` (e.g. for grok-4.7). It is applied to the plugin's internal LLM calls (auto-capture summaries, profile learning, profile cleanup), including when `opencodeModel` is `"inherit"`, so background work can use a different reasoning level than the interactive session.
- 
--Slow reasoning models (or very large profile prompts) can exceed the default 90 s structured-output budget. Set `"opencodeTimeoutMs"` (milliseconds) to extend it for internal structured-output calls (auto-capture summaries, profile learning) — e.g. `"opencodeTimeoutMs": 180000` for 3 minutes. Values are clamped to 10000..600000; the default stays 90000. Numeric strings are coerced. Profile cleanup uses a separate, longer timeout.
-+Slow reasoning models (or very large profile prompts) can exceed the default 90 s structured-output budget. Set `"opencodeTimeoutMs"` (milliseconds) to extend it for internal structured-output calls (auto-capture summaries, profile learning) — e.g. `"opencodeTimeoutMs": 180000` for 3 minutes. Values are clamped to 10000..600000; the default stays 90000. Numeric strings are coerced.
+@@ -0,0 +1,44 @@
++/**
++ * Fake embedding worker for subprocess IPC tests. Speaks the same JSON-line
++ * protocol as src/services/embedding-worker.ts without loading ONNX.
++ */
++import { createInterface } from "node:readline";
 +
-+Profile cleanup timeouts are separate: external/manual-API cleanup defaults to 60 s via `"userProfileCleanupTimeoutMs"` (same 10000..600000 clamp; e.g. `"userProfileCleanupTimeoutMs": 180000`). OpenCode-session cleanup keeps a fixed 300 s budget. The Node HTTP idle timeout is derived as `max(userProfileCleanupTimeoutMs, 300000) + 30000`, and the Web UI `/ai-cleanup` fetch allows up to 630 s so neither layer undercuts a raised external deadline.
- 
- Supported providers: any provider listed by `opencode providers list` (e.g. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
- 
-```
-
-**File**: `opencode-mem.example.jsonc` (modified, +4/-0)
-```diff
-@@ -482,6 +482,10 @@
-   "userProfileAutoCleanupEnabled": true,
-   // Number of analyzed user prompts between automatic AI cleanup runs
-   "userProfileAutoCleanupInterval": 100,
-+  // Abort deadline (ms) for external/manual-API profile cleanup (default 60000, clamped to 10000..600000).
-+  // OpenCode-session cleanup keeps a separate longer timeout (300000). Node HTTP idle timeout
-+  // is derived as max(this, opencode cleanup) + 30000 so the server never undercuts the provider call.
-+  // "userProfileCleanupTimeoutMs": 180000,
- 
-   // Enable LLM validation of existing preferences against recent behavior.
-   // When enabled, each analysis round checks if top-5 preferences still match recent prompts.
++const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
++let warmed = false;
++
++function send(payload) {
++  process.stdout.write(`${JSON.stringify(payload)}\n`);
++}
++
++for await (const line of rl) {
++  const trimmed = line.trim();
++  if (!trimmed) continue;
++  let request;
++  try {
++    request = JSON.parse(trimmed);
++  } catch (error) {
++    send({ id: -1, ok: false, error: String(error) });
++    continue;
++  }
++  if (request.type === "warmup") {
++    warmed = true;
++    send({ id: request.id, ok: true });
++    continue;
++  }
++  if (request.type === "embed") {
++    if (!warmed) {
++      send({ id: request.id, ok: false, error: "not warmed up" });
++      continue;
++    }
++    const n = Math.max(1, Number(request.text?.length ?? 1));
++    send({ id: request.id, ok: true, vector: [n, n + 1, n + 2] });
++    continue;
++  }
++  if (request.type === "dispose") {
++    warmed = false;
++    send({ id: request.id, ok: true });
++    continue;
++  }
++  send({ id: request.id ?? -1, ok: false, error: "unknown type" });
++}
 ```
 
 ---
 
-### Incident Patch 2: `75c7004b` (2026-11-18)
-**Commit Message**: fix(ai): resolve opencodeModel "inherit" in profile cleanup (#508)
+### Incident Patch 2: `79630340` (2026-11-24)
+**Commit Message**: fix(web): allow tag migration when only external provider is ready (#520)
 
-* fix(ai): resolve opencodeModel "inherit" in profile cleanup
+The model picker blocked Start Migration on OpenCode-model readiness
+alone, even though the batch API accepts an external memoryModel +
+memoryApiUrl channel. Expose readyForMigration from the catalog API and
+gate the dialog on that instead.
 
-Profile cleanup passed the configured model verbatim to session.prompt,
-so `opencodeModel: "inherit"` reached OpenCode as a literal model id and
-failed with `Generate.ModelNotFoundError: Model not found: <provider>/inherit`.
-Auto-capture is unaffected because it resolves "inherit" from the prompt
-record; cleanup has no prompt of its own.
+**File**: `src/index.ts` (modified, +3/-2)
+```diff
+@@ -415,8 +415,9 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+ 
+   await configureOpencodeHostTransport(ctx);
+ 
+-  // Re-reads the provider directory into the connectivity snapshot. Errors
+-  // are logged and the previous snapshot retained. The host registers
++  // Re-reads the provider directory into the connectivity snapshot. On success
++  // the snapshot is replaced; on failure the configured opencodeProvider is
++  // seeded so structured-output is still attempted. The host registers
+   // user-config providers after plugin setup (provider.updated/model.updated),
+   // so this runs again on those events and on connectivity-gate misses.
+   const refreshConnectedProviders = async (): Promise<void> => {
+```
 
-Resolve the model with resolveOpencodeModelRef before creating the
-transient session, so an unresolvable "inherit" fails with an explicit
-message and no session is created.
+**File**: `src/services/api-handlers.ts` (modified, +18/-6)
+```diff
+@@ -1710,8 +1710,12 @@ export async function handleGetTagMigrationProgress(): Promise<ApiResponse<Migra
+ }
+ 
+ export interface TagMigrationModelStatus {
+-  /** True when the migration path can run without a live session (inherit cannot). */
++  /** True when the OpenCode path can run without a live session (inherit cannot). */
+   configured: boolean;
++  /** True when memoryModel + memoryApiUrl are set (external tag-migration channel). */
++  externalConfigured: boolean;
++  /** True when either the OpenCode or external channel can run tag migration. */
++  readyForMigration: boolean;
+   providerID: string | null;
+   modelID: string | null;
+ }
+@@ -1735,14 +1739,22 @@ export type ProviderDirectoryEntry = {
+   models: Array<{ id: string; name: string }>;
+ };
+ 
+-export async function handleGetTagMigrationModel(
+-  loadDirectory?: () => Promise<ProviderDirectoryEntry[]>
+-): Promise<ApiResponse<TagMigrationModelCatalog>> {
+-  const status: TagMigrationModelStatus = {
+-    configured: isOpencodeTagMigrationConfigured(),
++function tagMigrationModelStatus(): TagMigrationModelStatus {
++  const configured = isOpencodeTagMigrationConfigured();
++  const externalConfigured = isExternalTagMigrationConfigured();
++  return {
++    configured,
++    externalConfigured,
++    readyForMigration: configured || externalConfigured,
+     providerID: CONFIG.opencodeProvider ?? null,
+     modelID: CONFIG.opencodeModel ?? null,
+   };
++}
++
++export async function handleGetTagMigrationModel(
++  loadDirectory?: () => Promise<ProviderDirectoryEntry[]>
++): Promise<ApiResponse<TagMigrationModelCatalog>> {
++  const status = tagMigrationModelStatus();
+ 
+   try {
+     const { loadOpencodeProvider } = await import("./ai/opencode-provider-loader.js");
+```
 
-Drop the unreachable hardcoded fallbacks (bs-aigw / deepseek-v4-flash):
-callAICleanup only takes this path when both settings are configured.
+**File**: `web/sim/config-model-provider.json` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+   "data": {
+     "available": true,
+     "configured": false,
++    "externalConfigured": false,
++    "readyForMigration": false,
+     "providerID": "opencode",
+     "modelID": "inherit",
+     "providers": [
+```
 
-* refactor(ai): resolve inherit via loadOpencodeProvider in cleanup
+**File**: `web/src/lib/components/explorer/ModelPicker.svelte` (modified, +17/-2)
+```diff
+@@ -11,12 +11,16 @@
+     idPrefix?: string;
+     disabled?: boolean;
+     configured?: boolean;
++    /** True when OpenCode or the external memory provider can run tag migration. */
++    readyForMigration?: boolean;
+   };
+ 
+   type ModelCatalog = {
+     available: boolean;
+     reason?: string;
+     configured: boolean;
++    externalConfigured?: boolean;
++    readyForMigration?: boolean;
+     providerID: string | null;
+     modelID: string | null;
+     providers: Array<{
+@@ -27,7 +31,12 @@
+     }>;
+   };
+ 
+-  let { idPrefix = "model", disabled = false, configured = $bindable(false) }: Props = $props();
++  let {
++    idPrefix = "model",
++    disabled = false,
++    configured = $bindable(false),
++    readyForMigration = $bindable(false),
++  }: Props = $props();
+ 
+   const i18n = useI18n();
+   let catalog = $state<ModelCatalog | null>(null);
+@@ -53,15 +62,21 @@
+         available: false,
+         reason: result.error ?? "",
+         configured: false,
++        externalConfigured: false,
++        readyForMigration: false,
+         providerID: null,
+         modelID: null,
+         providers: [],
+       };
+       configured = false;
++      readyForMigration = false;
+       return;
+     }
+     catalog = result.data;
+     configured = result.data.configured;
++    readyForMigration =
++      result.data.readyForMigration ??
++      (result.data.configured || Boolean(result.data.externalConfigured));
+     const data = result.data;
+     const provider = data.providers.find((entry) => entry.id === data.providerID);
+     if (provider) {
+@@ -147,7 +162,7 @@
+     </p>
+   {/if}
+ 
+-  {#if catalog && !catalog.configured}
++  {#if catalog && !(catalog.readyForMigration ?? catalog.configured)}
+     <p class="text-xs text-muted-foreground">{i18n.t("migration-model-required")}</p>
+   {/if}
+ </div>
+```
 
-Use the existing loader instead of a direct dynamic import, and extend
-the cleanup test mock so resolveOpencodeModelRef still comes from the
-real opencode-provider module.
+**File**: `web/src/lib/components/explorer/TagMigrationDialog.svelte` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@
+   let running = $state(false);
+   let status = $state("");
+   let progress = $state(0);
+-  let modelConfigured = $state(false);
++  let readyForMigration = $state(false);
+ 
+   $effect(() => {
+     if (open && !running) {
+@@ -125,7 +125,7 @@
+       ></div>
+     </div>
+ 
+-    <ModelPicker idPrefix="migration-model" disabled={running} bind:configured={modelConfigured} />
++    <ModelPicker idPrefix="migration-model" disabled={running} bind:readyForMigration />
+ 
+     <p class="text-xs text-muted-foreground">{i18n.t("migration-note")}</p>
+   </div>
+@@ -134,7 +134,7 @@
+       <DialogActions
+         onCancel={() => handleOpenChange(false)}
+         primaryLabel={i18n.t("btn-start-migration")}
+-        primaryDisabled={!modelConfigured}
++        primaryDisabled={!readyForMigration}
+         onPrimary={() => void runTagMigration()}
+       />
+     {/if}
+```
+
+**File**: `web/vite-plugins/opencode-mem-sim.ts` (modified, +4/-0)
+```diff
+@@ -56,6 +56,8 @@ type MarkdownStatus = {
+ type ModelProviderCatalog = {
+   available: boolean;
+   configured: boolean;
++  externalConfigured?: boolean;
++  readyForMigration?: boolean;
+   providerID: string | null;
+   modelID: string | null;
+   providers: Array<{
+@@ -242,6 +244,8 @@ export function opencodeMemSimPlugin(simRoot: string): Plugin {
+                 modelProvider.providerID = providerID;
+                 modelProvider.modelID = modelID;
+                 modelProvider.configured = modelID !== "inherit";
++                modelProvider.readyForMigration =
++                  modelProvider.configured || Boolean(modelProvider.externalConfigured);
+                 sendJson(res, 200, {
+                   success: true,
+                   data: { writtenTo: "sim", providerID, modelID, requiresReload: false },
+```
+
+---
+
+### Incident Patch 3: `ffd6a2cf` (2026-11-24)
+**Commit Message**: fix(provider): keep configured provider connected when directory is unavailable (#513)
+
+* fix(provider): keep configured provider connected when directory is unavailable
+
+Some plugin contexts (notably the V2 host) do not expose the provider directory, so refreshing the connectivity snapshot throws and ensureProviderConnected() denies providers that are actually configured. Fall back to the explicitly configured opencodeProvider so internal structured-output calls are still attempted; an invalid provider id still fails on the call and falls back to the external API.
+
+* fix(provider): load connectivity fallback via opencode provider loader
+
+Use loadOpencodeProvider in the directory-unavailable catch path so
+setConnectedProviders updates the same module instance that
+ensureProviderConnected reads.
 
 ---------
 
 Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
 
-**File**: `src/services/user-profile/ai-cleanup.ts` (modified, +11/-4)
+**File**: `src/index.ts` (modified, +10/-0)
 ```diff
-@@ -337,6 +337,16 @@ async function callViaOpencodeWithClient(
-   const systemPrompt =
-     "You are a user profile cleanup assistant. Merge duplicate entries and return only JSON without markdown wrapping.";
+@@ -435,6 +435,16 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+       }
+     } catch (error) {
+       log("Failed to refresh opencode provider state", { error: String(error) });
++      // The host provider directory may be unavailable (e.g. a plugin context
++      // without `ctx.provider`). Keep the explicitly configured provider
++      // connected so structured-output calls are attempted instead of being
++      // denied by the connectivity gate; a bad provider id still fails loudly
++      // on the call itself and falls back to the external API.
++      // Use the loader so we hit the same module instance as ensureProviderConnected.
++      if (CONFIG.opencodeProvider) {
++        const { setConnectedProviders } = await loadOpencodeProvider();
++        setConnectedProviders([CONFIG.opencodeProvider]);
++      }
+     }
+   };
  
-+  // Resolve `opencodeModel: "inherit"` before creating the session, so the
-+  // literal "inherit" never reaches session.prompt. callAICleanup only routes
-+  // here when both opencodeProvider and opencodeModel are set.
-+  const { resolveOpencodeModelRef } = await loadOpencodeProvider();
-+  const model = resolveOpencodeModelRef({
-+    providerID: CONFIG.opencodeProvider!,
-+    modelID: CONFIG.opencodeModel!,
-+  });
-+  log("AI cleanup: model resolved", model);
-+
-   const created = (await raceWithTimeout(
-     v2Client.session.create({
-       title: "opencode-mem profile cleanup",
-@@ -362,10 +372,7 @@ async function callViaOpencodeWithClient(
-     const promptResult = await raceWithTimeout(
-       v2Client.session.prompt({
-         sessionID,
--        model: {
--          providerID: CONFIG.opencodeProvider || "bs-aigw",
--          modelID: CONFIG.opencodeModel || "deepseek-v4-flash",
--        },
-+        model,
-         // V1 prompt body: variant is a sibling of `model`, not inside it.
-         ...(CONFIG.opencodeVariant ? { variant: CONFIG.opencodeVariant } : {}),
-         system: systemPrompt,
-```
-
-**File**: `tests/ai-cleanup.test.ts` (modified, +73/-26)
-```diff
-@@ -1,5 +1,5 @@
- import { afterEach, describe, expect, it } from "bun:test";
--import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- import { extractTextFromPromptResult } from "../src/services/user-profile/ai-cleanup.js";
-@@ -65,6 +65,8 @@ describe("extractTextFromPromptResult", () => {
- const aiCleanupUrl = new URL("../src/services/user-profile/ai-cleanup.js", import.meta.url).href;
- const configUrl = new URL("../src/config.js", import.meta.url).href;
- const loggerUrl = new URL("../src/services/logger.js", import.meta.url).href;
-+const opencodeProviderUrl = new URL("../src/services/ai/opencode-provider.js", import.meta.url)
-+  .href;
- const opencodeProviderLoaderUrl = new URL(
-   "../src/services/ai/opencode-provider-loader.js",
-   import.meta.url
-@@ -74,6 +76,8 @@ function runCleanupScenario(opts: {
-   promptThrows?: boolean;
-   clientAvailable?: boolean;
-   withExternalApi?: boolean;
-+  opencodeModel?: string;
-+  recentOpencodeModel?: { providerID: string; modelID: string };
- }) {
-   const dir = mkdtempSync(join(tmpdir(), "opencode-mem-ai-cleanup-"));
-   tempDirs.push(dir);
-@@ -82,6 +86,17 @@ function runCleanupScenario(opts: {
-   const clientAvailable = opts.clientAvailable ?? true;
-   const withExternalApi = opts.withExternalApi ?? false;
- 
-+  // Isolated OpenCode state: `opencodeModel: "inherit"` reads the recent model
-+  // list from there, so a developer's own model.json cannot leak into a test.
-+  const stateDir = join(dir, "state");
-+  if (opts.recentOpencodeModel) {
-+    mkdirSync(join(stateDir, "opencode"), { recursive: true });
-+    writeFileSync(
-+      join(stateDir, "opencode", "model.json"),
-+      JSON.stringify({ recent: [opts.recentOpencodeModel] })
-+    );
-+  }
-+
-   const script = `
- import { mock } from "bun:test";
- 
-@@ -104,7 +119,7 @@ const cleanupJson = JSON.stringify({
- mock.module(${JSON.stringify(configUrl)}, () => ({
-   CONFIG: {
-     opencodeProvider: "openai",
--    opencodeModel: "gpt-test",
-+    opencodeModel: ${JSON.stringify(opts.opencodeModel ?? "gpt-test")},
-     memoryModel: ${withExternalApi ? '"gpt-ext"' : "undefined"},
-     memoryApiUrl: ${withExternalApi ? '"http://example.test/v1"' : "undefined"},
-     memoryApiKey: "test-key",
-@@ -123,31 +138,36 @@ mock.module(${JSON.stringify(configUrl)}, () => ({
- mock.module(${JSON.stringify(loggerUrl)}, () => ({ log: () => {}, safeLog: () => {}, serializeError: (error) => ({ error: error instanceof Error ? error.message : String(error) }) }));
- 
- mock.module(${JSON.stringify(opencodeProviderLoaderUrl)}, () => ({
--  loadOpencodeProvider: async () => ({
--    getV2Client: () =>
--      ${clientAvailable}
--        ? {
--            session: {
--              create: async () => ({ data: { id: "sess-cleanup-1" } }),
--              prompt: async (args) => {
--                promptCalls.push(args);
--                if (${promptThrows}) {
--                  throw new Error("prompt failed for test");
--                }
--                return {
--                  data: {
--                    info: {},
--                    parts: [{ type: "text", text: cleanupJson }],
--                  },
--                };
--              },
--              delete: async (args) => {
--                deleteCalls.push(args);
-+  loadOpencodeProvider: async () => {
-+    // Keep real helpers (e.g. resolveOpencodeModelRef for "inherit"); only stub the client.
-+    const real = await import(${JSON.stringify(opencodeProviderUrl)});
-+    return {
-+      ...real,
-+      getV2Client: () =>
-+        ${clientAvailable}
-+          ? {
-+              session: {
-+                create: async () => ({ data: { id: "sess-cleanup-1" } }),
-+                prompt: async (args) => {
-+                  promptCalls.push(args);
-+                  if (${promptThrows}) {
-+                    throw new Error("prompt failed for test");
-+                  }
-+                  return {
-+                    data: {
-+                      info: {},
-+                      parts: [{ type: "text", text: cleanupJson }],
-+                    },
-+                  };
-+                },
-+                delete: async (args) => {
-+                  deleteCalls.push(args);
-+                },
-               },
--            },
--          }
--        : null,
--  }),
-+            }
-+          : null,
-+    };
-+  },
- }));
- 
- if (${withExternalApi}) {
-@@ -203,6 +223,7 @@ console.log(
-     cmd: [process.execPath, scriptPath],
-     stdout: "pipe",
-     stderr: "pipe",
-+    env: { ...process.env, XDG_STATE_HOME: stateDir },
-   });
- 
-   const stdout = Buffer.from(spawned.stdout).toString("utf8").trim();
-@@ -265,4 +286,30 @@ describe("AI cleanup opencode provider path (#177)", () => {
-     expect(result.parsed?.externalRequestBody?.stream).toBeUndefined();
-     expect(result.parsed?.externalRequestBody?.messages).toHaveLength(2);
-   });
-+
-+  it('resolves ope
-```
-
----
-
-### Incident Patch 3: `2e7a5822` (2026-11-18)
-**Commit Message**: feat(i18n): add French localization to the web UI and docs (#509)
-
-Add a complete fr dictionary (268 keys, exact key/placeholder parity with
-English) to the web UI language catalog, a full French README translation
-under .github/i18n/ (including the credential-redaction section), and wire
-French into the docs site (docs-map.json, LOCALES, language switcher).
-Add the French flag to the language rows and translation lists of all six
-READMEs, and a catalog regression test mirroring the Turkish one.
-
-**File**: `.github/i18n/README.ar.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](../pics/banner.png)
- 
--اللغات: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | **🇸🇦** | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md)
-+اللغات: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | **🇸🇦** | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md) | [🇫🇷](./README.fr.md)
- 
- نظام ذاكرة دائم لوكلاء البرمجة بالذكاء الاصطناعي يتيح الاحتفاظ بالسياق طويل الأمد عبر الجلسات باستخدام تقنية قاعدة بيانات متجهات محلية.
- 
-@@ -736,7 +736,7 @@ bun run check
- 
- يسعى هذا المشروع بنشاط للمساهمات ليصبح المكون الإضافي النهائي للذاكرة لوكلاء البرمجة بالذكاء الاصطناعي. سواء كنت تصلح أخطاء، أو تضيف ميزات، أو تحسّن التوثيق، أو توسّع دعم نماذج التضمين، مساهماتك حاسمة. قاعدة الشيفرة منظمة جيدًا وجاهزة للتحسين. افتح القضايا بقوالب Issue أو Feature request، واملأ قالب طلب السحب عند إرسال PR — نراجع وندمج المساهمات بسرعة.
- 
--**ترجمات README:** `README.md` (الإنجليزية) هو المصدر المعتمد. عند تغيير محتواه، حدّث الملفات ضمن `.github/i18n/` (`README.de.md` و`README.zh.md` و`README.ar.md` و`README.tr.md` و`README.nl.md`) لتطابقها.
-+**ترجمات README:** `README.md` (الإنجليزية) هو المصدر المعتمد. عند تغيير محتواه، حدّث الملفات ضمن `.github/i18n/` (`README.de.md` و`README.zh.md` و`README.ar.md` و`README.tr.md` و`README.nl.md` و`README.fr.md`) لتطابقها.
- 
- ## الترخيص والروابط
- 
-```
-
-**File**: `.github/i18n/README.de.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](../pics/banner.png)
- 
--Sprachen: [🇬🇧](../../README.md) | **🇩🇪** | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md)
-+Sprachen: [🇬🇧](../../README.md) | **🇩🇪** | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md) | [🇫🇷](./README.fr.md)
- 
- Ein persistentes Speichersystem für KI-Coding-Agenten, das langfristige Kontextbeibehaltung über Sitzungen hinweg mittels lokaler Vektordatenbank-Technologie ermöglicht.
- 
-@@ -738,7 +738,7 @@ Die [Dokumentation](https://opencode-mem.zhafron.my.id/docs/) wird aus dieser RE
- 
- Dieses Projekt sucht aktiv Beiträge, um das maßgebliche Memory-Plugin für KI-Coding-Agenten zu werden. Ob du Bugs behebst, Features hinzufügst, Dokumentation verbesserst oder die Embedding-Modell-Unterstützung erweiterst — deine Beiträge sind entscheidend. Die Codebasis ist gut strukturiert und bereit für Erweiterungen. Bitte Issues mit den Vorlagen Issue oder Feature request öffnen und beim Einreichen eines PRs die Pull-Request-Vorlage ausfüllen — wir reviewen und mergen Beiträge zügig.
- 
--**README-Übersetzungen:** `README.md` (Englisch) ist die Quelle der Wahrheit. Wenn du dessen Inhalt änderst, aktualisiere die Dateien unter `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md` und `README.nl.md`) entsprechend.
-+**README-Übersetzungen:** `README.md` (Englisch) ist die Quelle der Wahrheit. Wenn du dessen Inhalt änderst, aktualisiere die Dateien unter `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, `README.nl.md` und `README.fr.md`) entsprechend.
- 
- ## Lizenz & Links
- 
-```
-
-**File**: `.github/i18n/README.fr.md` (added, +648/-0)
-```diff
-@@ -0,0 +1,648 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+[![Website](https://img.shields.io/badge/website-opencode--mem.zhafron.my.id-blue)](https://opencode-mem.zhafron.my.id)
-+[![Docs](https://img.shields.io/badge/docs-opencode--mem.zhafron.my.id%2Fdocs-blue)](https://opencode-mem.zhafron.my.id/docs/)
-+
-+![OpenCode Memory Banner](../pics/banner.png)
-+
-+Langues : [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md) | **🇫🇷**
-+
-+Un système de mémoire persistante pour les agents de codage IA, qui permet de conserver le contexte à long terme entre les sessions grâce à une base de données vectorielle locale.
-+
-+## Fonctionnalités principales
-+
-+- **Base de données locale :** Turso/libSQL embarqué avec recherche vectorielle native, stocké sous `storagePath`. Pas de base vectorielle séparée.
-+- **Extraction intelligente de mémoires à partir des prompts (auto-capture) :** quand une session devient inactive, une requête IA en arrière-plan transforme le travail technique en mémoires de projet persistantes.
-+- **Rappel automatique :** les mémoires pertinentes et le profil utilisateur sont injectés dans le contexte du modèle (`chatMessage`).
-+- **Apprentissage du profil utilisateur :** un résumé trans-projets de vos préférences, schémas et flux de travail.
-+- **Hygiène des mémoires :** déduplication intelligente, mise à jour à la capture optionnelle et consolidation « dreaming » optionnelle avec corbeille récupérable.
-+- **Support IA multi-fournisseurs :** tout fournisseur configuré dans OpenCode (`opencodeProvider` / `opencodeModel`), ou une API manuelle : OpenAI Chat Completions, OpenAI Responses, Anthropic, MiniMax, OrcaRouter, Atlas Cloud, Cheaper Inference, API Route, Runcrate, CloudGPU.
-+- **Embeddings :** plus de 12 modèles d'embedding locaux sur CPU (pas besoin de GPU) ou toute API d'embeddings compatible OpenAI.
-+- **Interface web complète :** chronologie unifiée mémoires–prompts, profil utilisateur, bibliothèque de skills, coffre Markdown et statistiques de santé, avec authentification HTTP Basic optionnelle.
-+- **Confidentialité :** balises `<private>`, masquage des identifiants avant capture et chiffrement au repos optionnel.
-+- **Portabilité :** backend coffre Markdown optionnel, et modes `export` / `import` / `migrate` de l'outil `memory` pour les projets déplacés ou copiés.
-+
-+## Masquage des identifiants dans les mémoires
-+
-+Avant que l'auto-capture n'envoie le contexte à son fournisseur de résumé configuré (y compris le repli), le plugin retire les identifiants reconnaissables du texte utilisateur, du texte de l'assistant, des entrées d'outils, des preuves de résultats d'outils conservées et du contexte de mémoires antérieures. Les prompts/preuves en attente sont assainis avant persistance ; les résumés et tags générés sont assainis à nouveau avant l'embedding et l'écriture de nouvelles mémoires. L'outil `add` explicite de `memory` utilise la même frontière d'écriture. Cela s'applique aux mémoires Turso comme aux mémoires Markdown créées par le plugin, sans appel de modèle ni dépendance supplémentaire.
-+
-+Les formats reconnus incluent les jetons GitHub pris en charge, les formes de clés API OpenAI/Anthropic/OpenRouter/Google, les jetons Slack, les identifiants de clé d'accès AWS, les identifiants « bearer » et les clés privées PEM, ainsi que les affectations d'identifiants détectées prudemment. Les remplacements conservent le contexte utile alentour. La protection `<private>...</private>` existante demeure : les régions imbriquées ou non fermées échouent en mode fermé. Un début de clé privée PEM non fermé masque de même jusqu'à la fin du texte. L'assainissement précède les limites de longueur de capture, afin qu'une troncature ne laisse pas derrière elle une partie d'un identifiant reconnu. Les chaînes de diagnostic du plugin utilisent le même assainisseur ; les correspondances ne sont jamais signalées séparément.
-+
-+**Limites :** il s'agit d'une protection au mieux pour les copies de mémoires du plugin, pas pour la conversation originale d'OpenCode, les requêtes du modèle principal ou le trafic des outils. Les mots de passe arbitraires, les valeurs « bearer » composées uniquement de lettres, les jetons personnalisés/encodés, les valeurs obscurcies et les identifiants répartis sur plusieurs messages peuvent ne pas être reconnus. Utilisez `<private>` pour les autres textes sensibles. Les hachages, UUID et longues chaînes arbitraires ne sont pas traités comme des secrets. Les mé
-```
-
-**File**: `.github/i18n/README.nl.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](../pics/banner.png)
- 
--Talen: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | **🇳🇱**
-+Talen: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | **🇳🇱** | [🇫🇷](./README.fr.md)
- 
- Een persistent geheugensysteem voor AI-codingagents dat langetermijncontextbehoud over sessies mogelijk maakt met lokale vectordatabasetechnologie.
- 
-@@ -742,7 +742,7 @@ De [docs](https://opencode-mem.zhafron.my.id/docs/) worden gegenereerd uit deze
- 
- Dit project zoekt actief bijdragen om de definitieve geheugenplugin voor AI-codingagents te worden. Of je bugs fixt, features toevoegt, documentatie verbetert of embeddingmodelondersteuning uitbreidt: je bijdragen zijn cruciaal. De codebase is goed gestructureerd en klaar voor verbetering. Open issues met de Issue- of Feature request-templates, en vul het pull request-template in wanneer je een PR indient — we reviewen en mergen bijdragen snel.
- 
--**README-vertalingen:** `README.md` (Engels) is de bron van waarheid. Wanneer je de inhoud wijzigt, werk dan de bestanden onder `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md` en `README.nl.md`) bij zodat ze overeenkomen.
-+**README-vertalingen:** `README.md` (Engels) is de bron van waarheid. Wanneer je de inhoud wijzigt, werk dan de bestanden onder `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, `README.nl.md` en `README.fr.md`) bij zodat ze overeenkomen.
- 
- ## Licentie & links
- 
-```
-
-**File**: `.github/i18n/README.tr.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](../pics/banner.png)
- 
--Diller: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | **🇹🇷** | [🇳🇱](./README.nl.md)
-+Diller: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | [🇨🇳](./README.zh.md) | [🇸🇦](./README.ar.md) | **🇹🇷** | [🇳🇱](./README.nl.md) | [🇫🇷](./README.fr.md)
- 
- Yerel vektör veritabanı teknolojisi kullanarak oturumlar arasında uzun vadeli bağlam saklamayı sağlayan, yapay zeka kodlama ajanları için kalıcı bir bellek sistemi.
- 
-@@ -744,7 +744,7 @@ bun run check
- 
- Bu proje, AI kodlama ajanları için nihai bellek eklentisi olmak üzere aktif olarak katkı arıyor. Hataları düzeltmek, özellik eklemek, belgeleri iyileştirmek veya embedding model desteğini genişletmek olsun, katkılarınız kritiktir. Kod tabanı iyi yapılandırılmış ve iyileştirmeye hazırdır. Lütfen Issue veya Feature request şablonlarıyla issue açın ve bir PR gönderdiğinizde pull request şablonunu doldurun — katkıları hızlıca inceler ve birleştiririz.
- 
--**README çevirileri:** `README.md` (İngilizce) esas kaynaktır. İçeriğini değiştirdiğinizde `.github/i18n/` altındaki dosyaları (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md` ve `README.nl.md`) buna uyacak şekilde güncelleyin.
-+**README çevirileri:** `README.md` (İngilizce) esas kaynaktır. İçeriğini değiştirdiğinizde `.github/i18n/` altındaki dosyaları (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, `README.nl.md` ve `README.fr.md`) buna uyacak şekilde güncelleyin.
- 
- ## Lisans ve Bağlantılar
- 
-```
-
-**File**: `.github/i18n/README.zh.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](../pics/banner.png)
- 
--语言: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | **🇨🇳** | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md)
-+语言: [🇬🇧](../../README.md) | [🇩🇪](./README.de.md) | **🇨🇳** | [🇸🇦](./README.ar.md) | [🇹🇷](./README.tr.md) | [🇳🇱](./README.nl.md) | [🇫🇷](./README.fr.md)
- 
- 面向 AI 编程代理的持久记忆系统，基于本地向量数据库技术，实现跨会话的长期上下文保留。
- 
-@@ -678,7 +678,7 @@ bun run check
- 
- 本项目积极寻求贡献，以成为 AI 编程代理的权威记忆插件。无论你是修复缺陷、添加功能、改进文档，还是扩展嵌入模型支持，你的贡献都至关重要。代码库结构良好，已准备好增强。请使用 Issue 或 Feature request 模板提出问题，并在提交 PR 时填写 pull request 模板 — 我们会快速审查并合并贡献。
- 
--**README 翻译：** `README.md`（英文）为唯一权威来源。更改其内容时，请同步更新 `.github/i18n/` 下的文件（`README.de.md`、`README.zh.md`、`README.ar.md`、`README.tr.md` 和 `README.nl.md`）。
-+**README 翻译：** `README.md`（英文）为唯一权威来源。更改其内容时，请同步更新 `.github/i18n/` 下的文件（`README.de.md`、`README.zh.md`、`README.ar.md`、`README.tr.md`、`README.nl.md` 和 `README.fr.md`）。
- 
- ## 许可证与链接
- 
-```
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@
- 
- ![OpenCode Memory Banner](.github/pics/banner.png)
- 
--Languages: **🇬🇧** | [🇩🇪](./.github/i18n/README.de.md) | [🇨🇳](./.github/i18n/README.zh.md) | [🇸🇦](./.github/i18n/README.ar.md) | [🇹🇷](./.github/i18n/README.tr.md) | [🇳🇱](./.github/i18n/README.nl.md)
-+Languages: **🇬🇧** | [🇩🇪](./.github/i18n/README.de.md) | [🇨🇳](./.github/i18n/README.zh.md) | [🇸🇦](./.github/i18n/README.ar.md) | [🇹🇷](./.github/i18n/README.tr.md) | [🇳🇱](./.github/i18n/README.nl.md) | [🇫🇷](./.github/i18n/README.fr.md)
- 
- A persistent memory system for AI coding agents that enables long-term context retention across sessions using local vector database technology.
- 
-@@ -799,7 +799,7 @@ The [docs](https://opencode-mem.zhafron.my.id/docs/) are generated from this REA
- 
- This project is actively seeking contributions to become the definitive memory plugin for AI coding agents. Whether you are fixing bugs, adding features, improving documentation, or expanding embedding model support, your contributions are critical. The codebase is well-structured and ready for enhancement. Please open issues with the Issue or Feature request templates, and fill out the pull request template when you submit a PR — we review and merge contributions quickly.
- 
--**README translations:** `README.md` (English) is the source of truth. When you change its content, update the files under `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, and `README.nl.md`) to match.
-+**README translations:** `README.md` (English) is the source of truth. When you change its content, update the files under `.github/i18n/` (`README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, `README.nl.md`, and `README.fr.md`) to match.
- 
- ## License & Links
- 
-```
-
-**File**: `github-site/docs-map.json` (modified, +2/-1)
-```diff
-@@ -6,7 +6,8 @@
-     "zh": ".github/i18n/README.zh.md",
-     "ar": ".github/i18n/README.ar.md",
-     "tr": ".github/i18n/README.tr.md",
--    "nl": ".github/i18n/README.nl.md"
-+    "nl": ".github/i18n/README.nl.md",
-+    "fr": ".github/i18n/README.fr.md"
-   },
-   "untranslated": {
-     "Memory credential redaction": ["de", "zh", "ar", "tr", "nl"]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #512** (2026-11-18): chore(release): release v2.43.0 (@EyJunge1)
-- **PR #511** (2026-11-18): chore(deps): bump packages across root, web, and github-site (@EyJunge1)
-- **PR #510** (2026-11-18): fix(config): make external profile cleanup timeout configurable (@EyJunge1)
-- **PR #509** (2026-11-18): feat(i18n): add French localization to the web UI and docs (@ptitan)
-- **PR #508** (2026-11-18): fix(ai): resolve opencodeModel "inherit" in profile cleanup (@ptitan)
-- **PR #506** (2026-11-16): chore(deps): bump the minor-and-patch group across 2 directories with 10 updates (@dependabot[bot])
+- **PR #522** (2026-11-24): chore(release): release v2.44.0 (@EyJunge1)
+- **PR #521** (2026-11-24): fix(embedding): isolate Windows local ONNX in a Node subprocess (@EyJunge1)
+- **PR #520** (2026-11-24): fix(web): allow tag migration when only external provider is ready (@EyJunge1)
+- **PR #519** (2026-11-24): chore(deps-dev): bump the minor-and-patch group across 2 directories with 3 updates (@dependabot[bot])
+- **PR #517** (2026-11-24): docs: clarify native database platform requirements (@cloudgpuapp)
+- **PR #516** (2026-11-24): feat(ai): add AIGROW memory provider preset (@guglielmo-io)
 
 ---
 
@@ -1563,30 +2101,30 @@ READMEs, and a catalog regression test mirroring the Turkish one.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): make external profile cleanup timeout configurable
+## X. embedding): isolate Windows local ONNX in a Node subprocess
 
 **RULE**:
-When implementing operations in `.github/i18n/README.ar.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e704b90c`: config): make external profile cleanup timeout configurable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a755b1da`: embedding): isolate Windows local ONNX in a Node subprocess. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/i18n/README.ar.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-نماذج الاستدلال البطيئة (أو مطالبات الملف الكبيرة جدًا) يمكن أن تتجاوز ميزانية المخرجات المنظمة الافتراضية البالغة 90 ثانية. عيّن `"opencodeTimeoutMs"` (بالمللي ثانية) لتمديدها لاستدعاءات المخرجات المنظمة الداخلية (ملخصات الالتقاط التلقائي، تعلّم الملف) — مثلًا `"opencodeTimeoutMs": 180000` لمدة 3 دقائق. تُقيَّد القيم إلى 10000..600000؛ يبقى الافتراضي 90000. تُحوَّل السلاسل الرقمية.
+**Windows + OpenCode/Bun:** Local embeddings run `onnxruntime-node` in a **subprocess** (never inside the OpenCode host) so Bun↔ORT NAPI segfaults cannot take down `opencode serve` ([#518](https://github.com/tickernelz/opencode-mem/issues/518), [oven-sh/bun#28008](https://github.com/oven-sh/bun/issues/28008)). Runtime order: Node.js → Bun on PATH → the OpenCode binary itself via `BUN_BE_BUN=1` (Bun ≥ 1.2.16; no separate Node install required). Or set `embeddingApiUrl` + `embeddingApiKey` for remote embeddings. Override with `OPENCODE_MEM_EMBEDDING_SUBPROCESS=0` (in-process, not recommended on Windows) or `=1` (force subprocess on other OSes). The parent `SIGKILL`s the worker on dispose/idle/timeout and re-spawns after a worker crash.
 
-مهل تنظيف الملف منفصلة: تنظيف API الخارجي/اليدوي افتراضيًا 60 ثانية عبر `"userProfileCleanupTimeoutMs"` (نفس التقييد 10000..600000؛ مثلًا `"userProfileCleanupTimeoutMs": 180000`). يحتفظ تنظيف جلسة OpenCode بميزانية ثابتة 300 ثانية. تُشتق مهلة خمول HTTP في Node كـ `max(userProfileCleanupTimeoutMs, 300000) + 30000`، ويسمح جلب واجهة الويب لـ `/ai-cleanup` حتى 630 ثانية حتى لا تقطع أي طبقة الموعد النهائي الخارجي المرفوع.
+- **Windows segfault in `onnxruntime_binding.node`:** Local embeddings run ORT in a subprocess (#518), using Node, Bun, or the OpenCode binary (`BUN_BE_BUN=1`). If that still fails, configure remote embeddings (`embeddingApiUrl` + `embeddingApiKey`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-نماذج الاستدلال البطيئة (أو مطالبات الملف الكبيرة جدًا) يمكن أن تتجاوز ميزانية المخرجات المنظمة الافتراضية البالغة 90 ثانية. عيّن `"opencodeTimeoutMs"` (بالمللي ثانية) لتمديدها لاستدعاءات المخرجات المنظمة الداخلية (ملخصات الالتقاط التلقائي، تعلّم الملف) — مثلًا `"opencodeTimeoutMs": 180000` لمدة 3 دقائق. تُقيَّد القيم إلى 10000..600000؛ يبقى الافتراضي 90000. تُحوَّل السلاسل الرقمية. يستخدم تنظيف الملف مهلة منفصلة أطول.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e704b90c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a755b1da` are properly handled with clean fallback behavior.

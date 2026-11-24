@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T18:09:14.655Z",
-    "lastVerified": "2026-11-24T18:09:14.655Z",
+    "lastChecked": "2026-11-24T18:17:41.141Z",
+    "lastVerified": "2026-11-24T18:17:41.141Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T17:42:45.357Z",
-    "lastVerified": "2026-11-24T17:42:45.357Z",
+    "lastChecked": "2026-11-24T18:17:34.628Z",
+    "lastVerified": "2026-11-24T18:17:34.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1575,9 +1575,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-24T14:15:04.062Z",
+    "lastChecked": "2026-11-24T18:17:29.559Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-24T14:15:04.062Z"
+    "lastVerified": "2026-11-24T18:17:29.559Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2707,9 +2707,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-23T22:42:48.391Z",
+    "lastChecked": "2026-11-24T18:17:27.120Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-23T22:42:48.391Z"
+    "lastVerified": "2026-11-24T18:17:27.120Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -5283,9 +5283,9 @@
   "flipkart-recyclerlistview": {
     "name": "recyclerlistview",
     "officialUrl": "https://github.com/Flipkart/recyclerlistview",
-    "lastChecked": "2026-11-22T03:24:54.776Z",
+    "lastChecked": "2026-11-24T18:17:24.566Z",
     "revisionIdentifier": "3485036e",
-    "lastVerified": "2026-11-22T03:24:54.776Z"
+    "lastVerified": "2026-11-24T18:17:24.566Z"
   },
   "encoredev-encore": {
     "name": "encoredev/encore",
@@ -5981,9 +5981,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-23T16:36:52.497Z",
+    "lastChecked": "2026-11-24T18:17:19.580Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-23T16:36:52.497Z"
+    "lastVerified": "2026-11-24T18:17:19.580Z"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7517,22 +7517,21 @@
     "lastVerified": "2026-11-22T10:03:43.540Z"
   },
   "tickernelz-opencode-mem": {
-    "name": "opencode-mem",
+    "name": "tickernelz/opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T21:48:13.417Z",
-    "lastVerified": "2026-11-23T21:48:13.417Z",
+    "lastChecked": "2026-11-24T18:17:36.560Z",
+    "lastVerified": "2026-11-24T18:17:36.560Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
+    "contentHash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "94a849ca"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "restatedev-restate": {
     "name": "restatedev/restate",
@@ -11021,9 +11020,9 @@
   "syntax-tree-hast-util-from-html": {
     "name": "hast-util-from-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
-    "lastChecked": "2026-11-20T18:16:50.087Z",
+    "lastChecked": "2026-11-24T18:17:22.044Z",
     "revisionIdentifier": "3bf56434",
-    "lastVerified": "2026-11-20T18:16:50.087Z"
+    "lastVerified": "2026-11-24T18:17:22.044Z"
   },
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",

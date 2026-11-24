@@ -12802,3 +12802,4 @@ Every entry in this ledger must capture:
 | `learn-github-react-metro` | `https://github.com/react/metro` | `2ceb7043` | Multi-dimensional audit evidence | 2026-11-24T18:00:27.706Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `bae03862` | Multi-dimensional audit evidence | 2026-11-24T18:00:38.127Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `99c65654` | Multi-dimensional audit evidence | 2026-11-24T18:09:11.332Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `e38c8744` | Multi-dimensional audit evidence | 2026-11-24T18:17:37.834Z |

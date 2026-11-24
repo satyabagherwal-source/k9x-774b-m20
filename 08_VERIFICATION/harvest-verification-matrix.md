@@ -12769,3 +12769,4 @@
 | `CYCLE-20261124-2TDI` | `2026-11-24T18:00:27.702Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10325` | Yes (`8ca88d57...`) |
 | `CYCLE-20261124-31EY` | `2026-11-24T18:00:38.123Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`7f9bd676...`) |
 | `CYCLE-20261124-E1EO` | `2026-11-24T18:09:11.328Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10327` | Yes (`5bf09ff3...`) |
+| `CYCLE-20261124-OW86` | `2026-11-24T18:17:37.830Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10328` | Yes (`5bea6255...`) |

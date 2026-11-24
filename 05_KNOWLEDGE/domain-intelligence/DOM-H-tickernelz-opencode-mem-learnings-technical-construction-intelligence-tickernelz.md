@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:35:21.028Z",
+  "timestamp": "2026-11-24T18:17:41.559Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tickernelz-opencode-mem-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tickernelz-opencode-mem-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:35:21.028Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T18:17:41.559Z`  
 > **Learning ID**: `LEARN-EVO-tickernelz-opencode-mem-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tickernelz-opencode-mem-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `e42d23c4`  
+> **Source Version**: `e38c8744`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:35:14.821Z  
+> **Timestamp**: 2026-11-24T18:17:36.676Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:35:14.816Z  
+> **Harvest Timestamp**: 2026-11-24T18:17:36.560Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1869 stars
+- **Stars / Engagement**: 1887 stars
 
 ---
 
@@ -64,6 +64,240 @@ The following architectural invariants have been empirically discovered and reco
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `src/services/embedding-worker-protocol.ts`
+```
+/**
+ * JSON-line IPC between the embedding parent and the local-ONNX subprocess.
+ *
+ * On Windows, loading `onnxruntime-node` inside the OpenCode/Bun host segfaults
+ * (#518 / oven-sh/bun#28008). The parent keeps the protocol; the child alone
+ * loads transformers + ORT and is SIGKILL'd on dispose so NAPI finalizers
+ * never run in the host address space.
+ */
+
+export type EmbeddingWorkerWarmupRequest = {
+  id: number;
+  type: "warmup";
+  model: string;
+  cacheDir: string;
+  pooling: string;
+  dtype?: string;
+};
+
+export type EmbeddingWorkerEmbedRequest = {
+  id: number;
+  type: "embed";
+  text: string;
+  pooling: string;
+};
+
+export type EmbeddingWorkerDisposeRequest = {
+  id: number;
+  type: "dispose";
+};
+
+export type EmbeddingWorkerRequest =
+  EmbeddingWorkerWarmupRequest | EmbeddingWorkerEmbedRequest | EmbeddingWorkerDisposeRequest;
+
+export type EmbeddingWorkerOkResponse = {
+  id: number;
+  ok: true;
+  vector?: number[];
+};
+
+export type EmbeddingWorkerErrorResponse = {
+  id: number;
+  ok: false;
+  error: string;
+};
+
+export type EmbeddingWorkerResponse = EmbeddingWorkerOkResponse | EmbeddingWorkerErrorResponse;
+
+export function parseWorkerResponse(line: string): EmbeddingWorkerResponse {
+  const parsed = JSON.parse(line) as EmbeddingWorkerResponse;
+  if (typeof parsed?.id !== "number" || typeof parsed?.ok !== "boolean") {
+    throw new Error(`embedding-worker: invalid response: ${line.slice(0, 200)}`);
+  }
+  return parsed;
+}
+
+```
+
+### Core Architecture Module: `src/services/embedding-worker.ts`
+```
+/**
+ * Local-ONNX embedding worker process.
+ *
+ * Run with `OPENCODE_MEM_EMBEDDING_WORKER=1` (or as `import.meta.main`). Loads
+ * `@huggingface/transformers` / `onnxruntime-node` only in this address space.
+ * The parent SIGKILLs us on shutdown so ORT's NAPI finalizer never runs in the
+ * OpenCode/Bun host (#518).
+ */
+
+import { createInterface } from "node:readline";
+import { join } from "node:path";
+import {
+  prepareOnnxruntimeForTransformers,
+  formatOnnxruntimeInitError,
+} from "./onnxruntime-resolve.js";
+import { createRuntimeRequire } from "./runtime-require.js";
+import {
+  getTransformersPackageSpecifier,
+  resolveTransformersCjsEntry,
+} from "./transformers-resolve.js";
+import type {
+  EmbeddingWorkerRequest,
+  EmbeddingWorkerResponse,
+} from "./embedding-worker-protocol.js";
+
+const requireFromHere = createRuntimeRequire(import.meta);
+
+type Pipe = {
+  (text: string, opts: { pooling: string; normalize: boolean }): Promise<{ data: Float32Array }>;
+  dispose?: () => Promise<void>;
+};
+
+let pipe: Pipe | null = null;
+
+function send(response: EmbeddingWorkerResponse): void {
+  process.stdout.write(`${JSON.stringify(response)}\n`);
+}
+
+// Keep stdout reserved for JSON-line IPC; route casual logs to stderr.
+console.log = (...args: unknown[]) => {
+  process.stderr.write(`${args.map(String).join(" ")}\n`);
+};
+console.info = console.log;
+console.debug = console.log;
+
+async function loadPipeline(model: string, cacheDir: string, dtype?: string): Promise<Pipe> {
+  const transformersSpecifier = getTransformersPackageSpecifier();
+  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
+  const transformersEntry = resolveTransformersCjsEntry({
+    requireFn: requireFromHere,
+    specifier: transformersSpecifier,
+    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
+  });
+
+  prepareOnnxruntimeForTransformers();
+  const mod = requireFromHere(transformersEntry) as typeof import("@huggingface/transformers");
+  mod.env.allowLocalModels = true;
+  mod.env.allowRemoteModels = true;
+  mod.env.cacheDir = cacheDir;
+  try {
+    (mod.env as any).backends.onnx.wasm.numThreads = 1;
+  } catch {
+    // Optional; wasm settings may be absent under the node ORT backend.
+  }
+
+  // Parent resolves dtype (config / cache probe) before spawn.
+  const created = await mod.pipeline("feature-extraction", model, {
+    ...(dtype ? { dtype: dtype as "fp32" | "fp16" | "q8" | "auto" } : {}),
+  });
+  return created as unknown as Pipe;
+}
+
+async function handle(request: EmbeddingWorkerRequest): Promise<void> {
+  try {
+    switch (request.type) {
+      case "warmup": {
+        if (pipe?.dispose) {
+          try {
+            await pipe.dispose();
+          } catch {
+            // Replace the previous pipeline even if dispose fails.
+          }
+        }
+        pipe = await loadPipeline(
+          request.model,
+          request.cacheDir || join(process.cwd(), ".cache"),
+          request.dtype
+        );
+        send({ id: request.id, ok: true });
+        return;
+      }
+      case "embed": {
+        if (!pipe) {
+          send({ id: request.id, ok: false, error: "embedding-worker: not warmed up" });
+          return;
+        }
+        const output = await pipe(request.text, {
+          pooling: request.pooling,
+          normalize: true,
+        });
+        send({ id: request.id, ok: true, vector: Array.from(output.data) });
+        return;
+      }
+      case "dispose": {
+        const current = pipe;
+        pipe = null;
+        if (current?.dispose) {
+          try {
+            await current.dispose();
+          } catch {
+            // Parent will SIGKILL us; best-effort dispose only.
+          }
+        }
+        send({ id: request.id, ok: true });
+        return;
+      }
+      default: {
+        const unknown = request as { id?: number };
+        send({
+          id: typeof unknown.id === "number" ? unknown.id : -1,
+          ok: false,
+          error: "embedding-worker: unknown request type",
+        });
+      }
+    }
+  } catch (error) {
+    const rewritten = formatOnnxruntimeInitError(error);
+    send({
+      id: request.id,
+      ok: false,
+      error: rewritten.message,
+    });
+  }
+}
+
+export async function runEmbeddingWorker(): Promise<void> {
+  const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
+  for await (const line of rl) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    let request: EmbeddingWorkerRequest;
+    try {
+      request = JSON.parse(trimmed) as EmbeddingWorkerRequest;
+    } catch (error) {
+      send({
+        id: -1,
+        ok: false,
+        error: `embedding-worker: invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+      });
+      continue;
+    }
+    await handle(request);
+  }
+}
+
+const isWorkerMain =
+  process.env.OPENCODE_MEM_EMBEDDING_WORKER === "1" ||
+  (typeof import.meta !== "undefined" &&
+    Boolean((import.meta as ImportMeta & { main?: boolean }).main));
+
+if (isWorkerMain) {
+  void runEmbeddingWorker().catch((error) => {
+    send({
+      id: -1,
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    process.exitCode = 1;
+  });
+}
+
+```
 
 ### Core Architecture Module: `src/services/turso/engine-migrator.ts`
 ```
@@ -871,153 +1105,6 @@ console.log("wrote", out, `${resvg.width}x${resvg.height}`);
 
 ```
 
-### Core Architecture Module: `web/src/lib/profile-utils.ts`
-```
-import { jsonrepair } from "jsonrepair";
-import type { ProfileItem, UserProfile } from "./types";
-
-export type ProfileField = "preferences" | "patterns" | "workflows";
-
-export type ProfileDataSlice = NonNullable<UserProfile["profileData"]>;
-
-export type CleanupItem = ProfileItem & { _id: string; _type: "pref" | "pat" | "wf" };
-
-export function parseProfileField(field: unknown): ProfileItem[] {
-  if (!field) return [];
-  let result: unknown = field;
-  let lastResult: unknown = null;
-  while (typeof result === "string" && result !== lastResult) {
-    lastResult = result;
-    try {
-      result = JSON.parse(jsonrepair(result));
-    } catch {
-      break;
-    }
-  }
-  if (!Array.isArray(result)) return [];
-  const flattened: ProfileItem[] = [];
-  const walk = (item: unknown) => {
-    if (Array.isArray(item)) item.forEach(walk);
-    else if (item && typeof item === "object") flattened.push(item as ProfileItem);
-  };
-  walk(result);
-  return flattened;
-}
-
-/** Normalize profileData whether it arrives as object or JSON string. */
-export function normalizeProfileData(raw: unknown): ProfileDataSlice | null {
-  if (!raw) return null;
-  let data: unknown = raw;
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(jsonrepair(data));
-    } catch {
-      return null;
-    }
-  }
-  if (!data || typeof data !== "object") return null;
-  const obj = data as ProfileDataSlice;
-  return {
-    preferences: parseProfileField(obj.preferences),
-    patterns: parseProfileField(obj.patterns),
-    workflows: parseProfileField(obj.workflows),
-  };
-}
-
-/** Flat list with stable pref_/pat_/wf_ ids for AI cleanup selection. */
-export function flattenProfileItems(pd: ProfileDataSlice | null | undefined): CleanupItem[] {
-  if (!pd) return [];
-  const prefs = (pd.preferences || []).map((p, i) => ({
-    ...p,
-    _id: `pref_${i}`,
-    _type: "pref" as const,
-  }));
-  const pats = (pd.patterns || []).map((p, i) => ({
-    ...p,
-    _id: `pat_${i}`,
-    _type: "pat" as const,
-  }));
-  const wfs = (pd.workflows || []).map((w, i) => ({
-    ...w,
-    _id: `wf_${i}`,
-    _type: "wf" as const,
-  }));
-  return [...prefs, ...pats, ...wfs];
-}
-
-function parseProfileItemId(id: string): { prefix: string; index: number } | null {
-  if (!id.includes("_")) return null;
-  const [prefix, idxStr] = id.split("_");
-  const index = parseInt(idxStr, 10);
-  if (Number.isNaN(index)) return null;
-  return { prefix, index };
-}
-
-function itemAt(profileData: ProfileDataSlice | undefined, id: string): ProfileItem | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || !profileData) return null;
-  if (parsed.prefix === "pref") return profileData.preferences?.[parsed.index] ?? null;
-  if (parsed.prefix === "pat") return profileData.patterns?.[parsed.index] ?? null;
-  if (parsed.prefix === "wf") return profileData.workflows?.[parsed.index] ?? null;
-  return null;
-}
-
-export function findDescById(id: string, profileData?: ProfileDataSlice): string | null {
-  return itemAt(profileData, id)?.description ?? null;
-}
-
-export function findStepsById(id: string, profileData?: ProfileDataSlice): string[] | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || parsed.prefix !== "wf") return null;
-  return itemAt(profileData, id)?.steps || null;
-}
-
-export function profileTypeLabel(
-  id: string,
-  labels: { pref: string; pat: string; wf: string }
-): string {
-  const parsed = parseProfileItemId(id);
-  if (!parsed) return "?";
-  if (parsed.prefix === "pref") return labels.pref;
-  if (parsed.prefix === "pat") return labels.pat;
-  if (parsed.prefix === "wf") return labels.wf;
-  return "?";
-}
-
-export function confidencePct(item: Pick<ProfileItem, "confidence">): number {
-  return Math.round((item.confidence || 0) * 1000) / 10;
-}
-
-export function evidenceTitle(item: ProfileItem): string {
-  if (!item.evidence) return "";
-  return Array.isArray(item.evidence) ? item.evidence.join("\n") : item.evidence;
-}
-
-export function evidenceCount(item: ProfileItem): number {
-  if (!item.evidence) return 0;
-  return Array.isArray(item.evidence) ? item.evidence.length : 1;
-}
-
-```
-
-### Core Architecture Module: `web/src/lib/set-utils.ts`
-```
-/** Immutable Set toggle helper — returns a new Set. */
-export function toggleInSet<T>(set: Set<T>, value: T, checked: boolean): Set<T> {
-  const next = new Set(set);
-  if (checked) next.add(value);
-  else next.delete(value);
-  return next;
-}
-
-export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
-  const next = new Set(set);
-  next.delete(value);
-  return next;
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1045,155 +1132,984 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e42d23c4` (2026-11-16)
-**Commit Message**: chore(deps): bump the minor-and-patch group across 2 directories with 10 updates (#506)
+### Incident Patch 1: `a755b1da` (2026-11-24)
+**Commit Message**: fix(embedding): isolate Windows local ONNX in a Node subprocess (#521)
 
-**File**: `bun.lock` (modified, +29/-29)
+* fix(embedding): isolate Windows local ONNX in a Node subprocess
+
+Bun hosts segfault when onnxruntime-node loads in-process on Windows
+(#518). Run the transformers/ORT pipeline in a Node child over JSON-line
+IPC and SIGKILL it on dispose so NAPI finalizers never run in OpenCode.
+
+* fix(embedding): harden Windows ONNX subprocess isolation
+
+Add start mutex, spawn error handling, request timeouts, package-root
+cwd/NODE_PATH, Bun-child fallback when Node is missing, stdout filtering,
+and one-shot re-warmup after a worker crash so #518 stays host-safe.
+
+* fix(embedding): harden worker discovery for OpenCode hosts
+
+Resolve the embedding worker via import.meta.path/dirname when url is
+empty (#210), search standard Node/Bun install paths beyond PATH, walk
+up to the package root for node_modules, and SIGKILL a wedged child on
+request timeout.
+
+* fix(embedding): run Windows ONNX worker via OpenCode BUN_BE_BUN
+
+When Node/Bun are not on PATH, re-exec process.execPath with BUN_BE_BUN=1
+so a Bun --compile host (OpenCode standalone) acts as the Bun CLI and
+runs the embedding worker without a separate runtime install (#518).
+
+**File**: `README.md` (modified, +3/-0)
 ```diff
-@@ -115,11 +115,11 @@
+@@ -476,6 +476,8 @@ Changing `embeddingModel`, dimensions, pooling, or task prefixes can require re-
  
-     "@cacheable/utils": ["@cacheable/utils@2.5.0", "", { "dependencies": { "hashery": "^1.5.1", "keyv": "^5.6.0" } }, "sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA=="],
+ Remote embeddings bypass the local ONNX runtime on supported hosts. The plugin still needs the local database binding listed under [Prerequisites](#prerequisites).
  
--    "@effect/opentelemetry": ["@effect/opentelemetry@4.0.6", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.0.6" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-xhLR1EN4ZNaKM7Bx59SCFiRNduFzgH8LZXDrCpPN8MpQ93V0GQcFHTBah5T3EXO2v+5HTEacdTgetIA0Creqvw=="],
-+    "@effect/opentelemetry": ["@effect/opentelemetry@4.1.0", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.1.0" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-j9bNzQaoQvcnimBFMG0i3piEW20E8HjkXAQHTJN/XqG2e4uJ9zCv53/HCNzD7+ooFn5S4nwQy/BOXeNReMIe+A=="],
++**Windows + OpenCode/Bun:** Local embeddings run `onnxruntime-node` in a **subprocess** (never inside the OpenCode host) so Bun↔ORT NAPI segfaults cannot take down `opencode serve` ([#518](https://github.com/tickernelz/opencode-mem/issues/518), [oven-sh/bun#28008](https://github.com/oven-sh/bun/issues/28008)). Runtime order: Node.js → Bun on PATH → the OpenCode binary itself via `BUN_BE_BUN=1` (Bun ≥ 1.2.16; no separate Node install required). Or set `embeddingApiUrl` + `embeddingApiKey` for remote embeddings. Override with `OPENCODE_MEM_EMBEDDING_SUBPROCESS=0` (in-process, not recommended on Windows) or `=1` (force subprocess on other OSes). The parent `SIGKILL`s the worker on dispose/idle/timeout and re-spawns after a worker crash.
++
+ On supported platforms, `opencode-mem` pins `onnxruntime-node@1.31.1` (Ort::Env teardown fix from `1.24.1` / #225) and loads transformers through a CJS resolve shim so OpenCode nested installs keep that binding. Transformers is resolved to an absolute path before that shim is installed so OpenCode's Bun `--compile` host does not fail with `Cannot find module '@huggingface/transformers' from ''`. After upgrading, clear OpenCode's nested plugin cache (`~/.cache/opencode/packages/opencode-mem@*`) and reinstall.
  
--    "@effect/platform-node": ["@effect/platform-node@4.0.6", "", { "dependencies": { "@effect/platform-node-shared": "^4.0.6", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.0.6", "redis": ">=5.0.0 <7.0.0" } }, "sha512-gXvGHAy0/8PZbWvMMguloDUyeSP+rzYEo3FSEqUuGduxo9ORcGioDxPI+GOLCIFfam7VuNkmSUxBOiRMIrMrBw=="],
-+    "@effect/platform-node": ["@effect/platform-node@4.1.0", "", { "dependencies": { "@effect/platform-node-shared": "^4.1.0", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.1.0", "redis": ">=5.0.0 <7.0.0" } }, "sha512-v+X7moGVF9k5oMVvz0slA+NgtEod+W+oygeI285MDJgSlUCW3JcqElj+cD3rlijFZtpKhC7RLkU1GuCxjGHTpA=="],
+ ### Memory Scope
+@@ -768,6 +770,7 @@ Troubleshooting:
+ - For `opencodeProvider` / `opencodeModel` (e.g. DeepSeek V4 thinking), OpenCode still sends forced `tool_choice` for structured output. opencode-mem disables thinking on the internal `opencode-mem-structured` agent (and re-applies that in `chat.params` after variant merge) so auto-capture and profile learning can complete. Your interactive chat agent is unchanged. If capture still fails with a thinking/`tool_choice` error, pick a non-thinking model for `opencodeModel` or configure a complete manual fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture uses OpenCode with your authenticated `anthropic` provider. Forced `format: json_schema` often loops with Claude-auth, so opencode-mem uses an auth-preserving **text-JSON** path for `opencodeProvider: "anthropic"` (no forced `StructuredOutput` tools; reply is parsed with Zod). A step watchdog still aborts runaway internal sessions after 2 steps. If capture still fails, configure a complete manual Anthropic API-key fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth cannot be reused outside OpenCode.
+ - **Unsupported platforms:** If the plugin fails to load a native binding, check the [native database requirements](#prerequisites). For containers that use musl, use a glibc-based Linux image. MLX is not supported.
++- **Windows segfault in `onnxruntime_binding.node`:** Local embeddings run ORT in a subprocess (#518), using Node, Bun, or the OpenCode binary (`BUN_BE_BUN=1`). If that still fails, configure remote embeddings (`embeddingApiUrl` + `embeddingApiKey`).
  
--    "@effect/platform-node-shared": ["@effect/platform-node-shared@4.0.6", "", { "dependencies": { "@types/ws": "^8.18.2", "ws": "^8.22.0" }, "peerDependencies": { "effect": "^4.0.6" } }, "sha512-0PhyC4uG30xGtsajnxjkcBWfTjNRzUh4ZKl1Kvo/MNyCTb+W2O+fBzf7wCRCoqt+nLudiq4V7vX40Q8XIBuMaQ=="],
-+    "@effect/platform-node-shared": ["@effect/platform-node-shared@4.1.0", "", { "dependencies": { "@types/ws": "^8.18.2", "ws": "^8.22.0" }, "peerDependencies": { "effect": "^4.1.0" } }, "sha512-uYQfFRoxWLo8fIhiSeBcmz/R1ooOfE3HF3cWHFgxz82tZMk2Wn02BGABcdLmaAch9VpDLbtWnuhSxNyBsGMUFg=="],
+ ## Public Subpath Exports
  
-     "@emnapi/core": ["@emnapi/core@1.11.3", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.3", "tslib": "^2.4.0" } }, "sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg=="],
- 
-@@ -311,17 +311,17 @@
- 
-     "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.5", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-+bqu8gHiwmq96T9q5G34uLNHWCInIMsrE3hytCNHj1cVaxjY0AGJyNCT1rkeeZwgPU7A5TMTNwN+0XxCO2vqDg=="],
- 
--    "@opencode/ai": ["@opencode/ai@2.2.5", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.5", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.6", "google-auth-library": "10.5.0" } }, "sha512-TolUvNR615vpkc6FPf2np5PbAbO7k1gaVlrtZ5Wx5tN7Y8K2uSer0BZEiajJ2uBsF6RXJFfjjX1GZbcf85GtGQ=="],
-+    "@opencode/ai": ["@opencode/ai@2.2.7", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.7", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.1.0", "google-auth-library": "10.5.0" } }, "sha512-okBbQ0w661Y3fCdlHJUQdolJxGU8mts4W7JrmMrm1kuVEa8FideUm0R4jWenN1NqDLnNHLwmWtxMKHMRVG7wNg=="],
- 
--    "@opencode/client": ["@opencode/client@2.2.5", "", { "dependencies": { "@opencode/protocol": "2.2.5", "@opencode/schema": "2.2.5" }, "peerDependencies": { "effect": "4.0.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-EjYrFGWHURsIbjtmQdIsGSPmYZGaulxqwEfYxQH5t9838508BCIvDX9f7/ZsgNGHYXM0punA3W8hTt6GjxIEaw=="],
-+    "@opencode/client": ["@opencode/client@2.2.7", "", { "dependencies": { "@opencode/protocol": "2.2.7", "@opencode/sche
 ```
 
-**File**: `web/bun.lock` (modified, +57/-45)
+**File**: `src/services/embedding-subprocess.ts` (added, +442/-0)
 ```diff
-@@ -7,31 +7,37 @@
-       "dependencies": {
-         "dompurify": "^3.4.17",
-         "jsonrepair": "^3.15.0",
--        "marked": "^18.1.3",
-+        "marked": "^18.2.0",
-         "zod": "^4.6.7",
-       },
-       "devDependencies": {
-         "@fontsource-variable/jetbrains-mono": "^5.3.0",
--        "@lucide/svelte": "^1.70.0",
-+        "@lucide/svelte": "^1.72.0",
-         "@resvg/resvg-js": "^2.6.2",
-         "@sveltejs/vite-plugin-svelte": "^7.3.1",
--        "@tailwindcss/vite": "^4.3.4",
-+        "@tailwindcss/vite": "^4.3.5",
-         "@types/node": "^26.6.6",
--        "bits-ui": "^2.20.6",
-+        "bits-ui": "^2.21.0",
-         "clsx": "^2.1.1",
-         "prettier-plugin-svelte": "^4.1.1",
-         "svelte": "^5.57.3",
-         "svelte-check": "^4.7.8",
-         "tailwind-merge": "^3.7.0",
--        "tailwind-variants": "^4.0.1",
--        "tailwindcss": "^4.3.4",
-+        "tailwind-variants": "^4.0.2",
-+        "tailwindcss": "^4.3.5",
-         "tw-animate-css": "^1.4.0",
-         "typescript": "6.0.3",
--        "vite": "^8.3.6",
-+        "vite": "^8.3.8",
-       },
-     },
-   },
-   "packages": {
-+    "@emnapi/core": ["@emnapi/core@2.0.0-beta.2", "", { "dependencies": { "@emnapi/wasi-threads": "2.2.0", "tslib": "^2.4.0" } }, "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A=="],
+@@ -0,0 +1,442 @@
++/**
++ * Parent-side handle for the local-ONNX embedding subprocess (#518).
++ *
++ * Spawns a Node (preferred) or Bun child that runs `embedding-worker` so
++ * `onnxruntime-node` never loads in the OpenCode/Bun host. Dispose uses
++ * SIGKILL so ORT's NAPI finalizer cannot crash the host on Windows.
++ */
 +
-+    "@emnapi/runtime": ["@emnapi/runtime@2.0.0-beta.2", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw=="],
++import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
++import { createInterface } from "node:readline";
++import { fileURLToPath } from "node:url";
++import { existsSync } from "node:fs";
++import { homedir } from "node:os";
++import { basename, dirname, join } from "node:path";
++import { log, safeLog } from "./logger.js";
++import {
++  parseWorkerResponse,
++  type EmbeddingWorkerRequest,
++  type EmbeddingWorkerResponse,
++} from "./embedding-worker-protocol.js";
 +
-+    "@emnapi/wasi-threads": ["@emnapi/wasi-threads@2.2.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw=="],
++export type EmbeddingSubprocessWarmup = {
++  model: string;
++  cacheDir: string;
++  pooling: string;
++  dtype?: string;
++};
 +
-     "@floating-ui/core": ["@floating-ui/core@1.8.0", "", { "dependencies": { "@floating-ui/utils": "^0.2.12" } }, "sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ=="],
- 
-     "@floating-ui/dom": ["@floating-ui/dom@1.8.0", "", { "dependencies": { "@floating-ui/core": "^1.8.0", "@floating-ui/utils": "^0.2.12" } }, "sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg=="],
-@@ -52,7 +58,9 @@
- 
-     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
- 
--    "@lucide/svelte": ["@lucide/svelte@1.70.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-zvx7K/WLxo82c4ZYqbsfcYUPDVFrq4561xH0NHfSHJJbajj0AONTQ14EO095/WnfI4XUEl1tyS/nbjQNNiNxdQ=="],
-+    "@lucide/svelte": ["@lucide/svelte@1.72.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-DRwtZ5p/m5ZRsNlfCzELJRDzd2z19mc76eMs8rwllx/JWfvykmLoTFs3RyzFN519ldQxHt8Jxum/LKukgzuTLQ=="],
++type Pending = {
++  resolve: (value: EmbeddingWorkerResponse) => void;
++  reject: (error: Error) => void;
++  timer: ReturnType<typeof setTimeout>;
++};
 +
-+    "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || 2.0.0-beta.2", "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2" } }, "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw=="],
- 
-     "@oxc-project/types": ["@oxc-project/types@0.156.0", "", {}, "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw=="],
- 
-@@ -82,35 +90,37 @@
- 
-     "@resvg/resvg-js-win32-x64-msvc": ["@resvg/resvg-js-win32-x64-msvc@2.6.2", "", { "os": "win32", "cpu": "x64" }, "sha512-ZXtYhtUr5SSaBrUDq7DiyjOFJqBVL/dOBN7N/qmi/pO0IgiWW/f/ue3nbvu9joWE5aAKDoIzy/CxsY0suwGosQ=="],
- 
--    "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.16", "", { "os": "android", "cpu": "arm" }, "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA=="],
-+    "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.19", "", { "os": "android", "cpu": "arm" }, "sha512-e+Ebe0WT+9tbXmNKPIiC8YrWAHYwug3m6i4p3rZGGulfZri1jtI4HslT+OZnFf/OIHowWF71DTlHwXBP2SiA7A=="],
++type PluginImportMeta = ImportMeta & {
++  path?: string;
++  dirname?: string;
++  dir?: string;
++};
 +
-+    "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.2.19", "", { "os": "android", "cpu": "arm64" }, "sha512-hOombrTJ+szt2ciEzS7oCA78lMPBgF5UMQWCJIyNfnrI7GLl8HYoFqCnpL2gcPOaXMqryGCU5ExdQKyDDcC+yA=="],
- 
--    "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.2.16", "", { "os": "android", "cpu": "arm64" }, "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg=="],
-+    "@rolldown/binding-darwin-arm64": ["@rolldown/binding-darwin-arm64@1.2.19", "", { "os": "darwin", "cpu": "arm64" }, "sha512-XoMA2pwCKGTQzUjPgtRwkedH4WmXhdIPKT6l6oOxd1PUbNodGI6DcBekgN7EC//+x3pfBYX/qL1gNmZAqivw5g=="],
- 
--    "@rolldown/binding-darwin-arm64": ["@rolldown/binding-darwin-arm64@1.2.16", "", { "os": "darwin", "cpu": "arm64" }, "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2y
++const DEFAULT_REQUEST_TIMEOUT_MS = 60_000;
++
++function which(cmd: string): string | null {
++  const pathEnv = process.env.PATH ?? process.env.Path ?? "";
++  const ext =
++    process.platform === "win32"
++      ? (process.env.PATHEXT ?? ".EXE;.CMD;.BAT").split(";").filter(Boolean)
++      : [""];
++  const sep = process.platform === "win32" ? ";" : ":";
++  for (const dir of pathEnv.split(sep)) {
++    if (!dir) continue;
++    for (const e of ext) {
++      const candidate = join(dir, `${cmd}${e}`);
++      if (existsSync(candidate)) return candidate;
++    }
++  }
++  return null;
++}
++
++/** PATH plus well-known install locations (OpenCode sandboxes often omit PATH entries). */
++export function resolveRuntimeCandidates(cmd: "node" | "bun"): string[] {
++  const found: string[] = [];
++  const seen = new Set<string>();
++  const add = (path: string | null | undefined) => {
++    if (!path || seen.has(path) || !existsSync(path)) return;
++    seen.add(path);
++    found.push(path);
++  };
++
++  add(which(cmd));
++
++  const home = homedir();
++  const local = process.env.LOCALAPPDATA;
++  const pf = process.env.ProgramFiles ?? "C:\\Program Files";
++  const pf86 = process.env["ProgramFiles(x86)"] ?? "C:\\Program Files (x86)";
++
++  if (cmd === "node") {
++    if (process.platform === "win32") {
++      add(join(pf, "nodejs", "node.exe"));
++      add(join(pf86, "nodejs", "node.exe"));
++      if (local) add(join(local, "Programs", "nodejs", "node.exe"));
++    } else {
++      add("/usr/local/bin/node");
++      add("/usr/bin/node");
++      add(join(home, ".nvm", "current", "bin", "node"));
++    }
++  } else {
++    if (process.platform === "win32") {
++      add(join(home, ".bun", "bin", "bun.exe"));
++      if (local) add(join(local, "bun", "bin", "bun.exe"));
++    } else {
++      add(join(home, ".bun", "bin", "bun"));
++      add("/usr/local/bin/bun");
++    }
++  }
++
++  return found;
++}
++
++function isBunOrNodeExecutable(path: string): boolean {
++  const name = basename(path).toLowerCase();
++  return name === "bun" || name === "bun.exe" || name === "node" || name === "node.exe";
++}
++
++export type EmbeddingWorkerRuntime = {
++  /** Executable to spawn (node, bun, or a bun --compile host such as opencode.exe). */
++  command: string;
++  /** Extra argv before the worker script path. */
++  args: string[];
++  /** Extra env for the child (merged over process.env). */
++  env: Record<string, string>;
++};
++
++/**
++ * Prefer Node so ORT runs outside Bun's NAPI host (#518). Fall back to a Bun
++ * *subprocess* (still isolated from the OpenCode host) when Node is missing —
++ * a child segfault kills only the worker, not `opencode serve`.
++ *
++ * When only a Bun `--compile` host is available (typical OpenCode standalone
++ * install with no Node/Bun on PATH), re-exec `process.execPath` with
++ * `BUN_BE_BUN=1` so the child acts as the Bun CLI and can run our worker
++ * script (Bun ≥ 1.2.16; OpenCode 2.3.x ships Bun 1.4.x).
++ */
++export function resolveEmbeddingWorkerRuntime(): EmbeddingWorkerRuntime | null {
++  const node = resolveRuntimeCandidates("node")[0];
++  if (node) return { command: node, args: [], env: {} };
++
++  const bun = resolveRuntimeCandidates("bun")[0];
++  if (bun) return { command: bun, args: [], env: {} };
++
++  if (typeof process.versions.bun === "string" && process.execPath) {
++    // OpenCode.exe / other bun --compile hosts: ignore the bundled entrypoint
++    // and run our worker as plain `bun <script>`.
++    return {
++      command: process.execPath,
++      args: [],
++      env: { BUN_BE_BUN: "1" },
++    };
++  }
++
++  if (typeof process.versions.node === "string" && isBunOrNodeExecutable(process.execPath)) {
++    return { command: process.execPath, args: [], env: {} };
++  }
++
++  return null;
++}
++
++/** Directories that may contain the sibling embedding-worker script
 ```
 
-**File**: `web/package.json` (modified, +7/-7)
+**File**: `src/services/embedding-worker-protocol.ts` (added, +54/-0)
 ```diff
-@@ -13,26 +13,26 @@
-   "dependencies": {
-     "dompurify": "^3.4.17",
-     "jsonrepair": "^3.15.0",
--    "marked": "^18.1.3",
-+    "marked": "^18.2.0",
-     "zod": "^4.6.7"
-   },
-   "devDependencies": {
-     "@fontsource-variable/jetbrains-mono": "^5.3.0",
--    "@lucide/svelte": "^1.70.0",
-+    "@lucide/svelte": "^1.72.0",
-     "@resvg/resvg-js": "^2.6.2",
-     "@sveltejs/vite-plugin-svelte": "^7.3.1",
--    "@tailwindcss/vite": "^4.3.4",
-+    "@tailwindcss/vite": "^4.3.5",
-     "@types/node": "^26.6.6",
--    "bits-ui": "^2.20.6",
-+    "bits-ui": "^2.21.0",
-     "clsx": "^2.1.1",
-     "prettier-plugin-svelte": "^4.1.1",
-     "svelte": "^5.57.3",
-     "svelte-check": "^4.7.8",
-     "tailwind-merge": "^3.7.0",
--    "tailwind-variants": "^4.0.1",
--    "tailwindcss": "^4.3.4",
-+    "tailwind-variants": "^4.0.2",
-+    "tailwindcss": "^4.3.5",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "6.0.3",
--    "vite": "^8.3.6"
-+    "vite": "^8.3.8"
-   }
+@@ -0,0 +1,54 @@
++/**
++ * JSON-line IPC between the embedding parent and the local-ONNX subprocess.
++ *
++ * On Windows, loading `onnxruntime-node` inside the OpenCode/Bun host segfaults
++ * (#518 / oven-sh/bun#28008). The parent keeps the protocol; the child alone
++ * loads transformers + ORT and is SIGKILL'd on dispose so NAPI finalizers
++ * never run in the host address space.
++ */
++
++export type EmbeddingWorkerWarmupRequest = {
++  id: number;
++  type: "warmup";
++  model: string;
++  cacheDir: string;
++  pooling: string;
++  dtype?: string;
++};
++
++export type EmbeddingWorkerEmbedRequest = {
++  id: number;
++  type: "embed";
++  text: string;
++  pooling: string;
++};
++
++export type EmbeddingWorkerDisposeRequest = {
++  id: number;
++  type: "dispose";
++};
++
++export type EmbeddingWorkerRequest =
++  EmbeddingWorkerWarmupRequest | EmbeddingWorkerEmbedRequest | EmbeddingWorkerDisposeRequest;
++
++export type EmbeddingWorkerOkResponse = {
++  id: number;
++  ok: true;
++  vector?: number[];
++};
++
++export type EmbeddingWorkerErrorResponse = {
++  id: number;
++  ok: false;
++  error: string;
++};
++
++export type EmbeddingWorkerResponse = EmbeddingWorkerOkResponse | EmbeddingWorkerErrorResponse;
++
++export function parseWorkerResponse(line: string): EmbeddingWorkerResponse {
++  const parsed = JSON.parse(line) as EmbeddingWorkerResponse;
++  if (typeof parsed?.id !== "number" || typeof parsed?.ok !== "boolean") {
++    throw new Error(`embedding-worker: invalid response: ${line.slice(0, 200)}`);
++  }
++  return parsed;
++}
+```
+
+**File**: `src/services/embedding-worker.ts` (added, +170/-0)
+```diff
+@@ -0,0 +1,170 @@
++/**
++ * Local-ONNX embedding worker process.
++ *
++ * Run with `OPENCODE_MEM_EMBEDDING_WORKER=1` (or as `import.meta.main`). Loads
++ * `@huggingface/transformers` / `onnxruntime-node` only in this address space.
++ * The parent SIGKILLs us on shutdown so ORT's NAPI finalizer never runs in the
++ * OpenCode/Bun host (#518).
++ */
++
++import { createInterface } from "node:readline";
++import { join } from "node:path";
++import {
++  prepareOnnxruntimeForTransformers,
++  formatOnnxruntimeInitError,
++} from "./onnxruntime-resolve.js";
++import { createRuntimeRequire } from "./runtime-require.js";
++import {
++  getTransformersPackageSpecifier,
++  resolveTransformersCjsEntry,
++} from "./transformers-resolve.js";
++import type {
++  EmbeddingWorkerRequest,
++  EmbeddingWorkerResponse,
++} from "./embedding-worker-protocol.js";
++
++const requireFromHere = createRuntimeRequire(import.meta);
++
++type Pipe = {
++  (text: string, opts: { pooling: string; normalize: boolean }): Promise<{ data: Float32Array }>;
++  dispose?: () => Promise<void>;
++};
++
++let pipe: Pipe | null = null;
++
++function send(response: EmbeddingWorkerResponse): void {
++  process.stdout.write(`${JSON.stringify(response)}\n`);
++}
++
++// Keep stdout reserved for JSON-line IPC; route casual logs to stderr.
++console.log = (...args: unknown[]) => {
++  process.stderr.write(`${args.map(String).join(" ")}\n`);
++};
++console.info = console.log;
++console.debug = console.log;
++
++async function loadPipeline(model: string, cacheDir: string, dtype?: string): Promise<Pipe> {
++  const transformersSpecifier = getTransformersPackageSpecifier();
++  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
++  const transformersEntry = resolveTransformersCjsEntry({
++    requireFn: requireFromHere,
++    specifier: transformersSpecifier,
++    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
++  });
++
++  prepareOnnxruntimeForTransformers();
++  const mod = requireFromHere(transformersEntry) as typeof import("@huggingface/transformers");
++  mod.env.allowLocalModels = true;
++  mod.env.allowRemoteModels = true;
++  mod.env.cacheDir = cacheDir;
++  try {
++    (mod.env as any).backends.onnx.wasm.numThreads = 1;
++  } catch {
++    // Optional; wasm settings may be absent under the node ORT backend.
++  }
++
++  // Parent resolves dtype (config / cache probe) before spawn.
++  const created = await mod.pipeline("feature-extraction", model, {
++    ...(dtype ? { dtype: dtype as "fp32" | "fp16" | "q8" | "auto" } : {}),
++  });
++  return created as unknown as Pipe;
++}
++
++async function handle(request: EmbeddingWorkerRequest): Promise<void> {
++  try {
++    switch (request.type) {
++      case "warmup": {
++        if (pipe?.dispose) {
++          try {
++            await pipe.dispose();
++          } catch {
++            // Replace the previous pipeline even if dispose fails.
++          }
++        }
++        pipe = await loadPipeline(
++          request.model,
++          request.cacheDir || join(process.cwd(), ".cache"),
++          request.dtype
++        );
++        send({ id: request.id, ok: true });
++        return;
++      }
++      case "embed": {
++        if (!pipe) {
++          send({ id: request.id, ok: false, error: "embedding-worker: not warmed up" });
++          return;
++        }
++        const output = await pipe(request.text, {
++          pooling: request.pooling,
++          normalize: true,
++        });
++        send({ id: request.id, ok: true, vector: Array.from(output.data) });
++        return;
++      }
++      case "dispose": {
++        const current = pipe;
++        pipe = null;
++        if (current?.dispose) {
++          try {
++            await current.dispose();
++          } catch {
++            // Parent will SIGKILL us; best-effort dispose only.
++          }
++        }
++        send({ id: request.id, ok: true });
++        return;
++      }
++      default: {
++        const unknown = request as { id?: number };
++        send({
++          id: typeof unknown.id === "number" ? unknown.id : -1,
++          ok: false,
++          error: "embedding-worker: unknown request type",
++        });
++      }
++    }
++  } catch (error) {
++    const rewritten = formatOnnxruntimeInitError(error);
++    send({
++      id: request.id,
++      ok: false,
++      error: rewritten.message,
++    });
++  }
++}
++
++export async function runEmbeddingWorker(): Promise<void> {
++  const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
++  for await (const line of rl) {
++    const trimmed = line.trim();
++    if (!trimmed) continue;
++    let request: EmbeddingWorkerRequest;
++    try {
++      request = JSON.parse(trimmed) as EmbeddingWorkerRequest;
++    } catch (error) {
++      send({
++        id: -1,
++        ok: false,
++        error: `embedding-worker: invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
++      });
++      continue;
++    }
++    await handle(request);
++  }
++}
++
++const isWorkerMain =
++  process.env.OPENCODE_ME
+```
+
+**File**: `src/services/embedding.ts` (modified, +65/-2)
+```diff
+@@ -11,6 +11,7 @@ import {
+   getTransformersPackageSpecifier,
+   resolveTransformersCjsEntry,
+ } from "./transformers-resolve.js";
++import { EmbeddingSubprocessClient, shouldUseEmbeddingSubprocess } from "./embedding-subprocess.js";
+ 
+ const requireFromHere = createRuntimeRequire(import.meta);
+ 
+@@ -344,6 +345,7 @@ export async function fetchRemoteEmbeddingWithRetry(
+ 
+ export class EmbeddingService {
+   private pipe: any = null;
++  private subprocess: EmbeddingSubprocessClient | null = null;
+   private initPromise: Promise<void> | null = null;
+   public isWarmedUp: boolean = false;
+   /** Set when warmup fails permanently; prevents "initializing forever" (#184). */
+@@ -356,6 +358,8 @@ export class EmbeddingService {
+   private pendingDispose: string | null = null;
+   /** Bumped by dispose so a slow initialize cannot resurrect a released pipeline. */
+   private generation = 0;
++  /** Windows hosts keep local ONNX in a Node child (#518); elsewhere in-process. */
++  private readonly useSubprocess = shouldUseEmbeddingSubprocess();
+ 
+   static getInstance(): EmbeddingService {
+     if (!(globalThis as any)[GLOBAL_EMBEDDING_KEY]) {
+@@ -395,9 +399,21 @@ export class EmbeddingService {
+     this.generation++;
+     const pipe = this.pipe;
+     this.pipe = null;
++    const subprocess = this.subprocess;
++    this.subprocess = null;
+     this.isWarmedUp = false;
+     this.initPromise = null;
+     this.initError = null;
++    // Windows/Bun: SIGKILL the child so ORT's NAPI finalizer never runs in-host (#518).
++    if (subprocess) {
++      subprocess.dispose(reason);
++      safeLog("Embedding model released", {
++        reason,
++        model: CONFIG.embeddingModel,
++        via: "subprocess",
++      });
++      return;
++    }
+     if (pipe?.dispose) {
+       try {
+         await pipe.dispose();
+@@ -432,8 +448,6 @@ export class EmbeddingService {
+ 
+       // Local model path
+       const generation = this.generation;
+-      const { pipeline } = await ensureTransformersLoaded();
+-      // Explicit config wins; otherwise auto-resolve from model declaration / cache (#393).
+       const dtype = CONFIG.embeddingDtype ?? resolveLocalOnnxDtype(CONFIG.embeddingModel);
+       if (dtype) {
+         log("Resolved local ONNX dtype for embedding warmup", {
+@@ -442,6 +456,35 @@ export class EmbeddingService {
+           source: CONFIG.embeddingDtype ? "config" : "auto",
+         });
+       }
++
++      if (this.useSubprocess) {
++        // Keep onnxruntime-node out of the OpenCode/Bun host on Windows (#518).
++        void progressCallback;
++        const client = new EmbeddingSubprocessClient();
++        await client.warmup({
++          model: CONFIG.embeddingModel,
++          cacheDir: join(CONFIG.storagePath, ".cache"),
++          pooling: CONFIG.embeddingPooling,
++          ...(dtype ? { dtype } : {}),
++        });
++        if (generation !== this.generation) {
++          client.dispose("stale-generation");
++          return;
++        }
++        this.subprocess = client;
++        this.isWarmedUp = true;
++        this.initError = null;
++        this.scheduleIdleDispose();
++        log("Embedding model warmed up", {
++          model: CONFIG.embeddingModel,
++          pooling: CONFIG.embeddingPooling,
++          dtype: dtype ?? null,
++          via: "subprocess",
++        });
++        return;
++      }
++
++      const { pipeline } = await ensureTransformersLoaded();
+       const pipe = await pipeline("feature-extraction", CONFIG.embeddingModel, {
+         ...(dtype ? { dtype } : {}),
+         progress_callback: progressCallback,
+@@ -495,6 +538,26 @@ export class EmbeddingService {
+       if (CONFIG.embeddingApiUrl && CONFIG.embeddingApiKey) {
+         const data: any = await fetchRemoteEmbeddingWithRetry(fetch, input);
+         result = new Float32Array(data.data[0].embedding);
++      } else if (this.subprocess) {
++        const subprocess = this.subprocess;
++        try {
++          result = await subprocess.embed(input, CONFIG.embeddingPooling);
++        } catch (error) {
++          // Worker may have been SIGKILL'd / segfaulted; drop sticky warmup and
++          // re-spawn once so a single child death does not poison the host (#518).
++          if (subprocess.isReady) throw error;
++          subprocess.dispose("worker-exit");
++          if (this.subprocess === subprocess) this.subprocess = null;
++          this.isWarmedUp = false;
++          this.initPromise = null;
++          this.initError = null;
++          await this.warmup();
++          const restarted: EmbeddingSubprocessClient | null = this.subprocess;
++          if (!restarted) {
++            throw error instanceof Error ? error : new Error(String(error));
++          }
++          result = await restarted.embed(input, CONFIG.embeddingPooling);
++        }
+       } else {
+         const pipe = this.pipe;
+         if (!pipe) {
+```
+
+**File**: `tests/embedding-subprocess.test.ts` (added, +163/-0)
+```diff
+@@ -0,0 +1,163 @@
++import { afterEach, describe, expect, it } from "bun:test";
++import { join } from "node:path";
++import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import {
++  collectEmbeddingWorkerDirs,
++  EmbeddingSubprocessClient,
++  resolveEmbeddingWorkerPackageRoot,
++  resolveEmbeddingWorkerRuntime,
++  resolveEmbeddingWorkerScript,
++  shouldUseEmbeddingSubprocess,
++} from "../src/services/embedding-subprocess.js";
++import { parseWorkerResponse } from "../src/services/embedding-worker-protocol.js";
++
++const originalSubprocessEnv = process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++const originalPlatform = process.platform;
++
++afterEach(() => {
++  if (originalSubprocessEnv === undefined) {
++    delete process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++  } else {
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = originalSubprocessEnv;
++  }
++  Object.defineProperty(process, "platform", { value: originalPlatform });
++});
++
++describe("shouldUseEmbeddingSubprocess", () => {
++  it("defaults to true on win32 and false elsewhere", () => {
++    delete process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS;
++    Object.defineProperty(process, "platform", { value: "win32" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(true);
++    Object.defineProperty(process, "platform", { value: "darwin" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(false);
++  });
++
++  it("honours OPENCODE_MEM_EMBEDDING_SUBPROCESS overrides", () => {
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = "1";
++    Object.defineProperty(process, "platform", { value: "darwin" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(true);
++    process.env.OPENCODE_MEM_EMBEDDING_SUBPROCESS = "0";
++    Object.defineProperty(process, "platform", { value: "win32" });
++    expect(shouldUseEmbeddingSubprocess()).toBe(false);
++  });
++});
++
++describe("resolveEmbeddingWorkerRuntime", () => {
++  it("falls back to process.execPath with BUN_BE_BUN when no node/bun on PATH", () => {
++    // Under bun test we always have a bun-capable execPath.
++    const runtime = resolveEmbeddingWorkerRuntime();
++    expect(runtime).not.toBeNull();
++    expect(runtime!.command.length).toBeGreaterThan(0);
++    // Prefer real node/bun when present; otherwise OpenCode-style self re-exec.
++    if (runtime!.env.BUN_BE_BUN === "1") {
++      expect(runtime!.command).toBe(process.execPath);
++    }
++  });
++});
++
++describe("EmbeddingSubprocessClient readiness", () => {
++  it("rejects embed before warmup and after worker exit", async () => {
++    const runtime = resolveEmbeddingWorkerRuntime();
++    if (!runtime) return;
++
++    const client = new EmbeddingSubprocessClient({
++      runtime,
++      scriptPath: join(import.meta.dir, "fixtures", "embedding-worker-fake.mjs"),
++      requestTimeoutMs: 5_000,
++    });
++
++    expect(client.isReady).toBe(false);
++    await expect(client.embed("x", "mean")).rejects.toThrow(/not warmed up/);
++
++    await client.warmup({ model: "fake", cacheDir: "/tmp", pooling: "mean" });
++    expect(client.isReady).toBe(true);
++    expect(Array.from(await client.embed("ab", "mean"))).toEqual([2, 3, 4]);
++
++    client.dispose("test-exit");
++    expect(client.isReady).toBe(false);
++  });
++});
++
++describe("parseWorkerResponse", () => {
++  it("accepts ok and error payloads", () => {
++    expect(parseWorkerResponse(JSON.stringify({ id: 1, ok: true, vector: [1, 2] }))).toEqual({
++      id: 1,
++      ok: true,
++      vector: [1, 2],
++    });
++    expect(parseWorkerResponse(JSON.stringify({ id: 2, ok: false, error: "boom" }))).toEqual({
++      id: 2,
++      ok: false,
++      error: "boom",
++    });
++  });
++});
++
++describe("resolveEmbeddingWorkerScript anchors", () => {
++  it("finds the worker via import.meta.path when url is unusable", () => {
++    const root = mkdtempSync(join(tmpdir(), "opencode-mem-worker-"));
++    const services = join(root, "dist", "services");
++    mkdirSync(services, { recursive: true });
++    writeFileSync(join(root, "package.json"), JSON.stringify({ name: "opencode-mem" }));
++    const worker = join(services, "embedding-worker.js");
++    writeFileSync(worker, "export {}\n");
++
++    const resolved = resolveEmbeddingWorkerScript({
++      url: "",
++      path: join(services, "embedding-subprocess.js"),
++    } as ImportMeta & { path?: string });
++    expect(resolved).toBe(worker);
++    expect(resolveEmbeddingWorkerPackageRoot(resolved)).toBe(root);
++  });
++
++  it("collects dirs without throwing on a bad import.meta.url", () => {
++    const dirs = collectEmbeddingWorkerDirs({
++      url: "not-a-file-url",
++      path: "/tmp/opencode-mem/dist/services/embedding-subprocess.js",
++    } as ImportMeta & { path?: string });
++    expect(
++      dirs.some((dir) => dir.includes("dist/services") || dir.includes("dist\\services"))
++    ).toBe(true);
++  });
++});
++
++describe("EmbeddingSubprocessClient with fake worker", () => {
++  it("warms up, embeds, and SIGKILLs on dispose", async () => {
++    const runtime = resol
+```
+
+**File**: `tests/fixtures/embedding-worker-fake.mjs` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++/**
++ * Fake embedding worker for subprocess IPC tests. Speaks the same JSON-line
++ * protocol as src/services/embedding-worker.ts without loading ONNX.
++ */
++import { createInterface } from "node:readline";
++
++const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
++let warmed = false;
++
++function send(payload) {
++  process.stdout.write(`${JSON.stringify(payload)}\n`);
++}
++
++for await (const line of rl) {
++  const trimmed = line.trim();
++  if (!trimmed) continue;
++  let request;
++  try {
++    request = JSON.parse(trimmed);
++  } catch (error) {
++    send({ id: -1, ok: false, error: String(error) });
++    continue;
++  }
++  if (request.type === "warmup") {
++    warmed = true;
++    send({ id: request.id, ok: true });
++    continue;
++  }
++  if (request.type === "embed") {
++    if (!warmed) {
++      send({ id: request.id, ok: false, error: "not warmed up" });
++      continue;
++    }
++    const n = Math.max(1, Number(request.text?.length ?? 1));
++    send({ id: request.id, ok: true, vector: [n, n + 1, n + 2] });
++    continue;
++  }
++  if (request.type === "dispose") {
++    warmed = false;
++    send({ id: request.id, ok: true });
++    continue;
++  }
++  send({ id: request.id ?? -1, ok: false, error: "unknown type" });
++}
+```
+
+---
+
+### Incident Patch 2: `79630340` (2026-11-24)
+**Commit Message**: fix(web): allow tag migration when only external provider is ready (#520)
+
+The model picker blocked Start Migration on OpenCode-model readiness
+alone, even though the batch API accepts an external memoryModel +
+memoryApiUrl channel. Expose readyForMigration from the catalog API and
+gate the dialog on that instead.
+
+**File**: `src/index.ts` (modified, +3/-2)
+```diff
+@@ -415,8 +415,9 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+ 
+   await configureOpencodeHostTransport(ctx);
+ 
+-  // Re-reads the provider directory into the connectivity snapshot. Errors
+-  // are logged and the previous snapshot retained. The host registers
++  // Re-reads the provider directory into the connectivity snapshot. On success
++  // the snapshot is replaced; on failure the configured opencodeProvider is
++  // seeded so structured-output is still attempted. The host registers
+   // user-config providers after plugin setup (provider.updated/model.updated),
+   // so this runs again on those events and on connectivity-gate misses.
+   const refreshConnectedProviders = async (): Promise<void> => {
+```
+
+**File**: `src/services/api-handlers.ts` (modified, +18/-6)
+```diff
+@@ -1710,8 +1710,12 @@ export async function handleGetTagMigrationProgress(): Promise<ApiResponse<Migra
  }
+ 
+ export interface TagMigrationModelStatus {
+-  /** True when the migration path can run without a live session (inherit cannot). */
++  /** True when the OpenCode path can run without a live session (inherit cannot). */
+   configured: boolean;
++  /** True when memoryModel + memoryApiUrl are set (external tag-migration channel). */
++  externalConfigured: boolean;
++  /** True when either the OpenCode or external channel can run tag migration. */
++  readyForMigration: boolean;
+   providerID: string | null;
+   modelID: string | null;
+ }
+@@ -1735,14 +1739,22 @@ export type ProviderDirectoryEntry = {
+   models: Array<{ id: string; name: string }>;
+ };
+ 
+-export async function handleGetTagMigrationModel(
+-  loadDirectory?: () => Promise<ProviderDirectoryEntry[]>
+-): Promise<ApiResponse<TagMigrationModelCatalog>> {
+-  const status: TagMigrationModelStatus = {
+-    configured: isOpencodeTagMigrationConfigured(),
++function tagMigrationModelStatus(): TagMigrationModelStatus {
++  const configured = isOpencodeTagMigrationConfigured();
++  const externalConfigured = isExternalTagMigrationConfigured();
++  return {
++    configured,
++    externalConfigured,
++    readyForMigration: configured || externalConfigured,
+     providerID: CONFIG.opencodeProvider ?? null,
+     modelID: CONFIG.opencodeModel ?? null,
+   };
++}
++
++export async function handleGetTagMigrationModel(
++  loadDirectory?: () => Promise<ProviderDirectoryEntry[]>
++): Promise<ApiResponse<TagMigrationModelCatalog>> {
++  const status = tagMigrationModelStatus();
+ 
+   try {
+     const { loadOpencodeProvider } = await import("./ai/opencode-provider-loader.js");
+```
+
+**File**: `web/sim/config-model-provider.json` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+   "data": {
+     "available": true,
+     "configured": false,
++    "externalConfigured": false,
++    "readyForMigration": false,
+     "providerID": "opencode",
+     "modelID": "inherit",
+     "providers": [
+```
+
+**File**: `web/src/lib/components/explorer/ModelPicker.svelte` (modified, +17/-2)
+```diff
+@@ -11,12 +11,16 @@
+     idPrefix?: string;
+     disabled?: boolean;
+     configured?: boolean;
++    /** True when OpenCode or the external memory provider can run tag migration. */
++    readyForMigration?: boolean;
+   };
+ 
+   type ModelCatalog = {
+     available: boolean;
+     reason?: string;
+     configured: boolean;
++    externalConfigured?: boolean;
++    readyForMigration?: boolean;
+     providerID: string | null;
+     modelID: string | null;
+     providers: Array<{
+@@ -27,7 +31,12 @@
+     }>;
+   };
+ 
+-  let { idPrefix = "model", disabled = false, configured = $bindable(false) }: Props = $props();
++  let {
++    idPrefix = "model",
++    disabled = false,
++    configured = $bindable(false),
++    readyForMigration = $bindable(false),
++  }: Props = $props();
+ 
+   const i18n = useI18n();
+   let catalog = $state<ModelCatalog | null>(null);
+@@ -53,15 +62,21 @@
+         available: false,
+         reason: result.error ?? "",
+         configured: false,
++        externalConfigured: false,
++        readyForMigration: false,
+         providerID: null,
+         modelID: null,
+         providers: [],
+       };
+       configured = false;
++      readyForMigration = false;
+       return;
+     }
+     catalog = result.data;
+     configured = result.data.configured;
++    readyForMigration =
++      result.data.readyForMigration ??
++      (result.data.configured || Boolean(result.data.externalConfigured));
+     const data = result.data;
+     const provider = data.providers.find((entry) => entry.id === data.providerID);
+     if (provider) {
+@@ -147,7 +162,7 @@
+     </p>
+   {/if}
+ 
+-  {#if catalog && !catalog.configured}
++  {#if catalog && !(catalog.readyForMigration ?? catalog.configured)}
+     <p class="text-xs text-muted-foreground">{i18n.t("migration-model-required")}</p>
+   {/if}
+ </div>
+```
+
+**File**: `web/src/lib/components/explorer/TagMigrationDialog.svelte` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@
+   let running = $state(false);
+   let status = $state("");
+   let progress = $state(0);
+-  let modelConfigured = $state(false);
++  let readyForMigration = $state(false);
+ 
+   $effect(() => {
+     if (open && !running) {
+@@ -125,7 +125,7 @@
+       ></div>
+     </div>
+ 
+-    <ModelPicker idPrefix="migration-model" disabled={running} bind:configured={modelConfigured} />
++    <ModelPicker idPrefix="migration-model" disabled={running} bind:readyForMigration />
+ 
+     <p class="text-xs text-muted-foreground">{i18n.t("migration-note")}</p>
+   </div>
+@@ -134,7 +134,7 @@
+       <DialogActions
+         onCancel={() => handleOpenChange(false)}
+         primaryLabel={i18n.t("btn-start-migration")}
+-        primaryDisabled={!modelConfigured}
++        primaryDisabled={!readyForMigration}
+         onPrimary={() => void runTagMigration()}
+       />
+     {/if}
+```
+
+**File**: `web/vite-plugins/opencode-mem-sim.ts` (modified, +4/-0)
+```diff
+@@ -56,6 +56,8 @@ type MarkdownStatus = {
+ type ModelProviderCatalog = {
+   available: boolean;
+   configured: boolean;
++  externalConfigured?: boolean;
++  readyForMigration?: boolean;
+   providerID: string | null;
+   modelID: string | null;
+   providers: Array<{
+@@ -242,6 +244,8 @@ export function opencodeMemSimPlugin(simRoot: string): Plugin {
+                 modelProvider.providerID = providerID;
+                 modelProvider.modelID = modelID;
+                 modelProvider.configured = modelID !== "inherit";
++                modelProvider.readyForMigration =
++                  modelProvider.configured || Boolean(modelProvider.externalConfigured);
+                 sendJson(res, 200, {
+                   success: true,
+                   data: { writtenTo: "sim", providerID, modelID, requiresReload: false },
+```
+
+---
+
+### Incident Patch 3: `ffd6a2cf` (2026-11-24)
+**Commit Message**: fix(provider): keep configured provider connected when directory is unavailable (#513)
+
+* fix(provider): keep configured provider connected when directory is unavailable
+
+Some plugin contexts (notably the V2 host) do not expose the provider directory, so refreshing the connectivity snapshot throws and ensureProviderConnected() denies providers that are actually configured. Fall back to the explicitly configured opencodeProvider so internal structured-output calls are still attempted; an invalid provider id still fails on the call and falls back to the external API.
+
+* fix(provider): load connectivity fallback via opencode provider loader
+
+Use loadOpencodeProvider in the directory-unavailable catch path so
+setConnectedProviders updates the same module instance that
+ensureProviderConnected reads.
+
+---------
+
+Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
+
+**File**: `src/index.ts` (modified, +10/-0)
+```diff
+@@ -435,6 +435,16 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+       }
+     } catch (error) {
+       log("Failed to refresh opencode provider state", { error: String(error) });
++      // The host provider directory may be unavailable (e.g. a plugin context
++      // without `ctx.provider`). Keep the explicitly configured provider
++      // connected so structured-output calls are attempted instead of being
++      // denied by the connectivity gate; a bad provider id still fails loudly
++      // on the call itself and falls back to the external API.
++      // Use the loader so we hit the same module instance as ensureProviderConnected.
++      if (CONFIG.opencodeProvider) {
++        const { setConnectedProviders } = await loadOpencodeProvider();
++        setConnectedProviders([CONFIG.opencodeProvider]);
++      }
+     }
+   };
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #506** (2026-11-16): chore(deps): bump the minor-and-patch group across 2 directories with 10 updates (@dependabot[bot])
-- **PR #504** (2026-11-09): chore(release): release v2.42.0 (@EyJunge1)
-- **PR #503** (2026-11-09): chore(deps): bump the minor-and-patch group across 2 directories with 11 updates (@dependabot[bot])
-- **PR #502** (2026-11-09): feat(ai): add Standard Compute memory provider preset (@henrikdukefoss)
-- **PR #500** (2026-11-06): chore(release): release v2.41.1 (@EyJunge1)
-- **PR #499** (2026-11-06): fix(dreaming): allow manual runs when disabled and add LLM fallback (@EyJunge1)
+- **PR #522** (2026-11-24): chore(release): release v2.44.0 (@EyJunge1)
+- **PR #521** (2026-11-24): fix(embedding): isolate Windows local ONNX in a Node subprocess (@EyJunge1)
+- **PR #520** (2026-11-24): fix(web): allow tag migration when only external provider is ready (@EyJunge1)
+- **PR #519** (2026-11-24): chore(deps-dev): bump the minor-and-patch group across 2 directories with 3 updates (@dependabot[bot])
+- **PR #517** (2026-11-24): docs: clarify native database platform requirements (@cloudgpuapp)
+- **PR #516** (2026-11-24): feat(ai): add AIGROW memory provider preset (@guglielmo-io)
 
 ---
 
@@ -1213,33 +2129,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the minor-and-patch group across 2 directories with 10 updates
+## X. embedding): isolate Windows local ONNX in a Node subprocess
 
 **RULE**:
-When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e42d23c4`: deps): bump the minor-and-patch group across 2 directories with 10 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a755b1da`: embedding): isolate Windows local ONNX in a Node subprocess. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@effect/opentelemetry": ["@effect/opentelemetry@4.1.0", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.1.0" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-j9bNzQaoQvcnimBFMG0i3piEW20E8HjkXAQHTJN/XqG2e4uJ9zCv53/HCNzD7+ooFn5S4nwQy/BOXeNReMIe+A=="],
-    "@effect/platform-node": ["@effect/platform-node@4.1.0", "", { "dependencies": { "@effect/platform-node-shared": "^4.1.0", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.1.0", "redis": ">=5.0.0 <7.0.0" } }, "sha512-v+X7moGVF9k5oMVvz0slA+NgtEod+W+oygeI285MDJgSlUCW3JcqElj+cD3rlij
+**Windows + OpenCode/Bun:** Local embeddings run `onnxruntime-node` in a **subprocess** (never inside the OpenCode host) so Bun↔ORT NAPI segfaults cannot take down `opencode serve` ([#518](https://github.com/tickernelz/opencode-mem/issues/518), [oven-sh/bun#28008](https://github.com/oven-sh/bun/issues/28008)). Runtime order: Node.js → Bun on PATH → the OpenCode binary itself via `BUN_BE_BUN=1` (Bun ≥ 1.2.16; no separate Node install required). Or set `embeddingApiUrl` + `embeddingApiKey` for remote embeddings. Override with `OPENCODE_MEM_EMBEDDING_SUBPROCESS=0` (in-process, not recommended on Windows) or `=1` (force subprocess on other OSes). The parent `SIGKILL`s the worker on dispose/idle/timeout and re-spawns after a worker crash.
+
+- **Windows segfault in `onnxruntime_binding.node`:** Local embeddings run ORT in a subprocess (#518), using Node, Bun, or the OpenCode binary (`BUN_BE_BUN=1`). If that still fails, configure remote embeddings (`embeddingApiUrl` + `embeddingApiKey`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "@effect/opentelemetry": ["@effect/opentelemetry@4.0.6", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.0.6" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-xhLR1EN4ZNaKM7Bx59SCFiRNduFzgH8LZXDrCpPN8MpQ93V0GQcFHTBah5T3EXO2v+5HTEacdTgetIA0Creqvw=="],
-    "@effect/platform-node": ["@effect/platform-node@4.0.6", "", { "dependencies": { "@effect/platform-node-shared": "^4.0.6", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.0.6", "redis": ">=5.0.0 <7.0.0" } }, "sha512-gXvGHAy0/8PZbWvMMguloDUyeSP+rzYEo3FSEqUuGduxo9ORcGioDxPI+GOLCIF
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e42d23c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a755b1da` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

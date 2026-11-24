@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-Y046",
-    "timestamp": "2026-11-22T23:57:17.718Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-Y44K",
     "timestamp": "2026-11-22T23:57:22.916Z",
     "repository": "buresdv/Cork",
@@ -7490,6 +7475,21 @@
     "repository": "goodrain/rainbond",
     "learningId": "learn-github-goodrain-rainbond",
     "contentHash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-OW86",
+    "timestamp": "2026-11-24T18:17:37.830Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

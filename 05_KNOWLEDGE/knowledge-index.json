@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T18:09:17.783Z",
+  "last_updated": "2026-11-24T18:17:43.910Z",
   "total_verified_learnings": 9099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24823,
+  "total_items": 24826,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219266,13 +219266,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1WP6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P0N2-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "96b1ea200206a3a6f662fb930742cd195e7c17929d959abf1eab7b467c03504a",
+      "content_hash": "5cfd0eb6280837e2c69d6165c8f48e11da6e4858964965c47e4efbdd648132cc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:15:48.427Z"
+      "persisted_at": "2026-11-24T18:17:43.550Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219282,9 +219282,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d83ba089fbcdad74e1af61a5134067831fcc98936359f11aa81a2d10f6ba994a",
+      "content_hash": "9c70e88204fd518b08b00c8074b4d9af255c896c6cfd8ef89743e6f1b8400495",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:15:48.640Z"
+      "persisted_at": "2026-11-24T18:17:43.729Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219294,9 +219294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ede6e351355e4bed29bdf66ff3c87bed54177eeac0ffc4b58dbd4dd38ef945a7",
+      "content_hash": "043587518bd30c998d0ea7004bfb6a06a61559118e99565b48d51398f3115017",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:15:48.844Z"
+      "persisted_at": "2026-11-24T18:17:43.910Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -229436,9 +229436,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "89ce1b9366136c3aa78d43e4af98fa08af9ddbf1f4db03cd93f1926b01bbfa1a",
+      "content_hash": "4062f257a771a04e8e7cbf09b488797837fd274890877b8eaf939cda8fbbf457",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:05:44.378Z"
+      "persisted_at": "2026-11-24T18:17:42.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229448,9 +229448,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e42ef2e1b469d64309fb34c85733311129de0beede1b5c707cadec0b73b3c79",
+      "content_hash": "42143a6fca09f231f60b306f49fcdf2a0e5d633a22323d476252e2e014740740",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:05:44.548Z"
+      "persisted_at": "2026-11-24T18:17:43.098Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -277618,8 +277618,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "94a849ca",
-      "content_hash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
+      "source_version": "e38c8744",
+      "content_hash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -277632,6 +277632,11 @@
           "number": 9350,
           "title": "make external profile cleanup timeout configurable",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10328,
+          "title": "isolate Windows local ONNX in a Node subprocess",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -277639,7 +277644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:37:33.472Z",
+      "verified_at": "2026-11-24T18:17:37.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277681,10 +277686,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tickernelz-opencode-mem-technical-construction-intelligence-tickernelz-opencode-.md",
       "title": "Technical Construction Intelligence: tickernelz/opencode-mem Core Invariants",
       "repository": "tickernelz/opencode-mem",
-      "source_version": "e42d23c4",
-      "content_hash": "85c7fcd010c3033aa12e80bc316a2213cf05054630adceafe2f6f79afbe955d2",
+      "source_version": "e38c8744",
+      "content_hash": "ce9b7f6049df3e1a45644e2d0e4aa7f28dd0057e48f96125197c916404b0eb3a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:35:15.988Z"
+      "persisted_at": "2026-11-24T18:17:38.271Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tickernelz-opencode-mem": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tickernelz-opencode-mem",
@@ -277693,10 +277698,10 @@
       "relative_path": "08_VERIFICATION/tickernelz-opencode-mem-verification-protocol-empirical-defect-shield-for-ticker.md",
       "title": "Verification Protocol: Empirical Defect Shield for tickernelz/opencode-mem",
       "repository": "tickernelz/opencode-mem",
-      "source_version": "94a849ca",
-      "content_hash": "425f939855d9549dcae7d1be08fc4cb59da5dfb7f6974ac9b6285f757d10c3f4",
+      "source_version": "e38c8744",
+      "content_hash": "fc1b633dc625df89a458abbf3ced05d145ec99760d2c5766906eb8a3738ce0fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:37:34.116Z"
+      "persisted_at": "2026-11-24T18:17:38.455Z"
     },
     "candidate_directive-add-min-count-privacy-threshold-default-5": {
       "item_id": "candidate_directive-add-min-count-privacy-threshold-default-5",
@@ -277742,9 +277747,9 @@
       "title": "Technical Construction Intelligence: tickernelz-opencode-mem-learnings Core Invariants",
       "repository": "tickernelz-opencode-mem-learnings",
       "source_version": "HEAD",
-      "content_hash": "525e336bc017c4c095ef506f06b82f9d0e63a022b2fad844ed209f8f8293f1d1",
+      "content_hash": "bd920ad649107f84ae12d22065f5acb59fc61fdeed6fa9cd1df117a8bac98508",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:35:21.242Z"
+      "persisted_at": "2026-11-24T18:17:41.873Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tickernelz-opencode-mem-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tickernelz-opencode-mem-learni",
@@ -277754,9 +277759,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tickernelz-opencode-mem-learnings",
       "repository": "tickernelz-opencode-mem-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae7bc578e6d1a02f9617d83876227d80c2a26efb486cdb743cf7c23026a65f6d",
+      "content_hash": "bd41e9511c2046aeec3836980118d1318fb85c8975c2b034ffa4a53a17962e14",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:43:18.490Z"
+      "persisted_at": "2026-11-24T18:17:42.056Z"
     },
     "candidate_directive-synthesize-add-min-count-privacy-threshold-default-5": {
       "item_id": "candidate_directive-synthesize-add-min-count-privacy-threshold-default-5",
@@ -304555,13 +304560,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TZTD-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P00H-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "9976482469142b2a167458bcdd031ae33ad5c0baafe0981846be3ac288a1c88a",
+      "content_hash": "db90934b758a3537dad9d70511fbf5daae8ff3bd0fe6bf12e64a903477ba9925",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T08:05:44.209Z"
+      "persisted_at": "2026-11-24T18:17:42.738Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -339024,6 +339029,44 @@
       "content_hash": "fd69248d4a853f35917d5e8f1a6ced756c494d558072105a71395f872e033fb2",
       "domain_letter": "B",
       "persisted_at": "2026-11-24T18:09:11.777Z"
+    },
+    "rule-10328": {
+      "learning_id": "rule-10328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10328,
+      "title": "isolate Windows local ONNX in a Node subprocess",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "e38c8744",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:17:37.605Z"
+    },
+    "candidate_directive-isolate-windows-local-onnx-in-a-node-subprocess": {
+      "item_id": "candidate_directive-isolate-windows-local-onnx-in-a-node-subprocess",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OWF9-isolate-windows-local-onnx-in-a-node-subprocess.md",
+      "title": "isolate Windows local ONNX in a Node subprocess",
+      "repository": "tickernelz/opencode-mem",
+      "source_version": "e38c8744",
+      "content_hash": "eb99ed020f67eb180df3295d9b87d98dd96a6d28804222f8c1a75a194a73e152",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:17:38.089Z"
+    },
+    "candidate_directive-embedding-isolate-windows-local-onnx-in-a-node-subprocess": {
+      "item_id": "candidate_directive-embedding-isolate-windows-local-onnx-in-a-node-subprocess",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OZ7H-embedding-isolate-windows-local-onnx-in-a-node-subprocess.md",
+      "title": "embedding): isolate Windows local ONNX in a Node subprocess",
+      "repository": "tickernelz-opencode-mem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ce52f22293776b94610ca320d1fee4033da606968e1ce4f21f64528c58b6487",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:17:41.696Z"
     }
   },
   "ai-builder-brain": {
