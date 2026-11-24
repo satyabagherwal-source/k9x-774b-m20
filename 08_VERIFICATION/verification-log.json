@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-35CQ",
-    "timestamp": "2026-11-22T23:33:18.170Z",
-    "repository": "maziyarpanahi/openmed",
-    "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-3C1W",
-    "timestamp": "2026-11-22T23:33:26.852Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-DDFK",
     "timestamp": "2026-11-22T23:41:15.200Z",
     "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
@@ -7490,6 +7460,36 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-RV5Y",
+    "timestamp": "2026-11-24T17:51:56.806Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-RYNS",
+    "timestamp": "2026-11-24T17:52:01.336Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

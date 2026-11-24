@@ -12796,3 +12796,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `e9613f90` | Multi-dimensional audit evidence | 2026-11-24T17:42:47.103Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b6467a3e` | Multi-dimensional audit evidence | 2026-11-24T17:42:51.949Z |
 | `learn-dom-d-9fc91e58` | `project://hf-baidu-ernie-5.5-flash-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md` | 2026-11-24T17:43:21.556Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `dbc3d929` | Multi-dimensional audit evidence | 2026-11-24T17:51:56.810Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `188b9411` | Multi-dimensional audit evidence | 2026-11-24T17:52:01.340Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:15:05.928Z",
+  "timestamp": "2026-11-24T17:52:07.099Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-authzed-spicedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [authzed-spicedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:15:05.928Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:52:07.099Z`  
 > **Learning ID**: `LEARN-EVO-authzed-spicedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `2ffaa9ae`  
+> **Source Version**: `188b9411`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T22:14:57.149Z  
+> **Timestamp**: 2026-11-24T17:52:00.345Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:14:55.707Z  
+> **Harvest Timestamp**: 2026-11-24T17:52:00.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7235 stars
+- **Stars / Engagement**: 7238 stars
 
 ---
 
@@ -1111,11 +1111,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3524** (2026-11-23): **chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey**
+  *Symptoms*: ## Description  Review of #3473 caught a new context key declared as a bare `struct{}` type instead of using `github.com/authzed/ctxkey`. This adds an analyzer so that lint catches it.  - **`ctxkeycheck`**: reports every call to `context.WithValue`. The callee is resolved through type information, so a renamed `context` import is caught and a local `WithValue` function or method is not. Reading with `ctx.Value` is not reported. - **`allowed-key-types` flag**: exempts keys owned by another module. Lint sets it to `github.com/authzed/consistent.ctxKey`, because the hashring balancer reads that key itself. - **Migration**: the ten existing `context.WithValue` callers now use `ctxkey`, so lint needs no skip list. This covers the dispatcher and consistency middleware handles, the interceptor-order bookkeeping, the development warnings relation key, the CRDB `CtxDisableRetries` key, and `migrate.BackfillBatchSize`.  ## Breaking change for embedders  `migrate.BackfillBatchSize` in `pkg/migrate` is now a `*ctxkey.Key[uint64]` and `migrate.MigrationVariable` is removed. Code that runs migrations itself must call `migrate.BackfillBatchSize.Set(ctx, size)`. A value set with `context.WithValue(ctx, migrate.BackfillBatchSize, size)` still compiles but is no longer read; the Postgres backfill migration now returns an error when the batch size is missing instead of panicking on a type assertion.  ## Testing  - `ctxkeycheck` has analysistest coverage for flagged and allowed cases. - The full
+
 - **Issue #3522** (2026-11-23): **fix(lookupsubjects): stop combining found subjects into a shared slice**
   *Symptoms*: ## Description  Fixes and issue where `LookupSubjects` can omit subjects that would otherwise be granted by `CheckPermission`, causing results for the same data to vary between requests.  When a lookup reaches a group through multiple parent groups in the same batch, that group is resolved once and its `FoundSubjects` slice is shared across all of those parents. `combineFoundSubjects` appended each parent's additional subjects directly to the shared slice. When the underlying array had spare capacity, concurrent or subsequent appends from different parents could write to the same slot, overwriting earlier subjects. `combineFoundSubjects` now clips the shared slice when it is first stored for a parent, so the next append allocates a new backing array instead of writing into the shared one.  Because this depends on map iteration order and slice capacity, the failure is intermittent. On a 24-relationship nested-group dataset where one group is reached through two parents, roughly 8% of lookups returned 4 of the 5 subjects granted by `CheckPermission`. The `query-plan-lookups` engine is unaffected. 
-
-- **Issue #3519** (2026-11-23): **chore(deps): bump the go-mod group across 2 directories with 38 updates**
-  *Symptoms*: Bumps the go-mod group with 37 updates in the / directory:  | Package | From | To | | --- | --- | --- | | buf.build/gen/go/prometheus/prometheus/protocolbuffers/go | `1.36.12-20260707164124-2360da55afce.2` | `1.36.12-20261001224011-d7f6cfecf2b8.2` | | [buf.build/go/protovalidate](https://github.com/bufbuild/protovalidate-go) | `1.4.0` | `1.4.1` | | [cloud.google.com/go/spanner](https://github.com/googleapis/google-cloud-go) | `1.95.1` | `1.96.1` | | [github.com/authzed/consistent](https://github.com/authzed/consistent) | `0.3.0` | `0.4.0` | | [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.0` | `1.48.0` | | [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.5` | `1.33.19` | | [github.com/aws/aws-sdk-go-v2/feature/rds/auth](https://github.com/aws/aws-sdk-go-v2) | `1.7.3` | `1.7.12` | | [github.com/exaring/otelpgx](https://github.com/exaring/otelpgx) | `0.12.0` | `0.13.0` | | [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) | `1.10.1` | `1.10.2` | | [github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus](https://github.com/grpc-ecosystem/go-grpc-middleware) | `1.1.0` | `1.1.1` | | [github.com/grpc-ecosystem/grpc-gateway/v2](https://github.com/grpc-ecosystem/grpc-gateway) | `2.30.0` | `2.34.0` | | [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | `5.11.0` | `5.13.0` | | [github.com/jeroenrinzema/psql-wire](https://github.com/jeroenrinzema/psql-wire) | `0.19.0` | `0.20.0` | |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1132,139 +1132,197 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33d78a2b` (2026-11-23)
-**Commit Message**: fix(lookupsubjects): stop combining found subjects into a shared slice (#3522)
+### Incident Patch 1: `188b9411` (2026-11-23)
+**Commit Message**: chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
+
+Adds a ctxkeycheck analyzer that reports calls to context.WithValue, so that new context keys use the typed keys from github.com/authzed/ctxkey. Keys owned by another module can be exempted with the allowed-key-types flag, which lint uses for the consistent hashring balancer's request key.
+
+Migrates the existing context.WithValue callers to ctxkey so that no files need to be skipped. migrate.BackfillBatchSize becomes a typed key and migrate.MigrationVariable is removed.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
- - Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
- - Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
-+- LookupSubjects: no longer intermittently omits subjects when a group is reached through multiple parent groups. Subjects granted by CheckPermission could previously be missing from some LookupSubjects responses while present in others for the same data. (https://github.com/authzed/spicedb/pull/3522)
+@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - LookupResources: the v1 `LookupResources` stream can now pack several resources into one response. A client sets `optional_response_batch_size` on the request, and the server returns batched messages carrying up to that many resources with a single resume cursor per batch, instead of one message (and one cursor) per resource, cutting per-message gRPC overhead and cursor-token payload for high-cardinality lookups. `0`, the default, keeps one resource per message. A request whose `optional_response_batch_size` exceeds `--max-lookup-resources-response-batch-size` (default 1000) is rejected. Requires the LR3 LookupResources engine. (https://github.com/authzed/spicedb/pull/3517)
  
- ## [1.57.1] - 2026-11-10
- ### Fixed
+ ### Changed
++- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
+ - Server: `--experimental-lookup-resources-version` now defaults to `lr3`, enabling the LR3 LookupResources engine by default. Set it to an empty value to opt back out. (https://github.com/authzed/spicedb/pull/3517)
+ - Dispatch: when the primary fails a Check with an error that may be transient, such as being unavailable, the Check now waits for the secondary dispatchers and returns a secondary's answer if one succeeds, as LookupResources and LookupSubjects already did. Errors caused by the request itself are still returned at once. A Check that every dispatcher fails is no longer counted under `handler_name="$primary"` in `spicedb_dispatch_remote_dispatch_handler_total`. (https://github.com/authzed/spicedb/pull/3468)
+ - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
 ```
 
-**File**: `internal/dispatch/graph/lookupsubjects_test.go` (modified, +68/-0)
+**File**: `internal/checkbaseline/postgres.go` (modified, +1/-1)
 ```diff
-@@ -277,7 +277,58 @@ func TestLookupSubjectsDispatchCount(t *testing.T) {
+@@ -177,7 +177,7 @@ func openBaselineBackend(ctx context.Context, cfg AuditConfig) (*baselineBackend
+ 		return nil, err
  	}
+ 	defer driver.Close(context.Background())
+-	err = migrations.DatabaseMigrations.Run(context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000)), driver, migrate.Head, migrate.LiveRun)
++	err = migrations.DatabaseMigrations.Run(migrate.BackfillBatchSize.Set(ctx, 1000), driver, migrate.Head, migrate.LiveRun)
+ 	closeErr := driver.Close(ctx)
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `internal/datastore/crdb/crdb.go` (modified, +1/-1)
+```diff
+@@ -445,7 +445,7 @@ func (cds *crdbDatastore) ReadWriteTx(
+ 
+ 	config := options.NewRWTOptionsWithOptions(opts...)
+ 	if config.DisableRetries {
+-		ctx = context.WithValue(ctx, pool.CtxDisableRetries, true)
++		ctx = pool.CtxDisableRetries.Set(ctx, true)
+ 	}
+ 
+ 	err := cds.writePool.TryBeginFunc(ctx, cds.acquireTimeout, func(tx pgx.Tx) error {
+```
+
+**File**: `internal/datastore/crdb/pool/pool.go` (modified, +4/-4)
+```diff
+@@ -14,6 +14,8 @@ import (
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	"golang.org/x/time/rate"
+ 
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/datastore/common"
+ 	pgxcommon "github.com/authzed/spicedb/internal/datastore/postgres/common"
+ 	log "github.com/authzed/spicedb/internal/logging"
+@@ -39,10 +41,8 @@ func init() {
+ 	prometheus.MustRegister(resetHistogram)
  }
  
-+// sharedNestedGroupRelationships builds a graph where document:doc#viewer@group:top#member
-+// fans out to `instances` shared groups, each reached via `parents` parent groups.
-+// Each parent also has its own nested group at the same depth, so the shared group's
-+// FoundSubjects are combined with each parent's own subjects during dispatch.
-+// It returns the relationships and the expected FoundSubjects for document:doc#view.
-+//
-+//	document:doc#viewer
-+//	  └── group:top
-+//	        ├── group:shared{i}-parent{p}  (for each i in instances, p in parents)
-+//	        │     ├── group:shared{i}      (shared across all parents of instance i)
-+//	        │     │     ├── group:shared{i}-left   ──▶ 3 users
-+//	        │     │     └── group:shared{i}-right  ──▶ 2 users
-+//	        │     └── group:shared{i}-parent{p}-own
-+//	        │           └── group:shared{i}-parent{p}-own-inner ──▶ 1 user
-+func sharedNestedGroupRelationships(instances, parents int) ([]tuple.Relationship, []*v1.FoundSubject) {
-+	rels := []tuple.Relationship{tuple.MustParse("document:doc#viewer@group:top#member")}
-+	var expected []*v1.FoundSubject
-+	addMember := func(group, member string) {
-+		rels = append(rels, tuple.MustParse("group:"+group+"#member@"+member))
-+	}
-+	addUser := func(group, user string) {
-+		addMember(group, "user:"+user)
-+		expected = append(expected, &v1.FoundSubject{SubjectId: user})
-+	}
-+
-+	for i := range instances {
-+		shared := fmt.Sprintf("shared%d", i)
-+		addMember(shared, "group:"+shared+"-left#member")
-+		addMember(shared, "group:"+shared+"-right#member")
-+		for u := range 3 {
-+			addUser(shared+"-left", fmt.Sprintf("%s-left-user%d", shared, u))
-+		}
-+		for u := range 2 {
-+			addUser(shared+"-right", fmt.Sprintf("%s-right-user%d", shared, u))
-+		}
-+
-+		for p := range parents {
-+			parent := fmt.Sprintf("%s-parent%d", shared, p)
-+			own := parent + "-own"
-+			addMember("top", "group:"+parent+"#member")
-+			addMember(parent, "group:"+shared+"#member")
-+			addMember(parent, "group:"+own+"#member")
-+			addMember(own, "group:"+own+"-inner#member")
-+			addUser(own+"-inner", own+"-user")
-+		}
-+	}
-+	return rels, expected
-+}
-+
- func TestLookupSubjectsOverSchema(t *testing.T) {
-+	sharedGroupRels, sharedGroupExpected := sharedNestedGroupRelationships(6, 8)
-+
- 	testCases := []struct {
- 		name          string
- 		schema        string
-@@ -989,6 +1040,23 @@ func TestLookupSubjectsOverSchema(t *testing.T) {
- 				},
- 			},
- 		},
-+		{
-+			"nested group shared by several parents",
-+			`definition user {}
-+
-+			definition group {
-+				relation member: user | group#member
-+			}
-+
-+			definition document {
-+				relation viewer: group#member
-+				permission view = viewer
-+			}`,
-+			sharedGroupRels,
-+			ONR("document", "doc", "view"),
-+			RR("user", "..."),
-+			sharedGroupExpected,
-+		},
+-type ctxDisableRetries struct{}
+-
+ var (
+-	CtxDisableRetries ctxDisableRetries
++	CtxDisableRetries = ctxkey.NewWithDefault(false)
+ 	ErrAcquire        = errors.New("failed to acquire in time")
+ )
+ 
+@@ -323,7 +323,7 @@ func (p *RetryPool) withRetries(ctx context.Context, acquireTimeout time.Duratio
+ 	}()
+ 
+ 	maxRetries := p.maxRetries
+-	if disabled, ok := ctx.Value(CtxDisableRetries).(bool); ok && disabled {
++	if CtxDisableRetries.Value(ctx) {
+ 		maxRetries = 0
  	}
  
- 	for _, tc := range testCases {
 ```
 
-**File**: `internal/graph/lookupsubjects.go` (modified, +5/-1)
+**File**: `internal/datastore/postgres/migrations/zz_migration.0011_backfill_xid_add_indices.go` (modified, +6/-1)
 ```diff
-@@ -4,6 +4,7 @@ import (
+@@ -2,6 +2,7 @@ package migrations
+ 
+ import (
  	"context"
- 	"errors"
++	"errors"
  	"fmt"
-+	"slices"
- 	"sync"
  
- 	"golang.org/x/sync/errgroup"
-@@ -718,7 +719,10 @@ func (cl *ConcurrentLookupSubjects) dispatchTo(
+ 	"github.com/jackc/pgx/v5"
+@@ -125,7 +126,11 @@ func init() {
+ 				}
+ 			}
  
- func combineFoundSubjects(existing *v1.FoundSubjects, toAdd *v1.FoundSubjects) (*v1.FoundSubjects, error) {
- 	if existing == nil {
--		return toAdd, nil
-+		// toAdd.FoundSubjects may share a backing array with other resources.
-+		// We need to prevent appends overwriting each other when the backing array is shared, therefore we clip the slice to remove the extra capacity.
-+		// By doing so, we ensure that the next append operation will allocate a new backing array.
-+		return &v1.FoundSubjects{FoundSubjects: slices.Clip(toAdd.FoundSubjects)}, nil
+-			batchSize := ctx.Value(migrate.BackfillBatchSize).(uint64)
++			batchSize, ok := migrate.BackfillBatchSize.Value(ctx)
++			if !ok {
++				return errors.New("backfill batch size not found in context")
++			}
++
+ 			for _, stmt := range backfills {
+ 				concreteStmt := fmt.Sprintf(stmt, batchSize)
+ 
+```
+
+**File**: `internal/datastore/postgres/replica_lag_test.go` (modified, +1/-1)
+```diff
+@@ -528,7 +528,7 @@ func runMigrations(ctx context.Context, t testing.TB, uri string) {
+ 	t.Helper()
+ 	// The xid-backfill migration reads its batch size from the context, as the
+ 	// standard test bootstrap does.
+-	ctx = context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000))
++	ctx = migrate.BackfillBatchSize.Set(ctx, 1000)
+ 	driver, err := pgmigrations.NewAlembicPostgresDriver(ctx, uri, datastore.NoCredentialsProvider, false)
+ 	require.NoError(t, err)
+ 	defer func() { _ = driver.Close(ctx) }()
+```
+
+**File**: `internal/middleware/dispatcher/dispatcher.go` (modified, +9/-10)
+```diff
+@@ -6,40 +6,39 @@ import (
+ 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
+ 	"google.golang.org/grpc"
+ 
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/dispatch"
+ )
+ 
+-type ctxKeyType struct{}
+-
+-var dispatcherKey ctxKeyType = struct{}{}
+-
+ type dispatchHandle struct {
+ 	dispatcher dispatch.Dispatcher
+ }
+ 
++var dispatcherKey = ctxkey.New[*dispatchHandle]()
++
+ // ContextWithHandle adds a placeholder to a context that will later be
+ // filled by the dispatcher
+ func ContextWithHandle(ctx context.Context) context.Context {
+-	return context.WithValue(ctx, dispatcherKey, &dispatchHandle{})
++	return dispatcherKey.Set(ctx, &dispatchHandle{})
+ }
+ 
+ // FromContext reads the selected dispatcher out of a context.Context
+ // and returns nil if it does not exist.
+ func FromContext(ctx context.Context) dispatch.Dispatcher {
+-	if c := ctx.Value(dispatcherKey); c != nil {
+-		handle := c.(*dispatchHandle)
++	if handle, ok := dispatcherKey.Value(ctx); ok {
+ 		return handle.dispatcher
  	}
+ 	return nil
+ }
  
- 	if toAdd == nil {
+ // SetInContext adds a dispatcher to the given context
+ func SetInContext(ctx context.Context, dispatcher dispatch.Dispatcher) error {
+-	handle := ctx.Value(dispatcherKey)
+-	if handle == nil {
++	handle, ok := dispatcherKey.Value(ctx)
++	if !ok {
+ 		return nil
+ 	}
+-	handle.(*dispatchHandle).dispatcher = dispatcher
++	handle.dispatcher = dispatcher
+ 	return nil
+ }
+ 
+```
+
+**File**: `internal/testserver/datastore/postgres.go` (modified, +1/-1)
+```diff
+@@ -117,7 +117,7 @@ func (b *postgresTester) hostConnectionString(ctx context.Context) (string, erro
+ 
+ func (b *postgresTester) NewDatastore(t testing.TB, initFunc InitFunc) datastore.Datastore {
+ 	t.Helper()
+-	ctx := context.WithValue(t.Context(), migrate.BackfillBatchSize, uint64(1000))
++	ctx := migrate.BackfillBatchSize.Set(t.Context(), 1000)
+ 
+ 	var uri string
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3524** (2026-11-23): chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey (@josephschorr)
 - **PR #3522** (2026-11-23): fix(lookupsubjects): stop combining found subjects into a shared slice (@mazdakb)
 - **PR #3519** (closed): chore(deps): bump the go-mod group across 2 directories with 38 updates (@dependabot[bot])
 - **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
 - **PR #3515** (2026-11-23): test: add schema variant generator for property-based tests (@josephschorr)
 - **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
-- **PR #3510** (2026-11-20): fix: single schema store reads wrong schemahash at revision boundaries (@tstirrat15)
 
 ---
 
@@ -1284,13 +1342,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lookupsubjects): stop combining found subjects into a shared slice
+## X. lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33d78a2b`: lookupsubjects): stop combining found subjects into a shared slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `188b9411`: lint): add ctxkeycheck analyzer and migrate context keys to ctxkey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1298,7 +1356,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- LookupSubjects: no longer intermittently omits subjects when a group is reached through multiple parent groups. Subjects granted by CheckPermission could previously be missing from some LookupSubjects responses while present in others for the same data. (https://github.com/authzed/spicedb/pull/3522)
+- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1308,7 +1366,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33d78a2b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `188b9411` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

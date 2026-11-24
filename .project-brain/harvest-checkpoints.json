@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T17:42:51.962Z",
+  "last_updated": "2026-11-24T17:52:01.357Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
-      "verified_at": "2026-11-23T22:14:58.252Z",
+      "content_hash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
+      "verified_at": "2026-11-24T17:52:01.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:14:58.252Z"
+      "last_updated": "2026-11-24T17:52:01.357Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -14166,14 +14166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cheeriojs-dom-serializer",
-      "content_hash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
-      "verified_at": "2026-11-20T17:37:13.733Z",
+      "content_hash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
+      "verified_at": "2026-11-24T17:51:56.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:37:13.733Z"
+      "last_updated": "2026-11-24T17:51:56.825Z"
     },
     "paololeonardi/WaterfallGrid": {
       "repository": "paololeonardi/WaterfallGrid",

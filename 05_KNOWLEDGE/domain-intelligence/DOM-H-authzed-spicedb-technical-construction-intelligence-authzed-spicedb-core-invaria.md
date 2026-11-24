@@ -4,24 +4,24 @@
 {
   "source_repository": "authzed/spicedb",
   "source_url": "https://github.com/authzed/spicedb",
-  "source_version": "c9e95eba",
+  "source_version": "188b9411",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T16:33:26.397Z",
+  "timestamp": "2026-11-24T17:52:01.577Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-authzed-spicedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `c9e95eba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:33:26.397Z`  
+> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `188b9411`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:52:01.577Z`  
 > **Learning ID**: `learn-github-authzed-spicedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from authzed/spicedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:33:25.189Z  
+> **Harvest Timestamp**: 2026-11-24T17:52:00.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7230 stars
+- **Stars / Engagement**: 7238 stars
 
 ---
 
@@ -1100,13 +1100,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3509** (2026-11-18): **fix(graph): give each LookupResources3 producer its own caveat runner**
-  *Symptoms*: ## Problem  LookupResources3 creates one `CaveatRunner` per request and stores it in `lr3refs`. The producers of `relationshipsIter` run concurrently, and each one calls `RunCaveatExpression` on that shared runner. `CaveatRunner` caches caveat definitions and compiled caveats in plain maps, so it isn't safe for concurrent use.  When a lookup reaches caveated relationships through more than one entrypoint (for example `permission view = viewer + editor` with both relations caveated), those maps are written concurrently. Under load this aborts the process with `fatal error: concurrent map writes`, which can't be recovered. It happens with or without caveat context in the request, because caveats are evaluated either way to compute missing context.  With a dispatch concurrency limit of 1 the producers don't overlap, which is why serial configurations and the existing tests don't show it.  ## Fix  Create the caveat runner inside each producer, as LookupResources2 already does. Compiled caveats are still shared through the schema-tied compiled caveat cache (`CompiledCaveatCacheFor`), so the extra cost is two small maps per producer. The now-unused `caveatRunner` field is removed from `lr3refs`.  ## Testing  - New `TestLookupResources3OverSchemaWithCursors` case, "caveats evaluated by concurrent producers": three relations, each with its own caveat, unioned into one permission.   - Without the fix: 16 `DATA RACE` reports under `go test -race -count=3`.   - With the fix: passes clea
+- **Issue #3524** (2026-11-23): **chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey**
+  *Symptoms*: ## Description  Review of #3473 caught a new context key declared as a bare `struct{}` type instead of using `github.com/authzed/ctxkey`. This adds an analyzer so that lint catches it.  - **`ctxkeycheck`**: reports every call to `context.WithValue`. The callee is resolved through type information, so a renamed `context` import is caught and a local `WithValue` function or method is not. Reading with `ctx.Value` is not reported. - **`allowed-key-types` flag**: exempts keys owned by another module. Lint sets it to `github.com/authzed/consistent.ctxKey`, because the hashring balancer reads that key itself. - **Migration**: the ten existing `context.WithValue` callers now use `ctxkey`, so lint needs no skip list. This covers the dispatcher and consistency middleware handles, the interceptor-order bookkeeping, the development warnings relation key, the CRDB `CtxDisableRetries` key, and `migrate.BackfillBatchSize`.  ## Breaking change for embedders  `migrate.BackfillBatchSize` in `pkg/migrate` is now a `*ctxkey.Key[uint64]` and `migrate.MigrationVariable` is removed. Code that runs migrations itself must call `migrate.BackfillBatchSize.Set(ctx, size)`. A value set with `context.WithValue(ctx, migrate.BackfillBatchSize, size)` still compiles but is no longer read; the Postgres backfill migration now returns an error when the batch size is missing instead of panicking on a type assertion.  ## Testing  - `ctxkeycheck` has analysistest coverage for flagged and allowed cases. - The full
 
-- **Issue #3508** (2026-11-18): **refactor(dispatch): stop recovering panics from external strategies**
-  *Symptoms*: ## Summary  Follow-up to #3506. It removes the panic recovery around external secondary dispatch strategies, which was raised in review after #3506 merged.  #3506 recovered panics from strategies registered by a program that embeds SpiceDB, logged them, and counted them in `remote_dispatch_external_strategy_panics_total`. That was the only `recover()` in SpiceDB's non-test code under `internal/` and `pkg/`, and the server has no panic-recovery middleware. Everywhere else, including the built-in strategies running in the same goroutines, a panic is a bug and crashes the process. That also avoids carrying on with a policy left half-updated.  The case that motivated the recovery, a `Function` without a `Strategy`, is already rejected at startup by the registration checks from #3506, which stay. An embedder that wants extra protection can still recover inside its own strategy.  ## Changes  - `strategy_external.go`: the adapter calls the external policy directly. This removes `recoverCallback`, `reportExternalPanic` and `primaryOnlyPolicy`. - `metrics.go`: removes `remote_dispatch_external_strategy_panics_total`. It was never released. - `strategy_external_test.go`: removes `TestExternalStrategyPanicsAreContained`. - `pkg/dispatch/secondary`: documents that panics in a `Strategy` or `Policy` are not recovered. The README drops the recovery and the metric.  No CHANGELOG entry: neither the recovery nor the metric has been released.  `go test ./internal/dispatch/... ./pkg/dispatch/..
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3508?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
+- **Issue #3522** (2026-11-23): **fix(lookupsubjects): stop combining found subjects into a shared slice**
+  *Symptoms*: ## Description  Fixes and issue where `LookupSubjects` can omit subjects that would otherwise be granted by `CheckPermission`, causing results for the same data to vary between requests.  When a lookup reaches a group through multiple parent groups in the same batch, that group is resolved once and its `FoundSubjects` slice is shared across all of those parents. `combineFoundSubjects` appended each parent's additional subjects directly to the shared slice. When the underlying array had spare capacity, concurrent or subsequent appends from different parents could write to the same slot, overwriting earlier subjects. `combineFoundSubjects` now clips the shared slice when it is first stored for a parent, so the next append allocates a new backing array instead of writing into the shared one.  Because this depends on map iteration order and slice capacity, the failure is intermittent. On a 24-relationship nested-group dataset where one group is reached through two parents, roughly 8% of lookups returned 4 of the 5 subjects granted by `CheckPermission`. The `query-plan-lookups` engine is unaffected. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1123,560 +1121,197 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9e95eba` (2026-11-18)
-**Commit Message**: chore: fix test panic (#3503)
+### Incident Patch 1: `188b9411` (2026-11-23)
+**Commit Message**: chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
 
-**File**: `internal/datastore/memdb/memdb.go` (modified, +4/-4)
-```diff
-@@ -134,15 +134,15 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
- 	defer mdb.RUnlock()
- 
- 	if err := mdb.checkNotClosed(); err != nil {
--		return &memdbReader{nil, nil, err, time.Now()}
-+		return newErrorReader(err)
- 	}
- 
- 	if len(mdb.revisions) == 0 {
--		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
-+		return newErrorReader(errors.New("memdb datastore is not ready"))
- 	}
- 
- 	if err := mdb.checkRevisionLocalCallerMustLock(dr); err != nil {
--		return &memdbReader{nil, nil, err, time.Now()}
-+		return newErrorReader(err)
- 	}
- 
- 	// sort.Search finds the first snapshot newer than the requested revision,
-@@ -160,7 +160,7 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
- 
- 	rev := mdb.revisions[revIndex]
- 	if rev.db == nil {
--		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
-+		return newErrorReader(errors.New("memdb datastore is already closed"))
- 	}
- 
- 	roTxn := rev.db.Txn(false)
-```
+Adds a ctxkeycheck analyzer that reports calls to context.WithValue, so that new context keys use the typed keys from github.com/authzed/ctxkey. Keys owned by another module can be exempted with the allowed-key-types flag, which lint uses for the consistent hashring balancer's request key.
 
-**File**: `internal/datastore/memdb/memdb_test.go` (modified, +68/-3)
-```diff
-@@ -144,7 +144,72 @@ func TestAnythingAfterCloseDoesNotPanic(t *testing.T) {
- 	_, err = ds.OptimizedRevision(t.Context())
- 	require.ErrorIs(err, ErrMemDBIsClosed)
- 
--	reader := ds.SnapshotReader(datastore.NoRevision)
--	_, err = reader.CountRelationships(t.Context(), "blah")
--	require.ErrorIs(err, ErrMemDBIsClosed)
-+	requireAllReaderMethodsFail(t, ds.SnapshotReader(datastore.NoRevision), ErrMemDBIsClosed)
-+}
-+
-+// TestErrorReaderDoesNotPanic covers the readers SnapshotReader returns when it
-+// cannot read the requested revision. Each method must return the error instead
-+// of panicking.
-+func TestErrorReaderDoesNotPanic(t *testing.T) {
-+	sentinel := errors.New("sentinel")
-+	requireAllReaderMethodsFail(t, newErrorReader(sentinel), sentinel)
-+}
-+
-+func requireAllReaderMethodsFail(t *testing.T, reader datastore.Reader, expected error) {
-+	t.Helper()
-+
-+	calls := map[string]func(ctx context.Context) error{
-+		"CountRelationships": func(ctx context.Context) error {
-+			_, err := reader.CountRelationships(ctx, "blah")
-+			return err
-+		},
-+		"LookupCounters": func(ctx context.Context) error {
-+			_, err := reader.LookupCounters(ctx)
-+			return err
-+		},
-+		"ReadStoredSchema": func(ctx context.Context) error {
-+			_, err := reader.ReadStoredSchema(ctx)
-+			return err
-+		},
-+		"QueryRelationships": func(ctx context.Context) error {
-+			_, err := reader.QueryRelationships(ctx, datastore.RelationshipsFilter{OptionalResourceType: "document"})
-+			return err
-+		},
-+		"ReverseQueryRelationships": func(ctx context.Context) error {
-+			_, err := reader.ReverseQueryRelationships(ctx, datastore.SubjectsFilter{SubjectType: "user"})
-+			return err
-+		},
-+		"LegacyReadNamespaceByName": func(ctx context.Context) error {
-+			_, _, err := reader.LegacyReadNamespaceByName(ctx, "document")
-+			return err
-+		},
-+		"LegacyListAllNamespaces": func(ctx context.Context) error {
-+			_, err := reader.LegacyListAllNamespaces(ctx)
-+			return err
-+		},
-+		"LegacyLookupNamespacesWithNames": func(ctx context.Context) error {
-+			_, err := reader.LegacyLookupNamespacesWithNames(ctx, []string{"document"})
-+			return err
-+		},
-+		"LegacyReadCaveatByName": func(ctx context.Context) error {
-+			_, _, err := reader.LegacyReadCaveatByName(ctx, "somecaveat")
-+			return err
-+		},
-+		"LegacyListAllCaveats": func(ctx context.Context) error {
-+			_, err := reader.LegacyListAllCaveats(ctx)
-+			return err
-+		},
-+		"LegacyLookupCaveatsWithNames": func(ctx context.Context) error {
-+			_, err := reader.LegacyLookupCaveatsWithNames(ctx, []string{"somecaveat"})
-+			return err
-+		},
-+	}
-+
-+	for name, call := range calls {
-+		t.Run(name, func(t *testing.T) {
-+			var err error
-+			require.NotPanics(t, func() { err = call(t.Context()) })
-+			require.ErrorIs(t, err, expected)
-+		})
-+	}
- }
-```
-
-**File**: `internal/datastore/memdb/readonly.go` (modified, +12/-0)
-```diff
-@@ -27,6 +27,18 @@ type memdbReader struct {
- 	now      time.Time
- }
- 
-+// newErrorReader returns a reader on which every operation fails with err.
-+// Its txSource returns err and it uses a no-op locker, so a method that skips
-+// its initErr check still returns err instead of panicking on a nil locker.
-+func newErrorReader(err error) *memdbReader {
-+	return &memdbReader{
-+		TryLocker: noopTryLocker{},
-+		txSource:  func() (*memdb.Txn, error) { return nil, err },
-+		initErr:   err,
-+		now:       time.Now(),
-+	}
-+}
-+
- func (r *memdbReader) CountRelationships(ctx context.Context, name string) (int, error) {
- 	counters, err := r.LookupCounters(ctx)
- 	if err != nil {
-```
-
----
-
-### Incident Patch 2: `14a50ec2` (2026-11-18)
-**Commit Message**: refactor(dispatch): stop recovering panics from external strategies (#3508)
-
-#3506 recovered panics from strategies registered by a program that
-embeds SpiceDB, logging them and counting them in
-remote_dispatch_external_strategy_panics_total. That was the only
-recover() in SpiceDB's non-test code: everywhere else, built-in
-strategies included, a panic is a bug and crashes the process, which
-also avoids carrying on with a policy left in an inconsistent state.
-
-The concrete case that motivated it, a Function without a Strategy, is
-rejected at startup by the registration checks, which stay. Remove the
-recovery, its metric and test, and document that panics are not
-recovered.
-
-**File**: `internal/dispatch/remote/README.md` (modified, +1/-5)
-```diff
-@@ -122,9 +122,7 @@ Programs that embed SpiceDB add strategies without changing this package, throug
- Registration is checked at startup: a function without a `Strategy`, a name that is not callable
- from CEL (not an identifier, or a reserved word), a name that already names a function (a
- built-in strategy, a CEL function such as `duration`, or another registered one), and a call from
--a request kind not in `Methods` all fail startup. A panic in the strategy's code is recovered,
--logged and counted in `remote_dispatch_external_strategy_panics_total`; it fails that participant
--or race, not the process. External strategies run on the same engine as the
-+a request kind not in `Methods` all fail startup. External strategies run on the same engine as the
- built-in ones, through an adapter ([strategy_external.go](strategy_external.go)) that the
- built-in strategies don't go through. Their races are counted in
- `remote_dispatch_secondary_strategy_total` under the function's name.
-@@ -144,8 +142,6 @@ All are prefixed with `spicedb_dispatch_`:
-   and went to the primary only.
- - `remote_dispatch_hedge_wait_duration_seconds` and `..._hedge_actual_wait_duration_seconds`:
-   computed and actual primary wait, `hedged` only.
--- `remote_dispatch_external_strategy_panics_total{strategy}`: panics recovered from external
--  strategies (see [External strategies](#external-strategies)).
- 
- For example:
- 
-```
-
-**File**: `internal/dispatch/remote/metrics.go` (modified, +0/-10)
-```diff
-@@ -68,17 +68,7 @@ var exprEvalErrorsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
- 	Help:      "number of dispatches whose secondary dispatch expression failed to evaluate; they are sent to the primary only",
- }, []string{"rpc"})
- 
--// externalStrategyPanicsCounter counts panics recovered from strategies registered by a program
--// that embeds SpiceDB, by the strategy function's name, which comes from configuration.
--var externalStrategyPanicsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
--	Namespace: "spicedb",
--	Subsystem: "dispatch",
--	Name:      "remote_dispatch_external_strategy_panics_total",
--	Help:      "number of panics recovered from secondary dispatch strategies registered by a program that embeds SpiceDB; each failed one participant or race instead of the process",
--}, []string{"strategy"})
--
- func init() {
--	prometheus.MustRegister(externalStrategyPanicsCounter)
- 	prometheus.MustRegister(dispatchCounter)
- 	prometheus.MustRegister(hedgeWaitHistogram)
- 	prometheus.MustRegister(hedgeActualWaitHistogram)
-```
-
-**File**: `internal/dispatch/remote/strategy_external.go` (modified, +3/-51)
-```diff
-@@ -2,14 +2,12 @@ package remote
- 
- import (
- 	"context"
--	"runtime/debug"
- 	"time"
- 
- 	"github.com/authzed/cel-go/cel"
- 	"github.com/authzed/cel-go/common/types"
- 	"github.com/authzed/cel-go/common/types/ref"
- 
--	log "github.com/authzed/spicedb/internal/logging"
- 	"github.com/authzed/spicedb/pkg/dispatch/secondary"
- )
- 
-@@ -48,22 +46,13 @@ type externalStrategy struct {
- 
- func (s externalStrategy) name() string { return s.function }
- 
--// newPolicy creates the external policy for a race. If the strategy panics, the race runs the
--// primary only.
--func (s externalStrategy) newPolicy(r raceRequest) (policy racePolicy) {
--	defer func() {
--		if recovered := recover(); recovered != nil {
--			reportExternalPanic(s.function, "NewPolicy", recovered)
--			policy = primaryOnlyPolicy{}
--		}
--	}()
--
-+func (s externalStrategy) newPolicy(r raceRequest) racePolicy {
- 	participants := make([]secondary.Participant, len(r.participants))
- 	for i, p := range r.participants {
- 		participants[i] = publicParticipant(p)
- 	}
- 
--	adapted := externalPolicy{function: s.function, policy: s.strategy.NewPolicy(secondary.Race{
-+	adapted := externalPolicy{policy: s.strategy.NewPolicy(secondary.Race{
- 		Method:       r.reqKey,
- 		Request:      r.request,
- 		Participants: participants,
-@@ -81,36 +70,25 @@ func publicParticipant(p participant) secondary.Participant {
- }
- 
- // externalPolicy adapts a secondary.Policy to the engine's racePolicy.
--//
--// The policy is code of the program that embeds SpiceDB, called from participant goroutines that
--// nothing else recovers. So that a bug in it fails a dispatch instead of the process, every call
--// recovers from a panic: it is logged and counted, and the call is taken as the safest answer
--// (the participant does not start, does not claim the race, or the engine's default error is
--// returned).
- type externalPolicy struct {
--	function string
--	policy   secondary.Policy
-+	policy secondary.Policy
- }
- 
- func (e externalPolicy) start(ctx context.Context, p participant) bool {
--	defer e.recoverCallback("Start")
- 	return e.policy.Start(ctx, publicParticipant(p))
- }
- 
- func (e externalPolicy) readyToClaim(ctx context.Context, p participant, received int, complete bool) bool {
--	defer e.recoverCallback("ReadyToClaim")
- 	return e.policy.ReadyToClaim(ctx, publicParticipant(p), received, complete)
- }
- 
- func (externalPolicy) firstResult(participant, time.Duration) {}
- 
- func (e externalPolicy) done(p participant, err error) {
--	defer e.recoverCallback("Done")
- 	e.policy.Done(publicParticipant(p), err)
- }
- 
- func (e externalPolicy) noWinnerError(errs map[string]error) error {
--	defer e.recoverCallback("NoWinnerError")
- 	return e.policy.NoWinnerError(errs)
- }
- 
-@@ -121,31 +99,5 @@ type observingExternalPolicy struct {
- }
- 
- func (o observingExternalPolicy) observe(p participant, result any) {
--	defer o.recoverCallback("ObserveResult")
- 	o.observer.ObserveResult(publicParticipant(p), result)
- }
--
--// recoverCallback recovers from a panic in a policy callback, which then returns its results'
--// zero values. It must be deferred directly.
--func (e externalPolicy) recoverCallback(callback string) {
--	if recovered := recover(); recovered != nil {
--		reportExternalPanic(e.function, callback, recovered)
--	}
--}
--
--func reportExternalPanic(function, callback string, recovered any) {
--	externalStrategyPanicsCounter.WithLabelValues(function).Inc()
--	log.Error().
--		Str("strategy", function).
--		Str("callback", callback).
--		Interface("panic", recovered).
--		Bytes("stack", debug.Stack()).
--		Msg("secondary dispatch strategy panicked; failing the participant instead of the process")
--}
--
--// primaryOnlyPolicy runs the primary only: it replaces a policy the strategy failed to create.
--type primaryOnlyPolicy struct {
--	basePolicy
--}
--
--func (primaryOnlyPolicy) start(_ context.Context, p participant) bool { return p.primary }
-```
-
-**File**: `internal/dispatch/remote/strategy_external_test.go` (modified, +0/-75)
-```diff
-@@ -227,78 +227,3 @@ func TestExternalPolicyDelegatesNoWinnerError(t *testing.T) {
- 	adapted.firstResult(testSecondary, time.Millisecond) // external policies are not told latencies
- 	require.ErrorIs(t, adapted.noWinnerError(map[string]error{primaryDispatcher: errors.New("primary failed")}), want)
- }
--
--// panickingStrategy panics in the callbacks it is told to.
--type panickingStrategy struct {
--	inNewPolicy, inObserve, inPrimaryClaim bool
--}
--
--func (s panickingStrategy) NewPolicy(secondary.Race) secondary.Policy {
--	if s.inNewPolicy {
--		panic("NewPolicy failed")
--	}
--	return panickingPolicy{strategy: s}
--}
--
--type panickingPolicy struct {
--	secondary.BasePolicy
--	strategy panickingStrategy
--}
--
--func (p panickingPolicy) ObserveResult(secondary.Participant, any) {
--	if p.strategy.inObserve {
--		panic("ObserveResult failed")
--	}
--}
--
--func (p panickingPolicy) ReadyToClaim(ctx context.Context, pt secondary.Participant, received int, complete bool) bool {
--	if pt.Primary && p.strategy.inPrimaryClaim {
--		panic("ReadyToClaim failed")
--	}
--	// Only the primary may win, so the outcome does not depend on scheduling.
--	return pt.Primary && p.BasePolicy.ReadyToClaim(ctx, pt, received, complete)
--}
--
--func TestExternalStrategyPanicsAreContained(t *testing.T) {
--	tests := []struct {
--		name     string
--		strategy panickingStrategy
--		wantErr  bool
--	}{
--		{name: "NewPolicy: the race runs the primary only", strategy: panickingStrategy{inNewPolicy: true}},
--		{name: "ObserveResult: the result is still used", strategy: panickingStrategy{inObserve: true}},
--		{name: "ReadyToClaim: the participant does not win", strategy: panickingStrategy{inPrimaryClaim: true}, wantErr: true},
--	}
--
--	for _, tc := range tests {
--		t.Run(tc.name, func(t *testing.T) {
--			synctest.Test(t, func(t *testing.T) {
--				primary := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromPrimary}}}
--				secondaryClient := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromSecondary}}}
--				parsed, err := ParseDispatchExpression("check", "panicking(['secondary'])",
--					secondary.Function{Name: "panicking", Strategy: tc.strategy})
--				require.NoError(t, err)
--				d, err := NewClusterDispatcher(primary, nil, ClusterDispatcherConfig{
--					DispatchOverallTimeout: time.Hour,
--					SecondaryDispatch: map[string]SecondaryDispatch{
--						"secondary": {Name: "secondary", Client: secondaryClient, MaximumPrimaryHedgingDelay: time.Millisecond},
--					},
--					SecondaryDispatchExprs:      map[string]*DispatchExpr{"check": parsed},
--					StartingPrimaryHedgingDelay: time.Millisecond,
--				})
--				require.NoError(t, err)
--				panics := testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking"))
--
--				resp, err := d.DispatchCheck(t.Context(), testCheckRequest())
--				synctest.Wait() // a losing participant's callbacks may still be running
--				if tc.wantErr {
--					require.Error(t, err)
--				} else {
--					require.NoError(t, err)
--					require.Equal(t, fromPrimary, resp.Metadata.DispatchCount)
--				}
--				require.Greater(t, testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking")), panics)
--			})
--		})
--	}
--}
-```
-
-**File**: `pkg/dispatch/secondary/secondary.go` (modified, +2/-3)
-```diff
-@@ -74,9 +74,8 @@ type Participant struct {
- // participants' goroutines, so implementations must be safe for concurrent use. Embed BasePolicy
- // to keep the default decisions.
- //
--// A panic in NewPolicy or in a Policy method is recovered, logged and counted in
--// remote_dispatch_external_strategy_panics_total: the race then runs the primary only, or the
--// participant does not start or claim the race, or the engine's default error is returned.
-+// As elsewhere in SpiceDB, a panic in a Strategy or Policy is not recovered: it crashes the
-+// process.
- type Policy interface {
- 	// Start blocks until p may start, and must return promptly once ctx is done. Returning false
- 	// means p never runs.
-```
-
----
-
-### Incident Patch 3: `ec377f15` (2026-11-18)
-**Commit Message**: fix(graph): give each LookupResources3 producer its own caveat runner (#3509)
-
-* fix(graph): give each LookupResources3 producer its own caveat runner
-
-LookupResources3 created one CaveatRunner per request and shared it, via
-lr3refs, with the relationshipsIter producers, which run concurrently.
-CaveatRunner caches caveat definitions and compiled caveats in plain maps,
-so evaluating caveated relationships on several entrypoints at once raced
-on those maps and could abort the process with "concurrent map writes".
-
-Create the runner inside each producer instead, as LookupResources2 does.
-Compiled caveats remain shared through the schema-tied compiled caveat
-cache, so this only costs two small maps per producer.
-
-Add a LookupResources3 case with three caveated relations unioned into one
-permission; under -race it reports the data race without this change.
-
-Fixes DATA-1099
-
-* chore: changelog
-
----------
-
-Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
+Migrates the existing context.WithValue callers to ctxkey so that no files need to be skipped. migrate.BackfillBatchSize becomes a typed key and migrate.MigrationVariable is removed.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
- - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
- - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
-+- LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
+@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - LookupResources: the v1 `LookupResources` stream can now pack several resources into one response. A client sets `optional_response_batch_size` on the request, and the server returns batched messages carrying up to that many resources with a single resume cursor per batch, instead of one message (and one cursor) per resource, cutting per-message gRPC overhead and cursor-token payload for high-cardinality lookups. `0`, the default, keeps one resource per message. A request whose `optional_response_batch_size` exceeds `--max-lookup-resources-response-batch-size` (default 1000) is rejected. Requires the LR3 LookupResources engine. (https://github.com/authzed/spicedb/pull/3517)
  
- ## [1.57.1] - 2026-11-10
- ### Fixed
+ ### Changed
++- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
+ - Server: `--experimental-lookup-resources-version` now defaults to `lr3`, enabling the LR3 LookupResources engine by default. Set it to an empty value to opt back out. (https://github.com/authzed/spicedb/pull/3517)
+ - Dispatch: when the primary fails a Check with an error that may be transient, such as being unavailable, the Check now waits for the secondary dispatchers and returns a secondary's answer if one succeeds, as LookupResources and LookupSubjects already did. Errors caused by the request itself are still returned at once. A Check that every dispatcher fails is no longer counted under `handler_name="$primary"` in `spicedb_dispatch_remote_dispatch_handler_total`. (https://github.com/authzed/spicedb/pull/3468)
+ - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
 ```
 
-**File**: `internal/dispatch/graph/lookupresources3_test.go` (modified, +33/-0)
+**File**: `internal/checkbaseline/postgres.go` (modified, +1/-1)
 ```diff
-@@ -426,6 +426,39 @@ func TestLookupResources3OverSchemaWithCursors(t *testing.T) {
- 			genResourceIds("document", 2450),
- 			[]string{"somecondition"},
- 		},
-+		{
-+			"caveats evaluated by concurrent producers",
-+			`definition user {}
-+
-+			 caveat firstcaveat(first int) {
-+				first == 1
-+			 }
-+
-+			 caveat secondcaveat(second int) {
-+				second == 2
-+			 }
-+
-+			 caveat thirdcaveat(third int) {
-+				third == 3
-+			 }
-+
-+			 definition document {
-+				relation viewer: user with firstcaveat
-+				relation editor: user with secondcaveat
-+				relation owner: user with thirdcaveat
-+				permission view = viewer + editor + owner
-+			 }`,
-+			joinTuples(
-+				genRelsWithCaveat("document", "viewer", "user", "tom", "firstcaveat", map[string]any{"first": 1}, 0, 500),
-+				genRelsWithCaveat("document", "editor", "user", "tom", "secondcaveat", map[string]any{"second": 2}, 500, 500),
-+				genRelsWithCaveat("document", "owner", "user", "tom", "thirdcaveat", map[string]any{"third": 3}, 1000, 500),
-+			),
-+			RR("document", "view"),
-+			ONR("user", "tom", "..."),
-+			nil,
-+			genResourceIds("document", 1500),
-+			nil,
-+		},
- 		{
- 			"larger arrow dispatch",
- 			`definition user {}
+@@ -177,7 +177,7 @@ func openBaselineBackend(ctx context.Context, cfg AuditConfig) (*baselineBackend
+ 		return nil, err
+ 	}
+ 	defer driver.Close(context.Background())
+-	err = migrations.DatabaseMigrations.Run(context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000)), driver, migrate.Head, migrate.LiveRun)
++	err = migrations.DatabaseMigrations.Run(migrate.BackfillBatchSize.Set(ctx, 1000), driver, migrate.Head, migrate.LiveRun)
+ 	closeErr := driver.Close(ctx)
+ 	if err != nil {
+ 		return nil, err
 ```
 
-**File**: `internal/graph/lookupresources3.go` (modified, +6/-7)
+**File**: `internal/datastore/crdb/crdb.go` (modified, +1/-1)
 ```diff
-@@ -273,13 +273,10 @@ func (crr *CursoredLookupResources3) LookupResources3(req ValidatedLookupResourc
- 		return err
- 	}
- 	ts := schema.NewTypeSystem(schema.ResolverFor(sr))
--	caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
--
- 	refs := lr3refs{
- 		req:              req,
- 		reader:           reader,
- 		ts:               ts,
--		caveatRunner:     caveatRunner,
- 		concurrencyLimit: crr.concurrencyLimit,
+@@ -445,7 +445,7 @@ func (cds *crdbDatastore) ReadWriteTx(
+ 
+ 	config := options.NewRWTOptionsWithOptions(opts...)
+ 	if config.DisableRetries {
+-		ctx = context.WithValue(ctx, pool.CtxDisableRetries, true)
++		ctx = pool.CtxDisableRetries.Set(ctx, true)
  	}
  
-@@ -362,9 +359,6 @@ type lr3refs struct {
- 	// ts is the type system used to resolve types and relations for the lookup resources operation.
- 	ts *schema.TypeSystem
+ 	err := cds.writePool.TryBeginFunc(ctx, cds.acquireTimeout, func(tx pgx.Tx) error {
+```
+
+**File**: `internal/datastore/crdb/pool/pool.go` (modified, +4/-4)
+```diff
+@@ -14,6 +14,8 @@ import (
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	"golang.org/x/time/rate"
  
--	// caveatRunner is the caveat runner used to run caveats for the lookup resources operation.
--	caveatRunner *caveats.CaveatRunner
--
- 	// concurrencyLimit is the maximum number of concurrent operations that can be performed.
- 	concurrencyLimit uint16
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/datastore/common"
+ 	pgxcommon "github.com/authzed/spicedb/internal/datastore/postgres/common"
+ 	log "github.com/authzed/spicedb/internal/logging"
+@@ -39,10 +41,8 @@ func init() {
+ 	prometheus.MustRegister(resetHistogram)
  }
-@@ -881,6 +875,11 @@ func (crr *CursoredLookupResources3) relationshipsIter(
- 						return
- 					}
  
-+					// Producers run concurrently and CaveatRunner is not safe for concurrent use,
-+					// so each producer gets its own runner. Compiled caveats are still shared via
-+					// the schema-tied compiled caveat cache.
-+					caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
+-type ctxDisableRetries struct{}
+-
+ var (
+-	CtxDisableRetries ctxDisableRetries
++	CtxDisableRetries = ctxkey.NewWithDefault(false)
+ 	ErrAcquire        = errors.New("failed to acquire in time")
+ )
+ 
+@@ -323,7 +323,7 @@ func (p *RetryPool) withRetries(ctx context.Context, acquireTimeout time.Duratio
+ 	}()
+ 
+ 	maxRetries := p.maxRetries
+-	if disabled, ok := ctx.Value(CtxDisableRetries).(bool); ok && disabled {
++	if CtxDisableRetries.Value(ctx) {
+ 		maxRetries = 0
+ 	}
+ 
+```
+
+**File**: `internal/datastore/postgres/migrations/zz_migration.0011_backfill_xid_add_indices.go` (modified, +6/-1)
+```diff
+@@ -2,6 +2,7 @@ package migrations
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 
+ 	"github.com/jackc/pgx/v5"
+@@ -125,7 +126,11 @@ func init() {
+ 				}
+ 			}
+ 
+-			batchSize := ctx.Value(migrate.BackfillBatchSize).(uint64)
++			batchSize, ok := migrate.BackfillBatchSize.Value(ctx)
++			if !ok {
++				return errors.New("backfill batch size not found in context")
++			}
 +
- 					rm := newRelationshipsChunk(int(crr.dispatchChunkSize), dbCursor)
- 					for rel, err := range relationships {
- 						if err != nil {
-@@ -892,7 +891,7 @@ func (crr *CursoredLookupResources3) relationshipsIter(
- 						var missingContextParameters []string
- 						if rel.OptionalCaveat != nil && rel.OptionalCaveat.CaveatName != "" {
- 							caveatExpr := caveats.CaveatAsExpr(rel.OptionalCaveat)
--							runResult, err := refs.caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
-+							runResult, err := caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
- 							if err != nil {
- 								yieldError(err)
- 								return
+ 			for _, stmt := range backfills {
+ 				concreteStmt := fmt.Sprintf(stmt, batchSize)
+ 
+```
+
+**File**: `internal/datastore/postgres/replica_lag_test.go` (modified, +1/-1)
+```diff
+@@ -528,7 +528,7 @@ func runMigrations(ctx context.Context, t testing.TB, uri string) {
+ 	t.Helper()
+ 	// The xid-backfill migration reads its batch size from the context, as the
+ 	// standard test bootstrap does.
+-	ctx = context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000))
++	ctx = migrate.BackfillBatchSize.Set(ctx, 1000)
+ 	driver, err := pgmigrations.NewAlembicPostgresDriver(ctx, uri, datastore.NoCredentialsProvider, false)
+ 	require.NoError(t, err)
+ 	defer func() { _ = driver.Close(ctx) }()
+```
+
+**File**: `internal/middleware/dispatcher/dispatcher.go` (modified, +9/-10)
+```diff
+@@ -6,40 +6,39 @@ import (
+ 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
+ 	"google.golang.org/grpc"
+ 
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/dispatch"
+ )
+ 
+-type ctxKeyType struct{}
+-
+-var dispatcherKey ctxKeyType = struct{}{}
+-
+ type dispatchHandle struct {
+ 	dispatcher dispatch.Dispatcher
+ }
+ 
++var dispatcherKey = ctxkey.New[*dispatchHandle]()
++
+ // ContextWithHandle adds a placeholder to a context that will later be
+ // filled by the dispatcher
+ func ContextWithHandle(ctx context.Context) context.Context {
+-	return context.WithValue(ctx, dispatcherKey, &dispatchHandle{})
++	return dispatcherKey.Set(ctx, &dispatchHandle{})
+ }
+ 
+ // FromContext reads the selected dispatcher out of a context.Context
+ // and returns nil if it does not exist.
+ func FromContext(ctx context.Context) dispatch.Dispatcher {
+-	if c := ctx.Value(dispatcherKey); c != nil {
+-		handle := c.(*dispatchHandle)
++	if handle, ok := dispatcherKey.Value(ctx); ok {
+ 		return handle.dispatcher
+ 	}
+ 	return nil
+ }
+ 
+ // SetInContext adds a dispatcher to the given context
+ func SetInContext(ctx context.Context, dispatcher dispatch.Dispatcher) error {
+-	handle := ctx.Value(dispatcherKey)
+-	if handle == nil {
++	handle, ok := dispatcherKey.Value(ctx)
++	if !ok {
+ 		return nil
+ 	}
+-	handle.(*dispatchHandle).dispatcher = dispatcher
++	handle.dispatcher = dispatcher
+ 	return nil
+ }
+ 
+```
+
+**File**: `internal/testserver/datastore/postgres.go` (modified, +1/-1)
+```diff
+@@ -117,7 +117,7 @@ func (b *postgresTester) hostConnectionString(ctx context.Context) (string, erro
+ 
+ func (b *postgresTester) NewDatastore(t testing.TB, initFunc InitFunc) datastore.Datastore {
+ 	t.Helper()
+-	ctx := context.WithValue(t.Context(), migrate.BackfillBatchSize, uint64(1000))
++	ctx := migrate.BackfillBatchSize.Set(t.Context(), 1000)
+ 
+ 	var uri string
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
-- **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
-- **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
-- **PR #3506** (2026-11-18): feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies (@ostafen)
-- **PR #3505** (closed): feat(dispatch): add a compare secondary dispatch strategy for Check (@ostafen)
-- **PR #3504** (2026-11-17): chore: fix test flake in race logic (@tstirrat15)
+- **PR #3524** (2026-11-23): chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey (@josephschorr)
+- **PR #3522** (2026-11-23): fix(lookupsubjects): stop combining found subjects into a shared slice (@mazdakb)
+- **PR #3519** (closed): chore(deps): bump the go-mod group across 2 directories with 38 updates (@dependabot[bot])
+- **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
+- **PR #3515** (2026-11-23): test: add schema variant generator for property-based tests (@josephschorr)
+- **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
 
 ---
 
@@ -1696,37 +1331,31 @@ Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix test panic
+## X. lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
 
 **RULE**:
-When implementing operations in `internal/datastore/memdb/memdb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9e95eba`: fix test panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `188b9411`: lint): add ctxkeycheck analyzer and migrate context keys to ctxkey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datastore/memdb/memdb.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return newErrorReader(err)
-		return newErrorReader(errors.New("memdb datastore is not ready"))
-		return newErrorReader(err)
-		return newErrorReader(errors.New("memdb datastore is already closed"))
+- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return &memdbReader{nil, nil, err, time.Now()}
-		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
-		return &memdbReader{nil, nil, err, time.Now()}
-		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9e95eba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `188b9411` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

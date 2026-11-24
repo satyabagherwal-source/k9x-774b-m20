@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:43:23.836Z",
+  "last_updated": "2026-11-24T17:52:08.017Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54863,15 +54863,15 @@
       "domain_letter": "I"
     },
     {
-      "id": "CD-FINM",
+      "id": "CD-S2GW",
       "directive_title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
-      "source_repo": "dathere/qsv",
-      "source_commit": "984b16cb",
-      "staged_file": "11_INBOX/candidate-directives/CD-FINM-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "source_repo": "cheeriojs-dom-serializer-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S2GW-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
-      "domain_letter": "G"
+      "domain_letter": "H"
     },
     {
       "id": "CD-REV-73D934",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-FPI6",
+      "id": "CD-S3T7",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FPI6-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-S3T7-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56215,6 +56215,46 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8B40B8-an-older-peer-refusing-us-no-longer-show.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-RYUG",
+      "directive_title": "add ctxkeycheck analyzer and migrate context keys to ctxkey",
+      "source_repo": "authzed/spicedb",
+      "source_commit": "188b9411",
+      "staged_file": "11_INBOX/candidate-directives/CD-RYUG-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-036A70",
+      "directive_title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cheeriojs-dom-serializer",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-036A70-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-S36R",
+      "directive_title": "lint): add ctxkeycheck analyzer and migrate context keys to ctxkey",
+      "source_repo": "authzed-spicedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S36R-lint-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-514ECC",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-514ECC-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-24"
     }
   ]

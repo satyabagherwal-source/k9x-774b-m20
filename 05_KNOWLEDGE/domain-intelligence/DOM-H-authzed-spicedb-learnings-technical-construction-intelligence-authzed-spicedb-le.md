@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:11:25.169Z",
+  "timestamp": "2026-11-24T17:52:07.099Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-authzed-spicedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [authzed-spicedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:11:25.169Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:52:07.099Z`  
 > **Learning ID**: `LEARN-EVO-authzed-spicedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from authzed-spicedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `c311f7a7`  
+> **Source Version**: `188b9411`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:10:51.319Z  
+> **Timestamp**: 2026-11-24T17:52:00.345Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:10:51.313Z  
+> **Harvest Timestamp**: 2026-11-24T17:52:00.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7222 stars
+- **Stars / Engagement**: 7238 stars
 
 ---
 
@@ -1114,13 +1114,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3499** (2026-11-16): **feat(cmd): add --grpc-max-conn-age-grace**
-  *Symptoms*: ## Why  Without an L7 load balancer, SpiceDB relies on `--grpc-max-connection-age` to send clients a GOAWAY, which nudges them to reconnect and rebalance across pods. By default, the server then waits forever for in-flight requests to finish. A long stream — such as Watch — keeps its connection open indefinitely, keeping its load on one pod.  ## What it adds  - `--grpc-max-conn-age-grace`: how long the server waits after GOAWAY before it closes the connection. 0 keeps the current behavior (wait forever). - `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` for the read-only and dispatch listeners.  ## Test plan  - [x] `TestMaxConnAgeGraceEndsLongStream`: a stream ends within max age + grace. - [x] `TestMaxConnAgeWithoutGraceKeepsLongStream`: a stream stays open past max age when grace is 0. - [x] `TestMaxConnAgeGraceFlag`: the flag parses and defaults to 0.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3499?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
+- **Issue #3524** (2026-11-23): **chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey**
+  *Symptoms*: ## Description  Review of #3473 caught a new context key declared as a bare `struct{}` type instead of using `github.com/authzed/ctxkey`. This adds an analyzer so that lint catches it.  - **`ctxkeycheck`**: reports every call to `context.WithValue`. The callee is resolved through type information, so a renamed `context` import is caught and a local `WithValue` function or method is not. Reading with `ctx.Value` is not reported. - **`allowed-key-types` flag**: exempts keys owned by another module. Lint sets it to `github.com/authzed/consistent.ctxKey`, because the hashring balancer reads that key itself. - **Migration**: the ten existing `context.WithValue` callers now use `ctxkey`, so lint needs no skip list. This covers the dispatcher and consistency middleware handles, the interceptor-order bookkeeping, the development warnings relation key, the CRDB `CtxDisableRetries` key, and `migrate.BackfillBatchSize`.  ## Breaking change for embedders  `migrate.BackfillBatchSize` in `pkg/migrate` is now a `*ctxkey.Key[uint64]` and `migrate.MigrationVariable` is removed. Code that runs migrations itself must call `migrate.BackfillBatchSize.Set(ctx, size)`. A value set with `context.WithValue(ctx, migrate.BackfillBatchSize, size)` still compiles but is no longer read; the Postgres backfill migration now returns an error when the batch size is missing instead of panicking on a type assertion.  ## Testing  - `ctxkeycheck` has analysistest coverage for flagged and allowed cases. - The full
 
-- **Issue #3496** (2026-11-16): **chore(deps): bump OpenTelemetry to v1.47.0 for CVE-2026-128085**
-  *Symptoms*: ## Summary  `go.opentelemetry.io/otel/sdk` and `go.opentelemetry.io/otel/trace` v1.46.0 are affected by **CVE-2026-128085** (MEDIUM), fixed in v1.47.0. The Trivy scan (`Analyze Code and Docker Image with Trivvy`) currently fails on every PR because of it.  This PR bumps the OpenTelemetry modules to v1.47.0 in **all three** Go modules that depend on them:  | Module | Change | |---|---| | `go.mod` | `otel`, `otel/sdk`, `otel/sdk/metric`, `otel/trace` → v1.47.0 (`otel/metric` and the new indirect `otel/log` follow) | | `e2e/go.mod` | indirect `otel`, `otel/metric`, `otel/trace` → v1.47.0 | | `magefiles/go.mod` | indirect `otel`, `otel/metric`, `otel/trace` → v1.47.0 |  No other dependency changes.  ## Why not #3494  Dependabot's #3494 makes the same root `go.mod` change, but not the `e2e` and `magefiles` ones. Those modules still pin `otel/trace` v1.46.0 indirectly, so Trivy keeps failing on #3494 too: its scan reports 0 vulnerabilities for `go.mod` and 1 each for `e2e/go.mod` and `magefiles/go.mod`. This PR supersedes #3494, which can be closed once this merges.  ## Testing  - The root module builds; `e2e` and `magefiles` (with `-tags mage`) vet cleanly. - The tests of the 23 packages that import OpenTelemetry pass locally. - No module still references OpenTelemetry v1.46.0.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #3522** (2026-11-23): **fix(lookupsubjects): stop combining found subjects into a shared slice**
+  *Symptoms*: ## Description  Fixes and issue where `LookupSubjects` can omit subjects that would otherwise be granted by `CheckPermission`, causing results for the same data to vary between requests.  When a lookup reaches a group through multiple parent groups in the same batch, that group is resolved once and its `FoundSubjects` slice is shared across all of those parents. `combineFoundSubjects` appended each parent's additional subjects directly to the shared slice. When the underlying array had spare capacity, concurrent or subsequent appends from different parents could write to the same slot, overwriting earlier subjects. `combineFoundSubjects` now clips the shared slice when it is first stored for a parent, so the next append allocates a new backing array instead of writing into the shared one.  Because this depends on map iteration order and slice capacity, the failure is intermittent. On a 24-relationship nested-group dataset where one group is reached through two parents, roughly 8% of lookups returned 4 of the 5 subjects granted by `CheckPermission`. The `query-plan-lookups` engine is unaffected. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1137,368 +1135,197 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7612192d` (2026-11-16)
-**Commit Message**: feat(cmd): add --grpc-max-conn-age-grace (#3499)
+### Incident Patch 1: `188b9411` (2026-11-23)
+**Commit Message**: chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
 
-* feat(cmd): add --grpc-max-conn-age-grace
+Adds a ctxkeycheck analyzer that reports calls to context.WithValue, so that new context keys use the typed keys from github.com/authzed/ctxkey. Keys owned by another module can be exempted with the allowed-key-types flag, which lint uses for the consistent hashring balancer's request key.
 
-gRPC sends a GOAWAY to a connection that reaches its max age, then
-waits for in-flight requests to finish before it closes the connection.
-By default it waits forever. A long stream — such as Watch — keeps its
-connection and its load on one node behind an L4 load balancer.
-
-The new flag sets how long the server waits after GOAWAY. 0, the
-default, keeps the current behavior.
-
-Also adds --dispatch-cluster-max-conn-age-grace and
---readonly-grpc-max-conn-age-grace for the dispatch and read-only
-listeners.
-
-* docs: regenerate docs and add changelog entry for --grpc-max-conn-age-grace
+Migrates the existing context.WithValue callers to ctxkey so that no files need to be skipped. migrate.BackfillBatchSize becomes a typed key and migrate.MigrationVariable is removed.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - LookupResources: the v1 `LookupResources` stream can now pack several resources into one response. A client sets `optional_response_batch_size` on the request, and the server returns batched messages carrying up to that many resources with a single resume cursor per batch, instead of one message (and one cursor) per resource, cutting per-message gRPC overhead and cursor-token payload for high-cardinality lookups. `0`, the default, keeps one resource per message. A request whose `optional_response_batch_size` exceeds `--max-lookup-resources-response-batch-size` (default 1000) is rejected. Requires the LR3 LookupResources engine. (https://github.com/authzed/spicedb/pull/3517)
  
- ## [Unreleased]
- ### Added
-+- Server: `--grpc-max-conn-age-grace`, `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` set how long each listener waits after sending a GOAWAY before it closes the connection. Without a grace limit, a connection with a long-running stream such as Watch stays open indefinitely after its max age, keeping its load on one node behind an L4 load balancer. 0, the default, keeps the current behavior. (https://github.com/authzed/spicedb/pull/3499)
- - Tracing: `--otel-ignore-remote-sampling` makes SpiceDB apply `--otel-sample-ratio` to every request, ignoring the sampling decision callers send in their trace headers. Without it, a caller that marks most requests as sampled makes SpiceDB trace most requests, whatever the ratio. The caller's trace ID is still kept, and spans created inside SpiceDB still follow their parent, so traces stay whole. Off by default. (https://github.com/authzed/spicedb/pull/3452)
- - Dispatch: `--experimental-dispatch-secondary-upstream-exprs` expressions can now choose how secondary dispatchers race the primary: `hedged([...])` (the existing behavior, and what a plain list still means), `prefer_secondary([...], duration('50ms'))` to use the primary only as a fallback, or `prefer_primary()` to use the primary only. Existing expressions keep working. The strategies, their options and the new metrics are described in the [secondary dispatch README](https://github.com/authzed/spicedb/blob/main/internal/dispatch/remote/README.md). (https://github.com/authzed/spicedb/pull/3468)
- 
+ ### Changed
++- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
+ - Server: `--experimental-lookup-resources-version` now defaults to `lr3`, enabling the LR3 LookupResources engine by default. Set it to an empty value to opt back out. (https://github.com/authzed/spicedb/pull/3517)
+ - Dispatch: when the primary fails a Check with an error that may be transient, such as being unavailable, the Check now waits for the secondary dispatchers and returns a secondary's answer if one succeeds, as LookupResources and LookupSubjects already did. Errors caused by the request itself are still returned at once. A Check that every dispatcher fails is no longer counted under `handler_name="$primary"` in `spicedb_dispatch_remote_dispatch_handler_total`. (https://github.com/authzed/spicedb/pull/3468)
+ - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
 ```
 
-**File**: `docs/spicedb.md` (modified, +4/-0)
+**File**: `internal/checkbaseline/postgres.go` (modified, +1/-1)
 ```diff
-@@ -596,6 +596,7 @@ spicedb serve [flags]
-       --dispatch-cluster-cache-metrics                                                  enable metrics for the cache for dispatch calls this server receives from other servers (default true)
-       --dispatch-cluster-enabled                                                        enable dispatch gRPC server
-       --dispatch-cluster-max-conn-age duration                                          how long a connection serving dispatch should be able to live (default 30s)
-+      --dispatch-cluster-max-conn-age-grace duration                                    how long a connection serving dispatch stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --dispatch-cluster-max-workers uint32                                             set the number of workers for this server (0 value means 1 worker per request)
-       --dispatch-cluster-network string                                                 network type to serve dispatch ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --dispatch-cluster-tls-cert-path string                                           local path to the TLS certificate used to serve dispatch
-@@ -631,6 +632,7 @@ spicedb serve [flags]
-       --grpc-log-requests-enabled                                                       enable logging of API request payloads
-       --grpc-log-responses-enabled                                                      enable logging of API response payloads
-       --grpc-max-conn-age duration                                                      how long a connection serving gRPC should be able to live (default 30s)
-+      --grpc-max-conn-age-grace duration                                                how long a connection serving gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --grpc-max-workers uint32                                                         set the number of workers for this server (0 value means 1 worker per request)
-       --grpc-network string                                                             network type to serve gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --grpc-preshared-key strings                                                      (required) preshared key(s) that must be provided by clients to authenticate requests
-@@ -708,6 +710,7 @@ spicedb serve-testing [flags]
-       --grpc-addr string                                         address to listen on to serve gRPC (default ":50051")
-       --grpc-enabled                                             enable gRPC gRPC server (default true)
-       --grpc-max-conn-age duration                               how long a connection serving gRPC should be able to live (default 30s)
-+      --grpc-max-conn-age-grace duration                         how long a connection serving gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --grpc-max-workers uint32                                  set the number of workers for this server (0 value means 1 worker per request)
-       --grpc-network string                                      network type to serve gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --grpc-shutdown-grace-period duration                      time limit given to the server to shutdown gracefully after it receives SIGINT or SIGTERM. A value of zero means no limit (default 5s)
-@@ -729,6 +732,7 @@ spicedb serve-testing [flags]
-       --readonly-grpc-addr string                                address to listen on to serve read-only gRPC (default ":50052")
-       --readonly-grpc-enabled                                    enable read-only gRPC gRPC server (default true)
-       --readonly-grpc-max-conn-age duration                      how long a connection serving read-only gRPC should be able to live (default 30s)
-+      --readonly-grpc-max-conn-age-grace duration                how long a connection serving read-only gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --readonly-grpc-max-workers uint32                         set the number of workers for this server (0 value means 1 worker per request)
-       --readonly-grpc-network string                             network type to serve read-only gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --readonly-grpc-tls-cert-path string                       local path to the TLS certificate used to serve read-only gRPC
-```
-
-**File**: `pkg/cmd/util/util.go` (modified, +19/-12)
-```diff
-@@ -32,15 +32,18 @@ import (
- const BufferedNetwork string = "buffnet"
- 
- type GRPCServerConfig struct {
--	Address      string        `debugmap:"visible"`
--	Network      string        `debugmap:"visible" default:"tcp"`
--	TLSCertPath  string        `debugmap:"visible"`
--	TLSKeyPath   string        `debugmap:"visible"`
--	MaxConnAge   time.Duration `debugmap:"visible" default:"30s"`
--	Enabled      bool          `debugmap:"visible"`
--	BufferSize   int           `debugmap:"visible"`
--	ClientCAPath string        `debugmap:"visible"`
--	MaxWorkers   uint32        `debugmap:"visible"`
-+	Address     string        `debugmap:"visible"`
-+	Network     string        `debugmap:"visible" default:"tcp"`
-+	TLSCertPath string        `debugmap:"visible"`
-+	TLSKeyPath  string        `debugmap:"visible"`
-+	MaxConnAge  time.Duration `debugmap:"visible" default:"30s"`
-+	// MaxConnAgeGrace is how long a connection past MaxConnAge stays open for the RPCs it carries.
-+	// 0 waits for them forever.
-+	MaxConnAgeGrace time.Duration `debugmap:"visible"`
-+	Enabled         bool          `debugmap:"visible"`
-+	BufferSize      int           `debugmap:"visible"`
-+	ClientCAPath    string        `debugmap:"visible"`
-+	MaxWorkers      uint32        `debugmap:"visible"`
- 
- 	flagPrefix string
- }
-@@ -51,6 +54,7 @@ type GRPCServerConfig struct {
- // - "$PREFIX-tls-cert-path"
- // - "$PREFIX-tls-key-path"
- // - "$PREFIX-max-conn-age"
-+// - "$PREFIX-max-conn-age-grace"
- func RegisterGRPCServerFlags(flags *pflag.FlagSet, config *GRPCServerConfig, flagPrefix, serviceName, defaultAddr string, defaultEnabled bool) {
- 	flagPrefix = cmp.Or(flagPrefix, "grpc")
- 	serviceName = cmp.Or(serviceName, "grpc")
-@@ -62,6 +66,7 @@ func RegisterGRPCServerFlags(flags *pflag.FlagSet, config *GRPCServerConfig, fla
- 	flags.StringVar(&config.TLSCertPath, flagPrefix+"-tls-cert-path", "", "local path to the TLS certificate used to serve "+serviceName)
- 	flags.StringVar(&config.TLSKeyPath, flagPrefix+"-tls-key-path", "", "local path to the TLS key used to serve "+serviceName)
- 	flags.DurationVar(&config.MaxConnAge, flagPrefix+"-max-conn-age", 30*time.Second, "how long a connection serving "+serviceName+" should be able to live")
-+	flags.DurationVar(&config.MaxConnAgeGrace, flagPrefix+"-max-conn-age-grace", 0, "how long a connection serving "+serviceName+" stays open after its max age for the in-flight requests it carries. 0 waits for them forever")
- 	flags.BoolVar(&config.Enabled, flagPrefix+"-enabled", defaultEnabled, "enable "+serviceName+" gRPC server")
- 	flags.Uint32Var(&config.MaxWorkers, flagPrefix+"-max-workers", 0, "set the number of workers for this server (0 value means 1 worker per request)")
- }
-@@ -74,9 +79,11 @@ func (c *GRPCServerConfig) Complete(level zerolog.Level, svcRegistrationFn func(
- 	if c.BufferSize == 0 {
- 		c.BufferSize = 1024 * 1024
+@@ -177,7 +177,7 @@ func openBaselineBackend(ctx context.Context, cfg AuditConfig) (*baselineBackend
+ 		return nil, err
  	}
--	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{
--		MaxConnectionAge: c.MaxConnAge,
--	}), grpc.NumStreamWorkers(c.MaxWorkers))
-+	keepaliveParams := keepalive.ServerParameters{MaxConnectionAge: c.MaxConnAge}
-+	if c.MaxConnAgeGrace > 0 {
-+		keepaliveParams.MaxConnectionAgeGrace = c.MaxConnAgeGrace
-+	}
-+	opts = append(opts, grpc.KeepaliveParams(keepaliveParams), grpc.NumStreamWorkers(c.MaxWorkers))
- 
- 	tlsOpts, certWatcher, err := c.tlsOpts()
+ 	defer driver.Close(context.Background())
+-	err = migrations.DatabaseMigrations.Run(context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000)), driver, migrate.Head, migrate.LiveRun)
++	err = migrations.DatabaseMigrations.Run(migrate.BackfillBatchSize.Set(ctx, 1000), driver, migrate.Head, migrate.LiveRun)
+ 	closeErr := driver.Close(ctx)
  	if err != nil {
+ 		return nil, err
 ```
 
-**File**: `pkg/cmd/util/util_test.go` (modified, +70/-0)
+**File**: `internal/datastore/crdb/crdb.go` (modified, +1/-1)
 ```diff
-@@ -1,10 +1,20 @@
- package util
+@@ -445,7 +445,7 @@ func (cds *crdbDatastore) ReadWriteTx(
  
- import (
-+	"context"
-+	"net"
- 	"testing"
-+	"time"
+ 	config := options.NewRWTOptionsWithOptions(opts...)
+ 	if config.DisableRetries {
+-		ctx = context.WithValue(ctx, pool.CtxDisableRetries, true)
++		ctx = pool.CtxDisableRetries.Set(ctx, true)
+ 	}
  
- 	"github.com/rs/zerolog"
-+	"github.com/spf13/pflag"
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/credentials/insecure"
-+	"google.golang.org/grpc/health"
-+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-+	"google.golang.org/grpc/status"
+ 	err := cds.writePool.TryBeginFunc(ctx, cds.acquireTimeout, func(tx pgx.Tx) error {
+```
+
+**File**: `internal/datastore/crdb/pool/pool.go` (modified, +4/-4)
+```diff
+@@ -14,6 +14,8 @@ import (
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	"golang.org/x/time/rate"
+ 
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/datastore/common"
+ 	pgxcommon "github.com/authzed/spicedb/internal/datastore/postgres/common"
+ 	log "github.com/authzed/spicedb/internal/logging"
+@@ -39,10 +41,8 @@ func init() {
+ 	prometheus.MustRegister(resetHistogram)
+ }
+ 
+-type ctxDisableRetries struct{}
+-
+ var (
+-	CtxDisableRetries ctxDisableRetries
++	CtxDisableRetries = ctxkey.NewWithDefault(false)
+ 	ErrAcquire        = errors.New("failed to acquire in time")
  )
  
- func TestDisabledGRPC(t *testing.T) {
-@@ -33,3 +43,63 @@ func TestValidateTLSConfig(t *testing.T) {
- 		require.ErrorContains(t, (&GRPCServerConfig{TLSCertPath: "some path"}).validateTLSConfig(), "must provide both")
- 	})
- }
-+
-+// watchHealth opens a health Watch, a stream that never ends, on a buffered server with these limits,
-+// and returns a channel that gets the stream's error once the server ends it.
-+func watchHealth(t *testing.T, age, grace time.Duration) <-chan error {
-+	t.Helper()
-+	c := &GRPCServerConfig{Enabled: true, Network: BufferedNetwork, MaxConnAge: age, MaxConnAgeGrace: grace}
-+	s, err := c.Complete(zerolog.InfoLevel, func(s *grpc.Server) { healthpb.RegisterHealthServer(s, health.NewServer()) })
-+	require.NoError(t, err)
-+	ctx, cancel := context.WithCancel(t.Context())
-+	t.Cleanup(cancel)
-+	go func() { _ = s.Run(ctx) }()
-+	t.Cleanup(s.GracefulStop)
-+
-+	conn, err := grpc.NewClient("passthrough:///buffnet",
-+		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) { return s.BufferedListener().DialContext(ctx) }),
-+		grpc.WithTransportCredentials(insecure.NewCredentials()))
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = conn.Close() })
-+	stream, err := healthpb.NewHealthClient(conn).Watch(ctx, &healthpb.HealthCheckRequest{})
-+	require.NoError(t, err)
-+	_, err = stream.Recv()
-+	require.NoError(t, err)
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		_, err := stream.Recv()
-+		done <- err
-+	}()
-+	return done
-+}
-+
-+func TestMaxConnAgeGraceEndsLongStream(t *testing.T) {
-+	t.Parallel()
-+	select {
-+	case err := <-watchHealth(t, 100*time.Millisecond, 200*time.Millisecond):
-+		require.Equal(t, codes.Unavailable, status.Code(err), "%v", err)
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("the stream outlived max age + grace")
-+	}
-+}
-+
-+func TestMaxConnAgeWithoutGraceKeepsLongStream(t *testing.T) {
-+	t.Parallel()
-+	select {
-+	case err := <-watchHealth(t, 100*time.Millisecond, 0):
-+		t.Fatalf("the stream ended: %v", err)
-+	case <-time.After(time.Second):
-+	}
-+}
-+
-+func TestMaxConnAgeGraceFlag(t *testing.T) {
-+	t.Parallel()
-+	c := &GRPCServerConfig{}
-+	fs := pflag.NewFlagSet("test", pflag.ContinueOnError)
-+	RegisterGRPCServerFlags(fs, c, "grpc", "grpc", ":50051", true)
-+	require.NoError(t, fs.Parse(nil))
-+	require.Zero(t, c.MaxConnAgeGrace, "no grace by default: grpc-go waits forever")
-+	require.NoError(t, fs.Parse([]string{"--grpc-max-conn-age-grace=1h"}))
-+	require.Equal(t, time.Hour, c.MaxConnAgeGrace)
-+}
+@@ -323,7 +323,7 @@ func (p *RetryPool) withRetries(ctx context.Context, acquireTimeout time.Duratio
+ 	}()
+ 
+ 	maxRetries := p.maxRetries
+-	if disabled, ok := ctx.Value(CtxDisableRetries).(bool); ok && disabled {
++	if CtxDisableRetries.Value(ctx) {
+ 		maxRetries = 0
+ 	}
+ 
 ```
 
-**File**: `pkg/cmd/util/zz_generated.options.go` (modified, +15/-0)
+**File**: `internal/datastore/postgres/migrations/zz_migration.0011_backfill_xid_add_indices.go` (modified, +6/-1)
 ```diff
-@@ -35,6 +35,7 @@ func (g *GRPCServerConfig) ToOption() GRPCServerConfigOption {
- 		to.TLSCertPath = g.TLSCertPath
- 		to.TLSKeyPath = g.TLSKeyPath
- 		to.MaxConnAge = g.MaxConnAge
-+		to.MaxConnAgeGrace = g.MaxConnAgeGrace
- 		to.Enabled = g.Enabled
- 		to.BufferSize = g.BufferSize
- 		to.ClientCAPath = g.ClientCAPath
-@@ -72,6 +73,13 @@ func (g *GRPCServerConfig) DebugMap() map[string]any {
- 	} else {
- 		debugMap["MaxConnAge"] = g.MaxConnAge
- 	}
-+	if dm, ok := any(&g.MaxConnAgeGrace).(interface {
-+		DebugMap() map[string]any
-+	}); ok {
-+		debugMap["MaxConnAgeGrace"] = dm.DebugMap()
-+	} else {
-+		debugMap["MaxConnAgeGrace"] = g.MaxConnAgeGrace
-+	}
- 	debugMap["Enabled"] = g.Enabled
- 	debugMap["BufferSize"] = g.BufferSize
- 	if g.ClientCAPath == "" {
-@@ -155,6 +163,13 @@ func WithMaxConnAge(maxConnAge time.Duration) GRPCServerConfigOption {
- 	}
+@@ -2,6 +2,7 @@ package migrations
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 
+ 	"github.com/jackc/pgx/v5"
+@@ -125,7 +126,11 @@ func init() {
+ 				}
+ 			}
+ 
+-			batchSize := ctx.Value(migrate.BackfillBatchSize).(uint64)
++			batchSize, ok := migrate.BackfillBatchSize.Value(ctx)
++			if !ok {
++				return errors.New("backfill batch size not found in context")
++			}
++
+ 			for _, stmt := range backfills {
+ 				concreteStmt := fmt.Sprintf(stmt, batchSize)
+ 
+```
+
+**File**: `internal/datastore/postgres/replica_lag_test.go` (modified, +1/-1)
+```diff
+@@ -528,7 +528,7 @@ func runMigrations(ctx context.Context, t testing.TB, uri string) {
+ 	t.Helper()
+ 	// The xid-backfill migration reads its batch size from the context, as the
+ 	// standard test bootstrap does.
+-	ctx = context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000))
++	ctx = migrate.BackfillBatchSize.Set(ctx, 1000)
+ 	driver, err := pgmigrations.NewAlembicPostgresDriver(ctx, uri, datastore.NoCredentialsProvider, false)
+ 	require.NoError(t, err)
+ 	defer func() { _ = driver.Close(ctx) }()
+```
+
+**File**: `internal/middleware/dispatcher/dispatcher.go` (modified, +9/-10)
+```diff
+@@ -6,40 +6,39 @@ import (
+ 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
+ 	"google.golang.org/grpc"
+ 
++	"github.com/authzed/ctxkey"
++
+ 	"github.com/authzed/spicedb/internal/dispatch"
+ )
+ 
+-type ctxKeyType struct{}
+-
+-var dispatcherKey ctxKeyType = struct{}{}
+-
+ type dispatchHandle struct {
+ 	dispatcher dispatch.Dispatcher
  }
  
-+// WithMaxConnAgeGrace returns an option that can set MaxConnAgeGrace on a GRPCServerConfig
-+func WithMaxConnAgeGrace(maxConnAgeGrace time.Duration) GRPCServerConfigOption {
-+	return func(g *GRPCServerConfig) {
-+		g.MaxConnAgeGrace = maxConnAgeGrace
-+	}
-+}
++var dispatcherKey = ctxkey.New[*dispatchHandle]()
 +
- // WithEnabled returns an option that can set Enabled on a GRPCServerConfig
- func WithEnabled(enabled bool) GRPCServerConfigOption {
- 	return func(g *GRPCServerConfig) {
+ // ContextWithHandle adds a placeholder to a context that will later be
+ // filled by the dispatcher
+ func ContextWithHandle(ctx context.Context) context.Context {
+-	return context.WithValue(ctx, dispatcherKey, &dispatchHandle{})
++	return dispatcherKey.Set(ctx, &dispatchHandle{})
+ }
+ 
+ // FromContext reads the selected dispatcher out of a context.Context
+ // and returns nil if it does not exist.
+ func FromContext(ctx context.Context) dispatch.Dispatcher {
+-	if c := ctx.Value(dispatcherKey); c != nil {
+-		handle := c.(*dispatchHandle)
++	if handle, ok := dispatcherKey.Value(ctx); ok {
+ 		return handle.dispatcher
+ 	}
+ 	return nil
+ }
+ 
+ // SetInContext adds a dispatcher to the given context
+ func SetInContext(ctx context.Context, dispatcher dispatch.Dispatcher) error {
+-	handle := ctx.Value(dispatcherKey)
+-	if handle == nil {
++	handle, ok := dispatcherKey.Value(ctx)
++	if !ok {
+ 		return nil
+ 	}
+-	handle.(*dispatchHandle).dispatcher = dispatcher
++	handle.dispatcher = dispatcher
+ 	return nil
+ }
+ 
 ```
 
----
-
-### Incident Patch 2: `0b0989b7` (2026-11-09)
-**Commit Message**: style(dispatch): simplify cache-key fixture returns
-
-**File**: `internal/dispatch/keys/computed_test.go` (modified, +20/-10)
+**File**: `internal/testserver/datastore/postgres.go` (modified, +1/-1)
 ```diff
-@@ -466,12 +466,14 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return checkRequestToKey(&v1.DispatchCheckRequest{
-+		request := &v1.DispatchCheckRequest{
- 			ResourceRelation: resourceRelation,
- 			ResourceIds:      resourceIds,
- 			Subject:          ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			Metadata:         metadata,
--		}), []string{
-+		}
-+
-+		return checkRequestToKey(request), []string{
- 			resourceRelation.Namespace,
- 			resourceRelation.Relation,
- 			subjectRelation.Namespace,
-@@ -535,10 +537,12 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return expandRequestToKey(&v1.DispatchExpandRequest{
-+		request := &v1.DispatchExpandRequest{
- 			ResourceAndRelation: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			Metadata:            metadata,
--		}), []string{
-+		}
-+
-+		return expandRequestToKey(request), []string{
- 			resourceRelation.Namespace,
- 			resourceIds[0],
- 			resourceRelation.Relation,
-@@ -553,14 +557,16 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planCheckRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Resource: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			Subject:  ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
-+		}
-+
-+		return planCheckRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			resourceRelation.Namespace,
- 			resourceIds[0],
-@@ -578,13 +584,15 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planLookupResourcesRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Subject: ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
-+		}
-+
-+		return planLookupResourcesRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			subjectRelation.Namespace,
- 			subjectIds[0],
-@@ -600,13 +608,15 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planLookupSubjectsRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Resource: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
-+		}
-+
-+		return planLookupSubjectsRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			resourceRelation.Namespace,
- 			resourceIds[0],
+@@ -117,7 +117,7 @@ func (b *postgresTester) hostConnectionString(ctx context.Context) (string, erro
+ 
+ func (b *postgresTester) NewDatastore(t testing.TB, initFunc InitFunc) datastore.Datastore {
+ 	t.Helper()
+-	ctx := context.WithValue(t.Context(), migrate.BackfillBatchSize, uint64(1000))
++	ctx := migrate.BackfillBatchSize.Set(t.Context(), 1000)
+ 
+ 	var uri string
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3499** (2026-11-16): feat(cmd): add --grpc-max-conn-age-grace (@ecordell)
-- **PR #3496** (2026-11-16): chore(deps): bump OpenTelemetry to v1.47.0 for CVE-2026-128085 (@ostafen)
-- **PR #3494** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in the go-mod-security group across 1 directory (@dependabot[bot])
-- **PR #3486** (2026-11-13): chore(postgres): drop PostgreSQL 14 from the test matrix (@josephschorr)
-- **PR #3485** (2026-11-13): test: speed up the slowest unit tests (@josephschorr)
-- **PR #3480** (2026-11-10): chore: roll changelog (@tstirrat15)
+- **PR #3524** (2026-11-23): chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey (@josephschorr)
+- **PR #3522** (2026-11-23): fix(lookupsubjects): stop combining found subjects into a shared slice (@mazdakb)
+- **PR #3519** (closed): chore(deps): bump the go-mod group across 2 directories with 38 updates (@dependabot[bot])
+- **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
+- **PR #3515** (2026-11-23): test: add schema variant generator for property-based tests (@josephschorr)
+- **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
 
 ---
 
@@ -1518,13 +1345,13 @@ listeners.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd): add --grpc-max-conn-age-grace
+## X. lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7612192d`: cmd): add --grpc-max-conn-age-grace. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `188b9411`: lint): add ctxkeycheck analyzer and migrate context keys to ctxkey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1532,7 +1359,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Server: `--grpc-max-conn-age-grace`, `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` set how long each listener waits after sending a GOAWAY before it closes the connection. Without a grace limit, a connection with a long-running stream such as Watch stays open indefinitely after its max age, keeping its load on one node behind an L4 load balancer. 0, the default, keeps the current behavior. (https://github.com/authzed/spicedb/pull/3499)
+- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1542,7 +1369,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7612192d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `188b9411` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

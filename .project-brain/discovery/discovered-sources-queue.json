@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T17:43:23.603Z",
+  "updated_at": "2026-11-24T17:52:06.979Z",
   "stats": {
-    "total_discovered": 8794,
-    "approved_pending_harvest": 8319,
+    "total_discovered": 8811,
+    "approved_pending_harvest": 8336,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8315,
+      "COMMUNITY_AND_EXPERT": 8332,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -190170,6 +190170,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
         "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-966C8E83A585": {
+      "id": "SRC-966C8E83A585",
+      "url": "https://github.com/github/codeql-action/commit/1bd86f2fdb4b86187fa4059f16f31a3202acc9ea",
+      "title": "https://github.com/github/codeql-action/commit/1bd86f2fdb4b86187fa4059f16f31a3202acc9ea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-18216CB42715": {
+      "id": "SRC-18216CB42715",
+      "url": "https://redirect.github.com/github/codeql-action/issues/4336",
+      "title": "https://redirect.github.com/github/codeql-action/issues/4336",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-73D12DAEE16F": {
+      "id": "SRC-73D12DAEE16F",
+      "url": "https://github.com/github/codeql-action/commit/4302074c68e1a9732ddaab550373b49f970a4ade",
+      "title": "https://github.com/github/codeql-action/commit/4302074c68e1a9732ddaab550373b49f970a4ade",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-1B3E5FE5D49B": {
+      "id": "SRC-1B3E5FE5D49B",
+      "url": "https://redirect.github.com/vitest-dev/vitest/issues/11859",
+      "title": "https://redirect.github.com/vitest-dev/vitest/issues/11859",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-2B4060E33820": {
+      "id": "SRC-2B4060E33820",
+      "url": "https://github.com/vitest-dev/vitest/commit/708c05da0",
+      "title": "https://github.com/vitest-dev/vitest/commit/708c05da0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-4591AF914E07": {
+      "id": "SRC-4591AF914E07",
+      "url": "https://github.com/magurotuna",
+      "title": "https://github.com/magurotuna",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-C61C5C6040A8": {
+      "id": "SRC-C61C5C6040A8",
+      "url": "https://redirect.github.com/vitest-dev/vitest/issues/11772",
+      "title": "https://redirect.github.com/vitest-dev/vitest/issues/11772",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-9387CA48B806": {
+      "id": "SRC-9387CA48B806",
+      "url": "https://redirect.github.com/vitest-dev/vitest/issues/11829",
+      "title": "https://redirect.github.com/vitest-dev/vitest/issues/11829",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-9580657F596D": {
+      "id": "SRC-9580657F596D",
+      "url": "https://github.com/vitest-dev/vitest/commit/289caab9c",
+      "title": "https://github.com/vitest-dev/vitest/commit/289caab9c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-76593C8EFF79": {
+      "id": "SRC-76593C8EFF79",
+      "url": "https://redirect.github.com/vitest-dev/vitest/issues/11845",
+      "title": "https://redirect.github.com/vitest-dev/vitest/issues/11845",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.536Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-6E5EB82B642A": {
+      "id": "SRC-6E5EB82B642A",
+      "url": "https://github.com/vitest-dev/vitest/commit/3c967a7b7",
+      "title": "https://github.com/vitest-dev/vitest/commit/3c967a7b7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.580Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-EA64C8E86183": {
+      "id": "SRC-EA64C8E86183",
+      "url": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.87.0.tgz",
+      "title": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.87.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-6EE18B9021A7": {
+      "id": "SRC-6EE18B9021A7",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:05.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-50E932B9074E": {
+      "id": "SRC-50E932B9074E",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.19.tgz",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.19.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:06.029Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-2C5DED818E64": {
+      "id": "SRC-2C5DED818E64",
+      "url": "https://github.com/authzed/spicedb/pull/3517",
+      "title": "https://github.com/authzed/spicedb/pull/3517",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:06.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-056D06AAB292": {
+      "id": "SRC-056D06AAB292",
+      "url": "https://github.com/authzed/spicedb/pull/3524",
+      "title": "https://github.com/authzed/spicedb/pull/3524",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:06.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-786930C635EC": {
+      "id": "SRC-786930C635EC",
+      "url": "https://github.com/authzed/spicedb/pull/3486",
+      "title": "https://github.com/authzed/spicedb/pull/3486",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:52:06.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T17:43:24.186Z",
+  "last_updated": "2026-11-24T17:52:08.348Z",
   "total_verified_learnings": 9099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24811,
+  "total_items": 24814,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c596d482870ddbd40e15fab6dca924485a49363852e86cb0f1b5fda7609ee056",
+      "content_hash": "1e4a66774e8d61e5e729513d3b8394471e37e73c0122e205aa607cb6808e2e5d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:14:30.247Z"
+      "persisted_at": "2026-11-24T17:52:08.177Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bd40ddd7fec86153d03a35ec1573794caca92e7c0260544d9ee728892ee037d",
+      "content_hash": "b8820b0dc975c9ba2b45a5e34f7324386c3b2509b1c343ffacfb57b29c0b8561",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:14:30.498Z"
+      "persisted_at": "2026-11-24T17:52:08.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -225695,8 +225695,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "2ffaa9ae",
-      "content_hash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
+      "source_version": "188b9411",
+      "content_hash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -225744,6 +225744,11 @@
           "number": 10133,
           "title": "stop combining found subjects into a shared slice",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10323,
+          "title": "add ctxkeycheck analyzer and migrate context keys to ctxkey",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225751,7 +225756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:14:58.027Z",
+      "verified_at": "2026-11-24T17:52:01.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225869,10 +225874,10 @@
       "relative_path": "08_VERIFICATION/authzed-spicedb-verification-protocol-empirical-defect-shield-for-authzed-spiced.md",
       "title": "Verification Protocol: Empirical Defect Shield for authzed/spicedb",
       "repository": "authzed/spicedb",
-      "source_version": "2ffaa9ae",
-      "content_hash": "ebcc69154398c79e86fcaa320825c90c7d5825197924e0efebc07657b89eb6cd",
+      "source_version": "188b9411",
+      "content_hash": "2c6fe79261b32906bbe238cbc306c216ac5ed9d32d32cfb06269cbc2ecdc8deb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:14:58.876Z"
+      "persisted_at": "2026-11-24T17:52:01.908Z"
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -263271,8 +263276,8 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "390aa36b",
-      "content_hash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
+      "source_version": "dbc3d929",
+      "content_hash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
@@ -263285,6 +263290,11 @@
           "number": 9609,
           "title": "build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.8",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10268,
+          "title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263292,7 +263302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:37:13.517Z",
+      "verified_at": "2026-11-24T17:51:56.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263308,10 +263318,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-technical-construction-intelligence-cheeriojs-dom-seria.md",
       "title": "Technical Construction Intelligence: cheeriojs/dom-serializer Core Invariants",
       "repository": "cheeriojs/dom-serializer",
-      "source_version": "390aa36b",
-      "content_hash": "ba6054cd04ba896982a49bd289cb333a9ba7a894a31e09601261f3d349e20330",
+      "source_version": "dbc3d929",
+      "content_hash": "95de87cf3864c6cd201b2fc090ed34c8fcc36c0487965ecc3480ddc6706433ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:37:14.070Z"
+      "persisted_at": "2026-11-24T17:51:57.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer",
@@ -263320,10 +263330,10 @@
       "relative_path": "08_VERIFICATION/cheeriojs-dom-serializer-verification-protocol-empirical-defect-shield-for-cheer.md",
       "title": "Verification Protocol: Empirical Defect Shield for cheeriojs/dom-serializer",
       "repository": "cheeriojs/dom-serializer",
-      "source_version": "390aa36b",
-      "content_hash": "b081c91f13820e4d296d75d1266b8f361496345bbe4345c67ba85b7dd07e283c",
+      "source_version": "dbc3d929",
+      "content_hash": "8002392d6a220220b1f7f145c3a70a0c95dfc9505f42e0b0c17568ba8060980a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:37:14.228Z"
+      "persisted_at": "2026-11-24T17:51:57.417Z"
     },
     "learn-github-superhighfives-pika": {
       "learning_id": "learn-github-superhighfives-pika",
@@ -263442,9 +263452,9 @@
       "title": "Technical Construction Intelligence: cheeriojs-dom-serializer-learnings Core Invariants",
       "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "1db0bee422cfbd63eef2ce01479ecfd818cdeac10e5e70cb49102fad8d5219b4",
+      "content_hash": "e650efeba11efb620251d638480ca381286d4641ed4a92123915394288cf46c5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:37:28.711Z"
+      "persisted_at": "2026-11-24T17:52:06.438Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn",
@@ -263454,9 +263464,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cheeriojs-dom-serializer-learnings",
       "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "5298645d624df861102e76d11cd2e8859775e81f24bbe47cb731330b4355a818",
+      "content_hash": "c98b9a33b26f58e4f320c2c0690326d7f64c8494a7b7698b8e771dd15c24f3c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:37:28.878Z"
+      "persisted_at": "2026-11-24T17:52:06.610Z"
     },
     "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
@@ -266077,10 +266087,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-technical-construction-intelligence-authzed-spicedb-core-invaria.md",
       "title": "Technical Construction Intelligence: authzed/spicedb Core Invariants",
       "repository": "authzed/spicedb",
-      "source_version": "c9e95eba",
-      "content_hash": "3187527e300ab49487f93158217fe78b36a33828396a9a51b42a9e2550142534",
+      "source_version": "188b9411",
+      "content_hash": "510400df7b30ad5597850a99e2b3053e648e6dcedcf36c40e9fedab5cbc0e407",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:33:26.543Z"
+      "persisted_at": "2026-11-24T17:52:01.739Z"
     },
     "rule-8822": {
       "learning_id": "rule-8822",
@@ -266191,9 +266201,9 @@
       "title": "Technical Construction Intelligence: authzed-spicedb-learnings Core Invariants",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1610d9e4ce235e75743b4b22b1239901e3a036680f17e96cf51e4484c97fc72",
+      "content_hash": "2c068604ef230954397f0d409575f9214da79550d129d7e1db04b8353f3aa82f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T00:11:25.385Z"
+      "persisted_at": "2026-11-24T17:52:07.381Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-authzed-spicedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-authzed-spicedb-learnings",
@@ -266203,9 +266213,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for authzed-spicedb-learnings",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "8915d0eea4a802f29cf34d4fa3ea24ef9f0afc56a18277a7635cc7493c6d8cc9",
+      "content_hash": "9f70ee94b0e462230509b6254855647083263f98c231deb82b73eaf39116ddac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:15:06.406Z"
+      "persisted_at": "2026-11-24T17:52:07.540Z"
     },
     "rule-8823": {
       "learning_id": "rule-8823",
@@ -336636,26 +336646,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10268,
       "title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
-      "source_url": "https://github.com/dathere/qsv",
-      "source_version": "984b16cb",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "dbc3d929",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T13:30:23.599Z"
+      "verified_at": "2026-11-24T17:51:56.626Z"
     },
     "candidate_directive-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4": {
       "item_id": "candidate_directive-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FINM-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S2GW-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4.md",
       "title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
-      "repository": "dathere/qsv",
-      "source_version": "984b16cb",
-      "content_hash": "5eb40abe6dd9e04d6bacbc056da6ed6417b283daa2660a8b8695872d715dfd09",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:30:24.185Z"
+      "repository": "cheeriojs-dom-serializer-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f02403e54f5b4af93f01d04da2a8e839dacc46fcc8dea4e907423f9a8488a92",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:52:06.273Z"
     },
     "rule-10269": {
       "learning_id": "rule-10269",
@@ -338526,13 +338536,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FPI6-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S3T7-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6de9f69db07a5027a58b7e7103a8526d78a84903f19f61bd3009f74dd8aac7e",
+      "content_hash": "320b77a44fab214283f4d62a2a14b29e402c953caa0dcda9156b948986d09296",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:14:29.996Z"
+      "persisted_at": "2026-11-24T17:52:08.017Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -338840,6 +338850,44 @@
       "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
       "domain_letter": "D",
       "persisted_at": "2026-11-24T17:43:21.818Z"
+    },
+    "rule-10323": {
+      "learning_id": "rule-10323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10323,
+      "title": "add ctxkeycheck analyzer and migrate context keys to ctxkey",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "188b9411",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:52:01.147Z"
+    },
+    "candidate_directive-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey": {
+      "item_id": "candidate_directive-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RYUG-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey.md",
+      "title": "add ctxkeycheck analyzer and migrate context keys to ctxkey",
+      "repository": "authzed/spicedb",
+      "source_version": "188b9411",
+      "content_hash": "22dca8e842ac0aec0d2cc1a6b86313bd25710335b19fc27d7bf3b298b6754258",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:52:01.577Z"
+    },
+    "candidate_directive-lint-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey": {
+      "item_id": "candidate_directive-lint-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S36R-lint-add-ctxkeycheck-analyzer-and-migrate-context-keys-to-ctxkey.md",
+      "title": "lint): add ctxkeycheck analyzer and migrate context keys to ctxkey",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "890bd4b39c0a81c45cbe42388929cece6055c3e602bcfd6696b094dff78c2c9d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:52:07.204Z"
     }
   },
   "ai-builder-brain": {

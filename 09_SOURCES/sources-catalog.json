@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "2ffaa9ae",
+    "sourceVersion": "188b9411",
     "license": "Apache-2.0",
-    "contentHash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
-    "lastHarvestedAt": "2026-11-23T22:14:58.242Z",
+    "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
+    "lastHarvestedAt": "2026-11-24T17:52:01.340Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "390aa36b",
+    "sourceVersion": "dbc3d929",
     "license": "MIT",
-    "contentHash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
-    "lastHarvestedAt": "2026-11-20T17:37:13.725Z",
+    "contentHash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
+    "lastHarvestedAt": "2026-11-24T17:51:56.810Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {

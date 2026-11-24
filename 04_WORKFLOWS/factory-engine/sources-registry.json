@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T17:42:55.147Z",
-    "lastVerified": "2026-11-24T17:42:55.147Z",
+    "lastChecked": "2026-11-24T17:52:04.604Z",
+    "lastVerified": "2026-11-24T17:52:04.604Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T17:13:45.435Z",
+    "lastChecked": "2026-11-24T17:52:02.700Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T17:13:45.435Z"
+    "lastVerified": "2026-11-24T17:52:02.700Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1342,9 +1342,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-24T13:47:20.115Z",
+    "lastChecked": "2026-11-24T17:51:57.890Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-24T13:47:20.115Z"
+    "lastVerified": "2026-11-24T17:51:57.890Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2502,14 +2502,14 @@
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T22:14:55.707Z",
-    "lastVerified": "2026-11-23T22:14:55.707Z",
+    "lastChecked": "2026-11-24T17:52:00.340Z",
+    "lastVerified": "2026-11-24T17:52:00.340Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
+    "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5087,9 +5087,9 @@
   "react-native-modal-react-native-modal": {
     "name": "react-native-modal",
     "officialUrl": "https://github.com/react-native-modal/react-native-modal",
-    "lastChecked": "2026-11-22T02:53:13.212Z",
+    "lastChecked": "2026-11-24T17:51:52.641Z",
     "revisionIdentifier": "3e413c4c",
-    "lastVerified": "2026-11-22T02:53:13.212Z"
+    "lastVerified": "2026-11-24T17:51:52.641Z"
   },
   "saltstack-salt": {
     "name": "saltstack/salt",
@@ -5763,9 +5763,9 @@
   "cloudwego-volo": {
     "name": "volo",
     "officialUrl": "https://github.com/cloudwego/volo",
-    "lastChecked": "2026-11-23T16:11:36.401Z",
+    "lastChecked": "2026-11-24T17:51:47.706Z",
     "revisionIdentifier": "35e91302",
-    "lastVerified": "2026-11-23T16:11:36.401Z"
+    "lastVerified": "2026-11-24T17:51:47.706Z"
   },
   "hf-openai-clip-vit-base-patch32": {
     "name": "openai/clip-vit-base-patch32",
@@ -7327,9 +7327,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-23T21:23:12.147Z",
+    "lastChecked": "2026-11-24T17:52:00.384Z",
     "revisionIdentifier": "a1d031cb",
-    "lastVerified": "2026-11-23T21:23:12.147Z"
+    "lastVerified": "2026-11-24T17:52:00.384Z"
   },
   "domcyrus-rustnet": {
     "name": "domcyrus/rustnet",
@@ -10961,14 +10961,14 @@
     "officialUrl": "https://github.com/cheeriojs/dom-serializer",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T17:37:12.507Z",
-    "lastVerified": "2026-11-20T17:37:12.507Z",
+    "lastChecked": "2026-11-24T17:51:55.931Z",
+    "lastVerified": "2026-11-24T17:51:55.931Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
+    "contentHash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

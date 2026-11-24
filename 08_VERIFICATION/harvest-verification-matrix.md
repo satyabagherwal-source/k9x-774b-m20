@@ -12763,3 +12763,5 @@
 | `CYCLE-20261124-G30B` | `2026-11-24T17:42:47.099Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10321` | Yes (`b0700cbc...`) |
 | `CYCLE-20261124-G6QX` | `2026-11-24T17:42:51.945Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10322` | Yes (`159d25bd...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:43:21.556Z` | `hf-baidu-ernie-5.5-flash-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9FC91E58` [Domain D] | Yes (`1fda9eb0...`) |
+| `CYCLE-20261124-RV5Y` | `2026-11-24T17:51:56.806Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10268` | Yes (`09208315...`) |
+| `CYCLE-20261124-RYNS` | `2026-11-24T17:52:01.336Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10323` | Yes (`c8550492...`) |
