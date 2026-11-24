@@ -2183,10 +2183,10 @@
     "repository": "crawlseo/crawlseo",
     "platform": "github",
     "sourceUrl": "https://github.com/crawlseo/crawlseo",
-    "sourceVersion": "25e3c312",
+    "sourceVersion": "4d8d7ea2",
     "license": "MIT",
-    "contentHash": "22e56de16fa8b7ba25b043499258193e78f05bdb222a1bb9b74bcbbdd89a4d8b",
-    "lastHarvestedAt": "2026-11-02T21:48:31.293Z",
+    "contentHash": "55fef7bc8a26c0b36ed75a85fc157a825b9275f19b2dafa04a6edb86a0401cd3",
+    "lastHarvestedAt": "2026-11-24T05:14:11.664Z",
     "learningId": "learn-github-crawlseo-crawlseo"
   },
   "react-hook-form-react-hook-form": {
@@ -2703,10 +2703,10 @@
     "repository": "liyupi/yu-ai-agent",
     "platform": "github",
     "sourceUrl": "https://github.com/liyupi/yu-ai-agent",
-    "sourceVersion": "6d4608c5",
+    "sourceVersion": "8b08b4bd",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
-    "lastHarvestedAt": "2026-10-18T21:58:18.677Z",
+    "contentHash": "a3f22a0d6eabc9491a01f21cd44d24aa2ba361c3ca9d62e548bce346993c1d19",
+    "lastHarvestedAt": "2026-11-24T05:14:15.482Z",
     "learningId": "learn-github-liyupi-yu-ai-agent"
   },
   "tencent-omi": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "80e6fc28",
+    "sourceVersion": "2a1f0dad",
     "license": "NOASSERTION",
-    "contentHash": "4c93538b6451eba662b4e04ddf17eddbba96190a8869f882dfb99004dd182f37",
-    "lastHarvestedAt": "2026-11-21T02:26:52.738Z",
+    "contentHash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
+    "lastHarvestedAt": "2026-11-24T05:14:11.582Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-OG0Q",
-    "timestamp": "2026-11-22T10:18:02.906Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-3HV3",
-    "timestamp": "2026-11-22T10:29:45.135Z",
-    "repository": "IFM/PAN2",
-    "learningId": "learn-huggingface-ifm-pan2",
-    "contentHash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-3JFV",
-    "timestamp": "2026-11-22T10:29:47.179Z",
-    "repository": "xevrion/hatchzip",
-    "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-3SNA",
     "timestamp": "2026-11-22T10:29:59.110Z",
     "repository": "gluesql/gluesql",
@@ -7490,6 +7445,51 @@
     "repository": "react/react-native",
     "learningId": "learn-github-react-react-native",
     "contentHash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PDYY",
+    "timestamp": "2026-11-24T05:14:11.578Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PE17",
+    "timestamp": "2026-11-24T05:14:11.659Z",
+    "repository": "crawlseo/crawlseo",
+    "learningId": "learn-github-crawlseo-crawlseo",
+    "contentHash": "55fef7bc8a26c0b36ed75a85fc157a825b9275f19b2dafa04a6edb86a0401cd3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PGZ9",
+    "timestamp": "2026-11-24T05:14:15.477Z",
+    "repository": "liyupi/yu-ai-agent",
+    "learningId": "learn-github-liyupi-yu-ai-agent",
+    "contentHash": "a3f22a0d6eabc9491a01f21cd44d24aa2ba361c3ca9d62e548bce346993c1d19",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

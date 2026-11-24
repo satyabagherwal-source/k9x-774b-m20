@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T04:54:34.500Z",
+  "updated_at": "2026-11-24T05:14:23.709Z",
   "stats": {
-    "total_discovered": 8338,
-    "approved_pending_harvest": 7901,
+    "total_discovered": 8383,
+    "approved_pending_harvest": 7944,
     "harvested_count": 0,
-    "rejected_count": 437,
+    "rejected_count": 439,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7886,
+      "COMMUNITY_AND_EXPERT": 7931,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -180400,6 +180400,982 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
         "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-E382644F8722": {
+      "id": "SRC-E382644F8722",
+      "url": "https://github.com/crawlseo/crawlseo",
+      "title": "https://github.com/crawlseo/crawlseo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-776C16523F1B": {
+      "id": "SRC-776C16523F1B",
+      "url": "https://hooks.example.com/crawlseo",
+      "title": "https://hooks.example.com/crawlseo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-99A2832D6852": {
+      "id": "SRC-99A2832D6852",
+      "url": "https://crawlseo.cloud/bot",
+      "title": "https://crawlseo.cloud/bot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-E2620A4633CF": {
+      "id": "SRC-E2620A4633CF",
+      "url": "https://raw.githubusercontent.com/crawlseo/crawlseo/54e36fc8546d838f409fff4837816f8b69b2de2e/issues/stuck-running-409.png",
+      "title": "https://raw.githubusercontent.com/crawlseo/crawlseo/54e36fc8546d838f409fff4837816f8b69b2de2e/issues/stuck-running-409.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-E239ADFDE615": {
+      "id": "SRC-E239ADFDE615",
+      "url": "https://raw.githubusercontent.com/crawlseo/crawlseo/54e36fc8546d838f409fff4837816f8b69b2de2e/issues/crawl-top.png",
+      "title": "https://raw.githubusercontent.com/crawlseo/crawlseo/54e36fc8546d838f409fff4837816f8b69b2de2e/issues/crawl-top.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-2DCE0A4C5044": {
+      "id": "SRC-2DCE0A4C5044",
+      "url": "https://example.com/a",
+      "title": "https://example.com/a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:19.392Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+        "fileName": "crawlseo-crawlseo-learnings.md"
+      }
+    },
+    "SRC-BE5C643D330D": {
+      "id": "SRC-BE5C643D330D",
+      "url": "https://github.com/liyupi/yu-ai-agent",
+      "title": "https://github.com/liyupi/yu-ai-agent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-BBD33AD76539": {
+      "id": "SRC-BBD33AD76539",
+      "url": "http://localhost:8123/api",
+      "title": "http://localhost:8123/api",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T05:14:21.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-0F69760E2488": {
+      "id": "SRC-0F69760E2488",
+      "url": "https://vitejs.dev/config",
+      "title": "https://vitejs.dev/config",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-497CBE2F50A2": {
+      "id": "SRC-497CBE2F50A2",
+      "url": "https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png",
+      "title": "https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.470Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-7371066E99CC": {
+      "id": "SRC-7371066E99CC",
+      "url": "https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png",
+      "title": "https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-D1B9CD2B6413": {
+      "id": "SRC-D1B9CD2B6413",
+      "url": "https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png",
+      "title": "https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-0E2A9F430F32": {
+      "id": "SRC-0E2A9F430F32",
+      "url": "https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png",
+      "title": "https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-7CC8B7A64F36": {
+      "id": "SRC-7CC8B7A64F36",
+      "url": "https://pic.yupi.icu/1/ae36dd94-e87e-4dfe-ae31-81a6cc32c9e8.png",
+      "title": "https://pic.yupi.icu/1/ae36dd94-e87e-4dfe-ae31-81a6cc32c9e8.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-F0AAAA94960D": {
+      "id": "SRC-F0AAAA94960D",
+      "url": "https://pic.yupi.icu/1/1714011299057-cb31704a-6c33-410f-888d-74c2d7e1c6e4.png",
+      "title": "https://pic.yupi.icu/1/1714011299057-cb31704a-6c33-410f-888d-74c2d7e1c6e4.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.760Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-7FA2FBB90648": {
+      "id": "SRC-7FA2FBB90648",
+      "url": "https://www.bilibili.com/video/BV1YvmbYbEgS",
+      "title": "https://www.bilibili.com/video/BV1YvmbYbEgS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-F995606E3094": {
+      "id": "SRC-F995606E3094",
+      "url": "https://pic.yupi.icu/1/image-20250422160549546.png",
+      "title": "https://pic.yupi.icu/1/image-20250422160549546.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-B0CEBEE9AE22": {
+      "id": "SRC-B0CEBEE9AE22",
+      "url": "https://pic.yupi.icu/1/1745224085267-57afea3b-2de9-44a0-8f53-49e338c0e6b9.png",
+      "title": "https://pic.yupi.icu/1/1745224085267-57afea3b-2de9-44a0-8f53-49e338c0e6b9.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-2FD6F0FDBFA3": {
+      "id": "SRC-2FD6F0FDBFA3",
+      "url": "https://pic.yupi.icu/1/AI%E6%99%BA%E8%83%BD%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png",
+      "title": "https://pic.yupi.icu/1/AI%E6%99%BA%E8%83%BD%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:21.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-C41F5822B7A0": {
+      "id": "SRC-C41F5822B7A0",
+      "url": "https://www.mianshiya.com/",
+      "title": "https://www.mianshiya.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-661FD20B90E0": {
+      "id": "SRC-661FD20B90E0",
+      "url": "https://www.mianshiya.com/bank/1906189461556076546",
+      "title": "https://www.mianshiya.com/bank/1906189461556076546",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-3A6F5F5DB472": {
+      "id": "SRC-3A6F5F5DB472",
+      "url": "https://pic.yupi.icu/1/1745394632244-f7bd4196-78c7-48ad-af8f-c0319bf8c17a.png",
+      "title": "https://pic.yupi.icu/1/1745394632244-f7bd4196-78c7-48ad-af8f-c0319bf8c17a.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-A2EA98D221E1": {
+      "id": "SRC-A2EA98D221E1",
+      "url": "https://github.com/liyupi/ai-guide",
+      "title": "https://github.com/liyupi/ai-guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-C53E37845441": {
+      "id": "SRC-C53E37845441",
+      "url": "https://ai.codefather.cn/",
+      "title": "https://ai.codefather.cn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-4D0FEB9BEEC6": {
+      "id": "SRC-4D0FEB9BEEC6",
+      "url": "https://ai.codefather.cn/course/2087008226460565505",
+      "title": "https://ai.codefather.cn/course/2087008226460565505",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-78C9DB846370": {
+      "id": "SRC-78C9DB846370",
+      "url": "https://pic.yupi.icu/1/1745385315485-1ca9123b-eb99-4e47-a44e-675b06b307d9.png",
+      "title": "https://pic.yupi.icu/1/1745385315485-1ca9123b-eb99-4e47-a44e-675b06b307d9.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-C2CDF2D2BFC6": {
+      "id": "SRC-C2CDF2D2BFC6",
+      "url": "https://www.codefather.cn/course/1915010091721236482",
+      "title": "https://www.codefather.cn/course/1915010091721236482",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-3428F01A06F3": {
+      "id": "SRC-3428F01A06F3",
+      "url": "https://mp.weixin.qq.com/s/omIazLMQlTo9M3jFFH7NzQ?token=70787607&lang=zh_CN",
+      "title": "https://mp.weixin.qq.com/s/omIazLMQlTo9M3jFFH7NzQ?token=70787607&lang=zh_CN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.532Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-C38B6DF5879F": {
+      "id": "SRC-C38B6DF5879F",
+      "url": "https://pic.yupi.icu/1/image-20250120113601323-20250422160856617.png",
+      "title": "https://pic.yupi.icu/1/image-20250120113601323-20250422160856617.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-656113793F90": {
+      "id": "SRC-656113793F90",
+      "url": "https://mp.weixin.qq.com/s/I1oD6pAaWBvGLyFDT9AgvA?token=1925632390&lang=zh_CN",
+      "title": "https://mp.weixin.qq.com/s/I1oD6pAaWBvGLyFDT9AgvA?token=1925632390&lang=zh_CN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-83B6D0308B3A": {
+      "id": "SRC-83B6D0308B3A",
+      "url": "https://github.com/user-attachments/assets/56411098-b60e-4267-8ba2-4ebc5d416afc",
+      "title": "https://github.com/user-attachments/assets/56411098-b60e-4267-8ba2-4ebc5d416afc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-8BF81A51138E": {
+      "id": "SRC-8BF81A51138E",
+      "url": "https://pic.yupi.icu/1/image-20250120113756426-2025042",
+      "title": "https://pic.yupi.icu/1/image-20250120113756426-2025042",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-E4EB52FC2A68": {
+      "id": "SRC-E4EB52FC2A68",
+      "url": "https://yuyuanweb.feishu.cn/wiki/Abldw5WkjidySxkKxU2cQdAtnah",
+      "title": "https://yuyuanweb.feishu.cn/wiki/Abldw5WkjidySxkKxU2cQdAtnah",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-63989466697A": {
+      "id": "SRC-63989466697A",
+      "url": "https://www.codefather.cn/vip",
+      "title": "https://www.codefather.cn/vip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-69876FC0C940": {
+      "id": "SRC-69876FC0C940",
+      "url": "http://dogyupi.com/",
+      "title": "http://dogyupi.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T05:14:22.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-A1D28B74BC39": {
+      "id": "SRC-A1D28B74BC39",
+      "url": "https://img.shields.io/badge/Java-21-orange.svg",
+      "title": "https://img.shields.io/badge/Java-21-orange.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:22.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-55A158ECDDFA": {
+      "id": "SRC-55A158ECDDFA",
+      "url": "https://www.oracle.com/java",
+      "title": "https://www.oracle.com/java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-5AD3B21743D1": {
+      "id": "SRC-5AD3B21743D1",
+      "url": "https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg",
+      "title": "https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-696ACD66AC0A": {
+      "id": "SRC-696ACD66AC0A",
+      "url": "https://spring.io/projects/spring-boot",
+      "title": "https://spring.io/projects/spring-boot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-7E48AB095A58": {
+      "id": "SRC-7E48AB095A58",
+      "url": "https://img.shields.io/badge/Spring%20AI-Agent%20%26%20MCP-6DB33F.svg",
+      "title": "https://img.shields.io/badge/Spring%20AI-Agent%20%26%20MCP-6DB33F.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-8F353C983F21": {
+      "id": "SRC-8F353C983F21",
+      "url": "https://spring.io/projects/spring-ai",
+      "title": "https://spring.io/projects/spring-ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-55DB3C77A3E7": {
+      "id": "SRC-55DB3C77A3E7",
+      "url": "https://img.shields.io/badge/LangChain4j-RAG%20%26%20Tools-blue.svg",
+      "title": "https://img.shields.io/badge/LangChain4j-RAG%20%26%20Tools-blue.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-9E9C732F4BF1": {
+      "id": "SRC-9E9C732F4BF1",
+      "url": "https://www.bilibili.com/video/BV1UoLezKEbm",
+      "title": "https://www.bilibili.com/video/BV1UoLezKEbm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-BA7E875DC056": {
+      "id": "SRC-BA7E875DC056",
+      "url": "https://www.bilibili.com/video/BV1Eq5DzcE9o",
+      "title": "https://www.bilibili.com/video/BV1Eq5DzcE9o",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.557Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
+      }
+    },
+    "SRC-9641313E0AB0": {
+      "id": "SRC-9641313E0AB0",
+      "url": "https://pic.yupi.icu/1",
+      "title": "https://pic.yupi.icu/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:14:23.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+        "fileName": "liyupi-yu-ai-agent-learnings.md"
       }
     }
   }

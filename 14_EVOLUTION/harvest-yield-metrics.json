@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T04:53:55.608Z",
-  "total_cycles_completed": 11974,
-  "total_learnings_persisted": 11974,
-  "total_rules_promoted": 11054,
+  "last_updated": "2026-11-24T05:14:15.488Z",
+  "total_cycles_completed": 11977,
+  "total_learnings_persisted": 11977,
+  "total_rules_promoted": 11057,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:03:28.803Z",
-      "repository": "kubearmor/KubeArmor",
-      "learningId": "learn-github-kubearmor-kubearmor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:03:37.700Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:03:42.633Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:03:44.747Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T04:53:55.608Z",
       "repository": "react/react-native",
       "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T05:14:11.588Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T05:14:11.670Z",
+      "repository": "crawlseo/crawlseo",
+      "learningId": "learn-github-crawlseo-crawlseo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T05:14:15.488Z",
+      "repository": "liyupi/yu-ai-agent",
+      "learningId": "learn-github-liyupi-yu-ai-agent",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

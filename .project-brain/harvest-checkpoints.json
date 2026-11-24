@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T04:53:55.702Z",
+  "last_updated": "2026-11-24T05:14:15.501Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3411,14 +3411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlseo-crawlseo",
-      "content_hash": "22e56de16fa8b7ba25b043499258193e78f05bdb222a1bb9b74bcbbdd89a4d8b",
-      "verified_at": "2026-11-02T21:48:31.300Z",
+      "content_hash": "55fef7bc8a26c0b36ed75a85fc157a825b9275f19b2dafa04a6edb86a0401cd3",
+      "verified_at": "2026-11-24T05:14:11.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T21:48:31.300Z"
+      "last_updated": "2026-11-24T05:14:11.691Z"
     },
     "react-hook-form/react-hook-form": {
       "repository": "react-hook-form/react-hook-form",
@@ -4191,14 +4191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-liyupi-yu-ai-agent",
-      "content_hash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
-      "verified_at": "2026-10-18T21:58:18.683Z",
+      "content_hash": "a3f22a0d6eabc9491a01f21cd44d24aa2ba361c3ca9d62e548bce346993c1d19",
+      "verified_at": "2026-11-24T05:14:15.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:58:18.683Z"
+      "last_updated": "2026-11-24T05:14:15.500Z"
     },
     "Tencent/omi": {
       "repository": "Tencent/omi",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "4c93538b6451eba662b4e04ddf17eddbba96190a8869f882dfb99004dd182f37",
-      "verified_at": "2026-11-21T02:26:52.746Z",
+      "content_hash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
+      "verified_at": "2026-11-24T05:14:11.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:26:52.746Z"
+      "last_updated": "2026-11-24T05:14:11.600Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

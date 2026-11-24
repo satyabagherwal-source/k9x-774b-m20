@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md`  
 > **Source**: github ([https://github.com/liyupi/yu-ai-agent](https://github.com/liyupi/yu-ai-agent))  
-> **Source Version**: `6d4608c5`  
+> **Source Version**: `8b08b4bd`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:58:18.502Z  
+> **Timestamp**: 2026-11-24T05:14:14.277Z  
 > **Learning ID**: `learn-github-liyupi-yu-ai-agent`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/liyupi/yu-ai-agent](https://github.com/liyupi/yu-ai-agent))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:58:18.177Z  
+> **Harvest Timestamp**: 2026-11-24T05:14:14.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `liyupi/yu-ai-agent`
-- **Description**: 编程导航 AI 开发实战新项目，基于 Spring Boot 3 + Java 21 + Spring AI 构建 AI 恋爱大师应用和 ReAct 模式自主规划智能体YuManus，覆盖 AI 大模型接入、Spring AI 核心特性、Prompt 工程和优化、RAG 检索增强、向量数据库、Tool Calling 工具调用、MCP 模型上下文协议、AI Agent 开发（Manas Java 实现）、Cursor AI 工具等核心知识。用一套教程将程序员必知必会的 AI 技术一网打尽，帮你成为 AI 时代企业的香饽饽，给你的简历和求职大幅增加竞争力。
+- **Description**: 基于 Spring Boot 3、Java 21 与 Spring AI 打造的开源 AI 智能体实战项目，由程序员鱼皮编程导航出品，包含 AI 恋爱大师应用与基于 ReAct 模式的自主规划超级智能体 YuManus（OpenManus Java 实现）。项目完整覆盖 LLM 大模型接入、Ollama 本地部署、Prompt 工程优化、ChatMemory 对话记忆、结构化输出、RAG 知识库与 PgVector 向量检索、Tool Calling 工具调用、MCP 模型上下文协议服务开发、SSE 流式推送与 Serverless 部署上线，配套 Vue 3 前端与独立图片搜索 MCP 服务，助你系统掌握企业级 Java AI Agent 开发。
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 2739 stars
+- **Stars / Engagement**: 2790 stars
 
 ---
 
@@ -197,11 +197,11 @@ export default defineConfig({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #32** (2026-11-22): **docs: 添加可选的 Parallel Search MCP 接入指南**
+  *Symptoms*: 为 MCP 学习示例添加 [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp) 的接入指南，支持免费网页搜索和页面内容获取，无需 Parallel 账号或 API Key，匿名搜索使用 Fast 模式。  指南使用固定版本的 mcp-remote，通过 stdio 对接项目现有的 Spring AI 1.0 MCP 客户端，并提供独立配置文件和 LoveApp.doChatWithMcp 调用示例。配置需手动启用，现有搜索工具和默认配置保持不变；当前前端接口尚未接入该 MCP 方法。  I work at Parallel.
+
 - **Issue #26** (2026-04-20): **chore(demo): read dashscope api key from environment**
   *Symptoms*: ## Summary - make the demo API-key helper prefer `DASHSCOPE_API_KEY` from the environment - keep the existing fallback placeholder for readers who still want to edit the file manually  ## Why The invoke demos currently require editing committed source before running them. Reading the API key from the environment by default makes the examples easier to run and matches the recommended local configuration style used elsewhere in the project.  ## Scope - update `src/main/java/com/yupi/yuaiagent/demo/invoke/TestApiKey.java` - resolve the API key from `DASHSCOPE_API_KEY` when available - keep the original placeholder fallback for manual local edits  ## Testing - `sh ./mvnw -q -DskipTests compile` 
-
-- **Issue #25** (2026-04-20): **docs: add troubleshooting quick checks**
-  *Symptoms*: ## Summary - add a short troubleshooting checklist for common first-run problems  ## Why Most local issues in this project come from the same small set of setup mistakes: backend not running, missing API keys, or confusion about which optional services are required. A quick checklist can save new readers a lot of time.  ## Scope - add `docs/troubleshooting-quick-checks.md` - cover backend health checks, frontend URL expectations, required API keys, optional services, and SSE debugging hints  ## Testing - not run (documentation-only change) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -218,597 +218,203 @@ export default defineConfig({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d4608c5` (2025-06-25)
-**Commit Message**: refactor: 升级 Spring AI 依赖版本为 1.0
-- 更新依赖版本：Spring AI Alibaba: 1.0.0.2、Spring AI: 1.0.0
-- 重构代码，实现新版本兼容：
-  - 更新导入路径
-  - 调整类和方法签名以适应新版本
-  - 优化部分实现细节
+### Incident Patch 1: `8b08b4bd` (2026-11-23)
+**Commit Message**: docs: 将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题
 
-**File**: `pom.xml` (modified, +68/-32)
+**File**: `README.md` (modified, +13/-13)
 ```diff
-@@ -29,6 +29,24 @@
-     <properties>
-         <java.version>21</java.version>
-     </properties>
-+    <dependencyManagement>
-+        <dependencies>
-+            <dependency>
-+                <groupId>com.alibaba.cloud.ai</groupId>
-+                <artifactId>spring-ai-alibaba-bom</artifactId>
-+                <version>1.0.0.2</version>
-+                <type>pom</type>
-+                <scope>import</scope>
-+            </dependency>
-+            <dependency>
-+                <groupId>org.springframework.ai</groupId>
-+                <artifactId>spring-ai-bom</artifactId>
-+                <version>1.0.0</version>
-+                <type>pom</type>
-+                <scope>import</scope>
-+            </dependency>
-+        </dependencies>
-+    </dependencyManagement>
-     <dependencies>
-         <dependency>
-             <groupId>org.springframework.boot</groupId>
-@@ -43,37 +61,16 @@
-         <!-- Spring AI Alibaba -->
-         <dependency>
-             <groupId>com.alibaba.cloud.ai</groupId>
--            <artifactId>spring-ai-alibaba-starter</artifactId>
--            <version>1.0.0-M6.1</version>
-+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-         </dependency>
--        <!-- https://java2ai.com/docs/1.0.0-M6.1/models/ollama -->
-+        <!-- https://docs.spring.io/spring-ai/reference/api/chat/ollama-chat.html -->
-         <dependency>
-             <groupId>org.springframework.ai</groupId>
--            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
--            <version>1.0.0-M6</version>
--        </dependency>
--        <!-- LangChain4J DashScope -->
--        <dependency>
--            <groupId>dev.langchain4j</groupId>
--            <artifactId>langchain4j-community-dashscope</artifactId>
--            <version>1.0.0-beta2</version>
--        </dependency>
--        <!-- 支持结构化输出 -->
--        <dependency>
--            <groupId>com.github.victools</groupId>
--            <artifactId>jsonschema-generator</artifactId>
--            <version>4.38.0</version>
--        </dependency>
--        <!-- 支持文件会话记忆持久化的序列化 -->
--        <dependency>
--            <groupId>com.esotericsoftware</groupId>
--            <artifactId>kryo</artifactId>
--            <version>5.6.2</version>
-+            <artifactId>spring-ai-starter-model-ollama</artifactId>
-         </dependency>
-         <dependency>
-             <groupId>org.springframework.ai</groupId>
-             <artifactId>spring-ai-markdown-document-reader</artifactId>
--            <version>1.0.0-M6</version>
-         </dependency>
-         <!-- 手动整合 PGVector 向量存储 -->
-         <dependency>
-@@ -88,19 +85,39 @@
-         <dependency>
-             <groupId>org.springframework.ai</groupId>
-             <artifactId>spring-ai-pgvector-store</artifactId>
--            <version>1.0.0-M6</version>
-         </dependency>
-         <!-- 自动整合 PGVector 向量存储 -->
--<!--        <dependency>-->
--<!--            <groupId>org.springframework.ai</groupId>-->
--<!--            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>-->
--<!--            <version>1.0.0-M7</version>-->
--<!--        </dependency>-->
-+        <!--        <dependency>-->
-+        <!--            <groupId>org.springframework.ai</groupId>-->
-+        <!--            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>-->
-+        <!--            <version>1.0.0-M7</version>-->
-+        <!--        </dependency>-->
-         <!-- Spring AI MCP Client -->
-         <dependency>
-             <groupId>org.springframework.ai</groupId>
--            <artifactId>spring-ai-mcp-client-spring-boot-starter</artifactId>
--            <version>1.0.0-M6</version>
-+            <artifactId>spring-ai-starter-mcp-client</artifactId>
-+        </dependency>
-+        <dependency>
-+            <groupId>org.springframework.ai</groupId>
-+            <artifactId>spring-ai-advisors-vector-store</artifactId>
-+        </dependency>
-+        <!-- LangChain4J DashScope -->
-+        <dependency>
-+            <groupId>dev.langchain4j</groupId>
-+            <artifactId>langchain4j-community-dashscope</artifactId>
-+            <version>1.0.0-beta2</version>
-+        </dependency>
-+        <!-- 支持结构化输出 -->
-+        <dependency>
-+            <groupId>com.github.victools</groupId>
-+            <artifactId>jsonschema-generator</artifactId>
-+            <version>4.38.0</version>
-+        </dependency>
-+        <!-- 支持文件会话记忆持久化的序列化 -->
-+        <dependency>
-+            <groupId>com.esotericsoftware</groupId>
-+            <artifactId>kryo</artifactId>
-+            <version>5.6.2</version>
-         </dependency>
-         <!-- jsoup HTML 解析库 -->
-         <dependency>
-@@ -186,5 +203,24 @@
-                 <enabled>false</enabled>
-             </snapshots>
-         </repository>
-+        <repository>
-+            <id>spring-snapshots</id>
-+            <name>Spring Snapshots</name>
-+            <url>https://repo.spring.io/snapshot</url>
-+            <releases>
-+                <enabled>false</enabled>
-+            </r
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/YuAiAgentApplication.java` (modified, +1/-3)
-```diff
-@@ -1,14 +1,12 @@
- package com.yupi.yuaiagent;
+@@ -15,15 +15,15 @@
  
--import org.springframework.ai.autoconfigure.vectorstore.pgvector.PgVectorStoreAutoConfiguration;
- import org.springframework.boot.SpringApplication;
- import org.springframework.boot.autoconfigure.SpringBootApplication;
- import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+ 随着大模型技术深入各行各业，能够独立设计并落地 AI 应用与智能体的 Java 工程师正成为企业争抢的核心人才。`yu-ai-agent` 是一套以企业级 AI 开发实战为核心的开源项目，通过从零开发「AI 恋爱大师应用」和具备自主推理规划能力的「超级智能体 YuManus」，带你系统掌握新时代程序员必知必会的 AI 核心概念、主流框架原理、RAG 检索调优、工具调用以及 MCP 服务开发能力。
  
- @SpringBootApplication(exclude = {
--        PgVectorStoreAutoConfiguration.class
-         // 为了便于大家开发调试和部署，取消数据库自动配置，需要使用 PgVector 时把 DataSourceAutoConfiguration.class 删除
--        , DataSourceAutoConfiguration.class
-+        DataSourceAutoConfiguration.class
- })
- public class YuAiAgentApplication {
+-![AI 超级智能体项目核心效果与场景概览](https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png)
++![AI 超级智能体项目核心效果与场景概览](./doc/images/img-01.png)
  
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/advisor/MyLoggerAdvisor.java` (modified, +21/-30)
-```diff
-@@ -1,22 +1,21 @@
- package com.yupi.yuaiagent.advisor;
+ 在项目实践过程中，你可以直观感受到两类典型 AI 应用形态的完整落地方式。第一类是以垂直业务场景为核心的「AI 恋爱大师应用」，它依托大模型为用户的日常情感难题提供贴心建议，并完整支持多轮对话上下文记忆、基于自定义知识库的 RAG 检索问答，以及通过工具调用和 MCP 协议连接外部服务，例如结合地图能力查询周边地点并定制约会方案。
  
- import lombok.extern.slf4j.Slf4j;
-+import org.springframework.ai.chat.client.ChatClientMessageAggregator;
-+import org.springframework.ai.chat.client.ChatClientRequest;
-+import org.springframework.ai.chat.client.ChatClientResponse;
-+import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-+import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-+import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-+import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
- import reactor.core.publisher.Flux;
+-![AI 恋爱大师多轮对话与工具调用界面演示](https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png)
++![AI 恋爱大师多轮对话与工具调用界面演示](./doc/images/img-02.png)
  
--import org.springframework.ai.chat.client.advisor.api.AdvisedRequest;
--import org.springframework.ai.chat.client.advisor.api.AdvisedResponse;
--import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisor;
--import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisorChain;
--import org.springframework.ai.chat.client.advisor.api.StreamAroundAdvisor;
--import org.springframework.ai.chat.client.advisor.api.StreamAroundAdvisorChain;
--import org.springframework.ai.chat.model.MessageAggregator;
--
- /**
-  * 自定义日志 Advisor
-  * 打印 info 级别日志、只输出单次用户提示词和 AI 回复的文本
-  */
- @Slf4j
--public class MyLoggerAdvisor implements CallAroundAdvisor, StreamAroundAdvisor {
-+public class MyLoggerAdvisor implements CallAdvisor, StreamAdvisor {
+ 第二类则是具备更强通用性与自主决策能力的 `YuManus` 超级智能体。该模块参考开源项目 OpenManus 的设计思想并基于 Java 与 ReAct 模式自主实现，能够根据用户的复杂目标拆解步骤，自动组合联网搜索、网页抓取、资源下载和 PDF 文档生成等多种工具，端到端输出一份图文并茂的完整约会攻略。
  
- 	@Override
- 	public String getName() {
-@@ -28,35 +27,27 @@ public int getOrder() {
- 		return 0;
- 	}
+-![YuManus 自主规划超级智能体执行任务与生成 PDF 演示](https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png)
++![YuManus 自主规划超级智能体执行任务与生成 PDF 演示](./doc/images/img-03.png)
  
--	private AdvisedRequest before(AdvisedRequest request) {
--		log.info("AI Request: {}", request.userText());
-+	private ChatClientRequest before(ChatClientRequest request) {
-+		log.info("AI Request: {}", request.prompt());
- 		return request;
- 	}
+ 当你真正吃透这套项目的架构设计与编码套路之后，收获的绝不仅仅是一个恋爱助手案例，而是能够举一反三，灵活构建客服问答机器人、文档分析助手、自动化研报智能体等各类企业级 AI 产品。
  
--	private void observeAfter(AdvisedResponse advisedResponse) {
--		log.info("AI Response: {}", advisedResponse.response().getResult().getOutput().getText());
-+	private void observeAfter(ChatClientResponse chatClientResponse) {
-+		log.info("AI Response: {}", chatClientResponse.chatResponse().getResult().getOutput().getText());
- 	}
+@@ -33,21 +33,21 @@
  
- 	@Override
--	public AdvisedResponse aroundCall(AdvisedRequest advisedRequest, CallAroundAdvisorChain chain) {
--
--		advisedRequest = before(advisedRequest);
--
--		AdvisedResponse advisedResponse = chain.nextAroundCall(advisedRequest);
--
--		observeAfter(advisedResponse);
--
--		return advisedResponse;
-+	public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest, CallAdvisorChain chain) {
-+		chatClientRequest = before(chatClientRequest);
-+		ChatClientResponse chatClientResponse = chain.nextCall(chatClientRequest);
-+		observeAfter(chatClientResponse);
-+		return chatClientResponse;
- 	}
+ 在此基础上，项目进一步深入企业生产环境最关注的高阶能力，涵盖 Spring AI 自定义 Advisor、多轮对话记忆持久化、结构化输出、RAG 知识库全链路调优、PgVector 向量数据库与云知识库服务、Tool Calling 工具调用底层原理、MCP 模型上下文协议与自定义图片搜索服务开发、OpenManus 源码剖析、SSE 流式服务化以及 Serverless 部署上线，同时也会拓展多模态、智能体工作流、A2A 协议与大模型评估等前沿视野。
  
- 	@Override
--	public Flux<AdvisedResponse> aroundStream(AdvisedRequest advisedRequest, StreamAroundAdvisorChain chain) {
--
--		advisedRequest = before(advisedRequest);
--
--		Flux<AdvisedResponse> advisedResponses = chain.nextAroundStream(advisedRequest);
--
--		return new MessageAggregator().aggregateAdvisedResponse(advisedResponses, this::observeAfter);
-+	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest, StreamAdvisorChain chain) {
-+		chatClientRequest = before(chatClientRequest);
-+		Flux<ChatClientResponse> chatClientResponseFlux = chain.nextStream(chatClientRequest);
-+		return (new ChatClientMessageAggregator()).aggregateChatClientResponse(chatClientResponseFlux, this::observeAfter);
- 	}
--
- }
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/advisor/ReReadingAdvisor.java` (modified, +42/-39)
-```diff
-@@ -1,53 +1,56 @@
- package com.yupi.yuaiagent.advisor;
+-![RAG 知识库全链路实战与检索引擎调优流程](https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png)
++![RAG 知识库全链路实战与检索引擎调优流程](./doc/images/img-04.png)
  
--import org.springframework.ai.chat.client.advisor.api.*;
-+import org.springframework.ai.chat.client.ChatClientRequest;
-+import org.springframework.ai.chat.client.ChatClientResponse;
-+import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-+import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-+import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-+import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
-+import org.springframework.ai.chat.prompt.Prompt;
- import reactor.core.publisher.Flux;
+ 为了让学习者既会用好现成的 AI 云平台、又具备手写底层框架的工程实力，项目坚持结合官方文档与开源代码逐行拆解核心机制。例如在智能体章节中，我们会手把手剖析开源项目 OpenManus 的架构源码，帮助你理解 ReAct 循环如何控制思考与行动的边界，从而真正具备独立排查问题与定制 Agent 的能力。
  
--import java.util.HashMap;
--import java.util.Map;
--
- /**
-  * 自定义 Re2 Advisor
-  * 可提高大型语言模型的推理能力
-  */
--public class ReReadingAdvisor implements CallAroundAdvisor, StreamAroundAdvisor {
--
--	/**
--	 * 执行请求前，改写 Prompt
--	 * @param advisedRequest
--	 * @return
--	 */
--	private AdvisedRequest before(AdvisedRequest advisedRequest) {
--
--		Map<String, Object> advisedUserParams = new HashMap<>(advisedRequest.userParams());
--		advisedUserParams.put("re2_input_query", advisedRequest.userText());
--
--		return AdvisedRequest.from(advisedRequest)
--			.userText("""
--			    {re2_input_query}
--			    Read the question again: {re2_input_query}
--			    """)
--			.userParams(advisedUserParams)
--			.build();
--	}
-+public class ReReadingAdvisor implements CallAdvisor, StreamAdvisor {
-+
-+    /**
-+     * 执行请求前，改写 Prompt
-+     *
-+     * @param chatClientRequest
-+     * @return
-+     */
-+    private ChatClientRequest before(ChatClientRequest chatClientRequest) {
-+        String userText = chatClientRequest.prompt().getUserMessage().getText();
-+        // 添加上下文参数
-+        chatClientRequest.context().put("re2_input_query", userText);
-+        // 修改用户提示词
-+        String newUserText = """
-+                %s
-+                Read the question again: %s
-+                """.formatted(userText, userText);
-+        Prompt newPrompt = chatClientRequest.prompt().augmentUserMessage(newUserText);
-+        return new ChatClientRequest(newPrompt, chatClientRequest.context());
-+    }
+-![手撕开源智能体框架 OpenManus 核心架构源码解析](https://pic.yupi.icu/1/ae36dd94-e87e-4dfe-ae31-81a6cc32c9e8.png)
++![手撕开源智能体框架 OpenManus 核心架构源码解析](./doc/images/img-05.png)
  
--	@Override
--	public AdvisedResponse aroundCall(AdvisedRequest advisedRequest, CallAroundAdvisorChain chain) {
--		return chain.nextAroundCall(this.before(advisedRequest));
--	}
-+    @Override
-+    public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest, CallAdvisorChain chain) {
-+        return chain.nextCall(this.before(chatClientRequest));
-+    }
+ ### 鱼皮原创项目系列特色
  
--	@Override
--	public Flux<AdvisedResponse> aroundStream(AdvisedRequest advisedRequest, StreamAroundAdvisorChain chain) {
--		return chain.nextAroundStream(this.before(advisedRequest));
--	}
-+    @Override
-+    public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest, StreamAdvisorChain chain) {
-+        return chain.nextStream(this.before(chatClientRequest));
-+    }
+ 鱼皮的原创项目始终以工程实战为导向，采用全程直播的方式从零带做。从前期的需求分析、技术选型与架构画图，到后端初始化、Demo 验证、前后端联调、性能优化与云端部署，每个环节都会把设计背后的权衡讲透。相比零散拼凑网络教程，编程导航提供了从知识点学习、项目编码、复习笔记、专属答疑到简历润色与面试题解的一条龙成长闭环。
  
--	@Override
--	public int getOrder() { 
--		return 0;
--	}
-+    @Override
-+    public int getOrder() {
-+        return 0;
-+    }
+-![鱼皮原创项目实战从学知识到拿 Offer 的一条龙服务优势](https://pic.yupi.icu/1/1714011299057-cb31704a-6c33-410f-888d-74c2d7e1c6e4.png)
++![鱼皮原创项目实战从学知识到拿 Offer 的一条龙服务优势](./doc/images/img-06.png)
  
-     @Override
--    public String getName() { 
--		return this.getClass().getSimpleName();
--	}
-+    public String getName() {
-+        return this.getClass().getSimpleName();
-+    }
- }
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/agent/ToolCallAgent.java` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ public ToolCallAgent(ToolCallback[] availableTools) {
-         this.toolCallingManager = ToolCallingManager.builder().build();
-         // 禁用 Spring AI 内置的工具调用机制，自己维护选项和消息上下文
-         this.chatOptions = DashScopeChatOptions.builder()
--                .withProxyToolCalls(true)
-+                .withInternalToolExecutionEnabled(false)
-                 .build();
-     }
+ 目前编程导航已经沉淀了数十套覆盖不同技术侧重点的原创全栈与 AI 项目教程，许多同学通过系统跟学并在简历中扎实展示项目细节，成功收获了心仪的大厂与中厂 Offer。如果想快速了解鱼皮往期全系列项目的定位，可以先浏览 [往期项目合集介绍视频](https://www.bilibili.com/video/BV1YvmbYbEgS/)。
  
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/app/LoveApp.java` (modified, +16/-21)
-```diff
-@@ -9,10 +9,11 @@
- import lombok.extern.slf4j.Slf4j;
- import org.springframework.ai.chat.client.ChatClient;
- import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
--import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
- import org.springframework.ai.chat.client.advisor.api.Advisor;
-+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
- import org.springframework.ai.chat.memory.ChatMemory;
--import org.springframework.ai.chat.memory.InMemoryChatMemory;
-+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
-+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
- import org.springframework.ai.chat.model.ChatModel;
- import org.springframework.ai.chat.model.ChatResponse;
- import org.springframework.ai.tool.ToolCallback;
-@@ -23,9 +24,6 @@
+-![编程导航学员跟着鱼皮做项目提升技术与斩获 Offer 的真实评价](https://pic.yupi.icu/1/image-20250422160549546.png)
++![编程导航学员跟着鱼皮做项目提升技术与斩获 Offer 的真实评价](./doc/images/img-07.png)
  
- import java.util.List;
+ ## 🎯 核心功能
  
--import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
--import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
--
- @Component
- @Slf4j
- public class LoveApp {
-@@ -47,11 +45,14 @@ public LoveApp(ChatModel dashscopeChatModel) {
- //        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
- //        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
-         // 初始化基于内存的对话记忆
--        ChatMemory chatMemory = new InMemoryChatMemory();
-+        MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder()
-+                .chatMemoryRepository(new InMemoryChatMemoryRepository())
-+                .maxMessages(20)
-+                .build();
-         chatClient = ChatClient.builder(dashscopeChatModel)
-                 .defaultSystem(SYSTEM_PROMPT)
-                 .defaultAdvisors(
--                        new MessageChatMemoryAdvisor(chatMemory),
-+                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
-                         // 自定义日志 Advisor，可按需开启
-                         new MyLoggerAdvisor()
- //                        // 自定义推理增强 Advisor，可按需开启
-@@ -71,8 +72,7 @@ public String doChat(String message, String chatId) {
-         ChatResponse chatResponse = chatClient
-                 .prompt()
-                 .user(message)
--                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
--                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                 .call()
-                 .chatResponse();
-         String content = chatResponse.getResult().getOutput().getText();
-@@ -91,8 +91,7 @@ public Flux<String> doChatByStream(String message, String chatId) {
-         return chatClient
-                 .prompt()
-                 .user(message)
--                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
--                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                 .stream()
-                 .content();
-     }
-@@ -113,8 +112,7 @@ public LoveReport doChatWithReport(String message, String chatId) {
-                 .prompt()
-                 .system(SYSTEM_PROMPT + "每次对话后都要生成恋爱结果，标题为{用户名}的恋爱报告，内容为建议列表")
-                 .user(message)
--                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
--                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                 .call()
-                 .entity(LoveReport.class);
-         log.info("loveReport: {}", loveReport);
-@@ -149,8 +147,7 @@ public String doChatWithRag(String message, String chatId) {
-                 .prompt()
-                 // 使用改写后的查询
-                 .user(rewrittenMessage)
--                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
--                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                 // 开启日志，便于观察效果
-                 .advisors(new MyLoggerAdvisor())
-                 // 应用 RAG 知识库问答
-@@ -187,11 +184,10 @@ public String doChatWithTools(String message, String chatId) {
-         ChatResponse chatResponse = chatClient
-                 .prompt()
-                 .user(message)
--                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
--                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                 // 开启日志，便于观察效果
-                 .advisors(new MyLoggerAdvisor())
--                .tools(allTools)
-+                .toolCallbacks(allTools)
-                 .call()
-                 .chatResponse();
-         String content = chatResponse.getResult().getOutput().getText();
-@@ -215,11 +211,10 @@ public String do
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/chatmemory/FileBasedChatMemory.java` (modified, +2/-5)
-```diff
-@@ -45,11 +45,8 @@ public void add(String conversationId, List<Message> messages) {
-     }
+@@ -77,11 +77,11 @@
  
-     @Override
--    public List<Message> get(String conversationId, int lastN) {
--        List<Message> allMessages = getOrCreateConversation(conversationId);
--        return allMessages.stream()
--                .skip(Math.max(0, allMessages.size() - lastN))
--                .toList();
-+    public List<Message> get(String conversationId) {
-+        return getOrCreateConversation(conversationId);
-     }
+ 在 RAG 知识库模块中，项目并没有停留在简单的文本切分示例上，而是完整覆盖了文档收集与切分（ETL）、向量化存储、多条件文档过滤检索以及上下文查询增强等关键环节，并结合真实问答效果讲解检索策略选择与抑制大模型幻觉的实用方法。
  
-     @Override
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/rag/LoveAppRagCloudAdvisorConfig.java` (modified, +4/-2)
-```diff
-@@ -4,8 +4,8 @@
- import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetriever;
- import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
- import lombok.extern.slf4j.Slf4j;
--import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
- import org.springframework.ai.chat.client.advisor.api.Advisor;
-+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
- import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
- import org.springframework.beans.factory.annotation.Value;
- import org.springframework.context.annotation.Bean;
-@@ -23,7 +23,9 @@ public class LoveAppRagCloudAdvisorConfig {
+-![Spring AI RAG 知识库核心特性实战与检索流程示意](https://pic.yupi.icu/1/1745224085267-57afea3b-2de9-44a0-8f53-49e338c0e6b9.png)
++![Spring AI RAG 知识库核心特性实战与检索流程示意](./doc/images/img-08.webp)
  
-     @Bean
-     public Advisor loveAppRagCloudAdvisor() {
--        DashScopeApi dashScopeApi = new DashScopeApi(dashScopeApiKey);
-+        DashScopeApi dashScopeApi = DashScopeApi.builder()
-+                .apiKey(dashScopeApiKey)
-+                .build();
-         final String KNOWLEDGE_INDEX = "恋爱大师";
-         DocumentRetriever dashScopeDocumentRetriever = new DashScopeDocumentRetriever(dashScopeApi,
-                 DashScopeDocumentRetrieverOptions.builder()
+ 下面的整体架构图清晰展示了前端页面、Spring Boot 后端服务、大模型层、RAG 向量库、本地工具集以及外部 MCP 服务之间的数据流转与调用关系。
+ 
+-![AI 超级智能体平台系统整体架构设计图](https://pic.yupi.icu/1/AI%E6%99%BA%E8%83%BD%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
++![AI 超级智能体平台系统整体架构设计图](./doc/images/img-09.png)
+ 
+ ## 📂 仓库结构
+ 
+@@ -122,11 +122,11 @@ yu-ai-agent/
+ 
+ 在跟着项目实战的过程中，把动手写代码和面试考点复习结合起来效果最好。你可以结合 [程序员面试刷题神器面试鸭](https://www.mianshiya.com/) 中的 [AI 大模型面试题库](https://www.mianshiya.com/bank/1906189461556076546) 以及 Java、Spring Boot、Redis、MySQL 等高频题单同步巩固知识点，提前为简历深挖和面试问答做好准备。
+ 
+-![面试鸭 AI 大模型面试题库与求职刷题平台](https://pic.yupi.icu/1/1745394632244-f7bd4196-78c7-48ad-af8f-c0319bf8c17a.png)
++![面试鸭 AI 大模型面试题库与求职刷题平台](./doc/images/img-10.png)
+ 
+ 由于 AI 技术和工具生态演进非常迅速，日常保持对行业动态的关注同样重要。你可以关注鱼皮开源的 [AI 编程与大模型知识库（ai-guide）](https://github.com/liyupi/ai-guide)，里面系统整理了主流大模型用法、提示词技巧、Vibe Coding AI 编程实践与丰富案例；也可以收藏 [鱼皮 AI 导航网站](https://ai.codefather.cn) 获取精选工具与资讯，如果希望系统提升 AI 辅助研发与项目扩展效率，还可以同步学习 [AI 编程实战课程](https://ai.codefather.cn/course/2087008226460565505)。
+ 
+-![程序员鱼皮开源 AI 知识库与 Vibe Coding 学习指南](https://pic.yupi.icu/1/1745385315485-1ca9123b-eb99-4e47-a44e-675b06b307d9.png)
++![程序员鱼皮开源 AI 知识库与 Vibe Coding 学习指南](./doc/images/img-11.png)
+ 
+ ## ❓ 常见问题
+ 
+@@ -176,14 +176,14 @@ yu-ai-agent/
+ 
+ 如果你想沿着完整课程体系一步步吃透本项目的每一处架构设计、源码细节与扩展方向，欢迎前往 [AI 超级智能体实战课程主页](https://www.codefather.cn/course/1915010091721236482) 查看详细目录。编程导航目前已上线数十套覆盖 Java / Python / Go 后端、前端全栈与 AI 应用开发的原创实战课程，成为会员后不仅能全程跟学本项目，往期 [原创项目系列教程](https://mp.weixin.qq.com/s/omIazLMQlTo9M3jFFH7NzQ?token=70787607&lang=zh_CN) 也全部支持无限回看。
+ 
+-![编程导航涵盖多套原创全栈与 AI 应用开发实战项目合集](https://pic.yupi.icu/1/image-20250120113601323-20250422160856617.png)
++![编程导航涵盖多套原创全栈与 AI 应用开发实战项目合集](./doc/images/img-12.png)
+ 
+ 加入 [编程导航社区](https://mp.weixin.qq.com/s/I1oD6pAaWBvGLyFDT9AgvA?token=1925632390&lang=zh_CN) 后，你还可以持续获取原创技术干货、学习与求职指导以及上百场真实面试回放视频。为助力大家高效开启项目学习，扫码下方限时优惠券即可领券加入，支持加入三天内不满意全额退款。
+ 
+ <img width="404" alt="编程导航会员限时优惠券扫码领取通道" src="https://github.com/user-attachments/assets/56411098-b60e-4267-8ba2-4ebc5d416afc" />
+ 
+ 成为编程导航会员后，每天不到 1 块钱即可解锁全部原创项目教程、源码与学习资料，支持在 PC 网站与移动 APP 端随时同步进度，持续提升工程实战能力。
+ 
+-![编程导航 PC 网站与移动 APP 双端学习体验展示](https://pic.yupi.icu/1/image-20250120113756426-2025042
 ```
 
 ---
 
-### Incident Patch 2: `0ace2a4e` (2025-06-25)
-**Commit Message**: refactor: 优化配置和注释以便开发调试
+### Incident Patch 2: `c0a5253d` (2026-11-23)
+**Commit Message**: docs: 全面优化 README.md 文案排版与 SEO/GEO 表现
 
-- 注释掉 PgVector 数据库配置，简化本地开发和调试
-- 添加 API Key 和其他配置项的占位符，方便用户替换
-- 修改应用启动类，排除 PgVector 和数据源自动配置
-- 更新相关注释，提供更多配置指导和说明
-
-**File**: `src/main/java/com/yupi/yuaiagent/YuAiAgentApplication.java` (modified, +6/-1)
+**File**: `README.md` (modified, +114/-223)
 ```diff
-@@ -3,8 +3,13 @@
- import org.springframework.ai.autoconfigure.vectorstore.pgvector.PgVectorStoreAutoConfiguration;
- import org.springframework.boot.SpringApplication;
- import org.springframework.boot.autoconfigure.SpringBootApplication;
-+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+@@ -1,298 +1,189 @@
+-# AI 超级智能体项目
++# 🤖 AI 超级智能体项目（yu-ai-agent）
  
--@SpringBootApplication(exclude = PgVectorStoreAutoConfiguration.class)
-+@SpringBootApplication(exclude = {
-+        PgVectorStoreAutoConfiguration.class
-+        // 为了便于大家开发调试和部署，取消数据库自动配置，需要使用 PgVector 时把 DataSourceAutoConfiguration.class 删除
-+        , DataSourceAutoConfiguration.class
-+})
- public class YuAiAgentApplication {
+-> 作者：[程序员鱼皮](https://yuyuanweb.feishu.cn/wiki/Abldw5WkjidySxkKxU2cQdAtnah)
+->
+-> 本项目为教学项目，提供完整视频教程 + 文字教程 + 简历写法 + 面试题解 + 答疑服务，帮你提升项目能力，给简历增加亮点！
+->
+-> ⭐️ 加入项目系列学习：[加入编程导航](https://www.codefather.cn/vip)
++基于 Spring Boot 3、Java 21 与 Spring AI 构建的开源企业级 AI 应用与自主规划智能体实战项目，由 [程序员鱼皮](http://dogyupi.com/) 与编程导航团队原创出品，包含「AI 恋爱大师」情感问答应用以及基于 ReAct 模式的自主规划超级智能体 `YuManus`（OpenManus Java 架构实现）。
  
-     public static void main(String[] args) {
-```
-
-**File**: `src/main/java/com/yupi/yuaiagent/rag/PgVectorVectorStoreConfig.java` (modified, +2/-1)
-```diff
-@@ -14,7 +14,8 @@
- import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgDistanceType.COSINE_DISTANCE;
- import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgIndexType.HNSW;
++[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
++[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
++[![Spring AI](https://img.shields.io/badge/Spring%20AI-Agent%20%26%20MCP-6DB33F.svg)](https://spring.io/projects/spring-ai)
++[![LangChain4j](https://img.shields.io/badge/LangChain4j-RAG%20%26%20Tools-blue.svg)](https://github.com/langchain4j/langchain4j)
  
--@Configuration
-+// 为方便开发调试和部署，临时注释，如果需要使用 PgVector 存储知识库，取消注释即可
-+//@Configuration
- public class PgVectorVectorStoreConfig {
+-## 项目介绍
++[项目介绍](#-项目介绍) · [核心功能](#-核心功能) · [技术架构](#-技术架构) · [仓库结构](#-仓库结构) · [学习大纲](#-学习大纲) · [准备工作与生态资源](#-准备工作与生态资源) · [常见问题](#-常见问题) · [加入系统学习](#-加入系统学习)
  
-     @Resource
-```
-
-**File**: `src/main/resources/application.yml` (modified, +9/-1)
-```diff
-@@ -3,8 +3,14 @@ spring:
-     name: yu-ai-agent
-   profiles:
-     active: local
-+# 临时注释掉，便于大家开发调试和部署（实际填写 PgVector 数据库信息）
-+#  datasource:
-+#    url: xxx
-+#    username: root
-+#    password: 123456
-   ai:
-     dashscope:
-+      # 需要替换为你自己的 key
-       api-key: your-api-key
-       chat:
-         options:
-@@ -13,7 +19,7 @@ spring:
-       base-url: http://localhost:11434
-       chat:
-         model: gemma3:1b
--# 临时注释掉，便于大家开发调试和部署
-+# 临时注释掉，便于大家开发调试和部署（实际需要启动 MCP 服务）
- #    mcp:
- #      client:
- #        sse:
-@@ -22,6 +28,7 @@ spring:
- #              url: http://localhost:8127
- #        stdio:
- #          servers-configuration: classpath:mcp-servers.json
-+# 临时注释掉，便于大家开发调试和部署（实际需要启动 PgVector 数据库）
- #    vectorstore:
- #      pgvector:
- #        index-type: HNSW
-@@ -51,6 +58,7 @@ knife4j:
-     language: zh_cn
- # searchAPI
- search-api:
-+  # 需要替换为你自己的 key
-   api-key: 你的 API Key
- # 修改日志级别，查看 Spring AI 更多调用细节
- logging:
+-> 视频介绍：https://www.bilibili.com/video/BV1UoLezKEbm
++> 本仓库为教学实战项目，在 [编程导航 AI 超级智能体课程主页](https://www.codefather.cn/course/1915010091721236482) 提供完整视频教程、配套文字笔记、简历写法参考、面试题解与 1 对 1 答疑服务，帮助你真正把企业级 AI 开发技术学透并转化为求职竞争力。欢迎直接通过 [编程导航会员通道](https://www.codefather.cn/vip) 加入系统学习，也可以先前往 B 站观看 [项目整体介绍视频](https://www.bilibili.com/video/BV1UoLezKEbm) 与 [第一期免费公开课](https://www.bilibili.com/video/BV1Eq5DzcE9o)。
+ 
+-这是一套以 **AI 开发实战** 为核心的项目教程，将通过开发 **AI 恋爱大师应用 + 拥有自主规划能力的超级智能体**，带大家掌握新时代程序员必知必会的 AI 核心概念、AI 实用工具、AI 编程技术、AI 框架原理、AI 调优技巧，大幅增加求职的竞争力！
++## ✨ 项目介绍
+ 
+-![](https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png)
++随着大模型技术深入各行各业，能够独立设计并落地 AI 应用与智能体的 Java 工程师正成为企业争抢的核心人才。`yu-ai-agent` 是一套以企业级 AI 开发实战为核心的开源项目，通过从零开发「AI 恋爱大师应用」和具备自主推理规划能力的「超级智能体 YuManus」，带你系统掌握新时代程序员必知必会的 AI 核心概念、主流框架原理、RAG 检索调优、工具调用以及 MCP 服务开发能力。
+ 
+-`AI 恋爱大师应用` 可以依赖 AI 大模型解决用户的情感问题，支持多轮对话、基于自定义知识库进行问答、自主调用工具和 MCP 服务完成任务，比如调用地图服务获取附近地点并制定约会计划。
++![AI 超级智能体项目核心效果与场景概览](https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png)
+ 
+-![](https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png)
++在项目实践过程中，你可以直观感受到两类典型 AI 应用形态的完整落地方式。第一类是以垂直业务场景为核心的「AI 恋爱大师应用」，它依托大模型为用户的日常情感难题提供贴心建议，并完整支持多轮对话上下文记忆、基于自定义知识库的 RAG 检索问答，以及通过工具调用和 MCP 协议连接外部服务，例如结合地图能力查询周边地点并定制约会方案。
+ 
+-此外，还会手把手带大家完成基于 ReAct 模式的 `自主规划智能体 YuManus` ，可以利用网页搜索、资源下载和 PDF 生成工具，帮用户制定完整的约会计划并生成文档：
++![AI 恋爱大师多轮对话与工具调用界面演示](https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png)
+ 
+-![](https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png)
++第二类则是具备更强通用性与自主决策能力的 `YuManus` 超级智能体。该模块参考开源项目 OpenManus 的设计思想并基于 Java 与 ReAct 模式自主实现，能够根据用户的复杂目标拆解步骤，自动组合联网搜索、网页抓取、资源下载和 PDF 文档生成等多种工具，端到端输出一份图文并茂的完整约会攻略。
+ 
+-当然，学会这个项目后，你不仅能开发 AI 恋爱大师，而是能灵活开发各种复杂的 AI 应用，尽情发挥自己的想象力吧！
++![YuManus 自主规划超级智能体执行任务与生成 PDF 演示](https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png)
+ 
++当你真正吃透这套项目的架构设计与编码套路之后，收获的绝不仅仅是一个恋爱助手案例，而是能够举一反三，灵活构建客服问答机器人、文档分析助手、自动化研报智能体等各类企业级 AI 产品。
+ 
++### 为什么要跟着做这个项目
+ 
+-## 为什么要带做这个项目？
++相比传统以增删改查为主的练手系统，本项目选题紧贴企业真实 AI 落地需求，把 Java 后端工程师转战 AI 应用开发所需的关键技术串联在一条完整主线里。课程始终围绕通用项目开发方法与架构设计思维展开，你会依次实战主流 AI 应用平台（如 Dify、阿里云百炼）、4 种大模型接入方式、Spring AI 与 LangChain4j 开发框架、Ollama 本地大模型部署以及 Prompt 工程优化技巧。
+ 
+-本项目选题新颖、业务真实，区别于增删改查的 “烂大街” 项目，鱼皮会带你实战大量新技术和企业应用场景，用一套实战教程将程序员必知必会的 **AI 技术一网打尽**，帮你成为 AI 时代企业的香饽饽，给你的简历和求职大幅增加竞争力。
++在此基础上，项目进一步深入企业生产环境最关注的高阶能力，涵盖 Spring AI 自定义 Advisor、多轮对话记忆持久化、结构化输出、RAG 知识库全链路调优、PgVector 向量数据库与云知识库服务、Tool Calling 工具调用底层原理、MCP 模型上下文协议与自定义图片搜索服务开发、OpenManus 源码剖析、SSE 流式服务化以及 Serverless 部署上线，同时也会拓展多模态、智能体工作流、A2A 协议与大模型评估等前沿视野。
+ 
+-鱼皮给大家讲的都是 **通用的项目开发方法和架构设计套路**，从这个项目中你将学到：
++![RAG 知识库全链路实战与检索引擎调优流程](https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png)
+ 
+-- 主流 AI 应用平台的使用
+-- AI 大模型的 4 种接入方式
+-- AI 开发框架（Spring AI + LangChain4j）
+-- AI 大模型本地部署
+-- Prompt 工程和优化技巧
+-- Spring AI 核心特性：如自定义 Advisor、对话记忆、结构化输出
+-- RAG 知识库实战、原理和调优技巧
+-- PgVector 向量数据库 + 云数据库服务
+-- Tool Calling 工具调用实战及原理
+-- MCP 模型上下文协议和服务开发
+-- AI 智能体 Manus 原理和自主开发
+-- AI 服务化和 Serverless 部署上线
+-- 各种新概念：如多模态、智能体工作流、A2A 协议、大模型评估等
++为了让学习者既会用好现成的 AI 云平台、又具备手写底层框架的工程实力，项目坚持结合官方文档与开源代码逐行拆解核心机制。例如在智能体章节中，我们会手把手剖析开源项目 OpenManus 的架构源码，帮助你理解 ReAct 循环如何控制思考与行动的边界，从而真正具备独立排查问题与定制 Agent 的能力。
+ 
+-举个例子，RAG 核心特性实战及全链路调优：
++![手撕开源智能体框架 OpenManus 核心架构源码解析](https://pic.yupi.icu/1/ae36dd94-e87e-4dfe-ae31-81a6cc32c9e8.png)
+ 
+-![](https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png)
++### 鱼皮原创项目系列特色
+ 
+-项目还有其他优势：
++鱼皮的原创项目始终以工程实战为导向，采用全程直播的方式从零带做。从前期的需求分析、技术选型与架构画图，到后端初始化、Demo 验证、前后端联调、性能优化与云端部署，每个环节都会把设计背后的权衡讲透。相比零散拼凑网络教程，编程导航提供了从知识点学习、项目编码、复习笔记、专属答疑到简历润色与面试题解的一条龙成长闭环。
+ 
+-- AI 云平台和编程双端实战，不仅会用 AI 服务，还会自己写！
+-- 基于官方文档讲解最新的 AI 技术，细致入微，手撕文档和源码！
+-- 分享大量 AI 扩展知识和编程技巧，掌握最佳实践！
++![鱼皮原创项目实战从学知识到拿 Offer 的一条龙服务优势](https://pic.yupi.icu/1/1714011299057-cb31704a-6c33-410f-888d-74c2d7e1c6e4.png)
+ 
+-鱼皮带你手撕开源框架 OpenManus 的源码：
++目前编程导航已经沉淀了数十套覆盖不同技术侧重点的原创全栈与 AI 项目教程，许多同学通过系统跟学并在简历中扎实展示项目细节，成功收获了心仪的大厂与中厂 Offer。如果想快速了
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #32** (closed): docs: 添加可选的 Parallel Search MCP 接入指南 (@georgeatparallel)
 - **PR #26** (closed): chore(demo): read dashscope api key from environment (@however-yir)
 - **PR #25** (closed): docs: add troubleshooting quick checks (@however-yir)
 - **PR #24** (closed): docs(frontend): clarify local development setup (@however-yir)
 - **PR #23** (closed): chore: add env example for local configuration (@however-yir)
 - **PR #22** (closed): docs: add repository quick reference to README (@however-yir)
-- **PR #21** (closed): docs: add troubleshooting quick checks for local setup (clean diff final) (@however-yir)
 
 ---
 
@@ -828,81 +434,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 升级 Spring AI 依赖版本为 1.0
+## X. docs: 将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题
 
 **RULE**:
-When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in liyupi/yu-ai-agent. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in liyupi/yu-ai-agent. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d4608c5`: 升级 Spring AI 依赖版本为 1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b08b4bd`: docs: 将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.alibaba.cloud.ai</groupId>
-                <artifactId>spring-ai-alibaba-bom</artifactId>
-                <version>1.0.0.2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>1.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-        <!-- https://docs.spring.io/spring-ai/reference/api/chat/ollama-chat.html -->
-            <artifactId>spring-ai-starter-model-ollama</artifactId>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.ai</groupId>-->
-        <!--            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>-->
-        <!--            <version>1.0.0-M7</version>-->
-        <!--        </dependency>-->
-            <artifactI
+![AI 超级智能体项目核心效果与场景概览](./doc/images/img-01.png)
+![AI 恋爱大师多轮对话与工具调用界面演示](./doc/images/img-02.png)
+![YuManus 自主规划超级智能体执行任务与生成 PDF 演示](./doc/images/img-03.png)
+![RAG 知识库全链路实战与检索引擎调优流程](./doc/images/img-04.png)
+![手撕开源智能体框架 OpenManus 核心架构源码解析](./doc/images/img-05.png)
+![鱼皮原创项目实战从学知识到拿 Offer 的一条龙服务优势](./doc/images/img-06.png)
+![编程导航学员跟着鱼皮做项目提升技术与斩获 Offer 的真实评价](./doc/images/img-07.png)
+![Spring AI RAG 知识库核心特性实战与检索流程示意](./doc/images/img-08.webp)
+![AI 超级智能体平台系统整体架构设计图](./doc/images/img-09.png)
+![面试鸭 AI 大模型面试题库与求职刷题平台](./doc/images/img-10.png)
+![程序员鱼皮开源 AI 知识库与 Vibe Coding 学习指南](./doc/images/img-11.png)
+![编程导航涵盖多套原创全栈与 AI 应用开发实战项目合集](./doc/images/img-12.png)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-            <artifactId>spring-ai-alibaba-starter</artifactId>
-            <version>1.0.0-M6.1</version>
-        <!-- https://java2ai.com/docs/1.0.0-M6.1/models/ollama -->
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-            <version>1.0.0-M6</version>
-        </dependency>
-        <!-- LangChain4J DashScope -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-community-dashscope</artifactId>
-            <version>1.0.0-beta2</version>
-        </dependency>
-        <!-- 支持结构化输出 -->
-        <dependency>
-            <groupId>com.github.victools</groupId>
-            <artifactId>jsonschema-generator</artifactId>
-            <version>4.38.0</version>
-        </dependency>
-        <!-- 支持文件会话记忆持久化的序列化 -->
-        <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>kryo</artifactId>
-            <version>5.6.2</version>
-            <version>1.0.0-M6</version>
-            <version>1.0.0-M6</version>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>--
+// Induced defect failure mode:
+![AI 超级智能体项目核心效果与场景概览](https://pic.yupi.icu/1/8052592c-97ce-4568-b82e-6153924a053c.png)
+![AI 恋爱大师多轮对话与工具调用界面演示](https://pic.yupi.icu/1/1745225631067-44a111e1-1032-4f1c-bd69-9f08a59a654b.png)
+![YuManus 自主规划超级智能体执行任务与生成 PDF 演示](https://pic.yupi.icu/1/1745224663573-04af8f65-2da4-4ef9-8033-a179e703f9c4.png)
+![RAG 知识库全链路实战与检索引擎调优流程](https://pic.yupi.icu/1/1746250760306-3b545556-59df-43a9-b843-b73ec9b5a867.png)
+![手撕开源智能体框架 OpenManus 核心架构源码解析](https://pic.yupi.icu/1/ae36dd94-e87e-4dfe-ae31-81a6cc32c9e8.png)
+![鱼皮原创项目实战从学知识到拿 Offer 的一条龙服务优势](https://pic.yupi.icu/1/1714011299057-cb31704a-6c33-410f-888d-74c2d7e1c6e4.png)
+![编程导航学员跟着鱼皮做项目提升技术与斩获 Offer 的真实评价](https://pic.yupi.icu/1/image-20250422160549546.png)
+![Spring AI RAG 知识库核心特性实战与检索流程示意](https://pic.yupi.icu/1/1745224085267-57afea3b-2de9-44a0-8f53-49e338c0e6b9.png)
+![AI 超级智能体平台系统整体架构设计图](https://pic.yupi.icu/1/AI%E6%99%BA%E8%83%BD%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
+![面试鸭 AI 大模型面试题库与求职刷题平台](https://pic.yupi.icu/1/1745394632244-f7bd4196-78c7-48ad-af8f-c0319bf8c17a.png)
+![程序员鱼皮开源 AI 知识库与 Vibe Coding 学习指南](https://pic.yupi.icu/1/1745385315485-1ca9123b-eb99-4e47-a44e-675b06b307d9.png)
+![编程导航涵盖多套原创全栈与 AI 应用开发实战项目合集](https://pic.yupi.icu/1/
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d4608c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b08b4bd` are properly handled with clean fallback behavior.

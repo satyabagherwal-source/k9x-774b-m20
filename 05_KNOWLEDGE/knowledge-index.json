@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T04:54:36.468Z",
-  "total_verified_learnings": 9089,
+  "last_updated": "2026-11-24T05:14:24.347Z",
+  "total_verified_learnings": 9091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24441,
+  "total_items": 24458,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -237019,9 +237019,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7674fb2ee070124c5ed4a704992599b82c78068b913f048c09b06eb56fd5656",
+      "content_hash": "4a2e5333bfd3f1d0446e1e790a3a800998b3d63dcefdd57791d9183f0f4caaf2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T02:30:01.864Z"
+      "persisted_at": "2026-11-24T05:14:20.847Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -237031,9 +237031,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bf5a192c7af2411352bb9a592a6053cd236c8bb721a3fc8bb4bebb5bf393f21",
+      "content_hash": "f4cb09710084e477b9db45c746a878e99720cd2046bbaab340cd6dd3258b556b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:30:02.016Z"
+      "persisted_at": "2026-11-24T05:14:21.031Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -333417,6 +333417,256 @@
       "content_hash": "0767272bfbb9aa0abb660a6233ae0e5a89e1d00b898654f4ccb256a9f16b1f25",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T04:53:59.787Z"
+    },
+    "learn-github-crawlseo-crawlseo": {
+      "learning_id": "learn-github-crawlseo-crawlseo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "crawlseo/crawlseo",
+      "repository": "crawlseo/crawlseo",
+      "slug": "crawlseo-crawlseo",
+      "platform": "github",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "4d8d7ea2",
+      "content_hash": "55fef7bc8a26c0b36ed75a85fc157a825b9275f19b2dafa04a6edb86a0401cd3",
+      "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10206,
+          "title": "compare periods that both have data",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T05:14:11.419Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10206": {
+      "learning_id": "rule-10206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10206,
+      "title": "compare periods that both have data",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "4d8d7ea2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:14:11.419Z"
+    },
+    "candidate_directive-compare-periods-that-both-have-data": {
+      "item_id": "candidate_directive-compare-periods-that-both-have-data",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PEBG-compare-periods-that-both-have-data.md",
+      "title": "compare periods that both have data",
+      "repository": "crawlseo/crawlseo",
+      "source_version": "4d8d7ea2",
+      "content_hash": "45a6b3cf3d8525dff4c20714b556412ef0ab934cd30041c705deebf03ec10ad4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:14:12.036Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlseo-crawlseo-technical-construction-intelligence-crawlseo-crawlseo-core-inv.md",
+      "title": "Technical Construction Intelligence: crawlseo/crawlseo Core Invariants",
+      "repository": "crawlseo/crawlseo",
+      "source_version": "4d8d7ea2",
+      "content_hash": "291644a2aa6902363749ee3cad976cf6a20577109daf4e363eb85ec3f98650f7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:14:12.277Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlseo-crawlseo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlseo-crawlseo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlseo-crawlseo-verification-protocol-empirical-defect-shield-for-crawlseo-cra.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crawlseo/crawlseo",
+      "repository": "crawlseo/crawlseo",
+      "source_version": "4d8d7ea2",
+      "content_hash": "83d5159c704b6a59c61f8c5fd950b13da4205644c217f545b3c968a5abe4ee9d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T05:14:12.478Z"
+    },
+    "learn-github-liyupi-yu-ai-agent": {
+      "learning_id": "learn-github-liyupi-yu-ai-agent",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "liyupi/yu-ai-agent",
+      "repository": "liyupi/yu-ai-agent",
+      "slug": "liyupi-yu-ai-agent",
+      "platform": "github",
+      "source_url": "https://github.com/liyupi/yu-ai-agent",
+      "source_version": "8b08b4bd",
+      "content_hash": "a3f22a0d6eabc9491a01f21cd44d24aa2ba361c3ca9d62e548bce346993c1d19",
+      "dossier_path": "07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10207,
+          "title": "将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T05:14:15.207Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10207": {
+      "learning_id": "rule-10207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10207,
+      "title": "将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+      "source_url": "https://github.com/liyupi/yu-ai-agent",
+      "source_version": "8b08b4bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:14:15.207Z"
+    },
+    "candidate_directive-readme-13-doc-images": {
+      "item_id": "candidate_directive-readme-13-doc-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PH6S-readme-13-doc-images.md",
+      "title": "将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+      "repository": "liyupi/yu-ai-agent",
+      "source_version": "8b08b4bd",
+      "content_hash": "c1f5c760d59c98dbf9f881fb616ab299b1b70ad9ee06f8463a57124740819904",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T05:14:15.749Z"
+    },
+    "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-liyupi-yu-ai-agent-architecture-intelligence-liyupi-yu-ai-agent-core-invariants.md",
+      "title": "Architecture Intelligence: liyupi/yu-ai-agent Core Invariants",
+      "repository": "liyupi/yu-ai-agent",
+      "source_version": "8b08b4bd",
+      "content_hash": "044710943671e94a71dc43a0f382e3232717f1070c38987fc2bead99169950cb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:14:15.938Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-liyupi-yu-ai-agent": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-liyupi-yu-ai-agent",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/liyupi-yu-ai-agent-verification-protocol-empirical-defect-shield-for-liyupi-yu-a.md",
+      "title": "Verification Protocol: Empirical Defect Shield for liyupi/yu-ai-agent",
+      "repository": "liyupi/yu-ai-agent",
+      "source_version": "8b08b4bd",
+      "content_hash": "f2f524e22ed709d44718d3bb56148ebea02ac980a13e41b0b441527ea9324c04",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T05:14:16.126Z"
+    },
+    "candidate_directive-metrics-compare-periods-that-both-have-data": {
+      "item_id": "candidate_directive-metrics-compare-periods-that-both-have-data",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PK8K-metrics-compare-periods-that-both-have-data.md",
+      "title": "metrics): compare periods that both have data",
+      "repository": "crawlseo-crawlseo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6866c9d16b7002538ef744f3b38da36ff64573cb4b51f07bbeae34456c5479ef",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:14:19.705Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlseo-crawlseo-learnings-technical-construction-intelligence-crawlseo-crawlse.md",
+      "title": "Technical Construction Intelligence: crawlseo-crawlseo-learnings Core Invariants",
+      "repository": "crawlseo-crawlseo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "debab6c5d34d6e76352c1ad3f4efc1e0d856a41d2506aaf3c8127351623de393",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:14:19.892Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crawlseo-crawlseo-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crawlseo-crawlseo-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crawlseo-crawlseo-learnings-verification-protocol-empirical-defect-shield-for-cr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crawlseo-crawlseo-learnings",
+      "repository": "crawlseo-crawlseo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d4adae101425b2bc25970314128908cd3f28dbc2d83adbb1240fc8c8f726170f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T05:14:20.075Z"
+    },
+    "candidate_directive-clarify-state-flag-usage": {
+      "item_id": "candidate_directive-clarify-state-flag-usage",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PKZ9-clarify-state-flag-usage.md",
+      "title": "Clarify state flag usage",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "89dc30dc8f71c7480addb8bf51a11bc8ea66053aec914b89ed13c345216d63ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:14:20.666Z"
+    },
+    "candidate_directive-docs-readme-13-doc-images": {
+      "item_id": "candidate_directive-docs-readme-13-doc-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PNIS-docs-readme-13-doc-images.md",
+      "title": "docs: 将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+      "repository": "liyupi-yu-ai-agent-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8bcf02f3095fa54947df1548f4b71c8ddf9aca9ebe8137cbc6a0aa72c90f5b9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T05:14:23.957Z"
+    },
+    "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-liyupi-yu-ai-agent-learnings-architecture-intelligence-liyupi-yu-ai-agent-learni.md",
+      "title": "Architecture Intelligence: liyupi-yu-ai-agent-learnings Core Invariants",
+      "repository": "liyupi-yu-ai-agent-learnings",
+      "source_version": "HEAD",
+      "content_hash": "52c69dd48333950e7e7c6ffab55414ba8a874651ab317828157dd5112c881057",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:14:24.148Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-liyupi-yu-ai-agent-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-liyupi-yu-ai-agent-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/liyupi-yu-ai-agent-learnings-verification-protocol-empirical-defect-shield-for-l.md",
+      "title": "Verification Protocol: Empirical Defect Shield for liyupi-yu-ai-agent-learnings",
+      "repository": "liyupi-yu-ai-agent-learnings",
+      "source_version": "HEAD",
+      "content_hash": "71caa54489ae8d8cb39325601a50c650d122473b535fba6e695827d6fa7960dc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T05:14:24.347Z"
     }
   },
   "ai-builder-brain": {

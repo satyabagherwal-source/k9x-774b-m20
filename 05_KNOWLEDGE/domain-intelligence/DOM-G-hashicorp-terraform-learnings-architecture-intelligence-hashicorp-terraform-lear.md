@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T02:30:01.585Z",
+  "timestamp": "2026-11-24T05:14:20.526Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hashicorp-terraform-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hashicorp-terraform-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T02:30:01.585Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T05:14:20.526Z`  
 > **Learning ID**: `LEARN-EVO-hashicorp-terraform-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 91%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from hashicorp-terraform-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `80e6fc28`  
+> **Source Version**: `2a1f0dad`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T02:26:51.704Z  
+> **Timestamp**: 2026-11-24T05:14:10.289Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:26:51.602Z  
+> **Harvest Timestamp**: 2026-11-24T05:14:10.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50301 stars
+- **Stars / Engagement**: 50317 stars
 
 ---
 
@@ -2309,329 +2309,268 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80e6fc28` (2026-11-20)
-**Commit Message**: tests: Refactor how mock user input is defined in tests, fix minor difference in output when prompting for input in tests (#39565)
+### Incident Patch 1: `2a1f0dad` (2026-11-23)
+**Commit Message**: refactor: Clarify state flag usage (#39558)
 
-This change updates tests to either:
-* Remove mocked input that a test never uses
-* Refactor how mocked input is set up, moving tests to all use a map-based setup of inputs.
+This change updates some fields to make it clear that they're used for overriding default behaviours, and the fields themselves aren't used directly or expected to have set values. Also, we stop some fields that are used only inside the `local` package from being exported.
 
-Also I fix handling of mocked test inputs so a newline is printed to the terminal after receiving the input. This matches handling of non-mocked inputs.
-
-**File**: `internal/command/apply_test.go` (modified, +6/-41)
+**File**: `internal/backend/backendrun/cli.go` (modified, +9/-7)
 ```diff
-@@ -4,7 +4,6 @@
- package command
+@@ -60,16 +60,18 @@ type CLIOpts struct {
+ 	// for tailoring the output to fit the attached terminal, for example.
+ 	Streams *terminal.Streams
  
- import (
--	"bytes"
- 	"context"
- 	"fmt"
- 	"io/ioutil"
-@@ -27,7 +26,6 @@ import (
- 	"github.com/hashicorp/terraform/internal/addrs"
- 	"github.com/hashicorp/terraform/internal/collections"
- 	"github.com/hashicorp/terraform/internal/command/clistate"
--	tfui "github.com/hashicorp/terraform/internal/command/ui"
- 	"github.com/hashicorp/terraform/internal/configs/configschema"
- 	"github.com/hashicorp/terraform/internal/getproviders"
- 	"github.com/hashicorp/terraform/internal/plans"
-@@ -552,10 +550,9 @@ func TestApply_input(t *testing.T) {
- 	// value "result" to echo that back to us below.
+-	// StatePath is the local path where state is read from.
++	// OverrideStatePath (-state CLI flag) will override the local path where state is read from.
  	//
- 	// Don't disable input, so input would be asked
--	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--		Reader: bytes.NewBufferString("foo\n"),
--		Writer: new(bytes.Buffer),
--	}, nil, nil)
-+	uiInput, _ := testInputMap(t, map[string]string{
-+		"var.foo": "foo",
-+	})
+-	// StateOutPath is the local path where the state will be written.
+-	// If this is empty, it will default to StatePath.
++	// OverrideStateOutPath (-state-out CLI flag) will override the local path where the state will be written.
++	// If this is empty, it will default to OverrideStatePath.
+ 	//
+-	// StateBackupPath is the local path where a backup file will be written.
++	// StateBackupPath (-state-backup CLI flag) will enable creating a backup file at that path.
+ 	// If this is empty, no backup will be taken.
+-	StatePath       string
+-	StateOutPath    string
+-	StateBackupPath string
++	//
++	// These are currently only used in the local backend.
++	OverrideStatePath       string
++	OverrideStateOutPath    string
++	OverrideStateBackupPath string
  
- 	p := testProvider()
- 	testingOverrides := metaOverridesForProvider(p)
-@@ -598,10 +595,9 @@ func TestApply_inputPartial(t *testing.T) {
- 	t.Chdir(td)
+ 	// ContextOpts are the base context options to set when initializing a
+ 	// Terraform context. Many of these will be overridden or merged by
+```
+
+**File**: `internal/backend/local/backend.go` (modified, +19/-15)
+```diff
+@@ -55,20 +55,19 @@ type Local struct {
+ 	StateBackupPath   string
+ 	StateWorkspaceDir string
  
- 	// Don't disable input, so input would be asked
--	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--		Reader: bytes.NewBufferString("one\ntwo\n"),
--		Writer: new(bytes.Buffer),
--	}, nil, nil)
-+	uiInput, _ := testInputMap(t, map[string]string{
-+		"var.bar": "one",
-+	})
+-	// The OverrideState* paths are set based on per-operation CLI arguments
++	// The overrideState* paths are set based on per-operation CLI arguments
+ 	// and will override what'd be built from the State* fields if non-empty.
+ 	// While the interpretation of the State* fields depends on the active
+-	// workspace, the OverrideState* fields are always used literally.
++	// workspace, the overrideState* fields are always used literally.
+ 	//
+-	// OverrideStatePath is set as a result of the -state flag
+-	// OverrideStateOutPath is set as a result of the -state-out flag
+-	// OverrideStateBackupPath is set as a result of the -state-backup flag
++	// overrideStatePath is set as a result of the -state flag
++	// overrideStateOutPath is set as a result of the -state-out flag
++	// overrideStateBackupPath is set as a result of the -state-backup flag
+ 	//
+ 	// Note: these flags are only accepted by some commands.
+-	// Importantly, they are not accepted by `init`.
+-	OverrideStatePath       string
+-	OverrideStateOutPath    string
+-	OverrideStateBackupPath string
++	overrideStatePath       string
++	overrideStateOutPath    string
++	overrideStateBackupPath string
  
- 	p := testProvider()
- 	testingOverrides := metaOverridesForProvider(p)
-@@ -675,18 +671,11 @@ func TestApply_noArgs(t *testing.T) {
+ 	// We only want to create a single instance of a local state, so store them
+ 	// here as they're loaded.
+@@ -98,8 +97,12 @@ type Local struct {
+ 	opLock sync.Mutex
  }
  
- func TestApply_plan(t *testing.T) {
--	// Don't disable input, so input would be asked
--	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--		Reader: new(bytes.Buffer),
--		Writer: new(bytes.Buffer),
--	}, nil, nil)
--
- 	planPath := applyFixturePlanFile(t)
- 	statePath := testTempFile(t)
+-var _ backend.Backend = (*Local)(nil)
+-var _ backendrun.OperationsBackend = (*Local)(nil)
++var (
++	_ backend.Backend              = (*Local)(nil)
++	_ backendrun.OperationsBackend = (*Local)(nil)
++	_ backendrun.Local             = (*Local)(nil)
++	_ backendrun.CLI               = (*Local)(nil)
++)
  
- 	p := applyFixtureProvider()
- 	testingOverrides := metaOverridesForProvider(p)
--	testingOverrides.UIInput = uiInput
+ // New returns a new initialized local backend.
+ func New() *Local {
+@@ -362,7 +365,8 @@ func (b *Local) opWait(
+ 	cancelCtx context.Context,
+ 	tfCtx *terraform.Context,
+ 	opStateMgr statemgr.Persister,
+-	view views.Operation) (canceled bool) {
++	view views.Operation,
++) (canceled bool) {
+ 	// Wait for the operation to finish or for us to be interrupted so
+ 	// we can handle it properly.
+ 	select {
+@@ -415,9 +419,9 @@ func (b *Local) opWait(
+ //
+ // * Values configured from the CLI.
+ func (b *Local) StatePaths(name string) (stateIn, stateOut, backupOut string) {
+-	statePath := b.OverrideStatePath
+-	stateOutPath := b.OverrideStateOutPath
+-	backupPath := b.OverrideStateBackupPath
++	statePath := b.overrideStatePath
++	stateOutPath := b.overrideStateOutPath
++	backupPath := b.overrideStateBackupPath
  
- 	view, done := testView(t)
- 	c := &ApplyCommand{
-@@ -1027,13 +1016,6 @@ output "foobar" {
- // Test unhappy paths when applying a plan file describing a state store.
- func TestApply_plan_stateStore_errorCases(t *testing.T) {
- 	t.Run("error when the provider doesn't include the state store named in the plan", func(t *testing.T) {
--		// Don't disable input, so input would be asked
--		// Set some default reader/writers for the inputs
--		uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--			Reader: new(bytes.Buffer),
--			Writer: new(bytes.Buffer),
--		}, nil, nil)
--
- 		// Create the plan file that includes a state store
- 		ver := version.Must(version.NewVersion("1.2.3"))
- 		providerCfg := cty.ObjectVal(map[string]cty.Value{
-@@ -1092,7 +1074,6 @@ func TestApply_plan_stateStore_errorCases(t *testing.T) {
- 					Providers: map[addrs.Provider]providers.Factory{
- 						addrs.NewDefaultProvider("test"): providers.FactoryFixed(mock),
- 					},
--					UIInput: uiInput,
- 				},
- 				View: view,
- 			},
-@@ -1114,13 +1095,6 @@ func TestApply_plan_stateStore_errorCases(t *testing.T) {
- 	})
+ 	isDefault := name == backend.DefaultStateName || name == ""
  
- 	t.Run("error when the provider doesn't implement state stores", func(t *testing.T) {
--		// Don't disable input, so input would be asked
--		// Set some default reader/writers for the inputs
--		uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--			Reader: new(bytes.Buffer),
--			Writer: new(bytes.Buffer),
--		}, nil, nil)
--
- 		// Create the plan file that includes a state store
- 		ver := version.Must(version.NewVersion("1.2.3"))
- 		providerCfg := cty.ObjectVal(map[string]cty.Value{
-@@ -1179,7 +1153,6 @@ func TestApply_plan_stateStore_errorCases(t *testing.T) {
- 					Providers: map[addrs.Provider]providers.Factory{
- 						addrs.NewDefaultProvider("test"): providers.FactoryFixed(mock),
- 					},
--					UIInput: uiInput,
- 				},
- 				View: view,
- 			},
-@@ -1286,13 +1259,6 @@ func TestApply_plan_remoteState(t *testing.T) {
- 		t.Fatalf("err: %s", err)
- 	}
- 
--	// Don't disable input, so input would be asked
--	// Set some default reader/writers for the inputs
--	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
--		Reader: new(bytes.Buffer),
--		Writer: new(bytes.Buffer),
--	}, nil, nil)
--
- 	// Create a remote state
- 	state := testState()
- 	_, srv := testRemoteState(t, state, 200)
-@@ -1331,7 +1297,6 @@ func TestApply_plan_remoteState(t *testing.T) {
- 
- 	p := testProvider()
- 	testingOverrides := metaOverridesForProvider(p)
--	testingOverrides.UIInput = uiInput
- 
- 	view, done := testView(t)
- 	c := &ApplyCommand{
 ```
 
-**File**: `internal/command/plan_test.go` (modified, +6/-16)
+**File**: `internal/backend/local/backend_test.go` (modified, +6/-6)
 ```diff
-@@ -24,7 +24,6 @@ import (
- 	backendinit "github.com/hashicorp/terraform/internal/backend/init"
- 	"github.com/hashicorp/terraform/internal/checks"
- 	"github.com/hashicorp/terraform/internal/command/clistate"
--	"github.com/hashicorp/terraform/internal/command/ui"
- 	"github.com/hashicorp/terraform/internal/configs/configschema"
- 	"github.com/hashicorp/terraform/internal/plans"
- 	"github.com/hashicorp/terraform/internal/providers"
-@@ -880,12 +879,6 @@ func TestPlan_stateDefault(t *testing.T) {
+@@ -436,9 +436,9 @@ func TestLocal_StatePaths_defaultWorkspace(t *testing.T) {
+ 	b.StatePath = configPath    // equivalent of path = "new-path.tfstate" in config
+ 	b.StateOutPath = configPath // equivalent of path = "new-path.tfstate" in config
+ 	override := "override.tfstate"
+-	b.OverrideStatePath = override
+-	b.OverrideStateOutPath = override
+-	b.OverrideStateBackupPath = override
++	b.overrideStatePath = override
++	b.overrideStateOutPath = override
++	b.overrideStateBackupPath = override
+ 
+ 	path, out, back = b.StatePaths("")
+ 
+@@ -525,9 +525,9 @@ func TestLocal_StatePaths_nonDefaultWorkspace(t *testing.T) {
+ 	b = New()
+ 	b.StateWorkspaceDir = workingDir // equivalent of setting working_dir = "my/alternative/state/dir" in config
+ 	override := "override.tfstate"
+-	b.OverrideStatePath = override
+-	b.OverrideStateOutPath = override
+-	b.OverrideStateBackupPath = override
++	b.overrideStatePath = override
++	b.overrideStateOutPath = override
++	b.overrideStateBackupPath = override
+ 
+ 	path, out, back = b.StatePaths(workspace)
+ 
+```
+
+**File**: `internal/backend/local/cli.go` (modified, +9/-9)
+```diff
+@@ -16,19 +16,19 @@ func (b *Local) CLIInit(opts *backendrun.CLIOpts) error {
+ 	b.OpValidation = opts.Validation
+ 
+ 	// configure any new cli options
+-	if opts.StatePath != "" {
+-		log.Printf("[TRACE] backend/local: CLI option -state is overriding state path to %s", opts.StatePath)
+-		b.OverrideStatePath = opts.StatePath
++	if opts.OverrideStatePath != "" {
++		log.Printf("[TRACE] backend/local: CLI option -state is overriding state path to %s", opts.OverrideStatePath)
++		b.overrideStatePath = opts.OverrideStatePath
+ 	}
+ 
+-	if opts.StateOutPath != "" {
+-		log.Printf("[TRACE] backend/local: CLI option -state-out is overriding state output path to %s", opts.StateOutPath)
+-		b.OverrideStateOutPath = opts.StateOutPath
++	if opts.OverrideStateOutPath != "" {
++		log.Printf("[TRACE] backend/local: CLI option -state-out is overriding state output path to %s", opts.OverrideStateOutPath)
++		b.overrideStateOutPath = opts.OverrideStateOutPath
+ 	}
+ 
+-	if opts.StateBackupPath != "" {
+-		log.Printf("[TRACE] backend/local: CLI option -backup is overriding state backup path to %s", opts.StateBackupPath)
+-		b.OverrideStateBackupPath = opts.StateBackupPath
++	if opts.OverrideStateBackupPath != "" {
++		log.Printf("[TRACE] backend/local: CLI option -backup is overriding state backup path to %s", opts.OverrideStateBackupPath)
++		b.overrideStateBackupPath = opts.OverrideStateBackupPath
+ 	}
+ 
+ 	return nil
+```
+
+**File**: `internal/backend/remote/backend.go` (modified, +6/-4)
+```diff
+@@ -100,9 +100,12 @@ type Remote struct {
+ 	ignoreVersionConflict bool
  }
  
- func TestPlan_validate(t *testing.T) {
--	// Ask for input
--	uiInput := ui.NewUIInputForTests(
--		ui.UIInputOptions{},
--		nil, nil,
--	)
+-var _ backend.Backend = (*Remote)(nil)
+-var _ backendrun.OperationsBackend = (*Remote)(nil)
+-var _ backendrun.Local = (*Remote)(nil)
++var (
++	_ backend.Backend              = (*Remote)(nil)
++	_ backendrun.OperationsBackend = (*Remote)(nil)
++	_ backendrun.Local             = (*Remote)(nil)
++	_ backendrun.CLI               = (*Remote)(nil)
++)
+ 
+ // New creates a new initialized remote backend.
+ func New(services *disco.Disco) *Remote {
+@@ -760,7 +763,6 @@ func (b *Remote) fetchWorkspace(ctx context.Context, organization string, name s
+ // Operation implements backendrun.OperationsBackend.
+ func (b *Remote) Operation(ctx context.Context, op *backendrun.Operation) (*backendrun.RunningOperation, error) {
+ 	w, err := b.fetchWorkspace(ctx, b.organization, op.Workspace)
 -
- 	td := t.TempDir()
- 	testCopyDir(t, testFixturePath("plan-invalid"), td)
- 	t.Chdir(td)
-@@ -909,7 +902,6 @@ func TestPlan_validate(t *testing.T) {
+ 	if err != nil {
+ 		return nil, err
  	}
- 
- 	testingOverrides := metaOverridesForProvider(p)
--	testingOverrides.UIInput = uiInput
- 
- 	view, done := testView(t)
- 	c := &PlanCommand{
-@@ -1063,10 +1055,9 @@ func TestPlan_providerArgumentUnset(t *testing.T) {
- 	t.Chdir(td)
- 
- 	// The plan command will prompt for interactive input of provider.test.region
--	reader := bytes.NewBufferString("us-east-1\n")
--	uiInput := ui.NewUIInputForTests(ui.UIInputOptions{
--		Reader: reader,
--	}, nil, nil)
-+	uiInput, _ := testInputMap(t, map[string]string{
-+		"provider.test.region": "us-east-1",
-+	})
- 
- 	p := planFixtureProvider()
- 	// override the planFixtureProvider schema to include a required provider argument
-@@ -1145,10 +1136,9 @@ func TestPlan_providerConfigMerge(t *testing.T) {
- 	t.Chdir(td)
- 
- 	// The plan command will prompt for interactive input of provider.test.region
--	reader := bytes.NewBufferString("us-east-1\n")
--	uiInput := ui.NewUIInputForTests(ui.UIInputOptions{
--		Reader: reader,
--	}, nil, nil)
-+	uiInput, _ := testInputMap(t, map[string]string{
-+		"provider.test.region": "us-east-1",
-+	})
- 
- 	p := planFixtureProvider()
- 	// override the planFixtureProvider schema to include a required provider argument and a nested block
 ```
 
-**File**: `internal/command/refresh_test.go` (modified, +3/-6)
+**File**: `internal/cloud/backend.go` (modified, +7/-4)
 ```diff
-@@ -4,7 +4,6 @@
- package command
+@@ -126,10 +126,13 @@ type Cloud struct {
+ 	input bool
+ }
  
- import (
--	"bytes"
- 	"fmt"
- 	"io/ioutil"
- 	"os"
-@@ -19,7 +18,6 @@ import (
- 	"github.com/zclconf/go-cty/cty"
+-var _ backend.Backend = (*Cloud)(nil)
+-var _ backendrun.OperationsBackend = (*Cloud)(nil)
+-var _ backendrun.Local = (*Cloud)(nil)
+-var _ backendrun.ConstVariableSupplier = (*Cloud)(nil)
++var (
++	_ backend.Backend                  = (*Cloud)(nil)
++	_ backendrun.OperationsBackend     = (*Cloud)(nil)
++	_ backendrun.Local                 = (*Cloud)(nil)
++	_ backendrun.ConstVariableSupplier = (*Cloud)(nil)
++	_ backendrun.CLI                   = (*Cloud)(nil)
++)
  
- 	"github.com/hashicorp/terraform/internal/addrs"
--	"github.com/hashicorp/terraform/internal/command/ui"
- 	"github.com/hashicorp/terraform/internal/configs/configschema"
- 	"github.com/hashicorp/terraform/internal/providers"
- 	"github.com/hashicorp/terraform/internal/states"
-@@ -550,10 +548,9 @@ func TestRefresh_varsUnset(t *testing.T) {
- 	t.Chdir(td)
- 
- 	// Ask for input
--	reader := bytes.NewBufferString("bar\n")
--	uiInput := ui.NewUIInputForTests(ui.UIInputOptions{
--		Reader: reader,
--	}, []string{}, map[string]string{})
-+	uiInput, _ := testInputMap(t, map[string]string{
-+		"var.should_ask": "bar",
-+	})
- 
- 	state := testState()
- 	statePath := testStateFile(t, state)
+ // New creates a new initialized cloud backend.
+ func New(services *disco.Disco) *Cloud {
 ```
 
-**File**: `internal/command/state_replace_provider_test.go` (modified, +16/-8)
+**File**: `internal/command/console.go` (modified, +1/-1)
 ```diff
-@@ -84,9 +84,11 @@ func TestStateReplaceProvider(t *testing.T) {
- 					testingOverrides: &testingOverrides{
- 						// Respond to the interactive approval prompt
- 						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--							Reader: bytes.NewBufferString("yes\n"),
-+							Reader: nil,
- 							Writer: streams.Stdout.File,
--						}, nil, nil),
-+						}, nil, map[string]string{
-+							"replace-provider": "yes",
-+						}),
- 					},
- 				},
- 			},
-@@ -198,9 +200,11 @@ Successfully replaced provider for 2 resources.
- 					testingOverrides: &testingOverrides{
- 						// Respond to the interactive approval prompt
- 						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--							Reader: bytes.NewBufferString("no\n"),
-+							Reader: nil,
- 							Writer: streams.Stdout.File,
--						}, nil, nil),
-+						}, nil, map[string]string{
-+							"replace-provider": "no",
-+						}),
- 					},
- 				},
- 			},
-@@ -434,9 +438,11 @@ func TestStateReplaceProvider_stateStore(t *testing.T) {
+@@ -50,7 +50,7 @@ func (c *ConsoleCommand) Run(rawArgs []string) int {
+ 	}
  
- 					// Respond to the interactive approval prompt
- 					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--						Reader: bytes.NewBufferString("yes\n"),
-+						Reader: nil,
- 						Writer: streams.Stdout.File,
--					}, nil, nil),
-+					}, nil, map[string]string{
-+						"replace-provider": "yes",
-+					}),
- 				},
- 				View: view,
- 			},
-@@ -656,9 +662,11 @@ func TestStateReplaceProvider_checkRequiredVersion(t *testing.T) {
- 				testingOverrides: &testingOverrides{
- 					// Respond to the interactive approval prompt
- 					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--						Reader: bytes.NewBufferString("yes\n"),
-+						Reader: nil,
- 						Writer: streams.Stdout.File,
--					}, nil, nil),
-+					}, nil, map[string]string{
-+						"replace-provider": "yes",
-+					}),
- 				},
- 			},
- 		},
+ 	// Copy parsed flags back to Meta
+-	c.Meta.statePath = parsedArgs.StatePath
++	c.Meta.overrideStatePath = parsedArgs.StatePath
+ 	c.Meta.input = parsedArgs.InputEnabled
+ 	c.Meta.compactWarnings = parsedArgs.CompactWarnings
+ 	c.Meta.targetFlags = parsedArgs.TargetFlags
 ```
 
-**File**: `internal/command/ui/ui_input.go` (modified, +10/-0)
+**File**: `internal/command/import.go` (modified, +3/-3)
 ```diff
-@@ -164,6 +164,11 @@ func (i *uIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string,
- 	if len(i.testInputResponse) != 0 {
- 		v := i.testInputResponse[0]
- 		i.testInputResponse = i.testInputResponse[1:]
-+
-+		// Print a newline so that any further output starts properly
-+		// on a new line.
-+		fmt.Fprintln(i.Writer)
-+
- 		return v, nil
- 	}
+@@ -32,9 +32,9 @@ func (c *ImportCommand) Run(args []string) int {
+ 	parsedArgs, diags := arguments.ParseImport(c.Meta.process(args))
  
-@@ -176,6 +181,11 @@ func (i *uIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string,
- 		}
- 
- 		delete(i.testInputResponseMap, opts.Id)
-+
-+		// Print a newline so that any further output starts properly
-+		// on a new line.
-+		fmt.Fprintln(i.Writer)
-+
- 		return v, nil
- 	}
- 
+ 	// Copy parsed flags back to Meta
+-	c.Meta.statePath = parsedArgs.State.StatePath
+-	c.Meta.stateOutPath = parsedArgs.State.StateOutPath
+-	c.Meta.backupPath = parsedArgs.State.BackupPath
++	c.Meta.overrideStatePath = parsedArgs.State.StatePath
++	c.Meta.overrideStateOutPath = parsedArgs.State.StateOutPath
++	c.Meta.overrideBackupPath = parsedArgs.State.BackupPath
+ 	c.Meta.stateLock = parsedArgs.State.Lock
+ 	c.Meta.stateLockTimeout = parsedArgs.State.LockTimeout
+ 	c.Meta.parallelism = parsedArgs.Parallelism
+```
+
+---
+
+### Incident Patch 2: `87c4c161` (2026-10-22)
+**Commit Message**: Add changelog
+
+**File**: `.changes/v1.18/BUG FIXES-20261022-165935.yaml` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: 'state: Release file handles after unlocked writes to improve Windows compatibility'
++time: 2026-10-22T16:59:35.046795+02:00
++custom:
++    Issue: "39435"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2660,71 +2599,45 @@ Also I fix handling of mocked test inputs so a newline is printed to the termina
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: Refactor how mock user input is defined in tests, fix minor difference in
+## X. Clarify state flag usage
 
 **RULE**:
-When implementing operations in `internal/command/apply_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/backend/backendrun/cli.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80e6fc28`: tests: Refactor how mock user input is defined in tests, fix minor difference in output when prompting for input in tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a1f0dad`: Clarify state flag usage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/apply_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/backend/backendrun/cli.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	uiInput, _ := testInputMap(t, map[string]string{
-		"var.foo": "foo",
-	})
-	uiInput, _ := testInputMap(t, map[string]string{
-		"var.bar": "one",
-	})
+	// OverrideStatePath (-state CLI flag) will override the local path where state is read from.
+	// OverrideStateOutPath (-state-out CLI flag) will override the local path where the state will be written.
+	// If this is empty, it will default to OverrideStatePath.
+	// StateBackupPath (-state-backup CLI flag) will enable creating a backup file at that path.
+	//
+	// These are currently only used in the local backend.
+	OverrideStatePath       string
+	OverrideStateOutPath    string
+	OverrideStateBackupPath string
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	"bytes"
-	tfui "github.com/hashicorp/terraform/internal/command/ui"
-	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
-		Reader: bytes.NewBufferString("foo\n"),
-		Writer: new(bytes.Buffer),
-	}, nil, nil)
-	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
-		Reader: bytes.NewBufferString("one\ntwo\n"),
-		Writer: new(bytes.Buffer),
-	}, nil, nil)
-	// Don't disable input, so input would be asked
-	uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
-		Reader: new(bytes.Buffer),
-		Writer: new(bytes.Buffer),
-	}, nil, nil)
-
-	testingOverrides.UIInput = uiInput
-		// Don't disable input, so input would be asked
-		// Set some default reader/writers for the inputs
-		uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
-			Reader: new(bytes.Buffer),
-			Writer: new(bytes.Buffer),
-		}, nil, nil)
-
-					UIInput: uiInput,
-		// Don't disable input, so input would be asked
-		// Set some default reader/writers for the inputs
-		uiInput := tfui.NewUIInputForTests(tfui.UIInputOptions{
-			Reader: new(bytes.Buffer),
-			Writer: new(bytes.Buffer),
-		}, nil, nil)
-
-					UIInput: uiInput,
-	// Don't disable input, so input would be asked
-	// Set some default reader/writers for the inputs
-	uiInput :
+	// StatePath is the local path where state is read from.
+	// StateOutPath is the local path where the state will be written.
+	// If this is empty, it will default to StatePath.
+	// StateBackupPath is the local path where a backup file will be written.
+	StatePath       string
+	StateOutPath    string
+	StateBackupPath string
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80e6fc28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a1f0dad` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

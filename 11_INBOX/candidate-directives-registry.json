@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T04:54:35.967Z",
+  "last_updated": "2026-11-24T05:14:23.957Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53097,6 +53097,70 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BD9C52-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-PKZ9",
+      "directive_title": "Clarify state flag usage",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PKZ9-clarify-state-flag-usage.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PEBG",
+      "directive_title": "compare periods that both have data",
+      "source_repo": "crawlseo/crawlseo",
+      "source_commit": "4d8d7ea2",
+      "staged_file": "11_INBOX/candidate-directives/CD-PEBG-compare-periods-that-both-have-data.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PH6S",
+      "directive_title": "将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+      "source_repo": "liyupi/yu-ai-agent",
+      "source_commit": "8b08b4bd",
+      "staged_file": "11_INBOX/candidate-directives/CD-PH6S-readme-13-doc-images.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-PK8K",
+      "directive_title": "metrics): compare periods that both have data",
+      "source_repo": "crawlseo-crawlseo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PK8K-metrics-compare-periods-that-both-have-data.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-75E040",
+      "directive_title": "Clarify state flag usage",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hashicorp-terraform",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-75E040-clarify-state-flag-usage.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-PNIS",
+      "directive_title": "docs: 将 README 中的 13 张外链图片本地化存储至 doc/images，解决图床超时与失效问题",
+      "source_repo": "liyupi-yu-ai-agent-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PNIS-docs-readme-13-doc-images.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
     }
   ]
 }

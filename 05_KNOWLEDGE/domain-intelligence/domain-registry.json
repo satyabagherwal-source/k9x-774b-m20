@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T04:54:36.197Z",
-  "total_records": 2491,
+  "last_updated": "2026-11-24T05:14:24.148Z",
+  "total_records": 2495,
   "domains": {
     "A": {
       "total": 20,
@@ -1138,7 +1138,7 @@
       ]
     },
     "G": {
-      "total": 436,
+      "total": 438,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1575,11 +1575,13 @@
         "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants",
         "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants",
-        "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants",
+        "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 588,
+      "total": 590,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2168,7 +2170,9 @@
         "DOM-H-AB1B4707",
         "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants",
         "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants",
-        "DOM-H-F2861F87"
+        "DOM-H-F2861F87",
+        "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants"
       ]
     },
     "I": {
@@ -17766,8 +17770,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "eaa68cad3f7e96f6139c7bf325873ef06afa0cfca3d7e5be9073b8919defe039",
-      "created_at": "2026-11-21T02:26:53.115Z"
+      "content_hash": "aa891c7f9d5590d5edb4d49592ad817989575219a2cb7eece48f44db054b770c",
+      "created_at": "2026-11-24T05:14:12.190Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -17826,8 +17830,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "f7674fb2ee070124c5ed4a704992599b82c78068b913f048c09b06eb56fd5656",
-      "created_at": "2026-11-21T02:30:01.864Z"
+      "content_hash": "4a2e5333bfd3f1d0446e1e790a3a800998b3d63dcefdd57791d9183f0f4caaf2",
+      "created_at": "2026-11-24T05:14:20.847Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -41800,6 +41804,42 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T04:54:34.006Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: crawlseo/crawlseo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlseo-crawlseo-technical-construction-intelligence-crawlseo-crawlseo-core-inv.md",
+      "repository": "crawlseo/crawlseo",
+      "content_hash": "291644a2aa6902363749ee3cad976cf6a20577109daf4e363eb85ec3f98650f7",
+      "created_at": "2026-11-24T05:14:12.277Z"
+    },
+    "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: liyupi/yu-ai-agent Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-liyupi-yu-ai-agent-architecture-intelligence-liyupi-yu-ai-agent-core-invariants.md",
+      "repository": "liyupi/yu-ai-agent",
+      "content_hash": "044710943671e94a71dc43a0f382e3232717f1070c38987fc2bead99169950cb",
+      "created_at": "2026-11-24T05:14:15.938Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: crawlseo-crawlseo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlseo-crawlseo-learnings-technical-construction-intelligence-crawlseo-crawlse.md",
+      "repository": "crawlseo-crawlseo-learnings",
+      "content_hash": "debab6c5d34d6e76352c1ad3f4efc1e0d856a41d2506aaf3c8127351623de393",
+      "created_at": "2026-11-24T05:14:19.892Z"
+    },
+    "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: liyupi-yu-ai-agent-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-liyupi-yu-ai-agent-learnings-architecture-intelligence-liyupi-yu-ai-agent-learni.md",
+      "repository": "liyupi-yu-ai-agent-learnings",
+      "content_hash": "52c69dd48333950e7e7c6ffab55414ba8a874651ab317828157dd5112c881057",
+      "created_at": "2026-11-24T05:14:24.148Z"
     }
   }
 }

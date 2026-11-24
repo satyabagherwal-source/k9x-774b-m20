@@ -12595,3 +12595,6 @@
 | `CYCLE-20261124-Z6V0` | `2026-11-24T04:53:49.308Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10203` | Yes (`677ce3fd...`) |
 | `CYCLE-20261124-ZBPO` | `2026-11-24T04:53:55.596Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10204` | Yes (`f8b733d7...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T04:54:34.114Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F2861F87` [Domain H] | Yes (`36fa9292...`) |
+| `CYCLE-20261124-PDYY` | `2026-11-24T05:14:11.578Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10205` | Yes (`0d1eab44...`) |
+| `CYCLE-20261124-PE17` | `2026-11-24T05:14:11.659Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10206` | Yes (`55fef7bc...`) |
+| `CYCLE-20261124-PGZ9` | `2026-11-24T05:14:15.477Z` | `liyupi/yu-ai-agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10207` | Yes (`a3f22a0d...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md`  
 > **Source**: github ([https://github.com/crawlseo/crawlseo](https://github.com/crawlseo/crawlseo))  
-> **Source Version**: `25e3c312`  
+> **Source Version**: `4d8d7ea2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T21:48:30.687Z  
+> **Timestamp**: 2026-11-24T05:14:10.441Z  
 > **Learning ID**: `learn-github-crawlseo-crawlseo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crawlseo/crawlseo](https://github.com/crawlseo/crawlseo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T21:43:28.331Z  
+> **Harvest Timestamp**: 2026-11-24T05:14:04.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source SEO monitoring. GSC + Site Crawler + Core Web Vitals in one dashboard.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 663 stars
+- **Stars / Engagement**: 721 stars
 
 ---
 
@@ -825,6 +825,9 @@ export function stopCrawls(crawlIds: string[], reason = "Stopped"): number {
 
 ### Core Architecture Module: `lib/date-utils.ts`
 ```
+/** Days between today and the newest date with final data in GSC. */
+const GSC_LAG_DAYS = 3;
+
 /**
  * Format date to YYYY-MM-DD for Google APIs
  */
@@ -837,17 +840,19 @@ export function formatDateForAPI(date: Date): string {
  */
 export function getDateDaysAgo(days: number): string {
   const date = new Date();
-  date.setDate(date.getDate() - days);
+  date.setUTCDate(date.getUTCDate() - days);
   return formatDateForAPI(date);
 }
 
 /**
- * Get date range for last N days
+ * Get date range for the last N days GSC has data for: exactly N dates, ending
+ * at the lag boundary. Period comparisons build the previous period from this
+ * start, so ending any later would compare a short period with a full one.
  */
 export function getDateRange(days: number): { start: string; end: string } {
   return {
-    start: getDateDaysAgo(days),
-    end: formatDateForAPI(new Date()),
+    start: getDateDaysAgo(GSC_LAG_DAYS + days - 1),
+    end: getDataLagDate(),
   };
 }
 
@@ -867,7 +872,7 @@ export function calculatePercentChange(
  * is available. Google typically has a ~3-day lag.
  */
 export function getDataLagDate(): string {
-  return getDateDaysAgo(3);
+  return getDateDaysAgo(GSC_LAG_DAYS);
 }
 
 /**
@@ -1563,459 +1568,255 @@ export function webhookDispatcher(allowPrivate: boolean = allowPrivateWebhooks()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25e3c312` (2026-11-02)
-**Commit Message**: Release v0.3.6: version bump, CHANGELOG and chat relay docs (#111)
+### Incident Patch 1: `2b28c327` (2026-11-22)
+**Commit Message**: fix(metrics): compare periods that both have data (#114)
 
-* Release v0.3.6: version bump, CHANGELOG and chat relay docs
+Period comparisons now use exactly N dates ending at the GSC lag boundary, so the current and previous periods hold the same number of days with data. getDateDaysAgo counts in UTC. The domain overview keyword count uses the same period as its other metrics.
 
-- Version 0.3.6 in package.json, packages/mcp/package.json and package-lock.json.
-- README and .env.example: current-release references move to 0.3.6.
-- CHANGELOG 0.3.6: Bing data and saved keywords through /api/v1 and the MCP (#109, #110).
-- README, Alert webhooks: Telegram, Slack or Discord through a relay of your own,
-  with a minimal Node relay for Telegram that verifies the signature.
-
-* README relay: survive unexpected payloads, cap size, time out the Telegram call
-
-A signed request with an event the relay does not forward now gets 204, bad
-JSON gets 400, and neither stops the process. The body is capped at 1 MB, the
-Telegram call times out after 8 s and the text is cut at 4096 characters.
-CHANGELOG: a saved keyword with no data has null totals over /api/v1.
-
-**File**: `.env.example` (modified, +1/-1)
+**File**: `app/api/sites/[siteId]/domain-overview/route.test.ts` (modified, +1/-4)
 ```diff
-@@ -3,7 +3,7 @@ DATABASE_URL=postgresql://crawlseo:changeme@localhost:5432/crawlseo
- 
- # ============ DOCKER COMPOSE DB CREDENTIALS ============
- # These are referenced by docker-compose.yml; set your own for non-local deployments.
--# :latest is the latest release. Override to pin a release (:0.3.5), follow
-+# :latest is the latest release. Override to pin a release (:0.3.6), follow
- # main (:edge) or use an image built from a fork.
- # CRAWLSEO_IMAGE=ghcr.io/crawlseo/crawlseo:latest
- POSTGRES_USER=crawlseo
-```
-
-**File**: `CHANGELOG.md` (modified, +24/-0)
-```diff
-@@ -3,6 +3,30 @@
- Notable changes per release. Releases before 0.3.3 are described on the
- [releases page](https://github.com/crawlseo/crawlseo/releases).
- 
-+## 0.3.6 (2026-11-02)
-+
-+### Added
-+
-+- **Bing Webmaster data through `/api/v1` and the MCP** (#109).
-+  `GET /api/v1/sites/{siteId}/bing/traffic` returns Bing's daily clicks,
-+  impressions, pages crawled, indexed pages and crawl errors (`?days=` or
-+  `?startDate=&endDate=`). `.../bing/keywords` and `.../bing/pages` return
-+  the top queries and pages, summed over the weeks that end in the period
-+  (Bing reports by week), with `&limit=`. The MCP tools are
-+  `get_bing_traffic`, `get_bing_keywords` and `get_bing_pages`. Thanks to
-+  @rafaferreira.
-+- **Saved keywords through `/api/v1` and the MCP** (#110).
-+  `GET /api/v1/sites/{siteId}/saved-keywords` and the MCP tool
-+  `get_saved_keywords` return the saved keywords of a site, newest first,
-+  with their notes and their Search Console clicks, impressions, average
-+  position and CTR for the period (`?days=` or `?startDate=&endDate=`). A
-+  saved keyword with no Search Console data in the period has `null` clicks,
-+  impressions, position and CTR (shown as `-` in the MCP).
-+  Thanks to @rafaferreira.
-+- README: Telegram, Slack or Discord alerts through a webhook relay of your
-+  own, with a small Node example for Telegram. See
-+  [Alert webhooks](README.md#alert-webhooks).
-+
- ## 0.3.5 (2026-10-26)
- 
- ### Changed
-```
-
-**File**: `README.md` (modified, +48/-3)
-```diff
-@@ -236,15 +236,15 @@ Image tags:
- | Tag | What it is |
- |---|---|
- | `latest` | The latest release. Moves only when a version is tagged. |
--| `0.3.5`, `0.3` | A release, and the newest patch of a minor version. |
-+| `0.3.6`, `0.3` | A release, and the newest patch of a minor version. |
- | `edge` | The latest build of `main`, ahead of the last release. |
- | `sha-<commit>` | One exact build, for main pushes and releases. |
- 
- To pin a release, follow `main`, or use an image from a fork, set
- `CRAWLSEO_IMAGE` in `.env`:
- 
- ```bash
--CRAWLSEO_IMAGE=ghcr.io/crawlseo/crawlseo:0.3.5
-+CRAWLSEO_IMAGE=ghcr.io/crawlseo/crawlseo:0.3.6
- ```
- 
- To build locally instead, build the same image name before starting Compose:
-@@ -378,7 +378,7 @@ Each delivery is a JSON POST:
-     }
-   ],
-   "url": "https://seo.example.com/sites/cmgz.../alerts",
--  "crawlseo": { "version": "0.3.5" }
-+  "crawlseo": { "version": "0.3.6" }
- }
- ```
- 
-@@ -417,6 +417,51 @@ redirects are not followed (set the final URL). Settings shows the last
- delivery and its error. On Vercel a failed delivery is retried in the same
- request after 2, 10 and 30 seconds, then at the next cron run.
- 
-+**Telegram, Slack, Discord.** crawlseo has no built-in chat integrations.
-+Point the webhook at a relay of your own (n8n, Make, Zapier or a small script)
-+that verifies the signature as above and forwards the alert text to your chat.
-+In n8n that is a Webhook node, a Code node that checks the signature, and a
-+Telegram, Slack or Discord node. A minimal Node script for Telegram, with your
-+own bot token and chat id in the environment:
-+
-+```js
-+// relay.mjs: crawlseo alert webhook -> Telegram. Node 18+, no dependencies.
-+import { createServer } from "node:http";
-+import { createHmac, timingSafeEqual } from "node:crypto";
-+
-+const { WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, PORT = "8787" } = process.env;
-+if (!WEBHOOK_SECRET || !TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) throw new Error("Set WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID");
-+
-+function verify(rawBody, headers) {
-+  const timestamp = headers["x-crawlseo-timestamp"];
-+  const expected = "sha256=" + createHmac("sha256", WEBHOOK_SECRET).update(`${timestamp}.${rawBody}`).digest("hex");
-+  const given = Buffer.from(headers["x-crawlseo-signature"] ?? "");
-+  const fresh = Math.abs(Date.now() / 1000 - Number(timestamp)) < 300;
-+  return fresh && given.length === expected.length && timingSafeEqual(given, Buffer.from(expected));
-+}
-+
-+createServer(async (req, res) => {
-+  try {
-+    if (req.method !== "POST" || !(Number(req.headers["content-length"]) < 1e6)) return res.writeHead(400).end();
-+    const chunks = []; for await (const chunk of req) chunks.push(chunk);
-+    const raw = Buffer.concat(chunks).toString("utf8");
-+    if (!verify(raw, req.headers)) return res.writeHead(401).end();
-+    const p = JSON.parse(raw);
-+    const lines = p.event === "test" ? [p.message] : Array.isArray(p.alerts) ? p.alerts.map((a) => a.message) : [];
-+    if (!lines.length) return res.writeHead(204).end(); // an event this relay does not forward
-+    const text = [...lines, p.url].filter(Boolean).join("\n").slice(0, 4096);
-+    const sent = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }), signal: AbortSignal.timeout(8000) }).then((r) => r.ok, () => false);
-+    res.writeHead(sent ? 200 : 502).end(); // 502: crawlseo retries later
-+  } catch { if (!res.headersSent) res.writeHead(400).end(); } // bad JSON or a broken request: never crash
-+}).listen(Number(PORT));
-+```
-+
-+Run it with `WEBHOOK_SECRET`, `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` set,
-+behind HTTPS, and set its URL in **Settings > Alert webhook**. For Slack or
-+Discord, post the same text to an incoming webhook URL instead (`{ text }`
-+for Slack, `{ content }` for Discord, which takes at most 2000 characters). A relay on your own network needs
-+`ALERT_WEBHOOK_ALLOW_PRIVATE=true` (see below).
-+
- **Where webhooks may go.** The URL is checked with the same guard as the
- crawler, on save and again on every connection, so a name that resolves to a
- private, loopback, link-local or reserved address is refused, also when its
-```
-
-**File**: `package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "crawlseo",
--  "version": "0.3.5",
-+  "version": "0.3.6",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "crawlseo",
--      "version": "0.3.5",
-+      "version": "0.3.6",
-       "license": "MIT",
-       "dependencies": {
-         "@auth/core": "^0.41.0",
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "crawlseo",
--  "version": "0.3.5",
-+  "version": "0.3.6",
-   "private": true,
-   "description": "Open-source SEO monitoring. GSC + Crawler + Core Web Vitals + MCP in one dashboard.",
-   "homepage": "https://github.com/crawlseo/crawlseo",
-```
-
-**File**: `packages/mcp/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@crawlseo/mcp",
--  "version": "0.3.5",
-+  "version": "0.3.6",
-   "description": "Read-only MCP server for crawlseo: your Search Console data, crawl issues, Core Web Vitals and SEO opportunities for AI agents, through your own instance's API.",
-   "keywords": [
-     "mcp",
-```
-
----
-
-### Incident Patch 2: `ef7f4134` (2026-11-02)
-**Commit Message**: feat(mcp): read saved keywords through /api/v1 and the MCP (#110)
-
-The keywords a user saves to track are only on the Saved keywords page.
-Adds read-only GET /api/v1/sites/{id}/saved-keywords and the
-get_saved_keywords tool: each saved keyword with its notes and its Search
-Console totals for the period, computed as get_keywords computes them.
-
-Co-authored-by: Rafael Ferreira <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -189,6 +189,7 @@ Tested end to end with Claude Code.
- | `get_bing_traffic` | Bing daily clicks, impressions and pages crawled, with Bing's indexed-page and crawl-error counts per day |
- | `get_bing_keywords` | Top Bing queries, summed over the weeks that end in the period (Bing reports by week) |
- | `get_bing_pages` | Top pages in Bing, summed the same way |
-+| `get_saved_keywords` | Your saved keywords with their notes and Search Console totals, for the last N days or a date range |
- 
- The MCP talks only to your own instance, so it adds no outside service to [Your data stays yours](#your-data-stays-yours).
- 
-```
-
-**File**: `lib/api-v1/handlers.ts` (modified, +30/-0)
-```diff
-@@ -259,3 +259,33 @@ export async function bingPages(site: Site, params: URLSearchParams) {
-   const { totals, ...rest } = await bingSearch(site, params, "page");
-   return { ...rest, pages: totals.map(({ key, ...t }) => ({ url: key, ...t })) };
- }
-+/**
-+ * The keywords the user saved for the site, newest first, each with its
-+ * Search Console totals for the period, computed as get_keywords computes
-+ * them. A saved keyword with no Search Console row in the period has null
-+ * totals.
-+ */
-+export async function savedKeywords(site: Site, params: URLSearchParams) {
-+  const { period, startDate, endDate } = periodParam(params, 28);
-+  const saved = await db.savedKeyword.findMany({
-+    where: { siteId: site.id },
-+    orderBy: { createdAt: "desc" },
-+    select: { query: true, notes: true, createdAt: true },
-+  });
-+  const rows = saved.length
-+    ? await getTopKeywords(site.id, period, saved.length, saved.map((s) => s.query))
-+    : [];
-+  const byQuery = new Map(rows.map(({ query, ...totals }) => [query, totals]));
-+  return {
-+    site,
-+    startDate,
-+    endDate,
-+    savedKeywords: saved.map((s) => ({
-+      query: s.query,
-+      notes: s.notes,
-+      savedAt: s.createdAt,
-+      ...(byQuery.get(s.query) ?? { clicks: null, impressions: null, position: null, ctr: null }),
-+    })),
-+  };
-+}
-+
-```
-
-**File**: `lib/api-v1/router.test.ts` (modified, +35/-0)
-```diff
-@@ -112,6 +112,7 @@ describe("read-only", () => {
-       "/sites/site-a/crawls/crawl-a2/issues",
-       "/sites/site-a/vitals",
-       "/sites/site-a/opportunities",
-+      "/sites/site-a/saved-keywords",
-       "/sites/site-a/bing/traffic",
-       "/sites/site-a/bing/keywords",
-       "/sites/site-a/bing/pages",
-@@ -141,6 +142,7 @@ describe("user isolation", () => {
-       "/sites/site-b/crawls/crawl-b1/issues",
-       "/sites/site-b/vitals",
-       "/sites/site-b/opportunities",
-+      "/sites/site-b/saved-keywords",
-       "/sites/site-b/bing/traffic",
-       "/sites/site-b/bing/keywords",
-       "/sites/site-b/bing/pages",
-@@ -349,6 +351,39 @@ describe("Bing", () => {
-   });
+@@ -4,7 +4,6 @@ const { auth, db, domainOverview, backlinksOverview, getSitePeriodMetrics } = vi
+   auth: vi.fn(),
+   db: {
+     site: { findUnique: vi.fn() },
+-    keyword: { groupBy: vi.fn() },
+   },
+   domainOverview: vi.fn(),
+   backlinksOverview: vi.fn(),
+@@ -26,7 +25,7 @@ const backlinks = {
+   totalBacklinks: 42, referringDomains: 12, referringIps: 10, dofollow: 30, nofollow: 12,
+ };
+ const metrics = {
+-  current: { clicks: 7, impressions: 80, avgPosition: 12 },
++  current: { clicks: 7, impressions: 80, avgPosition: 12, uniqueKeywords: 1 },
+   previous: { clicks: 5, impressions: 60, avgPosition: 14 },
+   deltas: { clicks: 2, impressions: 20, avgPosition: -2 },
+ };
+@@ -44,7 +43,6 @@ beforeEach(() => {
+   domainOverview.mockResolvedValue(overview);
+   backlinksOverview.mockResolvedValue(backlinks);
+   getSitePeriodMetrics.mockResolvedValue(metrics);
+-  db.keyword.groupBy.mockResolvedValue([{ query: "own keyword" }]);
  });
  
-+describe("saved keywords", () => {
-+  type Saved = { query: string; notes: string | null; savedAt: string; clicks: number | null; impressions: number | null; position: number | null; ctr: number | null };
+ describe("GET /api/sites/[siteId]/domain-overview", () => {
+@@ -96,7 +94,6 @@ describe("GET /api/sites/[siteId]/domain-overview", () => {
+       domain: "competitor.com", overview: null, backlinks: summary,
+     });
+     expect(getSitePeriodMetrics).not.toHaveBeenCalled();
+-    expect(db.keyword.groupBy).not.toHaveBeenCalled();
+   });
+ 
+   it.each(["", "   ", "https://", "not a domain"])("rejects invalid comparison input %j before querying providers", async (domain) => {
+```
+
+**File**: `app/api/sites/[siteId]/domain-overview/route.ts` (modified, +1/-9)
+```diff
+@@ -65,19 +65,11 @@ export async function GET(
+     // Fallback to GSC data
+     const metrics = await getSitePeriodMetrics(siteId, 28);
+ 
+-    const keywordCount = await db.keyword.groupBy({
+-      by: ["query"],
+-      where: {
+-        siteId,
+-        date: { gte: new Date(Date.now() - 28 * 86400000) },
+-      },
+-    });
+-
+     return Response.json({
+       source: "gsc",
+       domain: targetDomain,
+       overview: {
+-        organicKeywords: keywordCount.length,
++        organicKeywords: metrics.current.uniqueKeywords,
+         organicTraffic: metrics.current.clicks,
+         organicCost: null,
+         backlinks: null,
+```
+
+**File**: `lib/date-utils.test.ts` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { getDataLagDate, getDateDaysAgo, getDateRange } from "./date-utils";
 +
-+  it("newest first, with the same totals get_keywords gives for that query and period", async () => {
-+    const r = (await body(await get("/sites/site-a/saved-keywords"))) as unknown as { startDate: string; endDate: string; savedKeywords: Saved[] };
-+    const kw = (await body(await get("/sites/site-a/keywords?limit=1000"))) as unknown as { startDate: string; keywords: { query: string }[] };
-+    expect(r.startDate).toBe(kw.startDate);
-+    expect(r.savedKeywords.map((s) => s.query)).toEqual(["never seen query", "quilltab notes"]);
-+    const row = kw.keywords.find((k) => k.query === "quilltab notes")!;
-+    expect(r.savedKeywords[1]).toEqual({ ...row, notes: null, savedAt: daysAgo(5).toISOString() });
-+    expect(r.savedKeywords[1].clicks).toBeGreaterThan(0);
++const originalTz = process.env.TZ;
++
++beforeEach(() => {
++  vi.useFakeTimers({ toFake: ["Date"] });
++});
++
++afterEach(() => {
++  vi.useRealTimers();
++  if (originalTz === undefined) delete process.env.TZ;
++  else process.env.TZ = originalTz;
++});
++
++const datesIn = ({ start, end }: { start: string; end: string }) =>
++  (Date.parse(end) - Date.parse(start)) / 86_400_000 + 1;
++
++describe("getDateRange", () => {
++  it("ends at the newest date GSC has", () => {
++    vi.setSystemTime(new Date("2026-03-20T12:00:00Z"));
++    expect(getDateRange(7).end).toBe("2026-03-17");
++    expect(getDateRange(7).end).toBe(getDataLagDate());
 +  });
 +
-+  it("a saved keyword with no Search Console row in the period has null totals, and keeps its notes", async () => {
-+    const r = (await body(await get("/sites/site-a/saved-keywords"))) as unknown as { savedKeywords: Saved[] };
-+    expect(r.savedKeywords[0]).toEqual({
-+      query: "never seen query",
-+      notes: "launch target",
-+      savedAt: daysAgo(2).toISOString(),
-+      clicks: null,
-+      impressions: null,
-+      position: null,
-+      ctr: null,
-+    });
-+  });
-+
-+  it("takes a date range; outside the data every total is null", async () => {
-+    const r = (await body(await get("/sites/site-a/saved-keywords?startDate=2020-01-01&endDate=2020-01-31"))) as unknown as { savedKeywords: Saved[] };
-+    expect(r.savedKeywords.map((s) => s.clicks)).toEqual([null, null]);
-+    expect((await get("/sites/site-a/saved-keywords?days=0")).status).toBe(400);
++  it("spans exactly the requested number of dates", () => {
++    vi.setSystemTime(new Date("2026-03-20T12:00:00Z"));
++    expect(getDateRange(7)).toEqual({ start: "2026-03-11", end: "2026-03-17" });
++    expect(datesIn(getDateRange(7))).toBe(7);
++    expect(datesIn(getDateRange(28))).toBe(28);
 +  });
 +});
 +
- describe("rate limit", () => {
-   it("allows API_RATE_LIMIT_PER_MINUTE requests per key, then 429 with Retry-After", async () => {
-     vi.stubEnv("API_RATE_LIMIT_PER_MINUTE", "3");
++describe("getDateDaysAgo", () => {
++  it("counts whole UTC days across a clock change", () => {
++    process.env.TZ = "Europe/London";
++    vi.setSystemTime(new Date("2026-11-06T00:30:00Z"));
++    expect(getDateDaysAgo(28)).toBe("2026-10-09");
++  });
++
++  it("gives the same date whatever the server's time zone", () => {
++    vi.setSystemTime(new Date("2026-03-20T01:30:00Z"));
++    for (const tz of ["UTC", "America/Sao_Paulo", "Asia/Tokyo"]) {
++      process.env.TZ = tz;
++      expect(getDateDaysAgo(3)).toBe("2026-03-17");
++    }
++  });
++});
 ```
 
-**File**: `lib/api-v1/router.ts` (modified, +3/-0)
+**File**: `lib/date-utils.ts` (modified, +10/-5)
 ```diff
-@@ -23,6 +23,7 @@ import { ApiError } from "./params";
-  * GET /api/v1/sites/{siteId}/bing/traffic          Bing daily rows, ?days= or ?startDate=&endDate=
-  * GET /api/v1/sites/{siteId}/bing/keywords         Bing weekly queries summed over the period, &limit=
-  * GET /api/v1/sites/{siteId}/bing/pages            the same for pages
-+ * GET /api/v1/sites/{siteId}/saved-keywords       saved keywords with their totals, ?days= or ?startDate=&endDate=
+@@ -1,3 +1,6 @@
++/** Days between today and the newest date with final data in GSC. */
++const GSC_LAG_DAYS = 3;
++
+ /**
+  * Format date to YYYY-MM-DD for Google APIs
   */
+@@ -10,17 +13,19 @@ export function formatDateForAPI(date: Date): string {
+  */
+ export function getDateDaysAgo(days: number): string {
+   const date = new Date();
+-  date.setDate(date.getDate() - days);
++  date.setUTCDate(date.getUTCDate() - days);
+   return formatDateForAPI(date);
+ }
  
- const PREFIX = "/api/v1/";
-@@ -82,6 +83,8 @@ async function route(owner: KeyOwner, segments: string[], params: URLSearchParam
-         return read.vitals(site, params);
-       case "opportunities":
-         return read.opportunities(site);
-+      case "saved-keywords":
-+        return read.savedKeywords(site, params);
-     }
-   }
-   if (segments.length === 4 && resource === "bing") {
-```
-
-**File**: `lib/seo-metrics.ts` (modified, +7/-2)
-```diff
-@@ -163,17 +163,22 @@ export async function getSitePeriodMetrics(
+ /**
+- * Get date range for last N days
++ * Get date range for the last N days GSC has data for: exactly N dates, ending
++ * at the lag boundary. Period comparisons build the previous period from this
++ * start, so ending any later would compare a short period with a full one.
+  */
+ export function getDateRange(days: number): { start: string; end: string } {
+   return {
+-    start: getDateDaysAgo(days),
+-    end: formatDateForAPI(new Date()),
++    start: getDateDaysAgo(GSC_LAG_DAYS + days - 1),
++    end: getDataLagDate(),
    };
  }
  
--/** Aggregate keyword rows across the period (sum metrics, weighted position). */
-+/**
-+ * Aggregate keyword rows across the period (sum metrics, weighted position).
-+ * `queries` keeps only those queries.
-+ */
- export async function getTopKeywords(
-   siteId: string,
-   period: Period = 28,
--  limit = 50
-+  limit = 50,
-+  queries?: string[]
- ): Promise<KeywordRow[]> {
-   const range = parseRange(period);
-   const rows = await db.keyword.findMany({
-     where: {
-       siteId,
-       date: { gte: range.start, lte: range.end },
-+      ...(queries && { query: { in: queries } }),
-     },
-     select: {
-       query: true,
-```
-
-**File**: `lib/testing/api-fixtures.ts` (modified, +10/-0)
-```diff
-@@ -58,6 +58,15 @@ export async function seedApiFixtures(db: PrismaClient): Promise<Fixtures> {
-     ],
-   });
- 
-+  // Saved keywords: one with Search Console rows, a newer one with none.
-+  await db.savedKeyword.createMany({
-+    data: [
-+      { siteId: "site-a", query: "quilltab notes", createdAt: daysAgo(5) },
-+      { siteId: "site-a", query: "never seen query", notes: "launch target", createdAt: daysAgo(2) },
-+      { siteId: "site-b", query: "secret b saved", notes: "secret b note", createdAt: daysAgo(2) },
-+    ],
-+  });
-+
-   await db.crawl.create({
-     data: { id: "crawl-a1", siteId: "site-a", status: "COMPLETED", startedAt: daysAgo(3), finishedAt: daysAgo(3), pagesFound: 12, issuesFound: 2, healthScore: 88 },
-   });
-@@ -100,6 +109,7 @@ export async function snapshotUserData(db: PrismaClient): Promise<string> {
-     db.crawl.findMany({ orderBy: { id: "asc" } }),
-     db.crawlIssue.findMany({ orderBy: { id: "asc" } }),
-     db.vitalsReport.findMany({ orderBy: { id: "asc" } }),
-+    db.savedKeyword.findMany({ orderBy: { id: "asc" } }),
-     db.bingDaily.findMany({ orderBy: { id: "asc" } }),
-     db.bingSearchWeekly.findMany({ orderBy: { id: "asc" } }),
-     db.job.findMany({ orderBy: { id: "asc" } }),
-```
-
-**File**: `packages/mcp/README.md` (modified, +1/-0)
-```diff
-@@ -53,6 +53,7 @@ Serves streamable HTTP on `http://127.0.0.1:3333/mcp` and a health check on `/he
- | `get_bing_traffic` | Bing daily clicks, impressions and pages crawled, with Bing's indexed-page and crawl-error counts per day |
- | `get_bing_keywords` | Top Bing queries, summed over the weeks that end in the period (Bing reports by week) |
- | `get_bing_pages` | Top pages in Bing, summed the same way |
-+| `get_saved_keywords` | Your saved keywords with their notes and Search Console totals, for the last N days or a date range |
- 
- ## License
- 
-```
-
-**File**: `packages/mcp/src/formatters.ts` (modified, +34/-0)
-```diff
-@@ -331,3 +331,37 @@ export function formatBingPages(pages: (BingSearchRow & { url: string })[], p: B
-   return bingSearchTable("pages", pages.map((r) => ({ ...r, name: r.url })), p);
+@@ -40,7 +45,7 @@ export function calculatePercentChange(
+  * is available. Google typically has a ~3-day lag.
+  */
+ export function getDataLagDate(): string {
+-  return getDateDaysAgo(3);
++  return getDateDaysAgo(GSC_LAG_DAYS);
  }
  
+ /**
+```
+
+**File**: `lib/seo-metrics.test.ts` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++import type { PrismaClient } from "@prisma/client";
++import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 +
-+type SavedKeyword = {
-+  query: string;
-+  notes: string | null;
-+  savedAt: string;
-+  clicks: number | null;
-+  impressions: number | null;
-+  position: number | null;
-+  ctr: number | null;
-+};
++// Period comparisons on the real Prisma client (PGlite), with rows stored the
++// way the GSC sync stores them: one per date, none newer than the lag boundary.
 +
-+export function formatSavedKeywords(saved: SavedKeyword[], p: Period): string {
-+  if (saved.length === 0) return "No saved keywords for this site.";
++const holder = vi.hoisted(() => ({ db: null as PrismaClient | null }));
++vi.mock("@/lib/db", async () => {
++  const { lazyDb } = await import("@/lib/testing/pglite");
++  return { db: lazyDb(holder) };
++});
 +
-+  const headers = ["Keyword", "Clicks", "Impressions", "Position", "CTR", "Saved", "Notes"];
-+  const rows = saved.map((k) => [
-+    k.query.length > 50 ? k.query.slice(0, 47) + "..." : k.query,
-+    k.clicks === null ? "-" : num(k.clicks),
-+    k.impressions === null ? "-" : num(k.impressions),
-+    k.position === null ? "-" : pos(k.position),
-+    k.ctr === null ? "-" : pct(k.ctr),
-+    k.savedAt.slice(0, 10),
-+    k.notes ? (k.notes.length > 40 ? k.notes.slice(0, 37) + "..." : k.notes) : "",
-+  ]);
-+  const noData = saved.filter((k) => k.impressions === null).length;
++import { createTestDb, type TestDb } from "@/lib/testing/pglite";
++import { getSitePeriodMetrics } from "./seo-metrics";
++import { getContentDecay } from "./seo-opportunities";
 +
-+  return (
-+    `${saved.length} saved keywords, Search Console totals for ${period(p)}:\n` +
-+    (noData ? `${noData} had no Search Console data in this period ("-").\n` : "") +
-+    "\n" +
-+    formatTable(headers, rows)
-+  );
-+}
++const NOW = new Date("2026-03-20T12:00:00Z");
++const NEWEST_GSC_DATE = Date.parse("2026-03-17T00:00:00Z");
++const DAY = 86_400_000;
 +
++let t: TestDb;
++let db: PrismaClient;
++
++beforeAll(async () => {
++  t = await createTestDb();
++  db = holder.db = t.db;
++  const user = await db.user.create({ data: { email: "owner@example.com" } });
++  await db.site.create({ data: { id: "flat", userId: user.id, domain: "example.com" } });
++  await db.page.createMany({
++    data: Array.from({ length: 70 }, (_, i) => ({
++      siteId: "flat",
++      url: "https://example.com/a",
++      date: new Date(NEWEST_GSC_DATE - i * DAY),
++      clicks: 10,
++      impressions: 100,
++      ctr: 0.1,
++      position: 5,
++    })),
++  });
++  vi.useFakeTimers({ toFake: ["Date"] });
++  vi.setSystemTime(NOW);
++}, 120_000);
++
++afterEach(() => {
++  vi.setSystemTime(NOW);
++});
++
++afterAll(async () => {
++  vi.useRealTimers();
++  await t?.close();
++});
++
++describe("period comparisons", () => {
++  it.each([7, 28])("shows no change on flat traffic over %i days", async (days) => {
++    const { current, previous, deltas } = await getSitePeriodMetrics("flat", days);
++    expect(current.clicks).toBe(10 * days);
++    expect(previous.clicks).toBe(10 * days);
++    expect(deltas.clicks).toBe(0);
++    expect(deltas.impressions).toBe(0);
++  });
++
++  it("still shows traffic that really stopped", async () => {
++    vi.setSystemTime(new Date(NOW.getTime() + 7 * DAY));
++    const { current, previous, deltas } = await getSitePeriodMetrics("flat", 7);
++    expect(current.clicks).toBe(0);
++    expect(previous.clicks).toBe(70);
++    expect(deltas.clicks).toBe(-100);
++  });
++
++  it("does not report flat traffic as content decay", async () => {
++    expect(await getContentDecay("flat")).toEqual([]);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #114** (2026-11-22): fix(metrics): compare periods that both have data (@rafaferreira)
+- **PR #112** (2026-11-22): feat(mcp): inspect one URL through /api/v1 and the MCP (@rafaferreira)
 - **PR #111** (2026-11-02): Release v0.3.6: version bump, CHANGELOG and chat relay docs (@m1kedigital)
 - **PR #110** (2026-11-02): feat(mcp): read saved keywords through /api/v1 and the MCP (@rafaferreira)
 - **PR #109** (2026-10-27): feat(bing): read Bing data through /api/v1 and the MCP (@rafaferreira)
 - **PR #108** (2026-10-26): Release v0.3.5: version bump, CHANGELOG and self-hosting docs (@m1kedigital)
-- **PR #107** (2026-10-26): Email alerts through your own SMTP, a site-wide noindex warning, README wording (@m1kedigital)
-- **PR #106** (2026-10-25): Respect noindex in the crawl audit; keep only verifiable claims in the README table (@m1kedigital)
 
 ---
 
@@ -2035,28 +1836,31 @@ Co-authored-by: Rafael Ferreira <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release v0.3.6: version bump, CHANGELOG and chat relay docs (#111)
+## X. metrics): compare periods that both have data
 
 **RULE**:
-When implementing operations in `.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crawlseo/crawlseo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/api/sites/[siteId]/domain-overview/route.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crawlseo/crawlseo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25e3c312`: Release v0.3.6: version bump, CHANGELOG and chat relay docs (#111). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b28c327`: metrics): compare periods that both have data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.example`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/api/sites/[siteId]/domain-overview/route.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# :latest is the latest release. Override to pin a release (:0.3.6), follow
+  current: { clicks: 7, impressions: 80, avgPosition: 12, uniqueKeywords: 1 },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-# :latest is the latest release. Override to pin a release (:0.3.5), follow
+// Induced defect failure mode:
+    keyword: { groupBy: vi.fn() },
+  current: { clicks: 7, impressions: 80, avgPosition: 12 },
+  db.keyword.groupBy.mockResolvedValue([{ query: "own keyword" }]);
+    expect(db.keyword.groupBy).not.toHaveBeenCalled();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25e3c312` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b28c327` are properly handled with clean fallback behavior.

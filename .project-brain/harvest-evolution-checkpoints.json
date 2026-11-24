@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T04:54:36.661Z",
+  "last_updated": "2026-11-24T05:14:24.500Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T04:37:07.379Z",
@@ -983,7 +983,7 @@
       "staged_for_review": 1
     },
     "hashicorp-terraform-learnings.md": {
-      "processed_at": "2026-11-21T02:30:01.404Z",
+      "processed_at": "2026-11-24T05:14:20.261Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3796,9 +3796,19 @@
       "processed_at": "2026-11-24T02:21:42.667Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "crawlseo-crawlseo-learnings.md": {
+      "processed_at": "2026-11-24T05:14:18.991Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "liyupi-yu-ai-agent-learnings.md": {
+      "processed_at": "2026-11-24T05:14:21.225Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3663,
+  "total_dossiers_evaluated": 3666,
   "total_canonical_promoted": 499,
-  "total_staged_for_review": 2754
+  "total_staged_for_review": 2757
 }

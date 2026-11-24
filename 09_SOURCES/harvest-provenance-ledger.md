@@ -12628,3 +12628,6 @@ Every entry in this ledger must capture:
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `8f588052` | Multi-dimensional audit evidence | 2026-11-24T04:53:49.312Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `ad969b28` | Multi-dimensional audit evidence | 2026-11-24T04:53:55.601Z |
 | `learn-dom-h-f2861f87` | `project://react-react-native` | `ad969b28` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-24T04:54:34.114Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `2a1f0dad` | Multi-dimensional audit evidence | 2026-11-24T05:14:11.582Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `4d8d7ea2` | Multi-dimensional audit evidence | 2026-11-24T05:14:11.664Z |
+| `learn-github-liyupi-yu-ai-agent` | `https://github.com/liyupi/yu-ai-agent` | `8b08b4bd` | Multi-dimensional audit evidence | 2026-11-24T05:14:15.482Z |
