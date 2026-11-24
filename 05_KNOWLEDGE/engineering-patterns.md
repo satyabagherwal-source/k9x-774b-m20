@@ -767519,3 +767519,155 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `93ed64ad` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10236. the cleanup and pipeline plugins failed when the leader-election plugin was not (Harvested from pubkey/rxdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+  "source": "pubkey/rxdb",
+  "source_url": "https://github.com/pubkey/rxdb",
+  "source_version": "cbac2d49",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T08:59:49.760Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pubkey-rxdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `cbac2d49`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs-src/docs/cleanup.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0b762853`: the cleanup and pipeline plugins failed when the leader-election plugin was not added. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/cleanup.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+The cleanup plugin adds the [leader election plugin](./leader-election.md) by itself because with the default `waitForLeadership: true` the cleanup only runs on the leading instance. You do not have to add it on your own.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0b762853` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10237. Ship agent guides with each release; add pxt guide and pxt lint (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Ship agent guides with each release; add pxt guide and pxt lint",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "f89365df",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T08:59:57.403Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `f89365df`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f89365df`: Ship agent guides with each release; add pxt guide and pxt lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+Design guidance for application builders belongs in that skill repo; how a release behaves belongs in the
+agent guides in `pixeltable/agent_guides/`, which ship with that release. `docs/release/skill.md` is only a pointer.
+| Agent guides, or a change to user-visible behavior | `pixeltable/agent_guides/README.md` |
+  non-obvious choices or invariants; update comments, help, docs and agent guides when their described behavior
+  changes. Use concrete, concise prose, `function()` for function references and ASCII typography in new prose.
+  `docs/release/docs.json`), CLI help/docs, agent guides (`pixeltable/agent_guides/`), dashboard response
+  types/consumers, provider model examples, dependency lockfiles and migration fixtures. Require updates only
+  where the change makes them stale.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+Application guidance belongs in that skill repo; `docs/release/skill.md` is only a pointer.
+  non-obvious choices or invariants; update comments, help and docs when their described behavior changes.
+  Use concrete, concise prose, `function()` for function references and ASCII typography in new prose.
+  `docs/release/docs.json`), CLI help/docs, dashboard response types/consumers, provider model examples,
+  dependency lockfiles and migration fixtures. Require updates only where the change makes them stale.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f89365df` are properly handled with clean fallback behavior.

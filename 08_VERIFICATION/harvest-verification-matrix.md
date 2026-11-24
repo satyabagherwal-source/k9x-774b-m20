@@ -12638,3 +12638,5 @@
 | `CYCLE-20261124-V048` | `2026-11-24T08:34:30.872Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | Yes (`00249820...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T08:35:01.096Z` | `1jehuang-jcode` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F29632A9` [Domain D] | Yes (`c61295d1...`) |
 | `CYCLE-20261124-CS95` | `2026-11-24T08:48:20.489Z` | `XinaTian/MROffice` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10235` | Yes (`9eac349f...`) |
+| `CYCLE-20261124-RKHE` | `2026-11-24T08:59:50.258Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10236` | Yes (`4d533760...`) |
+| `CYCLE-20261124-RQDI` | `2026-11-24T08:59:57.894Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10237` | Yes (`a3f0be60...`) |

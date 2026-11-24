@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-97CD",
-    "timestamp": "2026-11-22T15:42:07.213Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-QWN6",
-    "timestamp": "2026-11-22T15:55:53.154Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "a5272a2235f450c8f80cd1c771912448a8d2d1ff017bbe56cf32ce9d1be438f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-UUL3",
     "timestamp": "2026-11-22T15:58:57.111Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7460,36 @@
     "repository": "XinaTian/MROffice",
     "learningId": "learn-github-xinatian-mroffice",
     "contentHash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-RKHE",
+    "timestamp": "2026-11-24T08:59:50.258Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-RQDI",
+    "timestamp": "2026-11-24T08:59:57.894Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

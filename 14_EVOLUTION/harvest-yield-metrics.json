@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:48:20.499Z",
-  "total_cycles_completed": 12013,
-  "total_learnings_persisted": 12013,
-  "total_rules_promoted": 11089,
+  "last_updated": "2026-11-24T08:59:57.902Z",
+  "total_cycles_completed": 12015,
+  "total_learnings_persisted": 12015,
+  "total_rules_promoted": 11091,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:00:45.201Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:00:59.596Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:01:02.249Z",
       "repository": "ydb-platform/ydb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T08:48:20.499Z",
       "repository": "XinaTian/MROffice",
       "learningId": "learn-github-xinatian-mroffice",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:59:50.267Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:59:57.902Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

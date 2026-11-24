@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:48:28.521Z",
+  "last_updated": "2026-11-24T09:00:04.238Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-VOCD",
+      "id": "CD-RV9N",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-VOCD-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-RV9N-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53936,6 +53936,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-01F3BD-rust-resolve-python-calls-through-annota.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-RTUC",
+      "directive_title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+      "source_repo": "pubkey-rxdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RTUC-the-cleanup-and-pipeline-plugins-failed-when-the-leader-election-plugin-was-not.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-RUKD",
+      "directive_title": "Ship agent guides with each release; add pxt guide and pxt lint",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RUKD-ship-agent-guides-with-each-release-add-pxt-guide-and-pxt-lint.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-735EC1",
+      "directive_title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pubkey-rxdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-735EC1-the-cleanup-and-pipeline-plugins-failed-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-2FFE0C",
+      "directive_title": "Ship agent guides with each release; add pxt guide and pxt lint",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pixeltable-pixeltable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2FFE0C-ship-agent-guides-with-each-release-add-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-3FDC78",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3FDC78-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
     }
   ]

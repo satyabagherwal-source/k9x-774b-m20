@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:48:29.221Z",
+  "last_updated": "2026-11-24T09:00:04.683Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T08:48:27.026Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T08:35:01.952Z",
+      "processed_at": "2026-11-24T09:00:03.962Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-23T13:54:39.906Z",
+      "processed_at": "2026-11-24T09:00:03.009Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2173,7 +2173,7 @@
       "staged_for_review": 0
     },
     "pubkey-rxdb-learnings.md": {
-      "processed_at": "2026-11-21T15:49:49.346Z",
+      "processed_at": "2026-11-24T09:00:01.384Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3813,7 +3813,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3714,
+  "total_dossiers_evaluated": 3717,
   "total_canonical_promoted": 503,
-  "total_staged_for_review": 2802
+  "total_staged_for_review": 2805
 }

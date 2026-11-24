@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T08:48:29.063Z",
+  "last_updated": "2026-11-24T09:00:04.553Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24547,
+  "total_items": 24551,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba6e2fc35468378a18b959ec0be726b8a40be3fae12e5ef0eb583b5f6df25e5e",
+      "content_hash": "f22f0778dd599cab1a5d5ac33fac092645b8fdd725cdeff95303ca4af5754689",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:35:02.473Z"
+      "persisted_at": "2026-11-24T09:00:04.395Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "806b17f5a8f93418f2a2b4fe05c014125d188b87a69c4461beea4f9dfdd40e76",
+      "content_hash": "e4d5c70b79fa90fe4a7ccafc475876e22853e0bb05e5a9206028efa91d4a7d0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:35:02.668Z"
+      "persisted_at": "2026-11-24T09:00:04.553Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216370,8 +216370,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "596b617d",
-      "content_hash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
+      "source_version": "cbac2d49",
+      "content_hash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -216394,6 +216394,11 @@
           "number": 9800,
           "title": "RxState.set() lost when the cleanup merges the state operations at the same time",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10236,
+          "title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216401,7 +216406,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:48:49.829Z",
+      "verified_at": "2026-11-24T08:59:50.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216443,10 +216448,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "repository": "pubkey/rxdb",
-      "source_version": "1135a741",
-      "content_hash": "5fd2627813eda4b0b7cde2b6a39c3564b5f6c9c5cd4c067c3864ae15b43ade23",
+      "source_version": "cbac2d49",
+      "content_hash": "b43e5d90ebbc5423762000deb7368762a8e426f622abbc3f9d8ca02e88d7288c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:50:59.748Z"
+      "persisted_at": "2026-11-24T08:59:50.667Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb",
@@ -216455,10 +216460,10 @@
       "relative_path": "12_DECISIONS/ADR-pubkey-rxdb-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "596b617d",
-      "content_hash": "b4fc639f633729b28480291c525217f96c9452bede7cb9b18cd3c23ac467317e",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:48:50.598Z"
+      "source_version": "cbac2d49",
+      "content_hash": "84c56cb9357173de40b13b90dfad5886c24c451901e2a221ef015b6dc05dcdf3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T08:59:50.859Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb",
@@ -216467,10 +216472,10 @@
       "relative_path": "08_VERIFICATION/pubkey-rxdb-verification-protocol-empirical-defect-shield-for-pubkey-rxdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "596b617d",
-      "content_hash": "8aaaef4ec695c5a8d7d713d4a9af2b449e80b9be1eb3e875ddee4218f7b33bab",
+      "source_version": "cbac2d49",
+      "content_hash": "54880cfbf22e22d7943c750d2bfffb7d198468b12a6d811e60d598716f47cfe1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:48:50.888Z"
+      "persisted_at": "2026-11-24T08:59:50.993Z"
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -216602,9 +216607,9 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b732537b8fed516d82425a9c9c3c59e85677585877e871b600e21f14847efc96",
+      "content_hash": "715f8b7cd687523449392310248a14f86d4f6459cb2662dea6375bef31b8369f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:51:10.937Z"
+      "persisted_at": "2026-11-24T09:00:02.571Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings",
@@ -216614,9 +216619,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fa0829c4b4a81c250f4fad9933a34d42959bb7579a5638f88fe8e270ca99cc1",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:49:51.513Z"
+      "content_hash": "aff05a30c8d2036f69ea03a6d1c27841eddcaa2b03ae7d88013aef2189145da0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T09:00:02.729Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings",
@@ -216626,9 +216631,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fdeee901d47973d5ee95f3e932de55cedc6fc347109e8be8076ca806378d6d9",
+      "content_hash": "e204a46c69ce6954e436538bbc0e17cdc9c284f47ed5d319ebd8be03b96f78b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:49:51.656Z"
+      "persisted_at": "2026-11-24T09:00:02.860Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -226190,8 +226195,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "caec4119",
-      "content_hash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
+      "source_version": "f89365df",
+      "content_hash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -226249,6 +226254,11 @@
           "number": 10046,
           "title": "Cut the peak memory of the heaviest scheduled-run tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10237,
+          "title": "Ship agent guides with each release; add pxt guide and pxt lint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226256,7 +226266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:49:48.067Z",
+      "verified_at": "2026-11-24T08:59:57.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226310,10 +226320,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "caec4119",
-      "content_hash": "be2b33a700c1efa088c300950a407fcf549572f986170420fb6debbce0e35a47",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:49:48.850Z"
+      "source_version": "f89365df",
+      "content_hash": "bcb22253b8b2da24cc84f912dcd18de004701a75508be02d795552010771ebe6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T08:59:58.453Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -226322,10 +226332,10 @@
       "relative_path": "08_VERIFICATION/pixeltable-pixeltable-verification-protocol-empirical-defect-shield-for-pixeltab.md",
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable/pixeltable",
       "repository": "pixeltable/pixeltable",
-      "source_version": "caec4119",
-      "content_hash": "c0cc3ec8d3e9a13862f59416ce41e242b344176d45b5de72cf8540d5150e083c",
+      "source_version": "f89365df",
+      "content_hash": "d43349fb9bccb034931d5977feb32cbc865071b5a4b14f7424e0a043dda6dfcc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:49:48.996Z"
+      "persisted_at": "2026-11-24T08:59:58.589Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
@@ -226383,9 +226393,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "a50bdf367382a0df173a891376aa2843894188a64e96837edf43414bd0cc46f2",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:54:40.528Z"
+      "content_hash": "da3a27ee1172f70f2b3fb67118cbdc2291d7b3483f6f6a7c922d4aa265bec093",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T09:00:03.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -226395,9 +226405,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "43ee783759b19744bac6d643399efae6e74a0b5ae4bd72a4b42af3d0b459afd8",
+      "content_hash": "ee847195b974226ed26e72ed0d9e40e7b712913dfb3847bdae11fd73143f2cb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:54:40.686Z"
+      "persisted_at": "2026-11-24T09:00:03.788Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -251414,10 +251424,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "056c7016",
-      "content_hash": "080c15068ee3e6a2bccc3140bfe7af75f2ff7ef938d89bd8c53f96a54aff431f",
+      "source_version": "f89365df",
+      "content_hash": "883e1b0ea2d5085dd76afc5a014a7affd4376c86927590d8e5d4ae4a76953ebf",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:58:06.529Z"
+      "persisted_at": "2026-11-24T08:59:58.290Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -251427,9 +251437,9 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "002b702d660cbca0f382cc9ec58638eaf277bb7d3e35916f0b9ebf37a422cbcf",
+      "content_hash": "215b0c96d6c37021e9545f4f6ebd307e50c3e14023e370f2491a33efbe0b58a6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:58:10.511Z"
+      "persisted_at": "2026-11-24T09:00:03.492Z"
     },
     "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
@@ -319868,13 +319878,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VOCD-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RV9N-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9f00506256da68f86def6243bb713b4649bd2e3655b9f3691dadcfafce5a8ab",
+      "content_hash": "686e75b3fec7f55f937f893a922ef1c2d0a948391cabcd6449aee11542c5e3d4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:35:02.278Z"
+      "persisted_at": "2026-11-24T09:00:04.238Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334961,6 +334971,58 @@
       "content_hash": "739e76d88d7e7c1d00d576901b3468bd9a3be217efde09267c4c4304ed3bdf93",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T08:48:26.847Z"
+    },
+    "rule-10236": {
+      "learning_id": "rule-10236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10236,
+      "title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "cbac2d49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T08:59:50.061Z"
+    },
+    "candidate_directive-the-cleanup-and-pipeline-plugins-failed-when-the-leader-election-plugin-was-not": {
+      "item_id": "candidate_directive-the-cleanup-and-pipeline-plugins-failed-when-the-leader-election-plugin-was-not",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RTUC-the-cleanup-and-pipeline-plugins-failed-when-the-leader-election-plugin-was-not.md",
+      "title": "the cleanup and pipeline plugins failed when the leader-election plugin was not",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bb595106e174f2601cc2ff552eb9609ddced300f5b777ec956bebaafdb0d3a4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T09:00:02.392Z"
+    },
+    "rule-10237": {
+      "learning_id": "rule-10237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10237,
+      "title": "Ship agent guides with each release; add pxt guide and pxt lint",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "f89365df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T08:59:57.708Z"
+    },
+    "candidate_directive-ship-agent-guides-with-each-release-add-pxt-guide-and-pxt-lint": {
+      "item_id": "candidate_directive-ship-agent-guides-with-each-release-add-pxt-guide-and-pxt-lint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RUKD-ship-agent-guides-with-each-release-add-pxt-guide-and-pxt-lint.md",
+      "title": "Ship agent guides with each release; add pxt guide and pxt lint",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dfd133c1eafc170360cc1537bbed89b9ea75d564c52d976155a7aff4ffef9833",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T09:00:03.327Z"
     }
   },
   "ai-builder-brain": {

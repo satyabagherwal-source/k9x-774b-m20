@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "596b617d",
+    "sourceVersion": "cbac2d49",
     "license": "Apache-2.0",
-    "contentHash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
-    "lastHarvestedAt": "2026-11-21T15:48:50.031Z",
+    "contentHash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
+    "lastHarvestedAt": "2026-11-24T08:59:50.262Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "caec4119",
+    "sourceVersion": "f89365df",
     "license": "Apache-2.0",
-    "contentHash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
-    "lastHarvestedAt": "2026-11-23T13:49:48.286Z",
+    "contentHash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
+    "lastHarvestedAt": "2026-11-24T08:59:57.897Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

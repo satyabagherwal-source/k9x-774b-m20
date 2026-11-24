@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T08:48:20.511Z",
+  "last_updated": "2026-11-24T08:59:57.911Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
-      "verified_at": "2026-11-21T15:48:50.040Z",
+      "content_hash": "4d5337609cb13d3ee6907d2bd46ed4f5611e05d6ed8304a13a1d0b51edcdcd76",
+      "verified_at": "2026-11-24T08:59:50.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:48:50.040Z"
+      "last_updated": "2026-11-24T08:59:50.276Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "0c7ef9241b8afc87e4a0684dae6856ddf4fd38e2619411129255de8903982ef3",
-      "verified_at": "2026-11-23T13:49:48.294Z",
+      "content_hash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
+      "verified_at": "2026-11-24T08:59:57.911Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:49:48.294Z"
+      "last_updated": "2026-11-24T08:59:57.911Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

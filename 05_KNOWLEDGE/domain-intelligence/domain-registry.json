@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T08:48:28.702Z",
+  "last_updated": "2026-11-24T09:00:04.395Z",
   "total_records": 2509,
   "domains": {
     "A": {
@@ -9242,8 +9242,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ba6e2fc35468378a18b959ec0be726b8a40be3fae12e5ef0eb583b5f6df25e5e",
-      "created_at": "2026-11-24T08:35:02.473Z"
+      "content_hash": "f22f0778dd599cab1a5d5ac33fac092645b8fdd725cdeff95303ca4af5754689",
+      "created_at": "2026-11-24T09:00:04.395Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11099,8 +11099,8 @@
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "repository": "pubkey/rxdb",
-      "content_hash": "5fd2627813eda4b0b7cde2b6a39c3564b5f6c9c5cd4c067c3864ae15b43ade23",
-      "created_at": "2026-11-18T12:50:59.748Z"
+      "content_hash": "b43e5d90ebbc5423762000deb7368762a8e426f622abbc3f9d8ca02e88d7288c",
+      "created_at": "2026-11-24T08:59:50.667Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
@@ -11210,8 +11210,8 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-learnings-technical-construction-intelligence-pubkey-rxdb-learnings-.md",
       "repository": "pubkey-rxdb-learnings",
-      "content_hash": "b732537b8fed516d82425a9c9c3c59e85677585877e871b600e21f14847efc96",
-      "created_at": "2026-11-18T12:51:10.937Z"
+      "content_hash": "715f8b7cd687523449392310248a14f86d4f6459cb2662dea6375bef31b8369f",
+      "created_at": "2026-11-24T09:00:02.571Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -22418,8 +22418,8 @@
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "080c15068ee3e6a2bccc3140bfe7af75f2ff7ef938d89bd8c53f96a54aff431f",
-      "created_at": "2026-11-22T06:58:06.529Z"
+      "content_hash": "883e1b0ea2d5085dd76afc5a014a7affd4376c86927590d8e5d4ae4a76953ebf",
+      "created_at": "2026-11-24T08:59:58.290Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -22427,8 +22427,8 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "002b702d660cbca0f382cc9ec58638eaf277bb7d3e35916f0b9ebf37a422cbcf",
-      "created_at": "2026-11-22T06:58:10.511Z"
+      "content_hash": "215b0c96d6c37021e9545f4f6ebd307e50c3e14023e370f2491a33efbe0b58a6",
+      "created_at": "2026-11-24T09:00:03.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",

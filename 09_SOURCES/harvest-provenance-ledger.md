@@ -12671,3 +12671,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `7ecaf212` | Multi-dimensional audit evidence | 2026-11-24T08:34:30.876Z |
 | `learn-dom-d-f29632a9` | `project://1jehuang-jcode` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | 2026-11-24T08:35:01.096Z |
 | `learn-github-xinatian-mroffice` | `https://github.com/XinaTian/MROffice` | `93ed64ad` | Multi-dimensional audit evidence | 2026-11-24T08:48:20.493Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `cbac2d49` | Multi-dimensional audit evidence | 2026-11-24T08:59:50.262Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `f89365df` | Multi-dimensional audit evidence | 2026-11-24T08:59:57.897Z |
