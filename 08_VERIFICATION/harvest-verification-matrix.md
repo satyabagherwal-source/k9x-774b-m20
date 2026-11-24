@@ -12727,3 +12727,5 @@
 | `CYCLE-20261124-X9C0` | `2026-11-24T15:36:10.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`9e8a2fe3...`) |
 | `CYCLE-20261124-7YZQ` | `2026-11-24T15:44:30.182Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10296` | Yes (`a95b57d9...`) |
 | `CYCLE-20261124-835K` | `2026-11-24T15:44:35.576Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10297` | Yes (`ed1bf2c6...`) |
+| `CYCLE-20261124-JPQ3` | `2026-11-24T15:53:38.043Z` | `nativewind/nativewind` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10298` | Yes (`fe2a1e45...`) |
+| `CYCLE-20261124-JXGL` | `2026-11-24T15:53:48.069Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10299` | Yes (`181237dc...`) |

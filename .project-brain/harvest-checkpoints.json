@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T15:44:35.598Z",
+  "last_updated": "2026-11-24T15:53:48.101Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "c2f6e946da405787adac53d1b651ac8fb254c8776597205355a37794340cd922",
-      "verified_at": "2026-11-24T14:05:52.352Z",
+      "content_hash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
+      "verified_at": "2026-11-24T15:53:48.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:05:52.352Z"
+      "last_updated": "2026-11-24T15:53:48.100Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7551,14 +7551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativewind-nativewind",
-      "content_hash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
-      "verified_at": "2026-11-22T00:09:53.076Z",
+      "content_hash": "fe2a1e4523d2c4c8b1da19b6b9c2a68764416671c15753ea1cb7142ea760a145",
+      "verified_at": "2026-11-24T15:53:38.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:09:53.076Z"
+      "last_updated": "2026-11-24T15:53:38.071Z"
     },
     "crossplane/crossplane": {
       "repository": "crossplane/crossplane",

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "2bf1c0b8",
+    "sourceVersion": "dbec78ae",
     "license": "NOASSERTION",
-    "contentHash": "c2f6e946da405787adac53d1b651ac8fb254c8776597205355a37794340cd922",
-    "lastHarvestedAt": "2026-11-24T14:05:52.333Z",
+    "contentHash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
+    "lastHarvestedAt": "2026-11-24T15:53:48.074Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4953,10 +4953,10 @@
     "repository": "nativewind/nativewind",
     "platform": "github",
     "sourceUrl": "https://github.com/nativewind/nativewind",
-    "sourceVersion": "b56a0289",
+    "sourceVersion": "fbe86240",
     "license": "MIT",
-    "contentHash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
-    "lastHarvestedAt": "2026-11-22T00:09:53.068Z",
+    "contentHash": "fe2a1e4523d2c4c8b1da19b6b9c2a68764416671c15753ea1cb7142ea760a145",
+    "lastHarvestedAt": "2026-11-24T15:53:38.048Z",
     "learningId": "learn-github-nativewind-nativewind"
   },
   "crossplane-crossplane": {

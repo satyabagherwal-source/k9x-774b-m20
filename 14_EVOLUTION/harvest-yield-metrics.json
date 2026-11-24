@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:44:35.586Z",
-  "total_cycles_completed": 12094,
-  "total_learnings_persisted": 12094,
-  "total_rules_promoted": 11159,
+  "last_updated": "2026-11-24T15:53:48.082Z",
+  "total_cycles_completed": 12096,
+  "total_learnings_persisted": 12096,
+  "total_rules_promoted": 11161,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:18:21.004Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T23:18:24.869Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:31:24.531Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T15:44:35.586Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:53:38.057Z",
+      "repository": "nativewind/nativewind",
+      "learningId": "learn-github-nativewind-nativewind",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:53:48.082Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

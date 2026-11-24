@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T05:42:50.125Z",
+  "timestamp": "2026-11-24T15:53:54.907Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T05:42:50.125Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T15:53:54.907Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `f0980efc`  
+> **Source Version**: `dbec78ae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T05:42:41.842Z  
+> **Timestamp**: 2026-11-24T15:53:46.651Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:42:41.834Z  
+> **Harvest Timestamp**: 2026-11-24T15:53:46.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3848 stars
+- **Stars / Engagement**: 3852 stars
 
 ---
 
@@ -2304,424 +2304,353 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0980efc` (2026-11-24)
-**Commit Message**: fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (#5106)
+### Incident Patch 1: `dbec78ae` (2026-11-24)
+**Commit Message**: deps: bump Polars to upstream rev 08b2814 (#5111)
 
-* fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105)
+* deps: bump Polars to upstream rev 08b2814
 
-These three read the stats cache files directly and checked only their age,
-so a cache computed under other parsing options (delimiter, --no-headers,
---flexible, sniffed preamble, or stats --quote/--escape/--no-quoting) than
-they read the input with was trusted: moarstats and pragmastat's append
-mode extended such a baseline with statistics of another reading, and
-pragmastat --standalone skipped numeric columns it had typed as text.
+94 commits past 93d31f0; crates stay 0.55.1. Toolchain, crates/polars
+features and Polars' own [patch] section (hashbrown rev) are unchanged.
+The lock gains only the polars source lines plus recursive/stacker/
+http-body edges inside polars crates (all already in the tree).
 
-They now run stats_cache_parsing_opts_conflict, the check behind
-get_stats_records, and recompute the baseline (or, for --standalone,
-ignore the cache). A --flexible baseline still counts as compatible when
---stats-options asks for --flexible, so such runs don't recompute every time.
+sqlp results that change (tests added, each fails on 93d31f0):
+- UNNEST of an empty/NULL list returns no rows (#30996); updated
+  sqlp_unnest_issue_3108, whose empty-data row is now dropped
+- STRPOS/POSITION return a character position (#31026)
+- an aggregate in WHERE errors (#31004)
+- REPLACE with an empty pattern is a no-op (#31039); LEFT/RIGHT(NULL, 0)
+  are NULL (#30941)
+- SQL join keys of a date and a timestamp are cast to a common type
+  (#31053)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+New SQL: INSERT/UPDATE on registered tables (#30958), COPY <table> FROM
+(#30975), UNNEST WITH ORDINALITY (#31017), frames ending before the
+current row (#31022), SHOW FUNCTIONS (#31002), REGEXP_SUBSTR and
+JSON_EXTRACT_PATH[_TEXT] (#31003). QSV_SQL_DISABLE_FILE_WRITES still
+refuses COPY ... TO; INSERT/UPDATE/COPY FROM write no files.
 
-* fix(pragmastat,scoresql): don't trust a JSONL older than its sidecar; match pragmastat's flexible rule (#5105)
+COUNT(*) over UNION ALL ... LIMIT s
 
-- A stats run without --stats-jsonl rewrites the sidecar but leaves the
-  JSONL, so the sidecar ca
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ### Fixed
-+- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
- - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
- - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
- - `synthesize`: input with non-UTF8 cells failed outright when it had any numeric or date column ("invalid UTF-8"), or when a column it enumerated held one ("Unable to parse output of qsv command frequency"). It also failed when a relationship was declared, and with `QSV_NO_HEADERS` when the first row held one. Every pass now reads raw bytes, and invalid bytes are written as U+FFFD (`�`), as `stats` already reports them, and `--report` keys source cells the same way, so a copied row still counts as an exact match. A non-UTF8 header is still refused by `stats`. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ ### Added
++- `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITES` still refuses `COPY ... TO`; it doesn't block `INSERT`, `UPDATE` or `COPY ... FROM`, which write no files (SQL could already read any file through `read_csv()`). ([#5111](https://github.com/dathere/qsv/pull/5111))
+ - `validate`, `stats`: new `--quote`, `--escape` and `--no-quoting` options for reading CSV data quoted with another character (e.g. `'`), with quotes escaped as `\"` instead of `""`, or with no quoting at all. Both commands used to read only `"`-quoted data, so a field like `'x,1'` was split in two: `validate --split-ragged` quarantined good rows as ragged, and `stats` failed with "found record with 4 fields". `validate` still writes its `.valid`/`.invalid` split files with standard `"` quoting. Under any non-default quoting, neither an index nor Polars' row count is used, since both assume `"` quoting, so `stats` runs sequentially (slower on large files). A stats cache computed under one quoting is not reused under another. Requested in [#4610](https://github.com/dathere/qsv/issues/4610) ([#5104](https://github.com/dathere/qsv/pull/5104)).
+ - `validate`: an unknown JSON Schema `format` now names the closest known one when it looks like a typo, in row validation's warning (`Unknown format "emial" is not checked (did you mean "email"?)`) and in `validate schema`'s error (`... Did you mean "email"?`). Names are compared case-insensitively, within a third of the name's length (at least one edit, a swapped pair of letters counting as one), against the formats the schema's draft checks and qsv's own `currency`. A name close to none of them gets no hint, and the warning is otherwise unchanged. ([#5100](https://github.com/dathere/qsv/pull/5100))
+ - `synthesize`: `correlated` relationships may now take categorical members (up to 50 values; not dates or faker columns), e.g. `{"kind": "correlated", "members": ["borough", "latitude", "longitude"]}`. The rows split into strata, one per source combination of the categorical values seen at least `--min-count` times. Each stratum keeps its share of rows, and the numeric members are drawn from that stratum's own quantile buckets, coupled by a copula fitted within strata, so each borough keeps its own coordinates. A `joint` group sharing a categorical member joins the strata, so its tuples stay real, provided no other relationship names its columns (otherwise the usual first-relationship-wins order applies); the rows of a tuple too rare to print count toward the kept tuples sharing its categorical value, which draw that share of their numbers from the rare rows' own buckets, so each value keeps its share and its numeric range (a row printed as a kept city may then carry a rarer city's numbers in the same borough). A stratum too small for buckets of its own (fewer than 2 × `--min-count` − 1 values) uses its categorical value's, then the column's. Categorical members stay only when the strata explain some numeric member by a rank-based correlation ratio at or above `--correlation-threshold`, and a numeric member stays when the strata explain it or it correlates with another member within strata; otherwise the numeric members fall back to a plain `correlated` group and the `joint` groups it took in resolve on their own (or the run aborts under `--strict-relationships`). `--discover-relationships` proposes such members at a correlation ratio of 0.7 or more: on `NYC311-500.csv`, `Borough` joins `Incident Zip`, `BBL`, both State Plane coordinates, `Latitude` and `Longitude` in one group, and synthetic Latitude and Longitude keep Borough's correlation ratio (0.894 and 0.892, vs 0.892 and 0.878 in the source) and their 5th-95th percentiles. A discovered group holds
 ```
 
-**File**: `src/cmd/moarstats.rs` (modified, +29/-1)
+**File**: `Cargo.lock` (modified, +30/-27)
 ```diff
-@@ -5215,6 +5215,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         // so a CSV joined with another one would lose every statistic derived from them.
-         let separator_mismatch =
-             stats_current && util::stats_csv_separator_mismatch(&path, &stats_separator);
-+        // The input is read below with the default parsing options, so a baseline computed
-+        // under others (another delimiter or quoting, --no-headers, ...) describes other
-+        // columns (#5105). A --flexible baseline is what `--stats-options --flexible` asks for.
-+        let parsing_mismatch = stats_current
-+            && util::stats_cache_parsing_opts_conflict(
-+                input_path,
-+                &input_path
-+                    .canonicalize()
-+                    .unwrap_or_else(|_| input_path.to_path_buf()),
-+                false,
-+                None,
-+                None,
-+                args.flag_stats_options
-+                    .split_whitespace()
-+                    .any(|o| o == "--flexible"),
-+            );
-         // A current stats CSV can still be unusable for --use-percentiles: it
-         // may have been computed with a --percentile-list that lacks the
-         // requested --pct-thresholds (issue #4455). Treat that as stale so the
-@@ -5230,7 +5246,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             } else {
-                 true
-             };
--        if !stats_current || version_mismatch || separator_mismatch || !covers_thresholds {
-+        if !stats_current
-+            || version_mismatch
-+            || separator_mismatch
-+            || parsing_mismatch
-+            || !covers_thresholds
-+        {
-             if args.flag_force {
-                 winfo!("Force flag set: recomputing stats...");
-             } else if !stats_current {
-@@ -5257,6 +5278,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                      {}\nRecomputing baseline stats...",
-                     path.display()
-                 );
-+            } else if parsing_mismatch {
-+                wwarn!(
-+                    "Stats CSV file was computed with other CSV parsing options (e.g. delimiter \
-+                     or quoting) than moarstats reads the input with: {}\nRecomputing baseline \
-+                     stats...",
-+                    path.display()
-+                );
-             } else {
-                 wwarn!(
-                     "Stats CSV file was computed with a --percentile-list that does not include \
+@@ -6006,7 +6006,7 @@ dependencies = [
+ [[package]]
+ name = "polars"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "getrandom 0.2.17",
+  "getrandom 0.4.3",
+@@ -6031,7 +6031,7 @@ dependencies = [
+ [[package]]
+ name = "polars-arrow"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "avro-schema",
+  "bitflags 2.13.2",
+@@ -6074,7 +6074,7 @@ dependencies = [
+ [[package]]
+ name = "polars-async"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "atomic-waker",
+  "crossbeam-channel",
+@@ -6093,7 +6093,7 @@ dependencies = [
+ [[package]]
+ name = "polars-buffer"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "bytemuck",
+  "either",
+@@ -6105,7 +6105,7 @@ dependencies = [
+ [[package]]
+ name = "polars-compute"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "atoi_simd",
+  "bytemuck",
+@@ -6131,7 +6131,7 @@ dependencies = [
+ [[package]]
+ name = "polars-config"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "polars-error",
+  "serde",
+@@ -6141,7 +6141,7 @@ dependencies = [
+ [[package]]
+ name = "polars-core"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "atoi_simd",
+  "bitflags 2.13.2",
+@@ -6182,7 +6182,7 @@ dependencies = [
+ [[package]]
+ name = "polars-defs"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "chrono",
+  "chrono-tz",
+@@ -6197,7 +6197,7 @@ dependencies = [
+ [[package]]
+ name = "polars-descriptions"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "serde",
+  "strum_macros 0.28.0",
+@@ -6206,7 +6206,7 @@ dependencies = [
+ [[package]]
+ name = "polars-dtype"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "boxcar",
+  "hashbrown 0.17.1",
+@@ -6220,7 +6220,7 @@ dependencies = [
+ [[package]]
+ name = "polars-error"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = [
+  "avro-schema",
+  "parking_lot 0.12.5",
+@@ -6233,7 +6233,7 @@ dependencies = [
+ [[package]]
+ name = "polars-expr"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
++source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
+ dependencies = 
 ```
 
-**File**: `src/cmd/pragmastat.rs` (modified, +49/-3)
+**File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -389,6 +389,13 @@ fn append_to_filename(path: &std::path::Path, suffix: &str) -> std::path::PathBu
- }
+@@ -545,8 +545,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103" }
++polars-core  = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
+ # polars-readstat-rs 0.27.0 calls DataFrame/Series::slice(offset, len), which polars main
+ # replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork passes the pair as a
+ # tuple; upstream can't take it while it builds on crates.io polars 0.55.1. The fork also
+@@ -624,9 +624,9 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
+ #      and the commit hash 52ea381)
+ # ================================
+ # Keep the next line bare: build.rs reads everything after `=` into --version.
+-# QSV_POLARS_REV=py-2.1.0:93d31f0
++# QSV_POLARS_REV=py-2.1.0:08b2814
+ # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6", optional = true }
  
- /// Append pragmastat one-sample columns to the .stats.csv cache file.
-+/// Does `--stats-options` ask for a `--flexible` baseline?
-+fn stats_options_flexible(args: &Args) -> bool {
-+    args.flag_stats_options
-+        .split_whitespace()
-+        .any(|o| o == "--flexible")
-+}
-+
- fn run_cache_append(args: &Args) -> CliResult<()> {
-     use csv::{ReaderBuilder, WriterBuilder};
- 
-@@ -403,16 +410,37 @@ fn run_cache_append(args: &Args) -> CliResult<()> {
-     // A stats CSV written by another qsv version is stale too: existing ps_* columns are
-     // otherwise kept as-is, and that version's values survive an upgrade
-     let stats_current = util::stats_csv_is_current(&stats_csv_path, input_path);
-+    let version_mismatch = stats_current && util::stats_csv_version_mismatch(&stats_csv_path);
-+    // A baseline computed under other parsing options than this run reads the input with
-+    // (another delimiter or quoting, --no-headers, ...) describes other columns (#5105). A
-+    // --flexible baseline is what `--stats-options --flexible` asks for.
-+    let parsing_mismatch = stats_current
-+        && !version_mismatch
-+        && util::stats_cache_parsing_opts_conflict(
-+            input_path,
-+            &input_path
-+                .canonicalize()
-+                .unwrap_or_else(|_| input_path.to_path_buf()),
-+            args.flag_no_headers,
-+            args.flag_delimiter,
-+            None,
-+            stats_options_flexible(args),
-+        );
-     // a baseline computed here has a known selection, so its rows map to columns exactly
--    let baseline_computed_here =
--        !stats_current || util::stats_csv_version_mismatch(&stats_csv_path);
-+    let baseline_computed_here = !stats_current || version_mismatch || parsing_mismatch;
-     if baseline_computed_here {
--        if stats_current {
-+        if version_mismatch {
-             wwarn!(
-                 "Stats CSV file was generated by a different qsv version: {}\nRecomputing \
-                  baseline stats...",
-                 stats_csv_path.display()
-             );
-+        } else if parsing_mismatch {
-+            wwarn!(
-+                "Stats CSV file was computed with other CSV parsing options (e.g. delimiter or \
-+                 quoting) than pragmastat reads the input with: {}\nRecomputing baseline stats...",
-+                stats_csv_path.display()
-+            );
-         } else if stats_csv_path.exists() {
-             wwarn!(
-                 "Stats CSV file is older than the input: {}\nRecomputing baseline stats...",
-@@ -805,6 +833,24 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
-     if cache_mtime <= input_mtime {
-         return None;
-     }
-+    // nor one parsed otherwise than this run reads the input (#5105), judged by a sidecar that
-+    // describes this JSONL rather than a later stats run
-+    let given_path = std::path::Path::new(input_path);
-+    if util::stats_jsonl_predates_stats_cache(&cache_path, [given_path, &canonical])
-+        || util::stats_cache_parsing_opts_conflict(
-+            given_path,
-+            &canonical,
-+            args.flag_no_headers,
-+            args.flag_delimiter,
-+            // only the column types are used, which --prefer-dmy doesn't decide
-+            None,
-+            // as the append baseline: a --flexible one is what `--stats-options --flexible`
-+            // asks for
-+            !args.flag_standalone && stats_options_flexible(args),
-+        )
-+    {
-+        return None;
-+    }
- 
-     // Read the JSONL cache directly — no routing through get_stats_records,
-     // so we truly never trigger a stats run.
+ # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
+ # support big-endian targets, so we exclude the crate on big-endian builds.
 ```
 
-**File**: `src/cmd/scoresql.rs` (modified, +13/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -928,7 +928,19 @@ fn load_or_generate_caches(
+@@ -115,7 +115,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](#extended-input-support).  
+ 🗃️: [Limited Extended input support](#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:93d31f0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:93d31f0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:08b2814](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:08b2814-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](../../README.md#extended-input-support).  
+ 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:93d31f0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:93d31f0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:08b2814](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:08b2814-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +224/-1)
+```diff
+@@ -4040,12 +4040,13 @@ fn sqlp_unnest_issue_3108() {
+         .arg("select id, unnest(string_to_array(data, ',')) as value from data");
  
-     // Check for stats cache
-     let stats_path = canonical.with_extension("stats.csv.data.jsonl");
--    let stats = if stats_path.exists() && is_cache_fresh(&stats_path, &canonical) {
-+    // a fresh cache parsed otherwise than scoresql reads the input describes other columns (#5105)
-+    let stats = if stats_path.exists()
-+        && is_cache_fresh(&stats_path, &canonical)
-+        // a later stats run's sidecar doesn't describe this JSONL
-+        && !util::stats_jsonl_predates_stats_cache(&stats_path, [input_path, &canonical])
-+        && !util::stats_cache_parsing_opts_conflict(
-+            input_path,
-+            &canonical,
-+            false,
-+            Some(Delimiter(delim)),
-+            None,
-+            false,
-+        ) {
-         load_stats_cache(&stats_path)?
-     } else {
-         if !quiet {
-```
-
-**File**: `src/util/stats_cache.rs` (modified, +2/-2)
-```diff
-@@ -371,7 +371,7 @@ pub fn stats_csv_separator_mismatch(stats_csv_path: &Path, separator: &str) -> b
- ///
- /// Both locations are checked for the same reason `stats_cache_parsing_opts_conflict` checks
- /// both: for a symlinked input they differ.
--pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
-+pub(crate) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
-     let Ok(jsonl_meta) = std::fs::metadata(statsdata_path) else {
-         return false;
-     };
-@@ -396,7 +396,7 @@ pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&P
- ///
- /// (`get_stats_records_readonly` still fails closed on missing metadata: it returns an `Option`
- /// its callers treat as a best-effort accelerator, so refusing costs nothing there.)
--pub(super) fn stats_cache_parsing_opts_conflict(
-+pub(crate) fn stats_cache_parsing_opts_conflict(
-     input_path: &Path,
-     canonical_input_path: &Path,
-     no_headers: bool,
-```
-
-**File**: `tests/test_moarstats.rs` (modified, +44/-0)
-```diff
-@@ -8304,3 +8304,47 @@ fn moarstats_derived_statistics_skip_nan_cells() {
+     let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    // pola-rs/polars#30996: UNNEST of a NULL list returns no rows, so id 2 (empty `data`, read
++    // as NULL) has none. On 93d31f0 it had one row with an empty `value`.
+     let expected = vec![
+         svec!["id", "value"],
+         svec!["1", "a"],
+         svec!["1", "b"],
+         svec!["1", "c"],
+-        svec!["2", ""],
+         svec!["3", "b"],
+         svec!["3", "c"],
+         svec!["3", "d"],
+@@ -7981,6 +7982,228 @@ fn sqlp_new_functions_93d31f0() {
      );
-     assert_eq!(derived[0], derived[1]);
  }
+ 
++// Polars SQL behavior changed between 93d31f0 and 08b2814.
 +
-+/// `stat` of `field` in the stats CSV at `path`
-+fn stats_csv_value(path: &std::path::Path, field: &str, stat: &str) -> String {
-+    let mut rdr = ReaderBuilder::new().from_path(path).unwrap();
-+    let headers = rdr.headers().unwrap().clone();
-+    let field_idx = get_column_index(&headers, "field").unwrap();
-+    let stat_idx = get_column_index(&headers, stat).unwrap();
-+    rdr.records()
-+        .map(Result::unwrap)
-+        .find(|r| r.get(field_idx) == Some(field))
-+        .and_then(|r| get_field_value(&r, stat_idx))
-+        .unwrap_or_else(|| panic!("no {stat} for {field}"))
-+}
-+
-+// moarstats reads the input with the default parsing options, so it must not extend a
-+// baseline `stats` computed under others (#5105). Read with `'`, `b` is 1,2,3,4; read with
-+// `"`, it is 9,1,2,3,4.
-+#[test]
-+fn moarstats_recomputes_a_baseline_parsed_otherwise() {
-+    let wrk = Workdir::new("moarstats_recomputes_a_baseline_parsed_otherwise");
-+    wrk.create_from_string("data.csv", "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+    assert_eq!(
-+        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
-+        "4"
++fn strings_fixture(wrk: &Workdir) {
++    wrk.create(
++        "s.csv",
++        vec![
++            svec!["i", "s"],
++            svec!["1", "héllo wörld"],
++            svec!["2", "abc"],
++            svec!["3", ""],
++        ],
 +    );
-+
-+    let mut cmd = wrk.command("moarstats");
-+    cmd.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut cmd);
-+    assert!(got.contains("other CSV parsing options"), "{got}");
-+    assert_eq!(
-+        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
-+        "9"
-+    );
-+
-+    // the recomputed baseline is the default reading's, so it is reused from now on
-+    let mut again = wrk.command("moarstats");
-+    again.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut again);
-+    assert!(!got.contains("Recomputing"), "{got}");
-+}
-```
-
-**File**: `tests/test_pragmastat.rs` (modified, +74/-0)
-```diff
-@@ -2006,3 +2006,77 @@ fn pragmastat_cache_append_no_headers_partial_cache_left_empty() {
-     assert_eq!(rows.len(), 1);
-     assert!(rows[0][1..].iter().all(String::is_empty), "{rows:?}");
- }
-+
-+// Read with `'`, the `"10"` cells keep their quotes, so a cache computed that way types `n`
-+// as String. pragmastat reads the input with the default quoting, so it must not trust such a
-+// cache to pick its columns, nor extend it as a baseline (#5105).
-+fn quote_cached_data(wrk: &Workdir) {
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
 +}
 +
 +#[test]
-+fn pragmastat_standalone_ignores_a_cache_parsed_otherwise() {
-+    let wrk = Workdir::new("pragmastat_standalone_ignores_a_cache_parsed_otherwise");
-+    quote_cached_data(&wrk);
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--standalone", "data.csv"]);
++fn sqlp_strpos_counts_characters() {
++    // pola-rs/polars#31026 (fix!): STRPOS returns a character position. On 93d31f0 it was a
++    // byte offset, so the multi-byte `é` before the `w` made it 8.
++    let wrk = Workdir::new("sqlp_strpos_counts_characters");
++    strings_fixture(&wrk);
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.csv")
++        .arg("SELECT STRPOS(s, 'w') AS p FROM s WHERE i < 3 ORDER BY i");
 +    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
-+    assert_eq!(fields, ["id", "n"]);
++    assert_eq!(got, vec![svec!["p"], svec!["7"], svec!["0"]]);
 +}
 +
 +#[test]
-+fn pragmastat_append_recomputes_a_baseline_parsed_otherwise() {
-+    let wrk = Workdir::new("pragmastat_append_recomputes_a_baseline_parsed_otherwise");
-+    quote_cached_data(&wrk);
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut cmd);
-+    assert!(got.contains("other CSV parsing options"), "{got}");
-+    // `n` is numeric again: ps_n, ps_center
-+    let rows = ps_rows(&wrk.path("data.stats.csv"));
-+    let n = rows.iter().find(|r| r[0] == "n").unwrap();
-+    assert_eq!(n[1..3], ["2", "15"], "{rows:?}");
-+}
++fn sqlp_replace_empty_pattern_and_left_right_null() {
++    // pola-rs/polars#31039: REPLACE with an empty pattern leaves the string unchanged. On 93d31f0
++    // it put the replacement between every character ("XaXbXcX").
++    let wrk = Workdir::new("sqlp_replace_empty_pattern_and_left_right_null");
++    strings_fixture(&wrk);
 +
-+// A later stats run without --stats-jsonl rewrites the sidecar but leaves the JSONL, so the
-+// sidecar no longer describes it: the stale `'`-quoted JSONL must not be trusted either.
-+#[test]
-+fn pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar() {
-+    let wrk = Workdir::new("pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar");
-+    quote_cached_data(&wrk);
-+    let mut restats = wrk.command("stats");
-+    restats.args(["--cache-threshold", "1", "data.csv"]);
-+    wrk.assert_success(&mut restats);
-+
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--standalone", "data.csv"]);
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.csv")
++        .arg("SELECT REPLACE(s, '', 'X') AS r FROM s WHERE i = 2");
 +    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
-+    assert_eq!(fields, ["id", "n"]);
++    assert_eq!(got, vec![svec!["r"], svec!["abc"]]);
++
++    // pola-rs/polars#30941: LEFT and RIGHT with a zero count return NULL on NULL input. On
++    // 93d31f0 they returned the empty string, written as `""`.
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.csv")
++        .arg("SELECT LEFT(NULL, 0) AS l, RIGHT(NULL, 0) AS r");
++    let got: String = wrk.stdout_on_success(&mut cmd);
++    assert_eq!(got, "l,r\n,");
 +}
 +
-+// A --flexible baseline is accepted when --stats-options asks for one, so the column types
-+// must come from that same cache, or the date column is read as numbers.
 +#[test]
-+fn pragmastat_append_flexible_baseline_keeps_its_column_types() {
-+    let wrk = Workdir::new("pragmastat_append_flexible_baseline_keeps_its_column_types");
-+    wrk.create_from_string(
-+        "data.csv",
-+        "d,x\n2020-01-01,1\n2020-02-01,2\n2020-03-01,3\n",
-+    );
-+    let options = "--flexible --infer-dates --stats-jsonl";
-+    let mut stats = wrk.command("stats");
-+    stats.args(options.split(' ')).arg("data.csv");
-+    wrk.assert_success(&mut stats);
++fn sqlp_aggregate_in_where_errors() {
++    // pola-rs/polars#31004: an aggregate in WHERE is refused. On 93d31f0, `WHERE SUM(i) > 3`
++    // returned every row without an error.
++    let wrk = Workdir::new("sqlp_aggregate_in_where_errors");
++    strings_fixture(&wrk);
 +
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--stats-options", options, "data.csv"]);
-+    wrk.assert_success(&mut cmd);
-+    let rows = ps_rows(&wrk.path("data.stats.csv"));
-+    let d = rows.iter().find(|r| r[0] == "d").unwrap();
-+    assert_eq!(d[1], "3", "{rows:?}");
-+}
-```
-
-**File**: `tests/test_scoresql.rs` (modified, +47/-0)
-```diff
-@@ -1230,3 +1230,50 @@ fn scoresql_duckdb_bare_non_identifier_wildcard_qualifier() {
-         serde_json::from_str(&got).unwrap_or_else(|e| panic!("{e}: {got}"));
-     assert!(json["plan"].as_str().unwrap().contains("READ_CSV"), "{got}");
- }
-+
-+// scoresql reads the input with the default quoting, so a stats cache computed under another
-+// is regenerated rather than used (#5105): read with `'`, the `"10"` cells keep their quotes
-+#[test]
-+fn scoresql_regenerates_a_stats_cache_parsed_otherwise() {
-+    let wrk = Workdir::new("scoresql_regenerates_a_stats_cache_parsed_otherwise");
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+
-+    let mut cmd = wrk.command("scoresql");
-+    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
-+    let got = wrk.output(&mut cmd);
-+    let parsed: serde_json::Value =
-+        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
-+    assert_eq!(
-+        parsed["cache_status"]["stats_available"],
-+        serde_json::json!(["data"]),
-+        "{parsed}"
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.csv").arg("SELECT i FROM s WHERE SUM(i) > 3");
++    let stderr = wrk.output_stderr(&mut cmd);
++    assert!(
++        stderr.contains("aggregate functions are not allowed in WHERE"),
++        "{stderr}"
 +    );
 +}
 +
-+// A later stats run without --stats-jsonl rewrites the sidecar but leaves the `'`-quoted JSONL,
-+// which that sidecar no longer describes
 +#[test]
-+fn scoresql_regenerates_a_jsonl_older_than_its_sidecar() {
-+    let wrk = Workdir::new("scoresql_regenerates_a_jsonl_older_than_its_sidecar");
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+    let mut restats = wrk.command("stats");
-+    restats.args(["--cache-threshold", "1", "data.csv"]);
-+    wrk.assert_success(&mut restats);
++fn sqlp_unnest_empty_list_returns_no_rows() {
++    // pola-rs/polars#30996: UNNEST of an empty list returns no rows. On 93d31f0 it returned one
++    // NULL row.
++    let wrk = Workdir::new("sqlp_unnest_empty_list_returns_no_rows");
++    strings_fixture(&wrk);
 +
-+    let mut cmd = wrk.command("scoresql");
-+    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
-+    let got = wrk.output(&mut cmd);
-+    let parsed: serde_json::Value =
-+        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
-+    assert_eq!(
-+        parsed["cache_status"]["stats_available"],
-+        serde_json::json!(["data"]),
-+        "{parsed}"
-+    );
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.csv")
++        .arg("SELECT COUNT(*) AS n FROM (SELECT UNNEST([]) AS x)");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, vec![svec!["n"], svec!["0"]]);
 +}
++
++#[test]
++fn sqlp_join_date_with_timestamp() {
++    // pola-rs/polars#31053: join keys of a date and a timestamp are cast to their common type.
++    // On 93d31f0 the join failed with "datatypes of join keys don't match".
++    let wrk = Workdir::new("sqlp_join_date_with_timestamp");
++    wrk.create(
++        "dates.csv",
++        vec![
++            svec!["d", "ts"],
++            svec!["2024-01-01", "2024-01-01 00:00:00"],
++            svec!["2024-01-02", "2024-01-02 12:00:00"],
++        ],
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("dates.csv").arg(
++        "SELECT a.d FROM (SELECT CAST(d AS DATE) AS d FROM dates) a JOIN (SELECT CAST(ts AS \
++         TIMESTAMP) AS ts FROM dates) b ON a.d = b.ts ORDER BY 1",
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, vec![svec!["d"], svec!["2024-01-01"]]);
++}
++
++#[test]
++fn sqlp_insert_update_change_table_not_file() {
++    // pola-rs/polars#30958: INSERT and UPDATE work on registered tables. They change the table
++    // for the statements after them, never the input file, so they run under
++    // QSV_SQL_DISABLE_FILE_WRITES too.
++    let wrk = Workdir::new("sqlp_insert_update_change_table_not_file");
++    wrk.create(
++        "u.csv",
++        vec![svec!["k", "v"], svec!["a", "10"], svec!["b", "20"]],
++    );
++    wrk.create_fro
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5111** (2026-11-24): deps: bump Polars to upstream rev 08b2814 (@jqnatividad)
+- **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
+- **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
+- **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
 - **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
 - **PR #5104** (2026-11-24): feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (@jqnatividad)
-- **PR #5103** (2026-11-23): fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (@jqnatividad)
-- **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
-- **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
-- **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
 
 ---
 
@@ -2741,13 +2670,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu
+## X. deps: bump Polars to upstream rev 08b2814
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0980efc`: moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbec78ae`: deps: bump Polars to upstream rev 08b2814. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2755,7 +2684,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+- `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITE
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2765,7 +2694,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0980efc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbec78ae` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

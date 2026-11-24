@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:44:41.321Z",
+  "last_updated": "2026-11-24T15:53:56.606Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -12601,8 +12601,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1ae304b28365ad2ea15edd333aa29cc3f5c085ed2bf89e769902cdb5b92d35b7",
-      "created_at": "2026-11-24T14:05:52.895Z"
+      "content_hash": "ee6e2af8279fec10a83f046ea3c3c2c96030fa7be75a84359d327fbb28ef308c",
+      "created_at": "2026-11-24T15:53:48.669Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12670,8 +12670,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "54be12d1d4bebab08e02a8cb2f76b86c2a3afe900e7565b3a4526062e0b98a27",
-      "created_at": "2026-11-24T05:42:50.519Z"
+      "content_hash": "c8418ce1b47292d581085f57333099deb5d7098da4d9feb75826f64e60052e34",
+      "created_at": "2026-11-24T15:53:55.321Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -23715,8 +23715,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c412d6dbfdad1cd02c2f22c64e9fc0448231f25081cd2161e3ef794ec74be246",
-      "created_at": "2026-11-24T12:54:43.749Z"
+      "content_hash": "8daa1be168d635166226d047351ccefb20263faad70b6fb86b5be17f25d1665e",
+      "created_at": "2026-11-24T15:53:56.606Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -39086,8 +39086,8 @@
       "title": "Architecture Intelligence: nativewind/nativewind Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativewind-nativewind-architecture-intelligence-nativewind-nativewind-core-invar.md",
       "repository": "nativewind/nativewind",
-      "content_hash": "b28a5362bc1ea52384da96dcd17a8a33ac44459b3d064c713fb479ad4b96c50f",
-      "created_at": "2026-11-22T00:09:53.437Z"
+      "content_hash": "6bff90ab2cee27283a422b4c77658d8f50abe86899c5cc667f0319f67568009e",
+      "created_at": "2026-11-24T15:53:38.595Z"
     },
     "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
@@ -39095,8 +39095,8 @@
       "title": "Architecture Intelligence: nativewind-nativewind-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativewind-nativewind-learnings-architecture-intelligence-nativewind-nativewind-.md",
       "repository": "nativewind-nativewind-learnings",
-      "content_hash": "682de2f7fc5b3b823c3d24a9ddd41d06aabdb3b928d7fdaf41b04db3b0b98ccf",
-      "created_at": "2026-11-22T00:10:00.006Z"
+      "content_hash": "b83c2aad1524f489887b2e7533d0ff11e60a29683ed0ebca526e92d6b6650608",
+      "created_at": "2026-11-24T15:53:52.549Z"
     },
     "DOM-D-7F03EC79": {
       "record_id": "DOM-D-7F03EC79",

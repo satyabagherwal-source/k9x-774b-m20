@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T15:44:41.496Z",
+  "last_updated": "2026-11-24T15:53:57.052Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24735,
+  "total_items": 24740,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee1c580c2d20e0f372a703b1105f007066b99d6c664fc7b319714433d3476af9",
+      "content_hash": "a23ae57bf2702b53d98f67ca46efca031795e6f05ca6027a53dbb360ac3b346d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:54:43.960Z"
+      "persisted_at": "2026-11-24T15:53:56.863Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "035b5ba93e722a975c01e80c60392cd46840911ec3dfb9f31f9be2fca409de78",
+      "content_hash": "e19b08164fc4e312c449c76bec28153e062895d9e3a92a3dab230c30b9955356",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:54:44.128Z"
+      "persisted_at": "2026-11-24T15:53:57.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "2bf1c0b8",
-      "content_hash": "c8d6b0112c16a59ec785386c5c77b1edc85d52f24666cb196d118c743f544fbf",
+      "source_version": "dbec78ae",
+      "content_hash": "88ca3d4e6b28d05bfa9f7d509dbd59aa504a5f6d1b18face3309e8d9f7140f7e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:05:53.123Z"
+      "persisted_at": "2026-11-24T15:53:48.907Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "43c507e423f57b16a16fca6ec02863be0d74b3417226af2abac4026f57fb94b9",
+      "content_hash": "d519b64faedf93243dc79c05f4ea08328816878cb73ebee7fa9dcc58fa978c58",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:42:50.767Z"
+      "persisted_at": "2026-11-24T15:53:55.550Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220259,8 +220259,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "2bf1c0b8",
-      "content_hash": "c2f6e946da405787adac53d1b651ac8fb254c8776597205355a37794340cd922",
+      "source_version": "dbec78ae",
+      "content_hash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220468,6 +220468,11 @@
           "number": 10274,
           "title": "drop unused direct deps bytemuck and spreadsheet-ods",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10299,
+          "title": "bump Polars to upstream rev 08b2814",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220475,7 +220480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:05:52.066Z",
+      "verified_at": "2026-11-24T15:53:47.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221537,10 +221542,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "2bf1c0b8",
-      "content_hash": "1ae304b28365ad2ea15edd333aa29cc3f5c085ed2bf89e769902cdb5b92d35b7",
+      "source_version": "dbec78ae",
+      "content_hash": "ee6e2af8279fec10a83f046ea3c3c2c96030fa7be75a84359d327fbb28ef308c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T14:05:52.895Z"
+      "persisted_at": "2026-11-24T15:53:48.669Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221610,9 +221615,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "54be12d1d4bebab08e02a8cb2f76b86c2a3afe900e7565b3a4526062e0b98a27",
+      "content_hash": "c8418ce1b47292d581085f57333099deb5d7098da4d9feb75826f64e60052e34",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T05:42:50.519Z"
+      "persisted_at": "2026-11-24T15:53:55.321Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -256265,9 +256270,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c412d6dbfdad1cd02c2f22c64e9fc0448231f25081cd2161e3ef794ec74be246",
+      "content_hash": "8daa1be168d635166226d047351ccefb20263faad70b6fb86b5be17f25d1665e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:54:43.749Z"
+      "persisted_at": "2026-11-24T15:53:56.606Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -319728,14 +319733,19 @@
       "slug": "nativewind-nativewind",
       "platform": "github",
       "source_url": "https://github.com/nativewind/nativewind",
-      "source_version": "b56a0289",
-      "content_hash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
+      "source_version": "fbe86240",
+      "content_hash": "fe2a1e4523d2c4c8b1da19b6b9c2a68764416671c15753ea1cb7142ea760a145",
       "dossier_path": "07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
       "promoted_rules": [
         {
           "number": 9871,
           "title": "Update Nativewind attribution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10298,
+          "title": "map tint utilities to native props",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -319744,7 +319754,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:09:52.868Z",
+      "verified_at": "2026-11-24T15:53:37.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -319786,10 +319796,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativewind-nativewind-architecture-intelligence-nativewind-nativewind-core-invar.md",
       "title": "Architecture Intelligence: nativewind/nativewind Core Invariants",
       "repository": "nativewind/nativewind",
-      "source_version": "b56a0289",
-      "content_hash": "b28a5362bc1ea52384da96dcd17a8a33ac44459b3d064c713fb479ad4b96c50f",
+      "source_version": "fbe86240",
+      "content_hash": "6bff90ab2cee27283a422b4c77658d8f50abe86899c5cc667f0319f67568009e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:09:53.437Z"
+      "persisted_at": "2026-11-24T15:53:38.595Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nativewind-nativewind": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nativewind-nativewind",
@@ -319798,10 +319808,10 @@
       "relative_path": "08_VERIFICATION/nativewind-nativewind-verification-protocol-empirical-defect-shield-for-nativewi.md",
       "title": "Verification Protocol: Empirical Defect Shield for nativewind/nativewind",
       "repository": "nativewind/nativewind",
-      "source_version": "b56a0289",
-      "content_hash": "c34fe632ec3524ce1de4ec2639894f9baa1edcad7d95c52079ca5ab07f23ae49",
+      "source_version": "fbe86240",
+      "content_hash": "74acf6f6760e781fbb251d727a301c5fb5913e6bce7f7e42ef8aeb666b8ecd8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:09:53.608Z"
+      "persisted_at": "2026-11-24T15:53:38.827Z"
     },
     "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
@@ -319811,9 +319821,9 @@
       "title": "Architecture Intelligence: nativewind-nativewind-learnings Core Invariants",
       "repository": "nativewind-nativewind-learnings",
       "source_version": "HEAD",
-      "content_hash": "682de2f7fc5b3b823c3d24a9ddd41d06aabdb3b928d7fdaf41b04db3b0b98ccf",
+      "content_hash": "b83c2aad1524f489887b2e7533d0ff11e60a29683ed0ebca526e92d6b6650608",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:10:00.006Z"
+      "persisted_at": "2026-11-24T15:53:52.549Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nativewind-nativewind-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nativewind-nativewind-learning",
@@ -319823,9 +319833,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nativewind-nativewind-learnings",
       "repository": "nativewind-nativewind-learnings",
       "source_version": "HEAD",
-      "content_hash": "940183d4a35f24ed62b6423a92ea6e8db03c92d0faaf789af977e9ff9260ba6e",
+      "content_hash": "c08887df6712d0ad379e5b3c5a0cb275c6f2b33de3bc3f91d0848e767e8d2368",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:10:00.178Z"
+      "persisted_at": "2026-11-24T15:53:52.778Z"
     },
     "rule-9872": {
       "learning_id": "rule-9872",
@@ -330197,13 +330207,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5MX8-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-K3VA-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b8f3fd6c52db8f43f61828556f442ecbae9b32179b1304aa75f62f647c4bd16",
+      "content_hash": "aca42af47abdf2c5f455226a07ff00da3e0f54a8ec63dc63f73f7beab818581b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:54:43.546Z"
+      "persisted_at": "2026-11-24T15:53:56.380Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -337702,6 +337712,70 @@
       "content_hash": "232e270690ffcd6dfea66b7562da3af7c6f384aa1c2ba81315aab172ada03af2",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T15:44:40.327Z"
+    },
+    "rule-10298": {
+      "learning_id": "rule-10298",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10298,
+      "title": "map tint utilities to native props",
+      "source_url": "https://github.com/nativewind/nativewind",
+      "source_version": "fbe86240",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:53:37.773Z"
+    },
+    "candidate_directive-map-tint-utilities-to-native-props": {
+      "item_id": "candidate_directive-map-tint-utilities-to-native-props",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K0QG-map-tint-utilities-to-native-props.md",
+      "title": "map tint utilities to native props",
+      "repository": "nativewind-nativewind-learnings",
+      "source_version": "HEAD",
+      "content_hash": "007fecbefa4aa899e6a5f92dd5e5d6b5c7ed7616969ce66f90e72b1bdfa7236e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:53:52.313Z"
+    },
+    "rule-10299": {
+      "learning_id": "rule-10299",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10299,
+      "title": "bump Polars to upstream rev 08b2814",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "dbec78ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:53:47.801Z"
+    },
+    "candidate_directive-bump-polars-to-upstream-rev-08b2814": {
+      "item_id": "candidate_directive-bump-polars-to-upstream-rev-08b2814",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JXQI-bump-polars-to-upstream-rev-08b2814.md",
+      "title": "bump Polars to upstream rev 08b2814",
+      "repository": "dathere/qsv",
+      "source_version": "dbec78ae",
+      "content_hash": "894e4ffe6ad9204d3f68817c4e4f71a3164f96836b41cbf700df19241d5e5ede",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:53:48.434Z"
+    },
+    "candidate_directive-deps-bump-polars-to-upstream-rev-08b2814": {
+      "item_id": "candidate_directive-deps-bump-polars-to-upstream-rev-08b2814",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K2V9-deps-bump-polars-to-upstream-rev-08b2814.md",
+      "title": "deps: bump Polars to upstream rev 08b2814",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "decc3edab062d3d6ebe1a0227761f501d3e6513e42c896b5d04a15de0452d089",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:53:55.078Z"
     }
   },
   "ai-builder-brain": {

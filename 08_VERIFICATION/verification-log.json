@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-H32D",
-    "timestamp": "2026-11-22T20:56:10.693Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XZI7",
-    "timestamp": "2026-11-22T21:09:19.231Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-334N",
     "timestamp": "2026-11-22T21:13:17.207Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7490,6 +7460,36 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-JPQ3",
+    "timestamp": "2026-11-24T15:53:38.043Z",
+    "repository": "nativewind/nativewind",
+    "learningId": "learn-github-nativewind-nativewind",
+    "contentHash": "fe2a1e4523d2c4c8b1da19b6b9c2a68764416671c15753ea1cb7142ea760a145",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-JXGL",
+    "timestamp": "2026-11-24T15:53:48.069Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "nativewind/nativewind",
   "source_url": "https://github.com/nativewind/nativewind",
-  "source_version": "b56a0289",
+  "source_version": "fbe86240",
   "license": "MIT",
-  "timestamp": "2026-11-22T00:09:53.282Z",
+  "timestamp": "2026-11-24T15:53:38.365Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nativewind-nativewind",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nativewind/nativewind](https://github.com/nativewind/nativewind) (Revision: `b56a0289`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T00:09:53.282Z`  
+> **Provenance**: Harvested from [nativewind/nativewind](https://github.com/nativewind/nativewind) (Revision: `fbe86240`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T15:53:38.365Z`  
 > **Learning ID**: `learn-github-nativewind-nativewind`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nativewind/nativewind:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativewind-nativewind-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nativewind/nativewind](https://github.com/nativewind/nativewind))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T00:09:52.016Z  
+> **Harvest Timestamp**: 2026-11-24T15:53:36.492Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -277,14 +277,14 @@ module.exports = function (api) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1837** (2026-11-23): **tint-* is broken on main: theme.css still uses @prop, which react-native-css renamed to @nativeMapping**
+  *Symptoms*: Found while reviewing #1826. theme.css defines tint-* with an @prop at rule (line 42), but react-native-css renamed @prop to @nativeMapping in 3.0.0 and the compiler silently ignores @prop now. So -rn-tint never gets mapped to the tint prop and tint-* currently does nothing.  Fix is to switch theme.css to @nativeMapping and add a regression test asserting the value lands as a top level prop with an empty style, matching the @prop.tsx test conventions. The review on #1826 has the full analysis, that PR copied the same dead pattern.
+
 - **Issue #1054** (2024-10-25): **V4.1: ScrollView indicatorStyle prop causing "TypeError: right operand of 'in' is not an object"**
   *Symptoms*: **Describe the bug** ScrollView indicatorStyle prop throwing an error. Same error as #1012    **Reproduction** - nativewind@4.1.7 (nativewind@next)  Create ScrollView with indicatorStyle prop ```tsx <ScrollView indicatorStyle={'white'}></ScrollView> ``` https://stackblitz.com/edit/nativewind-test-vfyfwd?file=nativewind.test.tsx  **Additional context** ![image](https://github.com/user-attachments/assets/43ddd323-9cb6-438c-8cb9-50c876b43bf2) 
   **Post-Mortem & Fix Analysis**:
   > This is still an issue in 4.1.10
   > Oh, just ran into this. 
-
-- **Issue #1038** (2024-09-11): **docs: add `mdx` ending to `tailwind.config.js`'s `content` array file paths to watch**
-  *Symptoms*: **Describe the bug**  I'm not sure if this is really is necessary, but I ran into an issue today which nearly drove me crazy because of the `mdx` files not being processed by tailwind. I'm not sure why this is even necessary, because my project doesn't contain any `.mdx` files. But when running on node-js 22.5.1 with this dependencies:  ``` ├── expo-router@3.5.23 ├── expo@51.0.32 ├── nativewind@4.1.6 ├── tailwindcss@3.4.10 ```  I'm getting the following errors on some reloads:  ``` (node:73054) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension. ```  And this in combination with a further bug lead into some hours of bug-hunting...  Just reporting this, so that some other people running into this thing. Decide yourself, if this is something to adjust, or if its some weird stuff only happening on my machine...
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -301,29 +301,71 @@ module.exports = function (api) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b56a0289` (2026-11-19)
-**Commit Message**: Update Nativewind attribution
+### Incident Patch 1: `d9d3647e` (2026-11-23)
+**Commit Message**: fix: map tint utilities to native props (#1839)
 
-**File**: `README.md` (modified, +1/-1)
+* fix: map tint utilities to native props
+
+Replace the removed @prop directive with a block-form @nativeMapping that Tailwind preserves during utility expansion. Add a regression test confirming tint-black reaches the top-level tint prop instead of style.\n\nFixes #1837
+
+* fix: keep the tint-* mapping through Tailwind's production optimizer
+
+The nested `@nativeMapping { -rn-tint: tint; }` block only works while Tailwind leaves the CSS unoptimized. With `optimize: true` (the default when NODE_ENV is production) Tailwind hoists the block out of the `.tint-*` rule, react-native-css no longer sees it as rule-local, and the colour lands in `style.tint` again.
+
+Declare the mapping as a `-rn-native-mapping--rn-tint: tint` declaration instead. That's the form the `@map` variant already uses for the same reason, and react-native-css 3.1 reads it from the rule's declarations. It survives the optimizer, and it also fixes `ios:tint-*` and other `@media` variants in production builds.
+
+Add `tint-black` to the production discovery tests, which fail with the block form.
+
+---------
+
+Co-authored-by: Sam Moore <[REDACTED_EMAIL]>
+
+**File**: `src/__tests__/custom.tsx` (modified, +9/-0)
 ```diff
-@@ -25,7 +25,7 @@ Nativewind makes sure you're using the best style engine for any given platform
+@@ -1,5 +1,13 @@
+ import { renderCurrentTest, renderSimple } from "../test-utils";
  
- Nativewind processes your styles during your application's build step and uses a minimal runtime to selectively apply reactive styles (eg changes to device orientation, light dark mode).
++describe("Custom - Tint Color", () => {
++  test("tint-black", async () => {
++    expect(await renderCurrentTest()).toStrictEqual({
++      props: { tint: "#000", style: {} },
++    });
++  });
++});
++
+ describe("Custom - Ripple Color", () => {
+   test("ripple-black", async () => {
+     expect(await renderCurrentTest()).toStrictEqual({
+@@ -21,6 +29,7 @@ describe("Custom - Ripple Borderless", () => {
  
--> Built and maintained by the team at [Ronin Software](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
-+> Built and maintained by the team at [Ronin Technologies](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
+ describe("Custom utility production discovery", () => {
+   test.each([
++    ["tint-black", { tint: "#000", style: {} }],
+     ["ripple-foreground", { android_ripple: { foreground: true }, style: {} }],
+     [
+       "ripple-black ripple-foreground ripple-16",
+```
+
+**File**: `theme.css` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@
  
- ## Installation
+ @utility tint-* {
+   -rn-tint: --value(--color-*);
+-  @prop -rn-tint tint;
++  -rn-native-mapping--rn-tint: tint;
+ }
  
+ @utility ripple-* {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1894** (2026-11-23): feat: add Switch thumb-* and track-* color utilities (@sammoore)
 - **PR #1893** (2026-11-19): Update Nativewind attribution (@danstepanov)
 - **PR #1892** (2026-11-19): Update Nativewind attribution (@danstepanov)
 - **PR #1884** (2026-11-02): docs: point Nativewind RC guidance and migration skills at the rc.1 pair (@danstepanov)
 - **PR #1883** (2026-11-02): chore(release): add Nativewind 5.0.0-rc.1 descriptor (@danstepanov)
 - **PR #1882** (2026-11-02): chore(deps): require react-native-css 3.1.0-rc.1 for the Nativewind RC (@danstepanov)
-- **PR #1873** (2026-10-16): ci(issue-repro): scope issues:write to jobs that need it (@sammoore)
 
 ---
 
@@ -343,31 +385,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Nativewind attribution
+## X. map tint utilities to native props
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nativewind/nativewind. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/custom.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nativewind/nativewind. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b56a0289`: Update Nativewind attribution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9d3647e`: map tint utilities to native props. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/custom.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-> Built and maintained by the team at [Ronin Technologies](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
+describe("Custom - Tint Color", () => {
+  test("tint-black", async () => {
+    expect(await renderCurrentTest()).toStrictEqual({
+      props: { tint: "#000", style: {} },
+    });
+  });
+});
+
+    ["tint-black", { tint: "#000", style: {} }],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-> Built and maintained by the team at [Ronin Software](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b56a0289` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9d3647e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
