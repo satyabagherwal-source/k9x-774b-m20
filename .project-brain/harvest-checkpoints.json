@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T15:17:30.544Z",
+  "last_updated": "2026-11-24T15:27:19.777Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
-      "verified_at": "2026-11-24T00:40:05.720Z",
+      "content_hash": "7222ba912e2da70d60962bbe127a4cb103c6d8ec0339ec25090137d91f4fb9a6",
+      "verified_at": "2026-11-24T15:27:12.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:40:05.720Z"
+      "last_updated": "2026-11-24T15:27:12.073Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
-      "verified_at": "2026-11-23T19:01:02.252Z",
+      "content_hash": "83ec4b66321b53fbe589095450779e002696808ae68a93ef0dc7886ec5e8669d",
+      "verified_at": "2026-11-24T15:27:19.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:01:02.252Z"
+      "last_updated": "2026-11-24T15:27:19.776Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -19686,14 +19686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentinel7-h3",
-      "content_hash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
-      "verified_at": "2026-11-20T14:07:29.647Z",
+      "content_hash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
+      "verified_at": "2026-11-24T15:27:03.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T14:07:29.647Z"
+      "last_updated": "2026-11-24T15:27:03.147Z"
     },
     "AngelSlim/Hy4-flash-GGUF": {
       "repository": "AngelSlim/Hy4-flash-GGUF",

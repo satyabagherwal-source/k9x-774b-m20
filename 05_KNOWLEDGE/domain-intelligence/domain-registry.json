@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:17:36.007Z",
-  "total_records": 2541,
+  "last_updated": "2026-11-24T15:28:04.364Z",
+  "total_records": 2544,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 958,
+      "total": 961,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1028,7 +1028,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants",
-        "DOM-D-5E40C2C7"
+        "DOM-D-5E40C2C7",
+        "domain_intelligence-research-knowledge-intelligence-sentinel7-h3-core-invariants",
+        "DOM-D-A5C5FED6",
+        "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -14457,10 +14460,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "16bff7eefedd83944ab9ecdccb09e6caf8e9d3a89601df0ad616c7662e31c9da",
-      "created_at": "2026-11-24T00:40:06.114Z"
+      "content_hash": "ebfdc1db0f327c3b0a91348f053104af19bee66c7bb255ea94aca0ae81dd9ba5",
+      "created_at": "2026-11-24T15:27:12.666Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -14570,8 +14573,8 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
       "repository": "shopify-react-native-skia-learnings",
-      "content_hash": "ef9ea8b82ff4c48b2d3ddbb90f057e9af8ea260cbad801cd0c36c6d9d1e7126d",
-      "created_at": "2026-11-21T23:39:50.394Z"
+      "content_hash": "435f6df9db2e8026300ab75a29d964034b755d815e6da87bf310dfd2ca82ef04",
+      "created_at": "2026-11-24T15:28:02.388Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
@@ -17633,8 +17636,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "ecf0fc654641cce67da6ecc21946c9b991ba588fa0f109957177452017b06a8b",
-      "created_at": "2026-11-22T16:48:21.320Z"
+      "content_hash": "d4e035c0d54b67fa612e8643245b4055aa18408c694c8ba91777f96d244bb698",
+      "created_at": "2026-11-24T15:27:20.333Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -23694,8 +23697,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "853e017ffe592da85da2c8828231b41575792d467cb36dac138f0315413fd6e8",
-      "created_at": "2026-11-20T07:15:05.180Z"
+      "content_hash": "270f173dd2f9bfac892747a47e2373f7ef78dffe905805dee130cb3fbf3aa745",
+      "created_at": "2026-11-24T15:28:04.364Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -42673,6 +42676,66 @@
       "repository": "yugabyte-yugabyte-db-learnings",
       "content_hash": "b038f55a5b14360a822e20dabf0618c490a89c5de8886777ddbecfab2c99b35d",
       "created_at": "2026-11-24T15:09:05.159Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentinel7-h3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sentinel7-h3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Sentinel7/h3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentinel7-h3-research-knowledge-intelligence-sentinel7-h3-core-invariants.md",
+      "repository": "Sentinel7/h3",
+      "content_hash": "73543f17d204a67ce9532388cdab7668922aaef050fef05f040d3f12e2526073",
+      "created_at": "2026-11-24T15:27:03.453Z"
+    },
+    "DOM-D-A5C5FED6": {
+      "record_id": "DOM-D-A5C5FED6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Sentinel7/h3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Sentinel7/h3](https://huggingface.co/Sentinel7/h3))  \n> **Source Version**: `hf-sentinel7`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "502c35cb76ee78b2366633501761352a4b795bc74f0912501b7752ab9e890404",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/S -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/S",
+      "provenance": {
+        "source_uri": "project://hf-sentinel7-h3/hf-sentinel7-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T15:27:23.523Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sentinel7-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sentinel7-h3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T15:28:00.665Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sentinel7-h3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentinel7-h3-learnings-research-knowledge-intelligence-hf-sentinel7-h3-learni.md",
+      "repository": "hf-sentinel7-h3-learnings",
+      "content_hash": "0b350ccb33ad844b7f6fa121c8f7f811b07e813516cc9493bd3ef92a9595a13a",
+      "created_at": "2026-11-24T15:28:01.082Z"
     }
   }
 }

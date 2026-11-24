@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T14:59:47.720Z",
+  "updated_at": "2026-11-24T15:28:03.740Z",
   "stats": {
-    "total_discovered": 8711,
-    "approved_pending_harvest": 8251,
+    "total_discovered": 8721,
+    "approved_pending_harvest": 8258,
     "harvested_count": 0,
-    "rejected_count": 460,
+    "rejected_count": 463,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8232,
+      "COMMUNITY_AND_EXPERT": 8242,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -188445,6 +188445,205 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
         "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-6D52F6E48075": {
+      "id": "SRC-6D52F6E48075",
+      "url": "https://crbug.com/377935752",
+      "title": "https://crbug.com/377935752",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:01.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+        "fileName": "shopify-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-B04406DA7DCB": {
+      "id": "SRC-B04406DA7DCB",
+      "url": "http://|https://",
+      "title": "http://|https://",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T15:28:02.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-C86D901C6588": {
+      "id": "SRC-C86D901C6588",
+      "url": "https://hahn.yt.yandex.net/",
+      "title": "https://hahn.yt.yandex.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-D7111E7976F3": {
+      "id": "SRC-D7111E7976F3",
+      "url": "https://hahn/",
+      "title": "https://hahn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-D4017EF68936": {
+      "id": "SRC-D4017EF68936",
+      "url": "https://hahn.yt.yandex.net:8443/",
+      "title": "https://hahn.yt.yandex.net:8443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-DC2D0CC9DB70": {
+      "id": "SRC-DC2D0CC9DB70",
+      "url": "http://hahn/",
+      "title": "http://hahn/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T15:28:03.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-DA366A426C88": {
+      "id": "SRC-DA366A426C88",
+      "url": "http://hahn.yt.yandex.net/",
+      "title": "http://hahn.yt.yandex.net/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T15:28:03.395Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-9EDC09FC8C66": {
+      "id": "SRC-9EDC09FC8C66",
+      "url": "https://hahn/path",
+      "title": "https://hahn/path",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.572Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-E724A2CB7A67": {
+      "id": "SRC-E724A2CB7A67",
+      "url": "https://hahn/?query=",
+      "title": "https://hahn/?query=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-B9BD579CB41F": {
+      "id": "SRC-B9BD579CB41F",
+      "url": "https://user@hahn/",
+      "title": "https://user@hahn/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:28:03.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
+        "fileName": "ydb-platform-ydb-learnings.md"
       }
     }
   }

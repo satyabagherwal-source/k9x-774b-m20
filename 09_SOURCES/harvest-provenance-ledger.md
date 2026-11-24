@@ -12751,3 +12751,7 @@ Every entry in this ledger must capture:
 | `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `1fdf12ef` | Multi-dimensional audit evidence | 2026-11-24T15:17:14.574Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6dce0b21` | Multi-dimensional audit evidence | 2026-11-24T15:17:25.621Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `81e60511` | Multi-dimensional audit evidence | 2026-11-24T15:17:30.527Z |
+| `learn-huggingface-sentinel7-h3` | `https://huggingface.co/Sentinel7/h3` | `hf-sentine` | Multi-dimensional audit evidence | 2026-11-24T15:27:03.127Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `d36553ce` | Multi-dimensional audit evidence | 2026-11-24T15:27:12.019Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `442f5b3f` | Multi-dimensional audit evidence | 2026-11-24T15:27:19.757Z |
+| `learn-dom-d-a5c5fed6` | `project://hf-sentinel7-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md` | 2026-11-24T15:28:00.704Z |

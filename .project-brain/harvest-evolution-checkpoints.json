@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:17:36.326Z",
+  "last_updated": "2026-11-24T15:28:04.836Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T15:09:06.715Z",
@@ -843,7 +843,7 @@
       "staged_for_review": 1
     },
     "ydb-platform-ydb-learnings.md": {
-      "processed_at": "2026-11-23T19:01:43.882Z",
+      "processed_at": "2026-11-24T15:28:02.898Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2458,9 +2458,9 @@
       "staged_for_review": 0
     },
     "shopify-react-native-skia-learnings.md": {
-      "processed_at": "2026-11-21T23:39:49.755Z",
+      "processed_at": "2026-11-24T15:28:01.375Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md": {
       "processed_at": "2026-11-23T13:07:03.391Z",
@@ -3588,9 +3588,9 @@
       "staged_for_review": 0
     },
     "hf-sentinel7-h3-learnings.md": {
-      "processed_at": "2026-11-20T14:07:33.642Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-24T15:28:00.705Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-angelslim-hy4-flash-gguf-learnings.md": {
       "processed_at": "2026-11-20T16:14:33.248Z",
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3816,
-  "total_canonical_promoted": 510,
-  "total_staged_for_review": 2892
+  "total_dossiers_evaluated": 3819,
+  "total_canonical_promoted": 511,
+  "total_staged_for_review": 2893
 }

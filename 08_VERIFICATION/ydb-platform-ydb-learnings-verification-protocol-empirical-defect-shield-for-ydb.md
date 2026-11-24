@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T19:01:44.050Z",
+  "timestamp": "2026-11-24T15:28:03.933Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ydb-platform-ydb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ydb-platform-ydb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T19:01:44.050Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T15:28:03.933Z`  
 > **Learning ID**: `LEARN-EVO-ydb-platform-ydb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `4f5b8781`  
+> **Source Version**: `442f5b3f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:01:00.852Z  
+> **Timestamp**: 2026-11-24T15:27:18.356Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:01:00.844Z  
+> **Harvest Timestamp**: 2026-11-24T15:27:18.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4792 stars
+- **Stars / Engagement**: 4791 stars
 
 ---
 
@@ -2090,806 +2090,754 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6732a16f` (2026-11-23)
-**Commit Message**: Fix durable cleanup of stale incremental restore records (#60222)
+### Incident Patch 1: `16e0d087` (2026-11-24)
+**Commit Message**: CLI: support HTTP/HTTPS YT export proxies with regression tests (#57101)
 
-**File**: `ydb/core/tx/schemeshard/schemeshard__init.cpp` (modified, +204/-14)
+**File**: `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp` (modified, +2/-1)
 ```diff
-@@ -4,6 +4,7 @@
- #include "schemeshard_impl.h"
- #include "schemeshard_pq_helpers.h"  // for PQGroupReserve
+@@ -153,7 +153,8 @@ void TCommandExportToYt::Config(TConfig& config) {
+     TYdbOperationCommand::Config(config);
  
-+#include <ydb/core/base/path.h>
- #include <ydb/core/protos/flat_scheme_op.pb.h>
- #include <ydb/core/protos/table_metrics_settings.pb.h>
- #include <ydb/core/protos/fs_settings.pb.h>
-@@ -6168,10 +6169,7 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
-                             for (ui64 localId : protoOp.GetFailedShardLocalIds()) {
-                                 tableOp.FailedShards.insert(TShardIdx(ssTablet, localId));
-                             }
--                            const bool isComplete = !tableOp.ExpectedShards.empty()
--                                && (tableOp.CompletedShards.size() + tableOp.FailedShards.size()
--                                    == tableOp.ExpectedShards.size())
--                                && !tableOp.HasFailures();
-+                            const bool isComplete = tableOp.AllShardsComplete() && !tableOp.HasFailures();
-                             if (isComplete) {
-                                 state.CompletedOperations.insert(subOpId);
-                             } else {
-@@ -6210,8 +6208,11 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
+     TStringBuilder proxyHelp;
+-    proxyHelp << "YT proxy to connect to" << Endl
++    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
++        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
+         << "  Search order:" << Endl
+         << "    1. This option" << Endl
+         << "    2. \"YT_PROXY\" environment variable";
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/ut/ya.make` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ SRCS(
+     tabbed_table_ut.cpp
+     tx_mode_utils_ut.cpp
+     utf8_utils_ut.cpp
++    yt_ut.cpp
+ )
+ 
+ END()
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/yt.cpp` (modified, +17/-2)
+```diff
+@@ -16,18 +16,33 @@ void TCommandWithYtProxy::ParseYtProxy(const TString& proxy) {
+     }
+ 
+     TMaybe<ui16> port;
++    TStringBuf address = proxy;
++    TStringBuf scheme;
++    ui16 defaultPort = DefaultYtPort;
++
++    if (address.SkipPrefix("https://")) {
++        scheme = "https://";
++        defaultPort = 443;
++    } else if (address.SkipPrefix("http://")) {
++        scheme = "http://";
++    }
+ 
+     try {
+-        Split(proxy, ':', YtHost, port);
++        Split(address, ':', YtHost, port);
+     } catch (const yexception& ex) {
+         throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
+     }
+ 
++    if (YtHost.empty() || YtHost.find_first_of("/?#@") != TString::npos) {
++        throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
++    }
++
+     if (YtHost.find('.') == TString::npos && YtHost.find("localhost") == TString::npos) {
+         YtHost.append(".yt.yandex.net");
+     }
+ 
+-    YtPort = port.GetOrElse(DefaultYtPort);
++    YtHost.prepend(scheme);
++    YtPort = port.GetOrElse(defaultPort);
+ }
+ 
+ const TString TCommandWithYtToken::YtTokenFile = "~/.yt/token";
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/yt_ut.cpp` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++#include "yt.h"
++
++#include <library/cpp/testing/unittest/registar.h>
++
++namespace NYdb::NConsoleClient {
++namespace {
++
++class TYtProxyParser : public TCommandWithYtProxy {
++public:
++    void Parse(const TString& proxy) {
++        TClientCommandOptions options;
++        options.AddLongOption("proxy").RequiredArgument("PROXY");
++        const char* args[] = {"yt-proxy-test", "--proxy", proxy.c_str()};
++        TOptionsParseResult parsed(&options, 3, args);
++        TClientCommand::TConfig config(0, nullptr);
++        config.ParseResult = &parsed;
++        ParseYtProxy(config, "proxy");
++    }
++
++    const TString& GetHost() const {
++        return YtHost;
++    }
++
++    ui16 GetPort() const {
++        return YtPort;
++    }
++};
++
++void AssertProxy(const TString& proxy, const TString& host, ui16 port) {
++    TYtProxyParser parser;
++    parser.Parse(proxy);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetHost(), host);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetPort(), port);
++}
++
++} // namespace
++
++Y_UNIT_TEST_SUITE(YtProxyParsing) {
++    Y_UNIT_TEST(LegacyProxies) {
++        AssertProxy("hahn", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("hahn.yt.yandex.net", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn.yt.yandex.net:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("localhost:9013", "localhost", 9013);
++    }
++
++    Y_UNIT_TEST(HttpsDefaultPort) {
++        AssertProxy("https://hahn.yt.yandex.net", "https://hahn.yt.yandex.net", 443);
++        AssertProxy("https://hahn", "https://hahn.yt.yandex.net", 443);
++    }
++
++    Y_UNIT_TEST(HttpsExplicitPort) {
++        AssertProxy("https://hahn.yt.yandex.net:8443", "https://hahn.yt.yandex.net", 8443);
++        AssertProxy("https://hahn:443", "https://hahn.yt.yandex.net", 443);
++    }
++
++    Y_UNIT_TEST(HttpScheme) {
++        AssertProxy("http://hahn", "http://hahn.yt.yandex.net", 80);
++        AssertProxy("http://localhost:8080", "http://localhost", 8080);
++    }
++
++    Y_UNIT_TEST(InvalidProxies) {
++        for (const TString proxy : {
++                 "", "https://", "http://", "hahn:invalid", "hahn:65536",
++                 "ftp://hahn", "https://hahn/path", "https://hahn?query",
++                 "https://hahn#fragment", "https://user@hahn"}) {
++            TYtProxyParser parser;
++            UNIT_ASSERT_EXCEPTION(parser.Parse(proxy), TMisuseException);
++        }
++    }
++}
++
++} // namespace NYdb::NConsoleClient
+```
+
+---
+
+### Incident Patch 2: `1bbaf58a` (2026-11-24)
+**Commit Message**: Revert "Fix KQP shutdown while compute tasks are starting" (#60730)
+
+**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor_factory.cpp` (modified, +3/-4)
+```diff
+@@ -189,16 +189,15 @@ class TKqpCaFactory : public IKqpNodeComputeActorFactory {
+             YQL_ENSURE(args.ComputesByStages);
+             auto& info = args.ComputesByStages->UpsertTaskWithScan(*args.Task, meta);
+             info.TraceId = NWilson::TTraceId(args.TraceId);
+-            // Allocate bookkeeping before registering the actor.
+-            auto& actorId = info.MutableActorIds().emplace_back();
+             IActor* computeActor = CreateKqpScanComputeActor(
+                 args.ExecuterId, args.TxId, args.Task, AsyncIoFactory, runtimeSettings, memoryLimits,
+                 std::move(args.TraceId), std::move(args.Arena),
+                 std::move(schedulableOptions), args.BlockTrackingMode, std::move(args.UserToken), args.Database);
+-            actorId = args.UseBatchPool
++            TActorId result = args.UseBatchPool
+                 ? TlsActivationContext->Register(computeActor, TActorId(), TMailboxType::HTSwap, AppData()->BatchPoolId)
+                 : TlsActivationContext->Register(computeActor);
+-            return actorId;
++            info.MutableActorIds().emplace_back(result);
++            return result;
+         } else {
+             std::shared_ptr<TGUCSettings> GUCSettings;
+             if (!args.SerializedGUCSettings.empty()) {
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_data_executer.cpp` (modified, +9/-57)
+```diff
+@@ -445,7 +445,7 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+                 hFunc(TEvents::TEvUndelivered, HandleUndelivered);
+                 hFunc(TEvPrivate::TEvRetry, HandleRetry);
+                 hFunc(TEvInterconnect::TEvNodeDisconnected, HandleDisconnected);
+-                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleExecute);
++                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleStartKqpTasksResponse);
+                 hFunc(TEvDqCompute::TEvState, HandleComputeState);
+                 hFunc(TEvDqCompute::TEvNodeState, HandleNodeState);
+                 hFunc(TEvDqCompute::TEvChannelData, HandleChannelData);
+@@ -474,14 +474,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         ReportEventElapsedTime();
+     }
+ 
+-    void HandleExecute(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        HandleStartKqpTasksResponse(ev);
+-        if (CurrentStateFunc() == &TThis::WaitShutdownState) {
+-            // A failed start can both initiate shutdown and report which tasks started.
+-            HandleShutdown(ev);
+-        }
+-    }
+-
+     void HandleExecute(TEvKqp::TEvAbortExecution::TPtr& ev) {
+         if (IsCancelAfterAllowed(ev)) {
+             TBase::HandleAbortExecution(ev);
+@@ -1077,7 +1069,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+ 
+     void Shutdown() override {
+         if (Planner) {
+-            Planner->BeginShutdown();
+             if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+                 YDB_LOG_INFO("Shutdown immediately - nothing to wait",
+                     {"marker", "KQPDATA"},
+@@ -1124,9 +1115,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         switch(ev->GetTypeRewrite()) {
+             hFunc(TEvDqCompute::TEvState, HandleShutdown);
+             hFunc(TEvDqCompute::TEvNodeState, HandleShutdown);
+-            hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleShutdown);
+-            hFunc(TEvents::TEvUndelivered, HandleShutdown);
+-            hFunc(TEvPrivate::TEvRetry, HandleShutdown);
+             hFunc(TEvInterconnect::TEvNodeDisconnected, HandleShutdown);
+             hFunc(TEvents::TEvPoison, HandleShutdown);
+             hFunc(TEvDq::TEvAbortExecution, HandleShutdown);
+@@ -1142,54 +1130,15 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+     }
+ 
+     void HandleShutdown(TEvDqCompute::TEvState::TPtr& ev) {
+-        if (HandleComputeStats(ev) && Planner->GetPendingComputeActors().contains(ev->Sender)) {
+-            AbortLateComputeActor(ev->Sender);
+-        }
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        const auto& record = ev->Get()->Record;
+-        if (record.GetTxId() != TxId) {
+-            return;
+-        }
+-
+-        for (const auto& task : record.GetStartedTasks()) {
+-            const auto computeActor = ActorIdFromProto(task.GetActorId());
+-            if (Planner->AcknowledgeCA(task.GetTaskId(), computeActor, nullptr)) {
+-                AbortLateComputeActor(computeActor);
+-            }
+-        }
+-        for (const auto& task : record.GetNotStartedTasks()) {
+-            Planner->TaskNotStarted(task.GetTaskId());
+-        }
+-        TryFinishShutdown();
+-    }
++        HandleComputeStats(ev);
+ 
+-    void HandleShutdown(TEvents::TEvUndelivered::TPtr& ev) {
+-        if (ev->Get()->SourceType == TEvKqpNode::TEvStartKqpTasksRequest::EventType) {
+-            Planner->RequestNotStarted(ev->Cookie);
+-            TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            PassAway();
+         }
+     }
+ 
+-    void HandleShutdown(TEvPrivate::TEvRetry::TPtr& ev) {
+-        Planner->RequestNotStarted(ev->Get()->RequestId);
+-        TryFinishShutdown();
+-    }
+-
+-    void AbortLateComputeActor(const TActorId& computeActor) {
+-        const auto status = ResponseEv->Record.GetResponse().GetStatus();
+-        Send(computeActor, new TEvKqp::TEvAbortExecution(YdbStatusToDqStatus(status), "Terminate execution"));
+-    }
+-
+-    void TryFinishShutdown() {
++    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+         if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+-            FillLocksFromExtraData();
+             PassAway();
+         }
+     }
+@@ -1217,7 +1166,10 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
              }
          }
  
--        // Read incremental restore operations
-+        // Read incremental restore operations. Reset on each init attempt:
-+        // a previous attempt may have rolled back deletes after a page fault.
-         {
-+            Self->PersistedIncrementalRestoreOps.clear();
-+            Self->PersistedIncrementalRestoreItems.clear();
-             auto rowset = db.Table<Schema::IncrementalRestoreOperations>().Select();
-             if (!rowset.IsReady()) {
-                 return false;
-@@ -6225,7 +6226,19 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
-                 Y_ABORT_UNLESS(op.ParseFromString(serializedOp));
- 
-                 TOperationId opId(txId, 0);
-+                bool removed = false;
-+                if (!RemoveStaleIncrementalRestoreOp(db, opId, op, removed, ctx)) {
-+                    return false;
-+                }
-+                if (removed) {
-+                    if (!rowset.Next()) {
-+                        return false;
-+                    }
-+                    continue;
-+                }
-                 Self->LongIncrementalRestoreOps[opId] = op;
-+                Self->PersistedIncrementalRestoreOps[ui64(txId)] = TPathId(
-+                    op.GetBackupCollectionPathId().GetOwnerId(), op.GetBackupCollectionPathId().GetLocalId());
- 
-                 if (op.HasBackupCollectionPathId()) {
-                     // Skip path-state re-locking for terminal restores: leaving paths in
-@@ -6301,11 +6314,15 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
-                 ui64 waitTxId = irow.GetValueOrDefault<Schema::IncrementalRestoreItem::WaitTxId>(0);
-                 ui64 srcTableLocal = irow.GetValueOrDefault<Schema::IncrementalRestoreItem::SrcTablePathId>(0);
- 
-+                Self->PersistedIncrementalRestoreItems[originalOpId].insert(itemSeq);
-                 auto stateIt = Self->IncrementalRestoreStates.find(originalOpId);
-                 if (stateIt == Self->IncrementalRestoreStates.end()) {
--                    // Orphan row (state already forgotten / cleaned up). Drop.
--                    db.Table<Schema::IncrementalRestoreItem>()
--                        .Key(originalOpId, itemSeq).Delete();
-+                    // A legacy orphan may still have a live child. Keep its
-+                    // durable association so another reboot cannot mistake the
-+                    // parent for abandoned work after losing this evidence.
-+                    if (waitTxId == 0 || !Self->Operations.contains(TTxId(waitTxId))) {
-+                        Self->PersistRemoveIncrementalRestoreItem(db, originalOpId, itemSeq);
-+                    }
-                     if (!irow.Next()) return false;
-                     continue;
-                 }
-@@ -6329,8 +6346,7 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
-                     Self->TxIdToIncrementalRestore[TTxId(waitTxId)] = originalOpId;
-                 } else {
-                     // Sub-op didn't survive reboot. Drop; re-entry will re-enqueue.
--                    db.Table<Schema::IncrementalRestoreItem>()
--                        .Key(originalOpId, itemSeq).Delete();
-+                    Self->PersistRemoveIncrementalRestoreItem(db, originalOpId, itemSeq);
-                 }
- 
-                 if (!irow.Next()) return false;
-@@ -6669,6 +6685,172 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
-         return true;
+-        TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            FillLocksFromExtraData();
++            PassAway();
++        }
      }
  
-+    // Validate before rebuilding any path locks. Removing the obsolete header,
-+    // rather than just skipping a bad path, also makes the repaired database safe
-+    // for readers which do not have this recovery check.
-+  
+     void
 ```
 
-**File**: `ydb/core/tx/schemeshard/schemeshard__operation_drop_backup_collection.cpp` (modified, +29/-115)
+**File**: `ydb/core/kqp/executer_actor/kqp_executer_ut.cpp` (modified, +0/-231)
 ```diff
-@@ -131,57 +131,43 @@ TTxTransaction CreateTableDropTransaction(const TPath& tablePath) {
-     return tableDropTx;
+@@ -5,12 +5,8 @@
+ #include <ydb/core/kqp/executer_actor/kqp_executer.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/executer_actor/kqp_executer_stats.h>
+-#include <ydb/core/kqp/node_service/kqp_node_service.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+-#include <ydb/core/tx/datashard/datashard_failpoints.h>
+ #include <ydb/core/tx/datashard/datashard_ut_common_kqp.h>
+-#include <ydb/library/yql/dq/actors/compute/dq_compute_actor.h>
+ 
+ #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/status_codes.h>
+ 
+@@ -19,235 +15,8 @@ namespace NKikimr::NKqp {
+ using namespace NYdb;
+ using namespace NYdb::NTable;
+ 
+-namespace {
+-
+-enum class ELateRemoteTaskStart {
+-    ComputeState,
+-    StartResponse,
+-    InternalError,
+-    NotStarted,
+-    Undelivered,
+-};
+-
+-TKikimrSettings RemoteTaskSettings(ui32 channelVersion) {
+-    auto settings = TKikimrSettings().SetUseRealThreads(false).SetNodeCount(2);
+-    auto* config = settings.AppConfig.MutableTableServiceConfig();
+-    config->SetDqChannelVersion(channelVersion);
+-    config->MutableResourceManager()->SetMaxNonParallelDataQueryTasksLimit(0);
+-    config->MutableResourceManager()->SetMaxNonParallelTasksExecutionLimit(0);
+-    config->MutableQueryLimits()->SetWaitCAStatsTimeoutMs(1000);
+-    return settings;
+-}
+-
+-TActorId StartDistributedCount(TTestActorRuntime& runtime) {
+-    auto edge = runtime.AllocateEdgeActor();
+-    auto query = MakeHolder<TEvKqp::TEvQueryRequest>();
+-    ActorIdToProto(edge, query->Record.MutableRequestActorId());
+-    auto& request = *query->Record.MutableRequest();
+-    request.SetAction(NKikimrKqp::QUERY_ACTION_EXECUTE);
+-    request.SetType(NKikimrKqp::QUERY_TYPE_SQL_GENERIC_QUERY);
+-    request.SetDatabase("/Root");
+-    request.SetQuery("SELECT COUNT(*) FROM `/Root/EightShard`;");
+-    request.MutableTxControl()->mutable_begin_tx()->mutable_serializable_read_write();
+-    request.MutableTxControl()->set_commit_tx(true);
+-    NDataShard::NKqpHelpers::SendRequest(runtime, edge, std::move(query));
+-    return edge;
+-}
+-
+-void TestLateRemoteTaskStart(ui32 channelVersion, ELateRemoteTaskStart outcome) {
+-    using NYql::NDq::TEvDqCompute::TEvState;
+-    using NYql::NDqProto::StatusIds;
+-    constexpr auto failureStatus = StatusIds::PRECONDITION_FAILED;
+-    const TString failureMessage = "Local compute actor failed";
+-    const bool startsRemoteActors = outcome == ELateRemoteTaskStart::ComputeState
+-        || outcome == ELateRemoteTaskStart::StartResponse;
+-
+-    TKikimrRunner kikimr(RemoteTaskSettings(channelVersion));
+-    auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-
+-    TActorId executer;
+-    TActorId localComputeActor;
+-    TActorId localExecuter;
+-    TInstant shutdownDeadline;
+-    TInstant responseTime;
+-    THashSet<TActorId> abortedRemoteActors;
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> startRequests(runtime, [&](const auto& ev) {
+-        return ev->Sender.NodeId() != ev->GetRecipientRewrite().NodeId();
+-    });
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksResponse> startResponses(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::ComputeState && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId();
+-    });
+-    const auto stateObserver = runtime.AddObserver<TEvState>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender.NodeId() == recipient.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING && !localComputeActor) {
+-            localComputeActor = ev->Sender;
+-            localExecuter = recipient;
+-        }
+-    });
+-    TBlockEvents<TEvState> remoteHellos(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::StartResponse && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING;
+-    });
+-    const auto abortObserver = runtime.AddObserver<TEvKqp::TEvAbortExecution>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender == executer && recipient.NodeId() != executer.NodeId()) {
+-            UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(ev->Get()->Record.GetStatusCode()), static_cast<int>(failureStatus));
+-            UNIT_ASSERT(abortedRemoteActors.insert(recipient).second);
+-        }
+-    });
+-    const auto responseObserver = runtime.AddObserver<TEvKqpExecuter::TEvTxResponse>([&](auto& ev) {
+-        if (ev->Sender == executer) {
+-            responseTime = runtime.GetCurrentTime();
+-        }
+-    });
+-    TTestActorRuntimeBase::TScheduledEventFilter previousFilter;
+-    previousFilter = runtime.SetScheduledEventFilter([&](auto& actorRuntime, auto& ev, auto delay, auto& deadline) {
+-        if (executer && ev->GetTypeRewrit
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.cpp` (modified, +8/-10)
+```diff
+@@ -872,16 +872,14 @@ TMaybe<ui64> TKqpPlanner::GetActualNodeIdForTask(ui64 taskId) const {
  }
  
--// TODO: replace UGLY scan
- void CleanupIncrementalRestoreState(const TPathId& backupCollectionPathId, TOperationContext& context, NIceDb::TNiceDb& db) {
--    YDB_LOG_INFO_CTX(context.Ctx, "CleanupIncrementalRestoreState for backup collection",
--        {"pathId", backupCollectionPathId},
--        {"schemeshard", context.SS->TabletID()},
--    );
--
--    TVector<ui64> statesToCleanup;
--
--    for (auto it = context.SS->IncrementalRestoreStates.begin(); it != context.SS->IncrementalRestoreStates.end(); ++it) {
--        if (it->second.BackupCollectionPathId == backupCollectionPathId) {
--            statesToCleanup.push_back(it->first);
-+    THashSet<ui64> operationsToCleanup;
-+    for (const auto& [opId, state] : context.SS->IncrementalRestoreStates) {
-+        if (state.BackupCollectionPathId == backupCollectionPathId) {
-+            operationsToCleanup.insert(opId);
-         }
+ void TKqpPlanner::TaskNotStarted(ui64 taskId) {
+-    // A start failure can include tasks whose actors already reported in.
+-    PendingComputeTasks.erase(taskId);
+-}
++    // NOTE: should be invoked only while shutting down - when node is disconnected.
+ 
+-void TKqpPlanner::RequestNotStarted(ui64 requestId) {
+-    if (requestId < Requests.size()) {
+-        for (ui64 taskId : Requests[requestId].TaskIds) {
+-            TaskNotStarted(taskId);
+-        }
+-    }
++    auto& task = TasksGraph.GetTask(taskId);
++
++    YQL_ENSURE(!task.ComputeActorId);
++    YQL_ENSURE(!task.Meta.Completed);
++
++    PendingComputeTasks.erase(taskId);
+ }
+ 
+ TProgressStat::TEntry TKqpPlanner::CalculateConsumptionUpdate() {
+@@ -1038,7 +1036,7 @@ void TKqpPlanner::CollectTaskChannelsUpdates(const TKqpTasksGraph::TTaskType& ta
+ }
+ 
+ void TKqpPlanner::SendReadyState() {
+-    if (ReadyStateSent || ShuttingDown) {
++    if (ReadyStateSent) {
+         return;
      }
  
--    for (const auto& stateId : statesToCleanup) {
--        // Prefix-scan per opId, then delete tracked + untracked rows for that op.
--        // The state-tracked CleanupIncrementalRestoreItems only deletes rows whose
--        // seq is in the in-memory PendingItems/InFlightItems set; without the
--        // prefix scan, rows that slipped tracking (e.g. mid-flight reboot, partial
--        // rehydration) linger on disk until the next reboot self-heals them.
--        auto irow = db.Table<Schema::IncrementalRestoreItem>().Range(stateId).Select();
--        if (irow.IsReady()) {
--            while (!irow.EndOfSet()) {
--                const ui32 itemSeq = irow.GetValue<Schema::IncrementalRestoreItem::ItemSeq>();
--                db.Table<Schema::IncrementalRestoreItem>().Key(stateId, itemSeq).Delete();
--                if (!irow.Next()) {
--                    break;
--                }
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.h` (modified, +0/-5)
+```diff
+@@ -92,13 +92,9 @@ class TKqpPlanner {
+     bool AcknowledgeCA(ui64 taskId, TActorId computeActor, const NYql::NDqProto::TEvComputeActorState* state);
+     bool CompletedCA(ui64 taskId, TActorId computeActor);
+     void TaskNotStarted(ui64 taskId);
+-    void RequestNotStarted(ui64 requestId);
+     TProgressStat::TEntry CalculateConsumptionUpdate();
+     void ShiftConsumption();
+     void Submit();
+-    void BeginShutdown() {
+-        ShuttingDown = true;
+-    }
+     ui32 GetCurrentRetryDelay(ui32 requestId);
+     void Unsubscribe();
+ 
+@@ -173,7 +169,6 @@ class TKqpPlanner {
+     const bool EnableWatermarks;
+     IKqpStreamingQueryController* const StreamingQuery;
+     bool ReadyStateSent = false;
+-    bool ShuttingDown = false;
+ public:
+     static bool UseMockEmptyPlanner;  // for tests: if true then use TKqpMockEmptyPlanner that leads to the error
+     THashMap<ui32, TActorId> ResultChannels;
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_compute_actor_creation_ut.cpp` (modified, +5/-56)
+```diff
+@@ -1,9 +1,7 @@
+-#include <ydb/core/kqp/common/simple/services.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/node_service/kqp_query_control_plane.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+ #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+ 
+ namespace NKikimr::NKqp {
+ namespace {
+@@ -15,7 +13,6 @@ constexpr TStringBuf CreationError = "injected compute actor creation failure";
+ struct TCreationState {
+     ui32 Attempts = 0;
+     ui32 Aborted = 0;
+-    TVector<TActorId> StartedActors;
+     std::weak_ptr<IQueryQuotaManager> QueryQuota;
+     TIntrusivePtr<NRm::TTxState> Tx;
+ };
+@@ -76,9 +73,7 @@ class TThrowingComputeActorFactory : public NComputeActor::IKqpNodeComputeActorF
+             }
+             ythrow yexception() << CreationError;
+         }
+-        auto actor = TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+-        CreationState->StartedActors.push_back(actor);
+-        return actor;
++        return TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+     }
+ 
+     void ApplyConfig(const NKikimrConfig::TTableServiceConfig::TResourceManager&) override {}
+@@ -108,46 +103,6 @@ void CheckResourcesReleased(TTestActorRuntime& runtime, const TCreationState& st
+ } // namespace
+ 
+ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+-    Y_UNIT_TEST(CancelledBeforeActorCreation) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto nodeService = runtime.GetLocalServiceId(MakeKqpNodeServiceID(runtime.GetNodeId()));
+-        TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> forwarded(runtime, [&](const auto& ev) {
+-            return ev->Sender == executer && ev->GetRecipientRewrite() != nodeService;
+-        });
+-        auto sendStart = [&](ui64 taskId) {
+-            auto start = MakeHolder<TEvKqpNode::TEvStartKqpTasksRequest>();
+-            start->Record.SetTxId(TxId);
+-            start->Record.SetStartAllOrFail(true);
+-            start->Record.AddTasks()->SetId(taskId);
+-            runtime.Send(new IEventHandle(nodeService, executer, start.Release()));
+-        };
+-        auto checkRejection = [&](TActorId sender, ui64 taskId) {
+-            auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer, TDuration::Seconds(5));
+-            UNIT_ASSERT(reply);
+-            UNIT_ASSERT_VALUES_EQUAL(reply->Sender, sender);
+-            const auto& record = reply->Get()->Record;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 1);
+-            const auto& task = record.GetNotStartedTasks(0);
+-            UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), taskId);
+-            UNIT_ASSERT_EQUAL(task.GetReason(), NKikimrKqp::TEvStartKqpTasksResponse::INTERNAL_ERROR);
+-        };
+-
+-        sendStart(1);
+-        runtime.WaitFor("start request forwarded to the query manager", [&] { return !forwarded.empty(); }, TDuration::Seconds(5));
+-        const auto queryManager = forwarded.front()->GetRecipientRewrite();
+-        auto cancel = MakeHolder<TEvKqpNode::TEvCancelKqpTasksRequest>();
+-        cancel->Record.SetTxId(TxId);
+-        runtime.Send(new IEventHandle(nodeService, executer, cancel.Release()));
+-
+-        sendStart(2);
+-        checkRejection(nodeService, 2);
+-        forwarded.Stop().Unblock();
+-        checkRejection(queryManager, 1);
+-    }
+-
+     Y_UNIT_TEST_TWIN(NodeServiceFailure, UnknownException) {
+         for (ui32 failOnAttempt : {1u, 2u, 3u}) {
+             TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+@@ -186,17 +141,11 @@ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+             auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer);
+             const auto& record = reply->Get()->Record;
+             UNIT_ASSERT_VALUES_EQUAL(record.GetTxId(), TxId);
+-            const ui32 startedTasks = failOnAttempt == 3 ? 0 : failOnAttempt - 1;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), startedTasks);
+-            for (ui32 i = 0; i < startedTasks; ++i) {
+-                const auto& task = record.GetStartedTasks(i);
+-                UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), firstTaskId + i);
+-                UNIT_ASSERT_VALUES_EQUAL(ActorIdFromProto(task.GetActorId()), factory->CreationState->StartedActors.at(i));
 -            }
-+    // Include retained history and legacy headers without a state. This
-+    // inventory survives finalization and is rebuilt from durable rows on init.
-+    for (const auto& [opId, collectionPathId] : context.SS->PersistedIncrementalRestoreOps) {
-+        if (collectionPathId == backupCollectionPathId) {
-+            operationsToCleanup.insert(opId);
-         }
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3 - startedTasks);
+-            for (ui32 i = 0; i < 3 - startedTasks; ++i) {
++            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
++            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3);
++            for (ui32 i =
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_planner_ut.cpp` (removed, +0/-128)
+```diff
+@@ -1,128 +0,0 @@
+-#include <ydb/core/kqp/executer_actor/kqp_planner.h>
+-#include <ydb/core/kqp/ut/common/kqp_ut_common.h>
 -
--        auto* state = context.SS->IncrementalRestoreStates.FindPtr(stateId);
--        context.SS->CleanupIncrementalRestoreItems(stateId, db, state);
--        context.SS->IncrementalRestoreStates.erase(stateId);
--        db.Table<Schema::IncrementalRestoreState>().Key(stateId).Delete();
-     }
- 
--    for (auto opIt = context.SS->IncrementalRestoreOperationToState.begin();
--         opIt != context.SS->IncrementalRestoreOperationToState.end();) {
--        if (std::find(statesToCleanup.begin(), statesToCleanup.end(), opIt->second) != statesToCleanup.end()) {
--            auto toErase = opIt;
--            ++opIt;
-+    for (ui64 opId : operationsToCleanup) {
-+        context.SS->CleanupIncrementalRestoreItems(opId, db,
-+            context.SS->IncrementalRestoreStates.FindPtr(opId));
-+        context.SS->IncrementalRestoreStates.erase(opId);
-+        context.SS->LongIncrementalRestoreOps.erase(TOperationId(opId, 0));
-+        db.Table<Schema::IncrementalRestoreState>().Key(opId).Delete();
-+        context.SS->PersistRemoveLongIncrementalRestoreOp(db, opId);
-+    }
-+    for (auto it = context.SS->IncrementalRestoreOperationToState.begin();
-+         it != context.SS->IncrementalRestoreOperationToState.end();) {
-+        if (operationsToCleanup.contains(it->second)) {
-+            const auto toErase = it++;
-             context.SS->IncrementalRestoreOperationToState.erase(toErase);
-         } else {
--            ++opIt;
-+            ++it;
-         }
-     }
- 
--    YDB_LOG_INFO_CTX(context.Ctx, "CleanupIncrementalRestoreState: Cleaned up incremental restore states",
--        {"count", statesToCleanup.size()},
-+    YDB_LOG_INFO_CTX(context.Ctx, "CleanupIncrementalRestoreState: removed incremental restore operations",
-+        {"count", operationsToCleanup.size()},
-+        {"pathId", backupCollectionPathId},
-         {"schemeshard", context.SS->TabletID()},
-     );
- }
-@@ -221,14 +207,15 @@ class TPropose : public TSubOperationState {
- 
-         NIceDb::TNiceDb db(context.GetDB());
- 
-+        // Exact-key deletes cannot page-fault. Cleanup and the collection drop
-+        // commit together without reads in this non-retryable callback.
-+        CleanupIncrementalRestoreState(pathId, context, db);
-+
-         Y_ABORT_UNLESS(!pathPtr->Dropped());
-         pathPtr->SetDropped(step, OperationId.GetTxId());
-         context.SS->PersistDropStep(db, pathId, step, OperationId);
-         context.SS->PersistRemoveBackupCollection(db, pathId);
- 
--        // Clean up incremental restore state for this backup collection
--        CleanupIncrementalRestoreState(pathId, context, db);
+-namespace NKikimr::NKqp {
+-namespace {
 -
-         auto domainInfo = context.SS->ResolveDomainInfo(pathId);
-         domainInfo->DecPaths
-```
-
-**File**: `ydb/core/tx/schemeshard/schemeshard_impl.cpp` (modified, +7/-0)
-```diff
-@@ -5399,6 +5399,13 @@ void TSchemeShard::PersistLongIncrementalRestoreOp(NIceDb::TNiceDb& db, const NK
-         .Key(op.GetTxId())
-         .Update(
-             NIceDb::TUpdate<Schema::IncrementalRestoreOperations::Operation>(data));
-+    PersistedIncrementalRestoreOps[op.GetTxId()] = TPathId(
-+        op.GetBackupCollectionPathId().GetOwnerId(), op.GetBackupCollectionPathId().GetLocalId());
-+}
-+
-+void TSchemeShard::PersistRemoveLongIncrementalRestoreOp(NIceDb::TNiceDb& db, ui64 operationId) {
-+    db.Table<Schema::IncrementalRestoreOperations>().Key(operationId).Delete();
-+    PersistedIncrementalRestoreOps.erase(operationId);
- }
- 
- TTabletId TSchemeShard::GetGlobalHive() const {
-```
-
-**File**: `ydb/core/tx/schemeshard/schemeshard_impl.h` (modified, +9/-0)
-```diff
-@@ -363,6 +363,12 @@ class TSchemeShard
-     struct TTxDatabaseFreezeDone;
-     THashMap<TPathId, TPathDbRef> OwnDbRefs; // path's own type info record ref
-     THashMap<TOperationId, NKikimrSchemeOp::TLongIncrementalRestoreOp> LongIncrementalRestoreOps;
-+    // Inventory of durable rows, independent of active restore bookkeeping.
-+    // Completed headers remain until FORGET/DROP; legacy items may have no state.
-+    // Rebuilt on init and maintained by the persistence helpers below, so DROP
-+    // can remove all owned records without reads in its plan callback.
-+    THashMap<ui64, TPathId> PersistedIncrementalRestoreOps;
-+    THashMap<ui64, THashSet<ui32>> PersistedIncrementalRestoreItems;
- 
-     // Simplified state tracking for sequential incremental restore
- 
-@@ -1097,6 +1103,9 @@ class TSchemeShard
-     void PersistRemoveTestShardSet(NIceDb::TNiceDb& db, TPathId pathId);
- 
-     void PersistLongIncrementalRestoreOp(NIceDb::TNiceDb& db, const NKikimrSchemeOp::TLongIncrementalRestoreOp& op);
-+    void PersistRemoveLongIncrementalRestoreOp(NIceDb::TNiceDb& db, ui64 operationId);
-+    void PersistIncrementalRestoreItem(NIceDb::TNiceDb& db, ui64 operationId, const TIncrementalRestoreState::TItem& item);
-+    void PersistRemoveIncrementalRestoreItem(NIceDb::TNiceDb& db, ui64 operationId, ui32 itemSeq);
- 
-     // Secret
-     void PersistSecret(NIceDb::TNiceDb& db, TPathId pathId, const TSecretInfo& secretInfo);
-```
-
-**File**: `ydb/core/tx/schemeshard/schemeshard_incremental_restore_scan.cpp` (modified, +36/-33)
-```diff
-@@ -383,12 +383,7 @@ class TSchemeShard::TTxProgressIncrementalRestore : public NTabletFlatExecutor::
- 
-             if (isPathA) {
-                 const auto& tableOp = tableOpIt->second;
--                const size_t recordedShards =
--                    tableOp.CompletedShards.size() + tableOp.FailedShards.size();
--                const bool allShardsReported = recordedShards >= tableOp.ExpectedShards.size()
--                    && !tableOp.ExpectedShards.empty();
+-struct TTestStreamingQueryController : IKqpStreamingQueryController {
+-    bool NeedsPrepare() const override {
+-        return false;
+-    }
 -
--                if (!allShardsReported) {
-+                if (!tableOp.AllShardsComplete()) {
-                     stillInProgress.insert(opId);
-                     continue;
-                 }
-@@ -420,8 +415,7 @@ class TSchemeShard::TTxProgressIncrementalRestore : public NTabletFlatExecutor::
-                     const ui32 itemSeq = seqIt->second;
-                     state.WaitTxIdToItemSeq.erase(seqIt);
-                     state.InFlightItems.erase(itemSeq);
--                    db.Table<Schema::IncrementalRestoreItem>()
--                        .Key(OperationId, itemSeq).Delete();
-+                    Self->PersistRemoveIncrementalRestoreItem(db, OperationId, itemSeq);
-                 }
-                 // Keep dispatch state alive for failed sub-ops so retry can re-issue requests.
-                 if (!failed) {
-@@ -441,7 +435,7 @@ class TSchemeShard::TTxProgressIncrementalRestore : public NTabletFlatExecutor::
-                             const auto& tableOp = tableOpIt->second;
-                             const size_t recordedShards =
-                                 tableOp.CompletedShards.size() + tableOp.FailedShards.size();
--                            if (recordedShards < tableOp.ExpectedShards.size()) {
-+                            if (!tableOp.ExpectedShards.empty() && !tableOp.AllShardsComplete()) {
-                                 YDB_LOG_WARN_CTX(ctx, "Sub-op exited Operations with incomplete shard results recorded; treating as failure",
-                                     {"opId", opId},
-                                     {"recordedShards", recordedShards},
-@@ -473,8 +467,7 @@ class TSchemeShard::TTxProgressIncrementalRestore : public NTabletFlatExecutor::
-                         const ui32 itemSeq = seqIt->second;
-                         state.WaitTxIdToItemSeq.erase(seqIt);
-                         state.InFlightItems.erase(itemSeq);
--                        db.Table<Schema::IncrementalRestoreItem>()
--                            .Key(OperationId, itemSeq).Delete();
-+                        Self->PersistRemoveIncrementalRestoreItem(db, OperationId, itemSeq);
-                     }
-                     Self->TxIdToIncrementalRestore.erase(txId);
-                 }
-@@ -1452,13 +1445,7 @@ void TSchemeShard::EnqueueIncrementalRestoreItem(
-     item.WaitTxId = ui64(InvalidTxId);
-     item.PendingRequest = request.Release();
- 
--    db.Table<Schema::IncrementalRestoreItem>()
--        .Key(originalOpId, item.ItemSeq)
--        .Update(
--            NIceDb::TUpdate<Schema::IncrementalRestoreItem::ItemKind>(static_cast<ui32>(kind)),
--            NIceDb::TUpdate<Schema::IncrementalRestoreItem::TablePathId>(tablePathId.LocalPathId),
--            NIceDb::TUpdate<Schema::IncrementalRestoreItem::WaitTxId>(ui64(InvalidTxId)),
--            NIceDb::TUpdate<Schema::IncrementalRestoreItem::SrcTablePathId>(srcTablePathId.LocalPathId));
-+    PersistIncrementalRestoreItem(db, originalOpId, item);
- 
-     state.PendingItems.push_back(std::move(item));
- 
-@@ -1474,24 +1461,42 @@ void TSchemeShard::EnqueueIncrementalRestoreItem(
-         originalOpId);
- }
- 
-+void TSchemeShard::PersistIncrementalRestoreItem(
-+    NIceDb::TNiceDb& db, ui64 operationId, const TIncrementalRestoreState::TItem& item)
-+{
-+    db.Table<Schema::IncrementalRestoreItem>()
-+        .Key(operationId, item.ItemSeq)
-+        .Update(
-+            NIceDb::TUpdate<Schema::IncrementalRestoreItem::ItemKind>(static_cast<ui32>(item.Kind)),
-+            NIceDb::TUpdate<Schema::IncrementalRestoreItem::TablePathId>(item.TablePathId.LocalPathId),
-+            NIceDb::TUpdate<Schema::IncrementalRestoreItem::WaitTxId>(item.WaitTxId),
-+            NIceDb::TUpdate<Schema::IncrementalRestoreItem::SrcTablePathId>(item.SrcTablePathId.LocalPathId));
-+    PersistedIncrementalRestoreItems[operationId].insert(item.ItemSeq);
-+}
-+
-+void TSchemeShard::PersistRemoveIncrementalRestoreItem(NIceDb::TNiceDb& db, ui64 operationId, ui32 itemSeq) {
-+    db.Table<Schema::IncrementalRestoreItem>().Key(operationId, itemSeq).Delete();
-+    auto it = PersistedIncrementalRestoreItems.find(operationId);
-+    if (it != PersistedIncrementalRestoreItems.end()) {
-+        it->second.erase(itemSeq);
-+        if (it->second.empty()) {
-+            PersistedIncrementalRestoreItems.erase(it);
-+        }
-+    }
-+}
-+
- void TSchemeShard::CleanupIncrementalRestoreItems(
-     ui64 originalOpId,
-     NIceDb::TNiceDb& db,
-     TIncrementalRestoreState* state)
- {
--    THashSet<ui32> knownSeqs;
--    if (state) {
--        for 
+-    void StartPrepare(TVector<TPqTopicResolverSource>, THashMap<TString, TString>) override {}
+-
+-    std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph> GetGraphToRestore(
+-        const TVector<NKikimrKqp::TKqpNodeResources>&, ui32) override {
+-        return nullptr;
+-    }
+-
+-    TStartedActors Start(std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph>, const TKqpTasksGraph&) override {
+-        return {};
+-    }
+-
+-    void OnComputeActorsStarted(TVector<TTaskInfo> tasks, bool) override {
+-        ReadyTasks = std::move(tasks);
+-        ++ReadyCalls;
+-    }
+-
+-    bool IsOwnEvent(const NActors::IEventHandle&) const override {
+-        return false;
+-    }
+-
+-    void Handle(TAutoPtr<NActors::IEventHandle>&) override {}
+-
+-    void Terminate() override {}
+-
+-    TVector<TTaskInfo> ReadyTasks;
+-    ui32 ReadyCalls = 0;
+-};
+-
+-} // namespace
+-
+-Y_UNIT_TEST_SUITE(KqpPlanner) {
+-    Y_UNIT_TEST_TWIN(NoStreamingReadinessDuringShutdown, ComputeStateFirst) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto firstActor = runtime.AllocateEdgeActor();
+-        const auto lastActor = runtime.AllocateEdgeActor();
+-        const TString database = "/Root";
+-        const NKikimrConfig::TTableServiceConfig config;
+-
+-        runtime.RunCall([&] {
+-            for (const bool shuttingDown : {false, true}) {
+-                NKqpProto::TKqpPhyTx txProto;
+-                txProto.AddStages();
+-                auto txHolder = std::make_shared<TKqpPhyTxHolder>(nullptr, &txProto, nullptr, nullptr);
+-                const IKqpGateway::TPhysicalTxData tx(txHolder, nullptr);
+-                const TVector<IKqpGateway::TPhysicalTxData> transactions;
+-                TKqpTasksGraph graph(database, transactions, nullptr, config.GetResourceManager(),
+-                    config.GetAggregationConfig(), nullptr, {}, nullptr, false);
+-                graph.GetMeta().UserRequestContext = MakeIntrusive<TUserRequestContext>();
+-                graph.GetMeta().UserRequestContext->IsStreamingQuery = true;
+-                const NYql::NDq::TStageId stageId(0, 0);
+-                graph.AddStageInfo(TStageInfo(stageId, 0, 0, TStageInfoMeta(tx)));
+-                auto& stage = graph.GetStageInfo(stageId);
+-                auto addTask = [&] {
+-                    auto& task = graph.AddTask(stage);
+-                    task.Meta.ExpectedNodeId = executer.NodeId();
+-                    return task.Id;
+-                };
+-                const auto firstTaskId = addTask();
+-                const auto lastTaskId = addTask();
+-
+-                TTestStreamingQueryController controller;
+-                NWilson::TSpan span;
+-                TKqpPlanner planner({
+-                    .TasksGraph = graph,
+-                    .TxId = 1,
+-                    .Executer = executer,
+-                    .Database = database,
+-                    .UserToken = {},
+-                    .Deadline = {},
+-                    .StatsMode = Ydb::Table::QueryStatsCollection::STATS_COLLECTION_NONE,
+-                    .StatsReportingSettings = {},
+-                    .RlPath = {},
+-                    .ExecuterSpan = span,
+-                    .ExecuterRetriesConfig = config.GetExecuterRetriesConfig(),
+-                    .MkqlMemoryLimit = 0,
+-                    .AsyncIoFactory = nullptr,
+-                    .AllowSinglePartitionOpt = false,
+-                    .FederatedQuerySetup = std::nullopt,
+-                    .ResourceManager_ = {},
+-                    .CaFactory_ = {},
+-                    .BlockTrackingMode = {},
+-                    .ArrayBufferMinFillPercentage = {},
+-                    .BufferPageAllocSize = {},
+-                    .EnableCheckpoints = false,
+-                    .EnableWatermarks = false,
+-                    .StreamingQuery = &controller,
+-                });
+-                UNIT_ASSERT(!planner.PlanExecution());
+-                UNIT_ASSERT_VALUES_EQUAL(planner.GetPendingComputeTasks().size(), 2);
+-                UNIT_ASSERT(planner.AcknowledgeCA(firstTaskId, firstActor, nullptr));
+-                UNIT_ASSERT_VALUES_EQUAL(controller.ReadyCalls, 0);
+-
+-                if (shuttingDown) {
+-                    planner.BeginShutdown();
+-                }
+-                NYql::NDqProto::TEvComputeActorState state;
+-                state.SetTaskId(lastTaskId);
+-                state.SetState(NYql::NDqProto::COMPUTE_STATE_EXECUTING);
+-                UNIT_ASSERT(planner.AcknowledgeCA(lastTaskId, lastActor, ComputeStat
 ```
 
-**File**: `ydb/core/tx/schemeshard/schemeshard_info_types.h` (modified, +10/-2)
+**File**: `ydb/core/kqp/executer_actor/ut/ya.make` (modified, +0/-1)
 ```diff
-@@ -4423,8 +4423,16 @@ struct TIncrementalRestoreState {
-         explicit TTableOperationState(const TOperationId& opId) : OperationId(opId) {}
- 
-         bool AllShardsComplete() const {
--            return CompletedShards.size() + FailedShards.size() == ExpectedShards.size() &&
--                    !ExpectedShards.empty();
-+            if (ExpectedShards.empty()) {
-+                return false;
-+            }
-+            // Unexpected or overlapping replies cannot replace a missing expected shard.
-+            for (const auto& shard : ExpectedShards) {
-+                if (!CompletedShards.contains(shard) && !FailedShards.contains(shard)) {
-+                    return false;
-+                }
-+            }
-+            return true;
-         }
- 
-         bool HasFailures() const {
-```
-
-**File**: `ydb/core/tx/schemeshard/schemeshard_restore_incremental__forget.cpp` (modified, +1/-1)
-```diff
-@@ -131,7 +131,7 @@ struct TSchemeShard::TIncrementalRestore::TTxForget: public NTabletFlatExecutor:
-         );
- 
-         // Clean up IncrementalRestoreOperations table
--        db.Table<Schema::IncrementalRestoreOperations>().Key(restoreId).Delete();
-+        Self->PersistRemoveLongIncrementalRestoreOp(db, restoreId);
-         YDB_LOG_INFO(GetLogPrefix() << "Cleaned up IncrementalRestoreOperations for operation",
-             {"restoreId", restoreId},
-         );
-```
-
-**File**: `ydb/core/tx/schemeshard/ut_incremental_restore_reboots/ut_incremental_restore_reboots.cpp` (modified, +2/-0)
-```diff
-@@ -81,6 +81,8 @@ Y_UNIT_TEST_SUITE(TIncrementalRestoreWithRebootsTests) {
-             UNIT_ASSERT_C(!ss->FindTx(TOperationId(TTxId(rejectedId), 0)),
-                 "Rejected proposal left an orphan TxState");
-             UNIT_ASSERT(!ss->LongIncrementalRestoreOps.contains(TOperationId(TTxId(rejectedId), 0)));
-+            UNIT_ASSERT(!ss->PersistedIncrementalRestoreOps.contains(rejectedId));
-+            UNIT_ASSERT(!ss->PersistedIncrementalRestoreItems.contains(rejectedId));
-             return true;
-         });
-     }
+@@ -9,7 +9,6 @@ SRCS(
+     kqp_compute_actor_creation_ut.cpp
+     kqp_executer_stats_ut.cpp
+     kqp_executer_ut.cpp
+-    kqp_planner_ut.cpp
+     kqp_tasks_graph_ut.cpp
+     max_tasks_graph_ut.cpp
+ )
 ```
 
 ---
 
-### Incident Patch 2: `ec786cbf` (2026-11-23)
-**Commit Message**: YDBBUGS-1040 Retry transient S3 failures in backup compatibility tests (#60587)
+### Incident Patch 3: `1473bd55` (2026-11-24)
+**Commit Message**: [tests] tpc/medium: stop leaked YDB clusters, order more RAM under sanitizers (#58865)
 
-**File**: `ydb/tests/compatibility/s3_backups/test_export_import_s3.py` (modified, +6/-0)
+**File**: `ydb/tests/functional/tpc/medium/test_external.py` (modified, +4/-1)
 ```diff
-@@ -18,6 +18,10 @@
- from ydb.topic import TopicClient
+@@ -21,4 +21,7 @@ def setup_class(cls) -> None:
  
- 
-+# Allow the server to retry transient requests to the S3 mock.
-+S3_REQUEST_RETRIES = 10
-+
-+
- class TestExportImportS3(MixedClusterFixture):
-     class SchemeObject(Enum):
-         TABLE = 0
-@@ -48,6 +52,7 @@ def setup(self):
-             .with_access_key(s3_access_key)
-             .with_secret_key(s3_secret_key)
-             .with_bucket(s3_bucket)
-+            .with_number_of_retries(S3_REQUEST_RETRIES)
-         )
- 
-         extra_feature_flags = ["enable_export_auto_dropping"]
-@@ -222,6 +227,7 @@ def _import_check(self, scheme_objects=[scheme_object.name for scheme_object in
-             .with_access_key(s3_access_key)
-             .with_secret_key(s3_secret_key)
-             .with_bucket(s3_bucket)
-+            .with_number_of_retries(S3_REQUEST_RETRIES)
-         )
-         for num in range(1, 6):
-             if "TABLE" in scheme_objects:
+     @classmethod
+     def teardown_class(cls) -> None:
+-        cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        try:
++            cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        finally:
++            super().teardown_class()
 ```
 
----
-
-### Incident Patch 3: `38caa072` (2026-11-23)
-**Commit Message**: [Disable PG] Gate built-in PostgreSQL types and expressions in KQP SQL (#60314)
-
-**File**: `ydb/core/kqp/common/pg_policy/pg_policy.cpp` (added, +178/-0)
+**File**: `ydb/tests/functional/tpc/medium/test_upload.py` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,178 @@
-+#include "pg_policy.h"
+@@ -11,3 +11,10 @@ def setup_class(cls) -> None:
+         YdbCluster._tables_path = ''
+         cls.setup_cluster()
+         super().setup_class()
 +
-+#include <yql/essentials/core/services/yql_transform_pipeline.h>
-+#include <yql/essentials/core/type_ann/type_ann_expr.h>
-+#include <yql/essentials/core/yql_expr_optimize.h>
-+
-+#include <util/generic/hash_set.h>
-+
-+namespace NKikimr::NKqp {
-+namespace {
-+
-+class TPgTypeVisitor: public NYql::TDefaultTypeAnnotationVisitor {
-+public:
-+    bool ContainsPg(const NYql::TTypeAnnotationNode& type) {
-+        type.Accept(*this);
-+        return HasPg;
-+    }
-+
-+private:
-+    void Visit(const NYql::TPgExprType&) final {
-+        HasPg = true;
-+    }
-+
-+#define VISIT_COMPOSITE_TYPE(Type) \
-+    void Visit(const NYql::T##Type##ExprType& type) final { \
-+        if (!HasPg && Visited.insert(&type).second) { \
-+            TDefaultTypeAnnotationVisitor::Visit(type); \
-+        } \
-+    }
-+
-+    VISIT_COMPOSITE_TYPE(Multi)
-+    VISIT_COMPOSITE_TYPE(Tuple)
-+    VISIT_COMPOSITE_TYPE(Struct)
-+    VISIT_COMPOSITE_TYPE(Item)
-+    VISIT_COMPOSITE_TYPE(List)
-+    VISIT_COMPOSITE_TYPE(Stream)
-+    VISIT_COMPOSITE_TYPE(Flow)
-+    VISIT_COMPOSITE_TYPE(Optional)
-+    VISIT_COMPOSITE_TYPE(Callable)
-+    VISIT_COMPOSITE_TYPE(Type)
-+    VISIT_COMPOSITE_TYPE(Dict)
-+    VISIT_COMPOSITE_TYPE(Tagged)
-+    VISIT_COMPOSITE_TYPE(Variant)
-+    VISIT_COMPOSITE_TYPE(Block)
-+    VISIT_COMPOSITE_TYPE(Scalar)
-+    VISIT_COMPOSITE_TYPE(Linear)
-+    VISIT_COMPOSITE_TYPE(DynamicLinear)
-+
-+#undef VISIT_COMPOSITE_TYPE
-+
-+    THashSet<const NYql::TTypeAnnotationNode*> Visited;
-+    bool HasPg = false;
-+};
-+
-+bool IsPgValue(const NYql::TTypeAnnotationNode& type) {
-+    const auto* item = &type;
-+    while (item->GetKind() == NYql::ETypeAnnotationKind::Optional) {
-+        item = item->Cast<NYql::TOptionalExprType>()->GetItemType();
-+    }
-+    return item->GetKind() == NYql::ETypeAnnotationKind::Pg;
-+}
-+
-+bool IsExpandedType(const NYql::TExprNode& node, const NYql::TExprContext& ctx) {
-+    const auto* type = node.GetTypeAnn().Get();
-+    if (!type || type->GetKind() != NYql::ETypeAnnotationKind::Type) {
-+        return false;
-+    }
-+    const auto it = ctx.TypeAsNodeCache.find(type->Cast<NYql::TTypeExprType>()->GetType());
-+    return it != ctx.TypeAsNodeCache.end() && it->second.Get() == &node;
-+}
-+
-+void AddPgCompatibilityIssue(const NYql::TExprNode& node, NYql::TExprContext& ctx, NYql::EYqlIssueCode code) {
-+    ctx.AddError(NYql::YqlIssue(ctx.GetPosition(node.Pos()), code, "PostgreSQL compatibility is disabled"));
-+}
-+
-+class TKqpTypeAnnCallableTransformer: public NYql::IGraphTransformer {
-+public:
-+    explicit TKqpTypeAnnCallableTransformer(NYql::TTypeAnnotationContext& types)
-+        : Inner_(NYql::CreateExtCallableTypeAnnotationTransformer(types))
-+    {
-+    }
-+
-+    TStatus Transform(NYql::TExprNode::TPtr input, NYql::TExprNode::TPtr& output, NYql::TExprContext& ctx) final {
-+        const auto name = input->Content();
-+        const bool pgType = input->IsCallable("PgType");
-+        // YQL rewrites can emit FromPg as an identity on native values.
-+        const bool convertsPg = input->IsCallable("FromPg") && input->ChildrenSize() == 1 && input->Head().GetTypeAnn() &&
-+                                input->Head().GetTypeAnn()->GetKind() == NYql::ETypeAnnotationKind::Pg;
-+        if (input->IsCallable() && (convertsPg || (!pgType && IsPgCallable(name)))) {
-+            output = input;
-+            AddPgCompatibilityIssue(*input, ctx, NYql::TIssuesIds::KIKIMR_BAD_REQUEST);
-+            return TStatus::Error;
-+        }
-+
-+        auto status = Inner_->Transform(input, output, ctx);
-+        // PgType only resolves type metadata. ExpandType can emit it for unused input columns.
-+        if (pgType && (status != TStatus::Ok || !IsExpandedType(*input, ctx))) {
-+            AddPgCompatibilityIssue(*input, ctx, NYql::TIssuesIds::KIKIMR_BAD_REQUEST);
-+            return TStatus::Error;
-+        }
-+        if (status == TStatus::Ok && output && output->GetTypeAnn()) {
-+            const auto& type = *output->GetTypeAnn();
-+            // An initial read contains the full row. Composite value types
-+            // are checked after unused fields have been pruned.
-+            if (IsPgValue(type) || (name == "ParseType" && TPgTypeVisitor().ContainsPg(type))) {
-+                AddPgCompatibilityIssue(*output, ctx, NYql::TIssuesIds::KIKIMR_UNSUPPORTED);
-+                return TStatus::Error;
-+            }
-+        }
-+        return status;
-+    }
-+
-+    NThreading::TFuture<void> GetAsyncFuture(const NYql::TExprNode& input) final {
-+        return Inner_->GetAsyncFuture(input);
-+    }
-+
-+    TStatus ApplyAsyncChanges(NYql::TExprNode::TPtr input, NYql::TExprNode::TPtr& output, NYql::TExprContext& ctx) final {
-+        return Inner_->ApplyAsyncChanges(input, output, ctx);
-+    }
-+
-+    void Rewind() final {
-+        Inner_->Rewind();
-+    }
-+
-+    TStatistics GetStatistics() const final {
-+        return Inner_->GetStatistics();
-+    }
-+
-+private:
-+    TAutoPtr<NYql::IGraphTransformer> Inner_;
-+};
-+
-+} // na
++    @classmethod
++    def do_teardown_class(cls) -> None:
++        try:
++            super().do_teardown_class()
++        finally:
++            cls.cluster.stop()
 ```
 
-**File**: `ydb/core/kqp/common/pg_policy/pg_policy.h` (added, +16/-0)
+**File**: `ydb/tests/functional/tpc/medium/ya.make` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,16 @@
-+#pragma once
-+
-+#include <yql/essentials/core/yql_type_annotation.h>
-+
-+#include <util/generic/strbuf.h>
-+
-+namespace NKikimr::NKqp {
-+
-+bool IsPgCallable(TStringBuf name);
-+
-+bool ValidateOptimizedKqpPgTypes(const NYql::TExprNode::TPtr& root, NYql::TExprContext& ctx);
-+
-+NYql::TTypeAnnCallableFactory CreateKqpTypeAnnCallableFactory(NYql::TTypeAnnotationContext& types, bool disablePgCompatibility);
-+bool InstantAnnotateKqpTypes(NYql::TExprNode::TPtr& root, NYql::TExprContext& ctx, NYql::TTypeAnnotationContext& types, bool disablePgCompatibility);
-+
-+} // namespace NKikimr::NKqp
-```
-
-**File**: `ydb/core/kqp/common/pg_policy/ya.make` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+LIBRARY()
-+
-+SRCS(
-+    pg_policy.cpp
-+)
-+
-+PEERDIR(
-+    yql/essentials/core
-+    yql/essentials/core/services
-+    yql/essentials/core/type_ann
-+)
-+
-+YQL_LAST_ABI_VERSION()
-+
-+END()
-```
-
-**File**: `ydb/core/kqp/host/kqp_host.cpp` (modified, +9/-5)
-```diff
-@@ -1,5 +1,7 @@
- #include <ydb/library/yql/providers/ydb_external/common/provider_names.h>
- #include "kqp_host_impl.h"
-+
-+#include <ydb/core/kqp/common/pg_policy/pg_policy.h>
- #include <ydb/core/kqp/tracing/kqp_compile_trace_transformer.h>
- #include "kqp_statement_rewrite.h"
+@@ -22,12 +22,12 @@ TEST_SRCS(
  
-@@ -1937,7 +1939,7 @@ class TKqpHost : public IKqpHost {
-             return nullptr;
-         }
+ FORK_TEST_FILES()
  
--        auto transformer = TTransformationPipeline(TypesCtx)
-+        auto transformer = TTransformationPipeline(TypesCtx, CreateKqpTypeAnnCallableFactory(*TypesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .AddPreTypeAnnotation()
-             .Add(TSecretValueExprTransformer::Sync(SessionCtx->QueryPtr()), "SecretValueExpr")
-@@ -2230,7 +2232,9 @@ class TKqpHost : public IKqpHost {
-             TypesCtx->StreamLookupJoin = Config->GetEnableDqSourceStreamLookupJoin();
-         }
+-REQUIREMENTS(ram:16 cpu:1)
+-
+ IF (SANITIZER_TYPE)
++    REQUIREMENTS(ram:80 cpu:1)
+     SIZE(LARGE)
+     INCLUDE(${ARCADIA_ROOT}/ydb/tests/large.inc)
+ ELSE()
++    REQUIREMENTS(ram:16 cpu:1)
+     SIZE(MEDIUM)
+ ENDIF()
  
--        InitPgProvider();
-+        if (!Config->FeatureFlags.GetDisablePgCompatibility()) {
-+            InitPgProvider();
-+        }
- 
-         TypesCtx->UdfResolver = CreateSimpleUdfResolver(FuncRegistry);
-         TypesCtx->TimeProvider = TAppData::TimeProvider;
-@@ -2296,7 +2300,7 @@ class TKqpHost : public IKqpHost {
-             return CreateCompileTraceEnd(getTrace, name, &passes);
-         };
- 
--        YqlTransformer = TTransformationPipeline(TypesCtx)
-+        YqlTransformer = TTransformationPipeline(TypesCtx, CreateKqpTypeAnnCallableFactory(*TypesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(TLogExprTransformer::Sync("YqlTransformer", NYql::NLog::EComponent::ProviderKqp,
-                 NYql::NLog::ELevel::TRACE), "LogYqlTransform")
-@@ -2367,7 +2371,7 @@ class TKqpHost : public IKqpHost {
-                 false
-             );
- 
--        YqlTransformerNewRBO = TTransformationPipeline(TypesCtx)
-+        YqlTransformerNewRBO = TTransformationPipeline(TypesCtx, CreateKqpTypeAnnCallableFactory(*TypesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(TLogExprTransformer::Sync("YqlTransformerNewRBO", NYql::NLog::EComponent::ProviderKqp,
-                 NYql::NLog::ELevel::TRACE), "LogYqlTransformNewRBO")
-@@ -2395,7 +2399,7 @@ class TKqpHost : public IKqpHost {
-             .Add(endTrace("Prepare physical query"), "TraceEndPreparePhysicalQuery")
-             .Build();
- 
--        DataQueryAstTransformer = TTransformationPipeline(TypesCtx)
-+        DataQueryAstTransformer = TTransformationPipeline(TypesCtx, CreateKqpTypeAnnCallableFactory(*TypesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .AddIntentDeterminationTransformer()
-             .AddTableMetadataLoaderTransformer()
-```
-
-**File**: `ydb/core/kqp/host/kqp_runner.cpp` (modified, +11/-6)
-```diff
-@@ -1,4 +1,6 @@
- #include "kqp_host_impl.h"
-+
-+#include <ydb/core/kqp/common/pg_policy/pg_policy.h>
- #include <ydb/core/kqp/tracing/kqp_compile_trace_transformer.h>
- #include <ydb/core/kqp/tracing/kqp_compile_trace.h>
- 
-@@ -98,6 +100,9 @@ class TCompilePhysicalQueryTransformer : public TSyncTransformerBase {
- 
-         if (!TransformerFinished) {
-             TransformerFinished = true;
-+            if (Config->FeatureFlags.GetDisablePgCompatibility() && !ValidateOptimizedKqpPgTypes(input, ctx)) {
-+                return TStatus::Error;
-+            }
-             auto& preparedQuery = *TransformCtx.QueryCtx->PreparingQuery;
-             TKqpPhysicalQuery physicalQuery(input);
- 
-@@ -375,7 +380,7 @@ class TKqpRunner : public IKqpRunner {
- 
-         sessionCtx->SetInternalTypeAnnTransformer(CreateKqpTypeAnnotationTransformer(Cluster, sessionCtx->TablesPtr(), Config));
- 
--        auto physicalOptimizePipeline = TTransformationPipeline(typesCtx)
-+        auto physicalOptimizePipeline = TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(Log("PhysicalOptimize"), "LogPhysicalOptimize")
-             .AddPreTypeAnnotation()
-@@ -405,7 +410,7 @@ class TKqpRunner : public IKqpRunner {
-             .Add(CreateKqpCheckPhysicalQueryTransformer(OptimizeCtx), "CheckKqlPhysicalQuery")
-             .Build(false));
- 
--        auto physicalBuildTxsTransformer = CreateKqpQueryBlocksTransformer(TTransformationPipeline(typesCtx)
-+        auto physicalBuildTxsTransformer = CreateKqpQueryBlocksTransformer(TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(Log("PhysicalBuildTxs"), "LogPhysicalBuildTxs")
-             .AddTypeAnnotationTransformer()
-@@ -419,7 +424,7 @@ class TKqpRunner : public IKqpRunner {
-                 "BuildPhysicalTxs")
-             .Build(false));
- 
--        auto physicalBuildQueryTransformer = TTransformationPipeline(typesCtx)
-+        auto physicalBuildQueryTransformer = TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(Log("PhysicalBuildQuery"), "LogPhysicalBuildQuery")
-             .AddTypeAnnotationTransformer()
-@@ -429,7 +434,7 @@ class TKqpRunner : public IKqpRunner {
-             .Add(CreateKqpStatisticsTransformer(OptimizeCtx, *typesCtx, Config, Pctx), "Statistics")
-             .Build(false);
- 
--        auto physicalPeepholeTransformer = TTransformationPipeline(typesCtx)
-+        auto physicalPeepholeTransformer = TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-             .AddServiceTransformers()
-             .Add(Log("PhysicalPeephole"), "LogPhysicalPeephole")
-             .AddTypeAnnotationTransformer()
-@@ -477,7 +482,7 @@ class TKqpRunner : public IKqpRunner {
-             auto newRBOPreparedExplainTransformer = traced(CreateKqpRBOExplainPreparedTransformer(
-                 Gateway, Cluster, TransformCtx, &funcRegistry, *typesCtx, OptimizeCtx), "Build explain plan");
- 
--            auto rboKqpTypeAnnTransformer = TTransformationPipeline(typesCtx)
-+            auto rboKqpTypeAnnTransformer = TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-                 .Add(TAutoPtr<IGraphTransformer>(new TRboGcTransformer()), "GC")
-                 .Add(Log("RBOTypeAnnotator"), "LogRBOTypeAnnotator")
-                 .AddTypeAnnotationTransformer()
-@@ -492,7 +497,7 @@ class TKqpRunner : public IKqpRunner {
-             //    .Add(CreateKqpStatisticsTransformer(OptimizeCtx, *typesCtx, Config, Pctx), "Statistics")
-             //    .Build(false);
- 
--            auto newRBOPhysicalOptimizeTransformer = TTransformationPipeline(typesCtx)
-+            auto newRBOPhysicalOptimizeTransformer = TTransformationPipeline(typesCtx, CreateKqpTypeAnnCallableFactory(*typesCtx, Config->FeatureFlags.GetDisablePgCompatibility()))
-                 .AddServiceTransformers()
-                 .Add(Log("NewRBOPhysicalOptimize"), "LogNewRBOPhysicalOptimize")
-                 .Add(CreateCompileTraceBegin(getTrace, TCompileTraceLevels::Phase, "Optimize query",
-```
-
-**File**: `ydb/core/kqp/host/kqp_statement_rewrite.cpp` (modified, +3/-1)
-```diff
-@@ -1,5 +1,6 @@
- #include "kqp_statement_rewrite.h"
- 
-+#include <ydb/core/kqp/common/pg_policy/pg_policy.h>
- #include <ydb/core/kqp/host/kqp_host_impl.h>
- #include <ydb/core/kqp/opt/kqp_opt.h>
- #include <ydb/core/kqp/provider/rewrite_io_utils.h>
-@@ -160,7 +161,8 @@ TPrepareRewriteInfo PrepareCreateTableAs(
- 
-     sessionCtx->SetInternalTypeAnnTransformer(NOpt::CreateKqpTypeAnnotationTransformer(cluster, sessionCtx->TablesPtr(), sessionCtx->ConfigPtr()));
- 
--    auto typeTransformer = NYql::TTransformationPipeline(&typeCtx)
-+    auto typeTransformer = NYql::TTransformationPipeline(
-+        &typeCtx, CreateKqpTypeAnnCallableFactory(typeCtx, sessionCtx->Config().FeatureFlags.GetDisablePgCompatibility()))
-         .AddServiceTransformers()
-         .AddExpressionEvaluation(funcRegistry)
-         .AddPreTypeAnnotation()
-```
-
-**File**: `ydb/core/kqp/host/ya.make` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@ PEERDIR(
-     ydb/core/base
-     ydb/core/kqp/common
-     ydb/core/kqp/common/compile_cache
-+    ydb/core/kqp/common/pg_policy
-     ydb/core/kqp/common/simple
-     ydb/core/kqp/federated_query
-     ydb/core/kqp/gateway/utils
-```
-
-**File**: `ydb/core/kqp/provider/ya.make` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ PEERDIR(
-     ydb/core/base
-     ydb/core/docapi
-     ydb/core/external_sources
-+    ydb/core/kqp/common/pg_policy
-     ydb/core/kqp/common/simple
-     ydb/core/kqp/expr_nodes
-     ydb/core/kqp/opt/cbo
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60622** (2026-11-23): Set ownership of some tests to Enginiring (@iddqdex)
-- **PR #60617** (2026-11-23): EXT-2565: StateStorage quorum for NODATA (#54018) (@robdrynkin)
-- **PR #60615** (2026-11-23): support GetExportCredentials in compute api (@yegorskii)
-- **PR #60593** (2026-11-23): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60590** (2026-11-23): StateStorage: cover self-heal command lifetime through completion (@Evgenik2)
-- **PR #60587** (2026-11-23): YDBBUGS-1040 Retry transient S3 failures in backup compatibility tests (@stanislav-shchetinin)
+- **PR #60730** (2026-11-24): Revert "Fix KQP shutdown while compute tasks are starting" (@PavelEfarinov)
+- **PR #60722** (2026-11-24): [Optimizer] Read a row table through an index in the order of a top-N sort (@denis0x0D)
+- **PR #60718** (2026-11-24): Add correct Children.size() check (@nerhneiro)
+- **PR #60716** (2026-11-24): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60715** (2026-11-24): [YDBBUGS-1250] Fix read-session offset race during partition confirmation (@lberserq)
+- **PR #60712** (2026-11-24): [Disable PG] Record compilation mode in streaming graphs (@asmyasnikov)
 
 ---
 
@@ -2909,61 +2857,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. durable cleanup of stale incremental restore records
+## X. CLI: support HTTP/HTTPS YT export proxies with regression tests
 
 **RULE**:
-When implementing operations in `ydb/core/tx/schemeshard/schemeshard__init.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6732a16f`: durable cleanup of stale incremental restore records. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16e0d087`: CLI: support HTTP/HTTPS YT export proxies with regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/schemeshard/schemeshard__init.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <ydb/core/base/path.h>
-                            const bool isComplete = tableOp.AllShardsComplete() && !tableOp.HasFailures();
-        // Read incremental restore operations. Reset on each init attempt:
-        // a previous attempt may have rolled back deletes after a page fault.
-            Self->PersistedIncrementalRestoreOps.clear();
-            Self->PersistedIncrementalRestoreItems.clear();
-                bool removed = false;
-                if (!RemoveStaleIncrementalRestoreOp(db, opId, op, removed, ctx)) {
-                    return false;
-                }
-                if (removed) {
-                    if (!rowset.Next()) {
-                        return false;
-                    }
-                    continue;
-                }
-                Self->PersistedIncrementalRestoreOps[ui64(txId)] = TPathId(
-                    op.GetBackupCollectionPathId().GetOwnerId(), op.GetBackupCollectionPathId().GetLocalId());
-                Self->PersistedIncrementalRestoreItems[originalOpId].insert(itemSeq);
-                    // A legacy orphan may still have a live child. Keep its
-                    // durable association so another reboot cannot mistake the
-   
+    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
+        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                            const bool isComplete = !tableOp.ExpectedShards.empty()
-                                && (tableOp.CompletedShards.size() + tableOp.FailedShards.size()
-                                    == tableOp.ExpectedShards.size())
-                                && !tableOp.HasFailures();
-        // Read incremental restore operations
-                    // Orphan row (state already forgotten / cleaned up). Drop.
-                    db.Table<Schema::IncrementalRestoreItem>()
-                        .Key(originalOpId, itemSeq).Delete();
-                    db.Table<Schema::IncrementalRestoreItem>()
-                        .Key(originalOpId, itemSeq).Delete();
+    proxyHelp << "YT proxy to connect to" << Endl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6732a16f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16e0d087` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

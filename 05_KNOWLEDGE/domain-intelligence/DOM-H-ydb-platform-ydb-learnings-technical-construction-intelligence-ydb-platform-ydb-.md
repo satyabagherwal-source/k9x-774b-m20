@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T07:15:04.929Z",
+  "timestamp": "2026-11-24T15:28:03.933Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ydb-platform-ydb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ydb-platform-ydb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T07:15:04.929Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T15:28:03.933Z`  
 > **Learning ID**: `LEARN-EVO-ydb-platform-ydb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform-ydb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `7b95bfd8`  
+> **Source Version**: `442f5b3f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T07:14:59.766Z  
+> **Timestamp**: 2026-11-24T15:27:18.356Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T07:14:59.760Z  
+> **Harvest Timestamp**: 2026-11-24T15:27:18.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4792 stars
+- **Stars / Engagement**: 4791 stars
 
 ---
 
@@ -2072,11 +2072,11 @@ impl Remappable for noncontiguous::NFA {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #60166** (2026-11-20): **[CBO] Missing join condition above non-inner join after CBO reordering**
+  *Symptoms*: When CBO optimizer splits an `INNER JOIN` condition into multiple hyperedges, the chosen join order can leave some equalities unapplied, leading to incorrect results.  Example: ```sql SELECT * FROM A LEFT JOIN B ON A.b = B.a JOIN C ON A.c = C.a AND B.c = C.b; ```  Hypergraph that represents eligible reorderings of this query: ``` A ------ B LEFT  JOIN ON A.b = B.a A ------ C INNER JOIN ON A.c = C.a {A, B} - C INNER JOIN ON B.c = C.b ```  Which makes this candidate eligible: ```sql SELECT * FROM A INNER JOIN C ON A.c = C.a LEFT JOIN B ON A.b = B.a; -- this left join lacks "B.c = C.b" condition ```  Usually in cases where a condition is missing from a tree that CBO selected, it gets added back by `AddMissingConditions` subroutine to eligible joins until the tree is complete. The problem here is that it silently fails to do so because join at the top (the one where the condition needs to be added) is a `LEFT JOIN`, adding that condition to it is impossible.  Suggested solution: in such cases add a filter above outer-join that needs to filter on additional condition.
+
 - **Issue #59741** (2026-11-19): **Query Service: filter over keyless aggregate returns/writes a row when a column-free predicate is false (Table Service is correct)**
   *Symptoms*: **YDB version:** reproduced on 26.1.1.20 (`ydbplatform/local-ydb`, image `sha256:3d909b59...`) and on `ydbplatform/local-ydb:26.3.1` (`SELECT Version()` = `stable-26-3-1`). The fix candidate a374bb20 (guard `agg.Keys().Size() == 0` in `FilterOverAggregate`) is not in these branches.  **Summary** A `WHERE` over a keyless aggregate (`COUNT(*)` without `GROUP BY`) that contains a predicate independent of the aggregate's columns (a scalar named expression) behaves differently in Query Service and Table Service. In Query Service the column-free predicate seems to be pushed below the aggregate: the aggregate input becomes empty, `COUNT(*)` yields `0`, and the remaining predicate `cnt = 0` becomes true. As a result a guarded `UPSERT ... SELECT ... FROM $agg WHERE ...` writes when the guard is false. Table Service returns the correct result.  **Setup** ```sql CREATE TABLE omo_cas_repro (doc_id Utf8, ext_id Utf8, revision Int64, PRIMARY KEY (doc_id, revision)); UPSERT INTO omo_cas_repro (doc_id, ext_id, revision) VALUES ("doc","e0",0), ("doc","e1",1); ```  **1. Read-only repro** ```sql $agg = (SELECT COUNT(*) AS cnt FROM omo_cas_repro WHERE doc_id = "doc" AND ext_id = "e1"); $s   = (SELECT 0 AS v); SELECT * FROM $agg WHERE cnt = 0 AND $s = 1;   -- expected: 0 rows ``` - `ydb sql -s` (Query Service): **1 row, `cnt = 0`** (wrong) - `ydb table query execute -t data` (Table Service): 0 rows (correct)  **2. Guarded write (optimistic-concurrency pattern used in production code)** ```sql $tm
-
-- **Issue #59331** (2026-11-14): **Bridge: while a SUSPENDED pile is down, no tablet can boot, CMS included, so the takedown never finishes**
-  *Symptoms*: ## Summary  A pile is SUSPENDED between `bridge takedown` and the moment CMS moves it to DISCONNECTED. If the pile's nodes are down during that time, every tablet boot fails with `ReasonBootSSError`. Tablets that already run keep working; any tablet that starts or restarts loops.  CMS is a tablet too. If it restarts in that window, it cannot boot, so it never moves the pile to DISCONNECTED. On the tested build the public API also refuses any change to a SUSPENDED pile (`cannot update suspended pile`). The only exits are to bring the pile back, or to send a raw `SwitchBridgeClusterState` to distconf through the monitoring page.  A second form: a cold restart of the whole PRIMARY pile while the SUSPENDED pile is powered off. No static tablet (BSController, Hive, SchemeShard, Console, Cms and the others) starts until the SUSPENDED pile's nodes are started again.  The cause is the StateStorage ring group merge added by `79d68642643` ("Fix StateStorage convergence across bridge piles", #56676), which fixed #56585. A tablet boot now waits for every ring group, and the merged reply takes the worst status. The ring group of a SUSPENDED pile still counts, as SYNCHRONIZED. So while its nodes are down, every lock or update fails.  **Exposure.** In a normal takedown the window is short: in a run without a debugger, CMS sent its flip 8 ms after distconf got the takedown. The outage needs one of these: - the leaving pile goes down in that window, and CMS or another tablet restarts before t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2093,755 +2093,754 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `157c71b6` (2026-11-20)
-**Commit Message**: YDBBUGS-1181: Keep PQ metacache fallback indexes aligned (#59885)
+### Incident Patch 1: `16e0d087` (2026-11-24)
+**Commit Message**: CLI: support HTTP/HTTPS YT export proxies with regression tests (#57101)
 
-**File**: `ydb/core/client/server/msgbus_server_pq_metacache.cpp` (modified, +5/-3)
+**File**: `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp` (modified, +2/-1)
 ```diff
-@@ -217,9 +217,12 @@ class TPersQueueMetaCacheActor : public TActorBootstrapped<TPersQueueMetaCacheAc
-             Y_ABORT_UNLESS(Topics.size() == result->ResultSet.size());
-             Y_ABORT_UNLESS(Result == nullptr);
-             FirstRequestDone = true;
--            ui64 index = 0;
-             Result = std::move(result);
--            for (const auto& entry : Result->ResultSet) {
-+            // Index must follow the SchemeCache entry. A continue that skipped
-+            // index++ paired a later fallback with an earlier topic and could
-+            // retry an entry whose status was already Ok.
-+            for (ui64 index = 0; index < Result->ResultSet.size(); ++index) {
-+                const auto& entry = Result->ResultSet[index];
-                 if (DbRoot.empty()) {
-                     continue;
-                 }
-@@ -236,7 +239,6 @@ class TPersQueueMetaCacheActor : public TActorBootstrapped<TPersQueueMetaCacheAc
-                     }
-                     SecondTryTopics.push_back(index);
-                 }
--                index++;
-             }
-             //return true;
-             return SecondTryTopics.empty(); //ToDo - second try topics
-```
-
-**File**: `ydb/core/client/server/msgbus_server_pq_metacache_ut.cpp` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+#include "msgbus_server_pq_metacache.h"
-+
-+#include <ydb/core/base/path.h>
-+#include <ydb/core/testlib/basics/appdata.h>
-+#include <ydb/core/testlib/basics/runtime.h>
-+#include <ydb/core/tx/scheme_cache/scheme_cache.h>
-+
-+#include <library/cpp/testing/unittest/registar.h>
-+
-+#include <memory>
-+
-+namespace NKikimr::NMsgBusProxy {
-+namespace {
-+
-+using namespace NActors;
-+using namespace NSchemeCache;
-+using namespace NPqMetaCacheV2;
-+
-+constexpr TStringBuf DbRoot = "/Root/accounts";
-+
-+TString EntryPath(const TSchemeCacheNavigate::TEntry& entry) {
-+    return TString("/") + JoinPath(entry.Path);
-+}
-+
-+class TScriptedSchemeCache : public TActorBootstrapped<TScriptedSchemeCache> {
-+public:
-+    explicit TScriptedSchemeCache(TVector<TVector<TString>>* requests)
-+        : Requests(requests)
-+    {
-+    }
-+
-+    void Bootstrap() {
-+        Become(&TScriptedSchemeCache::StateWork);
-+    }
-+
-+    STRICT_STFUNC(StateWork,
-+        hFunc(TEvTxProxySchemeCache::TEvNavigateKeySet, Handle);
-+    )
-+
-+private:
-+    void Handle(TEvTxProxySchemeCache::TEvNavigateKeySet::TPtr& ev) {
-+        auto request = std::move(ev->Get()->Request);
-+        TVector<TString> paths;
-+        paths.reserve(request->ResultSet.size());
-+        for (auto& entry : request->ResultSet) {
-+            const TString path = EntryPath(entry);
-+            paths.push_back(path);
-+            if (path.Contains("topic-miss") && path.StartsWith(DbRoot)) {
-+                entry.Status = TSchemeCacheNavigate::EStatus::Ok;
-+            } else if (path.Contains("topic-ok")) {
-+                entry.Status = TSchemeCacheNavigate::EStatus::Ok;
-+            } else {
-+                entry.Status = TSchemeCacheNavigate::EStatus::PathErrorUnknown;
-+            }
-+        }
-+        Requests->push_back(std::move(paths));
-+        Send(ev->Sender, new TEvTxProxySchemeCache::TEvNavigateKeySetResult(std::move(request)));
-+    }
-+
-+    TVector<TVector<TString>>* Requests;
-+};
-+
-+Y_UNIT_TEST_SUITE(TPersQueueMetaCacheFallback) {
-+
-+Y_UNIT_TEST(SkipsEntriesWithoutAccountWhenSchedulingFallback) {
-+    TVector<TVector<TString>> requests;
-+    TTestBasicRuntime runtime(1, false);
-+    runtime.Initialize(TAppPrepare().Unwrap());
-+    runtime.GetAppData().PQConfig.SetTopicsAreFirstClassCitizen(true);
-+    runtime.GetAppData().PQConfig.MutablePQDiscoveryConfig()->SetLbUserDatabaseRoot(TString(DbRoot));
-+
-+    const auto schemeCacheId = runtime.Register(new TScriptedSchemeCache(&requests));
-+    const auto metaCacheId = runtime.Register(CreatePQMetaCache(schemeCacheId));
-+    runtime.DispatchEvents();
-+
-+    NPersQueue::TTopicNamesConverterFactory factory(false, "/Root/PQ", "dc1");
-+    auto noAccount = factory.MakeDiscoveryConverter("rt3.dc1--justtopic", {}, "dc1", "");
-+    auto resolved = factory.MakeDiscoveryConverter("account-ok/topic-ok", {}, "dc1", "");
-+    auto missing = factory.MakeDiscoveryConverter("account-miss/topic-miss", {}, "dc1", "");
-+    UNIT_ASSERT_C(noAccount->IsValid(), noAccount->GetReason());
-+    UNIT_ASSERT_C(resolved->IsValid(), resolved->GetReason());
-+    UNIT_ASSERT_C(missing->IsValid(), missing->GetReason());
-+
-+    TVector<NPersQueue::TDiscoveryConverterPtr> topics{noAccount, resolved, missing};
-+    const auto edge = runtime.AllocateEdgeActor();
-+    runtime.Send(new IEventHandle(
-+        metaCacheId,
-+        edge,
-+        new TEvPqNewMetaCache::TEvDescribeTopicsRequest(topics, false)), 0, true);
-+
-+    auto response = runtime.GrabEdgeEvent<TEvPqNewMetaCache::TEvDescribeTopicsResponse>(edge);
-+    UNIT_ASSERT(response);
-+    UNIT_ASSERT(response->Get()->Result);
-+    const auto& resultSet = response->Get()->Result->ResultSet;
-+    UNIT_ASSERT_VALUES_EQUAL(resultSet.size(), 3u);
-+    UNIT_ASSERT(resultSet[0].Status == TSchemeCacheNavigate::EStatus::PathErrorUnknown);
-+    UNIT_ASSERT(resultSet[1].Status == TSchemeCacheNavigate::EStatus::Ok);
-+    UNIT_ASSERT(resultSet[2].Status == TSchemeCacheNavigate::EStatus::Ok);
-+
-+    UNIT_ASSERT_VALUES_EQUAL(requests.size(), 2u);
-+    UNIT_ASSERT_VALUES_EQUAL(requests[0].size(), 3u);
-+    UNIT_ASSERT_VALUES_EQUAL(requests[1].size(), 1u);
-+    UNIT_ASSERT_VALUES_EQUAL(requests[1][0], "/Root/accounts/account-miss/topic-miss");
-+}
-+
-+} // Y_UNIT_TEST_SUITE
-+
-+} // namespace
-+} // namespace NKikimr::NMsgBusProxy
-```
-
-**File**: `ydb/core/client/server/ut/ya.make` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ YQL_LAST_ABI_VERSION()
+@@ -153,7 +153,8 @@ void TCommandExportToYt::Config(TConfig& config) {
+     TYdbOperationCommand::Config(config);
  
- SRCS(
-     msgbus_server_pq_metarequest_ut.cpp
-+    msgbus_server_pq_metacache_ut.cpp
+     TStringBuilder proxyHelp;
+-    proxyHelp << "YT proxy to connect to" << Endl
++    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
++        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
+         << "  Search order:" << Endl
+         << "    1. This option" << Endl
+         << "    2. \"YT_PROXY\" environment variable";
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/ut/ya.make` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ SRCS(
+     tabbed_table_ut.cpp
+     tx_mode_utils_ut.cpp
+     utf8_utils_ut.cpp
++    yt_ut.cpp
  )
  
  END()
 ```
 
+**File**: `ydb/public/lib/ydb_cli/common/yt.cpp` (modified, +17/-2)
+```diff
+@@ -16,18 +16,33 @@ void TCommandWithYtProxy::ParseYtProxy(const TString& proxy) {
+     }
+ 
+     TMaybe<ui16> port;
++    TStringBuf address = proxy;
++    TStringBuf scheme;
++    ui16 defaultPort = DefaultYtPort;
++
++    if (address.SkipPrefix("https://")) {
++        scheme = "https://";
++        defaultPort = 443;
++    } else if (address.SkipPrefix("http://")) {
++        scheme = "http://";
++    }
+ 
+     try {
+-        Split(proxy, ':', YtHost, port);
++        Split(address, ':', YtHost, port);
+     } catch (const yexception& ex) {
+         throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
+     }
+ 
++    if (YtHost.empty() || YtHost.find_first_of("/?#@") != TString::npos) {
++        throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
++    }
++
+     if (YtHost.find('.') == TString::npos && YtHost.find("localhost") == TString::npos) {
+         YtHost.append(".yt.yandex.net");
+     }
+ 
+-    YtPort = port.GetOrElse(DefaultYtPort);
++    YtHost.prepend(scheme);
++    YtPort = port.GetOrElse(defaultPort);
+ }
+ 
+ const TString TCommandWithYtToken::YtTokenFile = "~/.yt/token";
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/yt_ut.cpp` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++#include "yt.h"
++
++#include <library/cpp/testing/unittest/registar.h>
++
++namespace NYdb::NConsoleClient {
++namespace {
++
++class TYtProxyParser : public TCommandWithYtProxy {
++public:
++    void Parse(const TString& proxy) {
++        TClientCommandOptions options;
++        options.AddLongOption("proxy").RequiredArgument("PROXY");
++        const char* args[] = {"yt-proxy-test", "--proxy", proxy.c_str()};
++        TOptionsParseResult parsed(&options, 3, args);
++        TClientCommand::TConfig config(0, nullptr);
++        config.ParseResult = &parsed;
++        ParseYtProxy(config, "proxy");
++    }
++
++    const TString& GetHost() const {
++        return YtHost;
++    }
++
++    ui16 GetPort() const {
++        return YtPort;
++    }
++};
++
++void AssertProxy(const TString& proxy, const TString& host, ui16 port) {
++    TYtProxyParser parser;
++    parser.Parse(proxy);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetHost(), host);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetPort(), port);
++}
++
++} // namespace
++
++Y_UNIT_TEST_SUITE(YtProxyParsing) {
++    Y_UNIT_TEST(LegacyProxies) {
++        AssertProxy("hahn", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("hahn.yt.yandex.net", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn.yt.yandex.net:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("localhost:9013", "localhost", 9013);
++    }
++
++    Y_UNIT_TEST(HttpsDefaultPort) {
++        AssertProxy("https://hahn.yt.yandex.net", "https://hahn.yt.yandex.net", 443);
++        AssertProxy("https://hahn", "https://hahn.yt.yandex.net", 443);
++    }
++
++    Y_UNIT_TEST(HttpsExplicitPort) {
++        AssertProxy("https://hahn.yt.yandex.net:8443", "https://hahn.yt.yandex.net", 8443);
++        AssertProxy("https://hahn:443", "https://hahn.yt.yandex.net", 443);
++    }
++
++    Y_UNIT_TEST(HttpScheme) {
++        AssertProxy("http://hahn", "http://hahn.yt.yandex.net", 80);
++        AssertProxy("http://localhost:8080", "http://localhost", 8080);
++    }
++
++    Y_UNIT_TEST(InvalidProxies) {
++        for (const TString proxy : {
++                 "", "https://", "http://", "hahn:invalid", "hahn:65536",
++                 "ftp://hahn", "https://hahn/path", "https://hahn?query",
++                 "https://hahn#fragment", "https://user@hahn"}) {
++            TYtProxyParser parser;
++            UNIT_ASSERT_EXCEPTION(parser.Parse(proxy), TMisuseException);
++        }
++    }
++}
++
++} // namespace NYdb::NConsoleClient
+```
+
 ---
 
-### Incident Patch 2: `32eca4fd` (2026-11-19)
-**Commit Message**: Fix direct dependencies in ColumnShard and workload manager (#60031)
+### Incident Patch 2: `1bbaf58a` (2026-11-24)
+**Commit Message**: Revert "Fix KQP shutdown while compute tasks are starting" (#60730)
 
-**File**: `ydb/core/tx/columnshard/backup/import/ya.make` (modified, +1/-0)
+**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor_factory.cpp` (modified, +3/-4)
 ```diff
-@@ -12,6 +12,7 @@ PEERDIR(
-     ydb/core/kqp/common/events
-     ydb/core/scheme
-     ydb/core/tablet_flat
-+    ydb/core/tx/columnshard/backup/async_jobs
-     ydb/core/tx/columnshard/backup/import/protos
-     ydb/core/tx/columnshard/bg_tasks
-     ydb/core/tx/columnshard/blobs_action/protos
+@@ -189,16 +189,15 @@ class TKqpCaFactory : public IKqpNodeComputeActorFactory {
+             YQL_ENSURE(args.ComputesByStages);
+             auto& info = args.ComputesByStages->UpsertTaskWithScan(*args.Task, meta);
+             info.TraceId = NWilson::TTraceId(args.TraceId);
+-            // Allocate bookkeeping before registering the actor.
+-            auto& actorId = info.MutableActorIds().emplace_back();
+             IActor* computeActor = CreateKqpScanComputeActor(
+                 args.ExecuterId, args.TxId, args.Task, AsyncIoFactory, runtimeSettings, memoryLimits,
+                 std::move(args.TraceId), std::move(args.Arena),
+                 std::move(schedulableOptions), args.BlockTrackingMode, std::move(args.UserToken), args.Database);
+-            actorId = args.UseBatchPool
++            TActorId result = args.UseBatchPool
+                 ? TlsActivationContext->Register(computeActor, TActorId(), TMailboxType::HTSwap, AppData()->BatchPoolId)
+                 : TlsActivationContext->Register(computeActor);
+-            return actorId;
++            info.MutableActorIds().emplace_back(result);
++            return result;
+         } else {
+             std::shared_ptr<TGUCSettings> GUCSettings;
+             if (!args.SerializedGUCSettings.empty()) {
 ```
 
-**File**: `ydb/core/tx/columnshard/test_helper/shard_reader.h` (modified, +1/-1)
+**File**: `ydb/core/kqp/executer_actor/kqp_data_executer.cpp` (modified, +9/-57)
 ```diff
-@@ -1,6 +1,6 @@
- #pragma once
- #include <ydb/core/formats/arrow/arrow_helpers.h>
--#include <ydb/core/kqp/compute_actor/kqp_compute_events.h>
-+#include <ydb/core/kqp/common/events/scan.h>
- #include <ydb/core/testlib/basics/runtime.h>
- #include <ydb/core/testlib/tablet_helpers.h>
- #include <ydb/core/tx/columnshard/columnshard_private_events.h>
+@@ -445,7 +445,7 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+                 hFunc(TEvents::TEvUndelivered, HandleUndelivered);
+                 hFunc(TEvPrivate::TEvRetry, HandleRetry);
+                 hFunc(TEvInterconnect::TEvNodeDisconnected, HandleDisconnected);
+-                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleExecute);
++                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleStartKqpTasksResponse);
+                 hFunc(TEvDqCompute::TEvState, HandleComputeState);
+                 hFunc(TEvDqCompute::TEvNodeState, HandleNodeState);
+                 hFunc(TEvDqCompute::TEvChannelData, HandleChannelData);
+@@ -474,14 +474,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         ReportEventElapsedTime();
+     }
+ 
+-    void HandleExecute(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        HandleStartKqpTasksResponse(ev);
+-        if (CurrentStateFunc() == &TThis::WaitShutdownState) {
+-            // A failed start can both initiate shutdown and report which tasks started.
+-            HandleShutdown(ev);
+-        }
+-    }
+-
+     void HandleExecute(TEvKqp::TEvAbortExecution::TPtr& ev) {
+         if (IsCancelAfterAllowed(ev)) {
+             TBase::HandleAbortExecution(ev);
+@@ -1077,7 +1069,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+ 
+     void Shutdown() override {
+         if (Planner) {
+-            Planner->BeginShutdown();
+             if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+                 YDB_LOG_INFO("Shutdown immediately - nothing to wait",
+                     {"marker", "KQPDATA"},
+@@ -1124,9 +1115,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         switch(ev->GetTypeRewrite()) {
+             hFunc(TEvDqCompute::TEvState, HandleShutdown);
+             hFunc(TEvDqCompute::TEvNodeState, HandleShutdown);
+-            hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleShutdown);
+-            hFunc(TEvents::TEvUndelivered, HandleShutdown);
+-            hFunc(TEvPrivate::TEvRetry, HandleShutdown);
+             hFunc(TEvInterconnect::TEvNodeDisconnected, HandleShutdown);
+             hFunc(TEvents::TEvPoison, HandleShutdown);
+             hFunc(TEvDq::TEvAbortExecution, HandleShutdown);
+@@ -1142,54 +1130,15 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+     }
+ 
+     void HandleShutdown(TEvDqCompute::TEvState::TPtr& ev) {
+-        if (HandleComputeStats(ev) && Planner->GetPendingComputeActors().contains(ev->Sender)) {
+-            AbortLateComputeActor(ev->Sender);
+-        }
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        const auto& record = ev->Get()->Record;
+-        if (record.GetTxId() != TxId) {
+-            return;
+-        }
+-
+-        for (const auto& task : record.GetStartedTasks()) {
+-            const auto computeActor = ActorIdFromProto(task.GetActorId());
+-            if (Planner->AcknowledgeCA(task.GetTaskId(), computeActor, nullptr)) {
+-                AbortLateComputeActor(computeActor);
+-            }
+-        }
+-        for (const auto& task : record.GetNotStartedTasks()) {
+-            Planner->TaskNotStarted(task.GetTaskId());
+-        }
+-        TryFinishShutdown();
+-    }
++        HandleComputeStats(ev);
+ 
+-    void HandleShutdown(TEvents::TEvUndelivered::TPtr& ev) {
+-        if (ev->Get()->SourceType == TEvKqpNode::TEvStartKqpTasksRequest::EventType) {
+-            Planner->RequestNotStarted(ev->Cookie);
+-            TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            PassAway();
+         }
+     }
+ 
+-    void HandleShutdown(TEvPrivate::TEvRetry::TPtr& ev) {
+-        Planner->RequestNotStarted(ev->Get()->RequestId);
+-        TryFinishShutdown();
+-    }
+-
+-    void AbortLateComputeActor(const TActorId& computeActor) {
+-        const auto status = ResponseEv->Record.GetResponse().GetStatus();
+-        Send(computeActor, new TEvKqp::TEvAbortExecution(YdbStatusToDqStatus(status), "Terminate execution"));
+-    }
+-
+-    void TryFinishShutdown() {
++    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+         if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+-            FillLocksFromExtraData();
+             PassAway();
+         }
+     }
+@@ -1217,7 +1166,10 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+             }
+         }
+ 
+-        TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            FillLocksFromExtraData();
++            PassAway();
++        }
+     }
+ 
+     void
 ```
 
-**File**: `ydb/core/tx/columnshard/test_helper/ya.make` (modified, +1/-0)
+**File**: `ydb/core/kqp/executer_actor/kqp_executer_ut.cpp` (modified, +0/-231)
 ```diff
-@@ -3,6 +3,7 @@ LIBRARY()
- PEERDIR(
-     contrib/libs/apache/arrow
-     ydb/core/formats/arrow
-+    ydb/core/kqp/common/events
-     ydb/core/protos
-     ydb/core/testlib
-     ydb/core/tx/columnshard
+@@ -5,12 +5,8 @@
+ #include <ydb/core/kqp/executer_actor/kqp_executer.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/executer_actor/kqp_executer_stats.h>
+-#include <ydb/core/kqp/node_service/kqp_node_service.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+-#include <ydb/core/tx/datashard/datashard_failpoints.h>
+ #include <ydb/core/tx/datashard/datashard_ut_common_kqp.h>
+-#include <ydb/library/yql/dq/actors/compute/dq_compute_actor.h>
+ 
+ #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/status_codes.h>
+ 
+@@ -19,235 +15,8 @@ namespace NKikimr::NKqp {
+ using namespace NYdb;
+ using namespace NYdb::NTable;
+ 
+-namespace {
+-
+-enum class ELateRemoteTaskStart {
+-    ComputeState,
+-    StartResponse,
+-    InternalError,
+-    NotStarted,
+-    Undelivered,
+-};
+-
+-TKikimrSettings RemoteTaskSettings(ui32 channelVersion) {
+-    auto settings = TKikimrSettings().SetUseRealThreads(false).SetNodeCount(2);
+-    auto* config = settings.AppConfig.MutableTableServiceConfig();
+-    config->SetDqChannelVersion(channelVersion);
+-    config->MutableResourceManager()->SetMaxNonParallelDataQueryTasksLimit(0);
+-    config->MutableResourceManager()->SetMaxNonParallelTasksExecutionLimit(0);
+-    config->MutableQueryLimits()->SetWaitCAStatsTimeoutMs(1000);
+-    return settings;
+-}
+-
+-TActorId StartDistributedCount(TTestActorRuntime& runtime) {
+-    auto edge = runtime.AllocateEdgeActor();
+-    auto query = MakeHolder<TEvKqp::TEvQueryRequest>();
+-    ActorIdToProto(edge, query->Record.MutableRequestActorId());
+-    auto& request = *query->Record.MutableRequest();
+-    request.SetAction(NKikimrKqp::QUERY_ACTION_EXECUTE);
+-    request.SetType(NKikimrKqp::QUERY_TYPE_SQL_GENERIC_QUERY);
+-    request.SetDatabase("/Root");
+-    request.SetQuery("SELECT COUNT(*) FROM `/Root/EightShard`;");
+-    request.MutableTxControl()->mutable_begin_tx()->mutable_serializable_read_write();
+-    request.MutableTxControl()->set_commit_tx(true);
+-    NDataShard::NKqpHelpers::SendRequest(runtime, edge, std::move(query));
+-    return edge;
+-}
+-
+-void TestLateRemoteTaskStart(ui32 channelVersion, ELateRemoteTaskStart outcome) {
+-    using NYql::NDq::TEvDqCompute::TEvState;
+-    using NYql::NDqProto::StatusIds;
+-    constexpr auto failureStatus = StatusIds::PRECONDITION_FAILED;
+-    const TString failureMessage = "Local compute actor failed";
+-    const bool startsRemoteActors = outcome == ELateRemoteTaskStart::ComputeState
+-        || outcome == ELateRemoteTaskStart::StartResponse;
+-
+-    TKikimrRunner kikimr(RemoteTaskSettings(channelVersion));
+-    auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-
+-    TActorId executer;
+-    TActorId localComputeActor;
+-    TActorId localExecuter;
+-    TInstant shutdownDeadline;
+-    TInstant responseTime;
+-    THashSet<TActorId> abortedRemoteActors;
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> startRequests(runtime, [&](const auto& ev) {
+-        return ev->Sender.NodeId() != ev->GetRecipientRewrite().NodeId();
+-    });
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksResponse> startResponses(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::ComputeState && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId();
+-    });
+-    const auto stateObserver = runtime.AddObserver<TEvState>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender.NodeId() == recipient.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING && !localComputeActor) {
+-            localComputeActor = ev->Sender;
+-            localExecuter = recipient;
+-        }
+-    });
+-    TBlockEvents<TEvState> remoteHellos(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::StartResponse && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING;
+-    });
+-    const auto abortObserver = runtime.AddObserver<TEvKqp::TEvAbortExecution>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender == executer && recipient.NodeId() != executer.NodeId()) {
+-            UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(ev->Get()->Record.GetStatusCode()), static_cast<int>(failureStatus));
+-            UNIT_ASSERT(abortedRemoteActors.insert(recipient).second);
+-        }
+-    });
+-    const auto responseObserver = runtime.AddObserver<TEvKqpExecuter::TEvTxResponse>([&](auto& ev) {
+-        if (ev->Sender == executer) {
+-            responseTime = runtime.GetCurrentTime();
+-        }
+-    });
+-    TTestActorRuntimeBase::TScheduledEventFilter previousFilter;
+-    previousFilter = runtime.SetScheduledEventFilter([&](auto& actorRuntime, auto& ev, auto delay, auto& deadline) {
+-        if (executer && ev->GetTypeRewrit
 ```
 
-**File**: `ydb/services/workload_manager/common/ya.make` (modified, +1/-0)
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.cpp` (modified, +8/-10)
 ```diff
-@@ -12,6 +12,7 @@ PEERDIR(
-     ydb/core/base
-     ydb/core/resource_pools
-     ydb/core/scheme
-+    ydb/core/tx/scheme_cache
-     ydb/library/actors/core
-     ydb/public/sdk/cpp/src/client/types
+@@ -872,16 +872,14 @@ TMaybe<ui64> TKqpPlanner::GetActualNodeIdForTask(ui64 taskId) const {
+ }
+ 
+ void TKqpPlanner::TaskNotStarted(ui64 taskId) {
+-    // A start failure can include tasks whose actors already reported in.
+-    PendingComputeTasks.erase(taskId);
+-}
++    // NOTE: should be invoked only while shutting down - when node is disconnected.
+ 
+-void TKqpPlanner::RequestNotStarted(ui64 requestId) {
+-    if (requestId < Requests.size()) {
+-        for (ui64 taskId : Requests[requestId].TaskIds) {
+-            TaskNotStarted(taskId);
+-        }
+-    }
++    auto& task = TasksGraph.GetTask(taskId);
++
++    YQL_ENSURE(!task.ComputeActorId);
++    YQL_ENSURE(!task.Meta.Completed);
++
++    PendingComputeTasks.erase(taskId);
+ }
+ 
+ TProgressStat::TEntry TKqpPlanner::CalculateConsumptionUpdate() {
+@@ -1038,7 +1036,7 @@ void TKqpPlanner::CollectTaskChannelsUpdates(const TKqpTasksGraph::TTaskType& ta
+ }
+ 
+ void TKqpPlanner::SendReadyState() {
+-    if (ReadyStateSent || ShuttingDown) {
++    if (ReadyStateSent) {
+         return;
+     }
+ 
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.h` (modified, +0/-5)
+```diff
+@@ -92,13 +92,9 @@ class TKqpPlanner {
+     bool AcknowledgeCA(ui64 taskId, TActorId computeActor, const NYql::NDqProto::TEvComputeActorState* state);
+     bool CompletedCA(ui64 taskId, TActorId computeActor);
+     void TaskNotStarted(ui64 taskId);
+-    void RequestNotStarted(ui64 requestId);
+     TProgressStat::TEntry CalculateConsumptionUpdate();
+     void ShiftConsumption();
+     void Submit();
+-    void BeginShutdown() {
+-        ShuttingDown = true;
+-    }
+     ui32 GetCurrentRetryDelay(ui32 requestId);
+     void Unsubscribe();
+ 
+@@ -173,7 +169,6 @@ class TKqpPlanner {
+     const bool EnableWatermarks;
+     IKqpStreamingQueryController* const StreamingQuery;
+     bool ReadyStateSent = false;
+-    bool ShuttingDown = false;
+ public:
+     static bool UseMockEmptyPlanner;  // for tests: if true then use TKqpMockEmptyPlanner that leads to the error
+     THashMap<ui32, TActorId> ResultChannels;
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_compute_actor_creation_ut.cpp` (modified, +5/-56)
+```diff
+@@ -1,9 +1,7 @@
+-#include <ydb/core/kqp/common/simple/services.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/node_service/kqp_query_control_plane.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+ #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+ 
+ namespace NKikimr::NKqp {
+ namespace {
+@@ -15,7 +13,6 @@ constexpr TStringBuf CreationError = "injected compute actor creation failure";
+ struct TCreationState {
+     ui32 Attempts = 0;
+     ui32 Aborted = 0;
+-    TVector<TActorId> StartedActors;
+     std::weak_ptr<IQueryQuotaManager> QueryQuota;
+     TIntrusivePtr<NRm::TTxState> Tx;
+ };
+@@ -76,9 +73,7 @@ class TThrowingComputeActorFactory : public NComputeActor::IKqpNodeComputeActorF
+             }
+             ythrow yexception() << CreationError;
+         }
+-        auto actor = TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+-        CreationState->StartedActors.push_back(actor);
+-        return actor;
++        return TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+     }
+ 
+     void ApplyConfig(const NKikimrConfig::TTableServiceConfig::TResourceManager&) override {}
+@@ -108,46 +103,6 @@ void CheckResourcesReleased(TTestActorRuntime& runtime, const TCreationState& st
+ } // namespace
+ 
+ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+-    Y_UNIT_TEST(CancelledBeforeActorCreation) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto nodeService = runtime.GetLocalServiceId(MakeKqpNodeServiceID(runtime.GetNodeId()));
+-        TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> forwarded(runtime, [&](const auto& ev) {
+-            return ev->Sender == executer && ev->GetRecipientRewrite() != nodeService;
+-        });
+-        auto sendStart = [&](ui64 taskId) {
+-            auto start = MakeHolder<TEvKqpNode::TEvStartKqpTasksRequest>();
+-            start->Record.SetTxId(TxId);
+-            start->Record.SetStartAllOrFail(true);
+-            start->Record.AddTasks()->SetId(taskId);
+-            runtime.Send(new IEventHandle(nodeService, executer, start.Release()));
+-        };
+-        auto checkRejection = [&](TActorId sender, ui64 taskId) {
+-            auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer, TDuration::Seconds(5));
+-            UNIT_ASSERT(reply);
+-            UNIT_ASSERT_VALUES_EQUAL(reply->Sender, sender);
+-            const auto& record = reply->Get()->Record;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 1);
+-            const auto& task = record.GetNotStartedTasks(0);
+-            UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), taskId);
+-            UNIT_ASSERT_EQUAL(task.GetReason(), NKikimrKqp::TEvStartKqpTasksResponse::INTERNAL_ERROR);
+-        };
+-
+-        sendStart(1);
+-        runtime.WaitFor("start request forwarded to the query manager", [&] { return !forwarded.empty(); }, TDuration::Seconds(5));
+-        const auto queryManager = forwarded.front()->GetRecipientRewrite();
+-        auto cancel = MakeHolder<TEvKqpNode::TEvCancelKqpTasksRequest>();
+-        cancel->Record.SetTxId(TxId);
+-        runtime.Send(new IEventHandle(nodeService, executer, cancel.Release()));
+-
+-        sendStart(2);
+-        checkRejection(nodeService, 2);
+-        forwarded.Stop().Unblock();
+-        checkRejection(queryManager, 1);
+-    }
+-
+     Y_UNIT_TEST_TWIN(NodeServiceFailure, UnknownException) {
+         for (ui32 failOnAttempt : {1u, 2u, 3u}) {
+             TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+@@ -186,17 +141,11 @@ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+             auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer);
+             const auto& record = reply->Get()->Record;
+             UNIT_ASSERT_VALUES_EQUAL(record.GetTxId(), TxId);
+-            const ui32 startedTasks = failOnAttempt == 3 ? 0 : failOnAttempt - 1;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), startedTasks);
+-            for (ui32 i = 0; i < startedTasks; ++i) {
+-                const auto& task = record.GetStartedTasks(i);
+-                UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), firstTaskId + i);
+-                UNIT_ASSERT_VALUES_EQUAL(ActorIdFromProto(task.GetActorId()), factory->CreationState->StartedActors.at(i));
+-            }
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3 - startedTasks);
+-            for (ui32 i = 0; i < 3 - startedTasks; ++i) {
++            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
++            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3);
++            for (ui32 i =
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_planner_ut.cpp` (removed, +0/-128)
+```diff
+@@ -1,128 +0,0 @@
+-#include <ydb/core/kqp/executer_actor/kqp_planner.h>
+-#include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+-
+-namespace NKikimr::NKqp {
+-namespace {
+-
+-struct TTestStreamingQueryController : IKqpStreamingQueryController {
+-    bool NeedsPrepare() const override {
+-        return false;
+-    }
+-
+-    void StartPrepare(TVector<TPqTopicResolverSource>, THashMap<TString, TString>) override {}
+-
+-    std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph> GetGraphToRestore(
+-        const TVector<NKikimrKqp::TKqpNodeResources>&, ui32) override {
+-        return nullptr;
+-    }
+-
+-    TStartedActors Start(std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph>, const TKqpTasksGraph&) override {
+-        return {};
+-    }
+-
+-    void OnComputeActorsStarted(TVector<TTaskInfo> tasks, bool) override {
+-        ReadyTasks = std::move(tasks);
+-        ++ReadyCalls;
+-    }
+-
+-    bool IsOwnEvent(const NActors::IEventHandle&) const override {
+-        return false;
+-    }
+-
+-    void Handle(TAutoPtr<NActors::IEventHandle>&) override {}
+-
+-    void Terminate() override {}
+-
+-    TVector<TTaskInfo> ReadyTasks;
+-    ui32 ReadyCalls = 0;
+-};
+-
+-} // namespace
+-
+-Y_UNIT_TEST_SUITE(KqpPlanner) {
+-    Y_UNIT_TEST_TWIN(NoStreamingReadinessDuringShutdown, ComputeStateFirst) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto firstActor = runtime.AllocateEdgeActor();
+-        const auto lastActor = runtime.AllocateEdgeActor();
+-        const TString database = "/Root";
+-        const NKikimrConfig::TTableServiceConfig config;
+-
+-        runtime.RunCall([&] {
+-            for (const bool shuttingDown : {false, true}) {
+-                NKqpProto::TKqpPhyTx txProto;
+-                txProto.AddStages();
+-                auto txHolder = std::make_shared<TKqpPhyTxHolder>(nullptr, &txProto, nullptr, nullptr);
+-                const IKqpGateway::TPhysicalTxData tx(txHolder, nullptr);
+-                const TVector<IKqpGateway::TPhysicalTxData> transactions;
+-                TKqpTasksGraph graph(database, transactions, nullptr, config.GetResourceManager(),
+-                    config.GetAggregationConfig(), nullptr, {}, nullptr, false);
+-                graph.GetMeta().UserRequestContext = MakeIntrusive<TUserRequestContext>();
+-                graph.GetMeta().UserRequestContext->IsStreamingQuery = true;
+-                const NYql::NDq::TStageId stageId(0, 0);
+-                graph.AddStageInfo(TStageInfo(stageId, 0, 0, TStageInfoMeta(tx)));
+-                auto& stage = graph.GetStageInfo(stageId);
+-                auto addTask = [&] {
+-                    auto& task = graph.AddTask(stage);
+-                    task.Meta.ExpectedNodeId = executer.NodeId();
+-                    return task.Id;
+-                };
+-                const auto firstTaskId = addTask();
+-                const auto lastTaskId = addTask();
+-
+-                TTestStreamingQueryController controller;
+-                NWilson::TSpan span;
+-                TKqpPlanner planner({
+-                    .TasksGraph = graph,
+-                    .TxId = 1,
+-                    .Executer = executer,
+-                    .Database = database,
+-                    .UserToken = {},
+-                    .Deadline = {},
+-                    .StatsMode = Ydb::Table::QueryStatsCollection::STATS_COLLECTION_NONE,
+-                    .StatsReportingSettings = {},
+-                    .RlPath = {},
+-                    .ExecuterSpan = span,
+-                    .ExecuterRetriesConfig = config.GetExecuterRetriesConfig(),
+-                    .MkqlMemoryLimit = 0,
+-                    .AsyncIoFactory = nullptr,
+-                    .AllowSinglePartitionOpt = false,
+-                    .FederatedQuerySetup = std::nullopt,
+-                    .ResourceManager_ = {},
+-                    .CaFactory_ = {},
+-                    .BlockTrackingMode = {},
+-                    .ArrayBufferMinFillPercentage = {},
+-                    .BufferPageAllocSize = {},
+-                    .EnableCheckpoints = false,
+-                    .EnableWatermarks = false,
+-                    .StreamingQuery = &controller,
+-                });
+-                UNIT_ASSERT(!planner.PlanExecution());
+-                UNIT_ASSERT_VALUES_EQUAL(planner.GetPendingComputeTasks().size(), 2);
+-                UNIT_ASSERT(planner.AcknowledgeCA(firstTaskId, firstActor, nullptr));
+-                UNIT_ASSERT_VALUES_EQUAL(controller.ReadyCalls, 0);
+-
+-                if (shuttingDown) {
+-                    planner.BeginShutdown();
+-                }
+-                NYql::NDqProto::TEvComputeActorState state;
+-                state.SetTaskId(lastTaskId);
+-                state.SetState(NYql::NDqProto::COMPUTE_STATE_EXECUTING);
+-                UNIT_ASSERT(planner.AcknowledgeCA(lastTaskId, lastActor, ComputeStat
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/ya.make` (modified, +0/-1)
+```diff
+@@ -9,7 +9,6 @@ SRCS(
+     kqp_compute_actor_creation_ut.cpp
+     kqp_executer_stats_ut.cpp
+     kqp_executer_ut.cpp
+-    kqp_planner_ut.cpp
+     kqp_tasks_graph_ut.cpp
+     max_tasks_graph_ut.cpp
  )
 ```
 
 ---
 
-### Incident Patch 3: `dd807054` (2026-11-19)
-**Commit Message**: Fix re-adds with plain fulltext compaction (#59951)
+### Incident Patch 3: `1473bd55` (2026-11-24)
+**Commit Message**: [tests] tpc/medium: stop leaked YDB clusters, order more RAM under sanitizers (#58865)
 
-**File**: `ydb/core/base/fulltext.cpp` (modified, +26/-18)
+**File**: `ydb/tests/functional/tpc/medium/test_external.py` (modified, +4/-1)
 ```diff
-@@ -1500,7 +1500,8 @@ void TMultiDeltaReader::SetMaxId(ui64 maxId) {
- void TMultiDeltaReader::Start() {
-     Y_ENSURE(!Started);
-     Started = true;
--    if (Readers.size() == 1) {
-+    if (Readers.size() == 1 && Readers[0].Added) {
-+        // Single deleted segment should never happen, don't use OneLeft with it
-         OneLeft = true;
-     } else {
-         for (size_t i = 0; i < Readers.size(); i++) {
-@@ -1536,17 +1537,13 @@ void TMultiDeltaReader::Consume(ui32 rdrId, TReaderRef& rdr) {
-     }
- }
+@@ -21,4 +21,7 @@ def setup_class(cls) -> None:
  
--bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
-+bool TMultiDeltaReader::Read(ui64& docId, i64& freq) {
-     Y_ENSURE(Started);
-     if (OneLeft) {
--        if (!Readers[0].Added) {
--            // Single deleted segment = should not happen, but empty
--            ui64 unusedDoc = 0;
--            ui32 unusedFreq = 1;
--            while (Readers[0].Reader->Read(unusedDoc, unusedFreq)) {
--            }
--        }
--        return Readers[0].Reader->Read(docId, freq);
-+        ui32 ufreq = 0;
-+        bool ok = Readers[0].Reader->Read(docId, ufreq);
-+        freq = ufreq;
-+        return ok;
-     }
-     TItem cur = NextItem;
-     while (Items.size() > 0) {
-@@ -1555,12 +1552,11 @@ bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
-             // Add frequencies
-             cur.Freq += NextItem.Freq;
-         } else {
--            if (cur.Freq > 0) {
--                // Finished, item has positive frequency (not canceled by updates)
-+            if (cur.Freq != 0) {
-+                // Finished, item has non-zero frequency (not self-canceled by updates)
-                 // Leave NextItem as is
-                 docId = cur.DocId;
--                Y_ENSURE(cur.Freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
--                freq = static_cast<ui32>(cur.Freq);
-+                freq = cur.Freq;
-                 return true;
-             } else {
-                 // Scan the next item
-@@ -1569,16 +1565,28 @@ bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
-         }
-     }
-     NextItem = {};
--    if (cur.Freq > 0) {
--        // Finished, item has positive frequency (not canceled by updates)
-+    if (cur.Freq != 0) {
-+        // Finished, item has non-zero frequency (not self-canceled by updates)
-         docId = cur.DocId;
--        Y_ENSURE(cur.Freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
--        freq = static_cast<ui32>(cur.Freq);
-+        freq = cur.Freq;
-         return true;
-     }
-     return false;
- }
- 
-+bool TMultiDeltaReader::ReadPositive(ui64& docId, ui32& ufreq) {
-+    bool ok;
-+    i64 freq = 0;
-+    while (ok = Read(docId, freq)) {
-+        if (freq > 0) {
-+            Y_ENSURE(freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
-+            ufreq = (ui32)freq;
-+            return true;
-+        }
-+    }
-+    return false;
-+}
-+
- }
- 
- template<> inline
+     @classmethod
+     def teardown_class(cls) -> None:
+-        cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        try:
++            cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        finally:
++            super().teardown_class()
 ```
 
-**File**: `ydb/core/base/fulltext.h` (modified, +5/-10)
+**File**: `ydb/tests/functional/tpc/medium/test_upload.py` (modified, +7/-0)
 ```diff
-@@ -41,13 +41,7 @@ class TDeltaWriter {
-     TConstArrayRef<ui8> GetBuf() const;
- };
+@@ -11,3 +11,10 @@ def setup_class(cls) -> None:
+         YdbCluster._tables_path = ''
+         cls.setup_cluster()
+         super().setup_class()
++
++    @classmethod
++    def do_teardown_class(cls) -> None:
++        try:
++            super().do_teardown_class()
++        finally:
++            cls.cluster.stop()
+```
+
+**File**: `ydb/tests/functional/tpc/medium/ya.make` (modified, +2/-2)
+```diff
+@@ -22,12 +22,12 @@ TEST_SRCS(
  
--class IDeltaReader {
--public:
--    virtual ~IDeltaReader() = default;
--    virtual bool Read(ui64& docId, ui32& freq) = 0;
--};
+ FORK_TEST_FILES()
+ 
+-REQUIREMENTS(ram:16 cpu:1)
 -
--class TDeltaReader: public IDeltaReader {
-+class TDeltaReader {
-     TConstArrayRef<ui8> Buf;
-     size_t Pos = 0;
-     ui64 LastId = 0;
-@@ -58,13 +52,13 @@ class TDeltaReader: public IDeltaReader {
-     ui64 SavedLastId = 0;
- public:
-     TDeltaReader(TConstArrayRef<ui8> buf, bool withFreq, bool sign);
--    bool Read(ui64& docId, ui32& freq) override;
-+    bool Read(ui64& docId, ui32& freq);
-     void Save();
-     void Restore();
-     void SetMaxId(ui64 maxId);
- };
+ IF (SANITIZER_TYPE)
++    REQUIREMENTS(ram:80 cpu:1)
+     SIZE(LARGE)
+     INCLUDE(${ARCADIA_ROOT}/ydb/tests/large.inc)
+ ELSE()
++    REQUIREMENTS(ram:16 cpu:1)
+     SIZE(MEDIUM)
+ ENDIF()
  
--class TMultiDeltaReader: public IDeltaReader {
-+class TMultiDeltaReader {
-     struct TReaderRef {
-         TDeltaReader *Reader;
-         bool Added = false;
-@@ -101,7 +95,8 @@ class TMultiDeltaReader: public IDeltaReader {
-     void SetMaxId(ui64 maxId);
-     void Start();
-     void Stop();
--    bool Read(ui64& docId, ui32& freq);
-+    bool Read(ui64& docId, i64& freq);
-+    bool ReadPositive(ui64& docId, ui32& freq);
- };
- 
- }
-```
-
-**File**: `ydb/core/base/ut/fulltext_ut.cpp` (modified, +49/-18)
-```diff
-@@ -38,7 +38,7 @@ namespace NKikimr::NFulltext {
- 
-         struct TDeltaItem {
-             ui64 DocId;
--            ui32 Freq;
-+            i64 Freq;
-         };
- 
-         struct TGeneration {
-@@ -55,7 +55,7 @@ namespace NKikimr::NFulltext {
-             return TVector<ui8>(writer.GetBuf().begin(), writer.GetBuf().end());
-         }
- 
--        TVector<TDeltaItem> Merge(const TVector<TGeneration>& generations, bool withFreq = true) {
-+        TVector<TDeltaItem> MergeImpl(const TVector<TGeneration>& generations, bool withFreq, bool positiveOnly) {
-             TVector<TVector<ui8>> encoded;
-             encoded.reserve(generations.size());
- 
-@@ -69,13 +69,30 @@ namespace NKikimr::NFulltext {
- 
-             TVector<TDeltaItem> result;
-             ui64 docId = 0;
--            ui32 freq = 0;
--            while (reader.Read(docId, freq)) {
--                result.push_back({docId, freq});
-+            if (positiveOnly) {
-+                ui32 freq = 0;
-+                while (reader.ReadPositive(docId, freq)) {
-+                    result.push_back({docId, freq});
-+                }
-+            } else {
-+                i64 freq = 0;
-+                while (reader.Read(docId, freq)) {
-+                    result.push_back({docId, freq});
-+                }
-             }
-             return result;
-         }
- 
-+        // Signed merge: negatives are nets canceled by deletes, not postings.
-+        TVector<TDeltaItem> Merge(const TVector<TGeneration>& generations, bool withFreq = true) {
-+            return MergeImpl(generations, withFreq, false);
-+        }
-+
-+        // The path used by compaction and KQP: only positive frequencies become postings.
-+        TVector<TDeltaItem> MergePositive(const TVector<TGeneration>& generations, bool withFreq = true) {
-+            return MergeImpl(generations, withFreq, true);
-+        }
-+
-         TVector<TDeltaItem> RoundTrip(const TVector<TDeltaItem>& items, bool withFreq, bool sign = false) {
-             TDeltaWriter writer;
-             writer.Reset(withFreq, sign);
-@@ -170,7 +187,7 @@ namespace NKikimr::NFulltext {
-             rdr.Add(false, wr2.GetBuf());
-             rdr.Start();
-             ui64 docId;
--            ui32 freq;
-+            i64 freq;
-             for (ui64 i = 1; i <= 100; i++) {
-                 if (i >= 5 && i <= 25 && !((i - 5) % 2)) {
-                     continue;
-@@ -295,7 +312,7 @@ namespace NKikimr::NFulltext {
- 
-             TVector<TDeltaItem> actual;
-             ui64 docId = 0;
--            ui32 freq = 0;
-+            i64 freq = 0;
-             while (reader.Read(docId, freq)) {
-                 actual.push_back({docId, freq});
-             }
-@@ -326,8 +343,8 @@ namespace NKikimr::NFulltext {
-                     // Mix a dense head with a sparse tail. Repeated ids occur across generations, while
-                     // every individual segment remains strictly sorted as required by TDeltaWriter.
-                     const ui64 docId = (nextRandom() & 1)
--                                           ? nextRandom() % 128
--                                           : (nextRandom() % 128) * (1ULL << (nextRandom() % 40));
-+                        ? nextRandom() % 128
-+                        : (nextRandom() % 128) * (1ULL << (nextRandom() % 40));
-                     uniqueItems[docId] = 1 + nextRandom() % 31;
-                 }
-                 for (const auto& [docId, freq] : uniqueItems) {
-@@ -339,21 +356,31 @@ namespace NKikimr::NFulltext {
- 
-             TVector<TDeltaItem> expected;
-             for (const auto& [docId, freq] : reference) {
--                if (freq > 0) {
--                    expected.push_back({docId, static_cast<ui32>(freq)});
-+                if (freq != 0) {
-+                    expected.push_back({docId, freq});
-                 }
-             }
-             const auto compacted = Merge(generations);
-             AssertDeltaItemsEqual(compacted, expected);
- 
-+            // Compaction writes only positive frequencies, so the canonical segment drops the
-+            // negative nets that the signed merge reports.
-+            TVector<TDeltaItem> canonical;
-+            for (const auto& item : compacted) {
-+                if (item.Freq > 0) {
-+                    canonical.push_back(item);
-+                }
-+            }
-+            AssertDeltaItemsEqual(MergePositive(generations), canonical);
-+
-             // Compacting the canonical single add segment again is byte-for-byte and logically idempotent.
--            const auto compactedAgain = Merge({TGeneration{.Added = true, .Items = compacted}});
--            AssertDeltaItemsEqual(compactedAgain, compacted);
--            UNIT_ASSERT(Encode(compactedAgain) == Encode(compacted));
-+            const auto compactedAgain = Merge({TGeneration{.Added = true, .Items = canonical}});
-+            AssertDeltaItemsEqual(compactedAgain, canonical);
-+            UNIT_ASSERT(Encode(compactedAgain) == Encode(canonical));
-         }
- 
-         Y_UNIT_TEST(MultiDeltaReade
-```
-
-**File**: `ydb/core/kqp/runtime/kqp_full_text_source.cpp` (modified, +3/-3)
-```diff
-@@ -957,7 +957,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
-                     Reader.SetMaxId((ui64)std::numeric_limits<TDocId>::max());
-                     Started = true;
-                     Reader.Start();
--                    if (Reader.Read(CurDocId, CurFreq)) {
-+                    if (Reader.ReadPositive(CurDocId, CurFreq)) {
-                         TotalFreq++;
-                         break;
-                     }
-@@ -978,7 +978,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
-                 Reader.SetMaxId((ui64)maxId);
-                 Started = true;
-                 Reader.Start();
--                if (!Reader.Read(CurDocId, CurFreq)) {
-+                if (!Reader.ReadPositive(CurDocId, CurFreq)) {
-                     // Segment may be logically empty, then we have to switch to the next one
-                     FreeReader();
-                 } else {
-@@ -1059,7 +1059,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
-         if (!Started) {
-             return StartReader();
-         }
--        if (!Reader.Read(CurDocId, CurFreq)) {
-+        if (!Reader.ReadPositive(CurDocId, CurFreq)) {
-             FreeReader();
-             return StartReader();
-         }
-```
-
-**File**: `ydb/core/kqp/ut/indexes/common/kqp_indexes_compact_common.cpp` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ TString FormatFulltextIndex(TKikimrRunner& kikimr, const TString& name, bool wit
-             ui64 docId;
-             ui32 freq;
-             auto& list = tokens[lastToken];
--            while (mr.Read(docId, freq)) {
-+            while (mr.ReadPositive(docId, freq)) {
-                 list[docId] = freq;
-             }
-             segments.clear();
-```
-
-**File**: `ydb/core/tablet_flat/flat_ops_compact.h` (modified, +57/-28)
-```diff
-@@ -119,6 +119,16 @@ namespace NTabletFlatExecutor {
-             }
-         };
- 
-+        struct TFtSegment {
-+            ui64 MaxId;
-+            TVector<ui8> Buf;
-+
-+            TFtSegment(NFulltext::TDeltaWriter& wr):
-+                MaxId(wr.GetMaxId()),
-+                Buf(wr.GetBuf().begin(), wr.GetBuf().end()) {
-+            }
-+        };
-+
-         // Fulltext compaction state
-         TSerializedCellVec FtCurrentPrefix;
-         TString FtCurrentToken;
-@@ -137,8 +147,8 @@ namespace NTabletFlatExecutor {
-         // We have to preserve delete markers (removed segments) on non-final compaction (!Conf->Params->IsFinal)
-         ui64 RemovedGen = 0;
-         size_t RemovedDeltas = 0;
--        NFulltext::TMultiDeltaReader RemovedMerger;
-         NFulltext::TDeltaWriter RemovedWriter;
-+        TVector<TFtSegment> RemovedSegments, AddedSegments;
- 
-         const TCompactCfg* Conf;
-         TIntrusiveConstPtr<TScheme> Scheme;
-@@ -277,12 +287,12 @@ namespace NTabletFlatExecutor {
-                     FtMerger.Start();
-                     ui64 docId = 0;
-                     ui32 freq = 0;
--                    while (FtMerger.Read(docId, freq)) {
-+                    while (FtMerger.ReadPositive(docId, freq)) {
-                         FtWriter.Add(docId, freq);
-                         if (FtWriter.GetCount() >= Conf->FulltextMaxSegment) {
-                             // Flush current segment
-                             // It's the final level, so we don't have to preserve deltas here
--                            WriteFulltextSegment(FtWriter, true, std::numeric_limits<NTableIndex::NFulltext::TGen>::max());
-+                            WriteFulltextSegment(FtWriter.GetMaxId(), FtWriter.GetBuf(), true, std::numeric_limits<NTableIndex::NFulltext::TGen>::max());
-                             FtWriter.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
-                         }
-                     }
-@@ -328,10 +338,7 @@ namespace NTabletFlatExecutor {
-             Writer->EndKey();
-         }
- 
--        // Write a single merged fulltext segment through Writer
--        void WriteFulltextSegment(const NFulltext::TDeltaWriter& wr, bool added, NTableIndex::NFulltext::TGen gen) {
--            ui64 maxId = wr.GetMaxId();
--
-+        void WriteFulltextSegment(ui64 maxId, TConstArrayRef<ui8> segBuf, bool added, NTableIndex::NFulltext::TGen gen) {
-             // Build key cells: (token, gen, maxId) — gen before maxId
-             TSmallVec<TCell> keyCells(FtCurrentPrefix.GetCells().begin(), FtCurrentPrefix.GetCells().end());
-             keyCells.push_back(TCell(FtCurrentToken.data(), FtCurrentToken.size()));
-@@ -351,7 +358,6 @@ namespace NTabletFlatExecutor {
-             rs.Set(FtAddedPos, NTable::ECellOp::Set, TCell::Make(added));
- 
-             // Set __ydb_segment = merged segment data
--            auto segBuf = wr.GetBuf();
-             rs.Set(FtSegmentPos, NTable::ECellOp::Set, TCell((const char*)segBuf.data(), segBuf.size()));
- 
-             Writer->BeginKey(keyCells);
-@@ -363,7 +369,6 @@ namespace NTabletFlatExecutor {
-             if (!FtMergerStarted) {
-                 FtMergerStarted = true;
-                 FtMerger.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
--                RemovedMerger.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
-                 AddedDeltas = 0;
-                 RemovedDeltas = 0;
-                 AddedGen = std::numeric_limits<NTableIndex::NFulltext::TGen>::max();
-@@ -378,14 +383,13 @@ namespace NTabletFlatExecutor {
-                         // Skip erased keys
-                         continue;
-                     }
-+                    FtMerger.Add(ver.Added, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
-                     if (Conf->Params->IsFinal || ver.Added) {
--                        FtMerger.Add(ver.Added, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
-                         if (!Conf->Params->IsFinal && AddedGen > key.Gen) {
-                             AddedGen = key.Gen;
-                         }
-                         AddedDeltas++;
-                     } else {
--                        RemovedMerger.Add(true, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
-                         if (RemovedGen > key.Gen) {
-                             RemovedGen = key.Gen;
-                         }
-@@ -420,17 +424,29 @@ namespace NTabletFlatExecutor {
-                 }
-             }
-             if (RemovedDeltas > 0) {
--                RemovedMerger.Start();
--                FlushSegments(RemovedMerger, RemovedWriter, false, RemovedGen);
-+                // Flush and accumulate in RemovedSegments/AddedSegments
-+                FlushSegments();
-+                for (auto& seg: RemovedSegments) {
-+                    WriteFulltextSegment(seg.MaxId, seg.Buf, false, RemovedGen);
-+                }
-+                if (RemovedWriter.GetCount() > 0) {
-
-```
-
-**File**: `ydb/core/tablet_flat/ut/ut_compaction_fulltext.cpp` (modified, +105/-3)
-```diff
-@@ -255,6 +255,9 @@ namespace {
-     // Read all fulltext rows from compacted output
-     TVector<TFtRow> ReadFulltextRows(const TPartEggs& eggs) {
-         TVector<TFtRow> rows;
-+        if (eggs.Parts.empty()) {
-+            return rows;
-+        }
- 
-         NTest::TWrapPart wrap(eggs);
-         NTest::TTestEnv env;
-@@ -291,6 +294,21 @@ namespace {
-         return rows;
-     }
- 
-+    i64 DocumentBalance(const TVector<TFtRow>& rows, ui64 docId, TStringBuf prefix = {}) {
-+        i64 balance = 0;
-+        for (const auto& row : rows) {
-+            if (row.RowOp != ERowOp::Upsert || row.Prefix != prefix) {
-+                continue;
-+            }
-+            for (ui64 id : row.DocIds) {
-+                if (id == docId) {
-+                    balance += row.Added ? 1 : -1;
-+                }
-+            }
-+        }
-+        return balance;
-+    }
-+
- } // anonymous namespace
- 
- Y_UNIT_TEST_SUITE(TFulltextCompaction) {
-@@ -560,15 +578,15 @@ Y_UNIT_TEST_SUITE(TFulltextCompaction) {
- 
-         UNIT_ASSERT_VALUES_EQUAL(rows[0].Token, "hello");
-         UNIT_ASSERT_VALUES_EQUAL(rows[0].Gen, 10);
--        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 150);
-+        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 50);
-         UNIT_ASSERT_VALUES_EQUAL(rows[0].Added, false);
--        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{5, 10, 50, 150}));
-+        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{50}));
- 
-         UNIT_ASSERT_VALUES_EQUAL(rows[1].Token, "hello");
-         UNIT_ASSERT_VALUES_EQUAL(rows[1].Gen, 20);
-         UNIT_ASSERT_VALUES_EQUAL(rows[1].MaxId, 200);
-         UNIT_ASSERT_VALUES_EQUAL(rows[1].Added, true);
--        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 5, 10, 100, 101, 150, 200}));
-+        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 100, 101, 200}));
-     }
- 
-     Y_UNIT_TEST(FinalWithDeletes) {
-@@ -597,6 +615,90 @@ Y_UNIT_TEST_SUITE(TFulltextCompaction) {
-         UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{1, 100, 101, 200}));
-     }
- 
-+    Y_UNIT_TEST(NonFinalRepeatedDeletes) {
-+        auto lay = MakeFulltextLayout();
-+        auto segment = MakeSegment({51});
-+        auto base = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(1))
-+            .Ver({100, 1}).AddN(TString("hello"), Max<ui64>(), 51_u64, true, segment)
-+            .Finish();
-+        auto deltas = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(2))
-+            .Ver({100, 1}).AddN(TString("hello"), 10_u64, 51_u64, false, segment)
-+            .Ver({100, 1}).AddN(TString("hello"), 20_u64, 51_u64, true, segment)
-+            .Ver({100, 1}).AddN(TString("hello"), 30_u64, 51_u64, false, segment)
-+            .Finish();
-+
-+        // The base insert is outside this compaction. Both deletes must retain their weight.
-+        auto partial = TFulltextCompaction(false).Do(deltas, {100, 1});
-+        UNIT_ASSERT_VALUES_EQUAL(DocumentBalance(ReadFulltextRows(partial), 51), -1);
-+
-+        auto direct = TFulltextCompaction(true).Do(lay.RowScheme(), { &base, &deltas }, {100, 1});
-+        UNIT_ASSERT(ReadFulltextRows(direct).empty());
-+        auto staged = TFulltextCompaction(true).Do(lay.RowScheme(), { &base, &partial }, {100, 1});
-+        UNIT_ASSERT_C(ReadFulltextRows(staged).empty(), "Partial compaction resurrected a deleted document");
-+    }
-+
-+    Y_UNIT_TEST(NonFinalReAdd) {
-+        auto lay = MakeFulltextLayout();
-+
-+        auto segAdded1 = MakeSegment({1, 5, 10});
-+        auto segAdded2 = MakeSegment({10});
-+        auto segRemoved1 = MakeSegment({10, 20});
-+
-+        auto part = NTest::TPartCook(lay, { false, 4096 })
-+            .Ver({100, 1}).AddN(TString("hello"), 10_u64, 100_u64, true, segAdded1)
-+            .Ver({50, 1}).AddN(TString("hello"), 20_u64, 50_u64, false, segRemoved1)
-+            .Ver({60, 1}).AddN(TString("hello"), 30_u64, 200_u64, true, segAdded2)
-+            .Finish();
-+
-+        auto result = TFulltextCompaction(false /* final */).Do(part, {100, 1});
-+        auto rows = ReadFulltextRows(result);
-+
-+        UNIT_ASSERT_VALUES_EQUAL(rows.size(), 2);
-+        UNIT_ASSERT_VALUES_EQUAL(rows[0].Token, "hello");
-+        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 20);
-+        UNIT_ASSERT_VALUES_EQUAL(rows[0].Added, false);
-+        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{20}));
-+
-+        UNIT_ASSERT_VALUES_EQUAL(rows[1].Token, "hello");
-+        UNIT_ASSERT_VALUES_EQUAL(rows[1].MaxId, 10);
-+        UNIT_ASSERT_VALUES_EQUAL(rows[1].Added, true);
-+        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 5, 10}));
-+    }
-+
-+    Y_UNIT_TEST(NonFinalPrefixedRepeatedDeltas) {
-+        auto lay = MakePrefixedFulltextLayout();
-+        auto segment = MakeSegment({51});
-+        auto base = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(1))
-+            .Ver({100, 1}).AddN(TString("hello"), Max<ui64>(), 51_u64, true, segment, TString("user1"))
-+            .Finish();
-+        auto deltas = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(2))
-+            
-```
-
-**File**: `ydb/core/tx/datashard/datashard_user_db.h` (modified, +0/-4)
-```diff
-@@ -13,10 +13,6 @@ namespace NACLib {
-     class TUserContext;
- }
- 
--namespace NKikimr::NFulltext {
--    class IDeltaReader;
--};
--
- namespace NKikimr::NMiniKQL {
-     struct TEngineHostCounters;
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60106** (2026-11-20): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #60103** (2026-11-20): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #60102** (2026-11-20): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #60101** (2026-11-20): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60100** (2026-11-20): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #60090** (2026-11-20): Sync branches 261120-0046: main to prestable-27-1-1 (@ydbot)
+- **PR #60730** (2026-11-24): Revert "Fix KQP shutdown while compute tasks are starting" (@PavelEfarinov)
+- **PR #60722** (2026-11-24): [Optimizer] Read a row table through an index in the order of a top-N sort (@denis0x0D)
+- **PR #60718** (2026-11-24): Add correct Children.size() check (@nerhneiro)
+- **PR #60716** (2026-11-24): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60715** (2026-11-24): [YDBBUGS-1250] Fix read-session offset race during partition confirmation (@lberserq)
+- **PR #60712** (2026-11-24): [Disable PG] Record compilation mode in streaming graphs (@asmyasnikov)
 
 ---
 
@@ -2861,37 +2860,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YDBBUGS-1181: Keep PQ metacache fallback indexes aligned
+## X. CLI: support HTTP/HTTPS YT export proxies with regression tests
 
 **RULE**:
-When implementing operations in `ydb/core/client/server/msgbus_server_pq_metacache.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `157c71b6`: YDBBUGS-1181: Keep PQ metacache fallback indexes aligned. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16e0d087`: CLI: support HTTP/HTTPS YT export proxies with regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/client/server/msgbus_server_pq_metacache.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            // Index must follow the SchemeCache entry. A continue that skipped
-            // index++ paired a later fallback with an earlier topic and could
-            // retry an entry whose status was already Ok.
-            for (ui64 index = 0; index < Result->ResultSet.size(); ++index) {
-                const auto& entry = Result->ResultSet[index];
+    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
+        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            ui64 index = 0;
-            for (const auto& entry : Result->ResultSet) {
-                index++;
+    proxyHelp << "YT proxy to connect to" << Endl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `157c71b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16e0d087` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

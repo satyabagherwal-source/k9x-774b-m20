@@ -4,24 +4,24 @@
 {
   "source_repository": "ydb-platform/ydb",
   "source_url": "https://github.com/ydb-platform/ydb",
-  "source_version": "ac73d368",
+  "source_version": "442f5b3f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T16:48:21.155Z",
+  "timestamp": "2026-11-24T15:27:20.094Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ydb-platform-ydb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `ac73d368`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T16:48:21.155Z`  
+> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `442f5b3f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T15:27:20.094Z`  
 > **Learning ID**: `learn-github-ydb-platform-ydb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform/ydb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:48:19.931Z  
+> **Harvest Timestamp**: 2026-11-24T15:27:18.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4792 stars
+- **Stars / Engagement**: 4791 stars
 
 ---
 
@@ -2079,578 +2079,754 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3820fc09` (2026-11-22)
-**Commit Message**: [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility (#60311)
+### Incident Patch 1: `16e0d087` (2026-11-24)
+**Commit Message**: CLI: support HTTP/HTTPS YT export proxies with regression tests (#57101)
 
-**File**: `ydb/core/tx/replication/service/table_writer_ut.cpp` (modified, +1/-0)
+**File**: `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp` (modified, +2/-1)
 ```diff
-@@ -80,6 +80,7 @@ Y_UNIT_TEST_SUITE(LocalTableWriter) {
-         TEnv env(TFeatureFlags()
-             .SetEnableTableDatetime64(true)
-             .SetEnableTablePgTypes(true)
-+            .SetDisablePgCompatibility(false)
-             .SetEnableParameterizedDecimal(true));
-         env.GetRuntime().SetLogPriority(NKikimrServices::REPLICATION_SERVICE, NLog::PRI_DEBUG);
+@@ -153,7 +153,8 @@ void TCommandExportToYt::Config(TConfig& config) {
+     TYdbOperationCommand::Config(config);
  
+     TStringBuilder proxyHelp;
+-    proxyHelp << "YT proxy to connect to" << Endl
++    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
++        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
+         << "  Search order:" << Endl
+         << "    1. This option" << Endl
+         << "    2. \"YT_PROXY\" environment variable";
 ```
 
----
-
-### Incident Patch 2: `66cd1770` (2026-11-22)
-**Commit Message**: Fix S3 reader CPU quota leaks on early exit and cancellation while waiting for admission (#59849)
-
-**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor.cpp` (modified, +3/-1)
+**File**: `ydb/public/lib/ydb_cli/common/ut/ya.make` (modified, +1/-0)
 ```diff
-@@ -195,7 +195,9 @@ NYql::NDq::IDqAsyncIoFactory::TPtr CreateKqpAsyncIoFactory(
- 
-     if (federatedQuerySetup) {
-         auto s3HttpRetryPolicy = NYql::GetFqHTTPRetryPolicy();
--        s3ActorsFactory->RegisterS3ReadActorFactory(*factory, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway, s3HttpRetryPolicy, federatedQuerySetup->S3ReadActorFactoryConfig, nullptr, federatedQuerySetup->S3GatewayConfig.GetAllowLocalFiles());
-+        s3ActorsFactory->RegisterS3ReadActorFactory(*factory, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway,
-+            s3HttpRetryPolicy, federatedQuerySetup->S3ReadActorFactoryConfig, nullptr, federatedQuerySetup->S3GatewayConfig.GetAllowLocalFiles(),
-+            counters->GetKqpCounters()->GetSubgroup("subsystem", "S3ReadActor"));
-         s3ActorsFactory->RegisterS3WriteActorFactory(*factory,  federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway, s3HttpRetryPolicy);
- 
-         if (federatedQuerySetup->ConnectorClient) {
-```
-
-**File**: `ydb/library/yql/dq/actors/compute/dq_compute_actor_async_io.h` (modified, +4/-0)
-```diff
-@@ -116,6 +116,10 @@ struct IDqComputeActorAsyncInput {
- 
-     virtual const TDqAsyncStats& GetIngressStats() const = 0;
- 
-+    // Plain text for monitoring, called from the compute actor's mailbox.
-+    // Do not access state owned by actors in other mailboxes.
-+    virtual TString GetDebugInfo() const { return {}; }
-+
-     // Gets data and returns space used by filled data batch.
-     // Watermark will be returned if source watermark was moved forward. Watermark should be handled AFTER data.
-     // Method should be called under bound mkql allocator.
-```
-
-**File**: `ydb/library/yql/dq/actors/compute/dq_compute_actor_impl.h` (modified, +11/-0)
-```diff
-@@ -1803,6 +1803,17 @@ class TDqComputeActorBase : public NActors::TActorBootstrapped<TDerived>
-                 }
-                 ExtraMonitoringInfo(str, cgi);
- 
-+                for (const auto& [id, source] : SourcesMap) {
-+                    if (source.AsyncInput) {
-+                        const auto debugInfo = source.AsyncInput->GetDebugInfo();
-+                        if (!debugInfo.empty()) {
-+                            str << Endl << "  Source Id: " << id
-+                                << " Type: " << NHtml::EscapeText(source.Type) << Endl
-+                                << NHtml::EscapeText(debugInfo);
-+                        }
-+                    }
-+                }
-+
-                 COLLAPSED_BUTTON_CONTENT("ProcessOutputsState", TStringBuilder() << "ProcessOutputsState: " << ProcessOutputsState.LastRunTime << ' ' << ProcessOutputsState.LastRunStatus) {
-                     str << "  Inflight: " << ProcessOutputsState.Inflight << Endl;
-                     str << "  ChannelsReady: " << ProcessOutputsState.ChannelsReady << Endl;
-```
-
-**File**: `ydb/library/yql/providers/s3/actors/ut/ya.make` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ UNITTEST_FOR(ydb/library/yql/providers/s3/actors)
- 
- SRCS(
-     yql_arrow_push_down_ut.cpp
-+    yql_s3_actor_stats_ut.cpp
+@@ -26,6 +26,7 @@ SRCS(
+     tabbed_table_ut.cpp
+     tx_mode_utils_ut.cpp
+     utf8_utils_ut.cpp
++    yt_ut.cpp
  )
  
- PEERDIR(
+ END()
 ```
 
-**File**: `ydb/library/yql/providers/s3/actors/ut/yql_s3_actor_stats_ut.cpp` (added, +204/-0)
+**File**: `ydb/public/lib/ydb_cli/common/yt.cpp` (modified, +17/-2)
 ```diff
-@@ -0,0 +1,204 @@
-+#include <ydb/library/yql/providers/s3/actors/yql_s3_actor_stats.h>
+@@ -16,18 +16,33 @@ void TCommandWithYtProxy::ParseYtProxy(const TString& proxy) {
+     }
+ 
+     TMaybe<ui16> port;
++    TStringBuf address = proxy;
++    TStringBuf scheme;
++    ui16 defaultPort = DefaultYtPort;
++
++    if (address.SkipPrefix("https://")) {
++        scheme = "https://";
++        defaultPort = 443;
++    } else if (address.SkipPrefix("http://")) {
++        scheme = "http://";
++    }
+ 
+     try {
+-        Split(proxy, ':', YtHost, port);
++        Split(address, ':', YtHost, port);
+     } catch (const yexception& ex) {
+         throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
+     }
+ 
++    if (YtHost.empty() || YtHost.find_first_of("/?#@") != TString::npos) {
++        throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
++    }
++
+     if (YtHost.find('.') == TString::npos && YtHost.find("localhost") == TString::npos) {
+         YtHost.append(".yt.yandex.net");
+     }
+ 
+-    YtPort = port.GetOrElse(DefaultYtPort);
++    YtHost.prepend(scheme);
++    YtPort = port.GetOrElse(defaultPort);
+ }
+ 
+ const TString TCommandWithYtToken::YtTokenFile = "~/.yt/token";
+```
+
+**File**: `ydb/public/lib/ydb_cli/common/yt_ut.cpp` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++#include "yt.h"
 +
 +#include <library/cpp/testing/unittest/registar.h>
 +
-+#include <atomic>
-+#include <thread>
-+
-+namespace NYql::NDq {
++namespace NYdb::NConsoleClient {
 +namespace {
 +
-+class TWork: public IDqSchedulableWork {
++class TYtProxyParser : public TCommandWithYtProxy {
 +public:
-+    std::optional<TDuration> TryStartExecution(TMonotonic) override {
-+        UNIT_FAIL("Metrics must not acquire quota");
-+        return {};
++    void Parse(const TString& proxy) {
++        TClientCommandOptions options;
++        options.AddLongOption("proxy").RequiredArgument("PROXY");
++        const char* args[] = {"yt-proxy-test", "--proxy", proxy.c_str()};
++        TOptionsParseResult parsed(&options, 3, args);
++        TClientCommand::TConfig config(0, nullptr);
++        config.ParseResult = &parsed;
++        ParseYtProxy(config, "proxy");
 +    }
 +
-+    void StopExecution() override {
-+        UNIT_FAIL("Metrics must not release quota");
++    const TString& GetHost() const {
++        return YtHost;
 +    }
 +
-+    void NotifyResumed(bool) override {
-+    }
-+
-+    void RegisterForResume(const NActors::TActorId &) override {
-+    }
-+
-+    TWorkScope GetWorkScope() const override {
-+        return { "/Root", "test" };
-+    }
-+};
-+
-+struct TFixture {
-+    TWork Work;
-+    ::NMonitoring::TDynamicCounterPtr Counters = MakeIntrusive<::NMonitoring::TDynamicCounters>();
-+    const TMonotonic Start = TMonotonic::Now();
-+
-+    ui64 Value(const TString &name, const TString &kind = "reader") const {
-+        const bool derivative = name == "S3CpuAdmissionWaitUs" || name == "S3CpuUnfinishedOnExit";
-+        return Counters->GetSubgroup("db", "/Root")->GetSubgroup("pool", "test")->GetSubgroup("kind", kind)->GetCounter(name, derivative)->Val();
++    ui16 GetPort() const {
++        return YtPort;
 +    }
 +};
 +
-+}   // namespace
++void AssertProxy(const TString& proxy, const TString& host, ui16 port) {
++    TYtProxyParser parser;
++    parser.Parse(proxy);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetHost(), host);
++    UNIT_ASSERT_VALUES_EQUAL(parser.GetPort(), port);
++}
 +
-+Y_UNIT_TEST_SUITE(TS3ActorStatsTest) {
-+    Y_UNIT_TEST(RetriesCountOneWaitAndItsFullDuration) {
-+        TFixture f;
-+        TS3ActorStats metrics(f.Counters, &f.Work, "reader");
-+        metrics.OnRejected(f.Start);
-+        metrics.OnRejected(f.Start + TDuration::MicroSeconds(10));
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 0);
-+        metrics.OnAllowed(f.Start + TDuration::MicroSeconds(30));
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 0);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 30);
-+        metrics.OnStop(f.Start + TDuration::MicroSeconds(40));
-+        metrics.OnRejected(f.Start + TDuration::MicroSeconds(50));
-+        metrics.OnAllowed(f.Start + TDuration::MicroSeconds(55));
-+        metrics.OnStop(f.Start + TDuration::MicroSeconds(60));
-+        metrics.OnExit(f.Start + TDuration::MicroSeconds(70));
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 35);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 0);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 0);
++} // namespace
++
++Y_UNIT_TEST_SUITE(YtProxyParsing) {
++    Y_UNIT_TEST(LegacyProxies) {
++        AssertProxy("hahn", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("hahn.yt.yandex.net", "hahn.yt.yandex.net", 80);
++        AssertProxy("hahn.yt.yandex.net:8080", "hahn.yt.yandex.net", 8080);
++        AssertProxy("localhost:9013", "localhost", 9013);
 +    }
 +
-+    Y_UNIT_TEST(ExitWhileWaitingRecordsOnceAndBalancesGauge) {
-+        TFixture f;
-+        {
-+            TS3ActorStats metrics(f.Counters, &f.Work, "reader");
-+            metrics.OnRejected(f.Start);
-+            metrics.OnExit(f.Start + TDuration::MicroSeconds(25));
-+            metrics.OnExit(f.Start + TDuration::MicroSeconds(30));
-+            UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 0);
-+        }
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 25);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 1);
++    Y_UNIT_TEST(HttpsDefaultPort) {
++        AssertProxy("https://hahn.yt.yandex.net", "https://hahn.yt.yandex.net", 443);
++        AssertProxy("https://hahn", "https://hahn.yt.yandex.net", 443);
 +    }
 +
-+    Y_UNIT_TEST(DestructionWhileActivePreservesOtherLiveWork) {
-+        TFixture f;
-+        TS3ActorStats live(f.Counters, &f.Work, "reader");
-+        live.OnAllowed(f.Start);
-+        {
-+            TS3ActorStats exiting(f.Counters, &f.Work, "reader");
-+            exiting.OnAllowed(f.Start);
-+            UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 2);
-+        }
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 1);
-+        live.OnStop(f.Start);
++    Y_UNIT_TEST(HttpsExplicitPort) {
++        AssertProxy("https://hahn.yt.yandex.net:8443", "https://hahn.yt.yandex.net", 8443);
++        AssertProxy("https://hahn:443", "https://hahn.yt.yandex.net", 443);
 +    }
 +
-+    Y_UNIT_TEST(ReadersHaveIndependentSnapshotsAndSharedCounters) {
-+        TFixture f;
-+        TS3ActorStats reader(f.Counters, &f.Work);
-+        TS3ActorStats waiting(f.Counters, &f.Work);
-+        reader.OnAllowed(f.Start);
-+        waiting.OnRejected(f.Start);
-+        waiting.SetState(IS3ActorStats::EState::WaitingCpu, f.Start);
-+        UNIT_ASSERT(reader.GetSnapshot().CpuHeld);
-+        UNIT_ASSERT(!waiting.GetSnapshot().CpuHeld);
-+        UNIT_ASSERT(waiting.GetSnapshot().State == IS3ActorStats::EState::WaitingCpu);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 1);
-+        reader.OnStop(f.Start);
-+        waiting.OnStop(f.Start);
++    Y_UNIT_TEST(HttpScheme) {
++        AssertProxy("http://hahn", "http://hahn.yt.yandex.net", 80);
++        AssertProxy("http://localhost:8080", "http://localhost", 8080);
 +    }
 +
-+    Y_UNIT_TEST(ExplicitStatesWithoutCounters) {
-+        TFixture f;
-+        TS3ActorStats stats(nullptr, &f.Work);
-+        using EState = IS3ActorStats::EState;
-+        UNIT_ASSERT(stats.GetSnapshot().State == EState::Initializing);
-+        stats.SetState(EState::Processing, f.Start);
-+        stats.OnAllowed(f.Start);
-+        // A phase must not conceal an erroneously held slot.
-+        stats.SetState(EState::WaitingHttp, f.Start);
-+        UNIT_ASSERT(stats.GetSnapshot().CpuHeld);
-+        stats.OnStop(f.Start);
-+        stats.SetState(EState::WaitingCpu, f.Start + TDuration::MicroSeconds(10));
-+        stats.OnR
-```
-
-**File**: `ydb/library/yql/providers/s3/actors/ut/yql_s3_read_actor_ut.cpp` (modified, +290/-6)
-```diff
-@@ -11,6 +11,7 @@
- #include <contrib/libs/apache/arrow/cpp/src/parquet/arrow/writer.h>
- #include <contrib/libs/apache/arrow/cpp/src/parquet/file_reader.h>
- #include <contrib/libs/apache/arrow/cpp/src/parquet/metadata.h>
-+#include <google/protobuf/text_format.h>
- #include <library/cpp/testing/unittest/registar.h>
- #include <util/generic/size_literals.h>
- #include <util/stream/str.h>
-@@ -182,6 +183,82 @@ struct TReadResult {
- };
- 
- // All callbacks and observations run on the simulated actor runtime's single thread.
-+class TCountingWorkFactory: public IDqSchedulableWorkFactory {
-+public:
-+    ui64 Starts = 0;
-+    ui64 Stops = 0;
-+    ui64 Unfinished = 0;
-+    ui64 Attempts = 0;
-+    ui64 Waiting = 0;
-+    bool Throttle = false;
-+    TActorId WorkActorId;
-+
-+    class TWork: public IDqSchedulableWork {
-+    public:
-+        explicit TWork(TCountingWorkFactory& owner)
-+            : Owner(owner)
-+        {
-+        }
-+
-+        ~TWork() override {
-+            Owner.Unfinished += Active || Throttled;
-+        }
-+
-+        std::optional<TDuration> TryStartExecution(TMonotonic) override {
-+            UNIT_ASSERT(!Active);
-+            ++Owner.Attempts;
-+            if (Owner.Throttle) {
-+                if (!Throttled) {
-+                    Throttled = true;
-+                    ++Owner.Waiting;
-+                }
-+                return TDuration::Seconds(1);
-+            }
-+            if (Throttled) {
-+                Throttled = false;
-+                --Owner.Waiting;
-+            }
-+            Active = true;
-+            ++Owner.Starts;
-+            return {};
-+        }
-+
-+        void StopExecution() override {
-+            UNIT_ASSERT(Active || Throttled);
-+            if (Throttled) {
-+                Throttled = false;
-+                --Owner.Waiting;
-+            }
-+            Active = false;
-+            ++Owner.Stops;
-+        }
-+
-+        void NotifyResumed(bool) override {
-+        }
-+
-+        void RegisterForResume(const TActorId& actorId) override {
-+            Owner.WorkActorId = actorId;
-+        }
-+
-+        TWorkScope GetWorkScope() const override {
-+            return Owner.GetWorkScope();
-+        }
-+
-+    private:
-+        TCountingWorkFactory& Owner;
-+        bool Active = false;
-+        bool Throttled = false;
-+    };
-+
-+    std::unique_ptr<IDqSchedulableWork> CreateSchedulableWork() override {
-+        return std::make_unique<TWork>(*this);
-+    }
-+
-+    TWorkScope GetWorkScope() const override {
-+        return { "/Root", "test" };
-+    }
-+};
-+
- class TParquetReader {
- public:
-     TReadResult Result;
-@@ -219,7 +296,8 @@ class TParquetReader {
-     }
- 
-     void Start(std::shared_ptr<TParquetGateway> gateway, NS3::TSource source, ui64 dataInflight = 200_MB, bool batched = true,
--        ui64 batchDecodeTargetBytes = 16_MB)
-+        ui64 batchDecodeTargetBytes = 16_MB, IDqSchedulableWorkFactoryPtr workFactory = nullptr,
-+        ::NMonitoring::TDynamicCounterPtr cpuCounters = nullptr)
-     {
-         NS3::TRange range;
-         auto* path = range.AddPaths();
-@@ -233,31 +311,47 @@ class TParquetReader {
-             config.DataInflight = dataInflight;
-             config.BatchedRowGroupDecode = batched;
-             config.BatchDecodeTargetBytes = batchDecodeTargetBytes;
--            auto [input, inputActor] =
--                CreateS3ReadActor(actor.TypeEnv, actor.HolderFactory, std::shared_ptr<TScopedAlloc>(&actor.Alloc, [](TScopedAlloc*) {
-+            auto [input, inputActor] = CreateS3ReadActor(actor.TypeEnv, actor.HolderFactory,
-+                std::shared_ptr<TScopedAlloc>(&actor.Alloc, [](TScopedAlloc*) {
-                 }), gateway, std::move(source), 0, TCollectStatsLevel::None,
--                    TTxId{}, {}, {}, { encodedRange.Str() }, FakeActorId, CreateStructuredTokenCredentialsFactory(), GetHTTPDefaultRetryPolicy(),
--                    config, nullptr, nullptr, std::make_shared<TGuaranteeQuotaManager>(dataInflight, dataInflight), false);
-+                TTxId{}, {}, {}, { encodedRange.Str() }, FakeActorId, CreateStructuredTokenCredentialsFactory(), GetHTTPDefaultRetryPolicy(),
-+                config, nullptr, nullptr, std::make_shared<TGuaranteeQuotaManager>(dataInflight, dataInflight), false, workFactory, cpuCounters);
-             actor.InitAsyncInput(input, inputActor);
-         });
-     }
- 
--    void Pump() {
-+    void Dispatch() {
-         Runtime.SimulateSleep(TDuration::MilliSeconds(1));
-+    }
-+
-+    void Pump() {
-+        Dispatch();
-         Execute([&](TFakeActor& actor) {
-             TMaybe<TInstant> watermark;
-             TUnboxedValueBatch buffer;
-             actor.DqAsyncInput->GetAsyncInputData(buffer, watermark, Result.Finished, 1_MB);
-         });
-     }
- 
-+    TString DebugInfo() {
-+        TString result;
-+        Execute([&](TFakeActor& actor) {
-+            result = actor.DqAsyncInput->GetDebugInfo();
-+        });
-+        return result;
-+    }
-+
-     void ReadToEnd() {
-         for (ui32 step = 0; step < 100 && !Result.Finished &&
-```
-
-**File**: `ydb/library/yql/providers/s3/actors/ya.make` (modified, +3/-0)
-```diff
-@@ -15,6 +15,8 @@ SRCS(
-     yql_s3_write_actor.cpp
- )
- 
-+GENERATE_ENUM_SERIALIZATION(yql_s3_actor_stats_interface.h)
-+
- PEERDIR(
-     contrib/libs/apache/arrow
-     contrib/libs/fmt
-@@ -23,6 +25,7 @@ PEERDIR(
-     library/cpp/protobuf/util
-     library/cpp/string_utils/base64
-     library/cpp/string_utils/quote
-+    library/cpp/time_provider
-     library/cpp/xml/document
-     ydb/core/fq/libs/events
-     ydb/core/util
-```
-
-**File**: `ydb/library/yql/providers/s3/actors/yql_s3_actor_stats.h` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+#pragma once
-+
-+#include "yql_s3_actor_stats_interface.h"
-+
-+#include <ydb/library/yql/dq/actors/compute/dq_schedulable.h>
-+
-+#include <library/cpp/monlib/dynamic_counters/counters.h>
-+#include <util/system/guard.h>
-+#include <util/system/spinlock.h>
-+
-+namespace NYql::NDq {
-+
-+// Observes the caller's scheduler state without changing quota accounting.
-+// Gauges count live work; unfinished exits are retained in a cumulative
-+// counter.
-+class TS3ActorStats final: public IS3ActorStats {
-+private:
-+    enum class ECpuState {
-+        Idle,
-+        Waiting,
-+        Active
-+    };
-+
-+public:
-+    TS3ActorStats(const ::NMonitoring::TDynamicCounterPtr &counters, const IDqSchedulableWork *work, const TString &kind = "reader")
-+        : SchedulerEnabled(work != nullptr)
-+    {
-+        if (!counters || !work) {
-+            return;
-+        }
-+        const auto scope = work->GetWorkScope();
-+        const auto group = counters->GetSubgroup("db", scope.Namespace)->GetSubgroup("pool", scope.Name)->GetSubgroup("kind", kind);
-+        Active = group->GetCounter("S3CpuActive");
-+        Waiting = group->GetCounter("S3CpuWaiting");
-+        AdmissionWaitUs = group->GetCounter("S3CpuAdmissionWaitUs", true);
-+        UnfinishedOnExit = group->GetCounter("S3CpuUnfinishedOnExit", true);
-+    }
-+
-+    TS3ActorStats(const TS3ActorStats &) = delete;
-+    TS3ActorStats &operator=(const TS3ActorStats &) = delete;
-+
-+    ~TS3ActorStats() {
-+        OnExit(TMonotonic::Now());
-+    }
-+
-+    TSnapshot GetSnapshot() const override {
-+        const auto guard = Guard(Lock);
-+        return { Phase, StateSince, CpuState == ECpuState::Active };
-+    }
-+
-+    void SetState(EState state, TMonotonic now = TMonotonic::Now()) {
-+        const auto guard = Guard(Lock);
-+        SetStateLocked(state, now);
-+    }
-+
-+    void OnAllowed(TMonotonic now) {
-+        const auto guard = Guard(Lock);
-+        if (!SchedulerEnabled) {
-+            return;
-+        }
-+        FinishWaiting(now);
-+        if (CpuState != ECpuState::Active) {
-+            if (Active) {
-+                Active->Inc();
-+            }
-+            CpuState = ECpuState::Active;
++    Y_UNIT_TEST(InvalidProxies) {
++        for (const TString proxy : {
++                 "", "https://", "http://", "hahn:invalid", "hahn:65536",
++                 "ftp://hahn", "https://hahn/path", "https://hahn?query",
++                 "https://hahn#fragment", "https://user@hahn"}) {
++            TYtProxyParser parser;
++            UNIT_ASSERT_EXCEPTION(parser.Parse(proxy), TMisuseException);
 +        }
 +    }
++}
 +
-+    void OnRejected(TMonotonic now) {
-+        const auto guard = Guard(Lock);
-+        if (!SchedulerEnabled) {
-+            return;
-+        }
-+        if (CpuState == ECpuState::Idle) {
-+            if (Waiting) {
-+                Waiting->Inc();
-+            }
-+            WaitStarted = now;
-+            CpuState = ECpuState::Waiting;
-+        }
-+    }
-+
-+    void OnStop(TMonotonic now) {
-+        const auto guard = Guard(Lock);
-+        StopLocked(now);
-+    }
-+
-+    // Observes unfinished work before diagnostic cleanup. Does not release quota.
-+    // Explicitly called on Run() exit because the source may retain this object.
-+    void OnExit(TMonotonic now) {
-+        const auto guard = Guard(Lock);
-+        if (CpuState != ECpuState::Idle) {
-+            if (UnfinishedOnExit) {
-+                UnfinishedOnExit->Inc();
-+            }
-+            StopLocked(now);
-+        }
-+        SetStateLocked(EState::Finished, now);
-+    }
-+
-+private:
-+    void SetStateLocked(EState state, TMonotonic now) {
-+        if (Phase != state) {
-+            Phase = state;
-+            StateSince = now;
-+        }
-+    }
-+
-+    void StopLocked(TMonotonic now) {
-+        if (CpuState == ECpuState::Active) {
-+            if (Active) {
-+                Active->Dec();
-+            }
-+        } else {
-+            FinishWaiting(now);
-+        }
-+        CpuState = ECpuState::Idle;
-+    }
-+
-+    void FinishWaiting(TMonotonic now) {
-+        if (CpuState == ECpuState::Waiting) {
-+            if (Waiting) {
-+                Waiting->Dec();
-+            }
-+            if (AdmissionWaitUs) {
-+                AdmissionWaitUs->Add((now - WaitStarted).MicroSeconds());
-+            }
-+        }
-+    }
-+
-+private:
-+    mutable TAdaptiveLock Lock;
-+    const bool SchedulerEnabled;
-+    EState Phase = EState::Initializing;
-+    TMonotonic StateSince = TMonotonic::Now();
-+    ECpuState CpuState = ECpuState::Idle;
-+    TMonotonic WaitStarted;
-+    ::NMonitoring::TDynamicCounters::TCounterPtr Active;
-+    ::NMonitoring::TDynamicCounters::TCounterPtr Waiting;
-+    ::NMonitoring::TDynamicCounters::TCounterPtr AdmissionWaitUs;
-+    ::NMonitoring::TDynamicCounters::TCounterPtr UnfinishedOnExit;
-+};
-+
-+}   // namespace NYql::NDq
++} // namespace NYdb::NConsoleClient
 ```
 
 ---
 
-### Incident Patch 3: `0cd64345` (2026-11-21)
-**Commit Message**: Revert zstd debug section compression for Linux release builds
+### Incident Patch 2: `1bbaf58a` (2026-11-24)
+**Commit Message**: Revert "Fix KQP shutdown while compute tasks are starting" (#60730)
 
-Reverts https://nda.ya.ru/t/z0_YjmzG7x57Kq (rXXXXXX) and restores the release exclusions for the compiler and linker flags.
-
-During stack trace symbolization, libbacktrace decompresses DWARF sections into anonymous memory and retains them for subsequent lookups. On the same userver benchmark ELF, zstd-compressed sections raised anonymous memory after the first lookup from 30.3 MiB to 114.1 MiB.
-
-Tests: CI tested
-commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
-
-**File**: `build/ymake_conf.py` (modified, +4/-2)
+**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor_factory.cpp` (modified, +3/-4)
 ```diff
-@@ -1560,7 +1560,8 @@ def __init__(self, tc, build):
-             '-g',
-         ]
+@@ -189,16 +189,15 @@ class TKqpCaFactory : public IKqpNodeComputeActorFactory {
+             YQL_ENSURE(args.ComputesByStages);
+             auto& info = args.ComputesByStages->UpsertTaskWithScan(*args.Task, meta);
+             info.TraceId = NWilson::TTraceId(args.TraceId);
+-            // Allocate bookkeeping before registering the actor.
+-            auto& actorId = info.MutableActorIds().emplace_back();
+             IActor* computeActor = CreateKqpScanComputeActor(
+                 args.ExecuterId, args.TxId, args.Task, AsyncIoFactory, runtimeSettings, memoryLimits,
+                 std::move(args.TraceId), std::move(args.Arena),
+                 std::move(schedulableOptions), args.BlockTrackingMode, std::move(args.UserToken), args.Database);
+-            actorId = args.UseBatchPool
++            TActorId result = args.UseBatchPool
+                 ? TlsActivationContext->Register(computeActor, TActorId(), TMailboxType::HTSwap, AppData()->BatchPoolId)
+                 : TlsActivationContext->Register(computeActor);
+-            return actorId;
++            info.MutableActorIds().emplace_back(result);
++            return result;
+         } else {
+             std::shared_ptr<TGUCSettings> GUCSettings;
+             if (!args.SerializedGUCSettings.empty()) {
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_data_executer.cpp` (modified, +9/-57)
+```diff
+@@ -445,7 +445,7 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+                 hFunc(TEvents::TEvUndelivered, HandleUndelivered);
+                 hFunc(TEvPrivate::TEvRetry, HandleRetry);
+                 hFunc(TEvInterconnect::TEvNodeDisconnected, HandleDisconnected);
+-                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleExecute);
++                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleStartKqpTasksResponse);
+                 hFunc(TEvDqCompute::TEvState, HandleComputeState);
+                 hFunc(TEvDqCompute::TEvNodeState, HandleNodeState);
+                 hFunc(TEvDqCompute::TEvChannelData, HandleChannelData);
+@@ -474,14 +474,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         ReportEventElapsedTime();
+     }
  
--        if self.target.is_linux:
-+        if not self.build.is_release and self.target.is_linux:
-+            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-             self.debug_info_flags.append('-gz=zstd')
-         if self.tc.is_clang and self.tc.version_at_least(14):
-             # DTCC-1231: Clang 14 has switched to DWARFv5 by default
-@@ -1933,7 +1934,8 @@ def __init__(self, tc, build):
-             self.ld_flags.append('--ld-path={}/esp-clang/bin/ld.lld'.format(self.tc.name_marker))
-             if is_positive('NO_CXX_RTTI'):
-                 self.ld_flags.append('-fno-rtti')
--        if target.is_linux:
-+        if not self.build.is_release and target.is_linux:
-+            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-             self.ld_flags.extend(['-Wl,--compress-debug-sections=zstd'])
+-    void HandleExecute(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        HandleStartKqpTasksResponse(ev);
+-        if (CurrentStateFunc() == &TThis::WaitShutdownState) {
+-            // A failed start can both initiate shutdown and report which tasks started.
+-            HandleShutdown(ev);
+-        }
+-    }
+-
+     void HandleExecute(TEvKqp::TEvAbortExecution::TPtr& ev) {
+         if (IsCancelAfterAllowed(ev)) {
+             TBase::HandleAbortExecution(ev);
+@@ -1077,7 +1069,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
  
-         if self.musl.value:
+     void Shutdown() override {
+         if (Planner) {
+-            Planner->BeginShutdown();
+             if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+                 YDB_LOG_INFO("Shutdown immediately - nothing to wait",
+                     {"marker", "KQPDATA"},
+@@ -1124,9 +1115,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+         switch(ev->GetTypeRewrite()) {
+             hFunc(TEvDqCompute::TEvState, HandleShutdown);
+             hFunc(TEvDqCompute::TEvNodeState, HandleShutdown);
+-            hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleShutdown);
+-            hFunc(TEvents::TEvUndelivered, HandleShutdown);
+-            hFunc(TEvPrivate::TEvRetry, HandleShutdown);
+             hFunc(TEvInterconnect::TEvNodeDisconnected, HandleShutdown);
+             hFunc(TEvents::TEvPoison, HandleShutdown);
+             hFunc(TEvDq::TEvAbortExecution, HandleShutdown);
+@@ -1142,54 +1130,15 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+     }
+ 
+     void HandleShutdown(TEvDqCompute::TEvState::TPtr& ev) {
+-        if (HandleComputeStats(ev) && Planner->GetPendingComputeActors().contains(ev->Sender)) {
+-            AbortLateComputeActor(ev->Sender);
+-        }
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+-        TryFinishShutdown();
+-    }
+-
+-    void HandleShutdown(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
+-        const auto& record = ev->Get()->Record;
+-        if (record.GetTxId() != TxId) {
+-            return;
+-        }
+-
+-        for (const auto& task : record.GetStartedTasks()) {
+-            const auto computeActor = ActorIdFromProto(task.GetActorId());
+-            if (Planner->AcknowledgeCA(task.GetTaskId(), computeActor, nullptr)) {
+-                AbortLateComputeActor(computeActor);
+-            }
+-        }
+-        for (const auto& task : record.GetNotStartedTasks()) {
+-            Planner->TaskNotStarted(task.GetTaskId());
+-        }
+-        TryFinishShutdown();
+-    }
++        HandleComputeStats(ev);
+ 
+-    void HandleShutdown(TEvents::TEvUndelivered::TPtr& ev) {
+-        if (ev->Get()->SourceType == TEvKqpNode::TEvStartKqpTasksRequest::EventType) {
+-            Planner->RequestNotStarted(ev->Cookie);
+-            TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            PassAway();
+         }
+     }
+ 
+-    void HandleShutdown(TEvPrivate::TEvRetry::TPtr& ev) {
+-        Planner->RequestNotStarted(ev->Get()->RequestId);
+-        TryFinishShutdown();
+-    }
+-
+-    void AbortLateComputeActor(const TActorId& computeActor) {
+-        const auto status = ResponseEv->Record.GetResponse().GetStatus();
+-        Send(computeActor, new TEvKqp::TEvAbortExecution(YdbStatusToDqStatus(status), "Terminate execution"));
+-    }
+-
+-    void TryFinishShutdown() {
++    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
+         if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
+-            FillLocksFromExtraData();
+             PassAway();
+         }
+     }
+@@ -1217,7 +1166,10 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+             }
+         }
+ 
+-        TryFinishShutdown();
++        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
++            FillLocksFromExtraData();
++            PassAway();
++        }
+     }
+ 
+     void
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_executer_ut.cpp` (modified, +0/-231)
+```diff
+@@ -5,12 +5,8 @@
+ #include <ydb/core/kqp/executer_actor/kqp_executer.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/executer_actor/kqp_executer_stats.h>
+-#include <ydb/core/kqp/node_service/kqp_node_service.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+-#include <ydb/core/tx/datashard/datashard_failpoints.h>
+ #include <ydb/core/tx/datashard/datashard_ut_common_kqp.h>
+-#include <ydb/library/yql/dq/actors/compute/dq_compute_actor.h>
+ 
+ #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/status_codes.h>
+ 
+@@ -19,235 +15,8 @@ namespace NKikimr::NKqp {
+ using namespace NYdb;
+ using namespace NYdb::NTable;
+ 
+-namespace {
+-
+-enum class ELateRemoteTaskStart {
+-    ComputeState,
+-    StartResponse,
+-    InternalError,
+-    NotStarted,
+-    Undelivered,
+-};
+-
+-TKikimrSettings RemoteTaskSettings(ui32 channelVersion) {
+-    auto settings = TKikimrSettings().SetUseRealThreads(false).SetNodeCount(2);
+-    auto* config = settings.AppConfig.MutableTableServiceConfig();
+-    config->SetDqChannelVersion(channelVersion);
+-    config->MutableResourceManager()->SetMaxNonParallelDataQueryTasksLimit(0);
+-    config->MutableResourceManager()->SetMaxNonParallelTasksExecutionLimit(0);
+-    config->MutableQueryLimits()->SetWaitCAStatsTimeoutMs(1000);
+-    return settings;
+-}
+-
+-TActorId StartDistributedCount(TTestActorRuntime& runtime) {
+-    auto edge = runtime.AllocateEdgeActor();
+-    auto query = MakeHolder<TEvKqp::TEvQueryRequest>();
+-    ActorIdToProto(edge, query->Record.MutableRequestActorId());
+-    auto& request = *query->Record.MutableRequest();
+-    request.SetAction(NKikimrKqp::QUERY_ACTION_EXECUTE);
+-    request.SetType(NKikimrKqp::QUERY_TYPE_SQL_GENERIC_QUERY);
+-    request.SetDatabase("/Root");
+-    request.SetQuery("SELECT COUNT(*) FROM `/Root/EightShard`;");
+-    request.MutableTxControl()->mutable_begin_tx()->mutable_serializable_read_write();
+-    request.MutableTxControl()->set_commit_tx(true);
+-    NDataShard::NKqpHelpers::SendRequest(runtime, edge, std::move(query));
+-    return edge;
+-}
+-
+-void TestLateRemoteTaskStart(ui32 channelVersion, ELateRemoteTaskStart outcome) {
+-    using NYql::NDq::TEvDqCompute::TEvState;
+-    using NYql::NDqProto::StatusIds;
+-    constexpr auto failureStatus = StatusIds::PRECONDITION_FAILED;
+-    const TString failureMessage = "Local compute actor failed";
+-    const bool startsRemoteActors = outcome == ELateRemoteTaskStart::ComputeState
+-        || outcome == ELateRemoteTaskStart::StartResponse;
+-
+-    TKikimrRunner kikimr(RemoteTaskSettings(channelVersion));
+-    auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-
+-    TActorId executer;
+-    TActorId localComputeActor;
+-    TActorId localExecuter;
+-    TInstant shutdownDeadline;
+-    TInstant responseTime;
+-    THashSet<TActorId> abortedRemoteActors;
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> startRequests(runtime, [&](const auto& ev) {
+-        return ev->Sender.NodeId() != ev->GetRecipientRewrite().NodeId();
+-    });
+-    TBlockEvents<TEvKqpNode::TEvStartKqpTasksResponse> startResponses(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::ComputeState && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId();
+-    });
+-    const auto stateObserver = runtime.AddObserver<TEvState>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender.NodeId() == recipient.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING && !localComputeActor) {
+-            localComputeActor = ev->Sender;
+-            localExecuter = recipient;
+-        }
+-    });
+-    TBlockEvents<TEvState> remoteHellos(runtime, [&](const auto& ev) {
+-        return outcome == ELateRemoteTaskStart::StartResponse && ev->GetRecipientRewrite() == executer
+-            && ev->Sender.NodeId() != executer.NodeId()
+-            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING;
+-    });
+-    const auto abortObserver = runtime.AddObserver<TEvKqp::TEvAbortExecution>([&](auto& ev) {
+-        const auto recipient = ev->GetRecipientRewrite();
+-        if (ev->Sender == executer && recipient.NodeId() != executer.NodeId()) {
+-            UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(ev->Get()->Record.GetStatusCode()), static_cast<int>(failureStatus));
+-            UNIT_ASSERT(abortedRemoteActors.insert(recipient).second);
+-        }
+-    });
+-    const auto responseObserver = runtime.AddObserver<TEvKqpExecuter::TEvTxResponse>([&](auto& ev) {
+-        if (ev->Sender == executer) {
+-            responseTime = runtime.GetCurrentTime();
+-        }
+-    });
+-    TTestActorRuntimeBase::TScheduledEventFilter previousFilter;
+-    previousFilter = runtime.SetScheduledEventFilter([&](auto& actorRuntime, auto& ev, auto delay, auto& deadline) {
+-        if (executer && ev->GetTypeRewrit
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.cpp` (modified, +8/-10)
+```diff
+@@ -872,16 +872,14 @@ TMaybe<ui64> TKqpPlanner::GetActualNodeIdForTask(ui64 taskId) const {
+ }
+ 
+ void TKqpPlanner::TaskNotStarted(ui64 taskId) {
+-    // A start failure can include tasks whose actors already reported in.
+-    PendingComputeTasks.erase(taskId);
+-}
++    // NOTE: should be invoked only while shutting down - when node is disconnected.
+ 
+-void TKqpPlanner::RequestNotStarted(ui64 requestId) {
+-    if (requestId < Requests.size()) {
+-        for (ui64 taskId : Requests[requestId].TaskIds) {
+-            TaskNotStarted(taskId);
+-        }
+-    }
++    auto& task = TasksGraph.GetTask(taskId);
++
++    YQL_ENSURE(!task.ComputeActorId);
++    YQL_ENSURE(!task.Meta.Completed);
++
++    PendingComputeTasks.erase(taskId);
+ }
+ 
+ TProgressStat::TEntry TKqpPlanner::CalculateConsumptionUpdate() {
+@@ -1038,7 +1036,7 @@ void TKqpPlanner::CollectTaskChannelsUpdates(const TKqpTasksGraph::TTaskType& ta
+ }
+ 
+ void TKqpPlanner::SendReadyState() {
+-    if (ReadyStateSent || ShuttingDown) {
++    if (ReadyStateSent) {
+         return;
+     }
+ 
+```
+
+**File**: `ydb/core/kqp/executer_actor/kqp_planner.h` (modified, +0/-5)
+```diff
+@@ -92,13 +92,9 @@ class TKqpPlanner {
+     bool AcknowledgeCA(ui64 taskId, TActorId computeActor, const NYql::NDqProto::TEvComputeActorState* state);
+     bool CompletedCA(ui64 taskId, TActorId computeActor);
+     void TaskNotStarted(ui64 taskId);
+-    void RequestNotStarted(ui64 requestId);
+     TProgressStat::TEntry CalculateConsumptionUpdate();
+     void ShiftConsumption();
+     void Submit();
+-    void BeginShutdown() {
+-        ShuttingDown = true;
+-    }
+     ui32 GetCurrentRetryDelay(ui32 requestId);
+     void Unsubscribe();
+ 
+@@ -173,7 +169,6 @@ class TKqpPlanner {
+     const bool EnableWatermarks;
+     IKqpStreamingQueryController* const StreamingQuery;
+     bool ReadyStateSent = false;
+-    bool ShuttingDown = false;
+ public:
+     static bool UseMockEmptyPlanner;  // for tests: if true then use TKqpMockEmptyPlanner that leads to the error
+     THashMap<ui32, TActorId> ResultChannels;
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_compute_actor_creation_ut.cpp` (modified, +5/-56)
+```diff
+@@ -1,9 +1,7 @@
+-#include <ydb/core/kqp/common/simple/services.h>
+ #include <ydb/core/kqp/executer_actor/kqp_planner.h>
+ #include <ydb/core/kqp/node_service/kqp_query_control_plane.h>
+ #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
+ #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+-#include <ydb/core/testlib/actors/block_events.h>
+ 
+ namespace NKikimr::NKqp {
+ namespace {
+@@ -15,7 +13,6 @@ constexpr TStringBuf CreationError = "injected compute actor creation failure";
+ struct TCreationState {
+     ui32 Attempts = 0;
+     ui32 Aborted = 0;
+-    TVector<TActorId> StartedActors;
+     std::weak_ptr<IQueryQuotaManager> QueryQuota;
+     TIntrusivePtr<NRm::TTxState> Tx;
+ };
+@@ -76,9 +73,7 @@ class TThrowingComputeActorFactory : public NComputeActor::IKqpNodeComputeActorF
+             }
+             ythrow yexception() << CreationError;
+         }
+-        auto actor = TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+-        CreationState->StartedActors.push_back(actor);
+-        return actor;
++        return TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
+     }
+ 
+     void ApplyConfig(const NKikimrConfig::TTableServiceConfig::TResourceManager&) override {}
+@@ -108,46 +103,6 @@ void CheckResourcesReleased(TTestActorRuntime& runtime, const TCreationState& st
+ } // namespace
+ 
+ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+-    Y_UNIT_TEST(CancelledBeforeActorCreation) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto nodeService = runtime.GetLocalServiceId(MakeKqpNodeServiceID(runtime.GetNodeId()));
+-        TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> forwarded(runtime, [&](const auto& ev) {
+-            return ev->Sender == executer && ev->GetRecipientRewrite() != nodeService;
+-        });
+-        auto sendStart = [&](ui64 taskId) {
+-            auto start = MakeHolder<TEvKqpNode::TEvStartKqpTasksRequest>();
+-            start->Record.SetTxId(TxId);
+-            start->Record.SetStartAllOrFail(true);
+-            start->Record.AddTasks()->SetId(taskId);
+-            runtime.Send(new IEventHandle(nodeService, executer, start.Release()));
+-        };
+-        auto checkRejection = [&](TActorId sender, ui64 taskId) {
+-            auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer, TDuration::Seconds(5));
+-            UNIT_ASSERT(reply);
+-            UNIT_ASSERT_VALUES_EQUAL(reply->Sender, sender);
+-            const auto& record = reply->Get()->Record;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 1);
+-            const auto& task = record.GetNotStartedTasks(0);
+-            UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), taskId);
+-            UNIT_ASSERT_EQUAL(task.GetReason(), NKikimrKqp::TEvStartKqpTasksResponse::INTERNAL_ERROR);
+-        };
+-
+-        sendStart(1);
+-        runtime.WaitFor("start request forwarded to the query manager", [&] { return !forwarded.empty(); }, TDuration::Seconds(5));
+-        const auto queryManager = forwarded.front()->GetRecipientRewrite();
+-        auto cancel = MakeHolder<TEvKqpNode::TEvCancelKqpTasksRequest>();
+-        cancel->Record.SetTxId(TxId);
+-        runtime.Send(new IEventHandle(nodeService, executer, cancel.Release()));
+-
+-        sendStart(2);
+-        checkRejection(nodeService, 2);
+-        forwarded.Stop().Unblock();
+-        checkRejection(queryManager, 1);
+-    }
+-
+     Y_UNIT_TEST_TWIN(NodeServiceFailure, UnknownException) {
+         for (ui32 failOnAttempt : {1u, 2u, 3u}) {
+             TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+@@ -186,17 +141,11 @@ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
+             auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer);
+             const auto& record = reply->Get()->Record;
+             UNIT_ASSERT_VALUES_EQUAL(record.GetTxId(), TxId);
+-            const ui32 startedTasks = failOnAttempt == 3 ? 0 : failOnAttempt - 1;
+-            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), startedTasks);
+-            for (ui32 i = 0; i < startedTasks; ++i) {
+-                const auto& task = record.GetStartedTasks(i);
+-                UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), firstTaskId + i);
+-                UNIT_ASSERT_VALUES_EQUAL(ActorIdFromProto(task.GetActorId()), factory->CreationState->StartedActors.at(i));
+-            }
+-            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3 - startedTasks);
+-            for (ui32 i = 0; i < 3 - startedTasks; ++i) {
++            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
++            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3);
++            for (ui32 i =
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/kqp_planner_ut.cpp` (removed, +0/-128)
+```diff
+@@ -1,128 +0,0 @@
+-#include <ydb/core/kqp/executer_actor/kqp_planner.h>
+-#include <ydb/core/kqp/ut/common/kqp_ut_common.h>
+-
+-namespace NKikimr::NKqp {
+-namespace {
+-
+-struct TTestStreamingQueryController : IKqpStreamingQueryController {
+-    bool NeedsPrepare() const override {
+-        return false;
+-    }
+-
+-    void StartPrepare(TVector<TPqTopicResolverSource>, THashMap<TString, TString>) override {}
+-
+-    std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph> GetGraphToRestore(
+-        const TVector<NKikimrKqp::TKqpNodeResources>&, ui32) override {
+-        return nullptr;
+-    }
+-
+-    TStartedActors Start(std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph>, const TKqpTasksGraph&) override {
+-        return {};
+-    }
+-
+-    void OnComputeActorsStarted(TVector<TTaskInfo> tasks, bool) override {
+-        ReadyTasks = std::move(tasks);
+-        ++ReadyCalls;
+-    }
+-
+-    bool IsOwnEvent(const NActors::IEventHandle&) const override {
+-        return false;
+-    }
+-
+-    void Handle(TAutoPtr<NActors::IEventHandle>&) override {}
+-
+-    void Terminate() override {}
+-
+-    TVector<TTaskInfo> ReadyTasks;
+-    ui32 ReadyCalls = 0;
+-};
+-
+-} // namespace
+-
+-Y_UNIT_TEST_SUITE(KqpPlanner) {
+-    Y_UNIT_TEST_TWIN(NoStreamingReadinessDuringShutdown, ComputeStateFirst) {
+-        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
+-        auto& runtime = *kikimr.GetTestServer().GetRuntime();
+-        const auto executer = runtime.AllocateEdgeActor();
+-        const auto firstActor = runtime.AllocateEdgeActor();
+-        const auto lastActor = runtime.AllocateEdgeActor();
+-        const TString database = "/Root";
+-        const NKikimrConfig::TTableServiceConfig config;
+-
+-        runtime.RunCall([&] {
+-            for (const bool shuttingDown : {false, true}) {
+-                NKqpProto::TKqpPhyTx txProto;
+-                txProto.AddStages();
+-                auto txHolder = std::make_shared<TKqpPhyTxHolder>(nullptr, &txProto, nullptr, nullptr);
+-                const IKqpGateway::TPhysicalTxData tx(txHolder, nullptr);
+-                const TVector<IKqpGateway::TPhysicalTxData> transactions;
+-                TKqpTasksGraph graph(database, transactions, nullptr, config.GetResourceManager(),
+-                    config.GetAggregationConfig(), nullptr, {}, nullptr, false);
+-                graph.GetMeta().UserRequestContext = MakeIntrusive<TUserRequestContext>();
+-                graph.GetMeta().UserRequestContext->IsStreamingQuery = true;
+-                const NYql::NDq::TStageId stageId(0, 0);
+-                graph.AddStageInfo(TStageInfo(stageId, 0, 0, TStageInfoMeta(tx)));
+-                auto& stage = graph.GetStageInfo(stageId);
+-                auto addTask = [&] {
+-                    auto& task = graph.AddTask(stage);
+-                    task.Meta.ExpectedNodeId = executer.NodeId();
+-                    return task.Id;
+-                };
+-                const auto firstTaskId = addTask();
+-                const auto lastTaskId = addTask();
+-
+-                TTestStreamingQueryController controller;
+-                NWilson::TSpan span;
+-                TKqpPlanner planner({
+-                    .TasksGraph = graph,
+-                    .TxId = 1,
+-                    .Executer = executer,
+-                    .Database = database,
+-                    .UserToken = {},
+-                    .Deadline = {},
+-                    .StatsMode = Ydb::Table::QueryStatsCollection::STATS_COLLECTION_NONE,
+-                    .StatsReportingSettings = {},
+-                    .RlPath = {},
+-                    .ExecuterSpan = span,
+-                    .ExecuterRetriesConfig = config.GetExecuterRetriesConfig(),
+-                    .MkqlMemoryLimit = 0,
+-                    .AsyncIoFactory = nullptr,
+-                    .AllowSinglePartitionOpt = false,
+-                    .FederatedQuerySetup = std::nullopt,
+-                    .ResourceManager_ = {},
+-                    .CaFactory_ = {},
+-                    .BlockTrackingMode = {},
+-                    .ArrayBufferMinFillPercentage = {},
+-                    .BufferPageAllocSize = {},
+-                    .EnableCheckpoints = false,
+-                    .EnableWatermarks = false,
+-                    .StreamingQuery = &controller,
+-                });
+-                UNIT_ASSERT(!planner.PlanExecution());
+-                UNIT_ASSERT_VALUES_EQUAL(planner.GetPendingComputeTasks().size(), 2);
+-                UNIT_ASSERT(planner.AcknowledgeCA(firstTaskId, firstActor, nullptr));
+-                UNIT_ASSERT_VALUES_EQUAL(controller.ReadyCalls, 0);
+-
+-                if (shuttingDown) {
+-                    planner.BeginShutdown();
+-                }
+-                NYql::NDqProto::TEvComputeActorState state;
+-                state.SetTaskId(lastTaskId);
+-                state.SetState(NYql::NDqProto::COMPUTE_STATE_EXECUTING);
+-                UNIT_ASSERT(planner.AcknowledgeCA(lastTaskId, lastActor, ComputeStat
+```
+
+**File**: `ydb/core/kqp/executer_actor/ut/ya.make` (modified, +0/-1)
+```diff
+@@ -9,7 +9,6 @@ SRCS(
+     kqp_compute_actor_creation_ut.cpp
+     kqp_executer_stats_ut.cpp
+     kqp_executer_ut.cpp
+-    kqp_planner_ut.cpp
+     kqp_tasks_graph_ut.cpp
+     max_tasks_graph_ut.cpp
+ )
+```
+
+---
+
+### Incident Patch 3: `1473bd55` (2026-11-24)
+**Commit Message**: [tests] tpc/medium: stop leaked YDB clusters, order more RAM under sanitizers (#58865)
+
+**File**: `ydb/tests/functional/tpc/medium/test_external.py` (modified, +4/-1)
+```diff
+@@ -21,4 +21,7 @@ def setup_class(cls) -> None:
+ 
+     @classmethod
+     def teardown_class(cls) -> None:
+-        cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        try:
++            cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
++        finally:
++            super().teardown_class()
+```
+
+**File**: `ydb/tests/functional/tpc/medium/test_upload.py` (modified, +7/-0)
+```diff
+@@ -11,3 +11,10 @@ def setup_class(cls) -> None:
+         YdbCluster._tables_path = ''
+         cls.setup_cluster()
+         super().setup_class()
++
++    @classmethod
++    def do_teardown_class(cls) -> None:
++        try:
++            super().do_teardown_class()
++        finally:
++            cls.cluster.stop()
+```
+
+**File**: `ydb/tests/functional/tpc/medium/ya.make` (modified, +2/-2)
+```diff
+@@ -22,12 +22,12 @@ TEST_SRCS(
+ 
+ FORK_TEST_FILES()
+ 
+-REQUIREMENTS(ram:16 cpu:1)
+-
+ IF (SANITIZER_TYPE)
++    REQUIREMENTS(ram:80 cpu:1)
+     SIZE(LARGE)
+     INCLUDE(${ARCADIA_ROOT}/ydb/tests/large.inc)
+ ELSE()
++    REQUIREMENTS(ram:16 cpu:1)
+     SIZE(MEDIUM)
+ ENDIF()
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60418** (2026-11-22): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60415** (2026-11-22): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60393** (2026-11-22): actualize ROADMAP.md (@fomichev3000)
-- **PR #60381** (2026-11-22): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #60363** (2026-11-22): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #60362** (2026-11-22): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #60730** (2026-11-24): Revert "Fix KQP shutdown while compute tasks are starting" (@PavelEfarinov)
+- **PR #60722** (2026-11-24): [Optimizer] Read a row table through an index in the order of a top-N sort (@denis0x0D)
+- **PR #60718** (2026-11-24): Add correct Children.size() check (@nerhneiro)
+- **PR #60716** (2026-11-24): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60715** (2026-11-24): [YDBBUGS-1250] Fix read-session offset race during partition confirmation (@lberserq)
+- **PR #60712** (2026-11-24): [Disable PG] Record compilation mode in streaming graphs (@asmyasnikov)
 
 ---
 
@@ -2670,31 +2846,32 @@ commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility
+## X. CLI: support HTTP/HTTPS YT export proxies with regression tests
 
 **RULE**:
-When implementing operations in `ydb/core/tx/replication/service/table_writer_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3820fc09`: [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16e0d087`: CLI: support HTTP/HTTPS YT export proxies with regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/replication/service/table_writer_ut.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            .SetDisablePgCompatibility(false)
+    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
+        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    proxyHelp << "YT proxy to connect to" << Endl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3820fc09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16e0d087` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

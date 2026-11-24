@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:17:30.532Z",
-  "total_cycles_completed": 12086,
-  "total_learnings_persisted": 12086,
-  "total_rules_promoted": 11153,
+  "last_updated": "2026-11-24T15:27:19.764Z",
+  "total_cycles_completed": 12089,
+  "total_learnings_persisted": 12089,
+  "total_rules_promoted": 11154,
   "history": [
-    {
-      "timestamp": "2026-11-23T22:56:18.911Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T22:56:21.071Z",
-      "repository": "KeyboardKit/KeyboardKit",
-      "learningId": "learn-github-keyboardkit-keyboardkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T23:09:50.438Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:09:51.807Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T15:17:30.532Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:27:03.134Z",
+      "repository": "Sentinel7/h3",
+      "learningId": "learn-huggingface-sentinel7-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:27:12.069Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:27:19.764Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

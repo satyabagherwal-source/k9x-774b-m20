@@ -12718,3 +12718,7 @@
 | `CYCLE-20261124-8WY1` | `2026-11-24T15:17:14.569Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10291` | Yes (`d26d749e...`) |
 | `CYCLE-20261124-95GW` | `2026-11-24T15:17:25.617Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10292` | Yes (`1c06d402...`) |
 | `CYCLE-20261124-9996` | `2026-11-24T15:17:30.522Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10293` | Yes (`e13d2f04...`) |
+| `CYCLE-20261124-LJ2Q` | `2026-11-24T15:27:03.122Z` | `Sentinel7/h3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md` | Yes (`68db5097...`) |
+| `CYCLE-20261124-LPXP` | `2026-11-24T15:27:12.013Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md` | Yes (`7222ba91...`) |
+| `CYCLE-20261124-LVWO` | `2026-11-24T15:27:19.752Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10294` | Yes (`83ec4b66...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T15:28:00.704Z` | `hf-sentinel7-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A5C5FED6` [Domain D] | Yes (`502c35cb...`) |

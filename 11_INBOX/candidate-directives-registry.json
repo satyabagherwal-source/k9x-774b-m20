@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:17:35.833Z",
+  "last_updated": "2026-11-24T15:28:04.108Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51829,11 +51829,11 @@
       "domain_letter": "I"
     },
     {
-      "id": "CD-XVFO",
+      "id": "CD-MSLH",
       "directive_title": "🕸️): build Skia Graphite for wasm",
-      "source_repo": "wcandillon-react-native-skia-learnings",
+      "source_repo": "shopify-react-native-skia-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XVFO-build-skia-graphite-for-wasm.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-MSLH-build-skia-graphite-for-wasm.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -55479,6 +55479,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-LPYG",
+      "directive_title": "🕸️): build Skia Graphite for wasm",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "wcandillon/react-native-skia",
+      "source_commit": "d36553ce",
+      "date_staged": "2026-11-24",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-wcandillon-react-native-skia",
+      "candidateDomain": "H",
+      "candidateDomainName": "Technical Construction Intelligence",
+      "secondaryDomains": [],
+      "classificationConfidence": 0.6,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-LW66",
+      "directive_title": "support HTTP/HTTPS YT export proxies with regression tests",
+      "source_repo": "ydb-platform/ydb",
+      "source_commit": "442f5b3f",
+      "staged_file": "11_INBOX/candidate-directives/CD-LW66-support-http-https-yt-export-proxies-with-regression-tests.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-MU4D",
+      "directive_title": "CLI: support HTTP/HTTPS YT export proxies with regression tests",
+      "source_repo": "ydb-platform-ydb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MU4D-cli-support-http-https-yt-export-proxies-with-regression-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
     }
   ]
 }

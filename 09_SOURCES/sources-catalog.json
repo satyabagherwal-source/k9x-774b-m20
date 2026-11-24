@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "badcc586",
+    "sourceVersion": "d36553ce",
     "license": "MIT",
-    "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
-    "lastHarvestedAt": "2026-11-21T23:39:44.383Z",
+    "contentHash": "7222ba912e2da70d60962bbe127a4cb103c6d8ec0339ec25090137d91f4fb9a6",
+    "lastHarvestedAt": "2026-11-24T15:27:12.019Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "4f5b8781",
+    "sourceVersion": "442f5b3f",
     "license": "Apache-2.0",
-    "contentHash": "ea29664a601706c99186807166618165a0fa7dbf7868ec0f9e91f819bef645a7",
-    "lastHarvestedAt": "2026-11-23T19:01:02.242Z",
+    "contentHash": "83ec4b66321b53fbe589095450779e002696808ae68a93ef0dc7886ec5e8669d",
+    "lastHarvestedAt": "2026-11-24T15:27:19.757Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -13065,8 +13065,8 @@
     "sourceUrl": "https://huggingface.co/Sentinel7/h3",
     "sourceVersion": "hf-sentinel7-h3",
     "license": "Open-Source",
-    "contentHash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
-    "lastHarvestedAt": "2026-11-20T14:07:29.636Z",
+    "contentHash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
+    "lastHarvestedAt": "2026-11-24T15:27:03.127Z",
     "learningId": "learn-huggingface-sentinel7-h3"
   },
   "hf-angelslim-hy4-flash-gguf": {
