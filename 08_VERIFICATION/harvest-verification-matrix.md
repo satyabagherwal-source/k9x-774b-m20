@@ -12777,3 +12777,6 @@
 | `CYCLE-20261124-M7XI` | `2026-11-24T18:43:32.646Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10331` | Yes (`cc651574...`) |
 | `CYCLE-20261124-MALG` | `2026-11-24T18:43:36.100Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10332` | Yes (`aef5e7cb...`) |
 | `CYCLE-20261124-MC16` | `2026-11-24T18:43:37.962Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10333` | Yes (`485c2234...`) |
+| `CYCLE-20261124-WWD3` | `2026-11-24T18:51:50.871Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10334` | Yes (`43ae716e...`) |
+| `CYCLE-20261124-X67G` | `2026-11-24T18:52:03.628Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10335` | Yes (`f0da7d6f...`) |
+| `CYCLE-20261124-X6E7` | `2026-11-24T18:52:03.871Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10336` | Yes (`63736863...`) |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T18:43:43.995Z",
+  "last_updated": "2026-11-24T18:52:10.419Z",
   "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24844,
+  "total_items": 24851,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "4bc6dc81",
-      "content_hash": "267bd52830dd080683af945d6638104b629232192ab6ac4505d0512a0e5e2073",
+      "source_version": "c69b970d",
+      "content_hash": "6d55695582236b334a93ab61b94fdb615f9b854ade6da79d7516b48ead0225e6",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T14:50:42.531Z"
+      "persisted_at": "2026-11-24T18:52:04.334Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "4bc6dc81",
-      "content_hash": "c0a21aa3f7dbf72a26a9229ef1f24d098b6cfce731a5fa6713deb9e780f2473b",
+      "source_version": "c69b970d",
+      "content_hash": "5eab3ba749644c4f59937c603d311072e7f22f51b11cfb207c7ba64e14e1b45e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:50:42.700Z"
+      "persisted_at": "2026-11-24T18:52:04.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "9881fdd82337c8fe4ecd48fafff2b6bad8ea798fcd1aa9a2db14f6e62471fb0f",
+      "content_hash": "998cbbb586d6618441462be7bed0d7afb555c701b93ce54540f6968c0d8b1ab5",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T14:51:16.464Z"
+      "persisted_at": "2026-11-24T18:52:09.254Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "5371dd5bfbb76408dfe38e00b86142d58ffe81b71443181ab27af87d88b321a9",
+      "content_hash": "d5efae1c662095d7616af7c6d6d8417179d0b8f9f819e7b8b0265641bc598abb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:51:16.655Z"
+      "persisted_at": "2026-11-24T18:52:09.436Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -113686,9 +113686,9 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "f01482bcfef7eada5e725e47da95ccf44c8c9dcc6af7c9828726c6219a74248a",
+      "content_hash": "c7078dc930c66464164fde6ef04fb8baf6a5b1cb99ff8252454c8eef1b55dcc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T22:24:08.297Z"
+      "persisted_at": "2026-11-24T18:52:10.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
@@ -113698,9 +113698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "27bbe307b54c51e0d946d125f1b3b7c9aa40f771be657d5f8bf87ede3342b1a1",
+      "content_hash": "0a93b5b3155e94820d75f655bdd0b91b21ee89f6948938a1473e618595c2cb19",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:24:08.523Z"
+      "persisted_at": "2026-11-24T18:52:10.419Z"
     },
     "candidate_directive-editor-add-scoped-ios-account-deletion": {
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
@@ -214332,8 +214332,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "4bc6dc81",
-      "content_hash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
+      "source_version": "c69b970d",
+      "content_hash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214456,6 +214456,11 @@
           "number": 10240,
           "title": "explicitly set LRU map memory flags",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10336,
+          "title": "Fix nil status panic in first-regeneration test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214463,7 +214468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:50:41.927Z",
+      "verified_at": "2026-11-24T18:52:03.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242380,8 +242385,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "92175f43",
-      "content_hash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
+      "source_version": "b0144700",
+      "content_hash": "f0da7d6f717fc371205b4df2d4b9d1a3b0614728b019df30fd0c33ceafe9409d",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -242429,6 +242434,11 @@
           "number": 10135,
           "title": "use HTML file input for document uploads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10335,
+          "title": "preserve quoted paragraphs in Word exports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242436,7 +242446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:24:03.030Z",
+      "verified_at": "2026-11-24T18:52:03.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296174,8 +296184,8 @@
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "551b0df2",
-      "content_hash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
+      "source_version": "a95bfe7d",
+      "content_hash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "promoted_rules": [
@@ -296188,6 +296198,11 @@
           "number": 10074,
           "title": "stop silently dropping alerts for short-lived processes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10334,
+          "title": "Update helm chart and stable version to v1.7.7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -296195,7 +296210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:03:28.517Z",
+      "verified_at": "2026-11-24T18:51:50.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296237,10 +296252,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
       "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "551b0df2",
-      "content_hash": "d7ecc2184988ef49f76cef28ff0f4347ae75bb5614c56f03343a3e0839d0ed59",
+      "source_version": "a95bfe7d",
+      "content_hash": "45b3a09500c601024c888b679014d8603d3d8eef50f865cc22d2c5a69bf3be84",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:29.346Z"
+      "persisted_at": "2026-11-24T18:51:51.317Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor",
@@ -296249,10 +296264,10 @@
       "relative_path": "12_DECISIONS/ADR-kubearmor-kubearmor-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubea.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor/KubeArmor",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "551b0df2",
-      "content_hash": "f9d7efa43b20f8bb62b514eda6660fcb17ed08d19218bdf5d56dbb9ac41aa175",
+      "source_version": "a95bfe7d",
+      "content_hash": "532bc6f10338df933c49af1864d358cbff5439b9c16702353e1896770eeece24",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:29.582Z"
+      "persisted_at": "2026-11-24T18:51:51.499Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona",
@@ -296261,10 +296276,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/kubearmor-kubearmor-agent-contract-kubearmor-kubearmor-autonomous-specialist-per.md",
       "title": "Agent Contract: kubearmor/KubeArmor Autonomous Specialist Persona",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "551b0df2",
-      "content_hash": "ad4592dd9012624229f1be32d26f5d23e81e627f070a819b0f0ac062d0b2d203",
+      "source_version": "a95bfe7d",
+      "content_hash": "149a93ecad166213a52de5a8ea64a181e86f315974de0afc69bc0821314b00ea",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:29.780Z"
+      "persisted_at": "2026-11-24T18:51:51.653Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor",
@@ -296273,10 +296288,10 @@
       "relative_path": "08_VERIFICATION/kubearmor-kubearmor-verification-protocol-empirical-defect-shield-for-kubearmor-.md",
       "title": "Verification Protocol: Empirical Defect Shield for kubearmor/KubeArmor",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "551b0df2",
-      "content_hash": "e4f685d394220580cf498ccab76a67d760b2a5344d8ed43a789240efd56896c4",
+      "source_version": "a95bfe7d",
+      "content_hash": "9c5a429fe3e59ca5183a01c9f84dd002dd975b8e2b09d1e971bc3d8c39ec279e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:03:29.968Z"
+      "persisted_at": "2026-11-24T18:51:51.813Z"
     },
     "rule-9319": {
       "learning_id": "rule-9319",
@@ -296338,9 +296353,9 @@
       "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf834ffdbdc96b97a105da2fdd0e63b1cbd11d200ec7c1aebdd4f053a76e0d70",
+      "content_hash": "7550da47e5c1c316420223b1f5284a21e554da7fc3493bd1ceab72baf536aab3",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:49.329Z"
+      "persisted_at": "2026-11-24T18:52:08.154Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings",
@@ -296350,9 +296365,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor-kubearmor-learnings",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "52eadca39864080088ebce20f283949b8050ab8cd15176efb6c4240149c3801a",
+      "content_hash": "d2541c13d4c6d3f67b16c9e3d619fba1d923b8bc0eea5ab3c697f195a3206233",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:49.555Z"
+      "persisted_at": "2026-11-24T18:52:08.330Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona",
@@ -296362,9 +296377,9 @@
       "title": "Agent Contract: kubearmor-kubearmor-learnings Autonomous Specialist Persona",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "b42a095cfe164f0d8adf126882e71e21de26c7ef65248dba3da3d22dba8d1c1a",
+      "content_hash": "41fe7c14907730d0f881463bcb69d63f8d5e77d7da2445ad26121fe55d0f2696",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T17:03:49.743Z"
+      "persisted_at": "2026-11-24T18:52:08.482Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings",
@@ -296374,9 +296389,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubearmor-kubearmor-learnings",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "356a38f03a9c0acd4021099c02c19432d103d8b7fe12f68bcac4401cae0ceace",
+      "content_hash": "9bc7e0efc277cd014a8cf3bed68e764d2aabc6bf9314383494b7c79abdbb4b79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:03:49.959Z"
+      "persisted_at": "2026-11-24T18:52:08.650Z"
     },
     "candidate_directive-desktop-hotspot-base64-intrinsic": {
       "item_id": "candidate_directive-desktop-hotspot-base64-intrinsic",
@@ -339333,6 +339348,96 @@
       "content_hash": "da26f3647156f2d409bcd15e5a341c7f300535d2973df7bac6d1c22aa84d1539",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T18:43:41.866Z"
+    },
+    "rule-10334": {
+      "learning_id": "rule-10334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10334,
+      "title": "Update helm chart and stable version to v1.7.7",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "a95bfe7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:51:50.649Z"
+    },
+    "candidate_directive-update-helm-chart-and-stable-version-to-v1-7-7": {
+      "item_id": "candidate_directive-update-helm-chart-and-stable-version-to-v1-7-7",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X9K0-update-helm-chart-and-stable-version-to-v1-7-7.md",
+      "title": "Update helm chart and stable version to v1.7.7",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7ed4b7099307858b38d46e6bbef5fa234fc30e36d0c68abd00cb8b05499f3223",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-24T18:52:07.973Z"
+    },
+    "rule-10335": {
+      "learning_id": "rule-10335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10335,
+      "title": "preserve quoted paragraphs in Word exports",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "b0144700",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:52:03.392Z"
+    },
+    "rule-10336": {
+      "learning_id": "rule-10336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10336,
+      "title": "Fix nil status panic in first-regeneration test",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "c69b970d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:52:03.630Z"
+    },
+    "candidate_directive-preserve-quoted-paragraphs-in-word-exports": {
+      "item_id": "candidate_directive-preserve-quoted-paragraphs-in-word-exports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XB5V-preserve-quoted-paragraphs-in-word-exports.md",
+      "title": "preserve quoted paragraphs in Word exports",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4268b50f818e4bdbb0bb0951c8aabdb4007032ac09023be9e92a9dc741b2da36",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:52:10.051Z"
+    },
+    "candidate_directive-fix-nil-status-panic-in-first-regeneration-test": {
+      "item_id": "candidate_directive-fix-nil-status-panic-in-first-regeneration-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X6LR-fix-nil-status-panic-in-first-regeneration-test.md",
+      "title": "Fix nil status panic in first-regeneration test",
+      "repository": "cilium/cilium",
+      "source_version": "c69b970d",
+      "content_hash": "27fb998b529c7693b163d0f0301eaf68518eef2a298e81d7ea5b20a1dffe6d54",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T18:52:04.144Z"
+    },
+    "candidate_directive-endpoint-fix-nil-status-panic-in-first-regeneration-test": {
+      "item_id": "candidate_directive-endpoint-fix-nil-status-panic-in-first-regeneration-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XAEO-endpoint-fix-nil-status-panic-in-first-regeneration-test.md",
+      "title": "endpoint: Fix nil status panic in first-regeneration test",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0de4ad604fd60ee8724386cfd88cd2f2d71f194ea6779ca10b79a74b5e3af31c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T18:52:09.073Z"
     }
   },
   "ai-builder-brain": {

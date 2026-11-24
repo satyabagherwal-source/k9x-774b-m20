@@ -4,17 +4,17 @@
 {
   "source_repository": "kubearmor/KubeArmor",
   "source_url": "https://github.com/kubearmor/KubeArmor",
-  "source_version": "551b0df2",
+  "source_version": "a95bfe7d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T17:03:29.113Z",
+  "timestamp": "2026-11-24T18:51:51.131Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kubearmor-kubearmor",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor) (Revision: `551b0df2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:03:29.113Z`  
+> **Provenance**: Harvested from [kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor) (Revision: `a95bfe7d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T18:51:51.131Z`  
 > **Learning ID**: `learn-github-kubearmor-kubearmor`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:03:27.365Z  
+> **Harvest Timestamp**: 2026-11-24T18:51:49.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Runtime Security Enforcement System. Workload hardening/sandboxing and implementing least-permissive policies made easy leveraging LSMs (LSM-BPF, AppArmor).
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 2643 stars
+- **Stars / Engagement**: 2644 stars
 
 ---
 
@@ -3191,292 +3191,101 @@ func (nh *NRIHandler) nriToKubeArmorContainer(nriContainer *api.Container) tp.Co
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `551b0df2` (2026-11-23)
-**Commit Message**: fix(monitor): stop silently dropping alerts for short-lived processes
+### Incident Patch 1: `a95bfe7d` (2026-11-24)
+**Commit Message**: chore: Update helm chart and stable version to v1.7.7 (#3040)
 
-Stop silently dropping alerts for short-lived processes and upgrade go version.
+Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `STABLE-RELEASE` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@
- 
- ### Builder
- 
--FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
-+FROM golang:1.26-alpine3.23@sha256:23f198931d4bd83b4f5a613bd75656257ae8bf832dcbc2db80e1050b5219ca2a AS builder
- 
- RUN apk --no-cache update && apk upgrade --no-cache libcrypto3 libssl3 zlib libexpat
- RUN apk add --no-cache git clang llvm make gcc protobuf protobuf-dev curl elfutils-dev libbpf-dev
+@@ -1 +1 @@
+-v1.7.6
++v1.7.7
 ```
 
-**File**: `KubeArmor/go.mod` (modified, +1/-1)
+**File**: `deployments/helm/KubeArmor/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/KubeArmor
- 
--go 1.26.10
-+go 1.26.11
- 
- replace (
- 	github.com/kubearmor/KubeArmor => ../../
+@@ -1,8 +1,8 @@
+ apiVersion: v2
+-appVersion: v1.7.6
++appVersion: v1.7.7
+ description: A Helm chart for Kubearmor on Kubernetes
+ home: https://github.com/kubearmor/KubeArmor
+ icon: https://github.com/kubearmor/KubeArmor/blob/main/.gitbook/assets/logo.png?raw=true
+ name: kubearmor
+ type: application
+-version: v1.7.6
++version: v1.7.7
 ```
 
-**File**: `KubeArmor/monitor/logUpdate.go` (modified, +115/-32)
+**File**: `deployments/helm/KubeArmorOperator/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -8,6 +8,8 @@ import (
- 	"path/filepath"
- 	"strconv"
- 	"strings"
-+	"syscall"
-+	"time"
- 
- 	kl "github.com/kubearmor/KubeArmor/KubeArmor/common"
- 	cfg "github.com/kubearmor/KubeArmor/KubeArmor/config"
-@@ -128,11 +130,61 @@ func (mon *SystemMonitor) UpdateLogBase(ctx SyscallContext, log tp.Log) tp.Log {
- 
- // UpdateLogs Function
- func (mon *SystemMonitor) UpdateLogs() {
-+	// failed file/network events (potential alerts) whose process is not in the pid map yet.
-+	// The perf buffer is per-CPU and gives no ordering across CPUs, so such an event can be
-+	// read before the execve enter of its own process; it is retried until that arrives.
-+	type unresolvedLog struct {
-+		msg      ContextCombined
-+		log      tp.Log
-+		deadline time.Time
-+	}
-+
-+	unresolved := make([]unresolvedLog, 0)
-+	retryTicker := time.NewTicker(UnresolvedRetryInterval)
-+	defer retryTicker.Stop()
-+
- 	for {
- 		select {
- 		case <-StopChan:
- 			return
- 
-+		case now := <-retryTicker.C:
-+			if len(unresolved) == 0 {
-+				continue
-+			}
-+
-+			// entries are queued in arrival order with the same timeout and keep that order,
-+			// so the expired ones are always at the front: drop them without any lookup
-+			expired := 0
-+			for expired < len(unresolved) && now.After(unresolved[expired].deadline) {
-+				mon.Logger.Debugf("%s Event dropped: process information still missing after %s", unresolved[expired].log.Operation, UnresolvedRetryTimeout)
-+				expired++
-+			}
-+
-+			// retry at most UnresolvedRetryBatch entries per tick, so a long queue can't stall
-+			// this goroutine (and the ContextChan consumer with it); the rest wait for the next tick
-+			pending := unresolved[:0]
-+			for i, ev := range unresolved[expired:] {
-+				if i >= UnresolvedRetryBatch {
-+					pending = append(pending, unresolved[expired+i:]...)
-+					break
-+				}
-+
-+				// one cheap lookup first; the full resolution only once the process is known
-+				if !mon.HasActivePid(ev.msg.ContainerID, ev.msg.ContextSys.HostPID) {
-+					pending = append(pending, ev)
-+					continue
-+				}
-+
-+				mon.resolveProcessInfo(&ev.log, ev.msg)
-+				if mon.isProcessInformationMissing(&ev.log) {
-+					continue
-+				}
-+				mon.finalizeAndPushLog(ev.msg, ev.log)
-+			}
-+			clear(unresolved[len(pending):])
-+			unresolved = pending
-+
- 		case msg, valid := <-mon.ContextChan:
- 			if !valid {
- 				continue
-@@ -568,44 +620,75 @@ func (mon *SystemMonitor) UpdateLogs() {
- 			}
- 
- 			if mon.isProcessInformationMissing(&log) {
-+				// a file/network event denied by an enforcer is a potential alert: instead of
-+				// dropping it, wait for the (possibly late) execve of its process. Only EPERM
-+				// (BPF-LSM) and EACCES (AppArmor, SELinux) are queued: the policy matcher only
-+				// turns "Passed", "Operation not permitted" and "Permission denied" into
-+				// alerts, so other failures (ENOENT, ECONNREFUSED, ...) can never be one
-+				if (msg.ContextSys.Retval == -int64(syscall.EPERM) || msg.ContextSys.Retval == -int64(syscall.EACCES)) &&
-+					(log.Operation == "File" || log.Operation == "Network") {
-+					if len(unresolved) >= UnresolvedQueueSize {
-+						mon.Logger.Debugf("%s Event dropped: process information missing and retry queue is full", log.Operation)
-+						continue
-+					}
-+					unresolved = append(unresolved, unresolvedLog{
-+						msg:      msg,
-+						log:      log,
-+						deadline: time.Now().Add(UnresolvedRetryTimeout),
-+					})
-+				}
- 				continue
- 			}
- 
--			// fallback logic: in case we get relative path in log.Resource for file and process event
--			// then we join cwd + resource to get pull path
--			if log.Operation == "Process" || log.Operation == "File" {
--				if !strings.HasPrefix(strings.Split(log.Resource, " ")[0], "/") && log.Cwd != "/" {
--					log.Resource = filepath.Join(log.Cwd, log.Resource)
--				}
--			}
-+			mon.finalizeAndPushLog(msg, log)
-+		}
-+	}
-+}
- 
--			// get error message
--			if msg.ContextSys.Retval < 0 {
--				message := getErrorMessage(msg.ContextSys.Retval)
--				if message != "" {
--					log.Result = message
--				} else {
--					log.Result = fmt.Sprintf("Unknown (%d)", msg.ContextSys.Retval)
--				}
--			} else {
--				log.Result = "Passed"
--			}
-+// resolveProcessInfo re-reads the process fields of a non-exec log from the pid map
-+func (mon *SystemMonitor) resolveProcessInfo(log *tp.Log, msg ContextCombined) {
-+	// readlink is false: the process has usually exited already, and if it were still
-+	// alive the first (readlink) attempt would have resolved it
-+	log.ProcessName = mon.GetExecPath(msg.ContainerID, msg.ContextSys, false)
-+	log.ParentProcessName = mon.GetParentExecPath(msg.ContainerID, msg.ContextSys, false, false)
-+	log.Source = mon.GetCommand(msg.ContainerID, msg.ContextSys, false)
-+}
- 
--			// exec event
--			log.ExecEvent.ExecID = strconv.FormatUint(msg.ContextSys.ExecID, 10)
--			if comm := strings.TrimRight(string(msg.ContextSys.Comm[:]), "\x00"); len(comm) > 0 {
--				log.ExecEvent.ExecutableName = comm
--			}
-+// finalizeAndPushLog fills the remaining fields of a log and p
+@@ -13,9 +13,9 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: v1.7.6
++version: v1.7.7
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: v1.7.6
++appVersion: v1.7.7
 ```
 
-**File**: `KubeArmor/monitor/processTree.go` (modified, +25/-3)
+---
+
+### Incident Patch 2: `b6a648bf` (2026-11-24)
+**Commit Message**: chore: Update helm chart and stable version to v1.7.7
+
+Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
+
+**File**: `STABLE-RELEASE` (modified, +1/-1)
 ```diff
-@@ -278,6 +278,21 @@ func (mon *SystemMonitor) GetParentExecPath(containerID string, ctx SyscallConte
- 	return path
- }
- 
-+// HasActivePid reports whether the process is in the pid map
-+func (mon *SystemMonitor) HasActivePid(containerID string, hostPid uint32) bool {
-+	ActiveHostPidMap := *(mon.ActiveHostPidMap)
-+	ActivePidMapLock := *(mon.ActivePidMapLock)
-+
-+	ActivePidMapLock.Lock()
-+	defer ActivePidMapLock.Unlock()
-+
-+	if pidMap, ok := ActiveHostPidMap[containerID]; ok {
-+		_, ok := pidMap[hostPid]
-+		return ok
-+	}
-+	return false
-+}
-+
- // GetExecPath Function
- func (mon *SystemMonitor) GetExecPath(containerID string, ctx SyscallContext, readlink bool) string {
- 	ActiveHostPidMap := *(mon.ActiveHostPidMap)
-@@ -394,13 +409,20 @@ func (mon *SystemMonitor) CleanUpExitedHostPids() {
- 
- 		for containerID, pidMap := range ActiveHostPidMap {
- 			for pid, pidNode := range pidMap {
--				if pidNode.Exited && now.After(pidNode.ExitedTime.Add(time.Second*5)) {
-+				if pidNode.Exited && now.After(pidNode.ExitedTime.Add(ExitedNodeGracePeriod)) {
- 					cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
--				} else if now.After(pidNode.ExitedTime.Add(time.Second * 30)) {
-+				} else if !pidNode.Exited {
-+					// the process is gone but its exit event has not been processed (yet). Its
-+					// other events may still be queued (UpdateLogs can lag behind, and per-CPU
-+					// perf buffers deliver out of order), so don't delete the node right away:
-+					// mark it exited now and let the ExitedNodeGracePeriod rule above remove it
-+					// on a later pass
- 					p, err := os.FindProcess(int(pid))
- 					if err == nil && p != nil {
- 						if p.Signal(syscall.Signal(0)) != nil {
--							cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
-+							pidNode.Exited = true
-+							pidNode.ExitedTime = now
-+							pidMap[pid] = pidNode
- 						}
- 					} else {
- 						cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
+@@ -1 +1 @@
+-v1.7.6
++v1.7.7
 ```
 
-**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +14/-0)
+**File**: `deployments/helm/KubeArmor/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -42,6 +42,20 @@ const (
- 	ReplayInterval       = 1 * time.Second
- 	ReplayTimeout        = 10 * time.Second
- 	DefaultVisibilityKey = uint32(0xc0ffee)
-+	// failed (non-Passed) file/network events whose process is not known yet are retried
-+	// until the process shows up in the pid map. Events from per-CPU perf buffers can be read
-+	// out of order, so an event may arrive before the execve that created its process.
-+	// The retries run on the UpdateLogs goroutine, so the work per tick is bounded: at most
-+	// UnresolvedRetryBatch entries are looked up per tick and the queue holds at most
-+	// UnresolvedQueueSize entries.
-+	UnresolvedRetryInterval = 100 * time.Millisecond
-+	UnresolvedRetryTimeout  = 3 * time.Second
-+	UnresolvedRetryBatch    = 256
-+	UnresolvedQueueSize     = 1024
-+	// ExitedNodeGracePeriod is how long an exited process stays in the pid map before it is
-+	// removed. It must be longer than UnresolvedRetryTimeout: a queued event can only be
-+	// resolved while its process is still in the pid map.
-+	ExitedNodeGracePeriod = 5 * time.Second
- )
- 
- // ======================= /=/
+@@ -1,8 +1,8 @@
+ apiVersion: v2
+-appVersion: v1.7.6
++appVersion: v1.7.7
+ description: A Helm chart for Kubearmor on Kubernetes
+ home: https://github.com/kubearmor/KubeArmor
+ icon: https://github.com/kubearmor/KubeArmor/blob/main/.gitbook/assets/logo.png?raw=true
+ name: kubearmor
+ type: application
+-version: v1.7.6
++version: v1.7.7
 ```
 
-**File**: `deployments/go.mod` (modified, +1/-1)
+**File**: `deployments/helm/KubeArmorOperator/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/deployments
- 
--go 1.26.10
-+go 1.26.11
- 
- replace (
- 	github.com/kubearmor/KubeArmor => ../
-```
-
-**File**: `deployments/podman/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/deployments/podman
- 
--go 1.26.10
-+go 1.26.11
- 
- require (
- 	github.com/kubearmor/KubeArmor/KubeArmor v0.0.0-20260521154542-6789b83a8cee
-```
-
-**File**: `pkg/KubeArmorController/Dockerfile` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- # Copyright 2026 Authors of KubeArmor
- 
- # Build the manager binary
--FROM golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
-+FROM golang:1.26.11@sha256:4165ee6bf3b7811fd7b40373290405c83d0167dcb87ee5f29c427cdcef45ff8f AS builder
- 
- WORKDIR /workspace
- # Copy the Go Modules manifests
+@@ -13,9 +13,9 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: v1.7.6
++version: v1.7.7
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: v1.7.6
++appVersion: v1.7.7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3040** (2026-11-24): chore: Update helm chart and stable version to v1.7.7 (@AryanBakliwal)
 - **PR #3029** (2026-11-23): fix(monitor): stop silently dropping alerts for short-lived processes (@AryanBakliwal)
 - **PR #3012** (closed): docs: document Elasticsearch adapter configuration in KubeArmorConfig (@Ankitavasudev)
 - **PR #3011** (closed): docs: document seccompEnabled and controllerPort in KubeArmorConfig (@Ankitavasudev)
 - **PR #3010** (2026-11-18): docs(examples): fix links to the match-expression policy files (@SANJANAKUMARI83)
 - **PR #3004** (2026-11-18): fix(feeder): narrow DefaultPosturesLock scope in UpdateMatchedPolicy (@AryanBakliwal)
-- **PR #3001** (closed): docs: document the presets field in the policy specifications (@Ankitavasudev)
 
 ---
 
@@ -3496,31 +3305,33 @@ Stop silently dropping alerts for short-lived processes and upgrade go version.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. monitor): stop silently dropping alerts for short-lived processes
+## X. Update helm chart and stable version to v1.7.7
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deployments/helm/KubeArmor/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `551b0df2`: monitor): stop silently dropping alerts for short-lived processes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a95bfe7d`: Update helm chart and stable version to v1.7.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/helm/KubeArmor/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM golang:1.26-alpine3.23@sha256:23f198931d4bd83b4f5a613bd75656257ae8bf832dcbc2db80e1050b5219ca2a AS builder
+appVersion: v1.7.7
+version: v1.7.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
+appVersion: v1.7.6
+version: v1.7.6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `551b0df2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a95bfe7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

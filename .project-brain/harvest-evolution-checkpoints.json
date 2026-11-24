@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:43:44.152Z",
+  "last_updated": "2026-11-24T18:52:10.565Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T18:26:02.534Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-24T14:51:15.874Z",
+      "processed_at": "2026-11-24T18:52:08.839Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1998,7 +1998,7 @@
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
-      "processed_at": "2026-11-23T22:24:07.554Z",
+      "processed_at": "2026-11-24T18:52:09.622Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3478,7 +3478,7 @@
       "staged_for_review": 1
     },
     "kubearmor-kubearmor-learnings.md": {
-      "processed_at": "2026-11-23T17:03:48.446Z",
+      "processed_at": "2026-11-24T18:52:07.373Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3853,7 +3853,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3885,
+  "total_dossiers_evaluated": 3888,
   "total_canonical_promoted": 515,
-  "total_staged_for_review": 2952
+  "total_staged_for_review": 2955
 }

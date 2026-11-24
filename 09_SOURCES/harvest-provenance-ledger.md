@@ -12810,3 +12810,6 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `34e314f5` | Multi-dimensional audit evidence | 2026-11-24T18:43:32.651Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `ab26c80d` | Multi-dimensional audit evidence | 2026-11-24T18:43:36.104Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `eec6794f` | Multi-dimensional audit evidence | 2026-11-24T18:43:37.966Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `a95bfe7d` | Multi-dimensional audit evidence | 2026-11-24T18:51:50.875Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `b0144700` | Multi-dimensional audit evidence | 2026-11-24T18:52:03.633Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c69b970d` | Multi-dimensional audit evidence | 2026-11-24T18:52:03.875Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:51:16.153Z",
+  "timestamp": "2026-11-24T18:52:08.939Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:51:16.153Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T18:52:08.939Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `4bc6dc81`  
+> **Source Version**: `c69b970d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:50:41.398Z  
+> **Timestamp**: 2026-11-24T18:52:02.655Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:50:41.394Z  
+> **Harvest Timestamp**: 2026-11-24T18:52:02.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25898 stars
+- **Stars / Engagement**: 25899 stars
 
 ---
 
@@ -1284,11 +1284,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50238** (2026-11-24): **.github: Track Kubespray in Renovate and update it to v2.32.0**
-  *Symptoms*: The Kubespray pin in conformance-kubespray.yaml had no renovate annotation and no matching custom manager, so Renovate never updated it and it stayed at v2.28.0. That release installs Kubernetes v1.32.5, which cannot compile the transformMapEntry CEL rule that 25b9d6a5e2dc ("ipam: validate IP pool CIDRs in CEL and raise list limit to 16k") added, so the operator fails to create its CRDs and Conformance Kubespray has failed on main since that commit.  Renovate now tracks `<NAME>_SHA: <commit> # <tag>` pins in workflows, and Kubespray moves to v2.32.0, which installs Kubernetes 1.36.4. Its ansible-core 2.19 requires Python 3.11 or later, so the workflow now sets up Python 3.13.  Fixes: 25b9d6a5e2dc ("ipam: validate IP pool CIDRs in CEL and raise list limit to 16k")  This PR was prepared with AIL:3. I personally checked the local Renovate dry runs. 
+- **Issue #50242** (2026-11-24): **gha: Fail EKS matrix filtering when the AWS call fails**
+  *Symptoms*: The Filter Matrix step of conformance-eks and conformance-aws-cni pipes "aws eks describe-cluster-versions" into jq. The step has no shell: key, so it runs under "bash -e" without pipefail. When the aws call fails, jq reads empty input and exits 0, and the loop drops every version as unsupported. GitHub then skips the test job for the empty matrix, and outside the default branch the success expression accepts that, so the workflow posts a green commit status without running a single test.  This commit fetches the cluster versions once, before the loop, so a failed aws call fails the step. The call takes no per-version argument and returns the same list on every iteration.  This PR was prepared with AIL:3. I personally checked both Filter Matrix steps locally against a failing aws stub. 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #50225** (2026-11-24): **gateway-api: translation extension and resource registry hooks**
-  *Symptoms*: The PR allows registering of additional ResourceRegistry entries and adding translation extension hooks.  Please see the details per-commit.  ```release-note Cilium's Gateway API ResourceRegistry has been extended to allow registration of additional entries. The Gateway API translation process has been refactored to support translation extension hooks. ```  This PR was prepared with AIL: 1.  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate of Origin]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#dev-coo [Submitting a pull request]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request [kind]: https://kind.sigs.k8s.io 
+- **Issue #50239** (2026-11-24): **labels: explicitly require reserved source**
+  *Symptoms*: The convenience functions that look up commonly used reserved labels need to check for source as well.   ```release-note Fixes some label lookups that were missing the "reserved" source. ``` 
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1307,131 +1309,440 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `386e9da1` (2026-11-24)
-**Commit Message**: images: update cilium-{runtime,builder}
+### Incident Patch 1: `0f736337` (2026-11-23)
+**Commit Message**: endpoint: Fix nil status panic in first-regeneration test
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+The "policy changed" subtest of TestFirstRegenerationComputesPolicyOnce
+recomputes the policy of all identities without waiting for the result.
+When that recomputation supersedes the L4 policy before insertUser runs,
+insertUser starts an asynchronous RegenerateIfAlive on the test
+endpoint. newRegenTestEndpoint builds that endpoint without a status, so
+the goroutine panics in logStatusLocked and takes the whole package
+down:
 
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
+  panic: runtime error: invalid memory address or nil pointer dereference
+  created by github.com/cilium/cilium/pkg/policy.(*L4Policy).insertUser in goroutine 3156
+
+This commit makes the subtest wait for the recomputation with
+computePolicyForEPAndWait, as the "identity changed" subtest already
+does. Agent endpoints always have a status, so the panic only happens
+in the test.
+
+This commit was prepared with AIL:3. I personally checked the local
+reruns of the test on main and with this change.
+
+Fixes: e5967e950b8f ("endpoint: Avoid double wait for the initial endpoint policy")
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `pkg/endpoint/bpf_test.go` (modified, +1/-2)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "Cilium",
--  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
-+  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
-   "workspaceFolder": "/go/src/github.com/cilium/cilium",
-   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
-   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
-```
-
-**File**: `api/v1/standalone-dns-proxy/standalone-dns-proxy.pb.go` (modified, +10/-7)
-```diff
-@@ -732,13 +732,16 @@ func (x *DNSPolicy) GetDnsServers() []*DNSServer {
- // L7 DNS policy snapshot of all local endpoints and identity to ip mapping of source
- // and destinatione egress endpoints enforcing fqdn rules.
- type PolicyState struct {
--	state                     protoimpl.MessageState       `protogen:"open.v1"`
--	EgressL7DnsPolicy         []*DNSPolicy                 `protobuf:"bytes,1,rep,name=egress_l7_dns_policy,json=egressL7DnsPolicy,proto3" json:"egress_l7_dns_policy,omitempty"`
--	RequestId                 string                       `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`                                                     // Random UUID based identifier which will be referenced in ACKs
--	IdentityToEndpointMapping []*IdentityToEndpointMapping `protobuf:"bytes,3,rep,name=identity_to_endpoint_mapping,json=identityToEndpointMapping,proto3" json:"identity_to_endpoint_mapping,omitempty"` // Identity to Endpoint mapping for the DNS server and the source identity
--	IdentityToPrefixMapping   []*IdentityToPrefixMapping   `protobuf:"bytes,4,rep,name=identity_to_prefix_mapping,json=identityToPrefixMapping,proto3" json:"identity_to_prefix_mapping,omitempty"`       // Identity to Prefix mapping for the identity
--	unknownFields             protoimpl.UnknownFields
--	sizeCache                 protoimpl.SizeCache
-+	state             protoimpl.MessageState `protogen:"open.v1"`
-+	EgressL7DnsPolicy []*DNSPolicy           `protobuf:"bytes,1,rep,name=egress_l7_dns_policy,json=egressL7DnsPolicy,proto3" json:"egress_l7_dns_policy,omitempty"`
-+	// Random UUID based identifier which will be referenced in ACKs
-+	RequestId string `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-+	// Identity to Endpoint mapping for the DNS server and the source identity
-+	IdentityToEndpointMapping []*IdentityToEndpointMapping `protobuf:"bytes,3,rep,name=identity_to_endpoint_mapping,json=identityToEndpointMapping,proto3" json:"identity_to_endpoint_mapping,omitempty"`
-+	// Identity to Prefix mapping for the identity
-+	IdentityToPrefixMapping []*IdentityToPrefixMapping `protobuf:"bytes,4,rep,name=identity_to_prefix_mapping,json=identityToPrefixMapping,proto3" json:"identity_to_prefix_mapping,omitempty"`
-+	unknownFields           protoimpl.UnknownFields
-+	sizeCache               protoimpl.SizeCache
- }
- 
- func (x *PolicyState) Reset() {
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- # Copyright Authors of Cilium
- # SPDX-License-Identifier: Apache-2.0
- 
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
- ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
- #
- # cilium-envoy from github.com/cilium/proxy
-```
-
-**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
- ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
-**File**: `images/operator/Dockerfile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- ARG BASE_IMAGE=scratch
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
- ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
+@@ -96,8 +96,7 @@ func TestFirstRegenerationComputesPolicyOnce(t *testing.T) {
+ 	}{
+ 		{"unchanged", func(*testing.T, *Endpoint) {}, false},
+ 		{"policy changed", func(t *testing.T, ep *Endpoint) {
+-			_, err := f.polComputer.RecomputeIdentityPolicyForAllIdentities(f.repo.BumpRevision())
+-			require.NoError(t, err)
++			computePolicyForEPAndWait(t, ep, f.polComputer, f.repo.BumpRevision())
+ 		}, true},
+ 		{"labels changed", func(_ *testing.T, ep *Endpoint) {
+ 			ep.identityRevision++
 ```
 
 ---
 
-### Incident Patch 2: `aa2ff70d` (2026-11-24)
-**Commit Message**: images/builder: install clang-format from llvm-dist image
+### Incident Patch 2: `c69b970d` (2026-11-24)
+**Commit Message**: labels: explicitly require reserved source
 
-This will be used to check formatting of .protoc files in api/v1.
+The convenience functions that look up commonly used reserved labels
+need to check for source as well.
 
-Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+Signed-off-by: Casey Callendrello <[REDACTED_EMAIL]>
 
-**File**: `images/builder/Dockerfile` (modified, +8/-2)
+**File**: `pkg/labels/labels.go` (modified, +17/-13)
 ```diff
-@@ -82,12 +82,18 @@ RUN --mount=type=bind,readwrite,target=/go/src/github.com/cilium/cilium/images/b
-     ./install-test-formatters.sh
+@@ -234,50 +234,54 @@ type Labels map[string]Label
+ // Convenience functions to use instead of Has(), which iterates through the labels
+ //
  
- # clang compiles the BPF datapath in the builder (e.g. 'make -C bpf build_all',
--# 'make run_bpf_tests')
-+# 'make run_bpf_tests'),
-+# clang-format is used to auto-format protoc files in api/v1,
- # llvm-objcopy/llvm-strip are used by the BPF Go tests (pkg/bpf/testdata).
- # llc is intentionally not copied: the BPF build is clang-only, and the datapath
- # verifier tests extract the toolchain from the cilium-llvm image (see
- # contrib/scripts/extract-llvm.sh), not from this image.
--COPY --from=llvm-dist /usr/local/bin/clang /usr/local/bin/llvm-objcopy /usr/local/bin/llvm-strip /bin/
-+COPY --from=llvm-dist \
-+	/usr/local/bin/clang \
-+	/usr/local/bin/clang-format \
-+	/usr/local/bin/llvm-objcopy \
-+	/usr/local/bin/llvm-strip \
-+	/bin/
+-// HasLabelWithKey returns true if lbls has a label with 'key'
+-func (l Labels) HasLabelWithKey(key string) bool {
+-	_, ok := l[key]
++// HasReservedLabel returns true if lbls has a label with 'key'
++// and source reserved.
++func (l Labels) HasReservedLabel(key string) bool {
++	_, ok := l.LookupLabel(&Label{
++		Source: LabelSourceReserved,
++		Key:    key,
++	})
+ 	return ok
+ }
  
- # Create a cache directory with 777 so that we can run the builder image and
- # compile golang code from any UID.
+ func (l Labels) HasFixedIdentityLabel() bool {
+-	return l.HasLabelWithKey(LabelKeyFixedIdentity)
++	return l.HasReservedLabel(LabelKeyFixedIdentity)
+ }
+ 
+ func (l Labels) HasInitLabel() bool {
+-	return l.HasLabelWithKey(IDNameInit)
++	return l.HasReservedLabel(IDNameInit)
+ }
+ 
+ func (l Labels) HasHealthLabel() bool {
+-	return l.HasLabelWithKey(IDNameHealth)
++	return l.HasReservedLabel(IDNameHealth)
+ }
+ 
+ func (l Labels) HasIngressLabel() bool {
+-	return l.HasLabelWithKey(IDNameIngress)
++	return l.HasReservedLabel(IDNameIngress)
+ }
+ 
+ func (l Labels) HasHostLabel() bool {
+-	return l.HasLabelWithKey(IDNameHost)
++	return l.HasReservedLabel(IDNameHost)
+ }
+ 
+ func (l Labels) HasKubeAPIServerLabel() bool {
+-	return l.HasLabelWithKey(IDNameKubeAPIServer)
++	return l.HasReservedLabel(IDNameKubeAPIServer)
+ }
+ 
+ func (l Labels) HasRemoteNodeLabel() bool {
+-	return l.HasLabelWithKey(IDNameRemoteNode)
++	return l.HasReservedLabel(IDNameRemoteNode)
+ }
+ 
+ func (l Labels) HasWorldIPv6Label() bool {
+-	return l.HasLabelWithKey(IDNameWorldIPv6)
++	return l.HasReservedLabel(IDNameWorldIPv6)
+ }
+ 
+ func (l Labels) HasWorldIPv4Label() bool {
+-	return l.HasLabelWithKey(IDNameWorldIPv4)
++	return l.HasReservedLabel(IDNameWorldIPv4)
+ }
+ 
+ func (l Labels) HasNonDualstackWorldLabel() bool {
+-	return l.HasLabelWithKey(IDNameWorld)
++	return l.HasReservedLabel(IDNameWorld)
+ }
+ 
+ func (l Labels) HasWorldLabel() bool {
+```
+
+**File**: `pkg/policy/repository.go` (modified, +1/-1)
+```diff
+@@ -484,7 +484,7 @@ func (p *Repository) computePolicyEnforcementAndRules(securityIdentity *identity
+ 	// enabled for the endpoint.
+ 	// If the endpoint has the reserved:init label, i.e. if it has not yet
+ 	// received any labels, always enforce policy (default deny).
+-	if policyMode == option.AlwaysEnforce || lbls.Has(labels.IDNameInit) {
++	if policyMode == option.AlwaysEnforce || lbls.HasInitLabel() {
+ 		hasIngress = true
+ 		hasEgress = true
+ 		hasIngressDefaultDeny = true
+```
+
+---
+
+### Incident Patch 3: `664dd4c4` (2026-11-10)
+**Commit Message**: network-driver: fix DRA driver name
+
+Use networkdriver.cilium.io as the fixed DRA and NRI plugin name, and
+remove driverName from the network driver configuration API.
+
+This simplifies driver's code and enables fine-grained RBAC status
+authorization for this driver. See next commits.
+
+Update resource claim fixtures and tests to use the fixed name.
+
+Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
+
+**File**: `operator/pkg/networkdriver/config/nodeconfig_test.go` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ func TestDriverNodeConfigOps_Update(t *testing.T) {
+ 
+ 	t.Run("skips update when spec is unchanged", func(t *testing.T) {
+ 		fcs, cs := k8sTestClient.NewFakeClientset(hivetest.Logger(t))
+-		spec := cilium_v2alpha1_api.CiliumNetworkDriverNodeConfigSpec{DriverName: "test-driver"}
++		spec := cilium_v2alpha1_api.CiliumNetworkDriverNodeConfigSpec{}
+ 		_, err := cs.CiliumV2alpha1().CiliumNetworkDriverNodeConfigs().Create(
+ 			context.Background(),
+ 			&cilium_v2alpha1_api.CiliumNetworkDriverNodeConfig{
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/all-nodes.txtar` (modified, +3/-6)
+```diff
+@@ -58,7 +58,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -69,9 +68,9 @@ spec:
+         enabled: true
+ 
+ -- node-config.table --
+-Node                ClusterConfig          Config                                                                                                                                                                                                                                           Status  Error
+-kind-control-plane  driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
+-kind-worker         driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
++Node                 ClusterConfig           Config
++kind-control-plane   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
++kind-worker          driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
+ -- kind-worker-config-expected.yaml --
+ apiVersion: cilium.io/v2alpha1
+ kind: CiliumNetworkDriverNodeConfig
+@@ -83,7 +82,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+@@ -100,7 +98,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/clusterconfig-delete-not-found.txtar` (modified, +2/-3)
+```diff
+@@ -44,7 +44,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -55,5 +54,5 @@ spec:
+         enabled: true
+ 
+ -- node-config.table --
+-Node                ClusterConfig          Config                                                                                                                                                                                                                                           Status  Error
+-kind-worker         driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
++Node          ClusterConfig           Config
++kind-worker   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/conflict.txtar` (modified, +1/-10)
+```diff
+@@ -99,7 +99,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -122,7 +121,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool-2"
+         filter:
+@@ -143,7 +141,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+@@ -169,7 +166,6 @@ spec:
+         enabled: true
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: dummy.cilium.k8s.io
+     pools:
+     - filter:
+         deviceManagers:
+@@ -195,7 +191,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool-2"
+         filter:
+@@ -224,7 +219,6 @@ spec:
+         enabled: true
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: dummy.cilium.k8s.io
+     pools:
+     - filter:
+         deviceManagers:
+@@ -247,7 +241,6 @@ spec:
+         enabled: true
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: dummy.cilium.k8s.io
+     pools:
+     - filter:
+         deviceManagers:
+@@ -276,7 +269,6 @@ spec:
+         enabled: true
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 500
+-    driverName: dummy.cilium.k8s.io
+     pools:
+     - filter:
+         deviceManagers:
+@@ -297,9 +289,8 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 2
+   draRegistrationTimeout: 500
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+       - dummy
+-    name: dummy-pool-2
+\ No newline at end of file
++    name: dummy-pool-2
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/idempotent-reconcile.txtar` (modified, +1/-4)
+```diff
+@@ -67,7 +67,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -90,7 +89,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 2
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool-b"
+         filter:
+@@ -116,9 +114,8 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+       - dummy
+-    name: dummy-pool
+\ No newline at end of file
++    name: dummy-pool
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/idempotent-upsert.txtar` (modified, +2/-3)
+```diff
+@@ -50,7 +50,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -61,5 +60,5 @@ spec:
+         enabled: true
+ 
+ -- node-config.table --
+-Node                ClusterConfig          Config                                                                                                                                                                                                                                           Status  Error
+-kind-worker         driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
++Node          ClusterConfig           Config
++kind-worker   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/matchexpressions-selector.txtar` (modified, +2/-4)
+```diff
+@@ -75,7 +75,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -86,8 +85,8 @@ spec:
+         enabled: true
+ 
+ -- node-config.table --
+-Node             ClusterConfig          Config                                                                                                                                                                                                                                           Status  Error
+-kind-worker-2    driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
++Node            ClusterConfig           Config
++kind-worker-2   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
+ -- kind-worker-2-config-expected.yaml --
+ apiVersion: cilium.io/v2alpha1
+ kind: CiliumNetworkDriverNodeConfig
+@@ -99,7 +98,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+```
+
+**File**: `operator/pkg/networkdriver/config/testdata/multi-node-same-config.txtar` (modified, +3/-6)
+```diff
+@@ -64,7 +64,6 @@ spec:
+   spec:
+     draRegistrationRetryInterval: 1
+     draRegistrationTimeout: 600
+-    driverName: "dummy.cilium.k8s.io"
+     pools:
+       - name: "dummy-pool"
+         filter:
+@@ -75,9 +74,9 @@ spec:
+         enabled: true
+ 
+ -- node-config.table --
+-Node             ClusterConfig          Config                                                                                                                                                                                                                                           Status  Error
+-kind-worker-1    driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
+-kind-worker-2    driver-cluster-config  {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"driverName":"dummy.cilium.k8s.io","pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}                       Done    
++Node            ClusterConfig           Config
++kind-worker-1   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
++kind-worker-2   driver-cluster-config   {"draRegistrationRetryInterval":1,"draRegistrationTimeout":600,"pools":[{"name":"dummy-pool","filter":{"deviceManagers":["dummy"]}}],"deviceManagerConfigs":{"dummy":{"enabled":true}}}
+ -- kind-worker-1-config-expected.yaml --
+ apiVersion: cilium.io/v2alpha1
+ kind: CiliumNetworkDriverNodeConfig
+@@ -89,7 +88,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
+@@ -106,7 +104,6 @@ spec:
+       enabled: true
+   draRegistrationRetryInterval: 1
+   draRegistrationTimeout: 600
+-  driverName: dummy.cilium.k8s.io
+   pools:
+   - filter:
+       deviceManagers:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50242** (2026-11-24): gha: Fail EKS matrix filtering when the AWS call fails (@aanm)
+- **PR #50239** (2026-11-24): labels: explicitly require reserved source (@squeed)
 - **PR #50238** (2026-11-24): .github: Track Kubespray in Renovate and update it to v2.32.0 (@aanm)
 - **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
 - **PR #50224** (2026-11-24): v1.18 Backports 2026-11-23 (@glrf)
 - **PR #50221** (closed): .github: Retry the LVH image pull and commit status updates (@aanm)
-- **PR #50218** (2026-11-24): v1.20 Backports 2026-11-23 (@mhofstetter)
-- **PR #50215** (2026-11-24): v1.19 Backports 2026-11-23 (@glrf)
 
 ---
 
@@ -1451,31 +1762,32 @@ Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. images: update cilium-{runtime,builder}
+## X. endpoint: Fix nil status panic in first-regeneration test
 
 **RULE**:
-When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/endpoint/bpf_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `386e9da1`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f736337`: endpoint: Fix nil status panic in first-regeneration test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/endpoint/bpf_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
+			computePolicyForEPAndWait(t, ep, f.polComputer, f.repo.BumpRevision())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
+			_, err := f.polComputer.RecomputeIdentityPolicyForAllIdentities(f.repo.BumpRevision())
+			require.NoError(t, err)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `386e9da1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f736337` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -29,14 +29,14 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-23T22:24:02.000Z",
-    "lastVerified": "2026-11-23T22:24:02.000Z",
+    "lastChecked": "2026-11-24T18:52:02.435Z",
+    "lastVerified": "2026-11-24T18:52:02.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
+    "contentHash": "f0da7d6f717fc371205b4df2d4b9d1a3b0614728b019df30fd0c33ceafe9409d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T18:43:41.244Z",
-    "lastVerified": "2026-11-24T18:43:41.244Z",
+    "lastChecked": "2026-11-24T18:52:07.209Z",
+    "lastVerified": "2026-11-24T18:52:07.209Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T18:17:34.628Z",
-    "lastVerified": "2026-11-24T18:17:34.628Z",
+    "lastChecked": "2026-11-24T18:51:59.645Z",
+    "lastVerified": "2026-11-24T18:51:59.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1925,14 +1925,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T14:50:41.394Z",
-    "lastVerified": "2026-11-24T14:50:41.394Z",
+    "lastChecked": "2026-11-24T18:52:02.650Z",
+    "lastVerified": "2026-11-24T18:52:02.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
+    "contentHash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2959,9 +2959,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-23T23:31:29.033Z",
+    "lastChecked": "2026-11-24T18:51:52.574Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-23T23:31:29.033Z"
+    "lastVerified": "2026-11-24T18:51:52.574Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -5547,9 +5547,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-11-22T04:04:54.098Z",
+    "lastChecked": "2026-11-24T18:51:49.570Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-11-22T04:04:54.098Z"
+    "lastVerified": "2026-11-24T18:51:49.570Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -6162,14 +6162,14 @@
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T17:03:27.365Z",
-    "lastVerified": "2026-11-23T17:03:27.365Z",
+    "lastChecked": "2026-11-24T18:51:49.552Z",
+    "lastVerified": "2026-11-24T18:51:49.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
+    "contentHash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11088,12 +11088,12 @@
     "lastVerified": "2026-11-23T18:50:31.169Z"
   },
   "sindresorhus-got": {
-    "name": "sindresorhus/got",
+    "name": "got",
     "officialUrl": "https://github.com/sindresorhus/got",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T19:25:01.484Z",
-    "lastVerified": "2026-11-20T19:25:01.484Z",
+    "lastChecked": "2026-11-24T18:51:47.060Z",
+    "lastVerified": "2026-11-24T18:51:47.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sindresorhus-got",
@@ -11102,7 +11102,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c196ad00"
   },
   "stikdebug-stikdebug": {
     "name": "StikDebug",

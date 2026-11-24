@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T18:43:37.983Z",
+  "last_updated": "2026-11-24T18:52:03.895Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
-      "verified_at": "2026-11-24T14:50:42.149Z",
+      "content_hash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
+      "verified_at": "2026-11-24T18:52:03.894Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:50:42.149Z"
+      "last_updated": "2026-11-24T18:52:03.894Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -9261,14 +9261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubearmor-kubearmor",
-      "content_hash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
-      "verified_at": "2026-11-23T17:03:28.807Z",
+      "content_hash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
+      "verified_at": "2026-11-24T18:51:50.891Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:03:28.807Z"
+      "last_updated": "2026-11-24T18:51:50.892Z"
     },
     "callstack/agent-device": {
       "repository": "callstack/agent-device",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
-      "verified_at": "2026-11-23T22:24:03.305Z",
+      "content_hash": "f0da7d6f717fc371205b4df2d4b9d1a3b0614728b019df30fd0c33ceafe9409d",
+      "verified_at": "2026-11-24T18:52:03.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:24:03.305Z"
+      "last_updated": "2026-11-24T18:52:03.652Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

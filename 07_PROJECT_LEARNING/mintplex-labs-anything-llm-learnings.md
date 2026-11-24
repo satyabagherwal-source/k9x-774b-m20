@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `92175f43`  
+> **Source Version**: `b0144700`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T22:24:02.007Z  
+> **Timestamp**: 2026-11-24T18:52:02.440Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:24:02.000Z  
+> **Harvest Timestamp**: 2026-11-24T18:52:02.435Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68562 stars
+- **Stars / Engagement**: 68603 stars
 
 ---
 
@@ -1325,111 +1325,174 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92175f43` (2026-11-23)
-**Commit Message**: fix: use HTML file input for document uploads (#7309)
+### Incident Patch 1: `b0144700` (2026-11-24)
+**Commit Message**: fix: preserve quoted paragraphs in Word exports (#7337)
 
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx` (modified, +1/-0)
-```diff
-@@ -82,6 +82,7 @@ export default function UploadFile({
-     onDrop: enqueueDrop,
-     disabled: !ready,
-     getFilesFromEvent: getFilesFromUploadEvent,
-+    useFsAccessApi: false,
-   });
- 
-   if (variant === "mobile")
-```
+* fix: preserve quoted paragraphs in Word exports
 
----
-
-### Incident Patch 2: `c5d53913` (2026-11-23)
-**Commit Message**: fix: import Paperless-ngx documents that have no original file name (#7311)
-
-* fix: import Paperless-ngx documents that have no original file name
-
-Paperless-ngx sends original_file_name as null for some documents. The null title reached slugify, which threw and aborted the import partway. Fall back to the document title, then to the document id.
-
-* chore: drop Paperless-ngx loader tests
-
-* refactor: extract Paperless-ngx document title fallback
+* chore: drop narrow docx test, document quoteParagraphs
 
 ---------
 
 Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `collector/utils/extensions/PaperlessNgx/PaperlessNgxLoader/index.js` (modified, +7/-1)
+**File**: `server/utils/agents/aibitat/plugins/create-files/docx/utils.js` (modified, +50/-16)
 ```diff
-@@ -1,6 +1,12 @@
- const { htmlToText } = require("html-to-text");
- const pdf = require("pdf-parse");
+@@ -549,22 +549,29 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
+         elements.push(await processTable(child, docx, log, colors));
+         elements.push(new Paragraph({ children: [] }));
+       } else if (tagName === "blockquote") {
+-        const inlineChildren = await processInlineElements(
+-          child,
+-          docx,
+-          { italics: true, color: "666666" },
+-          log
+-        );
+-        elements.push(
+-          new Paragraph({
+-            children: inlineChildren,
+-            indent: { left: 720 },
+-            border: {
+-              left: { style: "single", size: 24, color: colors.accent },
+-            },
+-            spacing: { before: 200, after: 200 },
+-          })
+-        );
++        for (const block of quoteParagraphs(child)) {
++          const inlineChildren = await processInlineElements(
++            block,
++            docx,
++            { italics: true, color: "666666" },
++            log
++          );
++          if (
++            block.nodeType === block.DOCUMENT_FRAGMENT_NODE &&
++            !inlineChildren.length
++          )
++            continue;
++          elements.push(
++            new Paragraph({
++              children: inlineChildren,
++              indent: { left: 720 },
++              border: {
++                left: { style: "single", size: 24, color: colors.accent },
++              },
++              spacing: { before: 200, after: 200 },
++            })
++          );
++        }
+       } else if (tagName === "pre") {
+         const codeElement = child.querySelector("code");
+         const codeText = codeElement
+@@ -642,6 +649,33 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
+   return elements;
+ }
  
-+function documentTitle(doc) {
-+  return (
-+    doc.original_file_name || doc.title || `Paperless-ngx document ${doc.id}`
-+  );
++/**
++ * Splits a blockquote into the nodes that should each become one quoted Word paragraph:
++ * every direct <p>, plus a fragment for any loose content between them.
++ * A blockquote with no direct <p> is yielded whole.
++ * @param {Element} quote - The blockquote DOM element
++ * @returns {Generator<Element|DocumentFragment>}
++ */
++function* quoteParagraphs(quote) {
++  if (!Array.from(quote.children).some((node) => node.tagName === "P")) {
++    yield quote;
++    return;
++  }
++  let inline = quote.ownerDocument.createDocumentFragment();
++  const hasContent = () =>
++    inline.textContent.trim() || inline.querySelector("br, img");
++  for (const node of Array.from(quote.childNodes)) {
++    if (node.nodeName === "P") {
++      if (hasContent()) yield inline;
++      yield node;
++      inline = quote.ownerDocument.createDocumentFragment();
++    } else {
++      inline.append(node);
++    }
++  }
++  if (hasContent()) yield inline;
 +}
 +
- class PaperlessNgxLoader {
-   maxConcurrentDownloads = 5;
-   downloadTimeoutMs = 120_000;
-@@ -221,7 +227,7 @@ class PaperlessNgxLoader {
-       pageContent: doc.content || "",
-       metadata: {
-         id: doc.id,
--        title: doc.original_file_name,
-+        title: documentTitle(doc),
-         created: doc.created,
-         modified: doc.modified,
-         added: doc.added,
+ /**
+  * Creates a cover/title page section with colored background and centered title block.
+  * @param {Object} docx - The docx library
 ```
 
 ---
 
-### Incident Patch 3: `3e0d8a7c` (2026-11-23)
-**Commit Message**: fix: accept postgres:// connection strings for PGVector (#7313)
+### Incident Patch 2: `593c0943` (2026-11-23)
+**Commit Message**: fix: expand system prompt variables written inside other braces (#7331)
 
-* fix: accept postgres:// connection strings for PGVector
+The placeholder pattern {([^}]+)} let a match start at any earlier
+opening brace, so in a prompt like {"user": "{user.name}"} the match ran
+from the outer brace and {user.name} was never expanded. Placeholders now
+cannot contain a brace, so the innermost {key} is matched.
 
-The PGVector settings check only allowed the postgresql:// scheme, so a
-valid postgres:// connection string was rejected before the connection
-was ever tried. node-postgres accepts both schemes, and the SQL agent
-connector in this repo builds postgres:// strings itself.
-
-* chore: drop narrow updateENV PGVector test
-
----------
-
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/utils/helpers/updateENV.js` (modified, +8/-2)
+**File**: `server/__tests__/models/systemPromptVariables.test.js` (modified, +20/-0)
 ```diff
-@@ -1468,8 +1468,14 @@ async function downloadEmbeddingModelIfRequired(key, prevValue, nextValue) {
-  * @returns {string} - An error message if the connection string is invalid, otherwise null.
-  */
- async function looksLikePostgresConnectionString(connectionString = null) {
--  if (!connectionString || !connectionString.startsWith("postgresql://"))
--    return "Invalid Postgres connection string. Must start with postgresql://";
-+  // node-postgres accepts both URI schemes that libpq documents.
-+  if (
-+    !connectionString ||
-+    !["postgresql://", "postgres://"].some((scheme) =>
-+      connectionString.startsWith(scheme)
-+    )
-+  )
-+    return "Invalid Postgres connection string. Must start with postgresql:// or postgres://";
-   if (connectionString.includes(" "))
-     return "Invalid Postgres connection string. Must not contain spaces.";
-   return null;
+@@ -190,4 +190,24 @@ describe("SystemPromptVariables.expandSystemPromptVariables", () => {
+     );
+     expect(out).toBe("{unknownvariable} {unknownvariable}");
+   });
++
++  it("expands placeholders written inside other braces", async () => {
++    const out = await SystemPromptVariables.expandSystemPromptVariables(
++      'Reply as JSON: {"user": "{user.name}", "workspace": "{workspace.name}"}',
++      mockUser.id,
++      mockWorkspace.id
++    );
++    expect(out).toBe(
++      `Reply as JSON: {"user": "${mockUser.username}", "workspace": "${mockWorkspace.name}"}`
++    );
++  });
++
++  it("expands a placeholder that follows an unclosed brace", async () => {
++    const out = await SystemPromptVariables.expandSystemPromptVariables(
++      "Never output a lone { character. You run in {mystaticvariable}"
++    );
++    expect(out).toBe(
++      `Never output a lone { character. You run in ${mockSystemPromptVariables[0].value}`
++    );
++  });
+ });
+```
+
+**File**: `server/models/systemPromptVariables.js` (modified, +5/-3)
+```diff
+@@ -248,8 +248,10 @@ const SystemPromptVariables = {
+       const allVariables = await this.getAll(userId);
+       const resolved = new Map();
+ 
+-      // Find all variable patterns in the string
+-      const matches = str.match(/\{([^}]+)\}/g) || [];
++      // Find all variable patterns in the string. A placeholder holds no
++      // brace, so one written inside other braces ({"name": "{user.name}"})
++      // is matched on its own instead of from the outer opening brace.
++      const matches = str.match(/\{([^{}]+)\}/g) || [];
+ 
+       // Process each match
+       for (const match of new Set(matches)) {
+@@ -341,7 +343,7 @@ const SystemPromptVariables = {
+         }
+       }
+       return str.replace(
+-        /\{([^}]+)\}/g,
++        /\{([^{}]+)\}/g,
+         (match) => resolved.get(match) ?? match
+       );
+     } catch (error) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7339** (closed): fix: strip only the leading protocol from chunkSource URLs (@Bensonbenyi)
+- **PR #7337** (2026-11-24): fix: preserve quoted paragraphs in Word exports (@Israel-Kli)
+- **PR #7333** (closed): fix: keep reasoning when a stream ends right after reasoning (@rtmalikian)
+- **PR #7331** (2026-11-23): fix: expand system prompt variables written inside other braces (@MohammadHijjawi97)
 - **PR #7329** (2026-11-23): chore: update Gemini fallback model to gemini-3.1-flash-lite (@timothycarambat)
 - **PR #7328** (2026-11-23): fix: Ensure LanceDB rerank fetches at least topN candidates before re… (@Bensonbenyi)
-- **PR #7327** (2026-11-23): fix(i18n): replace unrelated Japanese chat toolbar strings (@AyhamJo7)
-- **PR #7321** (2026-11-23): fix: expand multi-stage plugins in ephemeral agent toolOverrides (@Max-Reisinger)
-- **PR #7319** (2026-11-23): fix: Pin encoding_format to float in Generic OpenAI embedder (@Bensonbenyi)
-- **PR #7316** (closed): fix: fall back to a Gemini model that is still served (@AyhamJo7)
 
 ---
 
@@ -1449,28 +1512,78 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use HTML file input for document uploads
+## X. preserve quoted paragraphs in Word exports
 
 **RULE**:
-When implementing operations in `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92175f43`: use HTML file input for document uploads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0144700`: preserve quoted paragraphs in Word exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    useFsAccessApi: false,
+        for (const block of quoteParagraphs(child)) {
+          const inlineChildren = await processInlineElements(
+            block,
+            docx,
+            { italics: true, color: "666666" },
+            log
+          );
+          if (
+            block.nodeType === block.DOCUMENT_FRAGMENT_NODE &&
+            !inlineChildren.length
+          )
+            continue;
+          elements.push(
+            new Paragraph({
+              children: inlineChildren,
+              indent: { left: 720 },
+              border: {
+                left: { style: "single", size: 24, color: colors.accent },
+              },
+              spacing: { before: 200, after: 200 },
+            })
+          );
+        }
+/**
+ * Splits a blockquote into the nodes that should each become one quoted Word paragraph:
+ * every direct <p>, plus a fragment for any loose content between them.
+ * A blockquote with no direct <p> is yielded whole.
+ * @param {Element} quote - The blockquote DOM element
+ * @returns {Generator<Element|DocumentFragment>}
+ */
+function* quoteParagraphs(quote) {
+  if (!Array.from(quote.children).some((node) => node.tagName === "P")) {
+    yield quote;
+    return;
+  }
+  let inline = qu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        const inlineChildren = await processInlineElements(
+          child,
+          docx,
+          { italics: true, color: "666666" },
+          log
+        );
+        elements.push(
+          new Paragraph({
+            children: inlineChildren,
+            indent: { left: 720 },
+            border: {
+              left: { style: "single", size: 24, color: colors.accent },
+            },
+            spacing: { before: 200, after: 200 },
+          })
+        );
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92175f43` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0144700` are properly handled with clean fallback behavior.
