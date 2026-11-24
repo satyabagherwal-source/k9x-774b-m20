@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T16:36:49.130Z",
+  "last_updated": "2026-11-24T16:46:10.623Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "fb75b76334b598dc848e895a4b723c01233fd28e6714a4f54c676a92acabdacd",
-      "verified_at": "2026-11-24T12:45:44.087Z",
+      "content_hash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
+      "verified_at": "2026-11-24T16:46:07.542Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:45:44.087Z"
+      "last_updated": "2026-11-24T16:46:07.542Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "7c1db1c42b197404adb50a56d67e4f7a909ea84842c96d85320da79ff79ac96c",
-      "verified_at": "2026-11-23T20:22:09.316Z",
+      "content_hash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
+      "verified_at": "2026-11-24T16:46:10.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:22:09.316Z"
+      "last_updated": "2026-11-24T16:46:10.622Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
-      "verified_at": "2026-11-23T21:14:41.259Z",
+      "content_hash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
+      "verified_at": "2026-11-24T16:46:04.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:14:41.259Z"
+      "last_updated": "2026-11-24T16:46:04.714Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -14016,14 +14016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lxml-lxml",
-      "content_hash": "a8f6f1c2e26aa8e367954fe09fe6f53cf9ed67225cd61abeccfbe0cdf9e095c8",
-      "verified_at": "2026-11-20T16:28:26.096Z",
+      "content_hash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
+      "verified_at": "2026-11-24T16:45:59.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:28:26.096Z"
+      "last_updated": "2026-11-24T16:45:59.396Z"
     },
     "mazzzystar/Queryable": {
       "repository": "mazzzystar/Queryable",

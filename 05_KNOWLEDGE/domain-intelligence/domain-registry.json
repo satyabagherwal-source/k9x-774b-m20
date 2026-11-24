@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T16:36:54.716Z",
-  "total_records": 2544,
+  "last_updated": "2026-11-24T16:46:19.179Z",
+  "total_records": 2546,
   "domains": {
     "A": {
       "total": 22,
@@ -1607,7 +1607,7 @@
       ]
     },
     "H": {
-      "total": 608,
+      "total": 610,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2216,7 +2216,9 @@
         "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants",
         "DOM-H-01E5EB37",
-        "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants"
       ]
     },
     "I": {
@@ -13249,8 +13251,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "b5565ebc532a5739a07404d07471050569e25be69108b779d8e79351dc0e0563",
-      "created_at": "2026-11-23T21:14:41.913Z"
+      "content_hash": "deb7f7212e7fd7b811cd36769b0940e5571aa8ad2433d6c14db7f88c8d9df00b",
+      "created_at": "2026-11-24T16:46:05.235Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -13371,8 +13373,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "1966e29aada57d1207970590ff401aec24e16f200a18baf013cad99be20b673d",
-      "created_at": "2026-11-23T21:14:53.483Z"
+      "content_hash": "708dcf969a6769c7f71555e8c2d2ee8faa86a294d7c7b20ef92371a005f65704",
+      "created_at": "2026-11-24T16:46:17.943Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -18230,8 +18232,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "a3c57f91d4482d2a9ecab55628603aef54a78f21b0e0073a70d5e7a79d8ae8e1",
-      "created_at": "2026-11-23T20:22:09.741Z"
+      "content_hash": "5812edb8dc1e0cf1449d70a05bfa4b61cb06cbe4de3cb4e5fa7b1a5f5d70aeef",
+      "created_at": "2026-11-24T16:46:11.152Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -25087,8 +25089,8 @@
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "189cb0816788a892e734a1495dd2e26d5296cf306e2467c3ace33767fbe51c00",
-      "created_at": "2026-11-24T12:45:44.676Z"
+      "content_hash": "fdf400843ef0a63d3adf6fc41e190f94d24ba674ef798e3a1b5910d26af1cea3",
+      "created_at": "2026-11-24T16:46:08.078Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -25105,8 +25107,8 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-learnings-human-need-intelligence-defguard-defguard-learnings-.md",
       "repository": "defguard-defguard-learnings",
-      "content_hash": "4de4e8594a369829b709255432c184faab9b4cac0eb8f022a8d4a366dcb1b908",
-      "created_at": "2026-11-24T12:45:51.892Z"
+      "content_hash": "34c2dd69f20b2b36984c66d33105cae3add7dafcf6b4f552a956c8cd3dcfd0d1",
+      "created_at": "2026-11-24T16:46:19.179Z"
     },
     "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants",
@@ -42736,6 +42738,24 @@
       "repository": "hf-sentinel7-h3-learnings",
       "content_hash": "0b350ccb33ad844b7f6fa121c8f7f811b07e813516cc9493bd3ef92a9595a13a",
       "created_at": "2026-11-24T15:28:01.082Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lxml/lxml Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lxml-lxml-technical-construction-intelligence-lxml-lxml-core-invariants.md",
+      "repository": "lxml/lxml",
+      "content_hash": "102cf76dacc8d1b2f46737d2c3c67fd62c2f73bafd10a815612ce115f0ef5027",
+      "created_at": "2026-11-24T16:45:59.941Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lxml-lxml-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lxml-lxml-learnings-technical-construction-intelligence-lxml-lxml-learnings-core.md",
+      "repository": "lxml-lxml-learnings",
+      "content_hash": "45668803342ea4da3b79d255df0d54f7048e60a9a9dd4ef6566d2f6d43017b6e",
+      "created_at": "2026-11-24T16:46:16.792Z"
     }
   }
 }

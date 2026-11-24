@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-D0DT",
-    "timestamp": "2026-11-22T21:48:59.825Z",
-    "repository": "vanniktech/gradle-maven-publish-plugin",
-    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-    "contentHash": "cb4d12643ff9b468f410cb4f0c87d5f17554f2b00ef328700f62a9c32b2c175d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-D87M",
-    "timestamp": "2026-11-22T21:49:09.970Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f56b473a036a880fc27b016e06036d27524852eeb6c659917a04182e5595ce03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-N7TV",
-    "timestamp": "2026-11-22T21:56:56.035Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-NGZ7",
-    "timestamp": "2026-11-22T21:57:07.891Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-ZA6I",
     "timestamp": "2026-11-22T22:06:18.954Z",
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -7490,6 +7430,66 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F1L8",
+    "timestamp": "2026-11-24T16:45:59.372Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F5OX",
+    "timestamp": "2026-11-24T16:46:04.689Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F7VI",
+    "timestamp": "2026-11-24T16:46:07.518Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FA92",
+    "timestamp": "2026-11-24T16:46:10.598Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

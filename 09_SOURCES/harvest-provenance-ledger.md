@@ -12768,3 +12768,7 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `44f6fc4d` | Multi-dimensional audit evidence | 2026-11-24T16:19:54.834Z |
 | `learn-huggingface-angelslim-hy4-flash-gguf` | `https://huggingface.co/AngelSlim/Hy4-flash-GGUF` | `hf-angelsl` | Multi-dimensional audit evidence | 2026-11-24T16:28:13.732Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `820699c7` | Multi-dimensional audit evidence | 2026-11-24T16:36:49.113Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `eee8a0c2` | Multi-dimensional audit evidence | 2026-11-24T16:45:59.377Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `87507e3e` | Multi-dimensional audit evidence | 2026-11-24T16:46:04.694Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `279cc5c3` | Multi-dimensional audit evidence | 2026-11-24T16:46:07.523Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0a698de7` | Multi-dimensional audit evidence | 2026-11-24T16:46:10.603Z |

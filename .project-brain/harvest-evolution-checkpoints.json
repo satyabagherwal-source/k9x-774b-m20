@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:36:55.050Z",
+  "last_updated": "2026-11-24T16:46:19.605Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T16:36:54.164Z",
@@ -483,7 +483,7 @@
       "staged_for_review": 0
     },
     "siderolabs-talos-learnings.md": {
-      "processed_at": "2026-11-23T21:14:52.877Z",
+      "processed_at": "2026-11-24T16:46:17.232Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -653,9 +653,9 @@
       "staged_for_review": 1
     },
     "lxml-lxml-learnings.md": {
-      "processed_at": "2026-11-20T16:29:07.432Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-24T16:46:14.511Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "beclab-olares-learnings.md": {
       "processed_at": "2026-11-23T23:48:57.368Z",
@@ -1348,7 +1348,7 @@
       "staged_for_review": 1
     },
     "defguard-defguard-learnings.md": {
-      "processed_at": "2026-11-24T12:45:50.698Z",
+      "processed_at": "2026-11-24T16:46:18.403Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3843,
+  "total_dossiers_evaluated": 3846,
   "total_canonical_promoted": 511,
-  "total_staged_for_review": 2916
+  "total_staged_for_review": 2919
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T16:19:58.552Z",
+  "updated_at": "2026-11-24T16:46:17.415Z",
   "stats": {
-    "total_discovered": 8753,
-    "approved_pending_harvest": 8290,
+    "total_discovered": 8771,
+    "approved_pending_harvest": 8300,
     "harvested_count": 0,
-    "rejected_count": 463,
+    "rejected_count": 471,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8274,
+      "COMMUNITY_AND_EXPERT": 8292,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -189348,6 +189348,350 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
         "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-76003D4E3F9D": {
+      "id": "SRC-76003D4E3F9D",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/466",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/466",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:15.046Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-751BC674DA4C": {
+      "id": "SRC-751BC674DA4C",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/474",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/474",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:15.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-6DBE83A28C5D": {
+      "id": "SRC-6DBE83A28C5D",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/478",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/478",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:15.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-05529E6AD960": {
+      "id": "SRC-05529E6AD960",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/479",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/479",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:15.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-775C1F50DA95": {
+      "id": "SRC-775C1F50DA95",
+      "url": "http://example.com/base",
+      "title": "http://example.com/base",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-D663207ED26D": {
+      "id": "SRC-D663207ED26D",
+      "url": "http://example.com/base/img",
+      "title": "http://example.com/base/img",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-17A25F331912": {
+      "id": "SRC-17A25F331912",
+      "url": "http://example.com/base/sheet",
+      "title": "http://example.com/base/sheet",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-AD8295A7A69D": {
+      "id": "SRC-AD8295A7A69D",
+      "url": "http://h/",
+      "title": "http://h/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-C4C2BD72BF94": {
+      "id": "SRC-C4C2BD72BF94",
+      "url": "http://h/1.png",
+      "title": "http://h/1.png",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-88265732FBF8": {
+      "id": "SRC-88265732FBF8",
+      "url": "http://h/2.png",
+      "title": "http://h/2.png",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-7CF91810A8CA": {
+      "id": "SRC-7CF91810A8CA",
+      "url": "http://h/3.png",
+      "title": "http://h/3.png",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-CB39800DB43F": {
+      "id": "SRC-CB39800DB43F",
+      "url": "http://www.zlatkovic.com/libxml.en.html",
+      "title": "http://www.zlatkovic.com/libxml.en.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T16:46:15.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-D12446A34DCA": {
+      "id": "SRC-D12446A34DCA",
+      "url": "https://github.com/lxml/libxml2-win-binaries/releases",
+      "title": "https://github.com/lxml/libxml2-win-binaries/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:15.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-5F08A2642528": {
+      "id": "SRC-5F08A2642528",
+      "url": "https://api.github.com/repos/lxml/libxml2-win-binaries/releases?per_page=5",
+      "title": "https://api.github.com/repos/lxml/libxml2-win-binaries/releases?per_page=5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:16.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-E833572CF2B0": {
+      "id": "SRC-E833572CF2B0",
+      "url": "https://github.com/lxml/libxml2-win-binaries/releases/download/%7Burlquote",
+      "title": "https://github.com/lxml/libxml2-win-binaries/releases/download/%7Burlquote",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:16.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-657D1A3D44B9": {
+      "id": "SRC-657D1A3D44B9",
+      "url": "https://github.com/hendrikmuhs/ccache-action/compare/f09c25b45002a07be2955cbe52e8cee55643f89d...dbeefd73e8e2ffc1bbc412570072735eb4db3607",
+      "title": "https://github.com/hendrikmuhs/ccache-action/compare/f09c25b45002a07be2955cbe52e8cee55643f89d...dbeefd73e8e2ffc1bbc412570072735eb4db3607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:16.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-3836603EFE3D": {
+      "id": "SRC-3836603EFE3D",
+      "url": "https://github.com/siderolabs/talos/issues/14305",
+      "title": "https://github.com/siderolabs/talos/issues/14305",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:17.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-F43529E259C2": {
+      "id": "SRC-F43529E259C2",
+      "url": "https://github.com/siderolabs/talos/discussions/15055",
+      "title": "https://github.com/siderolabs/talos/discussions/15055",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:46:17.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

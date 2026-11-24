@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T16:36:54.888Z",
+  "last_updated": "2026-11-24T16:46:19.398Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24750,
+  "total_items": 24758,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216196,26 +216196,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "c680657b",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "279cc5c3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T06:38:19.998Z"
+      "verified_at": "2026-11-24T16:46:07.261Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PV1Y-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FGOZ-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "unhappychoice-gitlogue-learnings",
+      "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "894900b2b0be06ba8fbae54d8a2df9361fa2823a350a5cd11a2388339da7e1db",
+      "content_hash": "bff944017c88b8310d5879f0cb4713ce6ec7ac19179c43734c9cd75bdb05cc11",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T06:38:32.569Z"
+      "persisted_at": "2026-11-24T16:46:18.953Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -223138,8 +223138,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "97f97c86",
-      "content_hash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
+      "source_version": "87507e3e",
+      "content_hash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -223182,6 +223182,11 @@
           "number": 10124,
           "title": "keep node cordoned during talosctl drain",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10306,
+          "title": "allow user etc files under iscsi and nvme",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223189,7 +223194,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:14:40.957Z",
+      "verified_at": "2026-11-24T16:46:04.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223231,10 +223236,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "97f97c86",
-      "content_hash": "b5565ebc532a5739a07404d07471050569e25be69108b779d8e79351dc0e0563",
+      "source_version": "87507e3e",
+      "content_hash": "deb7f7212e7fd7b811cd36769b0940e5571aa8ad2433d6c14db7f88c8d9df00b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:14:41.913Z"
+      "persisted_at": "2026-11-24T16:46:05.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -223243,10 +223248,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "97f97c86",
-      "content_hash": "fa5e9a1fbb5908441cd931aa44fb4216477273971d64cfca9eff0c21b9d51098",
+      "source_version": "87507e3e",
+      "content_hash": "a78bf6d2268510b53afea4da9f84c8a87a6c6405308ef8c085b81fd83e3d2363",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:14:42.151Z"
+      "persisted_at": "2026-11-24T16:46:05.461Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -223709,9 +223714,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "1966e29aada57d1207970590ff401aec24e16f200a18baf013cad99be20b673d",
+      "content_hash": "708dcf969a6769c7f71555e8c2d2ee8faa86a294d7c7b20ef92371a005f65704",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:14:53.483Z"
+      "persisted_at": "2026-11-24T16:46:17.943Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -223721,9 +223726,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc1b46cb3fd9c322702afaec5e5e3f4aa7c7040836e496fb0ead19ae6f7a64f6",
+      "content_hash": "76f0c2b3913308b0927845855665526dea4ebf5cb0ceadca808a7a2c907f4eeb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:14:53.706Z"
+      "persisted_at": "2026-11-24T16:46:18.164Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -238466,8 +238471,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "ec1c6cba",
-      "content_hash": "7c1db1c42b197404adb50a56d67e4f7a909ea84842c96d85320da79ff79ac96c",
+      "source_version": "0a698de7",
+      "content_hash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -238500,6 +238505,11 @@
           "number": 10112,
           "title": "Empirical Invariant Guard in pom.xml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10307,
+          "title": "Empirical Invariant Guard in flushableattribute.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238507,7 +238517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:22:09.064Z",
+      "verified_at": "2026-11-24T16:46:10.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238549,10 +238559,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "ec1c6cba",
-      "content_hash": "a3c57f91d4482d2a9ecab55628603aef54a78f21b0e0073a70d5e7a79d8ae8e1",
+      "source_version": "0a698de7",
+      "content_hash": "5812edb8dc1e0cf1449d70a05bfa4b61cb06cbe4de3cb4e5fa7b1a5f5d70aeef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:22:09.741Z"
+      "persisted_at": "2026-11-24T16:46:11.152Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -238561,10 +238571,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "ec1c6cba",
-      "content_hash": "6adad318fb3f79f05beb3257e0a3d6333ffa1994e94231a04c767a4d8d6a662d",
+      "source_version": "0a698de7",
+      "content_hash": "f98e4fef95340a821ddcb31f13c65645e30c629b3d3c546ba5203ce88b530ee0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:22:09.955Z"
+      "persisted_at": "2026-11-24T16:46:11.409Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -238573,10 +238583,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "ec1c6cba",
-      "content_hash": "08124957edd3e6ba1e69a2ccd8aef14774ecf7c1341cd285fce575708a7c65c3",
+      "source_version": "0a698de7",
+      "content_hash": "133a079032598e456e008425b8e83e293e8d2e2846f4845d9d0a36006c08a90f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:22:10.118Z"
+      "persisted_at": "2026-11-24T16:46:11.600Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -261985,14 +261995,19 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "7732bdb3",
-      "content_hash": "a8f6f1c2e26aa8e367954fe09fe6f53cf9ed67225cd61abeccfbe0cdf9e095c8",
+      "source_version": "eee8a0c2",
+      "content_hash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
         {
           "number": 8769,
           "title": "bump softprops/action-gh-release (GH-547)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10305,
+          "title": "Avoid quadratic rebuilding in `rewrite_links()` (GH-551)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -262001,7 +262016,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:28:25.858Z",
+      "verified_at": "2026-11-24T16:45:59.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262055,10 +262070,10 @@
       "relative_path": "08_VERIFICATION/lxml-lxml-verification-protocol-empirical-defect-shield-for-lxml-lxml.md",
       "title": "Verification Protocol: Empirical Defect Shield for lxml/lxml",
       "repository": "lxml/lxml",
-      "source_version": "74e94856",
-      "content_hash": "d60945f7e899859a58d796d74976fb7c3229aea524d8903d2f8673e102d2a84a",
+      "source_version": "eee8a0c2",
+      "content_hash": "dd3b49aefc6ad35c89e2153915ad08753053e27af6fdcaa41715ebc822d4f9fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:18:50.556Z"
+      "persisted_at": "2026-11-24T16:46:00.160Z"
     },
     "candidate_directive-pre-release-fixes-v1-8-0": {
       "item_id": "candidate_directive-pre-release-fixes-v1-8-0",
@@ -262116,9 +262131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lxml-lxml-learnings",
       "repository": "lxml-lxml-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc55d187887eb3f000537874dbcd2c99371fd8a8dee1a04483d7a27bf09297c7",
+      "content_hash": "8c562bd27fde5bf60a17953071c803a777cbcfc5631d7b16090a9d3eda9b5d1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:19:02.812Z"
+      "persisted_at": "2026-11-24T16:46:17.016Z"
     },
     "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants",
@@ -263522,8 +263537,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "7d232424",
-      "content_hash": "fb75b76334b598dc848e895a4b723c01233fd28e6714a4f54c676a92acabdacd",
+      "source_version": "279cc5c3",
+      "content_hash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -263563,7 +263578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:45:43.794Z",
+      "verified_at": "2026-11-24T16:46:07.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263605,10 +263620,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "7d232424",
-      "content_hash": "189cb0816788a892e734a1495dd2e26d5296cf306e2467c3ace33767fbe51c00",
+      "source_version": "279cc5c3",
+      "content_hash": "fdf400843ef0a63d3adf6fc41e190f94d24ba674ef798e3a1b5910d26af1cea3",
       "domain_letter": "A",
-      "persisted_at": "2026-11-24T12:45:44.676Z"
+      "persisted_at": "2026-11-24T16:46:08.078Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -263617,10 +263632,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "7d232424",
-      "content_hash": "37e23acb6d85bd39b7cf2f6bef154e28ebbd8853b3bbb56253c8d8018b3e0c2b",
+      "source_version": "279cc5c3",
+      "content_hash": "25cf1e5bd97e72093a9fe80857b72f83e2bb0cdc603ca84070cb150119b4ae66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:45:44.947Z"
+      "persisted_at": "2026-11-24T16:46:08.348Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -263654,9 +263669,9 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "4de4e8594a369829b709255432c184faab9b4cac0eb8f022a8d4a366dcb1b908",
+      "content_hash": "34c2dd69f20b2b36984c66d33105cae3add7dafcf6b4f552a956c8cd3dcfd0d1",
       "domain_letter": "A",
-      "persisted_at": "2026-11-24T12:45:51.892Z"
+      "persisted_at": "2026-11-24T16:46:19.179Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings",
@@ -263666,9 +263681,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for defguard-defguard-learnings",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a1d3305ab42aedcfc38651e45cd8f0c2c8d6b3a691ef85c3495ea5ee1f2e489",
+      "content_hash": "1df18b0c290a8b4d08d22ebf873eee4a5b1848b975bbe70f68f7d21d094c6266",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:45:52.128Z"
+      "persisted_at": "2026-11-24T16:46:19.398Z"
     },
     "rule-8789": {
       "learning_id": "rule-8789",
@@ -337931,6 +337946,108 @@
       "content_hash": "e4a3672a0e30774ded80ae68a427037634ef1267fe9fd21e044eee82e7d99053",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T16:36:52.798Z"
+    },
+    "rule-10305": {
+      "learning_id": "rule-10305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10305,
+      "title": "Avoid quadratic rebuilding in `rewrite_links()` (GH-551)",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "eee8a0c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:45:59.114Z"
+    },
+    "candidate_directive-avoid-quadratic-rebuilding-in-rewrite_links-gh-551": {
+      "item_id": "candidate_directive-avoid-quadratic-rebuilding-in-rewrite_links-gh-551",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FEUR-avoid-quadratic-rebuilding-in-rewrite_links-gh-551.md",
+      "title": "Avoid quadratic rebuilding in `rewrite_links()` (GH-551)",
+      "repository": "lxml-lxml-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5dd11a78abac95aa246e6a654fca2dfd2c450ebc6b2afbaac171989c3d404c0a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T16:46:16.570Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lxml-lxml-technical-construction-intelligence-lxml-lxml-core-invariants.md",
+      "title": "Technical Construction Intelligence: lxml/lxml Core Invariants",
+      "repository": "lxml/lxml",
+      "source_version": "eee8a0c2",
+      "content_hash": "102cf76dacc8d1b2f46737d2c3c67fd62c2f73bafd10a815612ce115f0ef5027",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T16:45:59.941Z"
+    },
+    "rule-10306": {
+      "learning_id": "rule-10306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10306,
+      "title": "allow user etc files under iscsi and nvme",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "87507e3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:46:04.432Z"
+    },
+    "candidate_directive-allow-user-etc-files-under-iscsi-and-nvme": {
+      "item_id": "candidate_directive-allow-user-etc-files-under-iscsi-and-nvme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FFQY-allow-user-etc-files-under-iscsi-and-nvme.md",
+      "title": "allow user etc files under iscsi and nvme",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de5fa6c7576fb456624bb8209faec0dac9f16fdab77ec17d6c1d46c5ba252967",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T16:46:17.728Z"
+    },
+    "rule-10307": {
+      "learning_id": "rule-10307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10307,
+      "title": "Empirical Invariant Guard in flushableattribute.cpp",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "0a698de7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:46:10.345Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-flushableattribute-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-flushableattribute-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FAHR-empirical-invariant-guard-in-flushableattribute-cpp.md",
+      "title": "Empirical Invariant Guard in flushableattribute.cpp",
+      "repository": "vespa-engine/vespa",
+      "source_version": "0a698de7",
+      "content_hash": "ab83a6f644b14c7242aeae2364ad948c1029e064f5c505c92a356ade1fc3855d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T16:46:10.913Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lxml-lxml-learnings-technical-construction-intelligence-lxml-lxml-learnings-core.md",
+      "title": "Technical Construction Intelligence: lxml-lxml-learnings Core Invariants",
+      "repository": "lxml-lxml-learnings",
+      "source_version": "HEAD",
+      "content_hash": "45668803342ea4da3b79d255df0d54f7048e60a9a9dd4ef6566d2f6d43017b6e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T16:46:16.792Z"
     }
   },
   "ai-builder-brain": {

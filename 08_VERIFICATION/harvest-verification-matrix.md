@@ -12735,3 +12735,7 @@
 | `CYCLE-20261124-HIDQ` | `2026-11-24T16:19:54.830Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10303` | Yes (`d3b07a59...`) |
 | `CYCLE-20261124-S7C0` | `2026-11-24T16:28:13.728Z` | `AngelSlim/Hy4-flash-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | Yes (`e98d7b4d...`) |
 | `CYCLE-20261124-3904` | `2026-11-24T16:36:49.108Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10304` | Yes (`ec714454...`) |
+| `CYCLE-20261124-F1L8` | `2026-11-24T16:45:59.372Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10305` | Yes (`336a4ffe...`) |
+| `CYCLE-20261124-F5OX` | `2026-11-24T16:46:04.689Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10306` | Yes (`c918c460...`) |
+| `CYCLE-20261124-F7VI` | `2026-11-24T16:46:07.518Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`41dfaafc...`) |
+| `CYCLE-20261124-FA92` | `2026-11-24T16:46:10.598Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10307` | Yes (`300f7505...`) |

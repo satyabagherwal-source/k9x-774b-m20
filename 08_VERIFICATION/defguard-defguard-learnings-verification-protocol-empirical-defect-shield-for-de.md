@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:45:51.494Z",
+  "timestamp": "2026-11-24T16:46:18.798Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-defguard-defguard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [defguard-defguard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:45:51.494Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T16:46:18.798Z`  
 > **Learning ID**: `LEARN-EVO-defguard-defguard-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `7d232424`  
+> **Source Version**: `279cc5c3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:45:42.585Z  
+> **Timestamp**: 2026-11-24T16:46:06.607Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:45:42.578Z  
+> **Harvest Timestamp**: 2026-11-24T16:46:06.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2058,593 +2058,54 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d232424` (2026-11-24)
-**Commit Message**: Make Client download page consistent with landing page (#4099)
+### Incident Patch 1: `279cc5c3` (2026-11-24)
+**Commit Message**: 2.2.1 (#4100)
 
-* make download page consistent
-
-* consistent download page 2
-
-**File**: `web/src/shared/api/update-service.ts` (modified, +3/-0)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@ export const updateServiceClient = axios.create({
+@@ -1538,7 +1538,7 @@ dependencies = [
  
- export type ClientVersionCheck = {
-   windows_amd64?: string;
-+  windows_arm64?: string;
-   deb_amd64?: string;
-   deb_arm64?: string;
-   deb_legacy_arm64?: string;
-@@ -49,6 +50,7 @@ const updateServiceApi = {
-           rpm_amd64: data.rpm_amd64 ?? clientDownloadFallback,
-           rpm_arm64: data.rpm_arm64 ?? clientDownloadFallback,
-           windows_amd64: data.windows_amd64 ?? clientDownloadFallback,
-+          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
-         };
-         return res;
-       })
-@@ -64,6 +66,7 @@ const updateServiceApi = {
-           rpm_amd64: clientDownloadFallback,
-           rpm_arm64: clientDownloadFallback,
-           windows_amd64: clientDownloadFallback,
-+          windows_arm64: clientDownloadFallback,
-         };
-         return fallback;
-       }),
+ [[package]]
+ name = "defguard_common"
+-version = "2.2.0"
++version = "2.2.1"
+ dependencies = [
+  "anyhow",
+  "argon2 0.6.0",
 ```
 
-**File**: `web/src/shared/components/modals/AddUserDeviceModal/steps/AddDeviceModalClientConfigStep/AddDeviceModalClientConfigStep.tsx` (modified, +44/-27)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,6 @@ import { CopyField } from '../../../../../defguard-ui/components/CopyField/CopyF
- import { Divider } from '../../../../../defguard-ui/components/Divider/Divider';
- import { Fold } from '../../../../../defguard-ui/components/Fold/Fold';
- import { FoldButton } from '../../../../../defguard-ui/components/FoldButton/FoldButton';
--import { IconButton } from '../../../../../defguard-ui/components/IconButton/IconButton';
- import { IconButtonMenu } from '../../../../../defguard-ui/components/IconButtonMenu/IconButtonMenu';
- import type { MenuItemsGroup } from '../../../../../defguard-ui/components/Menu/types';
- import { QrCard } from '../../../../../defguard-ui/components/QrCard/QrCard';
-@@ -41,21 +40,45 @@ export const AddDeviceModalClientConfigStep = () => {
-     );
-   }, [enrollment]);
- 
-+  const windowsMenu = useMemo(
-+    (): MenuItemsGroup[] => [
-+      {
-+        header: {
-+          text: `${titleCase(m.misc_for())} Windows`,
-+        },
-+        items: [
-+          {
-+            icon: 'windows',
-+            text: 'Windows 11 (x64)',
-+            onClick: () => openClientLink(clientLinks?.windows_amd64),
-+          },
-+          {
-+            icon: 'windows',
-+            text: 'Windows 11 (ARM)',
-+            onClick: () => openClientLink(clientLinks?.windows_arm64),
-+          },
-+        ],
-+      },
-+    ],
-+    [clientLinks],
-+  );
-+
-   const appleMenu = useMemo(
-     (): MenuItemsGroup[] => [
-       {
-         header: {
--          text: 'Apple Hardware',
-+          text: `${titleCase(m.misc_for())} macOS`,
-         },
-         items: [
-           {
--            icon: 'apple',
--            text: 'Intel',
--            onClick: () => openClientLink(clientLinks?.macos_amd64),
-+            icon: 'app-store',
-+            text: 'App Store',
-+            onClick: () => openClientLink(externalLink.client.desktop.macos.appStore),
-           },
-           {
-             icon: 'apple',
--            text: 'ARM',
-+            text: 'Universal DMG',
-+            // The update service returns the universal DMG for both macOS keys.
-             onClick: () => openClientLink(clientLinks?.macos_arm64),
-           },
-         ],
-@@ -72,42 +95,42 @@ export const AddDeviceModalClientConfigStep = () => {
-         },
-         items: [
-           {
--            icon: 'ubuntu',
--            text: 'Ubuntu 24.04 ARM',
--            onClick: () => openClientLink(clientLinks?.deb_arm64),
-+            icon: 'debian',
-+            text: 'Debian 13 (x86)',
-+            onClick: () => openClientLink(clientLinks?.deb_amd64),
-           },
-           {
--            icon: 'ubuntu',
--            text: 'Ubuntu 24.04 AMD64',
--            onClick: () => openClientLink(clientLinks?.deb_amd64),
-+            icon: 'debian',
-+            text: 'Debian 13 (ARM)',
-+            onClick: () => openClientLink(clientLinks?.deb_arm64),
-           },
-         ],
-       },
-       {
-         items: [
-           {
-             icon: 'debian',
--            text: 'Ubuntu 22.04 / Debian 12&13 ARM',
--            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
-+            text: 'Debian 12 | Ubuntu 22 (x86)',
-+            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
-           },
-           {
-             icon: 'debian',
--            text: 'Ubuntu 22.04 / Debian 12&13 AMD64',
--            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
-+            text: 'Debian 12 | Ubuntu 22 (ARM)',
-+            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
-           },
-         ],
-       },
-       {
-         items: [
-           {
-             icon: 'linux',
--            text: 'RPM ARM',
--            onClick: () => openClientLink(clientLinks?.rpm_arm64),
-+            text: 'Fedora 40 (x86)',
-+            onClick: () => openClientLink(clientLinks?.rpm_amd64),
-           },
-           {
-             icon: 'linux',
--            text: 'RPM AMD64',
--            onClick: () => openClientLink(clientLinks?.rpm_amd64),
-+            text: 'Fedora 40 (ARM)',
-+            onClick: () => openClientLink(clientLinks?.rpm_arm64),
-           },
-         ],
-       },
-@@ -152,13 +175,7 @@ export const AddDeviceModalClientConfigStep = () => {
-           </a>
-           <div className="download">
-             <p>{m.modal_add_user_device_client_desktop_download()}</p>
--            <a
--              href={clientLinks?.windows_amd64 ?? externalLink.defguard.download}
--              target="_blank"
--              rel="noopener noreferrer"
--            >
--              <IconButton icon="windows" />
--            </a>
-+            <IconButtonMenu icon="windows" menuItems={windowsMenu} />
-             <IconButtonMenu icon="apple" menuItems={appleMenu} />
-             <IconButtonMenu icon="linux" menuItems={linuxMenu} />
-           </div>
+@@ -18,7 +18,7 @@ redundant_closure = "warn"
+ [workspace.dependencies]
+ # internal crates
+ defguard_setup = { path = "./crates/defguard_setup", version = "0.0.0" }
+-defguard_common = { path = "./crates/defguard_common", version = "2.2.0", default-features = false }
++defguard_common = { path = "./crates/defguard_common", version = "2.2.1", default-features = false }
+ defguard_static_ip = { path = "./crates/defguard_static_ip", version = "0.0.0" }
+ defguard_core = { path = "./crates/defguard_core", version = "0.0.0", default-features = false }
+ defguard_event_logger = { path = "./crates/defguard_event_logger", version = "0.0.0" }
 ```
 
-**File**: `web/src/shared/constants.ts` (modified, +4/-0)
-```diff
-@@ -22,6 +22,10 @@ export const externalLink = {
-       linux: {
-         arch: 'https://aur.archlinux.org/packages/defguard-client',
-       },
-+      macos: {
-+        appStore:
-+          'https://apps.apple.com/us/app/defguard-desktop-client/id6754601166?mt=12',
-+      },
-     },
-     mobile: {
-       apple: 'https://apps.apple.com/us/app/defguard-vpn-client/id6748068630',
-```
-
-**File**: `web/tests/client-artifacts.test.ts` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+import { afterEach, expect, it, vi } from 'vitest';
-+import { updateServiceApi, updateServiceClient } from '../src/shared/api/update-service';
-+
-+type GetResponse = Awaited<ReturnType<typeof updateServiceClient.get>>;
-+
-+afterEach(() => {
-+  vi.restoreAllMocks();
-+});
-+
-+it('getClientArtifacts returns windows_arm64 from the update service and falls back to the download page when the key is missing', async () => {
-+  const get = vi.spyOn(updateServiceClient, 'get');
-+
-+  get.mockResolvedValueOnce({
-+    data: { windows_arm64: 'https://example.com/client_arm64.msi' },
-+  } as GetResponse);
-+  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
-+    windows_arm64: 'https://example.com/client_arm64.msi',
-+  });
-+
-+  get.mockResolvedValueOnce({ data: {} } as GetResponse);
-+  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
-+    windows_arm64: 'https://defguard.net/download',
-+  });
-+});
-```
-
----
-
-### Incident Patch 2: `814398e0` (2026-11-24)
-**Commit Message**: Entra certificate authentication (#4037)
-
-* backend
-
-* frontend
-
-**File**: `.sqlx/query-9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f.json` (renamed, +26/-2)
+**File**: `crates/defguard_common/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider WHERE name = $1",
-+  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider WHERE name = $1",
-   "describe": {
-     "columns": [
-       {
-@@ -291,6 +291,28 @@
-             "name": "directory_sync_user_groups"
-           }
-         }
-+      },
-+      {
-+        "ordinal": 22,
-+        "name": "client_certificate",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_certificate"
-+          }
-+        }
-+      },
-+      {
-+        "ordinal": 23,
-+        "name": "client_private_key?: _",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_private_key"
-+          }
-+        }
-       }
-     ],
-     "parameters": {
-@@ -320,8 +342,10 @@
-       true,
-       false,
-       false,
-+      true,
-+      true,
-       true
-     ]
-   },
--  "hash": "947e582ac133cd33281dc9c31f5fa8bb1bc31b4e4b500d561e0708caa51fa118"
-+  "hash": "9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f"
- }
-```
-
-**File**: `.sqlx/query-a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287.json` (renamed, +5/-3)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22 WHERE id = $1",
-+  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22,\"client_certificate\" = $23,\"client_private_key\" = $24 WHERE id = $1",
-   "describe": {
-     "columns": [],
-     "parameters": {
-@@ -73,10 +73,12 @@
-         "Text",
-         "Bool",
-         "Bool",
--        "TextArray"
-+        "TextArray",
-+        "Text",
-+        "Text"
-       ]
-     },
-     "nullable": []
-   },
--  "hash": "de48ed494f4fd4ddc4d621282f8a91629ce6a744cea019bc79963a0bb9b7f6cf"
-+  "hash": "a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287"
- }
-```
-
-**File**: `.sqlx/query-a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc.json` (renamed, +26/-3)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
-+  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" WHERE id = $1",
-   "describe": {
-     "columns": [
-       {
-@@ -291,11 +291,32 @@
-             "name": "directory_sync_user_groups"
-           }
-         }
-+      },
-+      {
-+        "ordinal": 22,
-+        "name": "client_certificate",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_certificate"
-+          }
-+        }
-+      },
-+      {
-+        "ordinal": 23,
-+        "name": "client_private_key?: _",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_private_key"
-+          }
-+        }
-       }
-     ],
-     "parameters": {
-       "Left": [
--        "Int8",
-         "Int8"
-       ]
-     },
-@@ -321,8 +342,10 @@
-       true,
-       false,
-       false,
-+      true,
-+      true,
-       true
-     ]
-   },
--  "hash": "8fc78584c0f8b0c1f66af6b3dbca4d84d45461db80b690213381f9dabe5d29af"
-+  "hash": "a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc"
- }
-```
-
-**File**: `.sqlx/query-b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d.json` (renamed, +26/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\"",
-+  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\"",
-   "describe": {
-     "columns": [
-       {
-@@ -291,6 +291,28 @@
-             "name": "directory_sync_user_groups"
-           }
-         }
-+      },
-+      {
-+        "ordinal": 22,
-+        "name": "client_certificate",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_certificate"
-+          }
-+        }
-+      },
-+      {
-+        "ordinal": 23,
-+        "name": "client_private_key?: _",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_private_key"
-+          }
-+        }
-       }
-     ],
-     "parameters": {
-@@ -318,8 +340,10 @@
-       true,
-       false,
-       false,
-+      true,
-+      true,
-       true
-     ]
-   },
--  "hash": "167ce8254fc45970778500697df780cd51703b3512952117567bf21255827d63"
-+  "hash": "b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d"
- }
-```
-
-**File**: `.sqlx/query-ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a.json` (renamed, +27/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" WHERE id = $1",
-+  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
-   "describe": {
-     "columns": [
-       {
-@@ -291,10 +291,33 @@
-             "name": "directory_sync_user_groups"
-           }
-         }
-+      },
-+      {
-+        "ordinal": 22,
-+        "name": "client_certificate",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_certificate"
-+          }
-+        }
-+      },
-+      {
-+        "ordinal": 23,
-+        "name": "client_private_key?: _",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_private_key"
-+          }
-+        }
-       }
-     ],
-     "parameters": {
-       "Left": [
-+        "Int8",
-         "Int8"
-       ]
-     },
-@@ -320,8 +343,10 @@
-       true,
-       false,
-       false,
-+      true,
-+      true,
-       true
-     ]
-   },
--  "hash": "337b36a7bf600c63eabfc6183fdcbeb20f2a9dc72d544292b4443840a54a8bd8"
-+  "hash": "ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a"
- }
-```
-
-**File**: `.sqlx/query-e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33.json` (renamed, +4/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21 WHERE id = $22",
-+  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21, client_certificate = $22, client_private_key = $23 WHERE id = $24",
-   "describe": {
-     "columns": [],
-     "parameters": {
-@@ -73,10 +73,12 @@
-         "Bool",
-         "Bool",
-         "TextArray",
-+        "Text",
-+        "Text",
-         "Int8"
-       ]
-     },
-     "nullable": []
-   },
--  "hash": "66af8c4b14478a93354ff37b32e28cc9523b2b51aeea58fa82b0335f0b1c7769"
-+  "hash": "e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33"
- }
-```
-
-**File**: `.sqlx/query-e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806.json` (renamed, +5/-3)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING id",
-+  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\",\"client_certificate\",\"client_private_key\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) RETURNING id",
-   "describe": {
-     "columns": [
-       {
-@@ -84,12 +84,14 @@
-         "Text",
-         "Bool",
-         "Bool",
--        "TextArray"
-+        "TextArray",
-+        "Text",
-+        "Text"
-       ]
-     },
-     "nullable": [
-       false
-     ]
-   },
--  "hash": "00f9407fb5af87aa5cc8ae83b0216b1cdd6e8cfb7b01690229602f2544af4a73"
-+  "hash": "e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806"
- }
-```
-
-**File**: `.sqlx/query-e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0.json` (renamed, +26/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider LIMIT 1",
-+  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider LIMIT 1",
-   "describe": {
-     "columns": [
-       {
-@@ -291,6 +291,28 @@
-             "name": "directory_sync_user_groups"
-           }
-         }
-+      },
-+      {
-+        "ordinal": 22,
-+        "name": "client_certificate",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_certificate"
-+          }
-+        }
-+      },
-+      {
-+        "ordinal": 23,
-+        "name": "client_private_key?: _",
-+        "type_info": "Text",
-+        "origin": {
-+          "Table": {
-+            "table": "openidprovider",
-+            "name": "client_private_key"
-+          }
-+        }
-       }
-     ],
-     "parameters": {
-@@ -318,8 +340,10 @@
-       true,
-       false,
-       false,
-+      true,
-+      true,
-       true
-     ]
-   },
--  "hash": "1da314b8ea0aec1a6b0ab9a7c083dff6b876ababda9ea3da021a2e2c76a45b31"
-+  "hash": "e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0"
- }
+ [package]
+ name = "defguard_common"
+-version = "2.2.0"
++version = "2.2.1"
+ edition.workspace = true
+ license-file.workspace = true
+ homepage.workspace = true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4102** (2026-11-24): Pipeline fixes (@t-aleksander)
+- **PR #4100** (2026-11-24): Bump version to 2.2.1 (@t-aleksander)
 - **PR #4099** (2026-11-24): Make Client download page consistent with landing page (@t-aleksander)
 - **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
 - **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
 - **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
-- **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
-- **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
 
 ---
 
@@ -2664,33 +2125,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make Client download page consistent with landing page
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `web/src/shared/api/update-service.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d232424`: Make Client download page consistent with landing page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `279cc5c3`: 2.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/shared/api/update-service.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  windows_arm64?: string;
-          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
-          windows_arm64: clientDownloadFallback,
+version = "2.2.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "2.2.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d232424` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `279cc5c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

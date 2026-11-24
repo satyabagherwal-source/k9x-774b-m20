@@ -4,22 +4,22 @@
 {
   "source_repository": "siderolabs/talos",
   "source_url": "https://github.com/siderolabs/talos",
-  "source_version": "97f97c86",
+  "source_version": "87507e3e",
   "license": "MPL-2.0",
-  "timestamp": "2026-11-23T21:14:41.656Z",
+  "timestamp": "2026-11-24T16:46:05.013Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-siderolabs-talos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [siderolabs/talos](https://github.com/siderolabs/talos) (Revision: `97f97c86`).  
-> **License**: MPL-2.0 | **Timestamp**: `2026-11-23T21:14:41.656Z`  
+> **Provenance**: Harvested from [siderolabs/talos](https://github.com/siderolabs/talos) (Revision: `87507e3e`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-24T16:46:05.013Z`  
 > **Learning ID**: `learn-github-siderolabs-talos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `siderolabs/talos` (Commit: `97f97c86`)
+- **Target Repository**: `siderolabs/talos` (Commit: `87507e3e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:14:39.903Z  
+> **Harvest Timestamp**: 2026-11-24T16:46:03.328Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11584 stars
+- **Stars / Engagement**: 11587 stars
 
 ---
 
@@ -2122,11 +2122,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15053** (2026-11-23): **fix: request redaction in dashboard containers view**
-  *Symptoms*: The talosctl dashboard containers view watched `ContainerSpec` resources without the `x-talos-dev-redact` header. `ContainerSpec` is sensitive but redactable, so without the header a requester lacking the `os:admin` role (`os:reader`, `os:operator`, or Omni's proxied `os:operator`) was denied with `PermissionDenied` and the view failed to load.  Requests resource redaction. 
+- **Issue #15067** (2026-11-24): **Feat/bgp dynamic neighbors**
+  *Symptoms*: # Pull Request DRAFT<!> <!-- ## Note to the Contributor  We encourage contributors to go through a proposal process to discuss major changes. Before your PR is allowed to run through CI, the maintainers of Talos will first have to approve the PR. -->  ## What? (description) The goal of this PR is to offer BGP a FRR `listen range` equivalent in order to accept passively any incoming BGP connections from a specific CIDR range. This is done by :   - `BGPInstanceConfig` neighbors: new `prefix` field, mutually exclusive with `address`/`link`, works like FRR `bgp listen range` - backed by a GoBGP peer group plus a dynamic neighbor per prefix. always passive. supports `holdTime`, `bfd`, `authPassword`, `ebgpMultiHop`, `localASN` - an explicit `address` neighbor wins over a matching prefix: any dynamic session from that address is evicted - changing a prefix neighbor recreates its peer group, which resets its sessions (GoBGP doesn't apply peer group updates to dynamic neighbors it already accepted) - validation: prefix must be masked, prefixes in one instance can't overlap, an `address` neighbor inside an authenticated prefix must set its own `authPassword` (otherwise the kernel applies the prefix's TCP MD5 key)  ## Why? (reasoning)  This allows peering with a whole subnet without listing every peer in the configuration and update for each new possible client  ## Why? (reasoning)  ## Acceptance  Please use the following checklist:  - [ ] you linked an issu
 
-- **Issue #15050** (2026-11-23): **test: wait for full output in TestNetworkModes (containers)**
-  *Symptoms*: Fixes a container integration test flake in `TestNetworkModes`.  TestNetworkModes waited for `IFACES=`, which is the first line the container prints, and read the log as soon as that line appeared. The `resolv.conf` line comes last, so the log could be read before it was written. The host subtest then failed with neither marker present.  The `resolv.conf` markers also overlapped: `RESOLVCONF` is a substring of `NO-RESOLVCONF`, so the host assertion would have passed even with no `resolv.conf` in the container.  Here's a recent example of this failure: https://github.com/siderolabs/talos/actions/runs/45193124367/job/137760366104?pr=15045  This diff renames the markers to `RESOLV=present` and `RESOLV=absent` so neither matches the other. Both subtests now wait for that line, the last one printed, so the whole output is there when the log is read. 
+- **Issue #15062** (2026-11-24): **test: wait for MD arrays to finish rebuilding**
+  *Symptoms*: The RAID integration tests accepted a rebuilding array as success, so nothing caught MDArrayStatus getting stuck at rebuilding after the kernel finished the resync. Wait for ready/idle after growing an array and after the degraded boot array reboot.  Closes https://github.com/siderolabs/talos/issues/14305  Signed-off-by: Mateusz Urbanek <mateusz.urbanek@siderolabs.com> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2143,341 +2143,642 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9c11bef` (2026-11-23)
-**Commit Message**: fix: keep node cordoned during talosctl drain
+### Incident Patch 1: `ba1142dd` (2026-11-24)
+**Commit Message**: fix: allow user etc files under iscsi and nvme
 
-talosctl drain cordoned with talos.dev/cordoned, the annotation
-machined uses for its own cordons. While the machine is Running,
-NodeApplyController uncordons any node carrying it, so the cordon
-was removed mid-drain. Controllers that react to an unschedulable
-node (CNPG primary switchover) never ran, and PDB-protected pods
-blocked eviction until the drain timed out.
+EtcFileConfig rejected every path under iscsi/ and nvme/, but Talos
+only writes iscsi/initiatorname.iscsi, nvme/hostid and nvme/hostnqn
+there. open-iscsi reads /etc/iscsi/iscsid.conf, and the iscsid
+extension bind mounts the host /etc/iscsi read-only, so users had no
+way to set it.
 
-Use a separate talos.dev/client-cordoned annotation for client-side
-drains, so machined leaves those cordons alone. Also fix the drain
-failure being reported as a cordon error.
+Reserve only the files Talos writes. The bare iscsi and nvme paths
+stay reserved, as a file there would block the managed files.
 
-Fixes #15037
+Refs: https://github.com/siderolabs/talos/discussions/15055
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
-
-**File**: `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go` (modified, +3/-3)
+**File**: `pkg/machinery/config/types/runtime/etc_file.go` (modified, +8/-5)
 ```diff
-@@ -64,7 +64,7 @@ func CordonAndDrain(ctx context.Context, clientset kubernetes.Interface, nodeNam
- 		Status:  reporter.StatusRunning,
- 	})
+@@ -12,7 +12,6 @@ import (
+ 	"io/fs"
+ 	"os"
+ 	"path/filepath"
+-	"slices"
+ 	"strconv"
+ 	"strings"
  
--	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
-+	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
- 		report(reporter.Update{
- 			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
- 			Status:  reporter.StatusError,
-@@ -95,7 +95,7 @@ func CordonAndDrain(ctx context.Context, clientset kubernetes.Interface, nodeNam
+@@ -150,6 +149,9 @@ var managedEtcFiles = []string{
+ 	"localtime",
+ 	"os-release",
+ 	"xattr.conf",
++	"iscsi/initiatorname.iscsi",
++	"nvme/hostid",
++	"nvme/hostnqn",
+ }
  
- 	if err := nodedrain.Drain(ctx, clientset, nodeName, dopts); err != nil {
- 		report(reporter.Update{
--			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
-+			Message: fmt.Sprintf("%s: error draining node: %v", nodeName, err),
- 			Status:  reporter.StatusError,
- 		})
+ var managedEtcPrefixes = []string{
+@@ -158,10 +160,8 @@ var managedEtcPrefixes = []string{
+ 	"ca-certificates/",
+ 	"cni/",
+ 	"cri/",
+-	"iscsi/",
+ 	"kubernetes/",
+ 	"lvm/",
+-	"nvme/",
+ 	"pki/",
+ 	"selinux/",
+ 	"ssl/",
+@@ -173,8 +173,11 @@ func validateEtcFilePath(path string) error {
+ 		return fmt.Errorf("user etc file %q must be a local path", path)
+ 	}
  
-@@ -123,7 +123,7 @@ func Uncordon(ctx context.Context, clientset kubernetes.Interface, nodeName stri
- 		Status:  reporter.StatusRunning,
- 	})
+-	if slices.Contains(managedEtcFiles, path) {
+-		return fmt.Errorf("user etc file %q is managed by Talos", path)
++	for _, managed := range managedEtcFiles {
++		// a file at a managed file's parent directory path would break writing the managed file
++		if path == managed || strings.HasPrefix(managed, path+"/") {
++			return fmt.Errorf("user etc file %q is managed by Talos", path)
++		}
+ 	}
  
--	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
-+	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
- 		report(reporter.Update{
- 			Message: fmt.Sprintf("%s: error uncordoning node: %v", nodeName, err),
- 			Status:  reporter.StatusError,
+ 	for _, prefix := range managedEtcPrefixes {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/k8s/node_apply_test.go` (modified, +9/-0)
+**File**: `pkg/machinery/config/types/runtime/etc_file_test.go` (modified, +33/-0)
 ```diff
-@@ -509,6 +509,15 @@ func TestApplyCordoned(t *testing.T) {
- 			expectedUnschedulable: true,
- 			expectedAnnotations:   map[string]string{"foo": "bar"},
+@@ -141,6 +141,39 @@ func TestEtcFileValidate(t *testing.T) {
+ 			configName:    "selinux/config",
+ 			expectedError: `user etc file "selinux/config" is managed by Talos`,
  		},
 +		{
-+			name:               "cordoned by talosctl drain - uncordon",
-+			inputAnnotations:   map[string]string{constants.AnnotationClientCordonedKey: constants.AnnotationCordonedValue},
-+			inputUnschedulable: true,
-+			shouldCordon:       false,
-+
-+			expectedUnschedulable: true,
-+			expectedAnnotations:   map[string]string{constants.AnnotationClientCordonedKey: constants.AnnotationCordonedValue},
++			name:       "iscsid.conf",
++			configName: "iscsi/iscsid.conf",
 +		},
- 	} {
- 		t.Run(tt.name, func(t *testing.T) {
- 			t.Parallel()
-```
-
-**File**: `pkg/machinery/constants/constants.go` (modified, +6/-0)
-```diff
-@@ -1178,6 +1178,12 @@ const (
- 	// AnnotationCordonedValue is the annotation key for the nodes cordoned by Talos.
- 	AnnotationCordonedValue = "true"
- 
-+	// AnnotationClientCordonedKey is the annotation key for the nodes cordoned by talosctl drain.
-+	//
-+	// It must differ from AnnotationCordonedKey: machined uncordons nodes carrying that one
-+	// while the machine is running, which would undo the cordon in the middle of a client-side drain.
-+	AnnotationClientCordonedKey = "talos.dev/client-cordoned"
-+
- 	// AnnotationStaticPodSecretsVersion is the annotation key for the static pod secret version.
- 	AnnotationStaticPodSecretsVersion = "talos.dev/secrets-version"
- 
++		{
++			name:          "iscsi initiator name",
++			configName:    "iscsi/initiatorname.iscsi",
++			expectedError: `user etc file "iscsi/initiatorname.iscsi" is managed by Talos`,
++		},
++		{
++			name:          "iscsi directory",
++			configName:    "iscsi",
++			expectedError: `user etc file "iscsi" is managed by Talos`,
++		},
++		{
++			name:       "nvme discovery.conf",
++			configName: "nvme/discovery.conf",
++		},
++		{
++			name:          "nvme hostid",
++			configName:    "nvme/hostid",
++			expectedError: `user etc file "nvme/hostid" is managed by Talos`,
++		},
++		{
++			name:          "nvme hostnqn",
++			configName:    "nvme/hostnqn",
++			expectedError: `user etc file "nvme/hostnqn" is managed by Talos`,
++		},
++		{
++			name:          "nvme directory",
++			configName:    "nvme",
++			expectedError: `user etc file "nvme" is managed by Talos`,
++		},
+ 		{
+ 			name:          "escaped path",
+ 			configName:    "../foo",
 ```
 
 ---
 
-### Incident Patch 2: `bde1c414` (2026-11-21)
-**Commit Message**: fix: keep importing BGP routes after an imported prefix is originated
+### Incident Patch 2: `3a8b6587` (2026-11-16)
+**Commit Message**: fix: keep a derived BGP router ID while sessions are established
 
-GoBGP keys local paths by prefix. When an instance started
-originating a prefix it already imported, the originated path
-replaced the imported one along with its UUID. The next import
-reconcile deleted the imported path by its old UUID, GoBGP failed to
-find it, and the error stopped every other import change of the
-instance, on every retry.
+Without routerID, Talos derives the router ID from the lowest IPv4
+address on the advertised links. Adding an address that sorts lower,
+such as a VIP or a new DHCP lease, changed the router ID, which
+rebuilt the GoBGP server and reset every session of the instance.
 
-Forget the imported path when its prefix is originated, as GoBGP
-already replaced it.
+Keep the current derived router ID while a peer that stays configured
+is established or completing its handshake, and its address is still
+on the advertised links. FRR's bgpd also holds a new router ID from
+zebra until no session is up. A configured routerID, or a change
+that rebuilds the server anyway, applies the new router ID right
+away.
 
-Fixes: #15033
+Fixes: #14968
 
 Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports_test.go` (modified, +61/-0)
+**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +1/-1)
 ```diff
-@@ -16,6 +16,7 @@ import (
+@@ -233,7 +233,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
+ 			ctx,
+ 			instanceLogger,
+ 			resolved.Spec,
+-			resolved.RouterID,
++			resolved.RouterIDCandidates,
+ 			resolved.VRFIndex,
+ 			peers,
+ 			peerIfaces,
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +74/-2)
+```diff
+@@ -17,6 +17,7 @@ import (
+ 	gobgpapi "github.com/osrg/gobgp/v4/api"
  	"github.com/osrg/gobgp/v4/pkg/apiutil"
- 	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
  	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
++	"github.com/siderolabs/gen/xslices"
+ 	"go.uber.org/zap"
+ 	"go.uber.org/zap/exp/zapslog"
+ 	"golang.org/x/sys/unix"
+@@ -29,6 +30,8 @@ import (
+ type Instance struct {
+ 	server        *gobgpsrv.BgpServer
+ 	serverKey     string
++	derivedID     netip.Addr
++	pendingID     netip.Addr
+ 	watchCancel   context.CancelFunc
+ 	originated    map[netip.Prefix]struct{}
+ 	imported      map[netip.Prefix]importedPath
+@@ -77,6 +80,8 @@ func (instance *Instance) Stop() {
+ 	}
+ 
+ 	instance.serverKey = ""
++	instance.derivedID = netip.Addr{}
++	instance.pendingID = netip.Addr{}
+ 
+ 	instance.clearState()
+ }
+@@ -101,14 +106,14 @@ func (instance *Instance) EnsureServer(
+ 	ctx context.Context,
+ 	logger *zap.Logger,
+ 	config network.BGPInstanceConfigSpec,
+-	routerID netip.Addr,
++	routerIDCandidates []netip.Addr,
+ 	vrfIndex uint32,
+ 	resolvedPeers []Peer,
+ 	peerIfaces map[netip.Addr]string,
+ 	listenPort int32,
+ 	signal func(),
+ ) error {
+-	key := ServerKey(config.LocalASN, routerID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
++	routerID, key := instance.serverIdentity(ctx, logger, config, routerIDCandidates, resolvedPeers, vrfIndex, listenPort)
+ 
+ 	if instance.server == nil || instance.serverKey != key {
+ 		instance.Stop()
+@@ -162,6 +167,13 @@ func (instance *Instance) EnsureServer(
+ 		logger.Info("started embedded BGP speaker", zap.Uint32("asn", config.LocalASN), zap.Stringer("router_id", routerID))
+ 	}
+ 
++	// a configured router ID may be dropped for the same derived one without a rebuild
++	instance.derivedID = netip.Addr{}
++
++	if !config.RouterID.IsValid() {
++		instance.derivedID = routerID
++	}
++
+ 	instance.peerIfaces = peerIfaces
+ 	instance.unnumbered = map[string]netip.Addr{}
+ 
+@@ -174,6 +186,66 @@ func (instance *Instance) EnsureServer(
+ 	return instance.reconcilePeers(ctx, config, resolvedPeers)
+ }
+ 
++// serverIdentity returns the router ID and server key to run with.
++//
++// Like FRR, a derived router ID is kept while a session is established or opening, as a new one
++// resets every session, unless the server is rebuilt anyway or the address has left the advertised
++// links. derivedID is unset while the router ID is configured.
++func (instance *Instance) serverIdentity(
++	ctx context.Context,
++	logger *zap.Logger,
++	config network.BGPInstanceConfigSpec,
++	routerIDCandidates []netip.Addr,
++	resolvedPeers []Peer,
++	vrfIndex uint32,
++	listenPort int32,
++) (netip.Addr, string) {
++	routerID := selectRouterID(config.RouterID, routerIDCandidates)
++	key := ServerKey(config.LocalASN, routerID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
++	keptKey := ServerKey(config.LocalASN, instance.derivedID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
++
++	keep := key != instance.serverKey && keptKey == instance.serverKey && !config.RouterID.IsValid() &&
++		slices.Contains(routerIDCandidates, instance.derivedID) && instance.hasSession(ctx, resolvedPeers)
++
++	if !keep {
++		instance.pendingID = netip.Addr{}
++
++		return routerID, key
++	}
++
++	if instance.pendingID != routerID {
++		logger.Info("keeping the BGP router ID while a session is established or opening",
++			zap.Stringer("router_id", instance.derivedID), zap.Stringer("derived_router_id", routerID))
++
++		instance.pendingID = routerID
++	}
++
++	return instance.derivedID, keptKey
++}
++
++// hasSession reports whether a peer which stays configured is established or completing its handshake.
++func (instance *Instance) hasSession(ctx context.Context, resolvedPeers []Peer) bool {
++	addresses := xslices.ToSet(xslices.Map(resolvedPeers, func(peer Peer) string { return peer.Address }))
++
++	var session bool
++
++	if err := instance.server.ListPeer(ctx, &gobgpapi.ListPeerRequest{}, func(peer *gobgpapi.Peer) {
++		if _, configured := addresses[peer.GetConf().GetNeighborAddress()]; !configured {
++			return
++		}
++
++		switch peer.GetState().GetSessionState() { //nolint:exhaustive // only sessions with an OPEN exchange in progress or done
++		case gobgpapi.PeerState_SESSION_STATE_OPENSENT, gobgpapi.PeerState_SESSION_STATE_OPENCONFIRM, gobgpapi.PeerState_SESSION_STATE_ESTABLISHED:
++			session = true
++		}
++	}); err != nil {
++		// only a canceled context fails it: keep the router ID rather than rebuild the server
++		return true
++	}
++
++	return session
++}
++
+ // listenAddresses returns the wildcard addresses to listen on.
+ var listenAddresses = sync.OnceValue(func() []string {
+ 	addrs := []string{
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +217/-8)
+```diff
+@@ -16,9 +16,12 @@ import (
+ 	"github.com/gopacket/gopacket"
+ 	"github.com/gopacket/gopacket/layers"
+ 	gobgpapi "github.com/osrg/gobgp/v4/api"
++	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
 +	"github.com/siderolabs/gen/xslices"
  	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/require"
+ 	"go.uber.org/zap"
++	"go.uber.org/zap/zaptest/observer"
+ 	"golang.org/x/sys/unix"
  
-@@ -153,6 +154,66 @@ func TestBGPRouteImportLifecycle(t *testing.T) {
- 	assert.Nil(t, listBGPImportTestPath(t, targetServer, prefix))
+ 	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
+@@ -102,7 +105,7 @@ func TestInstanceAuthPasswordListenerKey(t *testing.T) {
+ 			t.Context(),
+ 			zap.NewNop(),
+ 			config,
+-			netip.MustParseAddr("10.0.0.1"),
++			[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 			0,
+ 			[]internalbgp.Peer{peer},
+ 			nil,
+@@ -224,7 +227,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 		t.Context(),
+ 		zap.NewNop(),
+ 		config,
+-		netip.MustParseAddr("10.0.0.1"),
++		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 		0,
+ 		[]internalbgp.Peer{peer},
+ 		peerIfaces,
+@@ -242,7 +245,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 		t.Context(),
+ 		zap.NewNop(),
+ 		config,
+-		netip.MustParseAddr("10.0.0.1"),
++		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 		0,
+ 		[]internalbgp.Peer{peer},
+ 		peerIfaces,
+@@ -256,7 +259,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 		t.Context(),
+ 		zap.NewNop(),
+ 		config,
+-		netip.MustParseAddr("10.0.0.1"),
++		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 		0,
+ 		[]internalbgp.Peer{peer},
+ 		peerIfaces,
+@@ -270,7 +273,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 		t.Context(),
+ 		zap.NewNop(),
+ 		config,
+-		netip.MustParseAddr("10.0.0.1"),
++		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 		0,
+ 		nil,
+ 		peerIfaces,
+@@ -307,7 +310,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 		t.Context(),
+ 		zap.NewNop(),
+ 		config,
+-		netip.MustParseAddr("10.0.0.9"),
++		[]netip.Addr{netip.MustParseAddr("10.0.0.9")},
+ 		0,
+ 		nil,
+ 		peerIfaces,
+@@ -339,7 +342,7 @@ func TestChangedPeerIsUpdatedInPlace(t *testing.T) {
+ 			ctx,
+ 			zap.NewNop(),
+ 			network.BGPInstanceConfigSpec{LocalASN: 65001, Neighbors: []network.BGPNeighborConfigSpec{peer.Config}},
+-			netip.MustParseAddr("10.0.0.1"),
++			[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
+ 			0,
+ 			[]internalbgp.Peer{peer},
+ 			nil,
+@@ -408,6 +411,212 @@ func TestChangedPeerIsUpdatedInPlace(t *testing.T) {
+ 	}
  }
  
-+func TestImportedPrefixBecomesOriginated(t *testing.T) {
-+	ctx := t.Context()
-+	sourceServer := startBGPImportTestServer(t, ctx, 4200000000, "192.0.2.1", -1, false)
-+	targetServer := startBGPImportTestServer(t, ctx, 65001, "192.0.2.2", -1, false)
++func TestDerivedRouterIDIsKeptWhilePeerIsEstablished(t *testing.T) {
++	t.Parallel()
 +
-+	prefix := netip.MustParsePrefix("198.51.100.100/32")
-+	other := netip.MustParsePrefix("198.51.100.101/32")
++	derived := network.BGPInstanceConfigSpec{}
++	configured := network.BGPInstanceConfigSpec{RouterID: netip.MustParseAddr("10.5.0.9")}
++	addrs := func(addrs ...string) []netip.Addr { return xslices.Map(addrs, netip.MustParseAddr) }
 +
-+	_, err := sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, prefix, 50), newBGPImportTestPath(t, other, 50)}})
-+	require.NoError(t, err)
++	for _, test := range []struct {
++		name string
 +
-+	source := internalbgp.NewInstance()
-+	internalbgp.SetInstanceServerForTest(source, sourceServer)
++		initial    network.BGPInstanceConfigSpec
++		initialID  string
++		deriveSame bool
++		openOnly   bool
++		dropPeer   bool
++		removePeer bool
++		next       network.BGPInstanceConfigSpec
++		candidates []netip.Addr
 +
-+	target := internalbgp.NewInstance()
-+	internalbgp.SetInstanceServerForTest(target, targetServer)
-+	target.SetOutputState(nil, []resourcenetwork.BGPImportRouteSpec{{
-+		BGPInstance: "workload",
-+		Prefixes:    []netip.Prefix{netip.MustParsePrefix("198.51.100.0/24")},
-+	}}, 0, netip.Addr{}, 0, true)
-+
-+	instances := map[string]*internalbgp.Instance{"fabric": target, "workload": source}
-+	desiredInstances := map[string]struct{}{"fabric": {}, "workload": {}}
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
-+	require.NoError(t, err)
-+	require.True(t, internalbgp.InstanceImportedForTest(target, prefix))
-+
-+	// an address on an advertised link makes the target originate the imported prefix: the originated path
-+	// replaces the imported one in GoBGP
-+	require.NoError(t, target.ReconcileOriginated([]netip.Prefix{prefix}))
-+
-+	_, err = sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, other, 75)}})
-+	require.NoError(t, err)
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
-+	require.NoError(t, err)
-+	assert.False(t, internalbgp.InstanceImportedForTest(target, prefix))
-+
-+	originated, err := internalbgp.BuildOriginatedPath(prefix)
-+	require.NoError(t, err)
-+
-+	path := listBGPImportTestPath(t, targetServer, prefix)
-+	require.NotNil(t, path)
-+
-+	attrType := func(attr bgppacket.PathAttributeInterface) bgppacket.BGPAttrType { return attr.GetType() }
-+	assert.Equal(t, xslices.Map(originated.Attrs, attrType), xslices.Map(path.Attrs, attrType),
-+		"the target must hold the originated path, not the imported one")
-+	assert.Equal(t, uint32(75), importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, listBGPImportTestPath(t, targetServer, other)).Value,
-+		"the other imports must still be reconciled")
-+
-+	// once the target stops originating it, the prefix is imported again
-+	require.NoError(t, target.ReconcileOriginated(nil))
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
-+	require.NoError(t, err)
-+	assert.True(t, internalbgp.InstanceImportedForTest(target, prefix))
-+	assert.Equal(t, uint32(50), importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, listBGPImportTestPath(t, targetServer, prefix)).Value)
-+}
-+
- func TestBGPImportFamilies(t *testing.T) {
- 	t.Parallel()
- 
++		expectedID string
++	}{
++		{
++			name:      "lower address added",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.3",
++		},
++		{
++			name:      "address removed",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			next:      derived, candidates: addrs("10.5.0.2"),
++			expectedID: "10.5.0.2",
++		},
++		{
++			name:      "server rebuilt anyway",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			next:      network.BGPInstanceConfigSpec{Multipath: true}, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.2",
++		},
++		{
++			name:      "no session established",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			dropPeer:  true,
++			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.2",
++		},
++		{
++			name:       "configured router ID dropped for the same derived one",
++			initial:    network.BGPInstanceConfigSpec{RouterID: netip.MustParseAddr("10.5.0.3")},
++			initialID:  "10.5.0.3",
++			deriveSame: true,
++			next:       derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.3",
++		},
++		{
++			name:      "session opening",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			openOnly:  true,
++			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.3",
++		},
++		{
++			name:       "established peer removed",
++			initial:    derived,
++			initialID:  "10.5.0.3",
++			removePeer: true,
++			next:       derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
++			expectedID: "10.5.0.2",
++		},
++		{
++			name:      "router ID configured",
++			initial:   derived,
++			initialID: "10.5.0.3",
++			next:      configured, candidates: addrs("10.5.0.3"),
++			expectedID: "10.5.0.9",
++		},
++		{
++			name:      "configured router ID removed",
++			initial:   configured,
++			initialID: "10.5.0.9",
++			next:      derived, candidates
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +3/-0)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/runtime.go` (modified, +16/-5)
 ```diff
-@@ -210,6 +210,9 @@ func (instance *Instance) ReconcileOriginated(advertised []netip.Prefix) error {
- 		}
- 
- 		instance.originated[prefix] = struct{}{}
-+
-+		// GoBGP keys local paths by prefix, so an imported path for it was just replaced along with its UUID
-+		delete(instance.imported, prefix)
+@@ -24,6 +24,9 @@ type ResolvedConfig struct {
+ 	// that route, as Talos installs address routes with a higher metric than BGP routes.
+ 	ConnectedPrefixes []netip.Prefix
+ 	RouterID          netip.Addr
++	// RouterIDCandidates are the IPv4 addresses on the advertised links, lowest first: a derived router ID
++	// is the first of them, and a running instance may keep any of them.
++	RouterIDCandidates []netip.Addr
+ 	// VRFIndex is the kernel index of the VRF link, zero when the instance runs in the main table.
+ 	//
+ 	// The listening socket is bound to the device by name, which the kernel resolves to an index
+@@ -146,12 +149,14 @@ func (state *RuntimeState) Resolve(spec network.BGPInstanceConfigSpec) (Resolved
  	}
  
- 	for prefix := range instance.originated {
+ 	advertisedAddresses := state.advertisedAddresses(resolved.AdvertiseLinks)
++	routerIDCandidates := routerIDCandidates(advertisedAddresses)
+ 
+ 	return ResolvedConfig{
+ 		Spec:               resolved,
+ 		AdvertisedPrefixes: connectedPrefixes(advertisedAddresses),
+ 		ConnectedPrefixes:  connectedPrefixes(state.domainAddresses(resolved.VRF)),
+-		RouterID:           routerID(resolved.RouterID, advertisedAddresses),
++		RouterID:           selectRouterID(resolved.RouterID, routerIDCandidates),
++		RouterIDCandidates: routerIDCandidates,
+ 		VRFIndex:           vrfIndex,
+ 	}, nil
+ }
+@@ -347,16 +352,22 @@ func connectedPrefixes(addresses []netip.Prefix) []netip.Prefix {
+ 	return slices.Compact(prefixes)
+ }
+ 
+-func routerID(configured netip.Addr, advertised []netip.Prefix) netip.Addr {
+-	if configured.IsValid() {
++func selectRouterID(configured netip.Addr, candidates []netip.Addr) netip.Addr {
++	if configured.IsValid() || len(candidates) == 0 {
+ 		return configured
+ 	}
+ 
++	return candidates[0]
++}
++
++func routerIDCandidates(advertised []netip.Prefix) []netip.Addr {
++	var candidates []netip.Addr
++
+ 	for _, prefix := range advertised {
+ 		if prefix.Addr().Is4() {
+-			return prefix.Addr()
++			candidates = append(candidates, prefix.Addr())
+ 		}
+ 	}
+ 
+-	return netip.Addr{}
++	return slices.Compact(candidates)
+ }
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/runtime_test.go` (modified, +3/-0)
+```diff
+@@ -166,14 +166,17 @@ func TestRuntimeStateRouterID(t *testing.T) {
+ 	state := internalbgp.NewRuntimeState(
+ 		map[string]network.LinkStatusSpec{"dummy0": {Index: 1}},
+ 		[]network.AddressStatusSpec{
++			{Address: netip.MustParsePrefix("10.0.0.9/24"), LinkName: "dummy0", LinkIndex: 1},
+ 			{Address: netip.MustParsePrefix("2001:db8::2/64"), LinkName: "dummy0", LinkIndex: 1},
+ 			{Address: netip.MustParsePrefix("10.0.0.2/32"), LinkName: "dummy0", LinkIndex: 1},
++			{Address: netip.MustParsePrefix("10.0.0.2/24"), LinkName: "dummy0", LinkIndex: 1},
+ 		},
+ 	)
+ 
+ 	auto, err := state.Resolve(network.BGPInstanceConfigSpec{AdvertiseLinks: []string{"dummy0"}})
+ 	require.NoError(t, err)
+ 	assert.Equal(t, netip.MustParseAddr("10.0.0.2"), auto.RouterID)
++	assert.Equal(t, []netip.Addr{netip.MustParseAddr("10.0.0.2"), netip.MustParseAddr("10.0.0.9")}, auto.RouterIDCandidates)
+ 
+ 	configured, err := state.Resolve(network.BGPInstanceConfigSpec{
+ 		RouterID:       netip.MustParseAddr("192.0.2.1"),
+```
+
+**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
+```diff
+@@ -5606,9 +5606,9 @@
+         "routerID": {
+           "type": "string",
+           "title": "routerID",
+-          "description": "BGP router-id. If not set, it is derived from the first advertised address.\n",
+-          "markdownDescription": "BGP router-id. If not set, it is derived from the first advertised address.",
+-          "x-intellij-html-description": "\u003cp\u003eBGP router-id. If not set, it is derived from the first advertised address.\u003c/p\u003e\n"
++          "description": "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.\n",
++          "markdownDescription": "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.",
++          "x-intellij-html-description": "\u003cp\u003eBGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.\u003c/p\u003e\n"
+         },
+         "routeSource": {
+           "type": "string",
+```
+
+**File**: `pkg/machinery/config/types/network/bgp.go` (modified, +3/-1)
+```diff
+@@ -84,7 +84,9 @@ type BGPInstanceConfigV1Alpha1 struct {
+ 	//   schemaRequired: true
+ 	BGPLocalASN uint32 `yaml:"localASN"`
+ 	//   description: |
+-	//     BGP router-id. If not set, it is derived from the first advertised address.
++	//     BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.
++	//     A derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.
++	//     It switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.
+ 	//   examples:
+ 	//    - value: >
+ 	//       meta.Addr{Addr: netip.MustParseAddr("10.0.0.1")}
+```
+
+**File**: `pkg/machinery/config/types/network/network_doc.go` (modified, +2/-2)
+```diff
+@@ -50,8 +50,8 @@ func (BGPInstanceConfigV1Alpha1) Doc() *encoder.Doc {
+ 				Name:        "routerID",
+ 				Type:        "Addr",
+ 				Note:        "",
+-				Description: "BGP router-id. If not set, it is derived from the first advertised address.",
+-				Comments:    [3]string{"" /* encoder.HeadComment */, "BGP router-id. If not set, it is derived from the first advertised address." /* encoder.LineComment */, "" /* encoder.FootComment */},
++				Description: "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.",
++				Comments:    [3]string{"" /* encoder.HeadComment */, "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links." /* encoder.LineComment */, "" /* encoder.FootComment */},
+ 			},
+ 			{
+ 				Name:        "routeSource",
 ```
 
 ---
 
-### Incident Patch 3: `f1028119` (2026-11-16)
-**Commit Message**: fix: replace changed imported BGP paths without a withdrawal
+### Incident Patch 3: `87507e3e` (2026-11-24)
+**Commit Message**: test: wait for MD arrays to finish rebuilding
 
-When an imported route changed attributes at its source, the
-importing instance deleted its copy and then added the new one, so
-its peers saw a withdrawal before the update and briefly lost the
-route.
+The RAID integration tests accepted a rebuilding array as success, so
+nothing caught MDArrayStatus getting stuck at rebuilding after the
+kernel finished the resync. Wait for ready/idle after growing an
+array and after the degraded boot array reboot.
 
-Add the changed path over the current one instead. GoBGP keys local
-paths by prefix, so AddPath replaces the path in place and returns a
-new UUID for it, which a later removal uses.
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-Fixes: #14969
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports.go` (modified, +4/-3)
+**File**: `internal/integration/api/storage.go` (modified, +18/-3)
 ```diff
-@@ -134,8 +134,7 @@ func (instance *Instance) listImportCandidates(selectors []netip.Prefix) (map[ne
+@@ -1403,9 +1403,7 @@ func (suite *StorageSuite) assertRAIDUserVolumeReadyMounted(nodeCtx context.Cont
  
- func (instance *Instance) reconcileImported(desired map[netip.Prefix]desiredImportedPath) error {
- 	for prefix, current := range instance.imported {
--		path, exists := desired[prefix]
--		if exists && path.fingerprint == current.fingerprint {
-+		if _, exists := desired[prefix]; exists {
- 			continue
- 		}
+ // TestRAIDArrayGrow provisions a raid1 array across two disks, then grows it by
+ // adding a third matched disk, verifying the MDArrayStatus picks up all three
+-// members and starts rebuilding. It intentionally does not wait for the resync to
+-// finish (see mdArrayGrewToMembers). The array is torn down through the MDService
+-// (talosctl wipe md) RPC.
++// members and starts rebuilding.
+ func (suite *StorageSuite) TestRAIDArrayGrow_RAID1() {
+ 	const raidName = "mdgrow"
  
-@@ -146,8 +145,10 @@ func (instance *Instance) reconcileImported(desired map[netip.Prefix]desiredImpo
- 		delete(instance.imported, prefix)
- 	}
- 
-+	// a changed path is added over the current one: GoBGP keys local paths by prefix, so AddPath replaces
-+	// it in place under a new UUID, while deleting it first would send a withdrawal to the peers
- 	for prefix, imported := range desired {
--		if _, exists := instance.imported[prefix]; exists {
-+		if current, exists := instance.imported[prefix]; exists && current.fingerprint == imported.fingerprint {
- 			continue
- 		}
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports_test.go` (modified, +68/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"context"
- 	"net"
- 	"net/netip"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -198,6 +199,73 @@ func startBGPImportTestServer(t *testing.T, ctx context.Context, asn uint32, rou
- 	return server
+@@ -1421,6 +1419,8 @@ func (suite *StorageSuite) TestRAIDArrayGrow_RAID1() {
+ 	suite.Require().Eventually(func() bool {
+ 		return suite.mdArrayStatusMatches(nodeCtx, raidName, expectedDevice, grownMemberDisks)
+ 	}, raidAssertTimeout, raidAssertInterval, "MD array status was not grown for %q", raidName)
++
++	suite.requireMDArrayIdle(nodeCtx, raidName)
  }
  
-+func TestImportedPathChangeIsReplacedInPlace(t *testing.T) {
-+	ctx := t.Context()
-+	fabricPort := freeBGPImportTestPort(t)
-+	sourceServer := startBGPImportTestServer(t, ctx, 4200000000, "192.0.2.1", -1, false)
-+	targetServer := startBGPImportTestServer(t, ctx, 65001, "192.0.2.2", -1, false)
-+	fabricServer := startBGPImportTestServer(t, ctx, 65000, "192.0.2.3", fabricPort, false)
-+	connectBGPImportTestFabric(t, ctx, targetServer, fabricServer, fabricPort)
+ // TestRAIDBootArrayDegradedReboot simulates a boot array member dying and verifies the
+@@ -1481,6 +1481,8 @@ echo b > /proc/sysrq-trigger
+ 	suite.Require().Eventually(func() bool {
+ 		return suite.mdArrayStatusMatches(nodeCtx, raidName, status.TypedSpec().Device, members)
+ 	}, raidAssertTimeout, raidAssertInterval, "boot array %q was not rebuilt", raidName)
 +
-+	prefix := netip.MustParsePrefix("198.51.100.100/32")
++	suite.requireMDArrayIdle(nodeCtx, raidName)
+ }
+ 
+ // TestRAIDArrayUnmanaged_RAID1 provisions a raid1 array via a RAIDArrayConfig, then
+@@ -1627,6 +1629,19 @@ func (suite *StorageSuite) mdArrayStatusMatches(ctx context.Context, name, devic
+ 	return true
+ }
+ 
++// requireMDArrayIdle waits until the MDArrayStatus reports the resync finished.
++func (suite *StorageSuite) requireMDArrayIdle(ctx context.Context, name string) {
++	suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
++		status, err := safe.StateGetByID[*storageres.MDArrayStatus](ctx, suite.Client.State(), name)
++		if !assert.NoError(collect, err) {
++			return
++		}
 +
-+	_, err := sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, prefix, 50)}})
-+	require.NoError(t, err)
-+
-+	source := internalbgp.NewInstance()
-+	internalbgp.SetInstanceServerForTest(source, sourceServer)
-+
-+	target := internalbgp.NewInstance()
-+	internalbgp.SetInstanceServerForTest(target, targetServer)
-+	target.SetOutputState(nil, []resourcenetwork.BGPImportRouteSpec{{
-+		BGPInstance: "workload",
-+		Prefixes:    []netip.Prefix{netip.MustParsePrefix("198.51.100.0/24")},
-+	}}, 0, netip.Addr{}, 0, true)
-+
-+	instances := map[string]*internalbgp.Instance{"fabric": target, "workload": source}
-+	desired := map[string]struct{}{"fabric": {}, "workload": {}}
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
-+	require.NoError(t, err)
-+	require.Eventually(t, func() bool { return listBGPImportTestPath(t, fabricServer, prefix) != nil }, 5*time.Second, 10*time.Millisecond)
-+
-+	var withdrawals atomic.Int32
-+
-+	require.NoError(t, fabricServer.WatchEvent(ctx, gobgpsrv.WatchEventMessageCallbacks{
-+		OnBestPath: func(paths []*apiutil.Path, _ time.Time) {
-+			for _, path := range paths {
-+				if path.Withdrawal && path.Nlri.String() == prefix.String() {
-+					withdrawals.Add(1)
-+				}
-+			}
-+		},
-+	}, gobgpsrv.WatchBestPath(false)))
-+
-+	updatedPath := newBGPImportTestPath(t, prefix, 75)
-+
-+	_, err = sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{updatedPath}})
-+	require.NoError(t, err)
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
-+	require.NoError(t, err)
-+
-+	require.Eventually(t, func() bool {
-+		path := listBGPImportTestPath(t, fabricServer, prefix)
-+
-+		return path != nil && importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, path).Value == 75
-+	}, 5*time.Second, 10*time.Millisecond)
-+
-+	assert.Zero(t, withdrawals.Load(), "a changed imported path must replace the old one without a withdrawal")
-+
-+	// the replacement must still be removable once the source withdraws it
-+	require.NoError(t, sourceServer.DeletePath(apiutil.DeletePathRequest{Paths: []*apiutil.Path{updatedPath}}))
-+
-+	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
-+	require.NoError(t, err)
-+
-+	require.Eventually(t, func() bool { return listBGPImportTestPath(t, fabricServer, prefix) == nil }, 5*time.Second, 10*time.Millisecond)
++		assert.Equal(collect, storageres.MDArrayPhaseReady, status.TypedSpec().Status)
++		assert.Equal(collect, "idle", status.TypedSpec().SyncAction)
++	}, raidAssertTimeout, raidAssertInterval, "MD array %q did not return to ready/idle", name)
 +}
 +
- func connectBGPImportTestFabric(
- 	t *testing.T,
- 	ctx context.Context,
+ // mdArrayStatusIsUnmanaged reports whether the MDArrayStatus with the given ID is marked
+ // Unmanaged with the expected device and exactly the expected members.
+ func (suite *StorageSuite) mdArrayStatusIsUnmanaged(ctx context.Context, id, device string, members []string) bool {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15067** (closed): Feat/bgp dynamic neighbors (@XT-Phate)
+- **PR #15062** (2026-11-24): test: wait for MD arrays to finish rebuilding (@shanduur)
+- **PR #15060** (2026-11-24): fix: allow user etc files under iscsi and nvme (@frezbo)
+- **PR #15059** (2026-11-24): release(v1.14.7): prepare release (@smira)
+- **PR #15058** (2026-11-24): fix: enable write-intent bitmap on created md arrays (@shanduur)
 - **PR #15053** (2026-11-23): fix: request redaction in dashboard containers view (@majabojarska)
-- **PR #15050** (2026-11-23): test: wait for full output in TestNetworkModes (containers) (@majabojarska)
-- **PR #15049** (2026-11-23): feat: make InlineDataVolumeConfig optionally redactable (@majabojarska)
-- **PR #15048** (2026-11-23): fix: keep node cordoned during talosctl drain (@shanduur)
-- **PR #15047** (2026-11-23): fix: end followed file logs when volumes are torn down (@frezbo)
-- **PR #15045** (2026-11-23): feat: add InlineDataVolumeConfig for ConfigMap-style volumes (@majabojarska)
 
 ---
 
@@ -2497,35 +2798,42 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep node cordoned during talosctl drain
+## X. allow user etc files under iscsi and nvme
 
 **RULE**:
-When implementing operations in `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/machinery/config/types/runtime/etc_file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9c11bef`: keep node cordoned during talosctl drain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba1142dd`: allow user etc files under iscsi and nvme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/runtime/etc_file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
-			Message: fmt.Sprintf("%s: error draining node: %v", nodeName, err),
-	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
+	"iscsi/initiatorname.iscsi",
+	"nvme/hostid",
+	"nvme/hostnqn",
+	for _, managed := range managedEtcFiles {
+		// a file at a managed file's parent directory path would break writing the managed file
+		if path == managed || strings.HasPrefix(managed, path+"/") {
+			return fmt.Errorf("user etc file %q is managed by Talos", path)
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
-			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
-	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
+	"slices"
+	"iscsi/",
+	"nvme/",
+	if slices.Contains(managedEtcFiles, path) {
+		return fmt.Errorf("user etc file %q is managed by Talos", path)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9c11bef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba1142dd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
