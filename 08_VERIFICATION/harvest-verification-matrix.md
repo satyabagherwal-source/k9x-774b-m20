@@ -12544,3 +12544,7 @@
 | `CYCLE-20261124-J4WE` | `2026-11-24T00:57:23.342Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10161` | Yes (`84b4441d...`) |
 | `CYCLE-20261124-J8N7` | `2026-11-24T00:57:28.195Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10162` | Yes (`190e9656...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:58:04.505Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0B02F7F4` [Domain F] | Yes (`40ed087e...`) |
+| `CYCLE-20261124-VXKB` | `2026-11-24T01:07:20.363Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10163` | Yes (`e4f9f44c...`) |
+| `CYCLE-20261124-VXSR` | `2026-11-24T01:07:20.667Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10164` | Yes (`fb381402...`) |
+| `CYCLE-20261124-VZD7` | `2026-11-24T01:07:22.699Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10165` | Yes (`801ecb3c...`) |
+| `CYCLE-20261124-W13I` | `2026-11-24T01:07:24.942Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`51e4d066...`) |

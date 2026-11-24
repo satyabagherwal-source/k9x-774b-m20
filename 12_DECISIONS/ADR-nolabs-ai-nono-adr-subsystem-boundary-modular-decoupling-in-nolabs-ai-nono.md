@@ -4,17 +4,17 @@
 {
   "source_repository": "nolabs-ai/nono",
   "source_url": "https://github.com/nolabs-ai/nono",
-  "source_version": "da971852",
+  "source_version": "d0c52cdf",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T20:38:57.692Z",
+  "timestamp": "2026-11-24T01:07:23.040Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nolabs-ai-nono",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `da971852`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T20:38:57.692Z`  
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `d0c52cdf`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:07:23.040Z`  
 > **Learning ID**: `learn-github-nolabs-ai-nono`
 
 
@@ -30,7 +30,7 @@ During deep inspection of nolabs-ai/nono, modular boundaries, performance charac
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:38:56.346Z  
+> **Harvest Timestamp**: 2026-11-24T01:07:21.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of nolabs-ai/nono, modular boundaries, performance charac
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5080 stars
+- **Stars / Engagement**: 5081 stars
 
 ---
 
@@ -2993,780 +2993,548 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da971852` (2026-11-23)
-**Commit Message**: fix(cli): improve platform enrollment and audit delivery (#2356)
+### Incident Patch 1: `d0c52cdf` (2026-11-23)
+**Commit Message**: feat(network-policy): add TypeSafe API endpoint (#2360)
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+* feat(network-policy): add TypeSafe API endpoint
 
-**File**: `crates/nono-cli/src/audit_client.rs` (modified, +301/-22)
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+* feat(scrub): add TYPESAFE_API_KEY to default sensitive env vars
+
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/data/network-policy.json` (modified, +1/-0)
 ```diff
-@@ -1,4 +1,7 @@
--//! Durable final-session audit delivery for audit-only platform enrollment.
-+//! Durable delivery of completed platform audit sessions.
-+
-+mod delivery;
-+pub(crate) use delivery::DeliveryWorker;
+@@ -17,6 +17,7 @@
+         "api.mistral.ai",
+         "api.cohere.com",
+         "api.together.xyz",
++        "api.typesafe.ai",
+         "api.fireworks.ai",
+         "api.deepseek.com",
+         "api.perplexity.ai",
+```
+
+**File**: `crates/nono/src/scrub.rs` (modified, +1/-0)
+```diff
+@@ -60,6 +60,7 @@ const SENSITIVE_ENV_VARS: &[&str] = &[
+     "NONO_PROXY_TOKEN",
+     "OPENAI_API_KEY",
+     "TOGETHER_API_KEY",
++    "TYPESAFE_API_KEY",
+ ];
  
- use crate::cli::{AuditStatusArgs, AuditSyncArgs};
- use crate::output::{SummaryKind, summary_heading, summary_row};
-@@ -193,10 +196,31 @@ pub(crate) fn maybe_ship_session(session_dir: &Path, metadata: &SessionMetadata)
-     let Some(state) = session_origin(session_dir)? else {
-         return Ok(());
-     };
--    let queued = build_queued_audit(session_dir, metadata, &state)?;
-+    if let Some((path, queued)) = queue_session(session_dir, metadata, &state)? {
-+        let origin = queued_origin(&queued, Some(&state))?;
-+        deliver_queued(origin, &path, &queued, Duration::from_secs(15))?;
+ /// Redaction policy for diagnostics and persisted command context.
+```
+
+---
+
+### Incident Patch 2: `5fb1bfa8` (2026-11-23)
+**Commit Message**: feat(sandbox): run proxied commands in the session network namespace (#2353)
+
+* feat(sandbox): run proxied commands in the session network namespace
+
+Mediated commands setns into the isolated session netns and reach their scoped proxies
+through in-namespace bridges attached at bootstrap.
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+* fix(isolation): reject command network grants that escape isolation
+
+Command allow_all and TCP port grants bypass the namespace; callback ports cannot reach host localhost.
+Adds full-path tests: commands and the agent reach only their own scoped proxy, with and without loopback.
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +33/-0)
+```diff
+@@ -322,6 +322,9 @@ pub struct ExecConfig<'a> {
+     /// `namespaces` requests a mount namespace.
+     #[cfg(target_os = "linux")]
+     pub mount_mask: Option<&'a nono::PreparedMountMask>,
++    /// Command-scoped proxies, bridged into the session network namespace for mediated commands.
++    #[cfg(target_os = "linux")]
++    pub scoped_proxy_handles: &'a [nono_proxy::server::ProxyHandle],
+     /// Allow-list of environment variable names. When set, only variables
+     /// matching a glob pattern (e.g. `"AWS_*"`, `"*_TOKEN"`, `"*SECRET*"`) are
+     /// passed to the child. Nono-injected credentials always bypass this.
+@@ -1527,6 +1530,36 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
+                 }
+             }
+ 
++            // Mediated commands join the session network namespace and reach their scoped proxies there.
++            #[cfg(target_os = "linux")]
++            if let Some(bootstrap) = clone_bootstrap.as_mut() {
++                let attached = std::mem::take(&mut bootstrap.scoped_bridges)
++                    .into_iter()
++                    .zip(config.scoped_proxy_handles)
++                    .try_for_each(|(bridge, handle)| {
++                        handle
++                            .add_listener(std::net::TcpListener::from(bridge))
++                            .map_err(|e| {
++                                NonoError::SandboxInit(format!(
++                                    "cannot attach command proxy bridge to proxy: {e}"
++                                ))
++                            })
++                    })
++                    .and_then(|()| {
++                        match (bootstrap.session_netns.take(), config.tool_sandbox_runtime) {
++                            (Some((user, net)), Some(runtime)) => {
++                                runtime.set_session_netns(user, net)
++                            }
++                            _ => Ok(()),
++                        }
++                    });
++                if let Err(error) = attached {
++                    let _ = signal::kill(child, Signal::SIGKILL);
++                    let _ = waitpid(child, None);
++                    return Err(error);
++                }
++            }
++
+             // Mount masks are mounts on host dentries; the host removing or
+             // replacing one detaches the mask. Watch for that for the whole
+             // session and terminate the sandbox rather than let it reach the
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files.rs` (modified, +85/-15)
+```diff
+@@ -56,6 +56,10 @@ pub(super) struct Bootstrap {
+     /// Watch over the child's mount masks, pinned after the child applied
+     /// them and before it ran untrusted code.
+     pub mount_watch: Option<nono::MountMaskWatch>,
++    /// In-namespace listeners for `ExecConfig::scoped_proxy_handles`, in the same order.
++    pub scoped_bridges: Vec<OwnedFd>,
++    /// The child's user and network namespaces, which mediated commands join.
++    pub session_netns: Option<(OwnedFd, OwnedFd)>,
+ }
+ 
+ pub(super) struct Command<'a> {
+@@ -101,6 +105,14 @@ fn namespace_confines_tcp(config: &ExecConfig<'_>) -> bool {
+         .is_some_and(|spec| spec.has_network() && spec.loopback_tcp_enabled())
+ }
+ 
++/// Mediated commands join the child's netns unless loopback TCP lets the session reach their bridges.
++fn commands_join_namespace(config: &ExecConfig<'_>) -> bool {
++    config.tool_sandbox_runtime.is_some()
++        && config
++            .namespaces
++            .is_some_and(|spec| spec.has_network() && !spec.loopback_tcp_enabled())
++}
++
+ /// Prepare the child's Landlock policy. With `root` (the child's
+ /// `/proc/<pid>/root` under a mount mask) every rule path is resolved as the
+ /// child sees it, so a grant of a masked directory such as `/tmp` attaches to
+@@ -303,6 +315,16 @@ pub(super) fn spawn(
+     let parent = above_stdio(parent.into())?;
+     let child = above_stdio(child.into())?;
+     let closed_stdio = reserve_stdio()?;
++    let commands_join = commands_join_namespace(config);
++    let mut scoped: Vec<(u16, RawFd)> = if commands_join {
++        config
++            .scoped_proxy_handles
++            .iter()
++            .map(|handle| (handle.port, -1))
++            .collect()
++    } else {
++        Vec::new()
++    };
+     let snapshot = listeners()?;
+     let mut signals = Signals::block()?;
+     // SAFETY: getpid takes no pointers and cannot fail.
+@@ -327,6 +349,7 @@ pub(super) fn spawn(
+             network.as_ref(),
+             namespaces.as_ref(),
+             mount_mask,
++            &mut scoped,
+             gate.as_ref().map(AsRawFd::as_raw_fd),
+             child.as_raw_fd(),
+             parent.as_raw_fd(),
+@@ -347,7 +370,7 @@ pub(super) fn spawn(
+     let mut mount_watch = None;
+     #[cfg(test)]
+     let mut late_fd = None;
+-    let handshake = (|| -> Result<(RawFd, Option<OwnedFd>)> {
++    let handshake = (|| -> Result<(RawFd, Bootstrap)> {
+         // Harden before releasing the child, and before any untrusted code can
+         // exec. The child independently enables inspection for notifications.
+         // SAFETY: prctl changes only the parent's dumpability.
+@@ -492,6 +515,34 @@ pub(super) fn spawn(
+             None if bridge_fd == -1 => None,
+             None => return Err(failure("unexpected bridge listener")),
+         };
++        let mut scoped_bridges = Vec::with_capacity(scoped.len());
++        for &(port, _) in &scoped {
++            let mut record = [0_u8; 4];
++            if !transfer(parent.as_raw_fd(), &mut record, false, Some(pid)) {
++                return Err(failure(
++                    "child died before reporting a command proxy bridge",
++                ));
++            }
++            let fd = i32::from_ne_bytes(record);
++            if fd < 3 {
++                return Err(failure("invalid command proxy bridge slot"));
++            }
++            // SAFETY: same shared-table contract as the session bridge above.
++            let borrowed = unsafe { std::os::fd::BorrowedFd::borrow_raw(fd) };
++            sandbox::validate_bridge_listener(borrowed, port)?;
++            // SAFETY: validated above; ports are distinct, so this is the only parent owner.
++            scoped_bridges.push(unsafe { OwnedFd::from_raw_fd(fd) });
++        }
++        let session_netns = if commands_join {
++            let open = |name: &str| {
++                std::fs::File::open(format!("/proc/{pid}/ns/{name}"))
++                    .map_err(|_| failure("cannot open the child's namespaces"))
++                    .and_then(|file| above_stdio(file.into()))
++            };
++            Some((open("user")?, open("net")?))
++        } else {
++            None
++        };
+         // Use send(MSG_NOSIGNAL) only in the parent; the child's filter traps it.
+         #[cfg(test)]
+         if command.fault == Fault::FailedAck {
+@@ -510,9 +561,19 @@ pub(super) fn spawn(
+         if !transfer(parent.as_raw_fd(), &mut [ack], true, Some(pid)) {
+             return Err(failure("acknowledgment failed"));
+         }
+-        Ok((network_fd, bridge))
++        Ok((
++            network_fd,
++            Bootstrap {
++                child: nix::unistd::Pid::from_raw(pid),
++                network: None,
++                bridge,
++                mount_watch: None,
++                scoped_bridges,
++                session_netns,
++            },
++        ))
+     })();
+-    let (network_fd, bridge) = match handshake {
++    let (network_fd, mut bootstrap) = match handshake {
+         Ok(fds) => fds,
+         Err(error) => {
+         
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files/tests.rs` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@ fn config(caps: &CapabilitySet, filesystem: bool, proxy: bool) -> ExecConfig<'_>
+         sandbox_policy: LinuxSandboxPolicy::Auto,
+         namespaces: None,
+         mount_mask: None,
++        scoped_proxy_handles: &[],
+         allowed_env_vars: None,
+         denied_env_vars: None,
+         case_insensitive_env_vars: false,
+```
+
+**File**: `crates/nono-cli/src/execution_runtime.rs` (modified, +2/-0)
+```diff
+@@ -824,6 +824,8 @@ pub(crate) fn execute_sandboxed(plan: LaunchPlan) -> Result<()> {
+         namespaces,
+         #[cfg(target_os = "linux")]
+         mount_mask: mount_mask.as_ref(),
++        #[cfg(target_os = "linux")]
++        scoped_proxy_handles: &scoped_proxy_handles,
+         allowed_env_vars: flags.allowed_env_vars,
+         denied_env_vars: flags.denied_env_vars,
+         case_insensitive_env_vars: flags.case_insensitive_env_vars,
+```
+
+**File**: `crates/nono-cli/src/isolation.rs` (modified, +108/-1)
+```diff
+@@ -102,7 +102,48 @@ pub(crate) fn validate_config(args: &SandboxArgs, prepared: &PreparedSandbox) ->
+     if !prepared.no_proxy.is_empty() {
+         conflicts.push("network.no_proxy (hosts that bypass the proxy)");
+     }
+-    reject_direct_grants(&conflicts)
++    reject_direct_grants(&conflicts)?;
++    reject_command_network_grants(isolate, prepared.command_policies.as_ref())
++}
++
++/// Commands with direct grants stay on the host and bypass isolation; proxied ones join it and lose host localhost.
++fn reject_command_network_grants(
++    isolate: &LinuxIsolateConfig,
++    policies: Option<&crate::command_policy::CommandPoliciesConfig>,
++) -> Result<()> {
++    let networks: Vec<_> = policies
++        .into_iter()
++        .flat_map(|p| &p.commands)
++        .filter_map(|(name, c)| Some((name.as_str(), c.sandbox.as_ref()?.network.as_ref()?)))
++        .collect();
++    let names = |grants: fn(&crate::command_policy::CommandNetworkConfig) -> bool| {
++        networks
++            .iter()
++            .filter(|(_, n)| grants(n))
++            .map(|(name, _)| *name)
++            .collect::<Vec<_>>()
++            .join(", ")
++    };
++    let direct =
++        names(|n| n.allow_all || !n.tcp_connect_ports.is_empty() || !n.tcp_bind_ports.is_empty());
++    if !direct.is_empty() {
++        return Err(NonoError::ConfigParse(format!(
++            "linux.isolate.network (--isolate net) cannot be combined with command \
++             network.allow_all, network.tcp_connect_ports or network.tcp_bind_ports, because \
++             those commands would reach the network directly from the host: {direct}. Use \
++             network.allow_domain, or do not use network isolation."
++        )));
++    }
++    let callbacks = names(|n| !n.open_port.is_empty() || !n.open_port_range.is_empty());
++    if isolate.loopback || callbacks.is_empty() {
++        return Ok(());
++    }
++    Err(NonoError::ConfigParse(format!(
++        "linux.isolate.network (--isolate net) cannot be combined with command \
++         network.open_port or network.open_port_range, because mediated commands run in the \
++         isolated namespace where host localhost ports are unreachable: {callbacks}. Remove \
++         these grants, add linux.isolate.loopback, or do not use network isolation."
++    )))
+ }
+ 
+ /// `loopback` lifts TCP enforcement on the grounds that the network namespace
+@@ -570,6 +611,72 @@ mod tests {
+         assert!(message.contains("connect_port"), "{message}");
+     }
+ 
++    #[test]
++    fn command_network_grants_are_rejected_under_isolation() {
++        use crate::command_policy::{
++            CommandNetworkConfig, CommandPoliciesConfig, CommandPolicyConfig, CommandSandboxConfig,
++        };
++        let policies = |network: CommandNetworkConfig| {
++            let sandbox = CommandSandboxConfig {
++                network: Some(network),
++                ..Default::default()
++            };
++            let mut policies = CommandPoliciesConfig::default();
++            policies.commands.insert(
++                "tool".into(),
++                CommandPolicyConfig {
++                    sandbox: Some(sandbox),
++                    ..Default::default()
++                },
++            );
++            policies
++                .commands
++                .insert("git".into(), CommandPolicyConfig::default());
++            policies
++        };
++        let loopback = LinuxIsolateConfig {
++            loopback: true,
++            ..isolate_network()
++        };
++        let callback = policies(CommandNetworkConfig {
++            open_port: vec![8250],
++            ..Default::default()
++        });
++        let message = reject_command_network_grants(&isolate_network(), Some(&callback))
++            .expect_err("open_port")
++            .to_string();
++        assert!(
++            message.contains("unreachable: tool") && !message.contains("git"),
++            "{message}"
++        );
++        assert!(reject_command_network_grants(&loopback, Some(&callback)).is_ok());
++        for direct in [
++            CommandNetworkConfig {
++                allow_all: true,
++                ..Default::default()
++            },
++            CommandNetworkConfig {
++                tcp_connect_ports: vec![22],
++                ..Default::default()
++            },
++            CommandNetworkConfig {
++                tcp_bind_ports: vec![8080],
++                ..Default::default()
++            },
++        ] {
++            for isolate in [&isolate_network(), &loopback] {
++                let error = reject_command_network_grants(isolate, Some(&policies(direct.clone())));
++                assert!(
++                    error
++                        .expect_err("direct")
++                        .to_string()
++                        .contains("directly from the host: tool")
++                );
++            }
++        }
++        assert!(reject_command_network_grants(&isolate_network(), None).is_ok());
++    }
++
+     #[test]
+     fn non_network_isolation_ignores_network_m
+```
+
+**File**: `crates/nono-cli/src/tool-sandbox/platform/linux.rs` (modified, +144/-5)
+```diff
+@@ -130,6 +130,8 @@ struct ToolSandboxState {
+     proxy_trust_bundle_paths: Vec<PathBuf>,
+     scoped_proxy_env_vars: BTreeMap<String, Vec<(String, String)>>,
+     reserved_proxy_ports: BTreeSet<u16>,
++    /// User and network namespaces of an isolated session, joined by eligible commands.
++    session_netns: std::sync::OnceLock<(OwnedFd, OwnedFd)>,
+     active_children: Mutex<HashMap<u32, ActiveChild>>,
+     /// Attributes severed-ancestry callers to their spawning command. See `lineage_cgroup`.
+     lineage: LineageMarker,
+@@ -417,6 +419,7 @@ impl PreparedToolSandboxRuntime {
+                 proxy_trust_bundle_paths: proxy_trust_bundle_paths.to_vec(),
+                 scoped_proxy_env_vars: scoped_proxy_env_vars.clone(),
+                 reserved_proxy_ports: reserved_proxy_ports.clone(),
++                session_netns: std::sync::OnceLock::new(),
+                 active_children: Mutex::new(HashMap::new()),
+                 lineage,
+                 active_count: AtomicUsize::new(0),
+@@ -454,6 +457,14 @@ impl PreparedToolSandboxRuntime {
+         vec![("PATH".to_string(), self.inner.session_path.clone())]
+     }
+ 
++    pub(crate) fn set_session_netns(&self, user: OwnedFd, net: OwnedFd) -> Result<()> {
++        self.inner.session_netns.set((user, net)).map_err(|_| {
++            NonoError::SandboxInit(
++                "command-mediation session network namespace is already set".to_string(),
++            )
++        })
++    }
++
+     pub(crate) fn broker_secret_env_vars(
+         &self,
+         secrets: &[nono::LoadedSecret],
+@@ -871,7 +882,10 @@ fn run_shim(shim_exe: &Path, socket_path: &Path) -> Result<()> {
+     std::process::exit(response.exit_code);
+ }
+ 
+-fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command> {
++fn prepare_launcher_command(
++    state: &ToolSandboxState,
++    spec: &ToolSandboxChildLaunchSpec,
++) -> Result<Command> {
+     let binary = OsStr::from_bytes(&spec.real_binary);
+     let binary_fd = open_and_verify_binary(binary, spec)?;
+     let caps = caps_from_spec(&spec.caps)?;
+@@ -897,6 +911,7 @@ fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command
+         .args(spec.argv.iter().skip(1).map(|arg| OsStr::from_bytes(arg)))
+         .current_dir(OsStr::from_bytes(&spec.cwd))
+         .env_clear();
++    install_session_netns_join(state, spec.session_netns, &mut command)?;
+     for entry in &spec.env {
+         let (name, value) = split_env_entry(entry).ok_or_else(|| {
+             NonoError::SandboxInit("invalid command-mediation environment entry".into())
+@@ -3655,6 +3670,7 @@ fn build_child_launch_spec_for_binary(
+         stdio_mode: selected_stdio_mode(request).to_string(),
+         stdio_limits: stdio_limits_from_policy(policy),
+         caps: caps_to_spec(&caps),
++        session_netns: state.session_netns.get().is_some() && joins_session_netns(&caps),
+         allowed_exec_paths,
+         expected_dev: binary.dev,
+         expected_ino: binary.ino,
+@@ -4509,6 +4525,44 @@ fn install_lineage_attach(
+     Ok(())
+ }
+ 
++/// Proxy-routed commands join the session netns; direct TCP grants need the host network.
++fn joins_session_netns(caps: &CapabilitySet) -> bool {
++    matches!(caps.network_mode(), NetworkMode::ProxyOnly { .. })
++        && caps.tcp_connect_ports().is_empty()
++        && caps.tcp_bind_ports().is_empty()
++}
++
++fn install_session_netns_join(
++    state: &ToolSandboxState,
++    join: bool,
++    command: &mut Command,
++) -> Result<()> {
++    if !join {
++        return Ok(());
++    }
++    let (user, net) = state
++        .session_netns
++        .get()
++        .map(|(user, net)| (user.as_raw_fd(), net.as_raw_fd()))
++        .ok_or_else(|| {
++            NonoError::SandboxInit(
++                "command-mediation session network namespace is unavailable".to_string(),
++            )
++        })?;
++    // SAFETY: setns is async-signal-safe; an error fails the spawn, so the command never runs outside the namespace.
++    unsafe {
++        command.pre_exec(move || {
++            for (fd, kind) in [(user, libc::CLONE_NEWUSER), (net, libc::CLONE_NEWNET)] {
++                if libc::setns(fd, kind) != 0 {
++                    return Err(std::io::Error::last_os_error());
++                }
++            }
++            Ok(())
++        });
 +    }
 +    Ok(())
 +}
 +
-+fn queue_session(
-+    session_dir: &Path,
-+    metadata: &SessionMetadata,
-+    state: &PlatformState,
-+) -> Result<Option<(PathBuf, QueuedAudit)>> {
-+    let _lock = delivery::lock_queue(true)?;
-+    if session_dir.join(RECEIPT_FILENAME).is_file() {
-+        return Ok(None);
-+    }
-+    for path in queued_paths()? {
-+        if queued_session_id(&path).as_deref() == Some(&metadata.session_id) {
-+            return Ok(Some((path.clone(), load_queued(&path)?)));
-+        }
-+    }
-+    let queued = build_queued_audit(session_dir, metadata, state)?;
-     let path = outbox_path(queued.ingest_id())?;
-     write_json_secure(&path, &queued)?;
--    deliver_queued(&state, &path, &queued)
-+    Ok(Some((path, queued)))
- }
- 
- pub(crate) fn run_sync(args: AuditSyncArgs) -> Result<()> {
-@@ -206,12 +230,9 @@ pub(crate) fn run_sync(args: AuditSyncArgs) -> Result<()> {
-     let mut failures = recover_missing_queue_items()?;
-     for path in queued_paths()? {
-         attempted += 1;
--        let result = load_queued(&path).and_then(|queued| {
--            let origin = queued_origin(&queued, state.as_ref())?;
--            deliver_queued(origin, &path, &queued)
--        });
-+        let result = deliver_path(&path, state.as_ref(), Duration::from_secs(15));
-         match result {
--            Ok(()) => delivered += 1,
-+            Ok(delivered_now) => delivered += usize::from(delivered_now),
-             Err(error) => failures.push(format!("{}: {error}", path.display())),
-         }
+ fn launch_child(
+     state: &ToolSandboxState,
+     command_name: &str,
+@@ -4545,7 +4599,7 @@ fn launch_child_with_direct_fds(
+     if spec.stdio_limits.is_some() {
+         return launch_child_with_brokered_stdio(state, command_name, launch_caller, spec, stdio);
      }
-@@ -231,7 +252,7 @@ pub(crate) fn run_sync(args: AuditSyncArgs) -> Result<()> {
-     } else if summary.attempted == 0 && summary.failures.is_empty() {
-         println!("No pending audit uploads.");
-     } else {
--        let kind = if summary.failures.is_empty() {
-+        let kind = if summary.failures.is_empty() && summary.remaining == 0 {
-             SummaryKind::Success
-         } else {
-             SummaryKind::Attention
-@@ -248,12 +269,15 @@ pub(crate) fn run_sync(args: AuditSyncArgs) -> Result<()> {
-             eprintln!("  {failure}");
-         }
-     }
--    if summary.failures.is_empty() {
-+    if summary.failures.is_empty() && summary.remaining == 0 {
-         Ok(())
-     } else {
--        Err(NonoError::ActionRequired(
--            "some audit sessions could not be delivered; retry `nono audit sync`".to_string(),
--        ))
-+        let message = if summary.failures.is_empty() {
-+            "audit uploads remain queued; another delivery may be in progress. Retry `nono audit sync` after it finishes"
-+        } else {
-+            "some audit sessions remain queued; review the per-upload errors before retrying"
-+        };
-+        Err(NonoError::ActionRequired(message.into()))
-     }
- }
+-    let mut command = prepare_launcher_command(spec)?;
++    let mut command = prepare_launcher_command(state, spec)?;
+     command
+         .stdin(Stdio::from(File::from(stdio.stdin)))
+         .stdout(Stdio::from(File::from(stdio.stdout)))
+@@ -4580,7 +4634,7 @@ fn launch_child_with_brokered_stdio(
+         stderr,
+     } = stdio;
  
-@@ -313,7 +337,10 @@ pub(crate) fn run_status(args: AuditStatusArgs) -> Result<()> {
-         if enrolled {
-             print!(
-                 "{}",
--                summary_row("Delivery", "Automatic when sessions finish")
-+                summary_row(
-+                    "Delivery",
-+                    "On completion; pending uploads retry during sessions"
-+                )
-             );
-         }
-         println!(
-@@ -380,7 +407,31 @@ fn build_queued_audit(
-     }))
- }
- 
--fn deliver_queued(state: &PlatformState, path: &Path, queued: &QueuedAudit) -> Result<()> {
-+fn deliver_path(path: &Path, active: Option<&PlatformState>, timeout: Duration) -> Result<bool> {
-+    let queued = match load_queued(path) {
-+        Err(NonoError::ConfigRead { source, .. })
-+            if source.kind() == std::io::ErrorKind::NotFound =>
-+        {
-+            return Ok(false);
-+        }
-+        result => result?,
-+    };
-+    let origin = queued_origin(&queued, active)?;
-+    deliver_queued(origin, path, &queued, timeout)
-+}
-+
-+fn deliver_queued(
-+    state: &PlatformState,
-+    path: &Path,
-+    queued: &QueuedAudit,
-+    timeout: Duration,
-+) -> Result<bool> {
-+    let Some(_lock) = delivery::lock_queue(false)? else {
-+        return Ok(false);
-+    };
-+    if !path.exists() {
-+        return Ok(false);
-+    }
-     let endpoint = endpoint_url(&state.platform_url, "/api/v1/audit/ingest")?;
-     let request_path = url::Ur
+-    let mut command = prepare_launcher_command(spec)?;
++    let mut comm
 ```
 
-**File**: `crates/nono-cli/src/audit_client/delivery.rs` (added, +159/-0)
+**File**: `crates/nono-cli/src/tool-sandbox/platform/macos.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,159 @@
-+use super::*;
-+use nix::fcntl::{Flock, FlockArg};
-+use std::fs::{File, OpenOptions};
-+use std::os::unix::fs::OpenOptionsExt;
-+use std::sync::mpsc::{self, Receiver, Sender};
-+use std::thread::{self, JoinHandle};
-+use std::time::Instant;
-+
-+const RETRY_INTERVAL: Duration = Duration::from_secs(30);
-+const MAX_RETRY_INTERVAL: Duration = Duration::from_secs(300);
-+const REQUEST_TIMEOUT: Duration = Duration::from_secs(5);
-+const MAX_BATCH: usize = 8;
-+const BATCH_BUDGET: Duration = Duration::from_secs(10);
-+
-+pub(crate) struct DeliveryWorker {
-+    stop: Sender<()>,
-+    thread: Option<JoinHandle<()>>,
-+}
-+
-+impl DeliveryWorker {
-+    // Start only in the supervisor parent after fork.
-+    pub(crate) fn start() -> Result<Option<Self>> {
-+        if queued_count()? == 0 && load_state()?.is_none() {
-+            return Ok(None);
-+        }
-+        let (stop, receiver) = mpsc::channel();
-+        let thread = thread::Builder::new()
-+            .name("nono-audit-delivery".into())
-+            .spawn(move || run(receiver))
-+            .map_err(|error| NonoError::Snapshot(format!("start audit delivery: {error}")))?;
-+        Ok(Some(Self {
-+            stop,
-+            thread: Some(thread),
-+        }))
-+    }
-+}
-+
-+impl Drop for DeliveryWorker {
-+    fn drop(&mut self) {
-+        let _ = self.stop.send(());
-+        if let Some(thread) = self.thread.take() {
-+            let _ = thread.join();
-+        }
-+    }
-+}
-+
-+fn run(stop: Receiver<()>) {
-+    let mut delay = RETRY_INTERVAL;
-+    let mut cursor = None;
-+    loop {
-+        if stop.try_recv() != Err(mpsc::TryRecvError::Empty) {
-+            return;
-+        }
-+        let failed = match retry_batch(&stop, &mut cursor) {
-+            Ok(Some(failed)) => failed,
-+            Ok(None) => return,
-+            Err(error) => {
-+                tracing::warn!("Audit uploads remain queued; run `nono audit sync`: {error}");
-+                true
-+            }
-+        };
-+        let wait = if failed { delay } else { RETRY_INTERVAL };
-+        delay = retry_delay(delay, failed);
-+        if stop.recv_timeout(wait) != Err(mpsc::RecvTimeoutError::Timeout) {
-+            return;
-+        }
-+    }
-+}
-+
-+fn retry_delay(previous: Duration, failed: bool) -> Duration {
-+    if failed {
-+        previous.saturating_mul(2).min(MAX_RETRY_INTERVAL)
-+    } else {
-+        RETRY_INTERVAL
-+    }
-+}
-+
-+pub(super) fn retry_batch(
-+    stop: &Receiver<()>,
-+    cursor: &mut Option<PathBuf>,
-+) -> Result<Option<bool>> {
-+    let started = Instant::now();
-+    let active = match load_state() {
-+        Ok(state) => state,
-+        Err(error) => {
-+            tracing::warn!("Cannot load current enrollment for legacy audit uploads: {error}");
-+            None
-+        }
-+    };
-+    let mut failed = false;
-+    let mut paths = queued_paths()?;
-+    if let Some(last) = cursor {
-+        let next = paths.partition_point(|path| path <= last);
-+        paths.rotate_left(next);
-+    }
-+    for path in paths.into_iter().take(MAX_BATCH) {
-+        if stop.try_recv() != Err(mpsc::TryRecvError::Empty) {
-+            return Ok(None);
-+        }
-+        if started.elapsed() >= BATCH_BUDGET {
-+            break;
-+        }
-+        *cursor = Some(path.clone());
-+        let result = deliver_path(&path, active.as_ref(), REQUEST_TIMEOUT);
-+        if let Err(error) = result {
-+            failed = true;
-+            tracing::warn!("Audit upload remains queued: {error}");
-+        }
-+    }
-+    Ok(Some(failed))
-+}
-+
-+pub(super) fn lock_queue(blocking: bool) -> Result<Option<Flock<File>>> {
-+    let dir = crate::state_paths::user_state_dir()?;
-+    fs::create_dir_all(&dir).map_err(|source| NonoError::ConfigWrite {
-+        path: dir.clone(),
-+        source,
-+    })?;
-+    let path = dir.join("audit-delivery.lock");
-+    let file = OpenOptions::new()
-+        .create(true)
-+        .truncate(false)
-+        .read(true)
-+        .write(true)
-+        .mode(0o600)
-+        .custom_flags(nix::libc::O_NOFOLLOW)
-+        .open(&path)
-+        .map_err(|source| NonoError::ConfigWrite {
-+            path: path.clone(),
-+            source,
-+        })?;
-+    match Flock::lock(
-+        file,
-+        if blocking {
-+            FlockArg::LockExclusive
-+        } else {
-+            FlockArg::LockExclusiveNonblock
-+        },
-+    ) {
-+        Ok(lock) => Ok(Some(lock)),
-+        Err((_, nix::errno::Errno::EWOULDBLOCK)) if !blocking => Ok(None),
-+        Err((_, errno)) => Err(NonoError::ConfigWrite {
-+            path,
-+            source: std::io::Error::from(errno),
-+        }),
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn retries_back_off_and_recover() {
-+        assert_eq!(retry_delay(RETRY_INTERVAL, true), Duration::from_secs(60));
-+        assert_eq!(retry_delay(MAX_RETRY_INTERVAL, true), MAX_RETRY_INTERVAL);
-+        assert_eq!(retry_delay(MAX_RETRY_INTERVAL, false), RETRY_INTERVAL);
-+    }
-+}
+@@ -3131,6 +3131,7 @@ fn build_child_launch_spec_for_binary(
+         stdio_mode: selected_stdio_mode(request).to_string(),
+         stdio_limits: stdio_limits_from_policy(policy),
+         caps: caps_to_spec(&caps),
++        session_netns: false,
+         allowed_exec_paths: Vec::new(),
+         expected_dev: binary.dev,
+         expected_ino: binary.ino,
 ```
 
-**File**: `crates/nono-cli/src/cli.rs` (modified, +4/-0)
+**File**: `crates/nono-cli/src/tool-sandbox/protocol.rs` (modified, +3/-0)
 ```diff
-@@ -2872,6 +2872,10 @@ pub struct PlatformEnrollArgs {
- #[derive(Parser, Debug)]
- #[command(disable_help_flag = true)]
- pub struct LoginArgs {
-+    /// Operator-facing label for this installation
-+    #[arg(long)]
-+    pub name: Option<String>,
-+
-     /// Platform origin for a self-hosted platform; defaults to the platform
-     /// you last signed in to, else https://app.nolabs.ai
-     #[arg(long, env = "NONO_PLATFORM_URL")]
-```
-
-**File**: `crates/nono-cli/src/login_cmd.rs` (modified, +46/-5)
-```diff
-@@ -62,6 +62,16 @@ struct Authorized {
- 
- pub(crate) fn run_login(mut args: LoginArgs) -> Result<()> {
-     reject_if_sandboxed("platform login")?;
-+    if args.name.is_some() && args.no_enroll {
-+        return Err(NonoError::ActionRequired(
-+            "--name cannot be used with --no-enroll or NONO_NO_ENROLL=true".into(),
-+        ));
-+    }
-+    if let Some(name) = &args.name {
-+        args.name = Some(device_name(Some(name)).ok_or_else(|| {
-+            NonoError::ActionRequired("device name must contain visible characters".into())
-+        })?);
-+    }
-     if args.re_enroll && args.no_enroll {
-         return Err(NonoError::ActionRequired(
-             "re-enroll cannot be used with --no-enroll or NONO_NO_ENROLL=true; disable the opt-out before recovery".into(),
-@@ -166,7 +176,7 @@ pub(crate) fn run_login(mut args: LoginArgs) -> Result<()> {
-     }
-     let new_key = session::create_key()?;
-     let key = &new_key.key;
--    let device_name = device_name(None);
-+    let device_name = device_name(args.name.as_deref());
-     let mut scope = platform_oauth::login_scope();
-     if !args.no_enroll && server.enrollment_endpoint.is_some() {
-         scope.push(' ');
-@@ -240,7 +250,7 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
-     let enrollment = if args.no_enroll {
-         Ok(EnrollmentResult::Skipped)
-     } else {
--        enroll_device(&record, args.re_enroll)
-+        enroll_device(&record, args.re_enroll, args.name.as_deref())
-     };
-     print!(
-         "{}",
-@@ -277,7 +287,11 @@ enum EnrollmentResult {
-     Active,
- }
- 
--fn enroll_device(record: &session::SessionRecord, re_enroll: bool) -> Result<EnrollmentResult> {
-+fn enroll_device(
-+    record: &session::SessionRecord,
-+    re_enroll: bool,
-+    name: Option<&str>,
-+) -> Result<EnrollmentResult> {
-     use crate::login_enrollment::{EnrollmentIntent, LoginEnrollmentRequest};
-     let server = client::discover(&record.platform_url)?;
-     if server.enrollment_endpoint.is_none() {
-@@ -292,6 +306,15 @@ fn enroll_device(record: &session::SessionRecord, re_enroll: bool) -> Result<Enr
-     if re_enroll && previous.is_none() {
-         return Ok(EnrollmentResult::NotEnrolled);
-     }
-+    if re_enroll
-+        && previous.as_ref().is_some_and(|previous| {
-+            previous.platform_url != record.platform_url || previous.tenant_id != record.tenant_id
-+        })
-+    {
-+        return Err(NonoError::ActionRequired(
-+            "recovery must use the original platform and tenant".into(),
-+        ));
-+    }
-     let (key_ref, key) = match (&previous, re_enroll) {
-         (Some(previous), true) => crate::device_key::replacement(
-             &record.issuer,
-@@ -309,7 +332,9 @@ fn enroll_device(record: &session::SessionRecord, re_enroll: bool) -> Result<Enr
-             &record.user_subject,
-         )?,
-     };
--    let display_name = device_name(None).unwrap_or_else(|| "nono device".into());
-+    let previous_name = platform_client::enrollment_display_name()?;
-+    let display_name =
-+        device_name(name.or(previous_name.as_deref())).unwrap_or_else(|| "nono device".into());
-     let intent = EnrollmentIntent {
-         protocol_version: "1".into(),
-         issuer: record.issuer.clone(),
-@@ -389,6 +414,7 @@ fn enroll_device(record: &session::SessionRecord, re_enroll: bool) -> Result<Enr
-     }
-     platform_client::validate_wire_identifier("subject id", &response.subject_id)?;
-     let policy_trust_root = response.policy_trust_root;
-+    let confirmed_previous = response.replaces_subject_id;
-     let state = platform_client::PlatformState {
-         protocol_version: response.protocol_version,
-         platform_url: record.platform_url.clone(),
-@@ -404,7 +430,20 @@ fn enroll_device(record: &session::SessionRecord, re_enroll: bool) -> Result<Enr
-         previous.subject_id == state.subject_id && previous.key_ref == state.key_ref
-     });
-     crate::platform_policy::pin_enrollment_key(&state, policy_trust_root)?;
--    platform_client::save_login_enrollment(state, record, &display_name)?;
-+    if re_enroll {
-+        let previous = previous
-+            .as_ref()
-+            .ok_or_else(|| NonoError::ActionRequired("no enrollment to replace".into()))?;
-+        platform_client::save_login_replacement(
-+            state,
-+            record,
-+            &display_name,
-+            previous,
-+            confirmed_previous.as_deref(),
-+        )?;
-+    } else {
-+        platform_client::save_login_enrollment(state, record, &display_name)?;
-+    }
-     Ok(if re_enroll {
-         EnrollmentResult::Reenrolled
-     } else if reused {
-@@ -421,6 +460,7 @@ pub(crate) fn run_tenant(args: TenantArgs) -> Result<()> {
-             let record = platform_oauth::refresh_memberships()?;
-             record.find_organization(&args.tenant)?;
-             let login = LoginArgs {
-+                name: None,
-                 url: None,
-                 tenant: Some(args.tenant),
-                 no_enroll: args.no_enroll,
-@@ -1040,6 +10
-```
-
-**File**: `crates/nono-cli/src/platform_client.rs` (modified, +184/-9)
-```diff
-@@ -57,6 +57,8 @@ struct EnrollmentExchangeRequest {
- 
- #[derive(Debug, Deserialize)]
- pub(crate) struct EnrollmentExchangeResponse {
+@@ -91,6 +91,9 @@ pub(crate) struct ToolSandboxChildLaunchSpec {
+     pub(crate) stdio_mode: String,
+     pub(crate) stdio_limits: Option<StdioLimitSpec>,
+     pub(crate) caps: ChildCapsSpec,
++    /// The launcher runs in the session's loopback-only network namespace, which confines UDP.
 +    #[serde(default)]
-+    pub replaces_subject_id: Option<String>,
-     #[serde(default)]
-     pub policy_trust_root: Option<crate::platform_policy::protocol::PolicyTrustRoot>,
-     pub protocol_version: String,
-@@ -210,22 +212,30 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
-         None => None,
-     };
-     if args.json {
-+        let last_verified_mode = policy
-+            .as_ref()
-+            .filter(|_| args.refresh)
-+            .map(|policy| policy.management_mode.as_str())
-+            .or_else(|| {
-+                stored
-+                    .as_ref()
-+                    .and_then(|stored| stored.last_policy_mode.as_deref())
-+            });
-         let mut output = match &stored {
-             Some(stored) => serde_json::json!({
-                 "enrolled": !stored.revoked,
-                 "platform_url": stored.state.platform_url,
-                 "tenant_id": stored.state.tenant_id,
-                 "subject_id": stored.state.subject_id,
-                 "subject_kind": stored.state.subject_kind,
--                "management_mode": stored.state.management_mode,
-+                "management_mode": policy.as_ref().map(|policy| policy.management_mode.as_str())
-+                    .or(last_verified_mode),
-+                "last_verified_management_mode": last_verified_mode,
-                 "enrolled_at": stored.state.enrolled_at,
-             }),
-             None => serde_json::json!({"enrolled": false}),
-         };
--        if let Some(policy) = &policy {
--            output["management_mode"] = serde_json::json!(policy.management_mode);
--        }
--        if policy.is_some() || args.refresh {
-+        if stored.is_some() {
-             output["policy_assignment"] =
-                 serde_json::to_value(&policy).map_err(|e| NonoError::ConfigParse(e.to_string()))?;
-             output["policy_refreshed"] = serde_json::json!(args.refresh && policy.is_some());
-@@ -322,7 +332,10 @@ fn status_text(
-             &crate::theme::fg(&device, if stored.revoked { t.yellow } else { t.text }).to_string(),
-         ));
-         text.push_str(&crate::platform_policy::display::status_rows(
--            policy, previous, refreshed,
-+            policy,
-+            previous,
-+            refreshed,
-+            stored.last_policy_mode.as_deref(),
-         ));
-         let audit = if stored.revoked {
-             Some("Unavailable · enrollment revoked".into())
-@@ -597,7 +610,17 @@ pub(crate) fn save_login_enrollment(
-             .filter(|stored| same_enrollment(&stored.state, &state))
-             .and_then(|stored| stored.last_policy_mode)
-     };
--    let stored = StoredEnrollment {
-+    let stored = login_enrollment(state, session, display_name, last_policy_mode);
-+    write_enrollment(&stored)
-+}
-+
-+fn login_enrollment(
-+    state: PlatformState,
-+    session: &SessionRecord,
-+    display_name: &str,
-+    last_policy_mode: Option<String>,
-+) -> StoredEnrollment {
-+    StoredEnrollment {
-         tenant: session
-             .organizations
-             .iter()
-@@ -608,8 +631,53 @@ pub(crate) fn save_login_enrollment(
-         display_name: Some(display_name.to_string()),
-         revoked: false,
-         last_policy_mode,
--    };
--    write_enrollment(&stored)
-+    }
-+}
-+
-+pub(crate) fn save_login_replacement(
-+    state: PlatformState,
-+    session: &SessionRecord,
-+    display_name: &str,
-+    previous: &PlatformState,
-+    confirmed_previous: Option<&str>,
-+) -> Result<()> {
-+    if confirmed_previous != Some(previous.subject_id.as_str()) {
-+        return Err(NonoError::ActionRequired(
-+            "platform did not confirm policy-preserving replacement; upgrade the platform before recovery, or ask its administrator to review an existing replacement".into(),
-+        ));
-+    }
-+    if state.platform_url != previous.platform_url
-+        || state.tenant_id != previous.tenant_id
-+        || state.subject_id == previous.subject_id
-+        || state.key_ref == previous.key_ref
-+        || session.platform_url != state.platform_url
-+        || session.tenant_id != state.tenant_id
-+    {
-+        return Err(NonoError::ConfigParse(
-+            "replacement does not match the original enrollment scope".into(),
-+        ));
-+    }
-+    let old = current_enrollment(previous)?;
-+    if old
-+        .login_user_id
-+        .as_deref()
-+        .is_some_and(|user| user != session.user_subject)
-+    {
-+        return Err(NonoError::ActionRequired(
-+            "replacement must be authorized by the enrolled user".into(),
-+        ));
-+    }
-+    let stored = login_enrollment(state, session, display_name, old.last_policy_mode);
-+    // Only the authenticated recovery response may replace an enforced identity.
-+    write_json_secure(
-+        &scoped_state_path(
-+            &stored.state.platform_url,
-+            &stored.state.tenant_id,
-+            &session.user
-```
-
-**File**: `crates/nono-cli/src/platform_policy.rs` (modified, +15/-3)
-```diff
-@@ -54,6 +54,7 @@ fn policy_sources(
- 
- #[derive(Debug)]
- enum RefreshFailure {
-+    Unauthorized(String),
-     Unavailable(String),
-     ServiceUnavailable(String),
-     Invalid(String),
-@@ -85,12 +86,15 @@ impl RefreshFailure {
-                                 .is_some_and(|policy| policy.management_mode == "audit_only")))
-             }
-             Self::ServiceUnavailable(_) => explicit_local,
--            Self::Invalid(_) => false,
-+            Self::Invalid(_) | Self::Unauthorized(_) => false,
-         }
-     }
- 
-     fn error(self) -> NonoError {
-         let message = match self {
-+            Self::Unauthorized(message) => format!(
-+                "{message}; device authentication was refused. Run `nono platform re-enroll` to authorize recovery; the existing enrollment and policy remain in place."
-+            ),
-             Self::Unavailable(message)
-             | Self::ServiceUnavailable(message)
-             | Self::Invalid(message) => message,
-@@ -329,6 +333,9 @@ fn request<T: serde::de::DeserializeOwned>(
-     tracing::debug!(endpoint = path, request_id = %id, status = response.status().as_u16(), "Received platform policy response");
-     if !response.status().is_success() {
-         let message = format!("policy endpoint returned HTTP {}", response.status());
-+        if response.status().as_u16() == 401 {
-+            return Err(RefreshFailure::Unauthorized(message));
-+        }
-         return Err(
-             if response.status().is_server_error()
-                 || matches!(response.status().as_u16(), 404 | 408 | 429)
-@@ -514,7 +521,9 @@ fn prepare_start_inner(args: &mut SandboxArgs, silent: bool) -> Result<()> {
-             .map(|policy| policy.assignment_version.clone())
-             .unwrap_or_else(|| "unknown".into()),
-         assigned_profile: assigned.map(|p| p.profile_id.clone()),
--        assigned_name: assigned.map(display::policy_name),
-+        assigned_name: selected
-+            .filter(|claims| claims.policy.is_some())
-+            .and_then(display::assigned_name),
-         assigned_revision: assigned.map(|p| p.revision),
-         assigned_digest: assigned.map(|p| p.content_digest.clone()),
-         policy_source: "local".into(),
-@@ -743,9 +752,12 @@ mod tests {
-         assert!(service.allows_local_fallback(true, Some(&advisory), None));
-         let invalid = RefreshFailure::Invalid("invalid signature or assignment".into());
-         assert!(!invalid.allows_local_fallback(true, Some(&advisory), Some("advisory")));
-+        let unauthorized = RefreshFailure::Unauthorized("HTTP 401".into());
-+        assert!(!unauthorized.allows_local_fallback(true, Some(&advisory), Some("advisory")));
-+        assert!(!unauthorized.allows_local_fallback(true, Some(&local), Some("audit_only")));
-         let mut enforced = claims();
-         enforced.management_mode = "enforced".into();
--        for failure in [&offline, &service, &invalid] {
-+        for failure in [&offline, &service, &invalid, &unauthorized] {
-             assert!(!failure.allows_local_fallback(true, None, None));
-             assert!(!failure.allows_local_fallback(true, Some(&enforced), Some("advisory")));
-             assert!(!failure.allows_local_fallback(true, Some(&advisory), Some("enforced")));
-```
-
-**File**: `crates/nono-cli/src/platform_policy/display.rs` (modified, +71/-3)
-```diff
-@@ -21,6 +21,21 @@ pub(super) fn policy_name(policy: &AssignedBundle) -> String {
-     safe_text(&policy.profile_id)
- }
- 
-+pub(super) fn assigned_name(claims: &AssignmentClaims) -> Option<String> {
-+    let source = &claims.resolved_via;
-+    if claims
-+        .policy
-+        .as_ref()
-+        .is_none_or(|policy| source["profile_id"].as_str() == Some(policy.profile_id.as_str()))
-+        && let Some(name) = source["profile_name"]
-+            .as_str()
-+            .filter(|name| !name.trim().is_empty())
-+    {
-+        return Some(safe_text(name));
-+    }
-+    claims.policy.as_ref().map(policy_name)
-+}
-+
- pub(crate) fn session_summary(session: &PolicySession) -> String {
-     let mut text = summary_heading("Policy", SummaryKind::Info);
-     if let Some(profile) = &session.assigned_profile {
-@@ -98,16 +113,23 @@ pub(crate) fn status_rows(
-     policy: Option<&AssignmentClaims>,
-     previous: Option<&AssignmentClaims>,
-     refreshed: bool,
-+    remembered_mode: Option<&str>,
- ) -> String {
-     let Some(policy) = policy else {
--        return summary_row(
-+        let mut text = remembered_mode
-+            .map(|mode| summary_row("Mode", &format!("{} · last verified", mode_label(mode))))
-+            .unwrap_or_default();
-+        text.push_str(&summary_row(
-             if refreshed { "Refresh" } else { "Policy" },
-             if refreshed {
-                 "Policy delivery unsupported by platform"
-+            } else if remembered_mode.is_some() {
-+                "Cached assignment unavailable · use --refresh"
-             } else {
-                 "Not checked · use --refresh"
-             },
--        );
-+        ));
-+        return text;
-     };
-     let mut text = assignment_rows(policy);
-     let checked = format!(
-@@ -131,10 +153,23 @@ pub(crate) fn status_rows(
- fn assignment_rows(policy: &AssignmentClaims) -> String {
-     let mut text = summary_row("Mode", mode_label(&policy.management_mode));
-     let profile = match &policy.policy {
--        Some(policy) => format!("{} · revision {}", policy_name(policy), policy.revision),
-+        Some(bundle) => format!(
-+            "{} · revision {}",
-+            assigned_name(policy).unwrap_or_else(|| policy_name(bundle)),
-+            bundle.revision
-+        ),
-         None => "Local profiles".into(),
-     };
-     text.push_str(&summary_row("Policy", &profile));
-+    if policy.policy.is_none()
-+        && let Some(name) = assigned_name(policy)
-+    {
-+        let label = match policy.resolved_via["revision"].as_i64() {
-+            Some(revision) => format!("{name} · revision {revision}"),
-+            None => name,
-+        };
-+        text.push_str(&summary_row("Assigned policy", &label));
-+    }
-     text
- }
- 
-@@ -176,6 +211,39 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn status_uses_the_resolved_platform_name_for_every_assignment_layer() {
-+        for layer in ["subject", "group", "unit_default"] {
-+            let mut claims = super::super::tests::claims();
-+            let id = claims.policy.as_ref().expect("policy").profile_id.clone();
-+            claims.resolved_via = serde_json::json!({
-+                "layer": layer, "profile_id": id, "profile_name": "Engineering baseline", "revision": 7,
-+            });
-+            assert_eq!(
-+                assigned_name(&claims).as_deref(),
-+                Some("Engineering baseline")
-+            );
-+            assert!(status_rows(Some(&claims), None, true, None).contains("Engineering baseline"));
-+            claims.management_mode = "audit_only".into();
-+            claims.policy = None;
-+            let text = status_rows(Some(&claims), None, true, None);
-+            assert!(text.contains("Local profiles"));
-+            assert!(text.contains("Assigned policy"));
-+            assert!(text.contains("Engineering baseline"));
-+        }
-+    }
-+
-+    #[test]
-+    fn a_name_for_another_profile_does_not_override_bundle_metadata() {
-+        let mut claims = super::super::tests::claims();
-+        claims.resolved_via =
-+            serde_json::json!({"profile_id":"different", "profile_name":"Wrong name"});
-+        assert_eq!(
-+            assigned_name(&claims),
-+            claims.policy.as_ref().map(policy_name)
-+        );
-+    }
-+
-     #[test]
-     fn checked_time_omits_fractional_seconds_and_includes_cache_age() {
-         let issued: DateTime<Utc> = "2026-11-16T15:47:56.660477Z".parse().expect("timestamp");
-```
-
-**File**: `crates/nono-cli/src/platform_policy/enforced.rs` (modified, +2/-0)
-```diff
-@@ -156,6 +156,7 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
-         Commands::Platform(args) => !matches!(
-             &args.command,
-             PlatformCommands::Status(_)
-+                | PlatformCommands::ReEnroll(_)
-                 | PlatformCommands::Tenant(crate::cli::TenantArgs {
-                     command: TenantCommands::List(_),
-                     ..
-@@ -205,6 +206,7 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
-             ));
-         }
-         Err(error) if error.allows_local_fallback(true, None, remembered.as_deref()) => false,
-+        Err(error @ super::RefreshFailure::Unauthorized(_)) => return Err(error.error()),
-         Err(error) if remembered.as_deref() == Some("enforced") => {
-             return Err(denied(format!(
-                 "this command needs a fresh platform release from enforced mode; {}",
++    pub(crate) session_netns: bool,
+     #[serde(default, skip_serializing_if = "Vec::is_empty")]
+     pub(crate) allowed_exec_paths: Vec<Vec<u8>>,
+     pub(crate) expected_dev: u64,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2360** (2026-11-23): feat(network-policy): add TypeSafe API endpoint (@jpds)
 - **PR #2358** (2026-11-23): chore(deps): bump typify from 0.8.0 to 0.10.1 (@dependabot[bot])
 - **PR #2357** (2026-11-23): chore(deps): bump the routine-rust group with 8 updates (@dependabot[bot])
 - **PR #2356** (2026-11-23): fix(cli): improve platform enrollment and audit delivery (@SequeI)
 - **PR #2355** (2026-11-23): fix: update url and stabilize proxy keep-alive test (@SequeI)
-- **PR #2349** (2026-11-20): fix(cli): allow mise to read ~/.local/state/mise (@acidghost)
-- **PR #2347** (2026-11-20): fix(profile): resolve .jsonc siblings and paths (@acidghost)
+- **PR #2353** (2026-11-23): feat(sandbox): run proxied commands in the session network namespace (@daescha)
 
 ---
 
@@ -3786,75 +3554,31 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): improve platform enrollment and audit delivery
+## X. network-policy): add TypeSafe API endpoint
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/audit_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/data/network-policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da971852`: cli): improve platform enrollment and audit delivery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0c52cdf`: network-policy): add TypeSafe API endpoint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/audit_client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/network-policy.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Durable delivery of completed platform audit sessions.
-
-mod delivery;
-pub(crate) use delivery::DeliveryWorker;
-    if let Some((path, queued)) = queue_session(session_dir, metadata, &state)? {
-        let origin = queued_origin(&queued, Some(&state))?;
-        deliver_queued(origin, &path, &queued, Duration::from_secs(15))?;
-    }
-    Ok(())
-}
-
-fn queue_session(
-    session_dir: &Path,
-    metadata: &SessionMetadata,
-    state: &PlatformState,
-) -> Result<Option<(PathBuf, QueuedAudit)>> {
-    let _lock = delivery::lock_queue(true)?;
-    if session_dir.join(RECEIPT_FILENAME).is_file() {
-        return Ok(None);
-    }
-    for path in queued_paths()? {
-        if queued_session_id(&path).as_deref() == Some(&metadata.session_id) {
-            return Ok(Some((path.clone(), load_queued(&path)?)));
-        }
-    }
-    let queued = build_queued_audit(session_dir, metadata, state)?;
-    Ok(Some((path, queued)))
-        let result = deliver_path(&path, state.as_ref(), Duration::from_secs(15));
-            Ok(delivered_now) => delivered += usize::from(delivered_now),
-        let kind = if summary.failures.is_empty() && summary.remaining == 0 {
-    if summary.failures.is_empty() && summary
+        "api.typesafe.ai",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! Durable final-session audit delivery for audit-only platform enrollment.
-    let queued = build_queued_audit(session_dir, metadata, &state)?;
-    deliver_queued(&state, &path, &queued)
-        let result = load_queued(&path).and_then(|queued| {
-            let origin = queued_origin(&queued, state.as_ref())?;
-            deliver_queued(origin, &path, &queued)
-        });
-            Ok(()) => delivered += 1,
-        let kind = if summary.failures.is_empty() {
-    if summary.failures.is_empty() {
-        Err(NonoError::ActionRequired(
-            "some audit sessions could not be delivered; retry `nono audit sync`".to_string(),
-        ))
-                summary_row("Delivery", "Automatic when sessions finish")
-fn deliver_queued(state: &PlatformState, path: &Path, queued: &QueuedAudit) -> Result<()> {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da971852` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0c52cdf` are properly handled with clean fallback behavior.
 
 
 ## Consequences

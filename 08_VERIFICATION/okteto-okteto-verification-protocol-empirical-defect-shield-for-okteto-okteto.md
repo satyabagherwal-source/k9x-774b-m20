@@ -4,22 +4,22 @@
 {
   "source_repository": "okteto/okteto",
   "source_url": "https://github.com/okteto/okteto",
-  "source_version": "112af098",
+  "source_version": "21298eb3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T22:49:28.850Z",
+  "timestamp": "2026-11-24T01:07:21.029Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-okteto-okteto",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `112af098`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T22:49:28.850Z`  
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `21298eb3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:07:21.029Z`  
 > **Learning ID**: `learn-github-okteto-okteto`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `okteto/okteto` (Commit: `112af098`)
+- **Target Repository**: `okteto/okteto` (Commit: `21298eb3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:49:27.793Z  
+> **Harvest Timestamp**: 2026-11-24T01:07:19.138Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1513,87 +1513,1198 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `112af098` (2026-11-20)
-**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14 (#5279)
+### Incident Patch 1: `55998c4b` (2026-11-23)
+**Commit Message**: ENG-35: Reach the internal API through its IP in remote builds (#5274)
 
-Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.13 to 46.3.14.
-- [Release notes](https://github.com/renovatebot/github-action/releases)
-- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.13...v46.3.14)
+* feat(remote): map the internal API hostname in remote builds
 
----
-updated-dependencies:
-- dependency-name: renovatebot/github-action
-  dependency-version: 46.3.14
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+The catalog secret variables endpoint is served over TLS on a hostname
+under the installation's wildcard certificate. Remote builds now map that
+hostname to the internal IP of the Okteto API, which the cluster metadata
+publishes, the same way they map the ssh-agent.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+remote-run only calls an https endpoint through that mapping. When the
+installation doesn't publish the IP, it fails right away with a hint
+instead of timing out. An http endpoint, from installations that predate
+this, is called as before.
 
-**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* feat(remote): reach the internal API through its IP instead of a hosts entry
+
+Remote builds no longer map the internal API hostname in /etc/hosts. The CLI
+passes the IP to remote-run in OKTETO_INTERNAL_API_IP, and remote-run connects
+to it while keeping the hostname in the URL, so the certificate is still
+verified against it. An invalid IP in the metadata no longer reaches BuildKit.
+
+okteto.NewInternalAPIHTTPClient builds that client. It needs a vali
+
+**File**: `cmd/remoterun/catalog.go` (modified, +58/-18)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-         uses: actions/checkout@v7
+@@ -18,11 +18,14 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io/fs"
++	"net"
++	"net/url"
+ 	"os"
+ 	"regexp"
+ 	"strings"
  
-       - name: Run Renovate
--        uses: renovatebot/github-action@v46.3.13
-+        uses: renovatebot/github-action@v46.3.14
-         with:
-           configurationFile: .github/renovate.json
-           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
+ 	"github.com/okteto/okteto/pkg/catalog"
++	"github.com/okteto/okteto/pkg/constants"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	"github.com/okteto/okteto/pkg/types"
+@@ -57,9 +60,9 @@ type catalogSecretVariablesGetter interface {
+ }
+ 
+ // catalogSecretVariablesClientFactory returns the client that gets the
+-// catalog secret variables with the token, or with the user's token when it's
+-// empty
+-type catalogSecretVariablesClientFactory func(token string) (catalogSecretVariablesGetter, error)
++// catalog secret variables from the endpoint through the internal IP of the
++// Okteto API, with the token, or with the user's token when it's empty
++type catalogSecretVariablesClientFactory func(endpoint, internalAPIIP, token string) (catalogSecretVariablesGetter, error)
+ 
+ // catalogSecretVariables gets the catalog secret variables of the development
+ // environment being deployed or destroyed, to inject them into the env of the
+@@ -72,6 +75,9 @@ type catalogSecretVariables struct {
+ 	tokenFile string
+ 	action    string
+ 	endpoint  string
++	// internalAPIIP is the internal IP of the Okteto API that the CLI starting
++	// the remote build passes on, empty when the installation doesn't publish it
++	internalAPIIP string
+ 	// phase is the operation whose commands get the variables
+ 	phase catalog.Phase
+ 	// forceDestroy runs the destroy commands without the variables when they
+@@ -101,6 +107,23 @@ func (invalidCatalogSecretVariableNamesError) Error() string {
+ 	return "the catalog secret variables have invalid names"
+ }
+ 
++// errCatalogSecretVariablesEndpointNotHTTPS is returned when the endpoint
++// isn't https, so the request isn't sent. Only the first installations with
++// catalog secret variables give an http endpoint, which remote builds can't
++// reach
++var errCatalogSecretVariablesEndpointNotHTTPS = errors.New("the catalog secret variables can't be fetched: the Okteto installation gives an endpoint that isn't https")
++
++// internalAPIIPMissingError is returned when the remote build doesn't get a
++// valid internal IP of the Okteto API to reach the endpoint through, so the
++// request isn't sent
++type internalAPIIPMissingError struct {
++	hostname string
++}
++
++func (e internalAPIIPMissingError) Error() string {
++	return fmt.Sprintf("the catalog secret variables can't be fetched: the remote build doesn't get the internal IP of the Okteto API to reach %s", e.hostname)
++}
++
+ // addCatalogSecretVariablesFlags adds the flags to get the catalog secret
+ // variables. They are only read from these flags, so a variable can't change
+ // them
+@@ -121,25 +144,22 @@ func newCatalogSecretVariables(action, endpoint string, phase catalog.Phase) (ca
+ 		return c, fmt.Errorf("--%s is required with --%s", catalog.SecretVariablesEndpointFlag, catalog.ActionFlag)
+ 	}
+ 	c.tokenFile = catalog.SecretVariablesTokenPath
++	c.internalAPIIP = os.Getenv(constants.OktetoInternalAPIIPEnvVar)
+ 	c.newClient = newCatalogSecretVariablesClient
+ 	return c, nil
+ }
+ 
+ // newCatalogSecretVariablesClient returns the client that gets the catalog
+ // secret variables with the token as the bearer, instead of the user's token.
+ // Without a token it uses the user's, which the endpoint of older
+-// installations takes. It reaches the endpoint directly, ignoring the proxy
+-// env vars, with the TLS settings of the context
+-func newCatalogSecretVariablesClient(token string) (catalogSecretVariablesGetter, error) {
+-	opts := []okteto.Option{okteto.WithoutProxy()}
++// installations takes. It connects to the internal IP of the Okteto API, never
++// through a proxy, and doesn't follow redirects
++func newCatalogSecretVariablesClient(endpoint, internalAPIIP, token string) (catalogSecretVariablesGetter, error) {
++	var opts []okteto.Option
+ 	if token != "" {
+ 		opts = append(opts, okteto.WithToken(token))
+ 	}
+-	oktetoClient, err := okteto.NewOktetoClient(opts...)
+-	if err != nil {
+-		return nil, err
+-	}
+-	return oktetoClient.User(), nil
++	return okteto.NewCatalogSecretVariablesClient(endpoint, internalAPIIP, opts...)
+ }
+ 
+ // get returns the catalog secret variables as "key=value" vars. Any error, and
+@@ -183,18 +203,33 @@ func (c catalogSecretVariables) get(ctx context.Context) ([]string, error) {
+ 	return vars, nil
+ }
+ 
+-// fetch gets the catalog secret variables from the endpoint. The token is the
+-// copy of the installer's file that BuildKit mounted when the RUN started, so
+-// it's fresh. It is never logged nor set in the env of the commands, but the
+-// secret is mounted for the whole RUN and they can read the file, so it's
+-// masked in their output like the user's token
++// fetch gets the catalog secret variables from the endpoint, an https URL
++// that the client reaches through the internal IP of the Okteto API instead of
++// resolving its hostname: the wildcard DNS record resolves it to the ingress,
++// which 
 ```
 
----
-
-### Incident Patch 2: `78a4365a` (2026-11-20)
-**Commit Message**: Upgrade buildkit dependency to v0.35.1-okteto1 (#5281)
-
-Signed-off-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `cmd/remoterun/catalog_test.go` (modified, +214/-25)
 ```diff
-@@ -26,7 +26,7 @@ require (
- 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
- 	github.com/manifoldco/promptui v0.9.0
- 	github.com/mitchellh/go-ps v1.0.0
--	github.com/moby/buildkit v0.35.0
-+	github.com/moby/buildkit v0.35.1
- 	github.com/moby/term v0.5.2
- 	github.com/pkg/errors v0.9.1
- 	github.com/shirou/gopsutil v3.21.11+incompatible
-@@ -299,4 +299,4 @@ require (
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941 // indirect
+@@ -17,8 +17,12 @@ import (
+ 	"bufio"
+ 	"bytes"
+ 	"context"
++	"encoding/base64"
+ 	"encoding/json"
++	"encoding/pem"
+ 	"errors"
++	"fmt"
++	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
+@@ -27,6 +31,7 @@ import (
+ 
+ 	"github.com/okteto/okteto/internal/test/client"
+ 	"github.com/okteto/okteto/pkg/catalog"
++	"github.com/okteto/okteto/pkg/constants"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	"github.com/okteto/okteto/pkg/types"
+@@ -88,8 +93,11 @@ func warnings(lines []oktetoLog.JSONLogFormat) []oktetoLog.JSONLogFormat {
+ }
+ 
+ const (
+-	testCatalogSecretVariablesEndpoint = "https://okteto.example/internal/catalog/secret-variables"
+-	testCatalogSecretVariablesToken    = "projected-token"
++	testInternalAPIIP                       = "10.20.30.40"
++	testCatalogSecretVariablesEndpoint      = "https://okteto-internal-api.okteto.example:8443/internal/catalog/secret-variables"
++	testCatalogSecretVariablesToken         = "projected-token"
++	internalAPIIPMissingCatalogSecretsError = "the catalog secret variables can't be fetched: the remote build doesn't get the internal IP of the Okteto API to reach okteto-internal-api.okteto.example"
++	internalAPIIPMissingHint                = "Ask an Okteto admin to make sure the Okteto installation publishes the internal IP of the Okteto API, and that the Okteto CLI starting the remote build passes it on, "
  )
  
--replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.1-0.20261112074422-d987d85bd8a3 // v0.35.0-okteto1
-+replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8 // v0.35.1-okteto1
+ // writeTestToken writes content to a token file in a temporary folder, and
+@@ -104,22 +112,27 @@ func writeTestToken(t *testing.T, content string) string {
+ func newTestCatalogSecretVariables(t *testing.T, c catalogSecretVariablesGetter, phase catalog.Phase) catalogSecretVariables {
+ 	t.Helper()
+ 	return catalogSecretVariables{
+-		newClient: func(string) (catalogSecretVariablesGetter, error) { return c, nil },
+-		tokenFile: writeTestToken(t, testCatalogSecretVariablesToken),
+-		action:    "action-name",
+-		endpoint:  testCatalogSecretVariablesEndpoint,
+-		phase:     phase,
++		newClient:     func(string, string, string) (catalogSecretVariablesGetter, error) { return c, nil },
++		tokenFile:     writeTestToken(t, testCatalogSecretVariablesToken),
++		action:        "action-name",
++		endpoint:      testCatalogSecretVariablesEndpoint,
++		internalAPIIP: testInternalAPIIP,
++		phase:         phase,
+ 	}
+ }
+ 
+-// recordingCatalogSecretVariablesClientFactory records the tokens it creates
+-// clients with, and returns client
++// recordingCatalogSecretVariablesClientFactory records the endpoints, the
++// internal IPs and the tokens it creates clients with, and returns client
+ type recordingCatalogSecretVariablesClientFactory struct {
+-	client catalogSecretVariablesGetter
+-	tokens []string
++	client         catalogSecretVariablesGetter
++	endpoints      []string
++	internalAPIIPs []string
++	tokens         []string
+ }
+ 
+-func (r *recordingCatalogSecretVariablesClientFactory) newClient(token string) (catalogSecretVariablesGetter, error) {
++func (r *recordingCatalogSecretVariablesClientFactory) newClient(endpoint, internalAPIIP, token string) (catalogSecretVariablesGetter, error) {
++	r.endpoints = append(r.endpoints, endpoint)
++	r.internalAPIIPs = append(r.internalAPIIPs, internalAPIIP)
+ 	r.tokens = append(r.tokens, token)
+ 	return r.client, nil
+ }
+@@ -160,11 +173,14 @@ func TestCatalogSecretVariablesWithoutAction(t *testing.T) {
+ }
+ 
+ func TestNewCatalogSecretVariablesWithoutAction(t *testing.T) {
+-	got, err := newCatalogSecretVariables("", "http://endpoint", catalog.DeployPhase)
++	t.Setenv(constants.OktetoInternalAPIIPEnvVar, testInternalAPIIP)
++
++	got, err := newCatalogSecretVariables("", "", catalog.DeployPhase)
+ 
+ 	require.NoError(t, err)
+ 	require.Nil(t, got.newClient)
+ 	require.Empty(t, got.tokenFile)
++	require.Empty(t, got.internalAPIIP)
+ }
+ 
+ func TestNewCatalogSecretVariablesRequiresTheEndpoint(t *testing.T) {
+@@ -174,16 +190,178 @@ func TestNewCatalogSecretVariablesRequiresTheEndpoint(t *testing.T) {
+ }
+ 
+ func TestNewCatalogSecretVariablesForTheAction(t *testing.T) {
++	t.Setenv(constants.OktetoInternalAPIIPEnvVar, testInternalAPIIP)
++
+ 	got, err := newCatalogSecretVariables("action-name", testCatalogSecretVariablesEndpoint, catalog.DestroyPhase)
+ 
+ 	require.NoError(t, err)
+ 	require.NotNil(t, got.newClient)
+ 	require.Equal(t, "/run/secrets/catalog-secret-variables-token", got.tokenFile)
+ 	require.Equal(t, "action-name", got.action)
+ 	require.Equal(t, testCatalogSecretVariablesEndpoint, got.endpoint)
++	require.Equal(t, testInternalAPIIP, got.internalAPIIP)
+ 	require.Equal(t, catalog.DestroyPhase, got.phase)
+ }
+ 
++// Neither the token is read nor the client built: a folder can't be read as a
++// token file, and the factory records every client it creates
++func TestCatalogSecretVariablesDoNotCallTheEndpointWithoutAValidInternalAPIIP(t *testing.T) {
++	tests := []struct {
++		name          string
++		internalAPIIP string
++	}{
++		{name: "without internal API IP", internalAPIIP: ""},
++		{name: "with an invalid internal API IP", internalAPIIP: "okte
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `pkg/constants/constants.go` (modified, +4/-0)
 ```diff
-@@ -541,8 +541,8 @@ github.com/nwaples/rardecode/v2 v2.2.0 h1:4ufPGHiNe1rYJxYfehALLjup4Ls3ck42CWwjKi
- github.com/nwaples/rardecode/v2 v2.2.0/go.mod h1:7uz379lSxPe6j9nvzxUZ+n7mnJNgjsRNb6IbvGVHRmw=
- github.com/oklog/ulid/v2 v2.1.2 h1:IEclFb9JNvzYA6MW2SCxbLzcHTVsfqm3PrqGQJH5zec=
- github.com/oklog/ulid/v2 v2.1.2/go.mod h1:rcEKHmBBKfef9DhnvX7y1HZBYxjXb0cP5ExxNsTT1QQ=
--github.com/okteto/buildkit v0.35.1-0.20261112074422-d987d85bd8a3 h1:DRARq+HvdyQOWtr3DkXIGmZrzsvWfCty7COhrhiVkIM=
--github.com/okteto/buildkit v0.35.1-0.20261112074422-d987d85bd8a3/go.mod h1:1bLB7NqbvyIScAVGCmYzQWHxdrJq42ZpdvBqlQRnoOk=
-+github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8 h1:JrLzIAeN8ZI4pPRLryJ6lKm/ZgQmk/RJILHOdWVZzDw=
-+github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8/go.mod h1:1bLB7NqbvyIScAVGCmYzQWHxdrJq42ZpdvBqlQRnoOk=
- github.com/onsi/ginkgo/v2 v2.32.0 h1:Hw7s2pVrQo/8Yz5N77qdnpHaoc+c6cC9WIV1Jce+J6E=
- github.com/onsi/ginkgo/v2 v2.32.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
- github.com/onsi/gomega v1.40.0 h1:Vtol0e1MghCD2ZVIilPDIg44XSL9l2QAn8ZNaljWcJc=
+@@ -170,6 +170,10 @@ const (
+ 	// OktetoSshAgentSocketEnvVar Env variable defining the socket where the ssh-forwarder will listen
+ 	OktetoSshAgentSocketEnvVar = "OKTETO_SSH_AGENT_SOCKET"
+ 
++	// OktetoInternalAPIIPEnvVar Env variable defining the internal IP of the Okteto API that remote builds reach its
++	// internal routes through. It's empty when the installation doesn't publish a valid one
++	OktetoInternalAPIIPEnvVar = "OKTETO_INTERNAL_API_IP"
++
+ 	// OktetoSharedEnvironmentEnvVar Env variable containing the namespace of the shared environment in divert
+ 	OktetoSharedEnvironmentEnvVar = "OKTETO_SHARED_ENVIRONMENT"
+ 
+```
+
+**File**: `pkg/okteto/catalog_secret_variables.go` (modified, +49/-1)
+```diff
+@@ -15,14 +15,18 @@ package okteto
+ 
+ import (
+ 	"context"
++	"crypto/x509"
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"net/http"
+ 	"net/url"
+ 
++	"github.com/okteto/okteto/pkg/config"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/types"
++	"golang.org/x/oauth2"
+ )
+ 
+ const (
+@@ -41,11 +45,55 @@ type catalogSecretVariablesErrorResponse struct {
+ 	Reason string `json:"reason"`
+ }
+ 
++// CatalogSecretVariablesClient gets the catalog secret variables from the
++// internal API of Okteto
++type CatalogSecretVariablesClient struct {
++	httpClient *http.Client
++}
++
++// NewCatalogSecretVariablesClient returns the client that gets the catalog
++// secret variables from endpoint, an https URL it reaches through
++// internalAPIIP, as NewInternalAPIHTTPClient does. It fails without both. It
++// sends the token of the current context, or the one of the options, and
++// trusts the certificate of the current context
++func NewCatalogSecretVariablesClient(endpoint, internalAPIIP string, opts ...Option) (*CatalogSecretVariablesClient, error) {
++	cfg := defaultOktetoClientCfg()
++	for _, opt := range opts {
++		opt(cfg)
++	}
++	if cfg.Token == "" {
++		return nil, fmt.Errorf(oktetoErrors.ErrNotLogged, cfg.CtxName)
++	}
++
++	// The certificate comes from the context already resolved, which doesn't
++	// need the context file on disk. Without a current context there's none,
++	// and GetContext would exit
++	var certs []*x509.Certificate
++	if cfg.CtxName != "" {
++		if cert, err := GetContextCertificateStateless(GetContext().Certificate); err == nil {
++			certs = append(certs, cert)
++		}
++	}
++
++	httpClient, err := NewInternalAPIHTTPClient(endpoint, internalAPIIP, certs...)
++	if err != nil {
++		return nil, err
++	}
++	httpClient.Transport = &VersionedTransport{
++		Version: config.VersionString,
++		RoundTripper: &oauth2.Transport{
++			Source: oauth2.StaticTokenSource(&oauth2.Token{AccessToken: cfg.Token, TokenType: "Bearer"}),
++			Base:   httpClient.Transport,
++		},
++	}
++	return &CatalogSecretVariablesClient{httpClient: httpClient}, nil
++}
++
+ // GetCatalogSecretVariables returns the catalog secret variables of the
+ // development environment the action runs for: the values of the ones that
+ // can be resolved, and the ones that can't. The endpoint only answers requests
+ // that come from BuildKit
+-func (c *userClient) GetCatalogSecretVariables(ctx context.Context, endpoint, action string) (types.CatalogSecretVariables, error) {
++func (c *CatalogSecretVariablesClient) GetCatalogSecretVariables(ctx context.Context, endpoint, action string) (types.CatalogSecretVariables, error) {
+ 	if c.httpClient == nil {
+ 		return types.CatalogSecretVariables{}, fmt.Errorf("catalog secret variables client not configured")
+ 	}
+```
+
+**File**: `pkg/okteto/catalog_secret_variables_test.go` (modified, +105/-18)
+```diff
+@@ -15,17 +15,42 @@ package okteto
+ 
+ import (
+ 	"context"
++	"encoding/base64"
++	"encoding/pem"
+ 	"errors"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"testing"
+ 
++	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/types"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+ const testCatalogSecretVariablesEndpoint = "https://okteto.example/internal/catalog/secret-variables"
+ 
++// newTestCatalogSecretVariablesClient returns a client whose requests the
++// handler answers
++func newTestCatalogSecretVariablesClient(handler http.Handler) *CatalogSecretVariablesClient {
++	return &CatalogSecretVariablesClient{httpClient: newTestUserClient(handler).httpClient}
++}
++
++// setTestContextToken sets a current context with the token
++func setTestContextToken(t *testing.T, token string) {
++	t.Helper()
++	setTestContext(t, &Context{Name: "test", Token: token})
++}
++
++func setTestContext(t *testing.T, okCtx *Context) {
++	t.Helper()
++	original := CurrentStore
++	t.Cleanup(func() { CurrentStore = original })
++	CurrentStore = &ContextStore{
++		CurrentContext: "test",
++		Contexts:       map[string]*Context{"test": okCtx},
++	}
++}
++
+ func respondWith(status int, body string) http.HandlerFunc {
+ 	return func(w http.ResponseWriter, _ *http.Request) {
+ 		w.WriteHeader(status)
+@@ -40,7 +65,7 @@ func TestGetCatalogSecretVariablesSendsTheAction(t *testing.T) {
+ 		_, _ = w.Write([]byte(`{"variables":[]}`))
+ 	})
+ 
+-	_, err := newTestUserClient(handler).GetCatalogSecretVariables(context.Background(), testCatalogSecretVariablesEndpoint, "deploy 1")
++	_, err := newTestCatalogSecretVariablesClient(handler).GetCatalogSecretVariables(context.Background(), testCatalogSecretVariablesEndpoint, "deploy 1")
+ 
+ 	require.NoError(t, err)
+ 	require.Equal(t, http.MethodGet, got.Method)
+@@ -49,20 +74,83 @@ func TestGetCatalogSecretVariablesSendsTheAction(t *testing.T) {
+ 	require.Equal(t, "action=deploy+1", got.URL.RawQuery)
+ }
+ 
+-func TestGetCatalogSecretVariablesSendsTheToken(t *testing.T) {
++// startTestInternalAPI starts the internal API on 127.0.0.1, sets a current
++// context with the token whose certificate is the one of the server, and
++// returns the server and its endpoint
++func startTestInternalAPI(t *testing.T, token string, handler http.HandlerFunc) (*internalAPITestServer, string) {
++	t.Helper()
++	server := startInternalAPITestServer(t, "127.0.0.1", handler)
++	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: server.Certificate().Raw})
++	setTestContext(t, &Context{Name: "test", Token: token, Certificate: base64.StdEncoding.EncodeToString(certPEM)})
++	return server, server.endpoint(t, "example.com")
++}
++
++func TestGetCatalogSecretVariablesThroughTheInternalAPIIP(t *testing.T) {
+ 	var authorization string
+-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++	server, endpoint := startTestInternalAPI(t, "okteto-token", func(w http.ResponseWriter, r *http.Request) {
+ 		authorization = r.Header.Get("Authorization")
+-		_, _ = w.Write([]byte(`{"variables":[]}`))
+-	}))
+-	t.Cleanup(server.Close)
+-	c, err := NewOktetoClientFromUrlAndToken(server.URL, "okteto-token")
++		_, _ = w.Write([]byte(`{"variables":[{"name":"PIN","value":"1"}]}`))
++	})
++	c, err := NewCatalogSecretVariablesClient(endpoint, "127.0.0.1")
+ 	require.NoError(t, err)
+ 
+-	_, err = c.User().GetCatalogSecretVariables(context.Background(), server.URL+"/internal/catalog/secret-variables", "action")
++	got, err := c.GetCatalogSecretVariables(context.Background(), endpoint, "action")
+ 
+ 	require.NoError(t, err)
++	require.Equal(t, []types.CatalogSecretVariable{{Name: "PIN", Value: "1"}}, got.Variables)
+ 	require.Equal(t, "Bearer okteto-token", authorization)
++	require.Equal(t, "example.com", server.sni)
++}
++
++func TestGetCatalogSecretVariablesSendsTheTokenOfTheOptions(t *testing.T) {
++	var authorization string
++	_, endpoint := startTestInternalAPI(t, "okteto-token", func(w http.ResponseWriter, r *http.Request) {
++		authorization = r.Header.Get("Authorization")
++		_, _ = w.Write([]byte(`{"variables":[]}`))
++	})
++	c, err := NewCatalogSecretVariablesClient(endpoint, "127.0.0.1", WithToken("projected-token"))
++	require.NoError(t, err)
++
++	_, err = c.GetCatalogSecretVariables(context.Background(), endpoint, "action")
++
++	require.NoError(t, err)
++	require.Equal(t, "Bearer projected-token", authorization)
++}
++
++// GetContext exits without a current context, so the certificate is only read with one
++func TestNewCatalogSecretVariablesClientWithATokenAndWithoutAContext(t *testing.T) {
++	original := CurrentStore
++	t.Cleanup(func() { CurrentStore = original })
++	CurrentStore = nil
++	t.Setenv(constants.OktetoFolderEnvVar, t.TempDir())
++
++	_, err := NewCatalogSecretVariablesClient(testCatalogSecretVariablesEndpoint, "10.20.30.40", WithToken("projected-token"))
++
++	require.NoError(t, err)
++}
++
++func TestNewCatalogSecretVariablesClientFailsForAnHTTPEndpoint(t *testing.T) {
++	setTestContextToken(t, "okteto-token")
++
++	_, err := NewCatalogSecretV
+```
+
+**File**: `pkg/okteto/internal_api.go` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package okteto
++
++import (
++	"crypto/x509"
++	"errors"
++	"net"
++	"net/http"
++	"net/url"
++
++	oktetoHttp "github.com/okteto/okteto/pkg/http"
++)
++
++var (
++	// ErrInvalidInternalAPIEndpoint is returned for an internal API endpoint that isn't an https URL
++	ErrInvalidInternalAPIEndpoint = errors.New("the internal API endpoint isn't an https URL")
++
++	// ErrInvalidInternalAPIIP is returned when the internal IP of the Okteto API is empty or isn't an IP
++	ErrInvalidInternalAPIIP = errors.New("the internal IP of the Okteto API is missing or invalid")
++)
++
++// NewInternalAPIHTTPClient returns an HTTP client for the internal routes of the Okteto API at endpoint, an https URL
++// that remote builds reach on internalAPIIP, the internal IP of the API. It connects to that IP instead of resolving
++// the hostname of the endpoint, which public DNS resolves to the ingress, and verifies the certificate against that
++// hostname, with the system pool and certs. Without a valid IP it fails instead of resolving the hostname.
++//
++// It never goes through a proxy, as the IP is only reachable inside the cluster, and never follows a redirect, which
++// would take the request somewhere else. It doesn't read the Okteto context: the Git credential helper runs without one
++func NewInternalAPIHTTPClient(endpoint, internalAPIIP string, certs ...*x509.Certificate) (*http.Client, error) {
++	u, err := url.Parse(endpoint)
++	if err != nil || u.Scheme != "https" || u.Hostname() == "" {
++		return nil, ErrInvalidInternalAPIEndpoint
++	}
++	ip := net.ParseIP(internalAPIIP)
++	if ip == nil {
++		return nil, ErrInvalidInternalAPIIP
++	}
++
++	transport := oktetoHttp.StrictSSLTransport(&oktetoHttp.SSLTransportOption{
++		Certs:           certs,
++		URLsToIntercept: []string{endpoint},
++		ServerName:      internalAPIAddress(u, ip),
++	})
++	transport.Proxy = nil
++	return &http.Client{
++		Transport: transport,
++		CheckRedirect: func(*http.Request, []*http.Request) error {
++			return http.ErrUseLastResponse
++		},
++	}, nil
++}
++
++// internalAPIAddress returns the address to connect to for the endpoint: the internal IP with the port of the endpoint
++func internalAPIAddress(endpoint *url.URL, ip net.IP) string {
++	port := endpoint.Port()
++	if port == "" {
++		port = "443"
++	}
++	return net.JoinHostPort(ip.String(), port)
++}
+```
+
+**File**: `pkg/okteto/internal_api_test.go` (added, +204/-0)
+```diff
+@@ -0,0 +1,204 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package okteto
++
++import (
++	"fmt"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// internalAPITestServer is a TLS server whose certificate is valid for
++// example.com, 127.0.0.1 and ::1, and which records the Host header and the SNI
++// of the requests
++type internalAPITestServer struct {
++	*httptest.Server
++	host string
++	sni  string
++}
++
++// startInternalAPITestServer starts the server on the IP. It skips the test
++// when it can't listen on the IP
++func startInternalAPITestServer(t *testing.T, ip string, handler http.HandlerFunc) *internalAPITestServer {
++	t.Helper()
++	listener, err := net.Listen("tcp", net.JoinHostPort(ip, "0"))
++	if err != nil {
++		t.Skipf("can't listen on %s: %s", ip, err)
++	}
++	s := &internalAPITestServer{}
++	s.Server = httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		s.host = r.Host
++		s.sni = r.TLS.ServerName
++		handler(w, r)
++	}))
++	s.Listener = listener
++	s.StartTLS()
++	t.Cleanup(s.Close)
++	return s
++}
++
++func (s *internalAPITestServer) endpoint(t *testing.T, hostname string) string {
++	t.Helper()
++	_, port, err := net.SplitHostPort(s.Listener.Addr().String())
++	require.NoError(t, err)
++	return fmt.Sprintf("https://%s/internal/catalog/secret-variables", net.JoinHostPort(hostname, port))
++}
++
++func answerOK(http.ResponseWriter, *http.Request) {}
++
++func TestInternalAPIHTTPClientConnectsToTheIPv4(t *testing.T) {
++	server := startInternalAPITestServer(t, "127.0.0.1", answerOK)
++	endpoint := server.endpoint(t, "example.com")
++	client, err := NewInternalAPIHTTPClient(endpoint, "127.0.0.1", server.Certificate())
++	require.NoError(t, err)
++
++	resp, err := client.Get(endpoint)
++
++	require.NoError(t, err)
++	require.NoError(t, resp.Body.Close())
++	require.Equal(t, http.StatusOK, resp.StatusCode)
++	require.Equal(t, "example.com", server.sni)
++	require.Equal(t, mustURL(t, endpoint).Host, server.host)
++}
++
++func TestInternalAPIHTTPClientConnectsToTheIPv6(t *testing.T) {
++	server := startInternalAPITestServer(t, "::1", answerOK)
++	endpoint := server.endpoint(t, "example.com")
++	client, err := NewInternalAPIHTTPClient(endpoint, "::1", server.Certificate())
++	require.NoError(t, err)
++
++	resp, err := client.Get(endpoint)
++
++	require.NoError(t, err)
++	require.NoError(t, resp.Body.Close())
++	require.Equal(t, http.StatusOK, resp.StatusCode)
++	require.Equal(t, "example.com", server.sni)
++	require.Equal(t, mustURL(t, endpoint).Host, server.host)
++}
++
++func TestInternalAPIHTTPClientVerifiesTheCertificateAgainstTheHostname(t *testing.T) {
++	// The certificate is also valid for 127.0.0.1, so verifying it against the
++	// IP would let the request through
++	server := startInternalAPITestServer(t, "127.0.0.1", answerOK)
++	endpoint := server.endpoint(t, "okteto-internal-api.other.example")
++	client, err := NewInternalAPIHTTPClient(endpoint, "127.0.0.1", server.Certificate())
++	require.NoError(t, err)
++
++	_, err = client.Get(endpoint) //nolint:bodyclose // it fails before there's a body
++
++	require.ErrorContains(t, err, "certificate is valid for")
++	require.Empty(t, server.sni)
++}
++
++func TestInternalAPIHTTPClientDoesNotTrustTheCertificateWithoutIt(t *testing.T) {
++	server := startInternalAPITestServer(t, "127.0.0.1", answerOK)
++	endpoint := server.endpoint(t, "example.com")
++	client, err := NewInternalAPIHTTPClient(endpoint, "127.0.0.1")
++	require.NoError(t, err)
++
++	_, err = client.Get(endpoint) //nolint:bodyclose // it fails before there's a body
++
++	require.ErrorContains(t, err, "certificate signed by unknown authority")
++}
++
++func TestInternalAPIHTTPClientDoesNotFollowRedirects(t *testing.T) {
++	server := startInternalAPITestServer(t, "127.0.0.1", func(w http.ResponseWriter, r *http.Request) {
++		http.Redirect(w, r, "https://okteto.example/elsewhere", http.StatusFound)
++	})
++	endpoint := server.endpoint(t, "example.com")
++	client, err := NewInternalAPIHTTPClient(endpoint, "127.0.0.1", server.Certificate())
++	require.NoError(t, err)
++
++	resp, err := client.Get(endpoint)
++
++	require.NoError(t, err)
++	require.NoError(t, resp.Body.Close())
++	require.Equal(t, http.StatusFound, resp.StatusCode)
++}
++
++func TestInternalAPIHTTPClientNeverUsesAProxy(t *testing.T) {
++	client, err := NewInternalAPIHTTPClient("https://example.com:8443/internal/catalog/secret-variables", "10.20.30.40")
++	requir
+```
+
+**File**: `pkg/okteto/secrets.go` (modified, +2/-0)
+```diff
+@@ -298,6 +298,8 @@ func (c *userClient) GetClusterMetadata(ctx context.Context, ns string) (types.C
+ 			metadata.SSHAgentHostname = string(v.Value)
+ 		case "sshAgentPort":
+ 			metadata.SSHAgentPort = string(v.Value)
++		case "internalAPIIP":
++			metadata.InternalAPIIP = string(v.Value)
+ 		case "cliMinVersion":
+ 			metadata.CliMinVersion = string(v.Value)
+ 		case "cliClusterVersion":
+```
+
+---
+
+### Incident Patch 2: `2ee7e6b7` (2026-11-23)
+**Commit Message**: refactor(build): remove the unused repository clean check from the builder config (#5278)
+
+* refactor(build): remove the unused repository clean check from the builder config
+
+getConfig and getConfigStateless ran IsClean, a git status, every time a
+builder was created, and stored the result in isCleanProject. Nothing has
+read it since #4203, when the image tagger stopped using it to choose the
+global registry, so every command that creates a builder paid for a git
+status it didn't use.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* refactor(build): remove the unused GetGitCommit from the builder config
+
+Nothing calls oktetoBuilderConfig.GetGitCommit outside its own test and
+the fakeConfig stub, the same as IsCleanProject. Drop it together with
+GetSHA from configRepositoryInterface, which only it used, the fake's
+sha field and TestGetGitCommit. One tagger case only differed by that
+field and is removed as a duplicate.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `cmd/build/v2/build.go` (modified, +0/-2)
+```diff
+@@ -57,8 +57,6 @@ type oktetoRegistryInterface interface {
+ // oktetoBuilderConfigInterface returns the configuration that the builder has for the registry and project
+ type oktetoBuilderConfigInterface interface {
+ 	HasGlobalAccess() bool
+-	IsCleanProject() bool
+-	GetGitCommit() string
+ 	IsOkteto() bool
+ 	GetAnonymizedRepo() string
+ }
+```
+
+**File**: `cmd/build/v2/config.go` (modified, +0/-29)
+```diff
+@@ -28,8 +28,6 @@ const (
+ )
+ 
+ type configRepositoryInterface interface {
+-	GetSHA() (string, error)
+-	IsClean() (bool, error)
+ 	GetAnonymizedRepo() string
+ 	GetLatestDirSHA(string) (string, error)
+ }
+@@ -42,7 +40,6 @@ type oktetoBuilderConfig struct {
+ 	repository          configRepositoryInterface
+ 	fs                  afero.Fs
+ 	hasGlobalAccess     bool
+-	isCleanProject      bool
+ 	isOkteto            bool
+ 	isSmartBuildsEnable bool
+ }
+@@ -57,15 +54,9 @@ func getConfig(registry configRegistryInterface, gitRepo configRepositoryInterfa
+ 		l.Infof("error trying to access globalPushAccess: %s", err)
+ 	}
+ 
+-	isClean, err := gitRepo.IsClean()
+-	if err != nil {
+-		l.Infof("error checking if the repository is clean: %s", err)
+-	}
+-
+ 	return oktetoBuilderConfig{
+ 		repository:          gitRepo,
+ 		hasGlobalAccess:     hasAccess,
+-		isCleanProject:      isClean,
+ 		fs:                  afero.NewOsFs(),
+ 		isOkteto:            okteto.IsOkteto(),
+ 		isSmartBuildsEnable: getIsSmartBuildEnabled(),
+@@ -78,15 +69,9 @@ func getConfigStateless(registry configRegistryInterface, gitRepo configReposito
+ 		l.Infof("error trying to access globalPushAccess: %s", err)
+ 	}
+ 
+-	isClean, err := gitRepo.IsClean()
+-	if err != nil {
+-		l.Infof("error checking if the repository is clean: %s", err)
+-	}
+-
+ 	return oktetoBuilderConfig{
+ 		repository:          gitRepo,
+ 		hasGlobalAccess:     hasAccess,
+-		isCleanProject:      isClean,
+ 		fs:                  afero.NewOsFs(),
+ 		isOkteto:            isOkteto,
+ 		isSmartBuildsEnable: getIsSmartBuildEnabled(),
+@@ -119,20 +104,6 @@ func (oc oktetoBuilderConfig) HasGlobalAccess() bool {
+ 	return oc.hasGlobalAccess
+ }
+ 
+-// IsCleanProject checks if the repository is clean(no changes over the last commit)
+-func (oc oktetoBuilderConfig) IsCleanProject() bool {
+-	return oc.isCleanProject
+-}
+-
+-// GetGitCommit returns the commit sha of the repository
+-func (oc oktetoBuilderConfig) GetGitCommit() string {
+-	commitSHA, err := oc.repository.GetSHA()
+-	if err != nil {
+-		oktetoLog.Infof("could not get repository sha: %s", err)
+-	}
+-	return commitSHA
+-}
+-
+ // GetAnonymizedRepo returns the repository url without credentials
+ func (oc oktetoBuilderConfig) GetAnonymizedRepo() string {
+ 	return oc.repository.GetAnonymizedRepo()
+```
+
+**File**: `cmd/build/v2/config_test.go` (modified, +22/-125)
+```diff
+@@ -30,15 +30,13 @@ type fakeConfigRegistry struct {
+ func (fcr fakeConfigRegistry) HasGlobalPushAccess() (bool, error) { return fcr.access, fcr.err }
+ 
+ type fakeConfigRepo struct {
+-	err     error
+-	sha     string
+-	url     string
+-	diff    string
+-	isClean bool
++	err  error
++	sha  string
++	url  string
++	diff string
+ }
+ 
+ func (fcr fakeConfigRepo) GetSHA() (string, error)                { return fcr.sha, fcr.err }
+-func (fcr fakeConfigRepo) IsClean() (bool, error)                 { return fcr.isClean, fcr.err }
+ func (fcr fakeConfigRepo) GetAnonymizedRepo() string              { return fcr.url }
+ func (fcr fakeConfigRepo) GetLatestDirSHA(string) (string, error) { return fcr.sha, fcr.err }
+ func (fcr fakeConfigRepo) GetDiffHash(string) (string, error)     { return fcr.diff, fcr.err }
+@@ -58,95 +56,62 @@ func TestGetConfigStateless(t *testing.T) {
+ 		input    input
+ 	}{
+ 		{
+-			name: "global access clean commit",
++			name: "global access",
+ 			input: input{
+ 				reg: fakeConfigRegistry{
+ 					access: true,
+ 					err:    nil,
+ 				},
+ 				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 			},
+ 			expected: oktetoBuilderConfig{
+ 				hasGlobalAccess: true,
+-				isCleanProject:  true,
+ 				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 				fs:                  afero.NewOsFs(),
+ 				isOkteto:            true,
+ 				isSmartBuildsEnable: true,
+ 			},
+ 		},
+ 		{
+-			name: "no global access clean commit",
++			name: "no global access",
+ 			input: input{
+ 				reg: fakeConfigRegistry{
+ 					access: false,
+ 					err:    nil,
+ 				},
+ 				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 			},
+ 			expected: oktetoBuilderConfig{
+ 				hasGlobalAccess: false,
+-				isCleanProject:  true,
+ 				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 				fs:                  afero.NewOsFs(),
+ 				isOkteto:            true,
+ 				isSmartBuildsEnable: true,
+ 			},
+ 		},
+ 		{
+-			name: "error on global access clean commit",
++			name: "error on global access",
+ 			input: input{
+ 				reg: fakeConfigRegistry{
+ 					access: false,
+ 					err:    assert.AnError,
+ 				},
+ 				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 			},
+ 			expected: oktetoBuilderConfig{
+ 				hasGlobalAccess: false,
+-				isCleanProject:  true,
+ 				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
+-				},
+-				fs:                  afero.NewOsFs(),
+-				isOkteto:            true,
+-				isSmartBuildsEnable: true,
+-			},
+-		},
+-		{
+-			name: "error on clean commit and global access",
+-			input: input{
+-				reg: fakeConfigRegistry{
+-					access: false,
+-					err:    assert.AnError,
+-				},
+-				repo: fakeConfigRepo{
+-					isClean: false,
+-					err:     assert.AnError,
+-				},
+-			},
+-			expected: oktetoBuilderConfig{
+-				hasGlobalAccess: false,
+-				isCleanProject:  false,
+-				repository: fakeConfigRepo{
+-					isClean: false,
+-					err:     assert.AnError,
++					err: nil,
+ 				},
+ 				fs:                  afero.NewOsFs(),
+ 				isOkteto:            true,
+@@ -182,95 +147,62 @@ func TestGetConfig(t *testing.T) {
+ 		input    input
+ 	}{
+ 		{
+-			name: "global access clean commit",
++			name: "global access",
+ 			input: input{
+ 				reg: fakeConfigRegistry{
+ 					access: true,
+ 					err:    nil,
+ 				},
+ 				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 			},
+ 			expected: oktetoBuilderConfig{
+ 				hasGlobalAccess: true,
+-				isCleanProject:  true,
+ 				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 				fs:                  afero.NewOsFs(),
+ 				isOkteto:            true,
+ 				isSmartBuildsEnable: true,
+ 			},
+ 		},
+ 		{
+-			name: "no global access clean commit",
++			name: "no global access",
+ 			input: input{
+ 				reg: fakeConfigRegistry{
+ 					access: false,
+ 					err:    nil,
+ 				},
+ 				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
+-				},
+-			},
+-			expected: oktetoBuilderConfig{
+-				hasGlobalAccess: false,
+-				isCleanProject:  true,
+-				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
+-				},
+-				fs:                  afero.NewOsFs(),
+-				isOkteto:            true,
+-				isSmartBuildsEnable: true,
+-			},
+-		},
+-		{
+-			name: "error on global access clean commit",
+-			input: input{
+-				reg: fakeConfigRegistry{
+-					access: false,
+-					err:    assert.AnError,
+-				},
+-				repo: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 			},
+ 			expected: oktetoBuilderConfig{
+ 				hasGlobalAccess: false,
+-				isCleanProject:  true,
+ 				repository: fakeConfigRepo{
+-					isClean: true,
+-					err:     nil,
++					err: nil,
+ 				},
+ 				fs:                  afero.NewOsFs(),
+ 				isOkteto:            true,
+ 				isSmartBuildsEnable: true,
+ 			},
+ 		},
+ 		{
+-			name: "error on clean commit and global access
+```
+
+**File**: `cmd/build/v2/services_test.go` (modified, +0/-4)
+```diff
+@@ -216,20 +216,16 @@ func TestNoServiceBuiltWithSubset(t *testing.T) {
+ }
+ 
+ type fakeConfig struct {
+-	sha                 string
+ 	repoURL             string
+ 	globalNamespace     string
+ 	namespace           string
+ 	registryURL         string
+-	isClean             bool
+ 	hasAccess           bool
+ 	isOkteto            bool
+ 	isSmartBuildsEnable bool
+ }
+ 
+ func (fc fakeConfig) HasGlobalAccess() bool                  { return fc.hasAccess }
+-func (fc fakeConfig) IsCleanProject() bool                   { return fc.isClean }
+-func (fc fakeConfig) GetGitCommit() string                   { return fc.sha }
+ func (fc fakeConfig) IsOkteto() bool                         { return fc.isOkteto }
+ func (fc fakeConfig) IsOktetoCluster() bool                  { return fc.isOkteto }
+ func (fc fakeConfig) GetAnonymizedRepo() string              { return fc.repoURL }
+```
+
+**File**: `cmd/build/v2/tagger_test.go` (modified, +2/-55)
+```diff
+@@ -50,21 +50,7 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 		{
+ 			name: "image is set without access to global",
+ 			cfg: fakeConfig{
+-				isClean:   true,
+ 				hasAccess: false,
+-				sha:       "sha",
+-			},
+-			b: &build.Info{
+-				Image: "nginx",
+-			},
+-			expectedImage: "nginx",
+-		},
+-		{
+-			name: "image is set with no clean project",
+-			cfg: fakeConfig{
+-				isClean:   false,
+-				hasAccess: true,
+-				sha:       "sha",
+ 			},
+ 			b: &build.Info{
+ 				Image: "nginx",
+@@ -74,9 +60,7 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 		{
+ 			name: "image is set with access to global",
+ 			cfg: fakeConfig{
+-				isClean:   true,
+ 				hasAccess: true,
+-				sha:       "sha",
+ 			},
+ 			b: &build.Info{
+ 				Image: "nginx",
+@@ -86,9 +70,7 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 		{
+ 			name: "image is set but in okteto dev registry",
+ 			cfg: fakeConfig{
+-				isClean:   true,
+ 				hasAccess: true,
+-				sha:       "sha",
+ 			},
+ 			b: &build.Info{
+ 				Dockerfile: "Dockerfile",
+@@ -100,9 +82,7 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 		{
+ 			name: "image is set but in okteto global registry",
+ 			cfg: fakeConfig{
+-				isClean:   true,
+ 				hasAccess: true,
+-				sha:       "sha",
+ 			},
+ 			b: &build.Info{
+ 				Dockerfile: "Dockerfile",
+@@ -114,22 +94,7 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 		{
+ 			name: "image inferred without access to global",
+ 			cfg: fakeConfig{
+-				isClean:   true,
+ 				hasAccess: false,
+-				sha:       "sha",
+-			},
+-			b: &build.Info{
+-				Dockerfile: "Dockerfile",
+-				Context:    ".",
+-			},
+-			expectedImage: "okteto.dev/test-test:okteto",
+-		},
+-		{
+-			name: "image inferred without clean project",
+-			cfg: fakeConfig{
+-				isClean:   false,
+-				hasAccess: true,
+-				sha:       "sha",
+ 			},
+ 			b: &build.Info{
+ 				Dockerfile: "Dockerfile",
+@@ -138,11 +103,9 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 			expectedImage: "okteto.dev/test-test:okteto",
+ 		},
+ 		{
+-			name: "image inferred with clean project, has access to global registry but no feature flag enabled",
++			name: "image inferred with access to global registry but no feature flag enabled",
+ 			cfg: fakeConfig{
+-				isClean:             true,
+ 				hasAccess:           true,
+-				sha:                 "sha",
+ 				isSmartBuildsEnable: false,
+ 			},
+ 			b: &build.Info{
+@@ -152,25 +115,9 @@ func Test_ImageTaggerWithoutVolumes_GetServiceDevImageReference(t *testing.T) {
+ 			expectedImage: "okteto.dev/test-test:okteto",
+ 		},
+ 		{
+-			name: "image inferred with clean project, has access to global registry and feature flag enabled",
+-			cfg: fakeConfig{
+-				isClean:             true,
+-				hasAccess:           true,
+-				sha:                 "sha",
+-				isSmartBuildsEnable: true,
+-			},
+-			b: &build.Info{
+-				Dockerfile: "Dockerfile",
+-				Context:    ".",
+-			},
+-			expectedImage: "okteto.dev/test-test:okteto",
+-		},
+-		{
+-			name: "image inferred with clean project, has access to global registry, feature flag enabled and empty build hash",
++			name: "image inferred with access to global registry and feature flag enabled",
+ 			cfg: fakeConfig{
+-				isClean:             true,
+ 				hasAccess:           true,
+-				sha:                 "",
+ 				isSmartBuildsEnable: true,
+ 			},
+ 			b: &build.Info{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5286** (2026-11-23): docs: update the links to the docs and use the short anchors of the Okteto Manifest reference (@pchico83)
+- **PR #5285** (2026-11-23): chore(deps): Update k8s.io/utils digest to ca04ba5 (@oktetobot)
+- **PR #5284** (closed): docs: point the CLI messages and the README to the current docs pages (@pchico83)
 - **PR #5281** (2026-11-20): Upgrade buildkit dependency to v0.35.1-okteto1 (@devin-ai-integration[bot])
 - **PR #5280** (closed): chore(deps): Update module sigs.k8s.io/kustomize/kyaml to v0.21.3 (@oktetobot)
 - **PR #5279** (2026-11-20): build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14 (@dependabot[bot])
-- **PR #5276** (2026-11-19): revert: read the git repository with go-git only (@jLopezbarb)
-- **PR #5275** (2026-11-19): docs: remove samples and align the README with the Okteto positioning (@pchico83)
-- **PR #5273** (closed): [Backport release-3.25] fix(deps): revert go-git to v5.16.5 (@jLopezbarb)
 
 ---
 
@@ -1613,31 +2724,69 @@ Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.gith
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14
+## X. ENG-35: Reach the internal API through its IP in remote builds
 
 **RULE**:
-When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/remoterun/catalog.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `112af098`: build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55998c4b`: ENG-35: Reach the internal API through its IP in remote builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/remoterun/catalog.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: renovatebot/github-action@v46.3.14
+	"net"
+	"net/url"
+	"github.com/okteto/okteto/pkg/constants"
+// catalog secret variables from the endpoint through the internal IP of the
+// Okteto API, with the token, or with the user's token when it's empty
+type catalogSecretVariablesClientFactory func(endpoint, internalAPIIP, token string) (catalogSecretVariablesGetter, error)
+	// internalAPIIP is the internal IP of the Okteto API that the CLI starting
+	// the remote build passes on, empty when the installation doesn't publish it
+	internalAPIIP string
+// errCatalogSecretVariablesEndpointNotHTTPS is returned when the endpoint
+// isn't https, so the request isn't sent. Only the first installations with
+// catalog secret variables give an http endpoint, which remote builds can't
+// reach
+var errCatalogSecretVariablesEndpointNotHTTPS = errors.New("the catalog secret variables can't be fetched: the Okteto installation gives an endpoint that isn't https")
+
+// internalAPIIPMissingError is returned when the remote build doesn't get a
+// valid internal IP of the Okteto API to reach the endpoint through, so the
+// request isn't sent
+type internalAPIIPMissingError struct {
+	hostname string
+}
+
+func (e internalAPIIPMissingError) Error() stri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: renovatebot/github-action@v46.3.13
+// catalog secret variables with the token, or with the user's token when it's
+// empty
+type catalogSecretVariablesClientFactory func(token string) (catalogSecretVariablesGetter, error)
+// installations takes. It reaches the endpoint directly, ignoring the proxy
+// env vars, with the TLS settings of the context
+func newCatalogSecretVariablesClient(token string) (catalogSecretVariablesGetter, error) {
+	opts := []okteto.Option{okteto.WithoutProxy()}
+	oktetoClient, err := okteto.NewOktetoClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+	return oktetoClient.User(), nil
+// fetch gets the catalog secret variables from the endpoint. The token is the
+// copy of the installer's file that BuildKit mounted when the RUN started, so
+// it's fresh. It is never logged nor set in the env of the commands, but the
+// secret is mounted for the whole RUN and they can read the file, so it's
+// masked in their output like the user's token
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `112af098` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55998c4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

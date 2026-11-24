@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:58:05.143Z",
+  "last_updated": "2026-11-24T01:07:33.733Z",
   "total_records": 2476,
   "domains": {
     "A": {
@@ -8685,10 +8685,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "945a5cc1c74f57d9549b43bb3e159b26606cc0d313f7850fa3fdcf89f4c8958c",
-      "created_at": "2026-11-23T21:31:36.239Z"
+      "content_hash": "211ec2751b921c97a0a21711dd20a16220f13a5c3f62b61bdb97b53b65613dec",
+      "created_at": "2026-11-24T01:07:25.501Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -9227,8 +9227,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "8d9abd2ca7466e40bbe884029082c8541f23ad19e4214ace510aa664e4bb96a5",
-      "created_at": "2026-11-23T20:38:57.861Z"
+      "content_hash": "7674771beac072f95d388a4b81b9f336034937ca2407d5be1a9315e2e7e27381",
+      "created_at": "2026-11-24T01:07:23.262Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -9296,8 +9296,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "dbd39c44b92fc25fde5cfff9528f8d83b6beff2a0b931593d7cbad3a01ad0422",
-      "created_at": "2026-11-23T16:37:15.639Z"
+      "content_hash": "ddc4c8c3c35e93dab7cfece03de8f017aa723582fb5ede2a4ffcf6cc95a0ad51",
+      "created_at": "2026-11-24T01:07:33.733Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -15537,8 +15537,8 @@
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "20df255fedeb99003f99ab237c71caa0bd704e3fc723787460ecf8abc142e9ce",
-      "created_at": "2026-11-20T22:49:28.973Z"
+      "content_hash": "8296345676a863e3d7d47eae871db196a47b1aac05553c30b560b782ae9b2993",
+      "created_at": "2026-11-24T01:07:21.286Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
@@ -15624,8 +15624,8 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "eb7721ee8af6d8bac2ad0db6dba3827dec9eaea238c21d4e8e4098c4d075cdde",
-      "created_at": "2026-11-20T22:49:33.483Z"
+      "content_hash": "24df4e43e352ca96be55e3c347cb2b47bae1c45e645c7c8db65d415642e93ab6",
+      "created_at": "2026-11-24T01:07:32.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
@@ -26155,8 +26155,8 @@
       "title": "Technical Construction Intelligence: tauri-apps/tauri Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-technical-construction-intelligence-tauri-apps-tauri-core-invar.md",
       "repository": "tauri-apps/tauri",
-      "content_hash": "284f42a97e0f270fb8dcdc3b8381d2a4130d02187cfd2bbf3c2ba3f572f296e6",
-      "created_at": "2026-11-21T02:00:37.491Z"
+      "content_hash": "4d10c48de75038b7b11dbaa0532693764124d24a5b6b81b084fb2669c8bdeac7",
+      "created_at": "2026-11-24T01:07:20.990Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
@@ -26182,8 +26182,8 @@
       "title": "Technical Construction Intelligence: tauri-apps-tauri-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-learnings-technical-construction-intelligence-tauri-apps-tauri-.md",
       "repository": "tauri-apps-tauri-learnings",
-      "content_hash": "c741b8791912b98d53794aad2bb2c82198360937b4474a46f27dc8f336cf734a",
-      "created_at": "2026-11-21T02:00:45.819Z"
+      "content_hash": "07813fa588ac39fce7d059789c31caabb8ed63edaba1abc8d740a47741f3bda7",
+      "created_at": "2026-11-24T01:07:30.855Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar",

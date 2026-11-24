@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T16:37:15.340Z",
+  "timestamp": "2026-11-24T01:07:33.349Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nolabs-ai-nono-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nolabs-ai-nono-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T16:37:15.340Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T01:07:33.349Z`  
 > **Learning ID**: `LEARN-EVO-nolabs-ai-nono-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `2011f567`  
+> **Source Version**: `d0c52cdf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T16:37:09.089Z  
+> **Timestamp**: 2026-11-24T01:07:21.181Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:37:09.083Z  
+> **Harvest Timestamp**: 2026-11-24T01:07:21.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5078 stars
+- **Stars / Engagement**: 5081 stars
 
 ---
 
@@ -2986,13 +2986,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2356** (2026-11-23): **fix(cli): improve platform enrollment and audit delivery**
+  *Symptoms*: ## Summary - Name devices during login and retry completed audit uploads safely. - Fix inherited-policy names, remembered-mode status and revoked-device recovery.  Maintainer-directed fixes to existing flows.  ## Test Plan `make ci`; Linux CLI/delivery tests; real enrollment, recovery and audit-verification flows.  ## Agent Disclosure Codex-assisted. Reviewed `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md` and protocol guides; repository rules followed, no external code reused.  ## Checklist - [x] Maintainer-directed scope; DCO signed; docs and tests updated. - [x] Agent eligibility, attribution and security/error/path rules checked; no new sandbox capability or enforcement mode. 
+
 - **Issue #2355** (2026-11-23): **fix: update url and stabilize proxy keep-alive test**
   *Symptoms*: ## Linked Issue  Maintainer-directed fix for the [main CI failures](https://github.com/nolabs-ai/nono/actions/runs/45157958328).  ## Summary  - Require `url` 2.5.9, fixing RUSTSEC-2026-0592, and update its required `form_urlencoded` dependency. - Make both HTTP origin fixtures read the complete request before responding. A single TCP read sometimes captured only headers, falsely failing the keep-alive test. Add a fragmented-request regression test.  ## Test Plan  - `make ci` passed on macOS with isolated config/state directories. - Linux/Rust 1.95: 895 proxy tests and `cargo check --workspace --locked` passed. - Keep-alive regression passed 30 consecutive runs. - Cargo Audit: zero vulnerabilities; five existing maintenance warnings remain unsuppressed.  ## Agent Disclosure  Prepared with Codex under maintainer direction. Reviewed AGENTS.md, CONTRIBUTING.md, GOVERNANCE.md, SECURITY.md, the release guide and affected code; follows repository contribution and security requirements.  ## Checklist  - [x] Maintainer-directed routine work - [x] All commits carry DCO sign-off - [x] Code follows repository standards and has regression coverage - [x] Documentation: not applicable to this dependency/test-fixture fix - [x] NEP: not applicable; no enforcement changes  ## Agent Compliance Check  - [x] Not prohibited from contributing - [x] Directly maintainer-directed work - [x] Reviewed contribution and security rules - [x] Original changes; no reused code requiring attribution - [x] No p
-
-- **Issue #2349** (2026-11-20): **fix(cli): allow mise to read ~/.local/state/mise**
-  *Symptoms*: ## Linked Issue  Closes #2348  ## Summary  mise keeps trusted/tracked config records under `~/.local/state/mise`. Add it to the `mise_manager` group's read list.  ## Agent Disclosure  Prepared with Claude Code on behalf of the contributor. It read AGENTS.md, CONTRIBUTING.md and the PR template, and followed their requirements (linked issue, DCO sign-off, disclosure).  ## Test Plan  - `cargo test -p nono-cli --bin nono policy`: 456 passed  ## Checklist  - [x] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates   - Not applicable: read-only grant added to an existing opt-in group, same as #2307. - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked   - Not applicable: read-only grant added to an existing opt-in group, same as #2307.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +1 | | Lines removed | -0 | | Total changed | 1 | | **Classification** | **Small (< 50 lines)** |  ### Affected crates  - **crates/nono-cli** — CLI changes. Verify argument parsing, flag documentation, and UX behaviour across supported platforms.  ### Blast radius — Contained  This PR touches: **configuration / policy files**  --- <sub>Updated automatically on each push to this PR.</sub>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -3009,144 +3007,548 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a93ccdfe` (2026-11-23)
-**Commit Message**: fix: update url and stabilize proxy keep-alive test (#2355)
+### Incident Patch 1: `d0c52cdf` (2026-11-23)
+**Commit Message**: feat(network-policy): add TypeSafe API endpoint (#2360)
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+* feat(network-policy): add TypeSafe API endpoint
 
-**File**: `Cargo.lock` (modified, +4/-4)
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+* feat(scrub): add TYPESAFE_API_KEY to default sensitive env vars
+
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/data/network-policy.json` (modified, +1/-0)
 ```diff
-@@ -1702,9 +1702,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -4990,9 +4990,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+@@ -17,6 +17,7 @@
+         "api.mistral.ai",
+         "api.cohere.com",
+         "api.together.xyz",
++        "api.typesafe.ai",
+         "api.fireworks.ai",
+         "api.deepseek.com",
+         "api.perplexity.ai",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/nono/src/scrub.rs` (modified, +1/-0)
 ```diff
-@@ -50,7 +50,7 @@ globset = "0.4"
- # Shared system dependencies
- nix = "0.31.3"
- landlock = "0.4.7"
--url = "2"
-+url = "2.5.9"
- idna = "1"
- getrandom = "0.4"
- base64 = "0.23"
+@@ -60,6 +60,7 @@ const SENSITIVE_ENV_VARS: &[&str] = &[
+     "NONO_PROXY_TOKEN",
+     "OPENAI_API_KEY",
+     "TOGETHER_API_KEY",
++    "TYPESAFE_API_KEY",
+ ];
+ 
+ /// Redaction policy for diagnostics and persisted command context.
 ```
 
-**File**: `crates/nono-proxy/src/server.rs` (modified, +51/-7)
+---
+
+### Incident Patch 2: `5fb1bfa8` (2026-11-23)
+**Commit Message**: feat(sandbox): run proxied commands in the session network namespace (#2353)
+
+* feat(sandbox): run proxied commands in the session network namespace
+
+Mediated commands setns into the isolated session netns and reach their scoped proxies
+through in-namespace bridges attached at bootstrap.
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+* fix(isolation): reject command network grants that escape isolation
+
+Command allow_all and TCP port grants bypass the namespace; callback ports cannot reach host localhost.
+Adds full-path tests: commands and the agent reach only their own scoped proxy, with and without loopback.
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +33/-0)
 ```diff
-@@ -7681,19 +7681,65 @@ mod tests {
-         );
-     }
+@@ -322,6 +322,9 @@ pub struct ExecConfig<'a> {
+     /// `namespaces` requests a mount namespace.
+     #[cfg(target_os = "linux")]
+     pub mount_mask: Option<&'a nono::PreparedMountMask>,
++    /// Command-scoped proxies, bridged into the session network namespace for mediated commands.
++    #[cfg(target_os = "linux")]
++    pub scoped_proxy_handles: &'a [nono_proxy::server::ProxyHandle],
+     /// Allow-list of environment variable names. When set, only variables
+     /// matching a glob pattern (e.g. `"AWS_*"`, `"*_TOKEN"`, `"*SECRET*"`) are
+     /// passed to the child. Nono-injected credentials always bypass this.
+@@ -1527,6 +1530,36 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
+                 }
+             }
  
-+    /// Wait for the fixture's headers and Content-Length body before replying.
-+    /// A TCP read can contain just part of either, even over loopback.
-+    async fn read_origin_request(stream: impl tokio::io::AsyncRead + Unpin) -> String {
-+        use tokio::io::{AsyncBufReadExt, AsyncReadExt, BufReader};
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+            let mut reader = BufReader::new(stream);
-+            let mut request = String::new();
-+            let mut content_length = 0;
-+            loop {
-+                let mut line = String::new();
-+                assert!(reader.read_line(&mut line).await.unwrap() > 0);
-+                request.push_str(&line);
-+                if line == "\r\n" {
-+                    break;
-+                }
-+                if let Some((name, value)) = line.split_once(':')
-+                    && name.eq_ignore_ascii_case("content-length")
-+                {
-+                    content_length = value.trim().parse().unwrap();
++            // Mediated commands join the session network namespace and reach their scoped proxies there.
++            #[cfg(target_os = "linux")]
++            if let Some(bootstrap) = clone_bootstrap.as_mut() {
++                let attached = std::mem::take(&mut bootstrap.scoped_bridges)
++                    .into_iter()
++                    .zip(config.scoped_proxy_handles)
++                    .try_for_each(|(bridge, handle)| {
++                        handle
++                            .add_listener(std::net::TcpListener::from(bridge))
++                            .map_err(|e| {
++                                NonoError::SandboxInit(format!(
++                                    "cannot attach command proxy bridge to proxy: {e}"
++                                ))
++                            })
++                    })
++                    .and_then(|()| {
++                        match (bootstrap.session_netns.take(), config.tool_sandbox_runtime) {
++                            (Some((user, net)), Some(runtime)) => {
++                                runtime.set_session_netns(user, net)
++                            }
++                            _ => Ok(()),
++                        }
++                    });
++                if let Err(error) = attached {
++                    let _ = signal::kill(child, Signal::SIGKILL);
++                    let _ = waitpid(child, None);
++                    return Err(error);
 +                }
 +            }
-+            let mut body = vec![0; content_length];
-+            reader.read_exact(&mut body).await.unwrap();
-+            request.push_str(&String::from_utf8_lossy(&body));
-+            request
-+        })
-+        .await
-+        .expect("origin must receive a complete request")
++
+             // Mount masks are mounts on host dentries; the host removing or
+             // replacing one detaches the mask. Watch for that for the whole
+             // session and terminate the sandbox rather than let it reach the
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files.rs` (modified, +85/-15)
+```diff
+@@ -56,6 +56,10 @@ pub(super) struct Bootstrap {
+     /// Watch over the child's mount masks, pinned after the child applied
+     /// them and before it ran untrusted code.
+     pub mount_watch: Option<nono::MountMaskWatch>,
++    /// In-namespace listeners for `ExecConfig::scoped_proxy_handles`, in the same order.
++    pub scoped_bridges: Vec<OwnedFd>,
++    /// The child's user and network namespaces, which mediated commands join.
++    pub session_netns: Option<(OwnedFd, OwnedFd)>,
+ }
+ 
+ pub(super) struct Command<'a> {
+@@ -101,6 +105,14 @@ fn namespace_confines_tcp(config: &ExecConfig<'_>) -> bool {
+         .is_some_and(|spec| spec.has_network() && spec.loopback_tcp_enabled())
+ }
+ 
++/// Mediated commands join the child's netns unless loopback TCP lets the session reach their bridges.
++fn commands_join_namespace(config: &ExecConfig<'_>) -> bool {
++    config.tool_sandbox_runtime.is_some()
++        && config
++            .namespaces
++            .is_some_and(|spec| spec.has_network() && !spec.loopback_tcp_enabled())
++}
++
+ /// Prepare the child's Landlock policy. With `root` (the child's
+ /// `/proc/<pid>/root` under a mount mask) every rule path is resolved as the
+ /// child sees it, so a grant of a masked directory such as `/tmp` attaches to
+@@ -303,6 +315,16 @@ pub(super) fn spawn(
+     let parent = above_stdio(parent.into())?;
+     let child = above_stdio(child.into())?;
+     let closed_stdio = reserve_stdio()?;
++    let commands_join = commands_join_namespace(config);
++    let mut scoped: Vec<(u16, RawFd)> = if commands_join {
++        config
++            .scoped_proxy_handles
++            .iter()
++            .map(|handle| (handle.port, -1))
++            .collect()
++    } else {
++        Vec::new()
++    };
+     let snapshot = listeners()?;
+     let mut signals = Signals::block()?;
+     // SAFETY: getpid takes no pointers and cannot fail.
+@@ -327,6 +349,7 @@ pub(super) fn spawn(
+             network.as_ref(),
+             namespaces.as_ref(),
+             mount_mask,
++            &mut scoped,
+             gate.as_ref().map(AsRawFd::as_raw_fd),
+             child.as_raw_fd(),
+             parent.as_raw_fd(),
+@@ -347,7 +370,7 @@ pub(super) fn spawn(
+     let mut mount_watch = None;
+     #[cfg(test)]
+     let mut late_fd = None;
+-    let handshake = (|| -> Result<(RawFd, Option<OwnedFd>)> {
++    let handshake = (|| -> Result<(RawFd, Bootstrap)> {
+         // Harden before releasing the child, and before any untrusted code can
+         // exec. The child independently enables inspection for notifications.
+         // SAFETY: prctl changes only the parent's dumpability.
+@@ -492,6 +515,34 @@ pub(super) fn spawn(
+             None if bridge_fd == -1 => None,
+             None => return Err(failure("unexpected bridge listener")),
+         };
++        let mut scoped_bridges = Vec::with_capacity(scoped.len());
++        for &(port, _) in &scoped {
++            let mut record = [0_u8; 4];
++            if !transfer(parent.as_raw_fd(), &mut record, false, Some(pid)) {
++                return Err(failure(
++                    "child died before reporting a command proxy bridge",
++                ));
++            }
++            let fd = i32::from_ne_bytes(record);
++            if fd < 3 {
++                return Err(failure("invalid command proxy bridge slot"));
++            }
++            // SAFETY: same shared-table contract as the session bridge above.
++            let borrowed = unsafe { std::os::fd::BorrowedFd::borrow_raw(fd) };
++            sandbox::validate_bridge_listener(borrowed, port)?;
++            // SAFETY: validated above; ports are distinct, so this is the only parent owner.
++            scoped_bridges.push(unsafe { OwnedFd::from_raw_fd(fd) });
++        }
++        let session_netns = if commands_join {
++            let open = |name: &str| {
++                std::fs::File::open(format!("/proc/{pid}/ns/{name}"))
++                    .map_err(|_| failure("cannot open the child's namespaces"))
++                    .and_then(|file| above_stdio(file.into()))
++            };
++            Some((open("user")?, open("net")?))
++        } else {
++            None
++        };
+         // Use send(MSG_NOSIGNAL) only in the parent; the child's filter traps it.
+         #[cfg(test)]
+         if command.fault == Fault::FailedAck {
+@@ -510,9 +561,19 @@ pub(super) fn spawn(
+         if !transfer(parent.as_raw_fd(), &mut [ack], true, Some(pid)) {
+             return Err(failure("acknowledgment failed"));
+         }
+-        Ok((network_fd, bridge))
++        Ok((
++            network_fd,
++            Bootstrap {
++                child: nix::unistd::Pid::from_raw(pid),
++                network: None,
++                bridge,
++                mount_watch: None,
++                scoped_bridges,
++                session_netns,
++            },
++        ))
+     })();
+-    let (network_fd, bridge) = match handshake {
++    let (network_fd, mut bootstrap) = match handshake {
+         Ok(fds) => fds,
+         Err(error) => {
+         
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files/tests.rs` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@ fn config(caps: &CapabilitySet, filesystem: bool, proxy: bool) -> ExecConfig<'_>
+         sandbox_policy: LinuxSandboxPolicy::Auto,
+         namespaces: None,
+         mount_mask: None,
++        scoped_proxy_handles: &[],
+         allowed_env_vars: None,
+         denied_env_vars: None,
+         case_insensitive_env_vars: false,
+```
+
+**File**: `crates/nono-cli/src/execution_runtime.rs` (modified, +2/-0)
+```diff
+@@ -824,6 +824,8 @@ pub(crate) fn execute_sandboxed(plan: LaunchPlan) -> Result<()> {
+         namespaces,
+         #[cfg(target_os = "linux")]
+         mount_mask: mount_mask.as_ref(),
++        #[cfg(target_os = "linux")]
++        scoped_proxy_handles: &scoped_proxy_handles,
+         allowed_env_vars: flags.allowed_env_vars,
+         denied_env_vars: flags.denied_env_vars,
+         case_insensitive_env_vars: flags.case_insensitive_env_vars,
+```
+
+**File**: `crates/nono-cli/src/isolation.rs` (modified, +108/-1)
+```diff
+@@ -102,7 +102,48 @@ pub(crate) fn validate_config(args: &SandboxArgs, prepared: &PreparedSandbox) ->
+     if !prepared.no_proxy.is_empty() {
+         conflicts.push("network.no_proxy (hosts that bypass the proxy)");
+     }
+-    reject_direct_grants(&conflicts)
++    reject_direct_grants(&conflicts)?;
++    reject_command_network_grants(isolate, prepared.command_policies.as_ref())
++}
++
++/// Commands with direct grants stay on the host and bypass isolation; proxied ones join it and lose host localhost.
++fn reject_command_network_grants(
++    isolate: &LinuxIsolateConfig,
++    policies: Option<&crate::command_policy::CommandPoliciesConfig>,
++) -> Result<()> {
++    let networks: Vec<_> = policies
++        .into_iter()
++        .flat_map(|p| &p.commands)
++        .filter_map(|(name, c)| Some((name.as_str(), c.sandbox.as_ref()?.network.as_ref()?)))
++        .collect();
++    let names = |grants: fn(&crate::command_policy::CommandNetworkConfig) -> bool| {
++        networks
++            .iter()
++            .filter(|(_, n)| grants(n))
++            .map(|(name, _)| *name)
++            .collect::<Vec<_>>()
++            .join(", ")
++    };
++    let direct =
++        names(|n| n.allow_all || !n.tcp_connect_ports.is_empty() || !n.tcp_bind_ports.is_empty());
++    if !direct.is_empty() {
++        return Err(NonoError::ConfigParse(format!(
++            "linux.isolate.network (--isolate net) cannot be combined with command \
++             network.allow_all, network.tcp_connect_ports or network.tcp_bind_ports, because \
++             those commands would reach the network directly from the host: {direct}. Use \
++             network.allow_domain, or do not use network isolation."
++        )));
 +    }
-+
-+    #[tokio::test]
-+    async fn origin_fixture_reads_fragmented_request_without_waiting_for_eof() {
-+        use tokio::io::AsyncWriteExt;
-+
-+        let (mut sender, receiver) = tokio::io::duplex(16);
-+        let reader = tokio::spawn(read_origin_request(receiver));
-+        let body = "fragmented request body";
-+        let head = format!(
-+            "POST /mcp HTTP/1.1\r\nHost: localhost\r\ncOnTeNt-LeNgTh: {}\r\n\r\n",
-+            body.len()
++    let callbacks = names(|n| !n.open_port.is_empty() || !n.open_port_range.is_empty());
++    if isolate.loopback || callbacks.is_empty() {
++        return Ok(());
++    }
++    Err(NonoError::ConfigParse(format!(
++        "linux.isolate.network (--isolate net) cannot be combined with command \
++         network.open_port or network.open_port_range, because mediated commands run in the \
++         isolated namespace where host localhost ports are unreachable: {callbacks}. Remove \
++         these grants, add linux.isolate.loopback, or do not use network isolation."
++    )))
+ }
+ 
+ /// `loopback` lifts TCP enforcement on the grounds that the network namespace
+@@ -570,6 +611,72 @@ mod tests {
+         assert!(message.contains("connect_port"), "{message}");
+     }
+ 
++    #[test]
++    fn command_network_grants_are_rejected_under_isolation() {
++        use crate::command_policy::{
++            CommandNetworkConfig, CommandPoliciesConfig, CommandPolicyConfig, CommandSandboxConfig,
++        };
++        let policies = |network: CommandNetworkConfig| {
++            let sandbox = CommandSandboxConfig {
++                network: Some(network),
++                ..Default::default()
++            };
++            let mut policies = CommandPoliciesConfig::default();
++            policies.commands.insert(
++                "tool".into(),
++                CommandPolicyConfig {
++                    sandbox: Some(sandbox),
++                    ..Default::default()
++                },
++            );
++            policies
++                .commands
++                .insert("git".into(), CommandPolicyConfig::default());
++            policies
++        };
++        let loopback = LinuxIsolateConfig {
++            loopback: true,
++            ..isolate_network()
++        };
++        let callback = policies(CommandNetworkConfig {
++            open_port: vec![8250],
++            ..Default::default()
++        });
++        let message = reject_command_network_grants(&isolate_network(), Some(&callback))
++            .expect_err("open_port")
++            .to_string();
++        assert!(
++            message.contains("unreachable: tool") && !message.contains("git"),
++            "{message}"
 +        );
-+        sender.write_all(head.as_bytes()).await.unwrap();
-+        tokio::task::yield_now().await;
-+        sender.write_all(body.as_bytes()).await.unwrap();
-+        assert_eq!(reader.await.unwrap(), format!("{head}{body}"));
++        assert!(reject_command_network_grants(&loopback, Some(&callback)).is_ok());
++        for direct in [
++            CommandNetworkConfig {
++                allow_all: true,
++                ..Default::default()
++            },
++            CommandNetworkConfig {
++                tcp_connect_ports: vec![22],
++                ..Default::default()
++            },
++            CommandNetworkConfig {
++                tcp_bind_ports: vec![8080],
++                ..Default::default()
++            },
++        ] {
++            for isolate in [&isolate_network(), &loopback] {
++                let error = reject_command_network_grants(isolate, Some(&policies(direct.clone())));
++                assert!(
++                    error
++                        .expect_err("direct")
++                        .to_string()
++                        .contains("directly from the host: tool")
++                );
++            }
++        }
++        assert!(reject_command_network_grants(&isolate_network(), None).is_ok());
 +    }
 +
-     /// Spawn a one-shot local HTTP/1.1 origin server that echoes the received
-     /// request line back in the body and returns 200. Returns its address and
-     /// a receiver that yields the raw request bytes it saw.
-     async fn spawn_echo_origin() -> (std::net::SocketAddr, tokio::sync::oneshot::Receiver<String>) {
--        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+        use tokio::io::AsyncWriteExt;
-         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-         let addr = listener.local_addr().unwrap();
-         let (tx, rx) = tokio::sync::oneshot::channel();
-         tokio::spawn(async move {
-             if let Ok((mut sock, _)) = listener.accept().await {
--                let mut buf = [0u8; 4096];
--                let n = sock.read(&mut buf).await.unwrap_or(0);
--                let received = String::from_utf8_lossy(&buf[..n]).to_string();
-+                let received = read_origin_request(&mut sock).await;
-                 let body = "ok";
-                 let response = format!(
-                     "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-@@ -7727,9 +7773,7 @@ mod tests {
-             let Ok((mut sock, _)) = listener.accept().await else {
-                 return;
-             };
--            let mut buf = [0u8; 4096];
--            let n = sock.read(&mut buf).await.unwrap_or(0);
--            let received = String::from_utf8_lossy(&buf[..n]).to_string();
-+            let received = read_origin_request(&mut sock).await;
-             let body = "event: message\r\ndata: {}\r\n\r\n";
-             let response = format!(
-                 "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\nmcp-session-id: s1\r\nconnection: keep-alive\r\ntransfer-encoding: chunked\r\n\r\n{:x}\r\n{body}\r\n0\r\n\r\n",
+     #[test]
+     fn non_network_isolation_ignores_network_m
+```
+
+**File**: `crates/nono-cli/src/tool-sandbox/platform/linux.rs` (modified, +144/-5)
+```diff
+@@ -130,6 +130,8 @@ struct ToolSandboxState {
+     proxy_trust_bundle_paths: Vec<PathBuf>,
+     scoped_proxy_env_vars: BTreeMap<String, Vec<(String, String)>>,
+     reserved_proxy_ports: BTreeSet<u16>,
++    /// User and network namespaces of an isolated session, joined by eligible commands.
++    session_netns: std::sync::OnceLock<(OwnedFd, OwnedFd)>,
+     active_children: Mutex<HashMap<u32, ActiveChild>>,
+     /// Attributes severed-ancestry callers to their spawning command. See `lineage_cgroup`.
+     lineage: LineageMarker,
+@@ -417,6 +419,7 @@ impl PreparedToolSandboxRuntime {
+                 proxy_trust_bundle_paths: proxy_trust_bundle_paths.to_vec(),
+                 scoped_proxy_env_vars: scoped_proxy_env_vars.clone(),
+                 reserved_proxy_ports: reserved_proxy_ports.clone(),
++                session_netns: std::sync::OnceLock::new(),
+                 active_children: Mutex::new(HashMap::new()),
+                 lineage,
+                 active_count: AtomicUsize::new(0),
+@@ -454,6 +457,14 @@ impl PreparedToolSandboxRuntime {
+         vec![("PATH".to_string(), self.inner.session_path.clone())]
+     }
+ 
++    pub(crate) fn set_session_netns(&self, user: OwnedFd, net: OwnedFd) -> Result<()> {
++        self.inner.session_netns.set((user, net)).map_err(|_| {
++            NonoError::SandboxInit(
++                "command-mediation session network namespace is already set".to_string(),
++            )
++        })
++    }
++
+     pub(crate) fn broker_secret_env_vars(
+         &self,
+         secrets: &[nono::LoadedSecret],
+@@ -871,7 +882,10 @@ fn run_shim(shim_exe: &Path, socket_path: &Path) -> Result<()> {
+     std::process::exit(response.exit_code);
+ }
+ 
+-fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command> {
++fn prepare_launcher_command(
++    state: &ToolSandboxState,
++    spec: &ToolSandboxChildLaunchSpec,
++) -> Result<Command> {
+     let binary = OsStr::from_bytes(&spec.real_binary);
+     let binary_fd = open_and_verify_binary(binary, spec)?;
+     let caps = caps_from_spec(&spec.caps)?;
+@@ -897,6 +911,7 @@ fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command
+         .args(spec.argv.iter().skip(1).map(|arg| OsStr::from_bytes(arg)))
+         .current_dir(OsStr::from_bytes(&spec.cwd))
+         .env_clear();
++    install_session_netns_join(state, spec.session_netns, &mut command)?;
+     for entry in &spec.env {
+         let (name, value) = split_env_entry(entry).ok_or_else(|| {
+             NonoError::SandboxInit("invalid command-mediation environment entry".into())
+@@ -3655,6 +3670,7 @@ fn build_child_launch_spec_for_binary(
+         stdio_mode: selected_stdio_mode(request).to_string(),
+         stdio_limits: stdio_limits_from_policy(policy),
+         caps: caps_to_spec(&caps),
++        session_netns: state.session_netns.get().is_some() && joins_session_netns(&caps),
+         allowed_exec_paths,
+         expected_dev: binary.dev,
+         expected_ino: binary.ino,
+@@ -4509,6 +4525,44 @@ fn install_lineage_attach(
+     Ok(())
+ }
+ 
++/// Proxy-routed commands join the session netns; direct TCP grants need the host network.
++fn joins_session_netns(caps: &CapabilitySet) -> bool {
++    matches!(caps.network_mode(), NetworkMode::ProxyOnly { .. })
++        && caps.tcp_connect_ports().is_empty()
++        && caps.tcp_bind_ports().is_empty()
++}
++
++fn install_session_netns_join(
++    state: &ToolSandboxState,
++    join: bool,
++    command: &mut Command,
++) -> Result<()> {
++    if !join {
++        return Ok(());
++    }
++    let (user, net) = state
++        .session_netns
++        .get()
++        .map(|(user, net)| (user.as_raw_fd(), net.as_raw_fd()))
++        .ok_or_else(|| {
++            NonoError::SandboxInit(
++                "command-mediation session network namespace is unavailable".to_string(),
++            )
++        })?;
++    // SAFETY: setns is async-signal-safe; an error fails the spawn, so the command never runs outside the namespace.
++    unsafe {
++        command.pre_exec(move || {
++            for (fd, kind) in [(user, libc::CLONE_NEWUSER), (net, libc::CLONE_NEWNET)] {
++                if libc::setns(fd, kind) != 0 {
++                    return Err(std::io::Error::last_os_error());
++                }
++            }
++            Ok(())
++        });
++    }
++    Ok(())
++}
++
+ fn launch_child(
+     state: &ToolSandboxState,
+     command_name: &str,
+@@ -4545,7 +4599,7 @@ fn launch_child_with_direct_fds(
+     if spec.stdio_limits.is_some() {
+         return launch_child_with_brokered_stdio(state, command_name, launch_caller, spec, stdio);
+     }
+-    let mut command = prepare_launcher_command(spec)?;
++    let mut command = prepare_launcher_command(state, spec)?;
+     command
+         .stdin(Stdio::from(File::from(stdio.stdin)))
+         .stdout(Stdio::from(File::from(stdio.stdout)))
+@@ -4580,7 +4634,7 @@ fn launch_child_with_brokered_stdio(
+         stderr,
+     } = stdio;
+ 
+-    let mut command = prepare_launcher_command(spec)?;
++    let mut comm
+```
+
+**File**: `crates/nono-cli/src/tool-sandbox/platform/macos.rs` (modified, +1/-0)
+```diff
+@@ -3131,6 +3131,7 @@ fn build_child_launch_spec_for_binary(
+         stdio_mode: selected_stdio_mode(request).to_string(),
+         stdio_limits: stdio_limits_from_policy(policy),
+         caps: caps_to_spec(&caps),
++        session_netns: false,
+         allowed_exec_paths: Vec::new(),
+         expected_dev: binary.dev,
+         expected_ino: binary.ino,
+```
+
+**File**: `crates/nono-cli/src/tool-sandbox/protocol.rs` (modified, +3/-0)
+```diff
+@@ -91,6 +91,9 @@ pub(crate) struct ToolSandboxChildLaunchSpec {
+     pub(crate) stdio_mode: String,
+     pub(crate) stdio_limits: Option<StdioLimitSpec>,
+     pub(crate) caps: ChildCapsSpec,
++    /// The launcher runs in the session's loopback-only network namespace, which confines UDP.
++    #[serde(default)]
++    pub(crate) session_netns: bool,
+     #[serde(default, skip_serializing_if = "Vec::is_empty")]
+     pub(crate) allowed_exec_paths: Vec<Vec<u8>>,
+     pub(crate) expected_dev: u64,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2360** (2026-11-23): feat(network-policy): add TypeSafe API endpoint (@jpds)
 - **PR #2358** (2026-11-23): chore(deps): bump typify from 0.8.0 to 0.10.1 (@dependabot[bot])
 - **PR #2357** (2026-11-23): chore(deps): bump the routine-rust group with 8 updates (@dependabot[bot])
+- **PR #2356** (2026-11-23): fix(cli): improve platform enrollment and audit delivery (@SequeI)
 - **PR #2355** (2026-11-23): fix: update url and stabilize proxy keep-alive test (@SequeI)
-- **PR #2349** (2026-11-20): fix(cli): allow mise to read ~/.local/state/mise (@acidghost)
-- **PR #2347** (2026-11-20): fix(profile): resolve .jsonc siblings and paths (@acidghost)
-- **PR #2346** (2026-11-20): fix: allow reading /etc/debian_version in system_read_linux_core (@mvanhorn)
+- **PR #2353** (2026-11-23): feat(sandbox): run proxied commands in the session network namespace (@daescha)
 
 ---
 
@@ -3166,37 +3568,31 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update url and stabilize proxy keep-alive test
+## X. network-policy): add TypeSafe API endpoint
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/data/network-policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a93ccdfe`: update url and stabilize proxy keep-alive test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0c52cdf`: network-policy): add TypeSafe API endpoint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/network-policy.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+        "api.typesafe.ai",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a93ccdfe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0c52cdf` are properly handled with clean fallback behavior.
 
 
 ## Consequences

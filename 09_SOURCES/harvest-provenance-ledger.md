@@ -12577,3 +12577,7 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `f49b558c` | Multi-dimensional audit evidence | 2026-11-24T00:57:23.347Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c31d4550` | Multi-dimensional audit evidence | 2026-11-24T00:57:28.200Z |
 | `learn-dom-f-0b02f7f4` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-24T00:58:04.505Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `ec000790` | Multi-dimensional audit evidence | 2026-11-24T01:07:20.368Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `21298eb3` | Multi-dimensional audit evidence | 2026-11-24T01:07:20.672Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `d0c52cdf` | Multi-dimensional audit evidence | 2026-11-24T01:07:22.704Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `84382d49` | Multi-dimensional audit evidence | 2026-11-24T01:07:24.946Z |

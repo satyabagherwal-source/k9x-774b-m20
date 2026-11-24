@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T00:57:28.205Z",
-  "total_cycles_completed": 11926,
-  "total_learnings_persisted": 11926,
-  "total_rules_promoted": 11008,
+  "last_updated": "2026-11-24T01:07:24.953Z",
+  "total_cycles_completed": 11930,
+  "total_learnings_persisted": 11930,
+  "total_rules_promoted": 11012,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:29:14.810Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:29:17.505Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:38:02.113Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:38:08.723Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:38:18.016Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T00:57:28.205Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:07:20.375Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:07:20.679Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:07:22.710Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:07:24.953Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

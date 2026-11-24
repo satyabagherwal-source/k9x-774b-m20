@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T00:58:05.513Z",
+  "last_updated": "2026-11-24T01:07:34.154Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24317,
+  "total_items": 24324,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "401721aa",
-      "content_hash": "945a5cc1c74f57d9549b43bb3e159b26606cc0d313f7850fa3fdcf89f4c8958c",
+      "source_version": "84382d49",
+      "content_hash": "211ec2751b921c97a0a21711dd20a16220f13a5c3f62b61bdb97b53b65613dec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:31:36.239Z"
+      "persisted_at": "2026-11-24T01:07:25.501Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "401721aa",
-      "content_hash": "fdb3f5d0a6ec2d53f8bc3baf9af9c3ecbaf8c56b3cf805b47fa112844a5cebe4",
+      "source_version": "84382d49",
+      "content_hash": "b5dc88b4faa40210bd6e0109ddb043c2ff04c558a1513b6e884940fa67703bab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:31:36.409Z"
+      "persisted_at": "2026-11-24T01:07:25.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "da971852",
-      "content_hash": "8d9abd2ca7466e40bbe884029082c8541f23ad19e4214ace510aa664e4bb96a5",
+      "source_version": "d0c52cdf",
+      "content_hash": "7674771beac072f95d388a4b81b9f336034937ca2407d5be1a9315e2e7e27381",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:38:57.861Z"
+      "persisted_at": "2026-11-24T01:07:23.262Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "da971852",
-      "content_hash": "4063a0459a3b87375ae4baa52c0bef3c8ee09640d9817ff00cc52e7e4f620a43",
+      "source_version": "d0c52cdf",
+      "content_hash": "d3f0a60b3bd56c02af67f3ddf32a092e449c0120c239bf0586c09c222334397a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:38:58.029Z"
+      "persisted_at": "2026-11-24T01:07:23.487Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "da971852",
-      "content_hash": "fae96b4592833ebcd2e77520f364a4a643a0cdb170a79b352b1cdae9d665f9a7",
+      "source_version": "d0c52cdf",
+      "content_hash": "aadd223a930eabd1da045c46c754a1525c7240b6d1d0f879511dc8836b70728b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:38:58.169Z"
+      "persisted_at": "2026-11-24T01:07:23.678Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113854,9 +113854,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "dbd39c44b92fc25fde5cfff9528f8d83b6beff2a0b931593d7cbad3a01ad0422",
+      "content_hash": "ddc4c8c3c35e93dab7cfece03de8f017aa723582fb5ede2a4ffcf6cc95a0ad51",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:37:15.639Z"
+      "persisted_at": "2026-11-24T01:07:33.733Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113866,9 +113866,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "1502055e30d0f5b16f38cfeaa61eabe4bd0aab4f57221e4b292e70c731ffb843",
+      "content_hash": "8e6e058c8170d73b75a04c982f7339d8f702efedbb94b49dce96cae35807474f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:37:15.824Z"
+      "persisted_at": "2026-11-24T01:07:33.968Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113878,9 +113878,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "077a0a7a14b02a3fca8d04b534be6122ceed9e371b249abf135609a28fcc3a69",
+      "content_hash": "d0f68de893ccf5d31cf465cce1440446662f62dd02dab0d33826beb92abe0874",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:37:15.967Z"
+      "persisted_at": "2026-11-24T01:07:34.154Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -213626,13 +213626,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "401721aa",
-      "content_hash": "ef0408ccb75b49e48598c214a993526a14e7c2d78ec25b2058f74ea23cae0e18",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "84382d49",
+      "content_hash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213697,7 +213697,7 @@
         {
           "number": 10128,
           "title": "Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213705,7 +213705,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:31:35.631Z",
+      "verified_at": "2026-11-24T01:07:24.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229854,8 +229854,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "112af098",
-      "content_hash": "b2ee57e092f67fcd70d7452d0b3a7223e391a9e59babee623620edbfa6507a0c",
+      "source_version": "21298eb3",
+      "content_hash": "fb381402bc39ccb58dda46e3e2bd1b0901a48adcbbf45bfdfbe71b0d3d263cad",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -229883,6 +229883,11 @@
           "number": 9650,
           "title": "build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10164,
+          "title": "Reach the internal API through its IP in remote builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229890,7 +229895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:49:28.505Z",
+      "verified_at": "2026-11-24T01:07:20.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229944,10 +229949,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "112af098",
-      "content_hash": "c0ce6b1ba5e70b76d03679825f947c03fce8ae2a694ac8d51e6f636c92205e10",
+      "source_version": "21298eb3",
+      "content_hash": "8cde4bf4c26538a3fac1b63aaddd4d90aaabebee16f0ee251a57516b9226d2d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:49:29.105Z"
+      "persisted_at": "2026-11-24T01:07:21.552Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -230434,9 +230439,9 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb7721ee8af6d8bac2ad0db6dba3827dec9eaea238c21d4e8e4098c4d075cdde",
+      "content_hash": "24df4e43e352ca96be55e3c347cb2b47bae1c45e645c7c8db65d415642e93ab6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T22:49:33.483Z"
+      "persisted_at": "2026-11-24T01:07:32.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings",
@@ -230446,9 +230451,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "a13d6625bcad0c12bc71ddcc2b5869427b1fe429398d4a161e154ae94ece878a",
+      "content_hash": "789f76076d4a9774a98bdf0e3dafa1c9ccc19e86b02a3cc8783db28e7e8e5fe8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:49:33.615Z"
+      "persisted_at": "2026-11-24T01:07:32.797Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -241164,8 +241169,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "da971852",
-      "content_hash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
+      "source_version": "d0c52cdf",
+      "content_hash": "801ecb3c69ab730915d41690e5cf171e59f353c951fadc7d7e54cc8ce3eb17fa",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -241218,6 +241223,11 @@
           "number": 10115,
           "title": "improve platform enrollment and audit delivery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10165,
+          "title": "add TypeSafe API endpoint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241225,7 +241235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:38:57.243Z",
+      "verified_at": "2026-11-24T01:07:22.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268725,8 +268735,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "bf10f005",
-      "content_hash": "81d0159082313a8d1fbc04f6f5f1f1ebbbdcb19fa897e20096b5ab32bbe00122",
+      "source_version": "ec000790",
+      "content_hash": "e4f9f44c5e063790277e3e171409059b763b5cf70dc7d7f4ae0474249f943e23",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -268739,6 +268749,11 @@
           "number": 9697,
           "title": "link the Windows resource into all targets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10163,
+          "title": "docs(security): add note about repo for plugin reports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268746,7 +268761,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:00:36.666Z",
+      "verified_at": "2026-11-24T01:07:20.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268788,10 +268803,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-technical-construction-intelligence-tauri-apps-tauri-core-invar.md",
       "title": "Technical Construction Intelligence: tauri-apps/tauri Core Invariants",
       "repository": "tauri-apps/tauri",
-      "source_version": "bf10f005",
-      "content_hash": "284f42a97e0f270fb8dcdc3b8381d2a4130d02187cfd2bbf3c2ba3f572f296e6",
+      "source_version": "ec000790",
+      "content_hash": "4d10c48de75038b7b11dbaa0532693764124d24a5b6b81b084fb2669c8bdeac7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:37.491Z"
+      "persisted_at": "2026-11-24T01:07:20.990Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri",
@@ -268800,10 +268815,10 @@
       "relative_path": "08_VERIFICATION/tauri-apps-tauri-verification-protocol-empirical-defect-shield-for-tauri-apps-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps/tauri",
       "repository": "tauri-apps/tauri",
-      "source_version": "bf10f005",
-      "content_hash": "8f3f00d49b2208fa7bab31ce6b8e05c85f1f60cc24c0511750f60aa46929e3f5",
+      "source_version": "ec000790",
+      "content_hash": "aff351b4418fcf7f1af78f6b8ce369018f4671cddf7e55d5787ad70ec6cdcb82",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:00:37.717Z"
+      "persisted_at": "2026-11-24T01:07:21.228Z"
     },
     "rule-8866": {
       "learning_id": "rule-8866",
@@ -268899,9 +268914,9 @@
       "title": "Technical Construction Intelligence: tauri-apps-tauri-learnings Core Invariants",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "c741b8791912b98d53794aad2bb2c82198360937b4474a46f27dc8f336cf734a",
+      "content_hash": "07813fa588ac39fce7d059789c31caabb8ed63edaba1abc8d740a47741f3bda7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:45.819Z"
+      "persisted_at": "2026-11-24T01:07:30.855Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri-learnings",
@@ -268911,9 +268926,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps-tauri-learnings",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bf74452b46cf2fdbf67cf453864c7ac04c2b04993e9640f1b4ad032dc277b89",
+      "content_hash": "d06e3e32aecb7c5516af817df171937b744add7e98c682e6bcc59af2dac3de8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:00:46.039Z"
+      "persisted_at": "2026-11-24T01:07:31.080Z"
     },
     "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries": {
       "item_id": "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries",
@@ -330260,26 +330275,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10128,
       "title": "Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "401721aa",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "84382d49",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T21:31:35.631Z"
+      "verified_at": "2026-11-24T01:07:24.684Z"
     },
     "candidate_directive-merge-build-link-with-the-lld-of-the-rust-toolchain-and-optimize-proc-macros-i": {
       "item_id": "candidate_directive-merge-build-link-with-the-lld-of-the-rust-toolchain-and-optimize-proc-macros-i",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6KPQ-merge-build-link-with-the-lld-of-the-rust-toolchain-and-optimize-proc-macros-i.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W1CP-merge-build-link-with-the-lld-of-the-rust-toolchain-and-optimize-proc-macros-i.md",
       "title": "Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i",
-      "repository": "tursodatabase-limbo-learnings",
-      "source_version": "HEAD",
-      "content_hash": "7485cb8503a9da9c0764847c3dcd0fd619ab1f677cc850597205b11773470514",
+      "repository": "tursodatabase/turso",
+      "source_version": "84382d49",
+      "content_hash": "63d84d661ba27a8265cf9baf01c24a73e764b5e157093118616214526ad71a70",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:31:40.001Z"
+      "persisted_at": "2026-11-24T01:07:25.280Z"
     },
     "rule-10129": {
       "learning_id": "rule-10129",
@@ -331620,6 +331635,96 @@
       "content_hash": "ec5c428f9196f4bbeabdddfcd11b1e720ff7b059343a7898b11a0ffe55c76ae5",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T00:57:28.443Z"
+    },
+    "rule-10163": {
+      "learning_id": "rule-10163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10163,
+      "title": "docs(security): add note about repo for plugin reports",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "ec000790",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:07:20.074Z"
+    },
+    "rule-10164": {
+      "learning_id": "rule-10164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10164,
+      "title": "Reach the internal API through its IP in remote builds",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "21298eb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:07:20.376Z"
+    },
+    "candidate_directive-docs-security-add-note-about-repo-for-plugin-reports": {
+      "item_id": "candidate_directive-docs-security-add-note-about-repo-for-plugin-reports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W5HB-docs-security-add-note-about-repo-for-plugin-reports.md",
+      "title": "docs(security): add note about repo for plugin reports",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "526a48d5f5174519bff0e4102b3fed8c4107cd49f40693a316baa0c7dee889f6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:07:30.630Z"
+    },
+    "rule-10165": {
+      "learning_id": "rule-10165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10165,
+      "title": "add TypeSafe API endpoint",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "d0c52cdf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:07:22.444Z"
+    },
+    "candidate_directive-add-typesafe-api-endpoint": {
+      "item_id": "candidate_directive-add-typesafe-api-endpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VZMI-add-typesafe-api-endpoint.md",
+      "title": "add TypeSafe API endpoint",
+      "repository": "nolabs-ai/nono",
+      "source_version": "d0c52cdf",
+      "content_hash": "a243076294e7f14d741586bb43055cb2fdbed07a2cf8f3b65989d7381850fec3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:07:23.041Z"
+    },
+    "candidate_directive-eng-35-reach-the-internal-api-through-its-ip-in-remote-builds": {
+      "item_id": "candidate_directive-eng-35-reach-the-internal-api-through-its-ip-in-remote-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W6SH-eng-35-reach-the-internal-api-through-its-ip-in-remote-builds.md",
+      "title": "ENG-35: Reach the internal API through its IP in remote builds",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7d99ff3990e8dfbf34f3d0a5230f243c979f819b2eb3e5c5008960c705041f94",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T01:07:32.327Z"
+    },
+    "candidate_directive-network-policy-add-typesafe-api-endpoint": {
+      "item_id": "candidate_directive-network-policy-add-typesafe-api-endpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W7PC-network-policy-add-typesafe-api-endpoint.md",
+      "title": "network-policy): add TypeSafe API endpoint",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d49360c7f81f9b0962db02954b2d962b178284d6aa7d0aeaca78979b574c1cef",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:07:33.511Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T00:57:28.209Z",
+  "last_updated": "2026-11-24T01:07:24.958Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
-      "verified_at": "2026-11-23T20:38:57.466Z",
+      "content_hash": "801ecb3c69ab730915d41690e5cf171e59f353c951fadc7d7e54cc8ce3eb17fa",
+      "verified_at": "2026-11-24T01:07:22.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:38:57.466Z"
+      "last_updated": "2026-11-24T01:07:22.714Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "b2ee57e092f67fcd70d7452d0b3a7223e391a9e59babee623620edbfa6507a0c",
-      "verified_at": "2026-11-20T22:49:28.674Z",
+      "content_hash": "fb381402bc39ccb58dda46e3e2bd1b0901a48adcbbf45bfdfbe71b0d3d263cad",
+      "verified_at": "2026-11-24T01:07:20.683Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T22:49:28.674Z"
+      "last_updated": "2026-11-24T01:07:20.683Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "ef0408ccb75b49e48598c214a993526a14e7c2d78ec25b2058f74ea23cae0e18",
-      "verified_at": "2026-11-23T21:31:35.854Z",
+      "content_hash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
+      "verified_at": "2026-11-24T01:07:24.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:31:35.854Z"
+      "last_updated": "2026-11-24T01:07:24.957Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "81d0159082313a8d1fbc04f6f5f1f1ebbbdcb19fa897e20096b5ab32bbe00122",
-      "verified_at": "2026-11-21T02:00:36.971Z",
+      "content_hash": "e4f9f44c5e063790277e3e171409059b763b5cf70dc7d7f4ae0474249f943e23",
+      "verified_at": "2026-11-24T01:07:20.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:00:36.971Z"
+      "last_updated": "2026-11-24T01:07:20.379Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",
