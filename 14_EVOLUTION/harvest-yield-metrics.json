@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T07:55:47.534Z",
-  "total_cycles_completed": 12009,
-  "total_learnings_persisted": 12009,
-  "total_rules_promoted": 11086,
+  "last_updated": "2026-11-24T08:25:06.819Z",
+  "total_cycles_completed": 12011,
+  "total_learnings_persisted": 12011,
+  "total_rules_promoted": 11088,
   "history": [
-    {
-      "timestamp": "2026-11-23T18:40:53.973Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T18:41:03.073Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T18:50:29.476Z",
       "repository": "LiquidAI/d1-3B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T07:55:47.534Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:24:33.012Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:25:06.819Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

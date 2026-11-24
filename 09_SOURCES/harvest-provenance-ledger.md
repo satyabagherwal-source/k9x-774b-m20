@@ -12666,3 +12666,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `29646196` | Multi-dimensional audit evidence | 2026-11-24T07:55:37.449Z |
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `28ae6752` | Multi-dimensional audit evidence | 2026-11-24T07:55:41.314Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `fe85b027` | Multi-dimensional audit evidence | 2026-11-24T07:55:47.529Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `0e6e2990` | Multi-dimensional audit evidence | 2026-11-24T08:24:33.007Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `eca8048b` | Multi-dimensional audit evidence | 2026-11-24T08:25:06.814Z |

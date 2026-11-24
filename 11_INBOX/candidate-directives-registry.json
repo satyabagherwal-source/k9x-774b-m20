@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:05:44.971Z",
+  "last_updated": "2026-11-24T08:25:13.857Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-U0EJ",
+      "id": "CD-J2BK",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U0EJ-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J2BK-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53829,6 +53829,57 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DAD667-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-J14X",
+      "directive_title": "build(deps): bump chrono from 0.4.41 to 0.4.45",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J14X-build-deps-bump-chrono-from-0-4-41-to-0-4-45.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-IX2C",
+      "directive_title": "Rerender DM status emoji on emojiset change.",
+      "source_repo": "zulip/zulip",
+      "source_commit": "eca8048b",
+      "staged_file": "11_INBOX/candidate-directives/CD-IX2C-rerender-dm-status-emoji-on-emojiset-change.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-839919",
+      "directive_title": "build(deps): bump chrono from 0.4.41 to 0.4.45",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ratatui-ratatui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-839919-build-deps-bump-chrono-from-0-4-41-to-0-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-J1RE",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "source_repo": "zulip-zulip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J1RE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E57DD7",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E57DD7-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-24"
     }
   ]

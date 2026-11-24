@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "4b6608d2",
+    "sourceVersion": "eca8048b",
     "license": "Apache-2.0",
-    "contentHash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
-    "lastHarvestedAt": "2026-11-21T14:49:38.019Z",
+    "contentHash": "f323e2d03a77f2873c98c850fe086056362cb604bbcb9a9acea363c2c6bb7b81",
+    "lastHarvestedAt": "2026-11-24T08:25:06.814Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "5a28bec1",
+    "sourceVersion": "0e6e2990",
     "license": "MIT",
-    "contentHash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
-    "lastHarvestedAt": "2026-11-22T23:49:17.183Z",
+    "contentHash": "2a60426ade967d14fc90af240454782856769fb26aae0d8c82253bfe701df90a",
+    "lastHarvestedAt": "2026-11-24T08:24:33.007Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {

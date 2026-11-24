@@ -12633,3 +12633,5 @@
 | `CYCLE-20261124-GZMT` | `2026-11-24T07:55:37.445Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10230` | Yes (`0096ff04...`) |
 | `CYCLE-20261124-H2M5` | `2026-11-24T07:55:41.309Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10231` | Yes (`9e81e0ff...`) |
 | `CYCLE-20261124-H7ES` | `2026-11-24T07:55:47.524Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10232` | Yes (`72ada69e...`) |
+| `CYCLE-20261124-I6SS` | `2026-11-24T08:24:33.004Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10233` | Yes (`2a60426a...`) |
+| `CYCLE-20261124-IWVV` | `2026-11-24T08:25:06.811Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10234` | Yes (`f323e2d0...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T07:55:47.546Z",
+  "last_updated": "2026-11-24T08:25:06.831Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
-      "verified_at": "2026-11-21T14:49:38.029Z",
+      "content_hash": "f323e2d03a77f2873c98c850fe086056362cb604bbcb9a9acea363c2c6bb7b81",
+      "verified_at": "2026-11-24T08:25:06.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T14:49:38.029Z"
+      "last_updated": "2026-11-24T08:25:06.830Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
-      "verified_at": "2026-11-22T23:49:17.191Z",
+      "content_hash": "2a60426ade967d14fc90af240454782856769fb26aae0d8c82253bfe701df90a",
+      "verified_at": "2026-11-24T08:24:33.023Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:49:17.191Z"
+      "last_updated": "2026-11-24T08:24:33.023Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",

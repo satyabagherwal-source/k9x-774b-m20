@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T08:05:45.140Z",
+  "last_updated": "2026-11-24T08:25:14.008Z",
   "total_records": 2506,
   "domains": {
     "A": {
@@ -8321,8 +8321,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "246b3f33a7845eeb4521bb3c4ee3ee5e8dae7c3612f34e6503d5b13d4e1b712c",
-      "created_at": "2026-11-24T07:33:19.389Z"
+      "content_hash": "b690ed2b89cc0737490d9c592250ca5d8d05ee4add6210106064f4c0b4e86dd0",
+      "created_at": "2026-11-24T08:25:13.284Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -10808,8 +10808,8 @@
       "title": "Architecture Intelligence: zulip/zulip Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-architecture-intelligence-zulip-zulip-core-invariants.md",
       "repository": "zulip/zulip",
-      "content_hash": "2b6583c79753a0e7d5a62be2778ccb6aaa18f08c99e12654475b687f0b63b892",
-      "created_at": "2026-11-21T14:49:38.279Z"
+      "content_hash": "691fbd5bb74b2f93772ebfe53e5307018c17a4f0c404091f2624557c2d2d1bb4",
+      "created_at": "2026-11-24T08:25:07.196Z"
     },
     "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants",
@@ -11897,8 +11897,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "7358511a4117f37857a46f67eec3052ba1a264b5c10161a25c36eb66c813f5a9",
-      "created_at": "2026-11-24T08:05:45.140Z"
+      "content_hash": "00f5965c3d62505e2841c6a105439392933acd9e32a4894f00d042bac6dbf112",
+      "created_at": "2026-11-24T08:25:14.008Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -25490,8 +25490,8 @@
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "repository": "ratatui/ratatui",
-      "content_hash": "18b0a6788faabf09577c04483707c1847eaa0e39cee5ddf202d4e8c5d3e69bfc",
-      "created_at": "2026-11-22T23:49:17.582Z"
+      "content_hash": "d27a03252061bf71925aae32ed4ee4fecfbb038133d3bce84e8c8c562f8c3fce",
+      "created_at": "2026-11-24T08:24:33.410Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -25499,8 +25499,8 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
       "repository": "ratatui-ratatui-learnings",
-      "content_hash": "72ac7a4161fe13b2fee18bd179814b2e02741e9346c149705790e0a4e5094219",
-      "created_at": "2026-11-22T23:49:26.879Z"
+      "content_hash": "d36358bac8ee58baba0184dee929a2704419c2524240942f4eb688cf10dba6cf",
+      "created_at": "2026-11-24T08:25:12.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",

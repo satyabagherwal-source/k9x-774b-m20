@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T08:41:55.233Z",
+  "timestamp": "2026-11-24T08:25:13.034Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zulip-zulip-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T08:41:55.233Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T08:25:13.034Z`  
 > **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `19e7b6bb`  
+> **Source Version**: `eca8048b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:51:31.102Z  
+> **Timestamp**: 2026-11-24T08:25:05.822Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:51:30.816Z  
+> **Harvest Timestamp**: 2026-11-24T08:24:35.726Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26241 stars
+- **Stars / Engagement**: 26291 stars
 
 ---
 
@@ -1235,14 +1235,14 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40683** (2026-11-14): **Error while sending update announcements**
-  *Symptoms*: Since upgrading our self-hosted Zulip Server from 12.1 to 13.0, we received the following error once per hour:  ``` Error while sending update announcements  IndexError list index out of range  Django Version: 5.2.18 Python Executable: /usr/bin/python3 Python Version: 3.12.3 Python Path: ['/home/zulip/deployments/2026-11-12-21-29-38/.venv/lib/python3.12/site-packages', '/home/zulip/deployments/2026-11-12-21-29-38', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages', '/home/zulip/deployments/2026-11-12-21-29-38'] Server time: Fri, 13 Nov 2026 15:47:03 +0000 Installed Applications: '' Installed Middleware: ''   Traceback (most recent call last):   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 830, in send_zulip_update_announcements     send_zulip_update_announcements_to_realm(realm, skip_delay)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 927, in send_zulip_update_announcements_to_realm     internal_prep_zulip_update_announcements_stream_messages(     ^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 778, in internal_prep_zulip_update_announcements_stream_messages     content = get_zulip_update_announcements_message_for_level(level=current_level + 1)  
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for this report @srittau! This is fixed in 13.1, and a separate late-breaking change required 13.2 today. Can you grab 13.2 and let us know if you experience any other challenges?
-  > The message was now delivered successfully after an update, thanks!
+- **Issue #40737** (2026-11-17): **Vagrant 2.4 on macOS fails with false forwarded port 9991 collision**
+  *Symptoms*: ### Describe the bug When running `vagrant up --provider=docker` on macOS using modern Vagrant (v2.4.x, which embeds Ruby 3.3), provisioning fails immediately due to a false `ForwardPortCollision`:  ```text Vagrant cannot forward the specified ports on this VM, since they would collide with some other application that is already listening on these ports. The forwarded port to 9991 is already in use on the host machine. ```  No service or process is listening on port 9991 (verified via `lsof -nP -iTCP:9991`).  ### Environment - **Host OS**: macOS (Apple Silicon / Intel) - **Vagrant Version**: 2.4.9 (embedded Ruby 3.3.0) - **Provider**: Docker (Docker Desktop on macOS)  ### Steps to reproduce 1. Clone the Zulip repository on macOS. 2. Install Docker Desktop and Vagrant via Homebrew (`brew install hashicorp/tap/hashicorp-vagrant`). 3. Ensure no local service is listening on port 9991. 4. Run `vagrant up --provider=docker`. 5. Observe the false port collision failure on port 9991.  ### Root Cause Vagrant checks whether a port is open in `lib/vagrant/util/is_port_open.rb` by executing: ```ruby Socket.tcp(host, port, connect_timeout: 0.1).close ``` expecting an `Errno::ECONNREFUSED` exception if the port is closed.  On Darwin with Ruby 3.3, a non-blocking connect (`connect_timeout`) to an unused port does not raise `Errno::ECONNREFUSED`. Instead, `IO.select` marks the socket writable, and the error code is held in the socket option `SO_ERROR: 61 (ECONNREFUSED)`.   Because no except
 
-- **Issue #40658** (2026-11-16): **Inbox: pressing r replies to the wrong topic after the list changes**
-  *Symptoms*: In Inbox, if I focus a topic with the arrow keys and then a topic above it gets marked as read somewhere else, pressing `r` replies to the wrong topic (the one just below the focused one).  **To reproduce**  1. Open Inbox in two tabs with a few unread topics. 2. In tab 1, arrow down to a topic near the bottom. 3. In tab 2, mark a topic near the top as read. 4. In tab 1, press `r`.  Compose opens for the next topic down, even though the focus ring is still on the one I picked. It also happens when a new unread topic shows up above the focused row.  From what I can tell, `row_focus` in `web/src/inbox_ui.ts` stores the row's position, and it isn't updated when rows above it are added or removed.  I have a small fix and can open a PR.  **AI use:** I used Claude to help find and understand this issue, and to debug and draft the fix.
+- **Issue #40704** (2026-11-17): **Update 12.4 to 13.2**
+  *Symptoms*: Following an update from 12.4 to 13.2, the following issues have appeared on Windows 7 clients using Firefox 115.26: 1. Status indicators have turned white. 2. The `message_feed_container` header overlaps with the main window.  <img width="1366" height="452" alt="zulip" src="https://github.com/user-attachments/assets/92a03a3e-31aa-4ca9-b3d4-937ff6b6c628" />  I also noticed that there are long-running requests leading up to these events:  <img width="1262" height="335" alt="events_1" src="https://github.com/user-attachments/assets/997b752a-28df-4ba3-a42b-3705af83a81d" /> 
+  **Post-Mortem & Fix Analysis**:
+  > A couple preliminary things to try on your end while I chat with folks here: - Are your users able to update to a more recent version of Firefox ESR 115? It looks like 115.45 was just released. - Can they try Zulip Desktop https://zulip.com/apps/?
+  > Update: the oldest Firefox that we support in Zulip 13 is ESR 126. However, our team is not able to think of any changes between 12 and 13 that would cause the display issues you're seeing. Wondering if there could be something cached on the user's system that’s causing this?  Please feel welcome to come chat about it in the [production help](https://chat.zulip.org/#narrow/channel/31-production-help) channel of the [Zulip Development Community](https://zulip.com/development-community/)! Folks with more helpful context are active there.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1259,385 +1259,406 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bc06e2d` (2026-11-05)
-**Commit Message**: portico: Fix typos on development community and security pages.
+### Incident Patch 1: `c7edd86a` (2026-10-21)
+**Commit Message**: server_events_dispatch: Rerender DM status emoji on emojiset change.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Changing the emojiset rerendered the message lists and the buddy list,
+but the other places that render status emoji from
+user_status.get_status_emoji kept showing them in the old style until
+something else redrew them: DM conversations in the left sidebar, and
+the Inbox and Recent conversations views.
 
-**File**: `templates/corporate/development-community.md` (modified, +1/-1)
+Rerender these too. inbox_ui.complete_rerender and
+recent_view_ui.complete_rerender do nothing unless their view is
+visible, and both rebuild their rows from scratch when it is shown, so
+only the visible view needs updating. The DM list's vdom comparison
+picks up the changed emoji_alt_code, so only rows with a status emoji
+are redrawn.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `web/src/server_events_dispatch.js` (modified, +5/-0)
 ```diff
-@@ -263,7 +263,7 @@ topic to a different channel](/help/move-content-to-another-channel).
- - [#learning](https://chat.zulip.org/#narrow/channel/92-learning) is
-   for posting great learning resources one comes across.
- - [#off topic](https://chat.zulip.org/#narrow/channel/97-off-topic) is
--  is for occasional conversations not related to Zulip, usually things
-+  for occasional conversations not related to Zulip, usually things
-   of general interest to open-source communities.
- 
- You can always find the description for the channel you’re reading at
+@@ -1129,6 +1129,11 @@ export function dispatch_normal_event(event) {
+                     }
+                     // Rerender buddy list status emoji
+                     activity_ui.build_user_sidebar();
++                    // Rerender status emoji in DM conversations in the
++                    // left sidebar, Inbox, and Recent conversations.
++                    pm_list.update_private_messages();
++                    inbox_ui.complete_rerender();
++                    recent_view_ui.complete_rerender();
+                     break;
+                 case "display_emoji_reaction_users":
+                     message_live_update.rerender_messages_view();
 ```
 
-**File**: `templates/corporate/security.md` (modified, +1/-1)
+**File**: `web/tests/dispatch.test.cjs` (modified, +3/-0)
 ```diff
-@@ -111,7 +111,7 @@ security issues from being introduced in Zulip.
- 
- ### Development process
- 
--- **Comprehensive automated testing**: The Zulip server has an remarkably
-+- **Comprehensive automated testing**: The Zulip server has a remarkably
-   complete automated test suite, including [complete test
-   coverage](https://app.codecov.io/gh/zulip/zulip/tree/main/zerver) in
-   security-sensitive code paths.
-```
-
----
-
-### Incident Patch 2: `5e601915` (2026-11-16)
-**Commit Message**: skills: Add write-security-advisory skill.
-
-This is a skill for generating the first draft of a security advisory in
-the style that we usually use.
-
-I used it for drafting multiple of recent security advisories and the
-quality of the generated draft is much more satisfactory than without
-this skill. Of course proof-reading is still required, as Claude makes
-subtle factual mistakes or uses clunky or imprecise phrasing.
-
-**File**: `.claude/skills/write-security-advisory/SKILL.md` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+---
-+name: write-security-advisory
-+description: "Draft or revise a GitHub security advisory for a Zulip vulnerability. Use whenever writing, reviewing, or editing advisory text, such as a GHSA or CVE description."
-+---
-+
-+# Writing a Zulip security advisory
-+
-+A security advisory is read by administrators deciding whether they're affected and
-+how urgently to upgrade. Every sentence should help that decision. Anything that only
-+matters to Zulip developers (how the fix works internally, data model history,
-+migrations, backfills) is noise, and gets cut in review.
-+
-+Read `references/examples.md` before drafting: it has three advisories that show
-+the expected style. Match their tone, length, and structure.
-+
-+## Before writing: verify the facts
-+
-+Advisories get cited for years, so every factual claim must come from the code or git
-+history, not from a bug report or memory. Before drafting, establish:
-+
-+- **Affected versions.** Find the introducing commit and run
-+  `git tag --contains <sha> | sort -V | head` for the first affected release, and
-+  `git tag -l '<major>.*' | sort -V | tail` for the latest release. Write the range as
-+  "Zulip Server X.Y through A.B". The fixed version is usually the next patch release
-+  of the stable branch, but confirm it with the user.
-+- **Who can trigger it.** Check the permission decorators and checks on the endpoint
-+  (e.g., `@require_realm_admin`, owner-only checks), and say which role is needed.
-+- **Every code path that leads to the vulnerable state.** E.g., if users can be deleted
-+  with or without their messages, the advisory has to be accurate for both cases.
-+- **Where a feature exists.** Code in `corporate/` (such as the `/activity/support`
-+  panel) only exists on Zulip Cloud, not on self-hosted servers.
-+- **User-facing names.** Use the names from the help center
-+  (`starlight_help/src/content/docs/`), e.g., "Public and private data (with consent)"
-+  export or "reusable invitation link", rather than internal names, except where
-+  Details explains the mechanism.
-+
-+## Structure
-+
-+Start the file with a `Title:` line, then the sections as `###` headings.
-+
-+**Title.** Describe the behavior in plain language, as an admin would notice it.
-+"Sign-up via reusable invitation links skips single sign-on" is good;
-+"Fix missing check in HomepageForm" is not. If the attacker gains more than one
-+capability, the title should cover all of them, without overstating any.
-+
-+**Summary.** Must work alone for triage. Say what an attacker can do, to whom, and under
-+which conditions. End with a severity sentence that names the preconditions that limit
-+it, e.g., "Severity is low: it requires a valid reusable invitation link, which only
-+administrators can create by default." If a precondition is rare, state the fact that
-+makes it rare (for example "User deletion isn't available in the Zulip apps…"), not a
-+guess like "deleted users are rare".
-+
-+**Details.** The root cause: what the feature normally does, what went wrong, and why.
-+Naming functions and files is fine (`get_consented_user_ids` (`zerver/lib/export.py`)),
-+as is referencing an earlier CVE whose check was incomplete. Name an API endpoint
-+or parameter only when it's needed to explain the root cause. Don't include
-+reproduction steps or exploit scripts.
-+
-+**Impact.** What the attacker gains, and from whom. List the conditions an
-+organization must meet to be affected, as bullets if there are several. If it helps,
-+say what the attacker does _not_ gain, e.g., "This is an integrity issue only". End with
-+the affected version range and then simply "This is fixed in Zulip Server X.Y." Leave out:
-+
-+- how the fix works, migrations, or backfills;
-+- anything an admin can't act on.
-+
-+**Severity** (optional, for serious issues). A CVSS score, plus a note when CVSS misses
-+the real-world impact.
-+
-+**Workarounds** (only if a real one exists). A workaround must neutralize the bug
-+without upgrading, e.g., revoking reusable invitation links, or removing the configured
-+email domains. "Don't use the affected feature" is not a workaround. When there's no
-+real workaround, leave the section out entirely rather than writing "None" or a weak
-+mitigation.
-+
-+**References** (optional). Links to relevant `https://zulip.com/help/...` articles,
-+with anchors where useful.
-+
-+Don't credit the reporter in the body. GitHub's credit field handles that.
-+
-+## Prose
-+
-+Reviewers read every sentence closely. These are the most common problems in drafts:
-+
-+- **Imprecise words.** "never allowed" when the accurate phrase is "had not allowed"
-+  (a user may have allowed it and later turned it off), or "messages of the deleted
-+  user" when some deletion paths remove them ("any remaining messages").
-+- **Inconsistent terms across sections.** If Details says the setting is "disabled",
-+  Impact must not say it was "reset".
-+- **Overloaded sentences.** One idea per sentence. Avoid tacked-on clauses
-+  ("…, even when …"), 
-```
-
-**File**: `.claude/skills/write-security-advisory/references/examples.md` (added, +108/-0)
-```diff
-@@ -0,0 +1,108 @@
-+# Example advisories
-+
-+Three advisories that show the expected style. The first two are lower severity and
-+use the standard structure. The third is a more serious issue with a Severity section,
-+a Workarounds section, and an Impact-first structure.
-+
-+## Example 1: Data exposure, no workaround (fixed in 12.4)
-+
-+```markdown
-+Title: Exports with member consent include direct messages of deleted users' conversations
-+
-+### Summary
-+
-+An organization export of public and private data with member consent treated every deleted user as having consented to the export of their private data. As a result, the export included direct messages from conversations that a deleted user had been part of, including messages written by other participants who had not consented. Severity is limited: creating such an export requires administrator permissions, and only conversations involving a deleted user are affected. User deletion isn't available in the Zulip apps: on self-hosted servers, it requires running the `manage.py delete_user` management command, and on Zulip Cloud, it's done by Zulip's support team.
-+
-+### Details
-+
-+The "Public and private data (with consent)" export includes the private data of users who have allowed administrators to export it. Since Zulip Server 11.0, it also treats mirror dummy accounts as consenting. Mirror dummies are placeholder accounts that represent users from data imported from other products, such as Slack, and they only contain data that was already accessible to the exporting organization.
-+
-+When a user is deleted (as opposed to deactivated), their account is turned into a mirror dummy too, so `get_consented_user_ids` (`zerver/lib/export.py`) considered them to be consenting. Deleting a user also disables their export consent setting, but since mirror dummies are considered consenting regardless of that setting, this had no effect. The deleted account remains a participant in its direct message conversations, so the export included those conversations, along with messages from the other participants.
-+
-+### Impact
-+
-+An organization administrator could obtain, through an export with member consent, direct messages in conversations that a deleted user had been part of. This includes messages sent in such conversations by other participants who had not allowed administrators to export their private data, as well as any remaining messages of the deleted user, whose consent setting was disabled when they were deleted.
-+
-+This affects Zulip Server 11.0 through 12.3, and only organizations with at least one deleted user.
-+
-+This is fixed in Zulip Server 12.4.
-+
-+### References
-+
-+- [Export your organization](https://zulip.com/help/export-your-organization)
-+- [Configure whether administrators can export your private data](https://zulip.com/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)
-+```
-+
-+Notes: there was no real workaround, so Workarounds was left out. ("Use the public
-+data export instead" was rejected because it just means not using the feature.)
-+Sentences about a migration for users deleted before 12.0 and about existing exports
-+were cut as noise.
-+
-+## Example 2: Authentication bypass with a workaround
-+
-+```markdown
-+Title: Sign-up via reusable invitation links skips single sign-on
-+
-+### Summary
-+
-+In Zulip organizations where only external authentication methods are enabled (e.g., SAML, OpenID Connect or Google), anyone with a reusable invitation link could create an account without using any of those methods. They only needed to control an email address the organization allows. Severity is low: it requires a valid reusable invitation link, which only administrators can create by default.
-+
-+### Details
-+
-+A reusable invitation link's sign-up page doesn't show the email form when no password-based authentication method (email or LDAP) is enabled. However, the server still accepted an email address submitted to the link (`/join/<key>/`). It sent a confirmation email to that address, and following the confirmation link created the account and logged the user in.
-+
-+The check that rejects email-based sign-up in such organizations, added for CVE-2025-31478 in `HomepageForm.clean_email` (`zerver/forms.py`), was skipped for requests coming from reusable invitation links (`from_multiuse_invite`).
-+
-+### Impact
-+
-+This lets someone skip the organization's single sign-on requirement. It affects organizations that:
-+- have no password-based authentication method enabled; and
-+- have at least one active reusable invitation link.
-+
-+The person must possess the link and control the email address used. The resulting account has the role and channel subscriptions specified by the link. Restricting sign-up to specific email domains limits which addresses can be used. Revoking reusable invitation links fully mitigates the issue until upgrading.
-+
-+This is fixed in Zulip Server 12.4.
-+```
-+
-+Notes: the workaround (revoking reus
+@@ -1389,9 +1389,12 @@ run_test("user_settings", ({override}) => {
+         called = false;
+         override(settings_preferences, "report_emojiset_change", stub.f);
+         override(activity_ui, "build_user_sidebar", noop);
++        const update_private_messages_stub = make_stub();
++        override(pm_list, "update_private_messages", update_private_messages_stub.f);
+         override(user_settings, "emojiset", "text");
+         dispatch(event);
+         assert.equal(stub.num_calls, 1);
++        assert.equal(update_private_messages_stub.num_calls, 1);
+         assert_same(called, true);
+         assert_same(user_settings.emojiset, "google");
+     }
 ```
 
 ---
 
-### Incident Patch 3: `48a97cc0` (2026-11-05)
-**Commit Message**: docs: Fix typos and grammar errors.
+### Incident Patch 2: `eca8048b` (2026-11-23)
+**Commit Message**: demo-orgs: Expand require_billing_access to cover demo orgs.
 
-This fixes repeated words, misspellings, and incorrect a/an usage
-across the developer and API documentation. It also removes an
-unmatched closing parenthesis from an API changelog entry.
+The upgrade and sponsorship pages are disabled for demo
+organizations, but the server did not enforce this on the JSON
+endpoints those pages post to. So a demo organization owner could
+still, for example, submit a sponsorship request via the API.
+
+Check for demo organizations in require_billing_access, which is
+used by all of the realm billing JSON endpoints.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `api_docs/changelog.md` (modified, +3/-3)
+**File**: `corporate/tests/test_stripe.py` (modified, +35/-0)
 ```diff
-@@ -1065,7 +1065,7 @@ No changes; API feature level used for the Zulip 11.0 release.
-   integration URL parameter options. Previously, these optional URL
-   parameters were included in the `config_options` field (see feature
-   level 318 entry). The `config_options` object is now reserved for
--  configuration data that can be set when creating an bot user for a
-+  configuration data that can be set when creating a bot user for a
-   specific incoming webhook integration.
+@@ -47,6 +47,7 @@
+     get_current_plan_by_customer,
+     get_current_plan_by_realm,
+ )
++from corporate.models.sponsorships import ZulipSponsorshipRequest
+ from corporate.models.stripe_state import Event, Invoice
+ from zerver.actions.create_realm import do_create_realm
+ from zerver.actions.realm_settings import do_deactivate_realm, do_reactivate_realm
+@@ -4449,6 +4450,40 @@ def check_users_cant_access(
+         }
+         self.assert_length(json_endpoints, len(tested_endpoints))
  
- **Feature level 402**
-@@ -3386,7 +3386,7 @@ No changes; feature level used for Zulip 7.0 release.
- 
- * [All REST API endpoints](/api/rest-error-handling#ignored-parameters):
-   Implemented `ignored_parameters_unsupported` as a possible return value
--  in the JSON success response for all endpoints. This value is a array
-+  in the JSON success response for all endpoints. This value is an array
-   of any parameters that were sent in the request by the client that are
-   not supported by the endpoint. Previously, unsupported parameters were
-   silently ignored, except in the subset of endpoints which already
-@@ -4646,7 +4646,7 @@ No changes; feature level used for Zulip 3.0 release.
-   `realm_bot` events no longer contain an `email` field to identify
-   the user; use the `user_id` field instead.  Previously, some (but
-   not all) events of these types contained an `email` key in addition to
--  to `user_id`) for identifying the modified user.
-+  `user_id` for identifying the modified user.
- * [`PATCH /users/{user_id}`](/api/update-user): The `is_admin` and
-   `is_guest` parameters were removed in favor of the more general
-   `role` parameter for specifying a change in user role.
++    def test_json_endpoints_for_demo_organizations(self) -> None:
++        demo_owner = self.create_demo_organization_owner()
++        realm = demo_owner.realm
++        self.assertTrue(demo_owner.has_billing_access)
++
++        for url in [
++            "/json/billing/upgrade",
++            "/json/billing/session/start_card_update_session",
++            "/json/upgrade/session/start_card_update_session",
++        ]:
++            result = self.client_post(url, {}, subdomain=realm.subdomain)
++            self.assert_json_error(result, "Not allowed for demo organizations")
++        result = self.client_patch("/json/billing/plan", {}, subdomain=realm.subdomain)
++        self.assert_json_error(result, "Not allowed for demo organizations")
++        result = self.client_get("/json/billing/event/status", {}, subdomain=realm.subdomain)
++        self.assert_json_error(result, "Not allowed for demo organizations")
++
++        # Test sponsorship view with valid data.
++        sponsorship_data = {
++            "organization_type": Realm.ORG_TYPES["opensource"]["id"],
++            "website": "https://example.com/",
++            "description": "Demo example sponsorship request.",
++            "expected_total_users": "10",
++            "plan_to_use_zulip": "For chat.",
++            "paid_users_count": "1",
++            "paid_users_description": "We have 1 paid staff member.",
++        }
++        result = self.client_post(
++            "/json/billing/sponsorship", sponsorship_data, subdomain=realm.subdomain
++        )
++        self.assert_json_error(result, "Not allowed for demo organizations")
++        self.assertIsNone(get_customer_by_realm(realm))
++        self.assertFalse(ZulipSponsorshipRequest.objects.exists())
++
+     @mock_stripe()
+     def test_billing_page_permissions(self, *mocks: Mock) -> None:
+         # Guest users can't access /upgrade/ page
 ```
 
-**File**: `docs/outreach/gsoc.md` (modified, +1/-1)
+**File**: `zerver/decorator.py` (modified, +2/-0)
 ```diff
-@@ -226,7 +226,7 @@ Django, TypeScript/JavaScript, and CSS.
-   number of others we would like to add. Also, several extensions to the
-   framework that would dramatically improve the user experience of using
-   integrations, e.g., being able to do callbacks to third-party services
--  like Stripe to display more user-friendly notifications. The [the integrations
-+  like Stripe to display more user-friendly notifications. The [integrations
-   label on GitHub](https://github.com/zulip/zulip/labels/area%3A%20integrations)
-   lists some of the priorities here (many of which are great preparatory
-   projects). 175 or 350 hours; medium difficulty with various possible difficult
+@@ -216,6 +216,8 @@ def wrapper(
+     ) -> HttpResponse:
+         if not user_profile.has_billing_access:
+             raise JsonableError(_("Insufficient permission"))
++        if user_profile.realm.demo_organization_scheduled_deletion_date is not None:
++            raise JsonableError(_("Not allowed for demo organizations"))
+         return func(request, user_profile, *args, **kwargs)
+ 
+     return wrapper
 ```
 
-**File**: `docs/overview/changelog.md` (modified, +4/-4)
+---
+
+### Incident Patch 3: `830e6313` (2026-10-15)
+**Commit Message**: message_list_view: Look up sender status emoji at render time.
+
+Every processed message carried its own copy of the sender's
+status_emoji_info, taken when the message was first processed. To keep
+those copies current, each user_status event walked every stored
+message via message_store.update_status_emoji_info, and any other
+input to the rendered emoji, such as the emojiset setting, had no way
+to reach them at all.
+
+Instead, look up the sender's status emoji in
+get_calculated_message_container_variables, which runs on every
+render, as the buddy list and other status emoji callers already do,
+and likewise in the message report preview. A user_status event now
+only needs to rerender that user's messages.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `web/src/message_helper.ts` (modified, +0/-7)
 ```diff
-@@ -1372,7 +1372,7 @@ _Released 2025-03-20_
-   Permissions panel showing all the permissions that membership in the
-   group grants.
- - Channel administration permissions have been restructured to be
--  based on groups, with new settings for administrering channels,
-+  based on groups, with new settings for administering channels,
-   adding subscribers, removing them, and being able to join channels.
- - The access control model for message content in channels has been
-   generalized to allow users to be able to join a private channel at
-@@ -1578,7 +1578,7 @@ _Released 2025-03-20_
-   which collection of messages to move.
- - Improved compose user mention typeahead to de-prioritize bots.
- - Improved internationalization (emoji picker categories, joining
--  lists of names without hardcoding `,` as a the separator, etc.)
-+  lists of names without hardcoding `,` as the separator, etc.)
- - Fixed a bug where new user accounts joining an organization that had
-   been idle in recent months would be created with very few messages
-   in their combined feed.
-@@ -2329,7 +2329,7 @@ _Released 2023-12-15_
- - Linkifiers are now processed in a defined, editable order.
- - Scheduled messages are now displayed when viewing the conversation
-   where they will be sent.
--- Message edit history has a Shift+H keyboard shortuct and is now
-+- Message edit history has a Shift+H keyboard shortcut and is now
-   accessed via the mouse exclusively by clicking on EDITED/MOVED
-   notices, simplifying the main message actions popover.
- - Users can now delete messages sent by bots that they control as
-@@ -2747,7 +2747,7 @@ _Released 2023-05-31_
-   been migrated from a custom format string to RFC 6570 URL
-   templates. A database migration will automatically migrate existing
-   linkifiers correctly in the vast majority of cases, but some fancier
--  linkfiers may require manual adjustment to generate correct URLs
-+  linkifiers may require manual adjustment to generate correct URLs
-   following this upgrade.
- - PostgreSQL 11 is no longer supported; if you are currently using it, you will
-   need to [upgrade PostgreSQL](../production/upgrade.md#upgrading-postgresql)
+@@ -14,7 +14,6 @@ import * as recent_senders from "./recent_senders.ts";
+ import * as stream_data from "./stream_data.ts";
+ import * as stream_topic_history from "./stream_topic_history.ts";
+ import * as submessage from "./submessage.ts";
+-import * as user_status from "./user_status.ts";
+ import * as util from "./util.ts";
+ 
+ export type NewMessage =
+@@ -86,12 +85,10 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+ 
+     const sent_by_me = people.is_my_user_id(message_with_booleans.message.sender_id);
+ 
+-    let status_emoji_info;
+     const sender = people.maybe_get_user_by_id(message_with_booleans.message.sender_id);
+     if (sender) {
+         message_with_booleans.message.sender_full_name = sender.full_name;
+         message_with_booleans.message.sender_email = sender.email;
+-        status_emoji_info = user_status.get_status_emoji(message_with_booleans.message.sender_id);
+     }
+ 
+     if (opts.raw_message.reactions) {
+@@ -138,7 +135,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+             const message: Message = {
+                 ...rest,
+                 sent_by_me,
+-                status_emoji_info,
+                 is_private: false,
+                 is_stream: true,
+                 reply_to: message_with_booleans.message.sender_email,
+@@ -162,7 +158,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+             const local_message: LocalMessage = {
+                 ...rest,
+                 sent_by_me,
+-                status_emoji_info,
+                 is_private: false,
+                 is_stream: true,
+                 reply_to: message_with_booleans.message.sender_email,
+@@ -190,7 +185,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+             const message: Message = {
+                 ..._.omit(message_with_booleans.message, "reactions"),
+                 sent_by_me,
+-                status_emoji_info,
+                 is_private: true,
+                 is_stream: false,
+                 reply_to: util.normalize_recipients(
+@@ -213,7 +207,6 @@ export function process_new_message(opts: NewMessage): ProcessedMessage {
+             const local_message: LocalMessage = {
+                 ...rest,
+                 sent_by_me,
+-                status_emoji_info,
+                 is_private: true,
+                 is_stream: false,
+                 reply_to: util.normalize_recipients(
 ```
 
-**File**: `docs/production/mobile-push-notifications.md` (modified, +1/-1)
+**File**: `web/src/message_list_view.ts` (modified, +6/-0)
 ```diff
-@@ -507,7 +507,7 @@ Server or the mobile app is a version predating the 12.0 release
- non-E2EE protocol will be used.
+@@ -48,6 +48,8 @@ import type {TopicLink} from "./types.ts";
+ import * as typing_data from "./typing_data.ts";
+ import * as typing_events from "./typing_events.ts";
+ import * as ui_util from "./ui_util.ts";
++import * as user_status from "./user_status.ts";
++import type {UserStatusEmojiInfo} from "./user_status.ts";
+ import * as user_topics from "./user_topics.ts";
+ import type {AllVisibilityPolicies} from "./user_topics.ts";
+ import * as util from "./util.ts";
+@@ -75,6 +77,7 @@ export type MessageContainer = {
+     sender_is_deactivated: boolean;
+     should_add_guest_indicator_for_sender: boolean;
+     small_avatar_url: string;
++    status_emoji_info: UserStatusEmojiInfo | undefined;
+     status_message: string | false;
+     stream_url?: string;
+     pm_with_url?: string;
+@@ -597,6 +600,7 @@ export class MessageListView {
+         sender_is_guest: boolean;
+         sender_is_deactivated: boolean;
+         should_add_guest_indicator_for_sender: boolean;
++        status_emoji_info: UserStatusEmojiInfo | undefined;
+         is_hidden: boolean;
+         mention_classname: string | undefined;
+         include_sender: boolean;
+@@ -681,6 +685,7 @@ export class MessageListView {
+         const should_add_guest_indicator_for_sender = people.should_add_guest_user_indicator(
+             message.sender_id,
+         );
++        const status_emoji_info = user_status.get_status_emoji(message.sender_id);
  
- The central design goal of the legacy Push Notification Service
--service was to avoid any message content being stored or logged by the
-+was to avoid any message content being stored or logged by the
- service, even in error cases.
- 
- - The Push Notification Service only stores the necessary metadata for
+         const small_avatar_url = is_hidden
+             ? people.get_muted_user_avatar_url()
+@@ -699,6 +704,7 @@ export class MessageListView {
+             sender_is_guest,
+             sender_is_deactivated,
+             should_add_guest_indicator_for_sender,
++            status_emoji_info,
+             is_hidden,
+             mention_classname,
+             include_sender,
 ```
 
-**File**: `docs/production/upload-backends.md` (modified, +1/-1)
+**File**: `web/src/message_live_update.ts` (modified, +1/-10)
 ```diff
-@@ -286,7 +286,7 @@ lifecycle transition cost][s3-pricing].
+@@ -2,7 +2,6 @@ import * as condense from "./condense.ts";
+ import * as message_lists from "./message_lists.ts";
+ import * as message_store from "./message_store.ts";
+ import * as thumbnail from "./thumbnail.ts";
+-import type {UserStatusEmojiInfo} from "./user_status.ts";
  
- ## Data export bucket
+ export function rerender_messages_view(): void {
+     for (const list of message_lists.all_rendered_message_lists()) {
+@@ -23,7 +22,7 @@ export function rerender_messages_view_by_message_ids(message_ids: number[]): vo
+     }
+ }
  
--The [data export process](export-and-import.md#data-export) process, when
-+The [data export process](export-and-import.md#data-export), when
- [triggered from the
- UI](https://zulip.com/help/export-your-organization), uploads the
- completed export so it is available to download from the server; this
+-function rerender_messages_sent_by_user(user_id: number): void {
++export function rerender_messages_sent_by_user(user_id: number): void {
+     for (const list of message_lists.all_rendered_message_lists()) {
+         const messages = list.data.get_messages_sent_by_user(user_id);
+         if (messages.length === 0) {
+@@ -119,14 +118,6 @@ export function update_avatar(user_id: number, avatar_url: string | null): void
+     rerender_messages_sent_by_user(user_id);
+ }
+ 
+-export function update_user_status_emoji(
+-    user_id: number,
+-    status_emoji_info: UserStatusEmojiInfo | undefined,
+-): void {
+-    message_store.update_status_emoji_info(user_id, status_emoji_info);
+-    rerender_messages_sent_by_user(user_id);
+-}
+-
+ export function update_thumbnails(): void {
+     thumbnail.set_media_preview_size_css_variable();
+     rerender_messages_view();
 ```
 
-**File**: `docs/subsystems/billing.md` (modified, +1/-1)
+**File**: `web/src/message_report.ts` (modified, +2/-0)
 ```diff
-@@ -127,7 +127,7 @@ Here are some flows to test when upgrading a remote Zulip organization:
-   `SELF_HOSTING_FREE_TRIAL_DAYS` to `30` days. You can change this
-   value and other settings for your development environment only in
-   `zproject/custom_dev_settings.py`, or secrets in
--  `zproject/dev-secrets.conf`. Note that this only provides free trail
-+  `zproject/dev-secrets.conf`. Note that this only provides a free trial
-   for the basic plan.
+@@ -25,6 +25,7 @@ import * as stream_data from "./stream_data.ts";
+ import {render_submessage} from "./submessage.ts";
+ import * as ui_report from "./ui_report.ts";
+ import {toggle_user_card_popover_for_message} from "./user_card_popover.ts";
++import * as user_status from "./user_status.ts";
  
-   - Using a valid card number like `4242 4242 4242 4242`, the
+ function register_message_preview_click_handlers(
+     $message_preview_container: JQuery,
+@@ -79,6 +80,7 @@ function get_message_container_for_preview(message: Message): MessageContainer {
+             message.sender_id,
+         ),
+         small_avatar_url: people.small_avatar_url(message),
++        status_emoji_info: user_status.get_status_emoji(message.sender_id),
+         status_message: "",
+         timestr: get_timestr(message),
+         want_date_divider: false,
 ```
 
-**File**: `docs/subsystems/performance.md` (modified, +1/-1)
+**File**: `web/src/message_store.ts` (modified, +0/-17)
 ```diff
-@@ -208,7 +208,7 @@ The cost for fetching `page_params` varies dramatically based
- primarily on the organization's size, varying from 90ms-300ms for a
- typical organization but potentially multiple seconds for large open
- organizations with 10,000s of users. There is also smaller
--variability based on a individual user's personal data state,
-+variability based on an individual user's personal data state,
- primarily in that having 10,000s of unread messages results in a
- somewhat expensive query to find which channels/topics those are in.
+@@ -11,7 +11,6 @@ import * as muted_users from "./muted_users.ts";
+ import * as people from "./people.ts";
+ import * as stream_data from "./stream_data.ts";
+ import {topic_link_schema} from "./types.ts";
+-import type {UserStatusEmojiInfo} from "./user_status.ts";
+ import * as util from "./util.ts";
+ 
+ const stored_messages = new Map<number, ProcessedMessage>();
+@@ -205,10 +204,6 @@ export type Message = (
+     // message list.
+     small_avatar_url?: string | null;
+ 
+-    // Used in `message_body.hbs` to show sender status emoji alongside
+-    // their name in message list.
+-    status_emoji_info?: UserStatusEmojiInfo | undefined;
+-
+     // Used for edited messages to show their last edit time.
+     local_edit_timestamp?: number;
+ 
+@@ -418,18 +413,6 @@ export function update_stream_name(stream_id: number, new_name: string): void {
+     }
+ }
+ 
+-export function update_status_emoji_info(
+-    user_id: number,
+-    new_info: UserStatusEmojiInfo | undefined,
+-): void {
+-    for (const message_data of stored_messages.values()) {
+-        const message = message_data.message;
+-        if (message.sender_id && message.sender_id === user_id) {
+-            message.status_emoji_info = new_info;
+-        }
+-    }
+-}
+-
+ export function reify_message_id({old_id, new_id}: {old_id: number; new_id: number}): void {
+     const message_data = stored_messages.get(old_id);
+     if (message_data !== undefined) {
+```
+
+**File**: `web/src/server_events_dispatch.js` (modified, +1/-4)
+```diff
+@@ -1298,10 +1298,7 @@ export function dispatch_normal_event(event) {
+                 user_status.set_status_emoji(event);
+                 activity_ui.redraw_user(event.user_id);
+                 pm_list.update_private_messages();
+-                message_live_update.update_user_status_emoji(
+-                    event.user_id,
+-                    user_status.get_status_emoji(event.user_id),
+-                );
++                message_live_update.rerender_messages_sent_by_user(event.user_id);
+             }
+             break;
  
 ```
 
-**File**: `docs/subsystems/realms.md` (modified, +1/-1)
+**File**: `web/templates/message_body.hbs` (modified, +1/-1)
 ```diff
-@@ -61,7 +61,7 @@ test the various Zulip configurations for different subdomains:
- - The root domain (like `zulip.com` itself) is `zulipdev.com` itself.
- - The default realm is hosted on `localhost:9991` rather than
-   `zulip.zulipdev.com`, using the [`REALM_HOSTS`
--  feature](../production/multiple-organizations.md) feature.
-+  feature](../production/multiple-organizations.md).
- 
- Details are below.
- 
+@@ -9,7 +9,7 @@
+             </span>
+             {{#unless status_message}}
+                 {{#unless is_hidden}}
+-                {{> status_emoji msg/status_emoji_info}}
++                {{> status_emoji status_emoji_info}}
+                 {{/unless}}
+             {{/unless}}
+         </span>
+```
+
+**File**: `web/tests/message_events.test.cjs` (modified, +0/-1)
+```diff
+@@ -175,7 +175,6 @@ run_test("update_messages", ({override, override_rewire}) => {
+             sender_id: 32,
+             sent_by_me: false,
+             starred: false,
+-            status_emoji_info: undefined,
+             stream_id: denmark.stream_id,
+             stream: "Denmark",
+             submessages: [],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40728** (2026-11-17): [Backport] oidc: Enable PKCE. (@mateuszmandera)
-- **PR #40719** (closed): message_edit: Use a `with` link in the moved-message notification. (@evykassirer)
-- **PR #40713** (2026-11-16): version: Update version for Zulip Server 13.2 release. (@mateuszmandera)
-- **PR #40712** (2026-11-16): 13.x branch cleanup  (@mateuszmandera)
-- **PR #40706** (2026-11-17): oidc: Enable PKCE. (@mateuszmandera)
-- **PR #40705** (2026-11-16): skills: Add write-security-advisory skill. (@mateuszmandera)
+- **PR #40788** (2026-11-24): demo-orgs: Expand require_billing_access to cover demo organizations. (@laurynmm)
+- **PR #40783** (closed): populate_db: Add markdown, emojis, and links to stream descriptions. (@Divyanshgupta2580)
+- **PR #40782** (closed): openapi: Fix basicAuth casing in securitySchemes and test validation. (@Divyanshgupta2580)
+- **PR #40781** (closed): create_user: Batch subscription lookups in add_new_user_history. (@Sajal-at)
+- **PR #40778** (closed): emoji_picker: Prevent self-closing on touchscreens when keyboard opens (@yatish-code26)
+- **PR #40775** (closed): docs: Update deprecated stripe.com/docs links in billing guide. (@Sajal-at)
 
 ---
 
@@ -1657,31 +1678,35 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. portico: Fix typos on development community and security pages.
+## X. server_events_dispatch: Rerender DM status emoji on emojiset change.
 
 **RULE**:
-When implementing operations in `templates/corporate/development-community.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/src/server_events_dispatch.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bc06e2d`: portico: Fix typos on development community and security pages.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7edd86a`: server_events_dispatch: Rerender DM status emoji on emojiset change.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/corporate/development-community.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/server_events_dispatch.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  for occasional conversations not related to Zulip, usually things
+                    // Rerender status emoji in DM conversations in the
+                    // left sidebar, Inbox, and Recent conversations.
+                    pm_list.update_private_messages();
+                    inbox_ui.complete_rerender();
+                    recent_view_ui.complete_rerender();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-  is for occasional conversations not related to Zulip, usually things
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bc06e2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7edd86a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

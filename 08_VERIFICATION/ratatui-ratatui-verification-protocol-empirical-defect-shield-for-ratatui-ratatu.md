@@ -4,22 +4,22 @@
 {
   "source_repository": "ratatui/ratatui",
   "source_url": "https://github.com/ratatui/ratatui",
-  "source_version": "5a28bec1",
+  "source_version": "0e6e2990",
   "license": "MIT",
-  "timestamp": "2026-11-22T23:49:17.410Z",
+  "timestamp": "2026-11-24T08:24:33.239Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ratatui-ratatui",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `5a28bec1`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T23:49:17.410Z`  
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `0e6e2990`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T08:24:33.239Z`  
 > **Learning ID**: `learn-github-ratatui-ratatui`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ratatui/ratatui` (Commit: `5a28bec1`)
+- **Target Repository**: `ratatui/ratatui` (Commit: `0e6e2990`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:49:16.123Z  
+> **Harvest Timestamp**: 2026-11-24T08:24:30.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23394 stars
+- **Stars / Engagement**: 23406 stars
 
 ---
 
@@ -951,15 +951,11 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2948** (2026-11-22): **refactor(table): take slices in render_row_cells**
-  *Symptoms*: Small cleanup: `Table::render_row_cells` took `Vec<&Rect>` and `&Vec<Cell>`, so every header, footer and body row collected the column widths into a new `Vec`. It now takes `&[Rect]` and `&[Cell]`, and callers pass the column widths directly. No behavior change.  Follow-up from the review of #2903. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2948?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 94.0%. Comparing base ([`529f654`](https://app.codecov.io/gh/ratatui/ratatui/commit/529f654838fc3732f4fdb675a3acf7e9d003921d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`6b8369a`](https://app.codecov.io/gh/ratatui/ratatui/commit/6b8369a6dbec9e622570edfb92863e46485d0570?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)).  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff          @@ ##            main   #2948   +/-   ## ====================================
+- **Issue #2961** (2026-11-23): **build(deps): bump chrono from 0.4.41 to 0.4.45**
+  *Symptoms*: Bumps [chrono](https://github.com/chronotope/chrono) from 0.4.41 to 0.4.45. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/chronotope/chrono/releases">chrono's releases</a>.</em></p> <blockquote> <h2>0.4.45</h2> <h2>What's Changed</h2> <ul> <li>fix(tz): reject TZ offset hour of 24 to avoid FixedOffset overflow by <a href="https://github.com/SAY-5"><code>@​SAY-5</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1787">chronotope/chrono#1787</a></li> <li>tz_data: fix tzdata locations on Android by <a href="https://github.com/caruschalalamove"><code>@​caruschalalamove</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1789">chronotope/chrono#1789</a></li> </ul> <h2>0.4.44</h2> <h2>What's Changed</h2> <ul> <li>docs: match MSRV with <code>Cargo.toml</code> contents by <a href="https://github.com/coryan"><code>@​coryan</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1772">chronotope/chrono#1772</a></li> <li>Add track_caller to non-deprecated functions by <a href="https://github.com/svix-jplatte"><code>@​svix-jplatte</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1774">chronotope/chrono#1774</a></li> </ul> <h2>0.4.43</h2> <h2>What's Changed</h2> <ul> <li>Install extra components for lint workflow by <a href="https://github.com/djc"><code>@​djc</code></a> in <a href="https://redirect.github.com/chronotope/chrono/pull/1741">chronotope/chrono#17
 
-- **Issue #2946** (2026-11-22): **ci: only create the release-plz PR on manual dispatch**
-  *Symptoms*: The release PR job ran on every push to `main`, so a release PR stayed open and churned between releases. We cut releases on demand, so this changes the `release-plz-pr` job to run only from `workflow_dispatch`.  - `release-plz-release` still runs on every push to `main`. It only publishes versions not yet on crates.io, so it publishes once a release PR is merged. - `RELEASE.md` now says to run the Release-plz workflow manually (`gh workflow run release-plz.yml --ref main`) to open or refresh the release PR.  The stale release PR #2609 is being closed; the next manual run recreates it. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2946?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.6%. Comparing base ([`7c6a326`](https://app.codecov.io/gh/ratatui/ratatui/commit/7c6a326c1a470874ee17ef54b7da09fd6c8eaa23?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`caae6f2`](https://app.codecov.io/gh/ratatui/ratatui/commit/caae6f2f8fbf76803626e5978e73f0275543ac27?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 3 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##            main   
+- **Issue #2960** (2026-11-23): **build(deps): bump trybuild from 1.0.122 to 1.0.125**
+  *Symptoms*: Bumps [trybuild](https://github.com/dtolnay/trybuild) from 1.0.122 to 1.0.125. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/dtolnay/trybuild/releases">trybuild's releases</a>.</em></p> <blockquote> <h2>1.0.125</h2> <ul> <li>Set -Zthreads=1 to get deterministic ordering of diagnostics on nightlies that default to parallel frontend (<a href="https://redirect.github.com/dtolnay/trybuild/issues/352">#352</a>)</li> </ul> <h2>1.0.124</h2> <ul> <li>Hide terminal size from cargo subprocess (<a href="https://redirect.github.com/dtolnay/trybuild/issues/350">#350</a>)</li> <li>Re-enable color output during compilation of dependencies (<a href="https://redirect.github.com/dtolnay/trybuild/issues/351">#351</a>)</li> </ul> <h2>1.0.123</h2> <ul> <li>Pass --diagnostic-width to every cargo invocation (<a href="https://redirect.github.com/dtolnay/trybuild/issues/345">#345</a>, thanks <a href="https://github.com/nazar-pc"><code>@​nazar-pc</code></a>)</li> <li>Copy [profile] from the workspace root into the generated manifest (<a href="https://redirect.github.com/dtolnay/trybuild/issues/346">#346</a>, thanks <a href="https://github.com/nazar-pc"><code>@​nazar-pc</code></a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/dtolnay/trybuild/commit/b0820fd696e120ea6fb0bae2235140929f0c5237"><code>b0820fd</code></a> Release 1.0.125</li> <li><a href="https://github.com/dtolnay/trybuild/commit/30e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -976,360 +972,250 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27c7483c` (2026-11-22)
-**Commit Message**: fix(paragraph): account for block borders and padding in line_count (#2824)
+### Incident Patch 1: `b7a577c8` (2026-11-23)
+**Commit Message**: build(deps): bump chrono from 0.4.41 to 0.4.45 (#2961)
 
-`Paragraph::line_count` wrapped text at the outer width, ignoring the
-horizontal space taken by the block's borders and padding. Bordered or
-padded paragraphs could need more rows than it returned, so sizing an
-area from it clipped the last lines.
+Bumps [chrono](https://github.com/chronotope/chrono) from 0.4.41 to
+0.4.45.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/chronotope/chrono/releases">chrono's
+releases</a>.</em></p>
+<blockquote>
+<h2>0.4.45</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>fix(tz): reject TZ offset hour of 24 to avoid FixedOffset overflow
+by <a href="https://github.com/SAY-5"><code>@​SAY-5</code></a> in <a
+href="https://redirect.github.com/chronotope/chrono/pull/1787">chronotope/chrono#1787</a></li>
+<li>tz_data: fix tzdata locations on Android by <a
+href="https://github.com/caruschalalamove"><code>@​caruschalalamove</code></a>
+in <a
+href="https://redirect.github.com/chronotope/chrono/pull/1789">chronotope/chrono#1789</a></li>
+</ul>
+<h2>0.4.44</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>docs: match MSRV with <code>Cargo.toml</code> contents by <a
+href="https://github.com/coryan"><code>@​coryan</code></a> in <a
+href="https://redirect.github.com/chronotope/chrono/pull/1772">chronotope/chrono#1772</a></li>
+<li>Add track_caller to non-deprecated functions by <a
+href="https://github.com/svix-jplatte"><code>@​svix-jplatte</c
 
-Wrap at the width left inside the block. When the block leaves no
-inner width, return only its vertical space, since no text rows are
-rendered.
-
-Document that the width includes the block and that the result can
-size the render area, and run the examples as doctests.
-
-Fixes #2823
-
-**File**: `ratatui-widgets/src/paragraph.rs` (modified, +287/-15)
+**File**: `Cargo.lock` (modified, +3/-10)
 ```diff
-@@ -326,41 +326,84 @@ impl<'a> Paragraph<'a> {
-         self.alignment(Alignment::Right)
-     }
+@@ -50,12 +50,6 @@ version = "0.2.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
  
--    /// Calculates the number of lines needed to fully render.
-+    /// Calculates the height needed to render this paragraph at the given width.
-     ///
--    /// Given a max line width, this method calculates the number of lines that a paragraph will
--    /// need in order to be fully rendered. For paragraphs that do not use wrapping, this count is
--    /// simply the number of lines present in the paragraph.
-+    /// The `width` includes the [`Block`]'s borders and padding, if set through [`Self::block`].
-     ///
--    /// This method will also account for the [`Block`] if one is set through [`Self::block`].
-+    /// Returns `0` if `width` is zero. If the block's borders and padding consume all available
-+    /// width, no text rows are rendered, but the returned height still includes the block's
-+    /// vertical borders and padding.
-+    ///
-+    /// Text is wrapped according to [`Wrap`] if set through [`Self::wrap`]. Without wrapping, text
-+    /// exceeding the available width is horizontally clipped, and the returned height is the number
-+    /// of text lines plus the block's vertical borders and padding.
-     ///
-     /// Note: The design for text wrapping is not stable and might affect this API.
-     ///
--    /// # Example
-+    /// # Examples
-     ///
--    /// ```ignore
--    /// use ratatui::{widgets::{Paragraph, Wrap}};
-+    /// ```
-+    /// # #[cfg(feature = "unstable-rendered-line-info")] {
-+    /// use ratatui::widgets::{Paragraph, Wrap};
-     ///
--    /// let paragraph = Paragraph::new("Hello World")
--    ///     .wrap(Wrap { trim: false });
-+    /// let paragraph = Paragraph::new("Hello World").wrap(Wrap { trim: false });
-     /// assert_eq!(paragraph.line_count(20), 1);
-     /// assert_eq!(paragraph.line_count(10), 2);
-+    /// # }
-+    /// ```
-+    ///
-+    /// ## Determining Rendered Height
-+    ///
-+    /// The returned height can be used to size the render area for the given width.
-+    ///
-+    /// ```
-+    /// # #[cfg(feature = "unstable-rendered-line-info")] {
-+    /// use ratatui::buffer::Buffer;
-+    /// use ratatui::layout::Rect;
-+    /// use ratatui::widgets::{Block, Paragraph, Widget, Wrap};
-+    ///
-+    /// let paragraph = Paragraph::new("Hello World")
-+    ///     .block(Block::bordered())
-+    ///     .wrap(Wrap { trim: false });
-+    ///
-+    /// let width = 10;
-+    /// let height = paragraph.line_count(width) as u16;
-+    /// assert_eq!(height, 4);
-+    ///
-+    /// let area = Rect::new(0, 0, width, height);
-+    /// let mut buffer = Buffer::empty(area);
-+    /// paragraph.render(area, &mut buffer);
-+    /// assert_eq!(
-+    ///     buffer,
-+    ///     Buffer::with_lines([
-+    ///         "┌────────┐",
-+    ///         "│Hello   │",
-+    ///         "│World   │",
-+    ///         "└────────┘",
-+    ///     ]),
-+    /// );
-+    /// # }
-     /// ```
-     #[instability::unstable(
-         feature = "rendered-line-info",
-         issue = "https://github.com/ratatui/ratatui/issues/293"
-     )]
-     pub fn line_count(&self, width: u16) -> usize {
--        if width < 1 {
-+        if width == 0 {
-             return 0;
-         }
+-[[package]]
+-name = "android-tzdata"
+-version = "0.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
+-
+ [[package]]
+ name = "android_system_properties"
+ version = "0.1.5"
+@@ -386,17 +380,16 @@ dependencies = [
  
--        let (top, bottom) = self
-+        let ((left, right), (top, bottom)) = self
-             .block
-             .as_ref()
--            .map(Block::vertical_space)
-+            .map(|block| (block.horizontal_space(), block.vertical_space()))
-             .unwrap_or_default();
+ [[package]]
+ name = "chrono"
+-version = "0.4.41"
++version = "0.4.45"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
++checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+ dependencies = [
+- "android-tzdata",
+  "iana-time-zone",
+  "js-sys",
+  "num-traits",
+  "serde",
+  "wasm-bindgen",
+- "windows-link 0.1.3",
++ "windows-link 0.2.1",
+ ]
  
-+        let text_width = width.saturating_sub(left).saturating_sub(right);
-+        if text_width == 0 {
-+            return (top as usize).saturating_add(bottom as usize);
-+        }
-+
-         let count = if let Some(Wrap { trim }) = self.wrap {
-             let styled = self.text.iter().map(|line| {
-                 let graphemes = line
-@@ -370,7 +413,7 @@ impl<'a> Paragraph<'a> {
-                 let alignment = line.alignment.unwrap_or(self.alignment);
-                 (graphemes, alignment)
-             });
--            let mut line_composer = WordWrapper::new(styled, width, trim);
-+            let mut line_composer = WordWrapper::new(styled, text_width, trim);
-             let mut count = 0;
-             while line_composer.next_line().is_some() {
-                 count += 1;
-@@ -527,7 +570,7 @@ mod tests {
-     use rstest::rstest;
- 
-     use super::*;
--    use crate::block::TitlePosition;
-+    use crate::block::{Padding, TitlePosition};
-     use crate::borders::Borders;
- 
-     /// Tests the [`Paragraph`] widget against the expected [`Buffer`] by rendering it onto an equal
-@@ -1214,6 +1257,235 @@ mod tests {
-         assert_eq!(paragraph.line_count(6), 1);
-     }
- 
-+    #[test]
-+    fn line_count_bordered() {
-+        let paragraph = Paragraph::new("The quick brown fox jumps over the lazy dog")
-+            .wrap(Wrap { trim: false })
-+            .block(Block::bordered());
-+        let mut buf = Buffer::empty(Rect::new(0, 0, 24, paragraph.line_count(24) as u16));
-+
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 2: `89b8c776` (2026-11-22)
-**Commit Message**: fix(crossterm): handle NormalIntensity in FromCrossterm<ContentStyle> (#2931)
+### Incident Patch 2: `2adf218b` (2026-11-23)
+**Commit Message**: build(deps): bump rand from 0.10.3 to 0.10.4 (#2959)
 
-Fixes #2920.
+Bumps [rand](https://github.com/rust-random/rand) from 0.10.3 to 0.10.4.
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a
+href="https://github.com/rust-random/rand/blob/master/CHANGELOG.md">rand's
+changelog</a>.</em></p>
+<blockquote>
+<h2>[0.10.4] — 2026-11-15</h2>
+<h3>Fixes</h3>
+<ul>
+<li>Fix possible panic due to sampling a deserialized
+<code>Uniform&lt;Duration&gt;</code> (<a
+href="https://redirect.github.com/rust-random/rand/issues/1841">#1841</a>)</li>
+</ul>
+<p><a
+href="https://redirect.github.com/rust-random/rand/issues/1841">#1841</a>:
+<a
+href="https://redirect.github.com/rust-random/rand/pull/1841">rust-random/rand#1841</a></p>
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/rust-random/rand/commit/c03e547d051fee1e7c8b1217ff04b11bf0ea5138"><code>c03e547</code></a>
+Rand 0.10.4: reject validate UniformDuration sampler state during
+deserializa...</li>
+<li><a
+href="https://github.com/rust-random/rand/commit/d1cbc134a1d039cf4680b82835ac008f172c3dee"><code>d1cbc13</code></a>
+Document StdRng / ThreadRng duplication concerns (<a
+href="https://redirect.github.com/rust-
 
-Converting a crossterm ContentStyle with Attribute::NormalIntensity used
-to drop the reset completely, so the resulting ratatui Style came back
-as a plain default instead of removing bold and dim. This adds
-NormalIntensity to the sub_modifier handling, removing both BOLD and
-DIM, which lines up with the reverse direction, where removing either
-one produces NormalIntensity.
-
-Added a case to the from_crossterm_content_style tests covering a
-NormalIntensity-only ContentStyle. It failed before the fix and passes
-now. cargo test -p ratatui-crossterm is green (109 passed), and clippy
-and fmt checks pass too.
-
-Note on process: I used an AI assistant to help draft this small fix,
-and I reviewed the change and ran the tests myself.
-
-**File**: `ratatui-crossterm/src/lib.rs` (modified, +10/-0)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -718,6 +718,9 @@ impl FromCrossterm<ContentStyle> for Style {
-         if value.attributes.has(CrosstermAttribute::NoBold) {
-             sub_modifier |= Modifier::BOLD;
-         }
-+        if value.attributes.has(CrosstermAttribute::NormalIntensity) {
-+            sub_modifier |= Modifier::BOLD | Modifier::DIM;
-+        }
-         if value.attributes.has(CrosstermAttribute::NoItalic) {
-             sub_modifier |= Modifier::ITALIC;
-         }
-@@ -1141,6 +1144,13 @@ mod tests {
-         },
-         Style::default().remove_modifier(Modifier::BOLD)
-     )]
-+    #[case(
-+        ContentStyle {
-+            attributes: CrosstermAttributes::from(CrosstermAttribute::NormalIntensity),
-+            ..Default::default()
-+        },
-+        Style::default().remove_modifier(Modifier::BOLD | Modifier::DIM)
-+    )]
-     #[case(
-         ContentStyle {
-             attributes: CrosstermAttributes::from(CrosstermAttribute::Italic),
+@@ -849,7 +849,7 @@ version = "0.0.0"
+ dependencies = [
+  "clap",
+  "crossterm 0.29.0",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+  "termion",
+  "termwiz",
+@@ -865,7 +865,7 @@ dependencies = [
+  "itertools 0.15.0",
+  "jiff",
+  "palette",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "rand_chacha 0.10.0",
+  "ratatui",
+  "strum",
+@@ -1636,7 +1636,7 @@ version = "0.0.0"
+ dependencies = [
+  "color-eyre",
+  "crossterm 0.29.0",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+ ]
+ 
+@@ -2053,7 +2053,7 @@ dependencies = [
+  "color-eyre",
+  "crossterm 0.29.0",
+  "line_drawing",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+ ]
+ 
+@@ -2652,7 +2652,7 @@ dependencies = [
+  "bytes",
+  "getrandom 0.4.1",
+  "lru-slab",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "rand_pcg",
+  "ring",
+  "rustc-hash",
+@@ -2715,9 +2715,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rand"
+-version = "0.10.3"
++version = "0.10.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
++checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
+ dependencies = [
+  "chacha20",
+  "getrandom 0.4.1",
+@@ -2790,7 +2790,7 @@ dependencies = [
+  "jiff",
+  "palette",
+  "pretty_assertions",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui-calendar",
+  "ratatui-core",
+  "ratatui-crossterm",
+@@ -4310,7 +4310,7 @@ dependencies = [
+  "color-eyre",
+  "colorgrad",
+  "crossterm 0.29.0",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+ ]
+ 
+@@ -4486,7 +4486,7 @@ version = "0.0.0"
+ dependencies = [
+  "color-eyre",
+  "crossterm 0.29.0",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+ ]
+ 
 ```
 
 ---
 
-### Incident Patch 3: `4a91af17` (2026-11-22)
-**Commit Message**: docs(chart): fix default axis and legend constraint docs (#2902)
+### Incident Patch 3: `8a0d4c93` (2026-11-23)
+**Commit Message**: build(deps): bump bnjbvr/cargo-machete from 0.9.2 to 0.10.1 (#2955)
 
-The `Chart::x_axis` and `Chart::y_axis` docs said the default axis
-draws a line. The line is only drawn once the axis has labels, and the
-default axis has none.
+Bumps [bnjbvr/cargo-machete](https://github.com/bnjbvr/cargo-machete)
+from 0.9.2 to 0.10.1.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/bnjbvr/cargo-machete/releases">bnjbvr/cargo-machete's
+releases</a>.</em></p>
+<blockquote>
+<h2>v0.10.1</h2>
+<p>You know what they say: one release a day keeps the doctor away. This
+one makes it so that release builds include MacOS builds as well; thanks
+to <a href="https://github.com/rwojsznis"><code>@​rwojsznis</code></a>
+for reporting!</p>
+<h2>What's Changed</h2>
+<ul>
+<li>Action: Fix aarch64 triple, use musl since 0.10 by <a
+href="https://github.com/gwen-lg"><code>@​gwen-lg</code></a> in <a
+href="https://redirect.github.com/bnjbvr/cargo-machete/pull/291">bnjbvr/cargo-machete#291</a></li>
+<li>ci: fix <code>macos</code> release builds by <a
+href="https://github.com/bnjbvr"><code>@​bnjbvr</code></a> in <a
+href="https://redirect.github.com/bnjbvr/cargo-machete/pull/293">bnjbvr/cargo-machete#293</a></li>
+<li>chore: release v0.10.1 by <a
+href="https://github.com/bnjbvr"><code>@​bnjbvr</code></a> in <a
+href="https://redirect.github.com/bnjb
 
-`Chart::hidden_legend_constraints` said `Constraint::Min` always shows
-the legend. Both constraints are checked together, so a legend taller
-than the height constraint is still hidden. The docs now say the
-constraints are measured against the graph area (inside the block,
-without the axis lines and labels), and the "show whenever it fits"
-example uses `(Constraint::Fill(1), Constraint::Fill(1))`.
-
-Render tests cover each documented behaviour.
-
-**File**: `ratatui-widgets/src/chart.rs` (modified, +193/-9)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -608,7 +608,8 @@ impl<'a> Chart<'a> {
+@@ -62,7 +62,7 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-      - uses: bnjbvr/cargo-machete@ac30a525c0a8d163a92d727b3ff079ee3f6ecb08 # v0.9.2
++      - uses: bnjbvr/cargo-machete@431e75731b681a69a4cfdeb1315b505778bb5c70 # v0.10.1
  
-     /// Sets the X [`Axis`]
-     ///
--    /// The default is an empty [`Axis`], i.e. only a line.
-+    /// The default is an empty [`Axis`], which draws no axis line: the line is only drawn once
-+    /// the axis has labels.
-     ///
-     /// This is a fluent setter method which must be chained or used as it consumes self
-     ///
-@@ -632,7 +633,8 @@ impl<'a> Chart<'a> {
- 
-     /// Sets the Y [`Axis`]
-     ///
--    /// The default is an empty [`Axis`], i.e. only a line.
-+    /// The default is an empty [`Axis`], which draws no axis line: the line is only drawn once
-+    /// the axis has labels.
-     ///
-     /// This is a fluent setter method which must be chained or used as it consumes self
-     ///
-@@ -658,17 +660,19 @@ impl<'a> Chart<'a> {
-     ///
-     /// The tuple's first constraint is used for the width and the second for the height. If the
-     /// legend takes more space than what is allowed by any constraint, the legend is hidden.
--    /// [`Constraint::Min`] is an exception and will always show the legend.
-+    ///
-+    /// Both constraints are applied to the graph area: the chart inside its block, without the axis
-+    /// lines and labels.
-     ///
-     /// If this is not set, the default behavior is to hide the legend if it is greater than 25% of
--    /// the chart, either horizontally or vertically.
-+    /// the graph area, either horizontally or vertically.
-     ///
-     /// This is a fluent setter method which must be chained or used as it consumes self
-     ///
-     /// # Examples
-     ///
--    /// Hide the legend when either its width is greater than 33% of the total widget width or if
--    /// its height is greater than 25% of the total widget height.
-+    /// Hide the legend when either its width is greater than 33% of the graph area width or if its
-+    /// height is greater than 25% of the graph area height.
-     ///
-     /// ```
-     /// use ratatui::layout::Constraint;
-@@ -678,14 +682,14 @@ impl<'a> Chart<'a> {
-     /// let chart = Chart::new(vec![]).hidden_legend_constraints(constraints);
-     /// ```
-     ///
--    /// Always show the legend, note the second constraint doesn't matter in this case since the
--    /// first one is always true.
-+    /// Show the legend whenever it fits in the graph area. It is still hidden if it does not fit,
-+    /// counting one row for each axis title that is displayed.
-     ///
-     /// ```
-     /// use ratatui::layout::Constraint;
-     /// use ratatui::widgets::Chart;
-     ///
--    /// let constraints = (Constraint::Min(0), Constraint::Ratio(1, 4));
-+    /// let constraints = (Constraint::Fill(1), Constraint::Fill(1));
-     /// let chart = Chart::new(vec![]).hidden_legend_constraints(constraints);
-     /// ```
-     ///
-@@ -1513,6 +1517,186 @@ mod tests {
-         }
-     }
- 
-+    const DIAGONAL: &[(f64, f64)] = &[(0.0, 0.0), (5.0, 5.0), (10.0, 10.0)];
-+
-+    fn axis() -> Axis<'static> {
-+        Axis::default().bounds([0.0, 10.0])
-+    }
-+
-+    /// A chart with a 5 row high legend in the top right corner.
-+    fn chart_with_three_named_datasets() -> Chart<'static> {
-+        let datasets = ["aaa", "bbb", "ccc"]
-+            .map(|name| Dataset::default().name(name).data(DIAGONAL))
-+            .to_vec();
-+        Chart::new(datasets)
-+            .legend_position(Some(LegendPosition::TopRight))
-+            .x_axis(axis())
-+            .y_axis(axis())
-+    }
-+
-+    #[test]
-+    fn default_axis_draws_no_line() {
-+        let chart = Chart::new(vec![Dataset::default().data(DIAGONAL)])
-+            .x_axis(axis())
-+            .y_axis(axis());
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, 12, 6));
-+        chart.render(buffer.area, &mut buffer);
-+        #[rustfmt::skip]
-+        let expected = Buffer::with_lines([
-+            "           •",
-+            "            ",
-+            "            ",
-+            "      •     ",
-+            "            ",
-+            "•           ",
-+        ]);
-+        assert_eq!(buffer, expected);
-+    }
-+
-+    #[test]
-+    fn axis_with_labels_draws_line() {
-+        let chart = Chart::new(vec![Dataset::default().data(DIAGONAL)])
-+            .x_axis(axis().labels(["0", "10"]))
-+            .y_axis(axis().labels(["0", "10"]));
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, 12, 6));
-+        chart.render(buffer.area, &mut buffer);
-+        #[rustfmt::skip]
-+        let expected = Buffer::with_lines([
-+            "10│        •",
-+            "  │         ",
-+            "  │    •    ",
-+            "0 │•        ",
-+            "  └─────────",
-+            "  0       10",
-+        ]);
-+        assert_eq!(buffer, expected);
-+    }
-+
-+    #[test]
-+    fn min_width_constraint_does_not_force_legend_to_show() {
-+        let chart = chart_with_three_named_datasets()
-+            .hidden_legend_constraints((Constraint::Min(0), Constraint::Ratio(1, 4)));
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 10));
-+        chart.render(buffer.area, &mut b
+   # Check for unused dependencies that static source scanning cannot distinguish.
+   # This complements cargo-machete by compiling the workspace and checking rustc dep-info.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2948** (2026-11-22): refactor(table): take slices in render_row_cells (@joshka)
-- **PR #2946** (2026-11-22): ci: only create the release-plz PR on manual dispatch (@joshka)
-- **PR #2941** (2026-11-22): refactor(bench): flatten buffer benchmarks and make with_lines scale with size (@joshka)
-- **PR #2940** (2026-11-21): refactor(widget): move string widget impls into their own modules (@joshka)
-- **PR #2939** (2026-11-21): fix(scrollbar): reach the end of the track when content is fully scrolled (@orhun)
-- **PR #2937** (2026-11-20): style(docs): fix formatting (@orhun)
+- **PR #2961** (2026-11-23): build(deps): bump chrono from 0.4.41 to 0.4.45 (@dependabot[bot])
+- **PR #2960** (2026-11-23): build(deps): bump trybuild from 1.0.122 to 1.0.125 (@dependabot[bot])
+- **PR #2959** (2026-11-23): build(deps): bump rand from 0.10.3 to 0.10.4 (@dependabot[bot])
+- **PR #2958** (2026-11-23): build(deps): bump jiff from 1.0.0 to 1.0.1 (@dependabot[bot])
+- **PR #2957** (2026-11-23): build(deps): bump clap from 4.6.7 to 4.6.9 (@dependabot[bot])
+- **PR #2956** (2026-11-23): build(deps): bump taiki-e/install-action from 2.90.3 to 2.90.6 (@dependabot[bot])
 
 ---
 
@@ -1349,69 +1235,42 @@ Render tests cover each documented behaviour.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paragraph): account for block borders and padding in line_count
+## X. build(deps): bump chrono from 0.4.41 to 0.4.45
 
 **RULE**:
-When implementing operations in `ratatui-widgets/src/paragraph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27c7483c`: paragraph): account for block borders and padding in line_count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7a577c8`: build(deps): bump chrono from 0.4.41 to 0.4.45. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-widgets/src/paragraph.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Calculates the height needed to render this paragraph at the given width.
-    /// The `width` includes the [`Block`]'s borders and padding, if set through [`Self::block`].
-    /// Returns `0` if `width` is zero. If the block's borders and padding consume all available
-    /// width, no text rows are rendered, but the returned height still includes the block's
-    /// vertical borders and padding.
-    ///
-    /// Text is wrapped according to [`Wrap`] if set through [`Self::wrap`]. Without wrapping, text
-    /// exceeding the available width is horizontally clipped, and the returned height is the number
-    /// of text lines plus the block's vertical borders and padding.
-    /// # Examples
-    /// ```
-    /// # #[cfg(feature = "unstable-rendered-line-info")] {
-    /// use ratatui::widgets::{Paragraph, Wrap};
-    /// let paragraph = Paragraph::new("Hello World").wrap(Wrap { trim: false });
-    /// # }
-    /// ```
-    ///
-    /// ## Determining Rendered Height
-    ///
-    /// The returned height can be used to size the render area for the given width.
-    ///
-    /// ```
-    /// # #[cfg(feature = "unstable-rendered-line-info")] {
-    /// use ratatui::buffer::Buffer;
-    /// use
+version = "0.4.45"
+checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+ "windows-link 0.2.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// Calculates the number of lines needed to fully render.
-    /// Given a max line width, this method calculates the number of lines that a paragraph will
-    /// need in order to be fully rendered. For paragraphs that do not use wrapping, this count is
-    /// simply the number of lines present in the paragraph.
-    /// This method will also account for the [`Block`] if one is set through [`Self::block`].
-    /// # Example
-    /// ```ignore
-    /// use ratatui::{widgets::{Paragraph, Wrap}};
-    /// let paragraph = Paragraph::new("Hello World")
-    ///     .wrap(Wrap { trim: false });
-        if width < 1 {
-        let (top, bottom) = self
-            .map(Block::vertical_space)
-            let mut line_composer = WordWrapper::new(styled, width, trim);
-    use crate::block::TitlePosition;
+[[package]]
+name = "android-tzdata"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
+
+version = "0.4.41"
+checksum = "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
+ "android-tzdata",
+ "windows-link 0.1.3",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27c7483c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7a577c8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

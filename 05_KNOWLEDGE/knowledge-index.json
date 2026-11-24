@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T08:05:45.306Z",
+  "last_updated": "2026-11-24T08:25:14.164Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24535,
+  "total_items": 24540,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "246b3f33a7845eeb4521bb3c4ee3ee5e8dae7c3612f34e6503d5b13d4e1b712c",
+      "content_hash": "b690ed2b89cc0737490d9c592250ca5d8d05ee4add6210106064f4c0b4e86dd0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T07:33:19.389Z"
+      "persisted_at": "2026-11-24T08:25:13.284Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5997895be35b2d242797345bf171a49a5066c206945ec6b46a75b6e01a421203",
+      "content_hash": "82741c3b523e96cb81e56b2e6bc80ab8c69df443cf983d69897e6485fb9453cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:41:55.622Z"
+      "persisted_at": "2026-11-24T08:25:13.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215163,8 +215163,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "4b6608d2",
-      "content_hash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
+      "source_version": "eca8048b",
+      "content_hash": "f323e2d03a77f2873c98c850fe086056362cb604bbcb9a9acea363c2c6bb7b81",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -215177,6 +215177,11 @@
           "number": 8955,
           "title": "Fix typos on development community and security pages.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10234,
+          "title": "Rerender DM status emoji on emojiset change.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215184,7 +215189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T14:49:37.780Z",
+      "verified_at": "2026-11-24T08:25:06.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215226,10 +215231,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-architecture-intelligence-zulip-zulip-core-invariants.md",
       "title": "Architecture Intelligence: zulip/zulip Core Invariants",
       "repository": "zulip/zulip",
-      "source_version": "4b6608d2",
-      "content_hash": "2b6583c79753a0e7d5a62be2778ccb6aaa18f08c99e12654475b687f0b63b892",
+      "source_version": "eca8048b",
+      "content_hash": "691fbd5bb74b2f93772ebfe53e5307018c17a4f0c404091f2624557c2d2d1bb4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T14:49:38.279Z"
+      "persisted_at": "2026-11-24T08:25:07.196Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip",
@@ -215238,10 +215243,10 @@
       "relative_path": "08_VERIFICATION/zulip-zulip-verification-protocol-empirical-defect-shield-for-zulip-zulip.md",
       "title": "Verification Protocol: Empirical Defect Shield for zulip/zulip",
       "repository": "zulip/zulip",
-      "source_version": "19e7b6bb",
-      "content_hash": "98605bc728ce79d94fdb8d218a21d126968ca02cea71cf4f29f8f0ca3baeede0",
+      "source_version": "eca8048b",
+      "content_hash": "14c2085a83c469cf3874e333a2d8b00b51b17354a7d53146ab0749808ca4418a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:51:32.449Z"
+      "persisted_at": "2026-11-24T08:25:07.383Z"
     },
     "learn-github-opentofu-opentofu": {
       "learning_id": "learn-github-opentofu-opentofu",
@@ -219156,13 +219161,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U0EJ-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J2BK-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba8cba63067de4a188e33bbb1be3210743f78183e81947dbafeef52f052120aa",
+      "content_hash": "b2e80ea249b53d9e5b71244b296b8026c217d206fd8034b66fc24fbb39899030",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:05:44.971Z"
+      "persisted_at": "2026-11-24T08:25:13.857Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219172,9 +219177,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7358511a4117f37857a46f67eec3052ba1a264b5c10161a25c36eb66c813f5a9",
+      "content_hash": "00f5965c3d62505e2841c6a105439392933acd9e32a4894f00d042bac6dbf112",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T08:05:45.140Z"
+      "persisted_at": "2026-11-24T08:25:14.008Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219184,9 +219189,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d5d168fb284520fa49defbbab6bd707b0ea00bc24cb0e8f251528284ce38e91",
+      "content_hash": "e8e5052764e6a0d460fdde9751ff6fddf4ba947f9f33e33751ec2c9b6bbe5a33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:05:45.306Z"
+      "persisted_at": "2026-11-24T08:25:14.164Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -265951,8 +265956,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "5a28bec1",
-      "content_hash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
+      "source_version": "0e6e2990",
+      "content_hash": "2a60426ade967d14fc90af240454782856769fb26aae0d8c82253bfe701df90a",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -265970,6 +265975,11 @@
           "number": 10006,
           "title": "account for block borders and padding in line_count",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10233,
+          "title": "build(deps): bump chrono from 0.4.41 to 0.4.45",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -265977,7 +265987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:49:16.972Z",
+      "verified_at": "2026-11-24T08:24:32.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266019,10 +266029,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "repository": "ratatui/ratatui",
-      "source_version": "5a28bec1",
-      "content_hash": "18b0a6788faabf09577c04483707c1847eaa0e39cee5ddf202d4e8c5d3e69bfc",
+      "source_version": "0e6e2990",
+      "content_hash": "d27a03252061bf71925aae32ed4ee4fecfbb038133d3bce84e8c8c562f8c3fce",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:49:17.582Z"
+      "persisted_at": "2026-11-24T08:24:33.410Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui",
@@ -266031,10 +266041,10 @@
       "relative_path": "08_VERIFICATION/ratatui-ratatui-verification-protocol-empirical-defect-shield-for-ratatui-ratatu.md",
       "title": "Verification Protocol: Empirical Defect Shield for ratatui/ratatui",
       "repository": "ratatui/ratatui",
-      "source_version": "5a28bec1",
-      "content_hash": "353edeff01316127bd8dcb4864e473bf734efde4f21b6e91335fd57661bfaa42",
+      "source_version": "0e6e2990",
+      "content_hash": "27af3c2712231d087932e25946d7bdd2ef2f89a2354bd908866d040c01c33e8b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:49:17.751Z"
+      "persisted_at": "2026-11-24T08:24:33.569Z"
     },
     "rule-8825": {
       "learning_id": "rule-8825",
@@ -266108,9 +266118,9 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "72ac7a4161fe13b2fee18bd179814b2e02741e9346c149705790e0a4e5094219",
+      "content_hash": "d36358bac8ee58baba0184dee929a2704419c2524240942f4eb688cf10dba6cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:49:26.879Z"
+      "persisted_at": "2026-11-24T08:25:12.477Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings",
@@ -266120,9 +266130,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ratatui-ratatui-learnings",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "593450b545212464a3bd3ee320b1344a60cc837b4b83fbe83fdd5f0581c4f885",
+      "content_hash": "081b8b68338e8f326bde4ae030b492bce61045d5d45f59381113bf918c713153",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:49:27.047Z"
+      "persisted_at": "2026-11-24T08:25:12.637Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -334780,6 +334790,70 @@
       "content_hash": "4350245c048e1e57fa3c6b4a792bae435684dcd3e645b1d2096720e3fee0cf40",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T07:55:53.049Z"
+    },
+    "rule-10233": {
+      "learning_id": "rule-10233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10233,
+      "title": "build(deps): bump chrono from 0.4.41 to 0.4.45",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "0e6e2990",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T08:24:32.828Z"
+    },
+    "candidate_directive-build-deps-bump-chrono-from-0-4-41-to-0-4-45": {
+      "item_id": "candidate_directive-build-deps-bump-chrono-from-0-4-41-to-0-4-45",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J14X-build-deps-bump-chrono-from-0-4-41-to-0-4-45.md",
+      "title": "build(deps): bump chrono from 0.4.41 to 0.4.45",
+      "repository": "ratatui-ratatui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d83daba6be08145c69a2cec504eb3799bb206efee43937b76197a33385d3a70",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T08:25:12.322Z"
+    },
+    "rule-10234": {
+      "learning_id": "rule-10234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10234,
+      "title": "Rerender DM status emoji on emojiset change.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "eca8048b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T08:25:06.590Z"
+    },
+    "candidate_directive-rerender-dm-status-emoji-on-emojiset-change": {
+      "item_id": "candidate_directive-rerender-dm-status-emoji-on-emojiset-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IX2C-rerender-dm-status-emoji-on-emojiset-change.md",
+      "title": "Rerender DM status emoji on emojiset change.",
+      "repository": "zulip/zulip",
+      "source_version": "eca8048b",
+      "content_hash": "361a21166834d2435b78273675f302d14922eb5bcef0bad098090b1bb9080811",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T08:25:07.050Z"
+    },
+    "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change": {
+      "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J1RE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "repository": "zulip-zulip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d611b42c8a6f448cad0d3fd228c55d976ae7a098cac5d4d2480e1d69fb93397d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T08:25:13.135Z"
     }
   },
   "ai-builder-brain": {
