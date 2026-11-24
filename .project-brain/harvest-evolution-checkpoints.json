@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:23:16.908Z",
+  "last_updated": "2026-11-24T03:33:38.110Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T03:05:28.544Z",
@@ -268,13 +268,13 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T03:14:33.446Z",
+      "processed_at": "2026-11-24T03:33:37.024Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "iii-hq-iii-learnings.md": {
-      "processed_at": "2026-11-19T22:07:47.864Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T03:33:34.691Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "aquasecurity-trivy-operator-learnings.md": {
@@ -303,7 +303,7 @@
       "staged_for_review": 0
     },
     "shifthackz-sdai-kmp-learnings.md": {
-      "processed_at": "2026-11-21T06:01:33.405Z",
+      "processed_at": "2026-11-24T03:33:36.025Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3798,7 +3798,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3636,
+  "total_dossiers_evaluated": 3639,
   "total_canonical_promoted": 498,
-  "total_staged_for_review": 2728
+  "total_staged_for_review": 2731
 }

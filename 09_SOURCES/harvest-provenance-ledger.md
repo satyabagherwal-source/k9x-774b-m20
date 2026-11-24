@@ -12606,3 +12606,5 @@ Every entry in this ledger must capture:
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `c26be2dd` | Multi-dimensional audit evidence | 2026-11-24T03:22:36.277Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `32ba4b5c` | Multi-dimensional audit evidence | 2026-11-24T03:22:43.059Z |
 | `learn-dom-k-aa8cd5c4` | `project://paradedb-paradedb` | `32ba4b5c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md` | 2026-11-24T03:23:14.802Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `81dfce48` | Multi-dimensional audit evidence | 2026-11-24T03:33:24.204Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `30461ed9` | Multi-dimensional audit evidence | 2026-11-24T03:33:30.273Z |

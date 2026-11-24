@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:23:16.330Z",
+  "last_updated": "2026-11-24T03:33:37.436Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-FJIA",
+      "id": "CD-41ZQ",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FJIA-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-41ZQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -48836,14 +48836,14 @@
       "staged_date": "2026-11-23"
     },
     {
-      "id": "CD-PM5G",
+      "id": "CD-4156",
       "directive_title": "Refine shared UI controls and platform navigation",
-      "source_repo": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_repo": "shifthackz-sdai-kmp-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-PM5G-refine-shared-ui-controls-and-platform-navigation.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-4156-refine-shared-ui-controls-and-platform-navigation.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-24",
       "domain_letter": "K"
     },
     {
@@ -52644,6 +52644,46 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-72E5E9-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-3S2S",
+      "directive_title": "read every engine socket through an 8 KiB buffer, not 128 KiB",
+      "source_repo": "iii-hq/iii",
+      "source_commit": "81dfce48",
+      "staged_file": "11_INBOX/candidate-directives/CD-3S2S-read-every-engine-socket-through-an-8-kib-buffer-not-128-kib.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-408V",
+      "directive_title": "sdk): read every engine socket through an 8 KiB buffer, not 128 KiB",
+      "source_repo": "iii-hq-iii-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-408V-sdk-read-every-engine-socket-through-an-8-kib-buffer-not-128-kib.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-9997E0",
+      "directive_title": "Refine shared UI controls and platform navigation",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "shifthackz-sdai-kmp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9997E0-refine-shared-ui-controls-and-platform-n.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-EF1AFD",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EF1AFD-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
     }
   ]

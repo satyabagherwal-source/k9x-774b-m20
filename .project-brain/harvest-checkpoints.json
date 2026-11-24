@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T03:22:43.074Z",
+  "last_updated": "2026-11-24T03:33:30.297Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
-      "verified_at": "2026-11-19T22:06:53.321Z",
+      "content_hash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
+      "verified_at": "2026-11-24T03:33:24.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:06:53.321Z"
+      "last_updated": "2026-11-24T03:33:24.233Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -18306,14 +18306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shifthackz-sdai-kmp",
-      "content_hash": "26a2ad5cd7a75a31d8a40e986e5eb0d67a80407b1485373a20105293483cf8aa",
-      "verified_at": "2026-11-23T07:18:36.383Z",
+      "content_hash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
+      "verified_at": "2026-11-24T03:33:30.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:18:36.383Z"
+      "last_updated": "2026-11-24T03:33:30.284Z"
     },
     "qybaihe/bla": {
       "repository": "qybaihe/bla",

@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "7fd8bb9f",
+    "sourceVersion": "81dfce48",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
-    "lastHarvestedAt": "2026-11-19T22:06:53.311Z",
+    "contentHash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
+    "lastHarvestedAt": "2026-11-24T03:33:24.204Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -12163,10 +12163,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
-    "sourceVersion": "82ebd42d",
+    "sourceVersion": "30461ed9",
     "license": "AGPL-3.0",
-    "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
-    "lastHarvestedAt": "2026-11-21T06:01:27.193Z",
+    "contentHash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
+    "lastHarvestedAt": "2026-11-24T03:33:30.273Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "qybaihe-bla": {

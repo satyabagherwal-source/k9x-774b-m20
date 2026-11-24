@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T03:22:46.306Z",
-    "lastVerified": "2026-11-24T03:22:46.307Z",
+    "lastChecked": "2026-11-24T03:33:34.512Z",
+    "lastVerified": "2026-11-24T03:33:34.512Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T02:53:36.341Z",
+    "lastChecked": "2026-11-24T03:33:34.499Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T02:53:36.341Z"
+    "lastVerified": "2026-11-24T03:33:34.499Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -654,22 +654,21 @@
     "lastVerified": "2026-11-23T23:48:49.882Z"
   },
   "iii-hq-iii": {
-    "name": "iii",
+    "name": "iii-hq/iii",
     "officialUrl": "https://github.com/iii-hq/iii",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T20:00:14.291Z",
-    "lastVerified": "2026-11-22T20:00:14.291Z",
+    "lastChecked": "2026-11-24T03:33:22.698Z",
+    "lastVerified": "2026-11-24T03:33:22.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7fd8bb9f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3.8-27b": {
     "name": "Qwen/Qwen3.8-27B",
@@ -1743,8 +1742,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T22:42:51.301Z",
-    "lastVerified": "2026-11-23T22:42:51.301Z",
+    "lastChecked": "2026-11-24T03:33:29.544Z",
+    "lastVerified": "2026-11-24T03:33:29.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -2437,9 +2436,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-23T04:08:19.120Z",
+    "lastChecked": "2026-11-24T03:33:32.101Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-23T04:08:19.120Z"
+    "lastVerified": "2026-11-24T03:33:32.101Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -4357,9 +4356,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-23T05:35:25.819Z",
+    "lastChecked": "2026-11-24T03:33:27.123Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-23T05:35:25.819Z"
+    "lastVerified": "2026-11-24T03:33:27.123Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -9378,9 +9377,9 @@
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
     "officialUrl": "https://github.com/SArfrz/NovaCrawl",
-    "lastChecked": "2026-11-19T23:43:16.218Z",
+    "lastChecked": "2026-11-24T03:33:22.041Z",
     "revisionIdentifier": "68c95079df",
-    "lastVerified": "2026-11-19T23:43:16.218Z"
+    "lastVerified": "2026-11-24T03:33:22.041Z"
   },
   "vanniktech-emoji": {
     "name": "Emoji",
@@ -12264,14 +12263,14 @@
     "officialUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-21T06:01:26.419Z",
-    "lastVerified": "2026-11-21T06:01:26.419Z",
+    "lastChecked": "2026-11-24T03:33:29.335Z",
+    "lastVerified": "2026-11-24T03:33:29.335Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
+    "contentHash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

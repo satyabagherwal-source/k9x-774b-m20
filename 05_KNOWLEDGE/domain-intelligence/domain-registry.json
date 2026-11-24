@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:23:16.538Z",
+  "last_updated": "2026-11-24T03:33:37.659Z",
   "total_records": 2486,
   "domains": {
     "A": {
@@ -9219,8 +9219,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f0d2318ec9d807d6d87ac040b76e311848453948db0d349d0a525309ef0b43fd",
-      "created_at": "2026-11-24T03:14:33.906Z"
+      "content_hash": "901f5520431b2b536da610cff9f37b7cebeb3b0847608f7453265175d8949223",
+      "created_at": "2026-11-24T03:33:37.659Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18260,8 +18260,8 @@
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "repository": "iii-hq/iii",
-      "content_hash": "dd6a80e9f94edca4699bf9cf30edf46415abbf69bba2aa91cd2a6638f995cdfa",
-      "created_at": "2026-11-19T22:06:54.133Z"
+      "content_hash": "254ed58ab966e31e28f6e4ae47053d22bb7685bfcb85f3a4498052a54f3afc53",
+      "created_at": "2026-11-24T03:33:24.826Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
@@ -18269,8 +18269,8 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
       "repository": "iii-hq-iii-learnings",
-      "content_hash": "33e847f18f325a83c3108d3d5fff94c3f1018c9aac7670c8e6c0c449c6d64295",
-      "created_at": "2026-11-19T22:07:48.841Z"
+      "content_hash": "6abf6940d92133a73b347e36ff8713db5f2dc2ffc4158df826d93a68403ac00f",
+      "created_at": "2026-11-24T03:33:35.397Z"
     },
     "DOM-D-73A9B4FE": {
       "record_id": "DOM-D-73A9B4FE",
@@ -23550,10 +23550,10 @@
       "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "K",
       "title": "Quality & Verification Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-quality-verification-intelligence-shifthackz-sda.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-quality-verification-intelligence-shifthackz-sdai-kmp-core-i.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "6b6cb5da2e2b4a8722814925f77bdd463c2a18730fad0b10d8cb274250100c76",
-      "created_at": "2026-11-23T07:18:36.728Z"
+      "content_hash": "7c3afbb8071f9b6eb0fad7e552ce0c8ba2d8f983b7ee63089a6ed2a0f7226abf",
+      "created_at": "2026-11-24T03:33:30.837Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
@@ -30313,8 +30313,8 @@
       "title": "Quality & Verification Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-learnings-quality-verification-intelligence-shifthackz-sdai-.md",
       "repository": "shifthackz-sdai-kmp-learnings",
-      "content_hash": "06c941b94c9271a08ed6efeea4f5cc9a5402454f0bc8ae169534f6306ffb85d1",
-      "created_at": "2026-11-18T06:07:49.787Z"
+      "content_hash": "d0e35b1a1fd59cd73886368dbb6de13ed2e2792aec8c75a60d6fca42f35d850d",
+      "created_at": "2026-11-24T03:33:36.581Z"
     },
     "DOM-D-5E75492A": {
       "record_id": "DOM-D-5E75492A",

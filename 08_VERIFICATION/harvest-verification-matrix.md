@@ -12573,3 +12573,5 @@
 | `CYCLE-20261124-PVU9` | `2026-11-24T03:22:36.273Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10185` | Yes (`f8533d53...`) |
 | `CYCLE-20261124-Q12M` | `2026-11-24T03:22:43.054Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10186` | Yes (`1ec9a7ba...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T03:23:14.802Z` | `paradedb-paradedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-AA8CD5C4` [Domain K] | Yes (`93cfe119...`) |
+| `CYCLE-20261124-3RS6` | `2026-11-24T03:33:24.198Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10187` | Yes (`46f72e92...`) |
+| `CYCLE-20261124-3WGS` | `2026-11-24T03:33:30.268Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10034` | Yes (`7d894040...`) |

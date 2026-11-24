@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:22:43.064Z",
-  "total_cycles_completed": 11953,
-  "total_learnings_persisted": 11953,
-  "total_rules_promoted": 11033,
+  "last_updated": "2026-11-24T03:33:30.280Z",
+  "total_cycles_completed": 11955,
+  "total_learnings_persisted": 11955,
+  "total_rules_promoted": 11035,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:02:52.447Z",
-      "repository": "mlua-rs/mlua",
-      "learningId": "learn-github-mlua-rs-mlua",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:03:01.761Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:11:39.730Z",
       "repository": "google/vit-base-patch16-224",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T03:22:43.064Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:33:24.214Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:33:30.280Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
