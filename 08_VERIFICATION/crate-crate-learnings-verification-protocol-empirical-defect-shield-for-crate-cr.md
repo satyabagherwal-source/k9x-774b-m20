@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T18:49:07.058Z",
+  "timestamp": "2026-11-24T03:58:47.095Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-crate-crate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crate-crate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T18:49:07.058Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T03:58:47.095Z`  
 > **Learning ID**: `LEARN-EVO-crate-crate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `39117a4b`  
+> **Source Version**: `2799f146`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T18:49:00.527Z  
+> **Timestamp**: 2026-11-24T03:58:40.133Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:49:00.522Z  
+> **Harvest Timestamp**: 2026-11-24T03:58:40.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4457 stars
+- **Stars / Engagement**: 4456 stars
 
 ---
 
@@ -559,11 +559,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20596** (2026-11-17): **The `RewriteToQueryThenFetch` rule drops an aliased column**
-  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ```sql CREATE TABLE t1 (id INT, a INT, b INT, flag BOOLEAN); CREATE TABLE t2 (id INT);  SET optimizer_rewrite_to_query_then_fetch = true;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10;  SET optimizer_rewrite_to_query_then_fetch = false;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Couldn't find x in SourceSymbols{inputs={id=INPUT(2), c._fetchid=INPUT(0), id=INPUT(1)}, nonDeterministicFunctions={}}: Eval[b, x] (rows=unknown)   └ Fetch[b, x, id, id] (rows=unknown)     └ Limit[10::bigint;0] (rows=unknown)       └ OrderBy[x ASC] (rows=unknown)         └ HashJoin[INNER | (id = id)] (rows=unknown)           ├ Rename[c._fetchid, id] AS c (rows=unknown)           │  └ Eval[_fetchid, id] (rows=unknown)           │    └ Collect[doc.t1 | [_fetchid, a AS x, id] | flag] (rows=unknown)           └ Collect[doc.t2 | [id] | true] (rows=unknown)] ```  ### Expected Result  ``` +---+---+ | b | x | +---+---+ +---+---+ ```
+- **Issue #20640** (2026-11-23): **Updating a nested object array with a JSON null raises `NullPointerException`**
+  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  INSERT accepts a nested object array containing a JSON-null element. Updating an existing row to an array of the same shape raises a NullPointerException, while the update without the null element succeeds.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_nested_update_repro; CREATE TABLE crate_json_nested_update_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (         groups ARRAY(OBJECT AS (             entries ARRAY(OBJECT AS (v INTEGER))         ))     ) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_nested_update_repro VALUES     (1, '{"groups":[{"entries":[{"v":1}]}]}'),     (2, '{"groups":[{"entries":[{"v":2},null]}]}'); REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":3}]}'::OBJECT WHERE id = 1 RETURNING doc; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":4},null]}'::OBJECT WHERE id = 1 RETURNING doc; REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; ```  ### Actual Result  The initial insert stores the JSON null, and the update without null succeeds. The next update
 
-- **Issue #20580** (2026-11-18): **ANALYZE accesses foreign tables as `crate`, ignoring the invoking user’s mapping**
-  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information  Cloud cluster with Postgres FDW  ### Problem description and reproduction steps  Running ANALYZE on a CrateDB cluster with a JDBC foreign table fails when a user mapping exists for the invoking user but no mapping exists for the internal crate user. Regular SELECT queries work through the configured mapping. During statistics collection, CrateDB attempts to authenticate to PostgreSQL as crate instead of the mapped PostgreSQL reader. Shouldn't this be documented or perhaps the existing user mapping be used?  Steps to reproduce 1. Create a PostgreSQL table and a reader account with permission to query it. 2. Allow connections from the CrateDB cluster to PostgreSQL. 3. In CrateDB, connect as a user other than `crate` and run:  ```sql  CREATE SERVER pg_remote FOREIGN DATA WRAPPER jdbc OPTIONS (     url 'jdbc:postgresql://<POSTGRES_HOST>:5433/fdw_lab?sslmode=require' );  CREATE USER MAPPING FOR CURRENT_USER SERVER pg_remote OPTIONS (     "user" 'crate_ce',     password '<POSTGRES_PASSWORD>' );  CREATE FOREIGN TABLE doc.remote_documents (     id BIGINT,     value DOUBLE PRECISION ) SERVER pg_remote OPTIONS (     schema_name 'fdw_source',     table_name 'measurements' );  --- Check the FDW works with: SELECT * FROM doc.remote_documents WHERE id = 1;  ---To Collect the statistics run: ANALYZE; ```   ### Actual Result  `PSQLException[FATAL: no pg_hba.conf entry for host "---", user "crate", database "fdw_lab", SSL encryption]`
+- **Issue #20639** (2026-11-23): **`OBJECT` equality filter includes rows with extra JSON keys**
+  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  The projected equality is FALSE for the object with an extra key. The same expression in WHERE incorrectly includes that row; adding IS TRUE returns only the matching row.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_object_extra_key_repro; CREATE TABLE crate_json_object_extra_key_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (a INTEGER, b INTEGER) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_object_extra_key_repro VALUES     (1, '{"a":1}'),     (2, '{"a":1,"b":2}'); REFRESH TABLE crate_json_object_extra_key_repro;  SELECT id, doc = '{"a":1}'::OBJECT AS equal_to_target FROM crate_json_object_extra_key_repro ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE doc = '{"a":1}'::OBJECT ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE (doc = '{"a":1}'::OBJECT) IS TRUE ORDER BY id; ```  ### Actual Result  Projected equality:  | id | equal_to_target | | --- | --- | | 1 | `TRUE` | | 2 | `FALSE` |  Direct `WHERE` filter:  | id | | --- | | 1 | | 2 |   ### Expected Result  Only row 1 is equal to `{"a":1}`, as confirmed by projection and the `IS TRUE` filter:  | id | | --- | | 1 |  PostgreSQL 16.14 returns only row 1 for the corresponding `JSONB` e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -580,36 +580,237 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39117a4b` (2026-11-19)
-**Commit Message**: Revert "Update JDK to 27.0.1.1+4"
+### Incident Patch 1: `e3b6b9db` (2026-11-23)
+**Commit Message**: Fix NullPointerException updating object array with null element
 
-Adoptium hasn't provided the build for all platforms yet, so we'll need
-to revert.
+`UPDATE` with an `ARRAY(OBJECT)` value containing a null element failed
+in `ValueNormalizer`. Null elements are now kept, matching `INSERT`
+behaviour.
 
-This reverts commit cc52dca6df1f31602dcaf8369418b02c487e653e.
+Fixes #20640
 
-**File**: `pom.xml` (modified, +2/-2)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
 ```diff
-@@ -338,8 +338,8 @@
-       ./mvnw -P jmods -Dos.arch=aarch64 -Dos.name="Mac OS X" package -DskipTests=true
-     To verify the version is available for both platforms
-     -->
--        <versions.jdk>27.0.1.1</versions.jdk>
--        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
-+        <versions.jdk>27.0.1.0.2</versions.jdk>
-+        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
+@@ -46,6 +46,11 @@ series.
+ Fixes
+ =====
  
-         <versions.jspecify>1.0.1</versions.jspecify>
-         <versions.log4j>2.26.1</versions.log4j>
++- Fixed a ``NullPointerException`` that occurred when updating a column of
++  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
++  contains a ``null`` element. The ``null`` element is now stored, matching the
++  behaviour of ``INSERT``.
++
+ - Fixed an issue where an ``<obj_column> = <obj_literal>`` expression could
+   match rows where the object column had additional properties not present in
+   the object literal.
+```
+
+**File**: `server/src/main/java/io/crate/analyze/expressions/ValueNormalizer.java` (modified, +4/-0)
+```diff
+@@ -166,6 +166,10 @@ private static boolean isObjectArray(DataType<?> type) {
+ 
+     private static void normalizeObjectArrayValue(List<Map<String, Object>> values, Reference arrayInfo, TableInfo tableInfo) {
+         for (Map<String, Object> value : values) {
++            if (value == null) {
++                // Keep null elements as they are, like INSERT does
++                continue;
++            }
+             // return value not used and replaced in value as arrayItem is a map that is mutated
+             normalizeObjectValue(value, arrayInfo, tableInfo);
+         }
+```
+
+**File**: `server/src/test/java/io/crate/analyze/ValueNormalizerTest.java` (modified, +34/-2)
+```diff
+@@ -22,10 +22,11 @@
+ package io.crate.analyze;
+ 
+ import static io.crate.testing.Asserts.assertThat;
+-import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
++import java.util.Arrays;
+ import java.util.HashMap;
++import java.util.List;
+ import java.util.Map;
+ 
+ import org.junit.Before;
+@@ -48,6 +49,7 @@
+ import io.crate.metadata.doc.DocSchemaInfo;
+ import io.crate.test.integration.CrateDummyClusterServiceUnitTest;
+ import io.crate.testing.SQLExecutor;
++import io.crate.types.ArrayType;
+ import io.crate.types.DataTypes;
+ 
+ 
+@@ -83,7 +85,15 @@ public void prepare() throws Exception {
+                       " strict object(strict) as (" +
+                       "  inner_d double" +
+                       " )," +
+-                      " ignored object(ignored)" +
++                      " ignored object(ignored)," +
++                      " obj_arr array(object as (" +
++                      "  v int" +
++                      " ))," +
++                      " nested object as (" +
++                      "  groups array(object as (" +
++                      "   entries array(object as (v int))" +
++                      "  ))" +
++                      " )" +
+                       ") " +
+                       "clustered by (id)");
+         userTableInfo = e.resolveTableInfo("doc.test1");
+@@ -232,4 +242,26 @@ public void testNormalizeStringToNumberColumn() throws Exception {
+         Symbol literal = normalizeInputForReference(stringDoubleLiteral, objInfo);
+         assertThat(literal).isLiteral(298.444d, DataTypes.DOUBLE);
+     }
++
++    @Test
++    public void test_normalize_object_array_keeps_null_elements() throws Exception {
++        Reference objArr = userTableInfo.getReference(ColumnIdent.of("obj_arr"));
++        List<Map<String, Object>> value = Arrays.asList(new HashMap<>(Map.of("v", 1)), null);
++        Symbol normalized = normalizeInputForReference(
++            Literal.of(new ArrayType<>(DataTypes.UNTYPED_OBJECT), value),
++            objArr
++        );
++        assertThat(normalized).isLiteral(Arrays.asList(Map.of("v", 1), null));
++    }
++
++    @Test
++    public void test_normalize_nested_object_array_keeps_null_elements() throws Exception {
++        Reference nested = userTableInfo.getReference(ColumnIdent.of("nested"));
++        List<Map<String, Object>> entries = Arrays.asList(new HashMap<>(Map.of("v", 4)), null);
++        Map<String, Object> group = new HashMap<>(Map.of("entries", entries));
++        Map<String, Object> value = new HashMap<>(Map.of("groups", List.of(group)));
++        Symbol normalized = normalizeInputForReference(Literal.of(value), nested);
++        assertThat(normalized).isLiteral(
++            Map.of("groups", List.of(Map.of("entries", Arrays.asList(Map.of("v", 4), null)))));
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `a6ee235d` (2026-11-23)
+**Commit Message**: Fix NullPointerException building eq query on object literal with null
+
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
+```diff
+@@ -46,6 +46,9 @@ series.
+ Fixes
+ =====
+ 
++- Fixed a ``NullPointerException`` that could occur if comparing an object to a
++  full literal containing a ``null`` value.
++
+ - Fixed an issue in the PostgreSQL wire protocol implementation that could cause
+   clients to not receive an error message if:
+ 
+```
+
+**File**: `server/src/main/java/io/crate/expression/operator/EqOperator.java` (modified, +6/-2)
+```diff
+@@ -305,6 +305,10 @@ public static Query refEqObject(Function eq,
+         int preFilters = 0;
+         for (Map.Entry<String, Object> entry : value.entrySet()) {
+             String key = entry.getKey();
++            Object innerValue = entry.getValue();
++            if (innerValue == null) {
++                continue;
++            }
+             DataType<?> innerType = type.innerType(key);
+             if (innerType == UndefinedType.INSTANCE) {
+                 // could be a nested object or not part of meta data; skip pre-filtering
+@@ -316,9 +320,9 @@ public static Query refEqObject(Function eq,
+             Query innerQuery;
+             if (DataTypes.isArray(innerType)) {
+                 innerQuery = termsAndGenericFilter(
+-                    eq, nestedStorageIdentifier, innerType, (Collection<?>) entry.getValue(), context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
++                    eq, nestedStorageIdentifier, innerType, (Collection<?>) innerValue, context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
+             } else {
+-                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, entry.getValue(), childRef.hasDocValues(), childRef.indexType());
++                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, innerValue, childRef.hasDocValues(), childRef.indexType());
+                 // instead of adding a MUST_NOT clause for the negation, we negate the innerQuery to also match null values
+                 if (termQueryOccur == Occur.MUST_NOT) {
+                     innerQuery = Queries.not(innerQuery);
+```
+
+**File**: `server/src/test/java/io/crate/expression/operator/EqOperatorTest.java` (modified, +29/-0)
+```diff
+@@ -29,10 +29,12 @@
+ import java.util.List;
+ import java.util.Map;
+ 
++import org.apache.lucene.search.BooleanQuery;
+ import org.apache.lucene.search.Query;
+ import org.elasticsearch.Version;
+ import org.junit.Test;
+ 
++import io.crate.common.collections.MapBuilder;
+ import io.crate.expression.scalar.ScalarTestCase;
+ import io.crate.expression.symbol.Literal;
+ import io.crate.lucene.GenericFunctionQuery;
+@@ -176,6 +178,33 @@ public void test_terms_query_on_empty_object() throws Exception {
+         }
+     }
+ 
++    @Test
++    public void test_obj_eq_obj_literal_with_null_value() throws Exception {
++        QueryTester.Builder builder = new QueryTester.Builder(
++            THREAD_POOL,
++            clusterService,
++            Version.CURRENT,
++            "create table tbl (obj object(strict) as (x int, y int))");
++        Map<String, Integer> map1 = Map.of("x", 10, "y", 20);
++        Map<String, Integer> map2 = Map.of("x", 42, "y", 84);
++        Map<String, Integer> map3 = MapBuilder.<String, Integer>newMapBuilder()
++            .put("x", 10)
++            .put("y", null)
++            .map();
++        Map<String, Integer> map4 = MapBuilder.<String, Integer>newMapBuilder()
++            .put("x", 20)
++            .put("y", null)
++            .map();
++        builder.indexValues("obj", map1, map2, map3, map4);
++        try (QueryTester tester = builder.build()) {
++            Query query = tester.toQuery("obj = {x=10, y=null}");
++            assertThat(query)
++                .isExactlyInstanceOf(BooleanQuery.class)
++                .hasToString("+obj.x:[10 TO 10] #(obj = {\"x\"=10, \"y\"=NULL})");
++            assertThat(tester.runQuery("obj", "obj = {x=10, y=null}")).containsExactly(map3);
++        }
++    }
++
+     @Test
+     public void test_numeric_type_equals_number_types() {
+         assertEvaluate("numeric_4_2 = 1.111", false, Literal.of(new BigDecimal("1.11")));
+```
+
+---
+
+### Incident Patch 3: `fe62b476` (2026-11-20)
+**Commit Message**: Fix spelling of 'accommodate' in alter-table docs
+
+**File**: `docs/sql/statements/alter-table.rst` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@ Clauses
+ 
+    Multiple files (in this directory) use the same standard text for
+    documenting the ``PARTITION`` clause. (Minor verb changes are made to
+-   accomodate the specifics of the parent statement.)
++   accommodate the specifics of the parent statement.)
+ 
+    For consistency, if you make changes here, please be sure to make a
+    corresponding change to the other files.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20631** (2026-11-19): Bump version to 6.4.8-SNAPSHOT (@hariso)
-- **PR #20630** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
-- **PR #20629** (2026-11-19): Revert "Update JDK to 27.0.1.1+4" (@hariso)
-- **PR #20628** (closed): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
-- **PR #20627** (closed): B/6.2 hll fix (@BaurzhanSakhariev)
-- **PR #20624** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
+- **PR #20662** (2026-11-23): docs: fix spelling mistake in SQL statements documentation (backport #20634) (@mergify[bot])
+- **PR #20661** (2026-11-23): Fix NullPointerException updating object array with null element (backport #20658) (@mergify[bot])
+- **PR #20658** (2026-11-23): Fix NullPointerException updating object array with null element (@matriv)
+- **PR #20650** (2026-11-23): Fix object column equals obj literal matching despite missing properties (backport #20645) (@mergify[bot])
+- **PR #20649** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
+- **PR #20648** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
 
 ---
 
@@ -629,33 +830,35 @@ This reverts commit cc52dca6df1f31602dcaf8369418b02c487e653e.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Update JDK to 27.0.1.1+4"
+## X. NullPointerException updating object array with null element
 
 **RULE**:
-When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39117a4b`: Revert "Update JDK to 27.0.1.1+4". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3b6b9db`: NullPointerException updating object array with null element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <versions.jdk>27.0.1.0.2</versions.jdk>
-        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
+- Fixed a ``NullPointerException`` that occurred when updating a column of
+  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
+  contains a ``null`` element. The ``null`` element is now stored, matching the
+  behaviour of ``INSERT``.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        <versions.jdk>27.0.1.1</versions.jdk>
-        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39117a4b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3b6b9db` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

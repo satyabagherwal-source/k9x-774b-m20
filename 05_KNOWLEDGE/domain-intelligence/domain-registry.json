@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:50:10.295Z",
+  "last_updated": "2026-11-24T03:58:47.396Z",
   "total_records": 2488,
   "domains": {
     "A": {
@@ -11915,8 +11915,8 @@
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "7e390c2675163d2ed7e266bc538779fedf3481e4f293b9c5b72a6995f318eafb",
-      "created_at": "2026-11-19T18:49:02.235Z"
+      "content_hash": "5ccba5a79fa590f56c724e86bbe66a44e4cb526df404f7912f92a0c8acf721c7",
+      "created_at": "2026-11-24T03:58:41.695Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
@@ -14793,8 +14793,8 @@
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "repository": "lingyired/status-trio",
-      "content_hash": "f4e20ccc4b3a4e83a79609f5875027dea78a37b54050334c6babde53080d23d7",
-      "created_at": "2026-11-21T06:45:21.192Z"
+      "content_hash": "175c9ac605666710c129ccb44618276de8add99819f1e8a2fb394a9e2c04dbd1",
+      "created_at": "2026-11-24T03:58:35.068Z"
     },
     "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
@@ -14811,8 +14811,8 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
       "repository": "lingyired-status-trio-learnings",
-      "content_hash": "6cf46fa11dc3d0b448d4b63c8d25cbd4ccc2bad714148c675455dfa642a443df",
-      "created_at": "2026-11-21T06:46:54.213Z"
+      "content_hash": "c0eb8b935b412b892b2223f334c7ae36d3c6d38a698dacf54ff3b4cd8a7c5478",
+      "created_at": "2026-11-24T03:58:45.200Z"
     },
     "DOM-H-87566B56": {
       "record_id": "DOM-H-87566B56",
@@ -26582,8 +26582,8 @@
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "repository": "zarf-dev/zarf",
-      "content_hash": "7de281aaf2848ce54efa80ea6b38cd129048fc1f92e43c3ab5f3f96b8d9c92a0",
-      "created_at": "2026-11-23T06:14:23.574Z"
+      "content_hash": "f340ef7c7736c89b7d86864989848f6c257af76543fc530485c3301bcc87ff83",
+      "created_at": "2026-11-24T03:58:37.650Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -26609,8 +26609,8 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-learnings-architecture-intelligence-zarf-dev-zarf-learnings-core-i.md",
       "repository": "zarf-dev-zarf-learnings",
-      "content_hash": "af99d2268cb16d9066a0b420217fe02f654d4dd0a6001a4e61047718bcacc74e",
-      "created_at": "2026-11-23T06:14:31.552Z"
+      "content_hash": "9c9f56420d9a20cb5919d32a7a25658dd9665dee4948221ad10eecaf7ce75843",
+      "created_at": "2026-11-24T03:58:46.514Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants",
@@ -34260,8 +34260,8 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-learnings-architecture-intelligence-crate-crate-learnings-core-invar.md",
       "repository": "crate-crate-learnings",
-      "content_hash": "17ec8db92c60ca5c5e862778121124b61b93b46507e48c306cc5ec29e0b8675e",
-      "created_at": "2026-11-19T18:49:07.374Z"
+      "content_hash": "93ad59df86d52b58ada0977a0f6b3bef4e92a9946ec1bcd9f97ca358361d0c86",
+      "created_at": "2026-11-24T03:58:47.396Z"
     },
     "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",

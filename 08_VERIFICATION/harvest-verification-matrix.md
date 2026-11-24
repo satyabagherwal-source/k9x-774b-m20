@@ -12581,3 +12581,6 @@
 | `CYCLE-20261124-OZ4O` | `2026-11-24T03:49:53.496Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10190` | Yes (`ebfaba4f...`) |
 | `CYCLE-20261124-P39G` | `2026-11-24T03:49:58.852Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10191` | Yes (`b5f2ed67...`) |
 | `CYCLE-20261124-P7SP` | `2026-11-24T03:50:04.729Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10192` | Yes (`c3916dba...`) |
+| `CYCLE-20261124-056F` | `2026-11-24T03:58:34.551Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10193` | Yes (`9d123b91...`) |
+| `CYCLE-20261124-0779` | `2026-11-24T03:58:37.173Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10194` | Yes (`3ef16bbe...`) |
+| `CYCLE-20261124-0ACF` | `2026-11-24T03:58:41.247Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10195` | Yes (`e36d2780...`) |

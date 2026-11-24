@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:50:04.739Z",
-  "total_cycles_completed": 11961,
-  "total_learnings_persisted": 11961,
-  "total_rules_promoted": 11041,
+  "last_updated": "2026-11-24T03:58:41.257Z",
+  "total_cycles_completed": 11964,
+  "total_learnings_persisted": 11964,
+  "total_rules_promoted": 11044,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:28:46.115Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:36:55.924Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:37:07.330Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:37:10.180Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T03:50:04.739Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:58:34.560Z",
+      "repository": "lingyired/status-trio",
+      "learningId": "learn-github-lingyired-status-trio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:58:37.183Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:58:41.257Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-346Q",
-    "timestamp": "2026-11-22T08:09:29.330Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "368bc90fc5d647df624c41dd83323efe6e33c75afb3a7cf39b15b6e535dde37a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-KEY8",
-    "timestamp": "2026-11-22T08:22:56.432Z",
-    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-    "contentHash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-7NZE",
-    "timestamp": "2026-11-22T08:41:01.226Z",
-    "repository": "laion/clap-htsat-fused",
-    "learningId": "learn-huggingface-laion-clap-htsat-fused",
-    "contentHash": "d6f0b51a8f715ff982ac2ad4d10b96e3291dcdb283907631341671decc2f1910",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-ABPO",
     "timestamp": "2026-11-22T09:11:04.908Z",
     "repository": "adventists-ai/Sophon-Realtime-v1",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-056F",
+    "timestamp": "2026-11-24T03:58:34.551Z",
+    "repository": "lingyired/status-trio",
+    "learningId": "learn-github-lingyired-status-trio",
+    "contentHash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-0779",
+    "timestamp": "2026-11-24T03:58:37.173Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "3ef16bbe5b1adfc5c23a9c90c3c0ffecfbb67d0c29029f88acbea8c6175e8fa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-0ACF",
+    "timestamp": "2026-11-24T03:58:41.247Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

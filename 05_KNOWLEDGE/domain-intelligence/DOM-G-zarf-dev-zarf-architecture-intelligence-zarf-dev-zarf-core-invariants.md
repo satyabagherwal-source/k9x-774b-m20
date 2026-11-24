@@ -4,23 +4,23 @@
 {
   "source_repository": "zarf-dev/zarf",
   "source_url": "https://github.com/zarf-dev/zarf",
-  "source_version": "e3bea4e4",
+  "source_version": "458cd2b5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T06:14:23.316Z",
+  "timestamp": "2026-11-24T03:58:37.454Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zarf-dev-zarf",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zarf-dev/zarf](https://github.com/zarf-dev/zarf) (Revision: `e3bea4e4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T06:14:23.316Z`  
+> **Provenance**: Harvested from [zarf-dev/zarf](https://github.com/zarf-dev/zarf) (Revision: `458cd2b5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:58:37.454Z`  
 > **Learning ID**: `learn-github-zarf-dev-zarf`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:14:21.635Z  
+> **Harvest Timestamp**: 2026-11-24T03:58:36.029Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1476,10 +1476,8 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 - **Issue #5697** (2026-11-22): **chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7**
   *Symptoms*: Bumps [github.com/containerd/containerd/v2](https://github.com/containerd/containerd) from 2.3.6 to 2.3.7. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/containerd/containerd/releases">github.com/containerd/containerd/v2's releases</a>.</em></p> <blockquote> <h2>containerd 2.3.7</h2> <p>Welcome to the v2.3.7 release of containerd!</p> <p>The seventh patch release for containerd 2.3 contains various fixes and updates including security patches.</p> <h3>Security Updates</h3> <ul> <li><strong>containerd</strong> <ul> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-vwhp-8p66-mq4f"><strong>CVE-2026-95839</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-5p7c-hggf-c748"><strong>GHSA-5p7c-hggf-c748</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-8647-2jxj-p2rc"><strong>GHSA-8647-2jxj-p2rc</strong></a></li> <li><a href="https://github.com/containerd/containerd/security/advisories/GHSA-hc94-p972-ch66"><strong>GHSA-hc94-p972-ch66</strong></a></li> </ul> </li> </ul> <h3>Highlights</h3> <h4>Container Runtime Interface (CRI)</h4> <ul> <li>Apply hardening to not follow symlinks for container log files (<a href="https://redirect.github.com/containerd/containerd/pull/14301">#14301</a>)</li> </ul> <h4>Image Distribution</h4> <ul> <li>Apply hardening to reject image references with &quot;..&quot; path components (<a href="ht
 
-- **Issue #5694** (2026-11-19): **chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr**
-  *Symptoms*: ## Description  All ADRs are moved to proposals repo in https://github.com/zarf-dev/proposals/pull/76, once that merges we'll be able to drop the entire `adr/` directory from this repo.   ## Related Issue  Fixes #5693  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 9f682a8cfa8468572dce2221838395677d577daf |
+- **Issue #5695** (2026-11-23): **fix: avoid re-tagging package pushes on publish**
+  *Symptoms*: ## Description  Fixes a flake on publish. Multiple things were fixed here:  1. Conversion to the progress tracker was making some objects lose the ability to upload and tag the manifest in one step.  2. In the publish case, we actually don't need `oras.Copy` to tag the package, we only need to copy the bytes since we tag every package as an index.  3. When we call SignManifest, we don't need another call to get the descriptor if we already have the digest, might as well avoid the possibility of this flake as well.   ## Related Issue  Fixes #5692  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1496,421 +1494,247 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3bea4e4` (2026-11-22)
-**Commit Message**: chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7 (#5697)
+### Incident Patch 1: `001952ca` (2026-11-23)
+**Commit Message**: fix: avoid re-tagging package pushes on publish (#5695)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `src/pkg/component/publish.go` (modified, +1/-1)
 ```diff
-@@ -107,7 +107,7 @@ require (
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/containerd/cgroups/v3 v3.1.3 // indirect
- 	github.com/containerd/containerd/api v1.11.1 // indirect
--	github.com/containerd/containerd/v2 v2.3.6 // indirect
-+	github.com/containerd/containerd/v2 v2.3.7 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/containerd/platforms v1.0.0-rc.5 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -508,8 +508,8 @@ github.com/containerd/console v1.0.5 h1:R0ymNeydRqH2DmakFNdmjR2k0t7UPuiOV/N/27/q
- github.com/containerd/console v1.0.5/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
- github.com/containerd/containerd/api v1.11.1 h1:h8nfoDW9+fNsC/9TwiAHj8B1GzXKtR4eFtkhi/X5RLU=
- github.com/containerd/containerd/api v1.11.1/go.mod h1:CaQFRu+N1MtbgL6JDOJLUB1hCKESU1lD6MuTJhgtdlw=
--github.com/containerd/containerd/v2 v2.3.6 h1:huoqZXaDW1x1kgPvFC4rMwxv92vUJnqgq7I5b1rSddM=
--github.com/containerd/containerd/v2 v2.3.6/go.mod h1:qaUSWKk9EchqbudSbhv1MxI8dXKGYHLpZtMQdkEkVZ4=
-+github.com/containerd/containerd/v2 v2.3.7 h1:7PGbgAVKE4ieQjFPv7+kwAv7f9dCtRpExZwjExHD/Fk=
-+github.com/containerd/containerd/v2 v2.3.7/go.mod h1:usc1tgzxnUlhLLW9KLqTEKRTSix46fIc6XHDZt4Tlrs=
- github.com/containerd/continuity v0.5.0 h1:7a85HZpCSs+1Zps0Ee3DPSuAWY+0SJM1JNM51nlEVDg=
- github.com/containerd/continuity v0.5.0/go.mod h1:/lNJvtJKUQStBzpVQ1+rasXO1LAWtUQssk28EZvJ3nE=
- github.com/containerd/errdefs v1.0.0 h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI=
-```
-
-**File**: `vendor/github.com/containerd/containerd/v2/core/content/helpers.go` (modified, +16/-1)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"math"
- 	"sync"
- 	"time"
+@@ -206,7 +206,7 @@ func pushComponentArtifact(ctx context.Context, store oras.ReadOnlyTarget, sourc
+ 			defer trackedRemote.StopReporting()
  
-@@ -189,7 +190,9 @@ func OpenWriter(ctx context.Context, cs Ingester, opts ...WriterOpt) (Writer, er
- //
- // Copy is buffered, so no need to wrap reader in buffered io.
- func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected digest.Digest, opts ...Opt) error {
--	r := or
-+	if size < 0 {
-+		return fmt.Errorf("invalid content size %d: %w", size, errdefs.ErrInvalidArgument)
-+	}
- 	for i := 0; ; i++ {
- 		if i >= 1 {
- 			log.G(ctx).WithField("digest", expected).Debugf("retrying copy due to reset")
-@@ -199,6 +202,7 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
- 		if err != nil {
- 			return fmt.Errorf("failed to get status: %w", err)
- 		}
-+		r := or
- 		// Reset the original reader if
- 		// 1. there is an offset, or
- 		// 2. this is a retry due to Reset error
-@@ -208,6 +212,14 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
- 				return fmt.Errorf("unable to resume write to %v: %w", ws.Ref, err)
+ 			var copyErr error
+-			published, copyErr = oras.Copy(ctx, store, sourceRef, trackedRemote, "", copyOpts)
++			published, copyErr = oras.Copy(ctx, store, sourceRef, trackedRemote.CopyTarget(), "", copyOpts)
+ 			if copyErr != nil {
+ 				return copyErr
  			}
- 		}
-+		if size > 0 {
-+			if ws.Offset > size {
-+				return fmt.Errorf("writer offset %d exceeds expected size %d: %w", ws.Offset, size, errdefs.ErrFailedPrecondition)
-+			}
-+			if rem := size - ws.Offset; rem < math.MaxInt64 {
-+				r = io.LimitReader(r, rem+1)
-+			}
-+		}
- 
- 		copied, err := copyWithBuffer(cw, r)
- 		if errors.Is(err, ErrReset) {
-@@ -220,6 +232,9 @@ func Copy(ctx context.Context, cw Writer, or io.Reader, size int64, expected dig
- 			// Short writes would return its own error, this indicates a read failure
- 			return fmt.Errorf("short read: expected %d bytes but got %d: %w", size-ws.Offset, copied, io.ErrUnexpectedEOF)
- 		}
-+		if size > 0 && copied > size-ws.Offset {
-+			return fmt.Errorf("read exceeds expected size %d: %w", size-ws.Offset, errdefs.ErrFailedPrecondition)
-+		}
- 		if err := cw.Commit(ctx, size, expected, opts...); err != nil {
- 			if errors.Is(err, ErrReset) {
- 				continue
 ```
 
-**File**: `vendor/github.com/containerd/containerd/v2/core/images/handlers.go` (modified, +21/-1)
+**File**: `src/pkg/images/progress.go` (modified, +24/-1)
 ```diff
-@@ -27,6 +27,7 @@ import (
- 
- 	"github.com/containerd/containerd/v2/core/content"
- 	"github.com/containerd/errdefs"
-+	"github.com/containerd/log"
- 	"github.com/containerd/platforms"
+@@ -16,6 +16,7 @@ import (
  	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
- 	"golang.org/x/sync/errgroup"
-@@ -59,6 +60,12 @@ var (
- 	ErrEmptyWalk = errors.New("image might be filtered out")
+ 	"github.com/zarf-dev/zarf/src/pkg/utils"
+ 	"oras.land/oras-go/v2"
++	"oras.land/oras-go/v2/registry"
  )
  
-+const (
-+	// referrerLabelDigestLen is the number of hex characters from a digest
-+	// used in referrer GC labels (e.g., containerd.io/gc.ref.content.referrer.sha256.abc123def456).
-+	referrerLabelDigestLen = 12
-+)
-+
- // Handler handles image manifests
- type Handler interface {
- 	Handle(ctx context.Context, desc ocispec.Descriptor) (subdescs []ocispec.Descriptor, err error)
-@@ -331,7 +338,20 @@ func SetChildrenMappedLabels(manager content.Manager, f HandlerFunc, labelMap fu
- 					idx := keys[key]
- 					keys[key] = idx + 1
- 					if strings.HasSuffix(key, ".sha256.") {
--						key = fmt.Sprintf("%s%s", key, ch.Digest.Hex()[:12])
-+						// The digest of a child is not validated until its
-+						// content is fetched, but the referrer label derived
-+						// here requires a valid, truncatable digest. Skip
-+						// malformed digests instead of panicking on them.
-+						if err := ch.Digest.Validate(); err != nil {
-+							log.G(ctx).WithFields(log.Fields{"digest": ch.Digest, "error": err}).Warn("skipping child with invalid digest for referrer label")
-+							continue
-+						}
-+						encoded := ch.Digest.Encoded()
-+						if len(encoded) < referrerLabelDigestLen {
-+							log.G(ctx).WithField("digest", ch.Digest).Warn("skipping child with digest too short for referrer label")
-+							continue
-+						}
-+						key += encoded[:referrerLabelDigestLen]
- 					} else if idx > 0 || key[len(key)-1] == '.' {
- 						key = fmt.Sprintf("%s%d", key, idx)
- 					}
-```
-
-**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/docker/fetcher.go` (modified, +81/-15)
-```diff
-@@ -254,6 +254,9 @@ func isRegistryOrigin(u *url.URL, hosts []RegistryHost) bool {
+ // Report defines a function to log progress
+@@ -130,8 +131,30 @@ func NewTrackedTarget(target oras.Target, totalBytes int64, reporter Report) *Tr
+ 	}
+ }
  
- func (r dockerFetcher) Fetch(ctx context.Context, desc ocispec.Descriptor) (io.ReadCloser, error) {
- 	ctx = log.WithLogger(ctx, log.G(ctx).WithField("digest", desc.Digest))
-+	if desc.Size < 0 {
-+		return nil, fmt.Errorf("invalid descriptor size %d: %w", desc.Size, errdefs.ErrInvalidArgument)
++// CopyTarget returns a progress-tracked target for oras.Copy, preserving direct
++// reference uploads when the underlying target supports them.
++func (tt *TrackedTarget) CopyTarget() oras.Target {
++	if pusher, ok := tt.Target.(registry.ReferencePusher); ok {
++		return &trackedReferenceTarget{TrackedTarget: tt, pusher: pusher}
 +	}
- 
- 	hosts := r.filterHosts(HostCapabilityPull)
- 	if len(hosts) == 0 {
-@@ -549,57 +552,82 @@ func (r dockerFetcher) open(ctx context.Context, req *request, mediatype string,
- 			parallelism = numChunks
- 		}
- 
--		// Prepare channels, buffer pool, and readers/writers for parallel fetching.
--		queue := make(chan int64, parallelism)
-+		// A dispatcher goroutine creates an in-memory pipe for each chunk in
-+		// order. A pool of worker goroutines downloads chunks into the write
-+		// ends of the pipes while chunkReader reads from the read ends
-+		// sequentially. Each pipe buffers its chunk in memory so a worker can
-+		// finish a chunk before the caller reads it, with at most parallelism
-+		// pipes active at a time.
-+		type chunk struct {
-+			i int64
-+			w *pipeWriter
-+		}
-+		// queue hands chunks from the dispatcher to the worker goroutines.
-+		queue := make(chan chunk)
-+		// readers passes pipeReaders in chunk order from the dispatcher to
-+		// chunkReader.
-+		readers := make(chan *pipeReader, parallelism)
-+		// slots limits the number of active pipes to parallelism. The
-+		// dispatcher sends to slots before creating a pipe. chunkReader
-+		// receives from slots after reading a pipe to io.EOF.
-+		slots := make(chan struct{}, parallelism)
- 		ctx, cancel := context.WithCancel(ctx)
- 		eg, ctx := errgroup.WithContext(ctx)
--		readers, writers := make([]io.Reader, numChunks), make([]*pipeWriter, numChunks)
- 		bufPool := newbufferPool(chunkSize)
--		for i := range numChunks {
--			readers[i], writers[i] = newPipeWriter(bufPool)
--		}
- 		// keep reference of the initial body value to ensure it is closed
- 		ibody := body
- 		eg.Go(func() error {
- 			defer close(queue)
-+			defer close(readers)
- 			for i := range numChunks {
- 				select {
--				case queue <- i:
-+				case slots <- struct{}{}:
- 				case <-ctx.Done():
- 					if i == 0 {
- 						ibody.Close()
- 					}
- 					return ctx.Err()
- 				}
-+				pr, pw := newPipeWriter(bufPool)
-+				readers <- pr
-+				select {
-+				case queue <- chunk{i: i, w: pw}:
-+				case <-ctx.Done():
-+					if i == 0 {
-+						ibody.Close()
-+					}
-+					_ = pw.CloseWithError(ctx.Err())
-+					return ctx.Err()
-+				}
- 			}
- 			return nil
- 		})
- 
- 		for range parallelism {
- 			eg.Go(func() error {
--				for i := range queue { // first in first out
-+				for c := range queue { // first in first out
- 					copy := func() error {
- 						var body io.ReadCloser
--						if i == 0 {
-+						if c.i == 0 {
- 							body = ibody
- 						} else {
- 							if err := r.Acquire(ctx, 1); err != nil {
--								_ = writers[i].CloseWithError(err)
-+								_ = c.w.CloseWithError(err)
- 								return err
- 							}
- 							defer r.Release(1)
- 							reqClone := req.clone()
--							reqClone.setOffset(offset + i*chunkSize)
-+							reqClone.setOffset(offset + c.i*chunkSize)
- 							nresp, err := reqClone.doWithRetries(ctx, lastHost, withErrorCheck)
- 							if err != nil {
--								_ = writers[i].CloseWithError(err)
-+								_ = c.w.CloseWithError(err)
- 								return err
- 							}
- 							body = nresp.Body
- 						}
--						_, err := io.Copy(writers[i], io.LimitReader(body, chunkSize))
-+						_, err := io.Copy(c.w, io.LimitReader(body, chunkSize))
- 						_ = body.Close()
--						_ = writers[i].CloseWithError(err)
-+						_ = c.w.CloseWithError(err)
- 						if err != nil && err != io.EOF {
- 							return err
- 						}
-@@ -619,7 +647,11 @@ func (r dockerFetcher) open(ctx context.Context, req *request, mediatype string,
- 					log.G(ctx).WithError(err).Warn("parallel fetch failed")
- 				}
- 			},
--			ReadCloser: io.NopCloser(io.MultiReader(readers...)),
-+			ReadCloser: io.NopCloser(&chunkReader{
-+				ctx:     ctx,
-+				readers: readers,
-+				slots:   slots,
-+			}),
++	return tt
++}
++
+ // Push wraps the target push method with an appropriate tracked reader.
+ func (tt *TrackedTarget) Push(ctx context.Context, desc ocispec.Descriptor, content io.Reader) error {
++	return tt.Target.Push(ctx, desc, tt.trackReader(content))
++}
++
++type trackedReferenceTarget struct {
++	*TrackedTarget
++	pusher registry.ReferencePusher
++}
++
++func (tt *trackedReferenceTarget) PushReference(ctx context.Context, desc ocispec.Descriptor, content io.Reader, reference string) error {
++	return tt.pusher.PushReference(ctx, desc, tt.trackReader(content), reference)
++}
++
++func (tt *TrackedTarget) trackReader(content io.Reader) io.Reader {
+ 	tReader := &trackedReader{
+ 		reader:    content,
+ 		bytesRead: tt.bytesRead,
+@@ -146,5 +169,5 @@ func (tt *TrackedTarget) Push(ctx context.Context, desc ocispec.Descriptor, cont
  		}
  	}
  
-@@ -665,3 +697,37 @@ func (f *fnOnClose) Close() error {
+-	return tt.Target.Push(ctx, desc, trackedReader)
++	return trackedReader
  }
- 
- var _ io.ReadCloser = &fnOnClose{}
-+
-+type chunkReader struct {
-+	ctx     context.Context
-+	readers <-chan *pipeReader
-+	slots   <-chan struct{}
-+	cur     *pipeReader
-+}
-+
-+func (r *chunkReader) Read(p []byte) (int, error) {
-+	for {
-+		if r.cur == nil {
-+			var ok bool
-+			r.cur, ok = <-r.readers
-+			if !ok {
-+				if err := r.ctx.Err(); err != nil {
-+					return 0, err
-+				}
-+				return 0, io.EOF
-+			}
-+		}
-+		n, err := r.cur.Read(p)
-+		if err == io.EOF {
-+			// The current chunk has been read to completion and its buffer
-+			// returned to bufPool; release the slot for the next chunk.
-+			r.cur = nil
-+			<-r.slots
-+			if n > 0 {
-+				return n, nil
-+			}
-+			continue
-+		}
-+		return n, err
-+	}
-+}
 ```
 
-**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/docker/httpreadseeker.go` (modified, +24/-0)
+**File**: `src/pkg/images/pull.go` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"bytes"
- 	"fmt"
- 	"io"
-+	"math"
- 
- 	"github.com/containerd/errdefs"
- 	"github.com/containerd/log"
-@@ -38,6 +39,9 @@ type httpReadSeeker struct {
- }
- 
- func newHTTPReadSeeker(size int64, open func(offset int64) (io.ReadCloser, error)) (io.ReadCloser, error) {
-+	if size < -1 {
-+		return nil, fmt.Errorf("httpReadSeeker: invalid size %d: %w", size, errdefs.ErrInvalidArgument)
-+	}
- 	return &httpReadSeeker{
- 		size: size,
- 		open: open,
-@@ -49,13 +53,33 @@ func (hrs *httpReadSeeker) Read(p []byte) (n int, err error) {
- 		return 0, io.EOF
- 	}
- 
-+	var rem int64
-+	if hrs.size >= 0 {
-+		rem = hrs.size - hrs.offset
-+		if rem < 0 {
-+			return 0, fmt.Errorf("httpReadSeeker: read past expected size %d: %w", hrs.size, errdefs.ErrFailedPrecondition)
-+		}
-+		if rem < math.MaxInt64 && int64(len(p)) > rem+1 {
-+			p = p[:rem+1]
-+		}
-+	}
-+
- 	rd, err := hrs.reader()
+@@ -461,7 +461,7 @@ func orasSave(ctx context.Context, imageInfo imagePullInfo, index, count int, op
+ 			trackedDst.StartReporting(ctx)
+ 			defer trackedDst.StopReporting()
+ 			var copyErr error
+-			desc, copyErr = oras.Copy(ctx, pullSrc, imageInfo.registryOverrideRef, trackedDst, imageInfo.ref, copyOpts)
++			desc, copyErr = oras.Copy(ctx, pullSrc, imageInfo.registryOverrideRef, trackedDst.CopyTarget(), imageInfo.ref, copyOpts)
+ 			return copyErr
+ 		},
+ 		retry.Attempts(uint(config.ZarfDefaultRetries)),
+```
+
+**File**: `src/pkg/images/push.go` (modified, +1/-1)
+```diff
+@@ -269,7 +269,7 @@ func copyImage(ctx context.Context, src *oci.Store, remote oras.Target, srcName
+ 	trackedRemote := NewTrackedTarget(remote, size, DefaultReport(logger.From(ctx), "image push in progress", srcName))
+ 	trackedRemote.StartReporting(ctx)
+ 	defer trackedRemote.StopReporting()
+-	_, err = oras.Copy(ctx, src, srcName, trackedRemote, dstName, copyOpts)
++	_, err = oras.Copy(ctx, src, srcName, trackedRemote.CopyTarget(), dstName, copyOpts)
  	if err != nil {
- 		return 0, err
+ 		return fmt.Errorf("failed to push image %s: %w", srcName, err)
  	}
- 
- 	n, err = rd.Read(p)
- 	hrs.offset += int64(n)
-+	if hrs.size >= 0 && int64(n) > rem {
-+		if hrs.rc != nil {
-+			if clsErr := hrs.rc.Close(); clsErr != nil {
-+				log.L.WithError(clsErr).Error("httpReadSeeker: failed to close ReadCloser")
-+			}
-+			hrs.rc = nil
+```
+
+**File**: `src/pkg/signing/cosign.go` (modified, +9/-4)
+```diff
+@@ -322,11 +322,16 @@ func SignManifest(ctx context.Context, manifestRef string, opts SignManifestOpti
+ 	if err != nil {
+ 		return fmt.Errorf("parsing OCI manifest reference: %w", err)
+ 	}
+-	descriptor, err := remote.Head(ref, registryOptions.GetRegistryClientOpts(ctx)...)
+-	if err != nil {
+-		return fmt.Errorf("resolving OCI manifest: %w", err)
++	// Cosign looks up the subject when publishing the referrer. Resolve here
++	// only when needed to pin a mutable reference before signing.
++	if _, pinned := ref.(name.Digest); !pinned {
++		descriptor, err := remote.Head(ref, registryOptions.GetRegistryClientOpts(ctx)...)
++		if err != nil {
++			return fmt.Errorf("resolving OCI manifest: %w", err)
 +		}
-+		return 0, fmt.Errorf("httpReadSeeker: read past expected size %d: %w", hrs.size, errdefs.ErrFailedPrecondition)
-+	}
- 	if n > 0 || err == nil {
- 		hrs.errsWithNoProgress = 0
++		ref = ref.Context().Digest(descriptor.Digest.String())
  	}
+-	manifestRef = ref.Context().Digest(descriptor.Digest.String()).String()
++	manifestRef = ref.String()
+ 
+ 	l.Debug("signing OCI manifest with cosign referrer", "reference", manifestRef, "key", opts.Key)
+ 	rootOpts := &options.RootOptions{Timeout: opts.Timeout}
 ```
 
-**File**: `vendor/github.com/containerd/containerd/v2/core/remotes/handlers.go` (modified, +3/-0)
+**File**: `src/pkg/signing/cosign_test.go` (modified, +41/-0)
 ```diff
-@@ -155,6 +155,9 @@ func Fetch(ctx context.Context, ingester content.Ingester, fetcher Fetcher, desc
- 		// into the content store. Error out here otherwise the error sent back is confusing
- 		return fmt.Errorf("unable to fetch descriptor (%s) which reports content size of zero: %w", desc.Digest, errdefs.ErrInvalidArgument)
- 	}
-+	if desc.Size < 0 {
-+		return fmt.Errorf("unable to fetch descriptor (%s) which reports negative content size (%d): %w", desc.Digest, desc.Size, errdefs.ErrInvalidArgument)
-+	}
- 	if ws.Offset == desc.Size {
- 		// If writer is already complete, commit and return
- 		err := cw.Commit(ctx, desc.Size, desc.Digest)
-```
-
-**File**: `vendor/github.com/containerd/containerd/v2/core/unpack/unpacker.go` (modified, +16/-5)
-```diff
-@@ -343,6 +343,20 @@ type unpackStatus struct {
- 	startAt time.Time
+@@ -4,11 +4,16 @@
+ package signing
+ 
+ import (
++	"net/http"
++	"net/http/httptest"
+ 	"os"
+ 	"path/filepath"
++	"strings"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/google/go-containerregistry/pkg/name"
++	"github.com/google/go-containerregistry/pkg/registry"
+ 	"github.com/google/go-containerregistry/pkg/v1/empty"
+ 	"github.com/google/go-containerregistry/pkg/v1/remote"
+ 	"github.com/stretchr/testify/require"
+@@ -52,6 +57,42 @@ func TestCosignSignManifestPublishesOCIReferrer(t *testing.T) {
+ 	require.Len(t, manifest.Manifests, 1)
  }
  
-+// layerSnapshotLabels filters out containerd.io/snapshot/uidmapping and
-+// .../gidmapping annotations from the (untrusted) image manifest to prevent
-+// snapshotters from incorrectly chowning the extracted layer to the supplied
-+// mapped host uid/gid.
-+func layerSnapshotLabels(annotations map[string]string) map[string]string {
-+	labels := snapshots.FilterInheritedLabels(annotations)
-+	if labels == nil {
-+		labels = make(map[string]string)
-+	}
-+	delete(labels, snapshots.LabelSnapshotUIDMapping)
-+	delete(labels, snapshots.LabelSnapshotGIDMapping)
-+	return labels
++func TestCosignSignManifestByDigest(t *testing.T) {
++	t.Parallel()
++
++	ctx := t.Context()
++	digest, err := empty.Image.Digest()
++	require.NoError(t, err)
++	const repository = "components/example"
++	subjectPath := "/v2/" + repository + "/manifests/" + digest.String()
++	var subjectHeads atomic.Int32
++	handler := registry.New(registry.WithReferrersSupport(true))
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method == http.MethodHead && r.URL.Path == subjectPath {
++			subjectHeads.Add(1)
++		}
++		handler.ServeHTTP(w, r)
++	}))
++	t.Cleanup(server.Close)
++
++	tag, err := name.NewTag(strings.TrimPrefix(server.URL, "http://")+"/"+repository+":1.0", name.Insecure)
++	require.NoError(t, err)
++	require.NoError(t, remote.Write(tag, empty.Image, remote.WithContext(ctx)))
++	subject := tag.Context().Digest(digest.String())
++	beforeSigning := subjectHeads.Load()
++
++	registryOpts := types.RemoteOptions{PlainHTTP: true}
++	signOpts := DefaultSignManifestOptions()
++	signOpts.Key = "./testdata/cosign.key"
++	signOpts.Password = "test"
++	require.NoError(t, SignManifest(ctx, subject.String(), signOpts, registryOpts))
++	require.LessOrEqual(t, subjectHeads.Load()-beforeSigning, int32(1), "signing by digest should avoid a separate resolution request")
++
++	verifyOpts := DefaultVerifyManifestOptions()
++	verifyOpts.Key = "./testdata/cosign.pub"
++	require.NoError(t, VerifyManifest(ctx, subject.String(), verifyOpts, registryOpts))
 +}
 +
- func (u *Unpacker) unpack(
- 	h images.Handler,
- 	config ocispec.Descriptor,
-@@ -435,11 +449,8 @@ func (u *Unpacker) unpack(
- 			}
- 		}()
+ // TestCosignSignVerifyRoundTrip exercises CosignSignBlobWithOptions and
+ // CosignVerifyBlobWithOptions for both the bundle format (cosign v3.1.1+ default)
+ // and the legacy .sig format.
+```
+
+**File**: `src/pkg/zoci/pull.go` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ func (r *Remote) PullPackage(ctx context.Context, destinationDir string, concurr
+ 	trackedDst.StartReporting(ctx)
+ 	defer trackedDst.StopReporting()
  
--		// inherits annotations which are provided as snapshot labels.
--		snapshotLabels := snapshots.FilterInheritedLabels(desc.Annotations)
--		if snapshotLabels == nil {
--			snapshotLabels = make(map[string]string)
--		}
-+		// inherits a filtered set of annotations which are provided as snapshot labels
-+		snapshotLabels := layerSnapshotLabels(desc.Annotations)
- 		snapshotLabels[labelSnapshotRef] = chainID
- 		snapshotLabels[labelSnapshotDiffID] = diffIDs[i].String()
- 		if i > 0 {
+-	err = r.CopyToTarget(ctx, layersToPull, trackedDst, copyOpts)
++	err = r.CopyToTarget(ctx, layersToPull, trackedDst.CopyTarget(), copyOpts)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `src/pkg/zoci/push.go` (modified, +6/-7)
+```diff
+@@ -44,7 +44,6 @@ func (r *Remote) PushPackage(ctx context.Context, pkgLayout *layout.PackageLayou
+ 		"size", utils.ByteFormat(float64(totalSize), 2),
+ 		"manifestSize", utils.ByteFormat(float64(manifestDesc.Size), 2))
+ 
+-	var publishedDesc ocispec.Descriptor
+ 	err = Retry(ctx, opts.Retries, func() error {
+ 		trackedRemote := images.NewTrackedTarget(
+ 			r.Repo(),
+@@ -54,13 +53,13 @@ func (r *Remote) PushPackage(ctx context.Context, pkgLayout *layout.PackageLayou
+ 		trackedRemote.StartReporting(ctx)
+ 		defer trackedRemote.StopReporting()
+ 
+-		var copyErr error
+-		publishedDesc, copyErr = oras.Copy(ctx, pkgLayout, pkgLayout.Digest(), trackedRemote, "", copyOpts)
+-		if copyErr != nil {
+-			return copyErr
++		// Copy the manifest and its dependencies without tagging
++		// UpdateIndex publishes the index under the destination tag
++		if err := oras.CopyGraph(ctx, pkgLayout, trackedRemote, manifestDesc, copyOpts.CopyGraphOptions); err != nil {
++			return err
+ 		}
+ 
+-		return r.OrasRemote.UpdateIndex(ctx, r.Repo().Reference.Reference, publishedDesc)
++		return r.OrasRemote.UpdateIndex(ctx, r.Repo().Reference.Reference, manifestDesc)
+ 	},
+ 	)
+ 	if err != nil {
+@@ -70,5 +69,5 @@ func (r *Remote) PushPackage(ctx context.Context, pkgLayout *layout.PackageLayou
+ 	l.Info("completed package publish", "destination", r.Repo().Reference.String(),
+ 		"duration", time.Since(start).Round(100*time.Millisecond))
+ 
+-	return publishedDesc, nil
++	return manifestDesc, nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5697** (2026-11-22): chore(deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7 (@dependabot[bot])
+- **PR #5695** (2026-11-23): fix: avoid re-tagging package pushes on publish (@AustinAbro321)
 - **PR #5694** (2026-11-19): chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr (@soltysh)
 - **PR #5685** (2026-11-17): chore(docs): update AirGap link to IBM's website (@BraedenOlney)
 - **PR #5683** (2026-11-17): docs: remove variables example (@AustinAbro321)
 - **PR #5680** (2026-11-19): docs: contribution workflow changes (@AustinAbro321)
-- **PR #5676** (2026-11-16): fix: paginate registry tag listings (@briantwatson)
 
 ---
 
@@ -1930,31 +1754,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7
+## X. avoid re-tagging package pushes on publish
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/component/publish.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3bea4e4`: deps): bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `001952ca`: avoid re-tagging package pushes on publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/component/publish.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/containerd/containerd/v2 v2.3.7 // indirect
+			published, copyErr = oras.Copy(ctx, store, sourceRef, trackedRemote.CopyTarget(), "", copyOpts)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/containerd/containerd/v2 v2.3.6 // indirect
+			published, copyErr = oras.Copy(ctx, store, sourceRef, trackedRemote, "", copyOpts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3bea4e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `001952ca` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

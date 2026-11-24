@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "39117a4b",
+    "sourceVersion": "2799f146",
     "license": "Apache-2.0",
-    "contentHash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
-    "lastHarvestedAt": "2026-11-19T18:49:01.784Z",
+    "contentHash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
+    "lastHarvestedAt": "2026-11-24T03:58:41.251Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "e3bea4e4",
+    "sourceVersion": "458cd2b5",
     "license": "Apache-2.0",
-    "contentHash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
-    "lastHarvestedAt": "2026-11-23T06:14:23.014Z",
+    "contentHash": "3ef16bbe5b1adfc5c23a9c90c3c0ffecfbb67d0c29029f88acbea8c6175e8fa8",
+    "lastHarvestedAt": "2026-11-24T03:58:37.177Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -12513,10 +12513,10 @@
     "repository": "lingyired/status-trio",
     "platform": "github",
     "sourceUrl": "https://github.com/lingyired/status-trio",
-    "sourceVersion": "f57d4590",
+    "sourceVersion": "56ec144e",
     "license": "Apache-2.0",
-    "contentHash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
-    "lastHarvestedAt": "2026-11-21T06:45:20.304Z",
+    "contentHash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
+    "lastHarvestedAt": "2026-11-24T03:58:34.555Z",
     "learningId": "learn-github-lingyired-status-trio"
   },
   "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {

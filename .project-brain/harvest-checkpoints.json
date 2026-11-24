@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T03:50:04.749Z",
+  "last_updated": "2026-11-24T03:58:41.269Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
-      "verified_at": "2026-11-19T18:49:01.794Z",
+      "content_hash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
+      "verified_at": "2026-11-24T03:58:41.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:49:01.794Z"
+      "last_updated": "2026-11-24T03:58:41.268Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
-      "verified_at": "2026-11-23T06:14:23.025Z",
+      "content_hash": "3ef16bbe5b1adfc5c23a9c90c3c0ffecfbb67d0c29029f88acbea8c6175e8fa8",
+      "verified_at": "2026-11-24T03:58:37.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:14:23.025Z"
+      "last_updated": "2026-11-24T03:58:37.193Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -18831,14 +18831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingyired-status-trio",
-      "content_hash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
-      "verified_at": "2026-11-21T06:45:20.315Z",
+      "content_hash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
+      "verified_at": "2026-11-24T03:58:34.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:45:20.315Z"
+      "last_updated": "2026-11-24T03:58:34.571Z"
     },
     "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",

@@ -12614,3 +12614,6 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `c6cc8601` | Multi-dimensional audit evidence | 2026-11-24T03:49:53.501Z |
 | `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `a1c2b6b5` | Multi-dimensional audit evidence | 2026-11-24T03:49:58.856Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `20bb8be8` | Multi-dimensional audit evidence | 2026-11-24T03:50:04.734Z |
+| `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `56ec144e` | Multi-dimensional audit evidence | 2026-11-24T03:58:34.555Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `458cd2b5` | Multi-dimensional audit evidence | 2026-11-24T03:58:37.177Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `2799f146` | Multi-dimensional audit evidence | 2026-11-24T03:58:41.251Z |

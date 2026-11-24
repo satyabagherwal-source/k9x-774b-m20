@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T03:50:10.458Z",
+  "last_updated": "2026-11-24T03:58:47.579Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24409,
+  "total_items": 24416,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219421,8 +219421,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "39117a4b",
-      "content_hash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
+      "source_version": "2799f146",
+      "content_hash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -219450,6 +219450,11 @@
           "number": 9428,
           "title": "Revert \"Update JDK to 27.0.1.1+4\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10195,
+          "title": "NullPointerException updating object array with null element",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219457,7 +219462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:49:01.545Z",
+      "verified_at": "2026-11-24T03:58:41.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219499,10 +219504,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "repository": "crate/crate",
-      "source_version": "39117a4b",
-      "content_hash": "7e390c2675163d2ed7e266bc538779fedf3481e4f293b9c5b72a6995f318eafb",
+      "source_version": "2799f146",
+      "content_hash": "5ccba5a79fa590f56c724e86bbe66a44e4cb526df404f7912f92a0c8acf721c7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T18:49:02.235Z"
+      "persisted_at": "2026-11-24T03:58:41.695Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate",
@@ -219511,10 +219516,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "39117a4b",
-      "content_hash": "761d21bef81ee7efe914f7ba9cac19dc040aaf0eabd17129abc7045caeb936f9",
+      "source_version": "2799f146",
+      "content_hash": "6340ae970335aecd002c11a96c833b95bfcbd201ab55d1df4e2805a00aad3715",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:49:02.424Z"
+      "persisted_at": "2026-11-24T03:58:41.907Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -227858,8 +227863,8 @@
       "slug": "lingyired-status-trio",
       "platform": "github",
       "source_url": "https://github.com/lingyired/status-trio",
-      "source_version": "f57d4590",
-      "content_hash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
+      "source_version": "56ec144e",
+      "content_hash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
       "dossier_path": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "promoted_rules": [
@@ -227887,6 +227892,11 @@
           "number": 9742,
           "title": "Apple Event Descriptor Memory Alignment & Type Proofing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10193,
+          "title": "interpret backlight calibration as microamps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227894,7 +227904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:45:20.045Z",
+      "verified_at": "2026-11-24T03:58:34.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227936,10 +227946,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "repository": "lingyired/status-trio",
-      "source_version": "f57d4590",
-      "content_hash": "f4e20ccc4b3a4e83a79609f5875027dea78a37b54050334c6babde53080d23d7",
+      "source_version": "56ec144e",
+      "content_hash": "175c9ac605666710c129ccb44618276de8add99819f1e8a2fb394a9e2c04dbd1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:45:21.192Z"
+      "persisted_at": "2026-11-24T03:58:35.068Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio",
@@ -227948,10 +227958,10 @@
       "relative_path": "08_VERIFICATION/lingyired-status-trio-verification-protocol-empirical-defect-shield-for-lingyire.md",
       "title": "Verification Protocol: Empirical Defect Shield for lingyired/status-trio",
       "repository": "lingyired/status-trio",
-      "source_version": "f57d4590",
-      "content_hash": "19395d7543b8943f450293652fc6f9ebf8d5d77c0c246615a0b413e6f311a16f",
+      "source_version": "56ec144e",
+      "content_hash": "f7c3efddce905e2be43d0ee6832cfbc2ca0a5393875ad126f405f482c28f91dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:45:21.401Z"
+      "persisted_at": "2026-11-24T03:58:35.254Z"
     },
     "learn-huggingface-naiveai-naive-n0-5-flash": {
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
@@ -228082,9 +228092,9 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "6cf46fa11dc3d0b448d4b63c8d25cbd4ccc2bad714148c675455dfa642a443df",
+      "content_hash": "c0eb8b935b412b892b2223f334c7ae36d3c6d38a698dacf54ff3b4cd8a7c5478",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:46:54.213Z"
+      "persisted_at": "2026-11-24T03:58:45.200Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning",
@@ -228094,9 +228104,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lingyired-status-trio-learnings",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "6859815c5f018609b314b93916aedef4219190226b1c125de7b16983ba330f46",
+      "content_hash": "62217876c0b90ba657ae1f8d0b7eba40ce865ac8413f7d29db3b9d748c7cacb3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:46:54.440Z"
+      "persisted_at": "2026-11-24T03:58:45.381Z"
     },
     "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers": {
       "item_id": "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers",
@@ -271519,8 +271529,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "e3bea4e4",
-      "content_hash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
+      "source_version": "458cd2b5",
+      "content_hash": "3ef16bbe5b1adfc5c23a9c90c3c0ffecfbb67d0c29029f88acbea8c6175e8fa8",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -271543,6 +271553,11 @@
           "number": 10031,
           "title": "bump github.com/containerd/containerd/v2 from 2.3.6 to 2.3.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10194,
+          "title": "avoid re-tagging package pushes on publish",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271550,7 +271565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:14:22.738Z",
+      "verified_at": "2026-11-24T03:58:36.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271592,10 +271607,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "repository": "zarf-dev/zarf",
-      "source_version": "e3bea4e4",
-      "content_hash": "7de281aaf2848ce54efa80ea6b38cd129048fc1f92e43c3ab5f3f96b8d9c92a0",
+      "source_version": "458cd2b5",
+      "content_hash": "f340ef7c7736c89b7d86864989848f6c257af76543fc530485c3301bcc87ff83",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:14:23.574Z"
+      "persisted_at": "2026-11-24T03:58:37.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf",
@@ -271604,10 +271619,10 @@
       "relative_path": "08_VERIFICATION/zarf-dev-zarf-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf.md",
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev/zarf",
       "repository": "zarf-dev/zarf",
-      "source_version": "e3bea4e4",
-      "content_hash": "153ac16b30df75b4d21b73e80ba7ee949555be4b2dbe2acf50e6f553e3848805",
+      "source_version": "458cd2b5",
+      "content_hash": "e23693172fb3b38c233b3f582620ce745a353612ffe8e6bbfc6609a2a07f359d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:14:23.866Z"
+      "persisted_at": "2026-11-24T03:58:37.863Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -271691,9 +271706,9 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "af99d2268cb16d9066a0b420217fe02f654d4dd0a6001a4e61047718bcacc74e",
+      "content_hash": "9c9f56420d9a20cb5919d32a7a25658dd9665dee4948221ad10eecaf7ce75843",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:14:31.552Z"
+      "persisted_at": "2026-11-24T03:58:46.514Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings",
@@ -271703,9 +271718,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev-zarf-learnings",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d3f882af61cc30b37df16b3964bbe58919f9a91d396497022bde5f89950dce9",
+      "content_hash": "e443e8a14b0ec4e504c9fe145a8b1c165ad1e9e98043e09ad5aed059e0f7c1f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:14:31.809Z"
+      "persisted_at": "2026-11-24T03:58:46.697Z"
     },
     "learn-huggingface-facebook-sam-3d-body-dinov3": {
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
@@ -291992,9 +292007,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crate-crate-learnings",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "99ba58a39a2ec16ec9d61aa48747c82d6ad4ba985699493f08ca34d0cc760ec1",
+      "content_hash": "eced7c32c06fe237e899dd4f37f0d51d52b46145ac3995deff32f2236c3f46b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:49:07.561Z"
+      "persisted_at": "2026-11-24T03:58:47.579Z"
     },
     "rule-9245": {
       "learning_id": "rule-9245",
@@ -300080,9 +300095,9 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "17ec8db92c60ca5c5e862778121124b61b93b46507e48c306cc5ec29e0b8675e",
+      "content_hash": "93ad59df86d52b58ada0977a0f6b3bef4e92a9946ec1bcd9f97ca358361d0c86",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T18:49:07.374Z"
+      "persisted_at": "2026-11-24T03:58:47.396Z"
     },
     "rule-9429": {
       "learning_id": "rule-9429",
@@ -332949,6 +332964,96 @@
       "content_hash": "adb6ab8cf4f00b1511c255c5a3475d2f5fd9c54e9c0a381943aa409108b015cf",
       "domain_letter": "B",
       "persisted_at": "2026-11-24T03:50:10.128Z"
+    },
+    "rule-10193": {
+      "learning_id": "rule-10193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10193,
+      "title": "interpret backlight calibration as microamps",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "56ec144e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:58:34.332Z"
+    },
+    "candidate_directive-interpret-backlight-calibration-as-microamps": {
+      "item_id": "candidate_directive-interpret-backlight-calibration-as-microamps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-05DR-interpret-backlight-calibration-as-microamps.md",
+      "title": "interpret backlight calibration as microamps",
+      "repository": "lingyired/status-trio",
+      "source_version": "56ec144e",
+      "content_hash": "000eb32572f9e51761476eea0c3f8413764268f0ddfa05e857a4588ccfb93680",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:58:34.821Z"
+    },
+    "rule-10194": {
+      "learning_id": "rule-10194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10194,
+      "title": "avoid re-tagging package pushes on publish",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "458cd2b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:58:36.941Z"
+    },
+    "candidate_directive-avoid-re-tagging-package-pushes-on-publish": {
+      "item_id": "candidate_directive-avoid-re-tagging-package-pushes-on-publish",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0E9L-avoid-re-tagging-package-pushes-on-publish.md",
+      "title": "avoid re-tagging package pushes on publish",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f4ed67665f78011f0d66d5d4a0a83a1bdae6593e75832856c152b9358511bc6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:58:46.334Z"
+    },
+    "rule-10195": {
+      "learning_id": "rule-10195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10195,
+      "title": "NullPointerException updating object array with null element",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "2799f146",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:58:41.036Z"
+    },
+    "candidate_directive-nullpointerexception-updating-object-array-with-null-element": {
+      "item_id": "candidate_directive-nullpointerexception-updating-object-array-with-null-element",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0EY5-nullpointerexception-updating-object-array-with-null-element.md",
+      "title": "NullPointerException updating object array with null element",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7d1c5f58c7b76c5f60fd056b3b48f689a173b895e09f5a828e4799b4dd01f8ee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:58:47.213Z"
+    },
+    "candidate_directive-power-interpret-backlight-calibration-as-microamps": {
+      "item_id": "candidate_directive-power-interpret-backlight-calibration-as-microamps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0D8T-power-interpret-backlight-calibration-as-microamps.md",
+      "title": "power): interpret backlight calibration as microamps",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d8fe5f47e18319d3c330929a539ff74ab1d0b7145b00f0781843e3877580560c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:58:45.012Z"
     }
   },
   "ai-builder-brain": {
