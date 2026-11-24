@@ -12685,3 +12685,6 @@
 | `CYCLE-20261124-1BWJ` | `2026-11-24T13:47:21.859Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10270` | Yes (`b2e1c81c...`) |
 | `CYCLE-20261124-1I8C` | `2026-11-24T13:47:30.060Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10271` | Yes (`aee5d064...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T13:48:09.884Z` | `i18next-react-i18next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-23B9B1A9` [Domain H] | Yes (`d97e5809...`) |
+| `CYCLE-20261124-D1MD` | `2026-11-24T13:56:28.405Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`69414851...`) |
+| `CYCLE-20261124-D4IO` | `2026-11-24T13:56:32.160Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10272` | Yes (`c078c7de...`) |
+| `CYCLE-20261124-DD06` | `2026-11-24T13:56:43.158Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9302` | Yes (`9047bd27...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:48:13.674Z",
+  "last_updated": "2026-11-24T13:56:49.203Z",
   "total_records": 2526,
   "domains": {
     "A": {
@@ -9373,8 +9373,8 @@
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "58b147dc4e38ff1fe3a92422e188bf760a856977fa42d642f76db7ad6142a6e5",
-      "created_at": "2026-11-18T19:51:58.779Z"
+      "content_hash": "bd4f609ebc699af0d29923cd100eb7ab1c559a9b39f46ea9abf00f7354a34303",
+      "created_at": "2026-11-24T13:56:32.606Z"
     },
     "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
@@ -9391,8 +9391,8 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
       "repository": "pimalaya-himalaya-learnings",
-      "content_hash": "20a72aabb40e1a51babab6774d48b4840d932ac6b0e129b8e2795bff935a3831",
-      "created_at": "2026-11-18T19:52:15.849Z"
+      "content_hash": "ca0579951c04872fa857d492aac635f8b0062efd2d457db01b7bb316e953a4ff",
+      "created_at": "2026-11-24T13:56:47.360Z"
     },
     "DOM-F-456EB881": {
       "record_id": "DOM-F-456EB881",
@@ -16403,8 +16403,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "b335fea65c63ddb8e99f268a3e3216dd0fa5c205e9f107936c2686d69844a04b",
-      "created_at": "2026-11-20T05:21:11.863Z"
+      "content_hash": "06e9d33f732ee30223d151847a3982d3b447c15e5e9a9da0f1d31e0db2137ef7",
+      "created_at": "2026-11-24T13:56:43.587Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -23403,8 +23403,8 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
       "repository": "rqlite-rqlite-learnings",
-      "content_hash": "4483689e05f44783c49bf4bc1a069440522898ad93f827550a50cd50edc2bb9e",
-      "created_at": "2026-11-20T05:21:16.183Z"
+      "content_hash": "39617f10e8d8d8cf05f00e00a58df6e7c116ec19433b314bb10619a55647b952",
+      "created_at": "2026-11-24T13:56:49.203Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
@@ -36082,8 +36082,8 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-opencode-adapted Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-research-knowledge-intelligence-harn.md",
       "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
-      "content_hash": "5fd6695583c5a5ae80439a99441523f99b3f56beb49e5e537d649ef1ed7552db",
-      "created_at": "2026-11-20T11:31:34.400Z"
+      "content_hash": "cbb9af91870c4b4477269f234d6d2d427f65abaa2ce61fc78c4387f8907e3382",
+      "created_at": "2026-11-24T13:56:28.639Z"
     },
     "DOM-D-04A5E986": {
       "record_id": "DOM-D-04A5E986",
@@ -36133,8 +36133,8 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-learnings-research-knowledge-intelli.md",
       "repository": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
-      "content_hash": "52bd460a7003b1227aeabed3df4a0b3fa8c379f6ab970fb70660451e12ed991c",
-      "created_at": "2026-11-20T11:32:08.219Z"
+      "content_hash": "b38f1fbcb0484658f3dc6053a27ec603bf6ab82fd5d85b7010dde2a92a2e813a",
+      "created_at": "2026-11-24T13:56:47.927Z"
     },
     "DOM-D-19E80851": {
       "record_id": "DOM-D-19E80851",

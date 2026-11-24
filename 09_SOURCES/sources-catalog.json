@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "bf9f4e2a",
+    "sourceVersion": "db0c9a6b",
     "license": "Apache-2.0",
-    "contentHash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
-    "lastHarvestedAt": "2026-11-21T23:27:18.739Z",
+    "contentHash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
+    "lastHarvestedAt": "2026-11-24T13:56:32.165Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "4452a98a",
+    "sourceVersion": "7feaf262",
     "license": "MIT",
-    "contentHash": "9efc30c4bf160dbeb468cecada8f1c9fd77c476598b651dc6d16b71c00b900ca",
-    "lastHarvestedAt": "2026-11-20T05:21:11.503Z",
+    "contentHash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
+    "lastHarvestedAt": "2026-11-24T13:56:43.163Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -13035,8 +13035,8 @@
     "sourceUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
     "sourceVersion": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
     "license": "Open-Source",
-    "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
-    "lastHarvestedAt": "2026-11-20T11:31:34.210Z",
+    "contentHash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
+    "lastHarvestedAt": "2026-11-24T13:56:28.410Z",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted"
   },
   "itsdecodingai-llm-twin-course": {

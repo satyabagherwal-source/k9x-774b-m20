@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-26FJ",
-    "timestamp": "2026-11-22T18:52:36.751Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "b7310708f163ff873e2c39a84d60db2ef537b61257d3b5924fd69082307233ad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-281D",
-    "timestamp": "2026-11-22T18:52:38.833Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-2HI3",
-    "timestamp": "2026-11-22T18:52:51.099Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "681990028914b65910c1956508ac3c7a35268279c83f10882544f52427efe1fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-DP2A",
     "timestamp": "2026-11-22T19:01:34.114Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7445,51 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-D1MD",
+    "timestamp": "2026-11-24T13:56:28.405Z",
+    "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+    "contentHash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-D4IO",
+    "timestamp": "2026-11-24T13:56:32.160Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-DD06",
+    "timestamp": "2026-11-24T13:56:43.158Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

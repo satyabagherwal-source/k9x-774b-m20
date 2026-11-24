@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T11:32:08.114Z",
+  "timestamp": "2026-11-24T13:56:47.805Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T11:32:08.114Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T13:56:47.805Z`  
 > **Learning ID**: `LEARN-EVO-hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-harness-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T11:31:33.701Z  
+> **Timestamp**: 2026-11-24T13:56:27.855Z  
 > **Learning ID**: `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:30:36.239Z  
+> **Harvest Timestamp**: 2026-11-24T13:56:27.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 302 downloads | 112 likes
+- **Stars / Engagement**: 972 downloads | 284 likes
 
 ---
 

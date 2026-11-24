@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:47:30.071Z",
-  "total_cycles_completed": 12056,
-  "total_learnings_persisted": 12056,
-  "total_rules_promoted": 11127,
+  "last_updated": "2026-11-24T13:56:43.168Z",
+  "total_cycles_completed": 12059,
+  "total_learnings_persisted": 12059,
+  "total_rules_promoted": 11129,
   "history": [
-    {
-      "timestamp": "2026-11-23T21:14:35.325Z",
-      "repository": "xevrion/hatchzip",
-      "learningId": "learn-github-xevrion-hatchzip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:14:41.231Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:14:41.253Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T21:14:47.634Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T13:47:30.071Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:56:28.416Z",
+      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:56:32.171Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:56:43.168Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

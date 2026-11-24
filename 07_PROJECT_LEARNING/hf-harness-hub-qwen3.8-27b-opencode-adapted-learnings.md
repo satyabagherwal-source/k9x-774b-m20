@@ -3,7 +3,7 @@
 > **Source Version**: `hf-harness-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T11:31:33.701Z  
+> **Timestamp**: 2026-11-24T13:56:27.855Z  
 > **Learning ID**: `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:30:36.239Z  
+> **Harvest Timestamp**: 2026-11-24T13:56:27.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 302 downloads | 112 likes
+- **Stars / Engagement**: 972 downloads | 284 likes
 
 ---
 

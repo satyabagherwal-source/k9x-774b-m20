@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T13:48:11.897Z",
+  "updated_at": "2026-11-24T13:56:48.796Z",
   "stats": {
-    "total_discovered": 8638,
-    "approved_pending_harvest": 8185,
+    "total_discovered": 8649,
+    "approved_pending_harvest": 8196,
     "harvested_count": 0,
     "rejected_count": 453,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8181,
+      "COMMUNITY_AND_EXPERT": 8191,
       "OFFICIAL_DOCUMENTATION": 269,
-      "STANDARDS_AND_SPECIFICATIONS": 124,
+      "STANDARDS_AND_SPECIFICATIONS": 125,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 46,
       "LEGAL_AND_REGULATORY": 2,
@@ -186888,6 +186888,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
         "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-D56E49F1564B": {
+      "id": "SRC-D56E49F1564B",
+      "url": "https://github.com/pimalaya/io-pimdir?rev=65a5026d9e8499ec7e24b401e9b689d3eebeea4e",
+      "title": "https://github.com/pimalaya/io-pimdir?rev=65a5026d9e8499ec7e24b401e9b689d3eebeea4e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:46.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-282C43A6526D": {
+      "id": "SRC-282C43A6526D",
+      "url": "https://www.rfc-editor.org/rfc/rfc2971",
+      "title": "IETF RFC 2971",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:46.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-73445B3665C3": {
+      "id": "SRC-73445B3665C3",
+      "url": "https://github.com/r",
+      "title": "https://github.com/r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-B02B4FDF1B1A": {
+      "id": "SRC-B02B4FDF1B1A",
+      "url": "https://github.com/rqlite/rqlite/pull/3069",
+      "title": "https://github.com/rqlite/rqlite/pull/3069",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-AB4A4CCC1034": {
+      "id": "SRC-AB4A4CCC1034",
+      "url": "https://github.com/rqlite/rqlite/pull/3068",
+      "title": "https://github.com/rqlite/rqlite/pull/3068",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-FF51F60A4632": {
+      "id": "SRC-FF51F60A4632",
+      "url": "https://github.com/rqlite/rqlite/pull/3067",
+      "title": "https://github.com/rqlite/rqlite/pull/3067",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.525Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-2993ECE70092": {
+      "id": "SRC-2993ECE70092",
+      "url": "https://github.com/rqlite/rqlite/pull/3072",
+      "title": "https://github.com/rqlite/rqlite/pull/3072",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-0A124E8C5AC6": {
+      "id": "SRC-0A124E8C5AC6",
+      "url": "https://github.com/rqlite/rqlite/pull/3075",
+      "title": "https://github.com/rqlite/rqlite/pull/3075",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-478BD95B7415": {
+      "id": "SRC-478BD95B7415",
+      "url": "https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3",
+      "title": "https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-BF9C4B1D068C": {
+      "id": "SRC-BF9C4B1D068C",
+      "url": "https://rqlite.io/docs/guides/security",
+      "title": "https://rqlite.io/docs/guides/security",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-2D72912E2ABC": {
+      "id": "SRC-2D72912E2ABC",
+      "url": "https://rqlite.io/docs/clustering/read-replicas",
+      "title": "https://rqlite.io/docs/clustering/read-replicas",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:56:48.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
       }
     }
   }

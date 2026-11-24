@@ -4,22 +4,22 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "4452a98a",
+  "source_version": "7feaf262",
   "license": "MIT",
-  "timestamp": "2026-11-20T05:21:11.730Z",
+  "timestamp": "2026-11-24T13:56:43.413Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `4452a98a`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T05:21:11.730Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `7feaf262`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:56:43.413Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rqlite/rqlite` (Commit: `4452a98a`)
+- **Target Repository**: `rqlite/rqlite` (Commit: `7feaf262`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:21:11.070Z  
+> **Harvest Timestamp**: 2026-11-24T13:56:42.348Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17961 stars
+- **Stars / Engagement**: 17969 stars
 
 ---
 
@@ -2080,11 +2080,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3066** (2026-11-18): **Upgrade dependencies via `go get`**
+- **Issue #3075** (2026-11-24): **Join replaces at most one**
   *Symptoms*: 
 
-- **Issue #3065** (2026-11-18): **Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout**
-  *Symptoms*: The read-only half of the test relied on a 1ns database timeout expiring before a trivial SELECT completed. On a machine with a coarse clock, such as the AppVeyor Windows workers, the read can finish before the timeout is noticed, so the request succeeds and the test fails.  Stall the read until the timeout expires instead, and assert that the result carries the query timeout error. 
+- **Issue #3072** (2026-11-24): **Join may only replace a node of the same suffrage**
+  *Symptoms*: Store.Join now replaces an existing node only if it has the same suffrage as the joining node. Every matching node is checked before any is removed, so a rejected join leaves the cluster unchanged. A join matching both ID and address is still ignored. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2101,28 +2101,45 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4452a98a` (2026-11-19)
+### Incident Patch 1: `7feaf262` (2026-11-24)
 **Commit Message**: Update CHANGELOG.md
 
-**File**: `CHANGELOG.md` (modified, +3/-1)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,6 @@
--## v10.7.4 (unreleased)
-+## v10.7.4 (November 19th 2026)
-+This release addresses a bug related to [rewriting of time-related functions](https://rqlite.io/docs/api/non-deterministic/) when each node is in a different timezone. Dependencies also upgraded.
-+
+@@ -3,7 +3,7 @@ This release addresses a [moderate severity security issue](https://github.com/r
+ 
  ### Implementation changes and bug fixes
- - [PR #3062](https://github.com/rqlite/rqlite/pull/3062): When rewriting time capture the value once per statement, to match SQLite.
- - [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for _Julian Day_ calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
+ - [PR #3069](https://github.com/rqlite/rqlite/pull/3069): Persist detection of modified database via _FULL snapshot needed_ file, which persists until FULL snapshot completes.
+-- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node never restores from snapshotted state.
++- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node will never restore from snapshotted state so skip checksum checks.
+ - [PR #3067](https://github.com/rqlite/rqlite/pull/3067): Discard any staged WAL files when the database is fully replaced by a load, boot, or restore. Thanks @clarkmcc
+ - [PR #3072](https://github.com/rqlite/rqlite/pull/3072): Join may only replace a node of the same suffrage. Thanks @zachariah-mithani
+ - [PR #3075](https://github.com/rqlite/rqlite/pull/3075): Join may replace at most one existing node.
+```
+
+---
+
+### Incident Patch 2: `45f8065b` (2026-11-24)
+**Commit Message**: Update CHANGELOG.md
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ ## v10.7.5 (November 23rd 2026)
+-This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) and [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade.
++This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) with [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade.
+ 
+ ### Implementation changes and bug fixes
+ - [PR #3069](https://github.com/rqlite/rqlite/pull/3069): Persist detection of modified database via _FULL snapshot needed_ file, which persists until FULL snapshot completes.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3075** (2026-11-24): Join replaces at most one (@otoolep)
+- **PR #3072** (2026-11-24): Join may only replace a node of the same suffrage (@otoolep)
+- **PR #3069** (2026-11-24): Persist detection of modified database (@otoolep)
+- **PR #3068** (2026-11-24): Open recovery before fast path (@otoolep)
+- **PR #3067** (2026-11-24): Discard snapshot baseline (@otoolep)
 - **PR #3066** (2026-11-18): Upgrade dependencies via `go get` (@otoolep)
-- **PR #3065** (2026-11-18): Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout (@otoolep)
-- **PR #3064** (2026-11-18): Shorten e2e test timeouts (@otoolep)
-- **PR #3063** (2026-11-18): Normalize timezone for JulianDay calculations (@otoolep)
-- **PR #3062** (2026-11-18): Capture 'now' once per statement when rewriting (@otoolep)
-- **PR #3060** (2026-11-17): Don't enforce timeouts for writes (@otoolep)
 
 ---
 
@@ -2148,7 +2165,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4452a98a`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7feaf262`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2156,19 +2173,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v10.7.4 (November 19th 2026)
-This release addresses a bug related to [rewriting of time-related functions](https://rqlite.io/docs/api/non-deterministic/) when each node is in a different timezone. Dependencies also upgraded.
-
+- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node will never restore from snapshotted state so skip checksum checks.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-## v10.7.4 (unreleased)
+- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node never restores from snapshotted state.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4452a98a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7feaf262` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

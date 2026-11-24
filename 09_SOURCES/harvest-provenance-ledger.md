@@ -12718,3 +12718,6 @@ Every entry in this ledger must capture:
 | `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `cbb61e6f` | Multi-dimensional audit evidence | 2026-11-24T13:47:21.863Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `00f96061` | Multi-dimensional audit evidence | 2026-11-24T13:47:30.064Z |
 | `learn-dom-h-23b9b1a9` | `project://i18next-react-i18next` | `cbb61e6f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | 2026-11-24T13:48:09.884Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-24T13:56:28.410Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `db0c9a6b` | Multi-dimensional audit evidence | 2026-11-24T13:56:32.165Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `7feaf262` | Multi-dimensional audit evidence | 2026-11-24T13:56:43.163Z |

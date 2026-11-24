@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T13:48:13.916Z",
+  "last_updated": "2026-11-24T13:56:49.375Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24652,
+  "total_items": 24655,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113937,10 +113937,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "edf58f38",
-      "content_hash": "58b147dc4e38ff1fe3a92422e188bf760a856977fa42d642f76db7ad6142a6e5",
+      "source_version": "db0c9a6b",
+      "content_hash": "bd4f609ebc699af0d29923cd100eb7ab1c559a9b39f46ea9abf00f7354a34303",
       "domain_letter": "B",
-      "persisted_at": "2026-11-18T19:51:58.779Z"
+      "persisted_at": "2026-11-24T13:56:32.606Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "bf9f4e2a",
-      "content_hash": "bbba17849025e49ff3068e708dfc3ac769837cfdd9e45cf686d8ef2c7b4fa399",
+      "source_version": "db0c9a6b",
+      "content_hash": "c074adcbb943ca39ba08b167f9389882c23c6cb3b7d65c8114ad1ce2b5012bf4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:27:19.667Z"
+      "persisted_at": "2026-11-24T13:56:32.797Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -113998,9 +113998,9 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "20a72aabb40e1a51babab6774d48b4840d932ac6b0e129b8e2795bff935a3831",
+      "content_hash": "ca0579951c04872fa857d492aac635f8b0062efd2d457db01b7bb316e953a4ff",
       "domain_letter": "B",
-      "persisted_at": "2026-11-18T19:52:15.849Z"
+      "persisted_at": "2026-11-24T13:56:47.360Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "572e0784fbdce4c184721c9907deeb26325b1b74428fb5a4100a22113be78358",
+      "content_hash": "08208a50a35b04c21f4002add9f5463a829aaebea113aa0d745c1978cea0abc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:28:28.044Z"
+      "persisted_at": "2026-11-24T13:56:47.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -232685,8 +232685,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "4452a98a",
-      "content_hash": "9efc30c4bf160dbeb468cecada8f1c9fd77c476598b651dc6d16b71c00b900ca",
+      "source_version": "7feaf262",
+      "content_hash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -232723,7 +232723,7 @@
         {
           "number": 9302,
           "title": "Update CHANGELOG.md",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232731,7 +232731,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T05:21:11.317Z",
+      "verified_at": "2026-11-24T13:56:42.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232773,10 +232773,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "4452a98a",
-      "content_hash": "b335fea65c63ddb8e99f268a3e3216dd0fa5c205e9f107936c2686d69844a04b",
+      "source_version": "7feaf262",
+      "content_hash": "06e9d33f732ee30223d151847a3982d3b447c15e5e9a9da0f1d31e0db2137ef7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T05:21:11.863Z"
+      "persisted_at": "2026-11-24T13:56:43.587Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -232785,10 +232785,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "4452a98a",
-      "content_hash": "d12ccc6975e36fed58284101845cc9756626381e55a1a4c8f5b429aebadb3f78",
+      "source_version": "7feaf262",
+      "content_hash": "913a34249c9fd8dcca18bfc9991e10625a73902e06a90747d16e94c38f661783",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:21:11.997Z"
+      "persisted_at": "2026-11-24T13:56:43.763Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -249366,8 +249366,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "bf9f4e2a",
-      "content_hash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
+      "source_version": "db0c9a6b",
+      "content_hash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -249405,6 +249405,11 @@
           "number": 9868,
           "title": "Machine API Documentation Leakage Prevention Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10272,
+          "title": "update the pimalaya nix input",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249412,7 +249417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:27:18.523Z",
+      "verified_at": "2026-11-24T13:56:31.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251054,13 +251059,13 @@
       "item_id": "candidate_directive-update-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-72TY-update-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DHJ4-update-changelog-md.md",
       "title": "Update CHANGELOG.md",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "54db07f1f803568b38d45965e5f71dbc2c03fc4c68d5d355f69f43bd493949e1",
+      "content_hash": "d4cee6fd7e25eda82841a34f97e0ccbf8b3efe456955857bb74ca288f6d35c49",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T05:21:16.057Z"
+      "persisted_at": "2026-11-24T13:56:49.026Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -254588,9 +254593,9 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "4483689e05f44783c49bf4bc1a069440522898ad93f827550a50cd50edc2bb9e",
+      "content_hash": "39617f10e8d8d8cf05f00e00a58df6e7c116ec19433b314bb10619a55647b952",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T05:21:16.183Z"
+      "persisted_at": "2026-11-24T13:56:49.203Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings",
@@ -254600,9 +254605,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "76479dfe52133352c06bd0b02b24c42f96d85bb6604fe115602b771961da8bd9",
+      "content_hash": "df82b5887e7a9e6bbbcdd13ef74f37c47f84079c8c880b25552d552012b6bd78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:21:16.309Z"
+      "persisted_at": "2026-11-24T13:56:49.375Z"
     },
     "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
@@ -295109,13 +295114,13 @@
       "rule_number": 9302,
       "title": "Update CHANGELOG.md",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "5db0619d",
+      "source_version": "7feaf262",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T23:34:55.351Z"
+      "verified_at": "2026-11-24T13:56:42.941Z"
     },
     "candidate_directive-build-remove-hack-for-registry-mirror-login": {
       "item_id": "candidate_directive-build-remove-hack-for-registry-mirror-login",
@@ -306538,7 +306543,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
-      "content_hash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
+      "content_hash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
       "dossier_path": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
       "promoted_rules": [],
@@ -306547,7 +306552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T11:31:33.982Z",
+      "verified_at": "2026-11-24T13:56:28.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -306564,9 +306569,9 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-opencode-adapted Core Invariants",
       "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
-      "content_hash": "5fd6695583c5a5ae80439a99441523f99b3f56beb49e5e537d649ef1ed7552db",
+      "content_hash": "cbb9af91870c4b4477269f234d6d2d427f65abaa2ce61fc78c4387f8907e3382",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T11:31:34.400Z"
+      "persisted_at": "2026-11-24T13:56:28.639Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear",
@@ -306576,9 +306581,9 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings Core Invariants",
       "repository": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
       "source_version": "HEAD",
-      "content_hash": "52bd460a7003b1227aeabed3df4a0b3fa8c379f6ab970fb70660451e12ed991c",
+      "content_hash": "b38f1fbcb0484658f3dc6053a27ec603bf6ab82fd5d85b7010dde2a92a2e813a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T11:32:08.219Z"
+      "persisted_at": "2026-11-24T13:56:47.927Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants",
@@ -336503,6 +336508,44 @@
       "content_hash": "ad6573bc57ebf74cc7136038020dd15ea7c375f99476c28f2ac3dc600384f83f",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T13:48:11.031Z"
+    },
+    "rule-10272": {
+      "learning_id": "rule-10272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10272,
+      "title": "update the pimalaya nix input",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "db0c9a6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:56:31.939Z"
+    },
+    "candidate_directive-update-the-pimalaya-nix-input": {
+      "item_id": "candidate_directive-update-the-pimalaya-nix-input",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D4PL-update-the-pimalaya-nix-input.md",
+      "title": "update the pimalaya nix input",
+      "repository": "pimalaya/himalaya",
+      "source_version": "db0c9a6b",
+      "content_hash": "af08b3e777f1a88189d5692c625fe6bca7cf0543d3731a3c9d6f8abfed9b5089",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T13:56:32.413Z"
+    },
+    "candidate_directive-build-update-the-pimalaya-nix-input": {
+      "item_id": "candidate_directive-build-update-the-pimalaya-nix-input",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DG3S-build-update-the-pimalaya-nix-input.md",
+      "title": "build: update the pimalaya nix input",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06021efb4aa67dc60555822d7df27f3f789ad3a70579458d1e55ac168389890c",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T13:56:47.180Z"
     }
   },
   "ai-builder-brain": {

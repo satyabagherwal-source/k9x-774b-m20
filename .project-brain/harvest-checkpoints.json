@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T13:47:30.083Z",
+  "last_updated": "2026-11-24T13:56:43.180Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
-      "verified_at": "2026-11-21T23:27:18.747Z",
+      "content_hash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
+      "verified_at": "2026-11-24T13:56:32.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:27:18.747Z"
+      "last_updated": "2026-11-24T13:56:32.182Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "9efc30c4bf160dbeb468cecada8f1c9fd77c476598b651dc6d16b71c00b900ca",
-      "verified_at": "2026-11-20T05:21:11.534Z",
+      "content_hash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
+      "verified_at": "2026-11-24T13:56:43.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:21:11.534Z"
+      "last_updated": "2026-11-24T13:56:43.179Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -19641,14 +19641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
-      "content_hash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
-      "verified_at": "2026-11-20T11:31:34.218Z",
+      "content_hash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
+      "verified_at": "2026-11-24T13:56:28.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T11:31:34.218Z"
+      "last_updated": "2026-11-24T13:56:28.418Z"
     },
     "itsdecodingai/llm-twin-course": {
       "repository": "itsdecodingai/llm-twin-course",
