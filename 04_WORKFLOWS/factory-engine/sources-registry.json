@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T22:16:03.965Z",
-    "lastVerified": "2026-11-24T22:16:03.965Z",
+    "lastChecked": "2026-11-24T22:30:15.972Z",
+    "lastVerified": "2026-11-24T22:30:15.972Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T21:38:44.726Z",
-    "lastVerified": "2026-11-24T21:38:44.726Z",
+    "lastChecked": "2026-11-24T22:30:15.959Z",
+    "lastVerified": "2026-11-24T22:30:15.959Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1343,9 +1343,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-24T17:51:57.890Z",
+    "lastChecked": "2026-11-24T22:30:11.078Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-24T17:51:57.890Z"
+    "lastVerified": "2026-11-24T22:30:11.078Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1683,9 +1683,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-24T01:56:02.208Z",
+    "lastChecked": "2026-11-24T22:30:13.559Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-24T01:56:02.208Z"
+    "lastVerified": "2026-11-24T22:30:13.559Z"
   },
   "googleworkspace-cli": {
     "name": "cli",
@@ -4239,9 +4239,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-24T03:05:20.175Z",
+    "lastChecked": "2026-11-24T22:30:08.689Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-24T03:05:20.175Z"
+    "lastVerified": "2026-11-24T22:30:08.689Z"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -6840,14 +6840,14 @@
     "officialUrl": "https://github.com/kotest/kotest",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-22T07:37:09.489Z",
-    "lastVerified": "2026-11-22T07:37:09.489Z",
+    "lastChecked": "2026-11-24T22:30:10.253Z",
+    "lastVerified": "2026-11-24T22:30:10.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kotest-kotest",
-    "contentHash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
+    "contentHash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7481,12 +7481,12 @@
     "officialUrl": "https://github.com/medialab/xan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T19:42:51.978Z",
-    "lastVerified": "2026-11-23T19:42:51.978Z",
+    "lastChecked": "2026-11-24T22:30:06.324Z",
+    "lastVerified": "2026-11-24T22:30:06.324Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-medialab-xan",
-    "contentHash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
+    "contentHash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -11503,12 +11503,12 @@
     "lastVerified": "2026-11-23T21:31:19.608Z"
   },
   "scrapinghub-dateparser": {
-    "name": "scrapinghub/dateparser",
+    "name": "dateparser",
     "officialUrl": "https://github.com/scrapinghub/dateparser",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T22:57:16.569Z",
-    "lastVerified": "2026-11-20T22:57:16.569Z",
+    "lastChecked": "2026-11-24T22:30:03.712Z",
+    "lastVerified": "2026-11-24T22:30:03.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-dateparser",
@@ -11517,7 +11517,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ce8c4390"
   },
   "jaywcjlove-devhub": {
     "name": "DevHub",

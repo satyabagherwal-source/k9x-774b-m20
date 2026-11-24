@@ -12825,3 +12825,5 @@
 | `CYCLE-20261124-78FH` | `2026-11-24T22:15:50.381Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10368` | Yes (`7b10871c...`) |
 | `CYCLE-20261124-79LS` | `2026-11-24T22:15:51.904Z` | `miso-belica/jusText` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/miso-belica-justext-learnings.md` | Yes (`eab67422...`) |
 | `CYCLE-20261124-7GE2` | `2026-11-24T22:16:00.698Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10369` | Yes (`22499c45...`) |
+| `CYCLE-20261124-PM6F` | `2026-11-24T22:30:08.007Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10370` | Yes (`928ed21a...`) |
+| `CYCLE-20261124-PP0J` | `2026-11-24T22:30:11.683Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10371` | Yes (`6e5be600...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:16:00.708Z",
-  "total_cycles_completed": 12184,
-  "total_learnings_persisted": 12184,
-  "total_rules_promoted": 11238,
+  "last_updated": "2026-11-24T22:30:11.696Z",
+  "total_cycles_completed": 12186,
+  "total_learnings_persisted": 12186,
+  "total_rules_promoted": 11240,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:11:17.523Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:11:19.290Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:11:24.114Z",
       "repository": "lioensky/VCPToolBox",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T22:16:00.708Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:30:08.020Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:30:11.696Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

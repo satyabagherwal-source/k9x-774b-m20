@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T22:16:00.720Z",
+  "last_updated": "2026-11-24T22:30:11.710Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
-      "verified_at": "2026-11-22T07:37:10.554Z",
+      "content_hash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
+      "verified_at": "2026-11-24T22:30:11.709Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:37:10.554Z"
+      "last_updated": "2026-11-24T22:30:11.709Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
-      "verified_at": "2026-11-23T19:42:53.097Z",
+      "content_hash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
+      "verified_at": "2026-11-24T22:30:08.039Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:42:53.097Z"
+      "last_updated": "2026-11-24T22:30:08.039Z"
     },
     "onejs/one": {
       "repository": "onejs/one",

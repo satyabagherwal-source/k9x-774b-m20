@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T22:16:06.699Z",
+  "last_updated": "2026-11-24T22:30:20.450Z",
   "total_verified_learnings": 9103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24953,
+  "total_items": 24961,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d12d7d3fe1c86afaf9cc52d01bbb2be647c5d0f32490c7a85f8bfdc730dfce9",
+      "content_hash": "02d13638127ceb9b6d4c3184e96d850be14025b3205223eda0db6e8cf20dc82d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:53:50.177Z"
+      "persisted_at": "2026-11-24T22:30:20.262Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ef2383fa8c8a4bc02f330ed94b44bc5a2431b602df2f791fd3949a663cf323b",
+      "content_hash": "8c126afe56f7850e272d9f438accc1e9bfb34a9ed5d7cc5b9028c8897279c47c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:53:50.381Z"
+      "persisted_at": "2026-11-24T22:30:20.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -239491,8 +239491,8 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "1bdf1431",
-      "content_hash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
+      "source_version": "1185d7cf",
+      "content_hash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
@@ -239510,6 +239510,11 @@
           "number": 9907,
           "title": "correct empty-collection KDoc on shouldNotContainExactCopies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10371,
+          "title": "enable concurrent launching of tests and specs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239517,7 +239522,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:37:10.334Z",
+      "verified_at": "2026-11-24T22:30:11.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239571,10 +239576,10 @@
       "relative_path": "08_VERIFICATION/kotest-kotest-verification-protocol-empirical-defect-shield-for-kotest-kotest.md",
       "title": "Verification Protocol: Empirical Defect Shield for kotest/kotest",
       "repository": "kotest/kotest",
-      "source_version": "1bdf1431",
-      "content_hash": "c34790a284fce774c6d5398d003cc414fc3f6a89d386704df3e8ab761ef58575",
+      "source_version": "1185d7cf",
+      "content_hash": "85fcfd8070ccf9f504fd4ded7d64237843842fcf71d2300e4fb38525cf5dfac8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:37:11.090Z"
+      "persisted_at": "2026-11-24T22:30:12.520Z"
     },
     "rule-8536": {
       "learning_id": "rule-8536",
@@ -239778,9 +239783,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kotest-kotest-learnings",
       "repository": "kotest-kotest-learnings",
       "source_version": "HEAD",
-      "content_hash": "14c8af70e61fa6b418657483df158da8c02b96295aa30a8fb1e3c024338a2fb2",
+      "content_hash": "470d941171ddaae5719a8d07df7282b85825671115ac2c7bb3f9f346ca17deb1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:37:24.234Z"
+      "persisted_at": "2026-11-24T22:30:18.895Z"
     },
     "learn-huggingface-microsoft-frognano-4b-2609": {
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
@@ -255625,8 +255630,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "0038ce76",
-      "content_hash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
+      "source_version": "dfbb3093",
+      "content_hash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -255664,6 +255669,11 @@
           "number": 10106,
           "title": "Adding notes wrt SIMD",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10370,
+          "title": "Adding seekable zst support",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255671,7 +255681,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:42:52.877Z",
+      "verified_at": "2026-11-24T22:30:07.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255725,10 +255735,10 @@
       "relative_path": "08_VERIFICATION/medialab-xan-verification-protocol-empirical-defect-shield-for-medialab-xan.md",
       "title": "Verification Protocol: Empirical Defect Shield for medialab/xan",
       "repository": "medialab/xan",
-      "source_version": "0038ce76",
-      "content_hash": "f7a9603b3cdab4f5b59fe687f2cd6bff529e46f799fda75b84be8867933b880f",
+      "source_version": "dfbb3093",
+      "content_hash": "443b1b6e5bbc87ef1c2664ed9cfc3f247daa3eaa028f6545cb2c03ab0efe8573",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:42:53.667Z"
+      "persisted_at": "2026-11-24T22:30:08.887Z"
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -255859,9 +255869,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for medialab-xan-learnings",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d246501fce20394a733cb348343143192dcc110f57c99349505a19d3866bbb1",
+      "content_hash": "1ab30ace2ced5e852a9b589cfc06d2aaac8c5a547103695cd1ec655af4d4eb65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:43:07.437Z"
+      "persisted_at": "2026-11-24T22:30:17.094Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -256495,9 +256505,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b083f50845598c41e49963b4744b86786f648ce5dfad4303c67195168d877098",
+      "content_hash": "b43db5fe94e8755a6afc07309c51388761a302c78b01526f81fd938acdf31c59",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:53:49.933Z"
+      "persisted_at": "2026-11-24T22:30:20.009Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -330553,13 +330563,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EXD8-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PV91-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a29ed1c36b52054338b815e17de1aa6ec058187301f4fea55cc189274b09f45",
+      "content_hash": "54f71c83896a1f446a1f599668afff1519b2ce04477f6de48414b3b66ea167db",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:53:49.689Z"
+      "persisted_at": "2026-11-24T22:30:19.772Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -340933,6 +340943,106 @@
       "content_hash": "eb365ba50dbb7fbc6da84c1b95d7c5494c0cf6c25f1598697154b9e57a327205",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T22:16:06.358Z"
+    },
+    "rule-10370": {
+      "learning_id": "rule-10370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10370,
+      "title": "Adding seekable zst support",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "dfbb3093",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:30:07.714Z"
+    },
+    "candidate_directive-adding-seekable-zst-support": {
+      "item_id": "candidate_directive-adding-seekable-zst-support",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PSTM-adding-seekable-zst-support.md",
+      "title": "Adding seekable zst support",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f275275b28e8d5c23804547c309ded8e1800ba36235a7d1244c1e76d0f0a9cbe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:16.625Z"
+    },
+    "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-architecture-intelligence-medialab-xan-core-invariants.md",
+      "title": "Architecture Intelligence: medialab/xan Core Invariants",
+      "repository": "medialab/xan",
+      "source_version": "dfbb3093",
+      "content_hash": "2e34e128bbe22b573f85b708a588efe2d3d946fd9abbd6a22f598123a48c5e18",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:08.648Z"
+    },
+    "rule-10371": {
+      "learning_id": "rule-10371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10371,
+      "title": "enable concurrent launching of tests and specs",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "1185d7cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:30:11.404Z"
+    },
+    "candidate_directive-enable-concurrent-launching-of-tests-and-specs": {
+      "item_id": "candidate_directive-enable-concurrent-launching-of-tests-and-specs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PU7X-enable-concurrent-launching-of-tests-and-specs.md",
+      "title": "enable concurrent launching of tests and specs",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9867c692b1f716f4d83285755dcea46a28a8277cef43760322d5648619c49ef6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:18.430Z"
+    },
+    "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kotest-kotest-architecture-intelligence-kotest-kotest-core-invariants.md",
+      "title": "Architecture Intelligence: kotest/kotest Core Invariants",
+      "repository": "kotest/kotest",
+      "source_version": "1185d7cf",
+      "content_hash": "8699d77bf2a8c143c817fd3741faa38ce58b49cd4d15ac69afbe743fecb58acd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:12.253Z"
+    },
+    "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-learnings-architecture-intelligence-medialab-xan-learnings-core-inv.md",
+      "title": "Architecture Intelligence: medialab-xan-learnings Core Invariants",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a09d5fd488ad95b452a8a167c52c61c5bc26e2842fddc6ab03b32733e5befda",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:16.858Z"
+    },
+    "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kotest-kotest-learnings-architecture-intelligence-kotest-kotest-learnings-core-i.md",
+      "title": "Architecture Intelligence: kotest-kotest-learnings Core Invariants",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "373351312bd9c29276e626aad8cfdffcc2c3cedb137bc8e80683e8159d5f8b54",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:30:18.665Z"
     }
   },
   "ai-builder-brain": {

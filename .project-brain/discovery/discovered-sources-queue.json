@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T22:16:05.388Z",
+  "updated_at": "2026-11-24T22:30:18.108Z",
   "stats": {
-    "total_discovered": 8967,
-    "approved_pending_harvest": 8490,
+    "total_discovered": 8968,
+    "approved_pending_harvest": 8491,
     "harvested_count": 0,
     "rejected_count": 477,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8485,
+      "COMMUNITY_AND_EXPERT": 8486,
       "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
@@ -193962,6 +193962,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
         "fileName": "miso-belica-justext-learnings.md"
+      }
+    },
+    "SRC-8503947B4C0E": {
+      "id": "SRC-8503947B4C0E",
+      "url": "https://github.com/kotest/kotest/issues/6188",
+      "title": "https://github.com/kotest/kotest/issues/6188",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:30:18.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
       }
     }
   }

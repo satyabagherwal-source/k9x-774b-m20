@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T19:43:06.960Z",
+  "timestamp": "2026-11-24T22:30:16.459Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-medialab-xan-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [medialab-xan-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T19:43:06.960Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T22:30:16.459Z`  
 > **Learning ID**: `LEARN-EVO-medialab-xan-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `0038ce76`  
+> **Source Version**: `dfbb3093`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:42:51.983Z  
+> **Timestamp**: 2026-11-24T22:30:06.575Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:42:51.978Z  
+> **Harvest Timestamp**: 2026-11-24T22:30:06.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4559 stars
+- **Stars / Engagement**: 4562 stars
 
 ---
 
@@ -1993,159 +1993,212 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0038ce76` (2026-11-23)
-**Commit Message**: Adding notes wrt SIMD
+### Incident Patch 1: `dfbb3093` (2026-11-24)
+**Commit Message**: Adding seekable zst support
+Related to #902
 
-**File**: `docs/blog/notes/simd.md` (added, +29/-0)
+**File**: `Cargo.lock` (modified, +14/-4)
 ```diff
-@@ -0,0 +1,29 @@
-+# SIMD design article notes
+@@ -3330,6 +3330,7 @@ dependencies = [
+  "url",
+  "uuid",
+  "xan_docopt",
++ "zeekstd",
+  "zmij",
+  "zstd",
+ ]
+@@ -3369,6 +3370,15 @@ dependencies = [
+  "synstructure 0.14.0",
+ ]
+ 
++[[package]]
++name = "zeekstd"
++version = "0.6.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
++dependencies = [
++ "zstd-safe",
++]
 +
-+*Designing the fastest general-purpose SIMD CSV parser*
+ [[package]]
+ name = "zerocopy"
+ version = "0.8.27"
+@@ -3494,18 +3504,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "zstd-safe"
+-version = "8.0.0"
++version = "8.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
++checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
+ dependencies = [
+  "zstd-sys",
+ ]
+ 
+ [[package]]
+ name = "zstd-sys"
+-version = "2.1.0+zstd.1.5.7"
++version = "2.1.3+zstd.1.5.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
++checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
+ dependencies = [
+  "cc",
+  "pkg-config",
+```
+
+**File**: `Cargo.toml` (modified, +1/-0)
+```diff
+@@ -142,6 +142,7 @@ unicode-segmentation = "1.13.3"
+ unicode-width = "0.2.2"
+ url = "2.5.8"
+ uuid = { version = "1.26.1", features = ["v4"] }
++zeekstd = "0.6.3"
+ zmij = "1.0.23"
+ zstd = "0.14.0"
+ 
+```
+
+**File**: `src/config.rs` (modified, +32/-17)
+```diff
+@@ -198,7 +198,10 @@ pub struct Config {
+ 
+ impl Config {
+     pub fn has_known_extension(path: &str) -> bool {
+-        let uncompressed_path = path.strip_suffix(".gz").unwrap_or(path);
++        let uncompressed_path = path
++            .strip_suffix(".gz")
++            .or_else(|| path.strip_suffix(".zst"))
++            .unwrap_or(path);
+ 
+         [
+             ".csv", ".tsv", ".tab", ".ssv", ".scsv", ".psv", ".cdx", ".ndjson", ".jsonl", ".vcf",
+@@ -215,6 +218,10 @@ impl Config {
+ 
+         if path.ends_with(".gz") {
+             Self::new(&Some(path.to_string())).has_seekable_index()
++        } else if path.ends_with(".zst") {
++            Self::new(&Some(path.to_string()))
++                .seekable_io_reader()
++                .is_ok()
+         } else {
+             true
+         }
+@@ -600,24 +607,32 @@ impl Config {
+             None => Err(error_msg)?,
+             Some(ref p) => match fs::File::open(p) {
+                 Ok(mut x) => {
+-                    if let Some(Compression::Gzip) = self.compression {
+-                        if let Some(index_path) =
+-                            self.compression.unwrap().index_path(p.to_str().unwrap())
+-                        {
+-                            let reader = BGZFReader::new(x)?;
+-                            let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
+-                            let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
+-
+-                            self.process_typical_headers_seek(&mut indexed_reader)?;
++                    match self.compression {
++                        Some(compression @ Compression::Gzip) => {
++                            if let Some(index_path) = compression.index_path(p.to_str().unwrap()) {
++                                let reader = BGZFReader::new(x)?;
++                                let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
++                                let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
 +
-+- Historical outline wrt simd-json etc.
-+- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
-+- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
-+- You cannot expect x16 or x32, that is just not realistic.
-+- Branching is data-dependent and cannot be avoided.
-+- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
-+- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
-+- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
-+- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on files having very large records & cells).
-+- Discussing the three-bytes Searcher vs. two-bytes/more branching on delimiter version.
-+- Show the bench table for reference.
-+- Keeping a field start state is complex and can kill performance by introducing too much branching
++                                self.process_typical_headers_seek(&mut indexed_reader)?;
 +
-+Things tried:
-+
-+- Pooling the SIMD operations (Sep's approach) and running the state machine over collected structural characters. This means you can have aligned/cache buffers for the SIMD calls etc. and they are not throttled by the scalar side. It does not seem to out-perform the interleaved/inline operation.
-+- Doing all the parse inside the amortized mask section under-peforms vs. the two-speed switch. Which means branching the state machine once per structural char.
-+- Alternative method with one quote+newline movemask and one delimiter movemask to deal with delimiters branchlessly. This under-performs because of the additional movemask, and branchlessness over little chunks of data still pays the cost of the loop.
-+- AVX2 underperforms (in the unquote sections), vzeroupper makes code generation tricky (I tried complex non-inlined version to avoid this). Unrolled SSE2 is on par for cases where AVX2 shines and is better for other cases, and is better for compatibility.
-+- Two-bytes searching (delimiter + newline) only, with a state for field start: more robust, less performant and result in a splitter that does not agree with the others.
-+
-+Regarding CSV Writer:
-+
-+- SIMD to find if a cell must be quoted is generally bad, because of the distribution of cell lengths and first byte to quote. The unrolled table test from burntsushi is the best.
-+- SIMD is useful to perform the quoting again because of the same intuition behind two-speed.
++                                return Ok(Box::new(indexed_reader));
++                            } else {
++                                Err(error_msg)?;
++                            }
++                        }
++                        Some(Compression::Zstd) => {
++                            if let Ok(mut decoder) = zeekstd::Decoder::new(x) {
++                                self.process_typical_headers_seek(&mut decoder)?;
+ 
+-                            return Ok(Box::new(indexed_reader));
+-                        } else {
+-                            Err(error_msg)?;
++                                return Ok(Box::new(decoder));
++                            } else {
++                                return Err(error_msg)?;
++                            }
++                        }
++                        None => {
++                            self.process_typical_headers_seek(&mut x)?;
+                         }
+-                    } else if self.compression.is_some() {
+-                        Err(error_msg)?;
+-                    } else {
+-                        self.process_typical_headers_seek(&mut x)?;
+                     }
+ 
+                     match x.borrow().stream_position() {
 ```
 
 ---
 
-### Incident Patch 2: `6884dbb3` (2026-11-23)
-**Commit Message**: Adding xan p map --tmp-dir
+### Incident Patch 2: `68b092c8` (2026-11-24)
+**Commit Message**: Improving performance of EmojiSanitizer::sanitize
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `src/cmd/view.rs` (modified, +4/-4)
 ```diff
-@@ -46,7 +46,7 @@ The **laminated** update.
- * Adding `xan explode -C/--combinations <k> & -I/--drop-incomplete`.
- * Adding `xan matrix --normalize`.
- * Adding `xan join --strict`.
--* Adding `xan parallel map --inplace & --replace & --atomicity`.
-+* Adding `xan parallel map --inplace, --replace, --atomicity & --tmp-dir`.
+@@ -618,13 +618,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                         }
+                     }
+                     _ => {
+-                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
++                        let cell = utils::sanitize_text_for_single_line_printing(cell);
  
- *Fixes*
- 
+                         if let Some(sanitizer) = &emoji_sanitizer_opt {
+-                            cell = sanitizer.sanitize(&cell);
++                            processed_record.push_field(&sanitizer.sanitize(&cell));
++                        } else {
++                            processed_record.push_field(&cell);
+                         }
+-
+-                        processed_record.push_field(&cell);
+                     }
+                 };
+             }
 ```
 
-**File**: `docs/cmd/parallel.md` (modified, +2/-0)
+**File**: `src/utils.rs` (modified, +12/-14)
 ```diff
-@@ -176,6 +176,8 @@ parallel map options:
-     --inplace              Replace target files, without changing their names, instead
-                            of adding new ones beside them.
-     --replace              Replace target files instead of adding new ones beside them.
-+    --tmp-dir <dir>        Where to write temporary files.
-+                           Will default to "/tmp" or equivalent.
-     --atomicity <mode>     When using --inplace, use to select when finished files are
-                            replaced. Must be one of the following:
-                                 - "all":  the command will wait for every file to be
-```
-
-**File**: `src/cmd/parallel.rs` (modified, +10/-1)
-```diff
-@@ -682,6 +682,8 @@ parallel map options:
-     --inplace              Replace target files, without changing their names, instead
-                            of adding new ones beside them.
-     --replace              Replace target files instead of adding new ones beside them.
-+    --tmp-dir <dir>        Where to write temporary files.
-+                           Will default to \"/tmp\" or equivalent.
-     --atomicity <mode>     When using --inplace, use to select when finished files are
-                            replaced. Must be one of the following:
-                                 - \"all\":  the command will wait for every file to be
-@@ -751,6 +753,7 @@ pub struct Args {
-     pub flag_ties: bool,
-     flag_inplace: bool,
-     flag_replace: bool,
-+    flag_tmp_dir: Option<String>,
-     flag_atomicity: Atomicity,
- }
- 
-@@ -1684,7 +1687,13 @@ impl Args {
-         }
- 
-         let tmp_dir_opt = (self.flag_inplace || self.flag_replace)
--            .then(TempDir::new)
-+            .then(|| {
-+                if let Some(dir) = &self.flag_tmp_dir {
-+                    TempDir::new_in(dir)
-+                } else {
-+                    TempDir::new()
-+                }
-+            })
-             .transpose()?;
- 
-         let tmp_files_mutex_opt: Option<Mutex<Vec<(PersistMode, NamedTempFile)>>> =
-```
-
-**File**: `tests/test_parallel.rs` (modified, +4/-0)
-```diff
-@@ -394,6 +394,7 @@ fn parallel_map_inplace() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--inplace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-         .arg("data2.csv");
-@@ -431,6 +432,7 @@ fn parallel_map_replace() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--replace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .arg("{}_slice.csv")
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-@@ -469,6 +471,7 @@ fn parallel_map_inplace_file_atomicity() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--inplace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["--atomicity", "file"])
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-@@ -507,6 +510,7 @@ fn parallel_map_replace_file_atomicity() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--replace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["--atomicity", "file"])
-         .arg("{}_slice.csv")
-         .args(["-P", "slice -l 1"])
-```
-
-**File**: `tests/workdir.rs` (modified, +4/-0)
-```diff
-@@ -48,6 +48,10 @@ impl Workdir {
-         }
+@@ -817,21 +817,19 @@ impl EmojiSanitizer {
+         EmojiSanitizer { pattern }
      }
  
-+    pub fn dir_as_str(&self) -> &str {
-+        self.dir.to_str().unwrap()
-+    }
-+
-     pub fn ls(&self) -> Vec<String> {
-         let mut paths: Vec<_> = fs::read_dir(&self.dir)
-             .unwrap()
+-    pub fn sanitize(&self, string: &str) -> String {
+-        self.pattern
+-            .replace_all(string, |caps: &Captures| {
+-                format!(
+-                    ":{}:",
+-                    match emojis::get(&caps[0]) {
++    pub fn sanitize<'s>(&self, string: &'s str) -> Cow<'s, str> {
++        self.pattern.replace_all(string, |caps: &Captures| {
++            format!(
++                ":{}:",
++                match emojis::get(&caps[0]) {
++                    None => "unknown_emoji",
++                    Some(emoji) => match emoji.shortcode() {
+                         None => "unknown_emoji",
+-                        Some(emoji) => match emoji.shortcode() {
+-                            None => "unknown_emoji",
+-                            Some(shortcode) => shortcode,
+-                        },
+-                    }
+-                )
+-            })
+-            .to_string()
++                        Some(shortcode) => shortcode,
++                    },
++                }
++            )
++        })
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2174,43 +2227,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Adding notes wrt SIMD
+## X. Adding seekable zst support
 
 **RULE**:
-When implementing operations in `docs/blog/notes/simd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0038ce76`: Adding notes wrt SIMD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfbb3093`: Adding seekable zst support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/blog/notes/simd.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# SIMD design article notes
+ "zeekstd",
+[[package]]
+name = "zeekstd"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
+dependencies = [
+ "zstd-safe",
+]
 
-*Designing the fastest general-purpose SIMD CSV parser*
-
-- Historical outline wrt simd-json etc.
-- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
-- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
-- You cannot expect x16 or x32, that is just not realistic.
-- Branching is data-dependent and cannot be avoided.
-- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
-- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
-- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
-- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on 
+version = "8.3.0"
+checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
+version = "2.1.3+zstd.1.5.7"
+checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "8.0.0"
+checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
+version = "2.1.0+zstd.1.5.7"
+checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0038ce76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfbb3093` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

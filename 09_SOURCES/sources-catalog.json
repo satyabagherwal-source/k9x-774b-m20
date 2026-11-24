@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "1bdf1431",
+    "sourceVersion": "1185d7cf",
     "license": "Apache-2.0",
-    "contentHash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
-    "lastHarvestedAt": "2026-11-22T07:37:10.546Z",
+    "contentHash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
+    "lastHarvestedAt": "2026-11-24T22:30:11.688Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "0038ce76",
+    "sourceVersion": "dfbb3093",
     "license": "Unlicense",
-    "contentHash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
-    "lastHarvestedAt": "2026-11-23T19:42:53.089Z",
+    "contentHash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
+    "lastHarvestedAt": "2026-11-24T22:30:08.013Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {

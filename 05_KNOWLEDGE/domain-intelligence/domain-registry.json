@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T22:16:06.528Z",
-  "total_records": 2583,
+  "last_updated": "2026-11-24T22:30:20.009Z",
+  "total_records": 2587,
   "domains": {
     "A": {
       "total": 22,
@@ -1175,7 +1175,7 @@
       ]
     },
     "G": {
-      "total": 448,
+      "total": 452,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1624,7 +1624,11 @@
         "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants",
         "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants",
-        "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants",
+        "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants",
+        "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants"
       ]
     },
     "H": {
@@ -23754,8 +23758,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b083f50845598c41e49963b4744b86786f648ce5dfad4303c67195168d877098",
-      "created_at": "2026-11-24T21:53:49.933Z"
+      "content_hash": "b43db5fe94e8755a6afc07309c51388761a302c78b01526f81fd938acdf31c59",
+      "created_at": "2026-11-24T22:30:20.009Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -43382,6 +43386,42 @@
       "repository": "miso-belica-justext-learnings",
       "content_hash": "1f4665253e3e1b115e9047abd67071fb5b2559e8330d76d6a569b9c415242f03",
       "created_at": "2026-11-24T22:16:05.798Z"
+    },
+    "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: medialab/xan Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-architecture-intelligence-medialab-xan-core-invariants.md",
+      "repository": "medialab/xan",
+      "content_hash": "2e34e128bbe22b573f85b708a588efe2d3d946fd9abbd6a22f598123a48c5e18",
+      "created_at": "2026-11-24T22:30:08.648Z"
+    },
+    "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kotest/kotest Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kotest-kotest-architecture-intelligence-kotest-kotest-core-invariants.md",
+      "repository": "kotest/kotest",
+      "content_hash": "8699d77bf2a8c143c817fd3741faa38ce58b49cd4d15ac69afbe743fecb58acd",
+      "created_at": "2026-11-24T22:30:12.253Z"
+    },
+    "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: medialab-xan-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-learnings-architecture-intelligence-medialab-xan-learnings-core-inv.md",
+      "repository": "medialab-xan-learnings",
+      "content_hash": "8a09d5fd488ad95b452a8a167c52c61c5bc26e2842fddc6ab03b32733e5befda",
+      "created_at": "2026-11-24T22:30:16.858Z"
+    },
+    "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kotest-kotest-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kotest-kotest-learnings-architecture-intelligence-kotest-kotest-learnings-core-i.md",
+      "repository": "kotest-kotest-learnings",
+      "content_hash": "373351312bd9c29276e626aad8cfdffcc2c3cedb137bc8e80683e8159d5f8b54",
+      "created_at": "2026-11-24T22:30:18.665Z"
     }
   }
 }

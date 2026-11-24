@@ -12858,3 +12858,5 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `d2e732b9` | Multi-dimensional audit evidence | 2026-11-24T22:15:50.386Z |
 | `learn-github-miso-belica-justext` | `https://github.com/miso-belica/justext` | `68533528` | Multi-dimensional audit evidence | 2026-11-24T22:15:51.908Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d245524c` | Multi-dimensional audit evidence | 2026-11-24T22:16:00.703Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `dfbb3093` | Multi-dimensional audit evidence | 2026-11-24T22:30:08.013Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `1185d7cf` | Multi-dimensional audit evidence | 2026-11-24T22:30:11.688Z |
