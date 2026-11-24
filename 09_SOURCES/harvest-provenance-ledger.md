@@ -12692,3 +12692,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-24T11:44:20.458Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3233be23` | Multi-dimensional audit evidence | 2026-11-24T11:44:33.553Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `68244323` | Multi-dimensional audit evidence | 2026-11-24T12:05:14.390Z |
+| `learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf` | `https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF` | `hf-nari-la` | Multi-dimensional audit evidence | 2026-11-24T12:18:19.562Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `ce0f96f1` | Multi-dimensional audit evidence | 2026-11-24T12:18:29.982Z |
+| `learn-dom-d-07a2bc67` | `project://hf-nari-labs-qwen3.8-27b-nariq-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md` | 2026-11-24T12:19:01.483Z |

@@ -5360,3 +5360,7 @@ https://github.com/XinaTian/MROffice
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T11:30:01.819Z] ---
 # [HUGGINGFACE-AI-MODELS] llamaindex/OCRia-nano-1 (880 score) - Verified Hugging Face Model: llamaindex/OCRia-nano-1 (88 likes, 0 downloads)
 https://huggingface.co/llamaindex/OCRia-nano-1
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T12:18:12.987Z] ---
+# [HUGGINGFACE-AI-MODELS] nari-labs/Qwen3.8-27B-NariQ-GGUF (2820 score) - Verified Hugging Face Model: nari-labs/Qwen3.8-27B-NariQ-GGUF (82 likes, 8795 do
+https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-TP8Q",
-    "timestamp": "2026-11-22T17:22:02.378Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "b320cb389986484614083aa9afaf2eaa4fc7f32f666573047e45895adc80cef2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-TTRD",
-    "timestamp": "2026-11-22T17:22:08.233Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-AOP9",
     "timestamp": "2026-11-22T17:35:14.829Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7490,6 +7460,36 @@
     "repository": "open-policy-agent/opa",
     "learningId": "learn-github-open-policy-agent-opa",
     "contentHash": "47bd3843da8976ccc97d7f9ce801b524af210169d690db67c26ebe319df512bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-UTR9",
+    "timestamp": "2026-11-24T12:18:19.557Z",
+    "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
+    "contentHash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-V1SP",
+    "timestamp": "2026-11-24T12:18:29.977Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

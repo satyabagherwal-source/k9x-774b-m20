@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T11:44:37.875Z",
+  "updated_at": "2026-11-24T12:19:02.463Z",
   "stats": {
-    "total_discovered": 8564,
-    "approved_pending_harvest": 8118,
+    "total_discovered": 8570,
+    "approved_pending_harvest": 8124,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8109,
+      "COMMUNITY_AND_EXPERT": 8115,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -185309,6 +185309,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
         "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-9F183E9F9F75": {
+      "id": "SRC-9F183E9F9F75",
+      "url": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "title": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:01.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md",
+        "fileName": "hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md"
+      }
+    },
+    "SRC-42C64C0CF02E": {
+      "id": "SRC-42C64C0CF02E",
+      "url": "https://github.com/hendrikmuhs/ccache-action",
+      "title": "https://github.com/hendrikmuhs/ccache-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:02.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-2022A44C7B5A": {
+      "id": "SRC-2022A44C7B5A",
+      "url": "https://github.com/actions/setup-java/releases",
+      "title": "https://github.com/actions/setup-java/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:02.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-DAE8843667AD": {
+      "id": "SRC-DAE8843667AD",
+      "url": "https://redirect.github.com/actions/setup-java/issues/1326",
+      "title": "https://redirect.github.com/actions/setup-java/issues/1326",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:02.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-7A662AE1B008": {
+      "id": "SRC-7A662AE1B008",
+      "url": "https://redirect.github.com/actions/setup-java/issues/1322",
+      "title": "https://redirect.github.com/actions/setup-java/issues/1322",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:02.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-DE00F3AED3AC": {
+      "id": "SRC-DE00F3AED3AC",
+      "url": "https://github.com/hendrikmuhs/ccache-action/releases",
+      "title": "https://github.com/hendrikmuhs/ccache-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:19:02.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
       }
     }
   }

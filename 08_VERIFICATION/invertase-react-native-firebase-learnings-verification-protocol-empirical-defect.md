@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T19:11:47.512Z",
+  "timestamp": "2026-11-24T12:19:02.596Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-invertase-react-native-firebase-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [invertase-react-native-firebase-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T19:11:47.512Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:19:02.596Z`  
 > **Learning ID**: `LEARN-EVO-invertase-react-native-firebase-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `74471603`  
+> **Source Version**: `ce0f96f1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T19:07:35.723Z  
+> **Timestamp**: 2026-11-24T12:18:28.864Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:07:35.616Z  
+> **Harvest Timestamp**: 2026-11-24T12:18:28.858Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12328 stars
+- **Stars / Engagement**: 12329 stars
 
 ---
 
@@ -1594,11 +1594,11 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #9517** (2026-11-23): **build(deps): bump the github-actions-minor-patch group across 1 directory with 2 updates**
+  *Symptoms*: Bumps the github-actions-minor-patch group with 2 updates in the / directory: [actions/setup-java](https://github.com/actions/setup-java) and [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action).  Updates `actions/setup-java` from 6.2.0 to 6.3.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-java/releases">actions/setup-java's releases</a>.</em></p> <blockquote> <h2>v6.3.0</h2> <h2>Behavior change: Java problem matcher is now opt-in</h2> <p>Starting with v6.3.0, <code>setup-java</code> no longer registers the Java problem matcher by default (<a href="https://redirect.github.com/actions/setup-java/issues/1326">#1326</a>, fixes <a href="https://redirect.github.com/actions/setup-java/issues/1322">#1322</a>). Java compiler warnings, compiler errors, and uncaught exceptions are no longer turned into annotations on pull request diffs unless you opt in.</p> <p>To keep annotations, set <code>problem-matcher: true</code>:</p> <pre lang="yaml"><code>- uses: actions/setup-java@v6   with:     distribution: temurin     java-version: '25'     problem-matcher: true </code></pre> <p>Compiler output still appears in the build logs, and compilation errors still fail the build. Only annotations are affected.</p> <p><strong>Why:</strong> inline annotations cluttered pull request reviews, and GitHub Actions caps annotations at 10 errors, 10 warnings, and 10 notices per step, and 50 per job. Larger Java builds therefore
+
 - **Issue #9515** (2026-11-20): **ci(android): skip hosted disk cleanup on self-hosted runners**
   *Symptoms*: ### Description  Since #9501, the overflow route can place Android e2e matrix cells on self-hosted `linux-nested-virt-self-hosted` runners. Those runners have no `docker` CLI, so `AdityaGarg8/remove-unwanted-software` fails at `sudo docker image prune` (`sudo: docker: command not found`) and the job dies in the first step.  The cleanup step exists to recover space on GitHub-hosted images. The self-hosted runners report ~800 GB free, so this gates the step to `runner.environment == 'github-hosted'` rather than only dropping the docker removal (the apt removals that follow it target the hosted image too).  This is the only workflow using that action.  ### Related issues  Follow-up to #9501.  ### Release Summary  CI only; no release note.  ### Checklist  - I read the [Contributor Guide](https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md) and followed the process outlined there for submitting PRs.   - [x] Yes - My change supports the following platforms;   - [x] `Android`   - [ ] `iOS`   - [ ] `Other` (macOS, web) - My change includes tests;   - [ ] `e2e` tests added or updated in `packages/\*\*/e2e`   - [ ] `jest` tests added or updated in `packages/\*\*/__tests__` - [ ] I have updated TypeScript types that are affected by my change. - This is a breaking change;   - [ ] Yes   - [x] No  ### Test Plan  - Failure reproduced on a self-hosted runner in the Android e2e workflow: `Free Disk Space (Ubuntu)` exits 1 with `sudo: docker: command not found`, with `
-
-- **Issue #9512** (2026-11-19): **test(firestore, pipelines): stop asserting backend rejection of a scalar IN**
-  *Symptoms*: ### Description  `FirestorePipeline › … › rejects malformed where and malformed union payloads at validation boundary` has failed on Android and iOS e2e on `main` and on every open PR since 2026-11-18.  Its first assertion sends `where({ condition: { operator: 'IN', fieldPath: 'tag', value: 'not-an-array' } })`. On iOS and Android the value goes through the native SDK to the live backend, because the `pipelines-e2e` database isn't on the emulator. The test expected `INVALID_ARGUMENT`. The backend now accepts `equal_any` with a scalar right-hand side and returns a result instead of an error, so the call no longer throws.  The request and the SDK version are identical in the last passing run and the first failing one, and nothing in `packages/firestore` changed in between. The request and the backend's response were also checked directly with the Firebase JS SDK.  On macOS (`Platform.other`), RNFB's web bridge rejects a non-array `IN` / `NOT_IN` / `ARRAY_CONTAINS_ANY` / `ARRAY_CONTAINS_ALL` in JS before any backend call (`lib/web/pipelines/pipeline_bridge_factory.ts`). That check is RNFB-owned and still worth covering.  This PR:  - **Splits the test in two:**   - `rejects malformed union payloads at validation boundary` runs on every platform. The union is rejected by RNFB's JS validation before any native or backend call, so the seed document is no longer needed. The second accepted message, which couldn't occur, is removed.   - `rejects a non-array IN where value in the web p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,679 +1615,292 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74471603` (2026-11-20)
-**Commit Message**: ci(android): skip hosted disk cleanup on self-hosted runners
+### Incident Patch 1: `ce0f96f1` (2026-11-23)
+**Commit Message**: build(deps): dependency updates 20261119 (#9510)
 
-The overflow route can place Android e2e jobs on self-hosted runners that
-have no docker CLI, so remove-unwanted-software fails on 'docker image
-prune'. Those runners also have plenty of free disk, so the step is only
-useful on GitHub-hosted runners.
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/tests_e2e_android.yml` (modified, +2/-0)
+**File**: `.github/workflows/linting.yml` (modified, +1/-1)
 ```diff
-@@ -123,6 +123,8 @@ jobs:
-       ORG_GRADLE_PROJECT_reactNativeArchitectures: ${{ matrix.arch }}
-     steps:
-       - name: Free Disk Space (Ubuntu)
-+        # Hosted runners only: self-hosted overflow runners have ample disk and no docker CLI.
-+        if: runner.environment == 'github-hosted'
-         # https://github.com/AdityaGarg8/remove-unwanted-software/releases
-         uses: AdityaGarg8/remove-unwanted-software@36765610732de8ee2e81a5c6c231506e2b5cabcf # v5.1
+@@ -44,7 +44,7 @@ jobs:
+           node-version: 24
+       - name: Configure JDK
+         # https://github.com/actions/setup-java/releases
+-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
++        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
          with:
+           distribution: 'temurin'
+           java-version: '21'
 ```
 
----
-
-### Incident Patch 2: `32a27ef8` (2026-11-20)
-**Commit Message**: ci: route heavy jobs through a vendored runner-select (#9501)
-
-**File**: `.github/actions/runner-select/VENDORED_FROM` (added, +3/-0)
+**File**: `.github/workflows/test_expo_fixture_ios_dupes.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,3 @@
-+33c44bc27724e71095a11d15d4aa145ba4890c53
-+Temporary copy. invertase/mellifera is private and this repository is public.
-+Remove this directory when a public runner-select pin is available.
-```
-
-**File**: `.github/actions/runner-select/action.yml` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+name: Mellifera runner select
-+description: >-
-+  Applies the Mellifera GHA placement pool test and outputs the runs-on label JSON
-+  for the job (hosted default, overflow spill, or safe default on failure).
-+inputs:
-+  mode:
-+    description: >-
-+      off, fixed, or github-app. Empty reads RUNNER_SELECT_MODE. Empty, off, or
-+      unknown emits the hosted label.
-+    required: false
-+    default: ''
-+  default-runs-on:
-+    description: >-
-+      Hosted label string or JSON array. Empty reads MELLIFERA_DEFAULT_RUNS_ON_MACOS
-+      or MELLIFERA_DEFAULT_RUNS_ON_LINUX by class, then MELLIFERA_DEFAULT_RUNS_ON.
-+    required: false
-+    default: ''
-+  class:
-+    description: macos or other
-+    required: true
-+  placement-url:
-+    description: >-
-+      Full GET URL for /v1/gha/placement (repo and label query included). Empty
-+      reads the full-URL env for the overflow label, then MELLIFERA_PLACEMENT_URL.
-+    required: false
-+    default: ''
-+  placement-token:
-+    description: >-
-+      Bearer token for placement (never logged). Empty reads MELLIFERA_PLACEMENT_TOKEN.
-+    required: false
-+    default: ''
-+  placement-ca:
-+    description: >-
-+      Optional PEM text of the CA that signs the placement host certificate. Empty
-+      reads MELLIFERA_PLACEMENT_CA, then keeps system trust. When set, curl trusts
-+      only this CA. Never logged.
-+    required: false
-+    default: ''
-+  overflow-runs-on:
-+    description: >-
-+      Overflow label string or JSON array when headroom allows spill. Empty reads
-+      MELLIFERA_OVERFLOW_RUNS_ON_MACOS or MELLIFERA_OVERFLOW_RUNS_ON_LINUX when set,
-+      otherwise macos-self-hosted or linux-self-hosted by class.
-+    required: false
-+    default: ''
-+outputs:
-+  runs-on:
-+    description: JSON string or array for fromJSON() in the workflow
-+    value: ${{ steps.select.outputs.runs-on }}
-+  pool:
-+    description: hosted, overflow, or default
-+    value: ${{ steps.select.outputs.pool }}
-+  reason:
-+    description: >-
-+      off, hosted, overflow, default, error, missing-token, bad-ca, curl-failed,
-+      non-200, or bad-json
-+    value: ${{ steps.select.outputs.reason }}
-+  summary:
-+    description: One-line route decision
-+    value: ${{ steps.select.outputs.summary }}
-+runs:
-+  using: composite
-+  steps:
-+    - id: select
-+      shell: bash
-+      env:
-+        INPUT_MODE: ${{ inputs.mode }}
-+        INPUT_DEFAULT_RUNS_ON: ${{ inputs.default-runs-on }}
-+        INPUT_CLASS: ${{ inputs.class }}
-+        INPUT_PLACEMENT_URL: ${{ inputs.placement-url }}
-+        INPUT_PLACEMENT_TOKEN: ${{ inputs.placement-token }}
-+        INPUT_PLACEMENT_CA: ${{ inputs.placement-ca }}
-+        INPUT_OVERFLOW_RUNS_ON: ${{ inputs.overflow-runs-on }}
-+      run: |
-+        set -euo pipefail
-+        mapfile -t _lines < <(bash "${{ github.action_path }}/select.sh")
-+        for _line in "${_lines[@]}"; do
-+          echo "$_line" >> "$GITHUB_OUTPUT"
-+        done
-```
-
-**File**: `.github/actions/runner-select/route-matrix.sh` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+#!/usr/bin/env bash
-+# One placement read per matrix cell. Always exits 0 and writes choices plus fallback.
-+set -u
-+
-+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-+OUT="${GITHUB_OUTPUT:-/dev/stdout}"
-+
-+write_output() {
-+  local name="$1"
-+  local value="$2"
-+  local delim="ROUTEMATRIX$(date +%s%N)"
-+  {
-+    printf '%s<<%s\n' "$name" "$delim"
-+    printf '%s\n' "$value"
-+    printf '%s\n' "$delim"
-+  } >>"$OUT"
-+}
-+
-+fallback_json() {
-+  local raw="${INPUT_DEFAULT_RUNS_ON:-}"
-+  if [[ -z "$raw" ]]; then
-+    printf '%s' '"ubuntu-latest"'
-+    return 0
-+  fi
-+  if printf '%s' "$raw" | jq -e . >/dev/null 2>&1; then
-+    printf '%s' "$raw" | jq -c .
-+    return 0
-+  fi
-+  jq -nc --arg s "$raw" '$s'
-+}
-+
-+FALLBACK="$(fallback_json 2>/dev/null || printf '%s' '"ubuntu-latest"')"
-+CHOICES='{}'
-+
-+if ! command -v jq >/dev/null 2>&1; then
-+  echo "runner-select: missing jq; every cell uses the hosted label" >&2
-+  write_output choices "$CHOICES"
-+  write_output fallback "$FALLBACK"
-+  exit 0
-+fi
-+
-+matrix_json="${MATRIX_JSON:-}"
-+if [[ -z "$matrix_json" ]]; then
-+  matrix_json='{}'
-+fi
-+keys_text="$(
-+  printf '%s' "$matrix_json" | jq -r --arg fields "${KEY_FIELDS:-}" '
-+    if (type != "object") or (length == 0) then empty
-+    else
-+      reduce (to_entries[]) as $axis ([{}];
-+        [ .[] as $base | $axis.value[] as $v | $base + {($axis.key): $v} ]
-+      )
-+      | .[]
-+      | . as $row
-+      | ($fields | split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(. != "") | $row[.] | tostring) | join("-"))
-+    end
-+  ' || true
-+)"
-+
-+while IFS= read -r key; do
-+  [[ -z "$key" ]] && continue
-+  label=""
-+  if out="$(bash "$SCRIPT_DIR/select.sh")"; then
-+    label="$(printf '%s\n' "$out" | sed -n 's/^runs-on=//p' | head -n 1)"
-+  fi
-+  if [[ -z "$label" ]] || ! printf '%s' "$label" | jq -e . >/dev/null 2>&1; then
-+    label="$FALLBACK"
-+  fi
-+  CHOICES="$(printf '%s' "$CHOICES" | jq -c --arg k "$key" --argjson v "$label" '. + {($k): $v}')"
-+done <<< "$keys_text"
-+
-+write_output choices "$CHOICES"
-+write_output fallback "$FALLBACK"
-+exit 0
-```
-
-**File**: `.github/actions/runner-select/select.sh` (added, +275/-0)
-```diff
-@@ -0,0 +1,275 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+
-+log_token() {
-+  local raw="$1"
-+  if [[ "$raw" =~ ^[A-Za-z0-9._-]*$ ]]; then
-+    printf '%s' "$raw"
-+  else
-+    printf 'rejected'
-+  fi
-+}
-+
-+emit() {
-+  local runs_on="$1"
-+  local pool="$2"
-+  local reason="$3"
-+  local http="${4-}"
-+  local placement="${5-}"
-+  local class_log mode_log summary
-+  class_log="$(log_token "$CLASS")"
-+  mode_log="$(log_token "$MODE")"
-+  summary="class=${class_log} mode=${mode_log} default=${DEFAULT_JSON} overflow=${OVERFLOW_JSON-}"
-+  if [[ -n "$http" ]]; then
-+    summary+=" http=${http}"
-+  fi
-+  if [[ "$placement" == 1 ]]; then
-+    summary+=" hosted.total.free=${TOTAL_FREE} hosted.macos.free=${MACOS_FREE} overflow.headroom=${HEADROOM} hosted.mode=${HOSTED_MODE_LOG}"
-+  fi
-+  summary+=" branch=${reason} reason=${reason}"
-+  printf 'runs-on=%s\n' "$runs_on"
-+  printf 'pool=%s\n' "$pool"
-+  printf 'reason=%s\n' "$reason"
-+  printf 'summary=%s\n' "$summary"
-+  printf 'runner-select: %s\n' "$summary" >&2
-+}
-+
-+fail_usage() {
-+  echo "runner-select: $*" >&2
-+  exit 2
-+}
-+
-+require_cmd() {
-+  command -v "$1" >/dev/null 2>&1 || fail_usage "missing required command: $1"
-+}
-+
-+first_nonempty() {
-+  local v
-+  for v in "$@"; do
-+    if [[ -n "$v" ]]; then
-+      printf '%s' "$v"
-+      return 0
-+    fi
-+  done
-+  return 0
-+}
-+
-+parse_label_input() {
-+  local raw="$1"
-+  if [[ -z "$raw" ]]; then
-+    return 1
-+  fi
-+  if printf '%s' "$raw" | jq -e . >/dev/null 2>&1; then
-+    printf '%s' "$raw" | jq -ec .
-+    return 0
-+  fi
-+  if [[ "$raw" == *[![:alnum:]_.-]* || "$raw" == *'://'* ]]; then
-+    return 1
-+  fi
-+  jq -nc --arg s "$raw" '$s'
-+}
-+
-+read_default_json() {
-+  local raw="$1"
-+  local parsed
-+  if ! parsed="$(parse_label_input "$raw")"; then
-+    if [[ -z "$raw" ]]; then
-+      echo 'runner-select: default-runs-on is empty' >&2
-+      exit 1
-+    fi
-+    echo 'runner-select: invalid default-runs-on' >&2
-+    exit 1
-+  fi
-+  DEFAULT_JSON="$parsed"
-+}
-+
-+read_overflow_json() {
-+  local raw="$1"
-+  local parsed
-+  if ! parsed="$(parse_label_input "$raw")"; then
-+    echo 'runner-select: invalid overflow-runs-on' >&2
-+    exit 1
-+  fi
-+  OVERFLOW_JSON="$parsed"
-+}
-+
-+overflow_label_key() {
-+  local raw="$1"
-+  local as_string=''
-+  if as_string="$(printf '%s' "$raw" | jq -er 'select(type == "string")' 2>/dev/null)" && [[ -n "$as_string" ]]; then
-+    printf '%s' "$as_string"
-+    return 0
-+  fi
-+  printf '%s' "$raw"
-+}
-+
-+placement_url_for_overflow() {
-+  local key="$1"
-+  case "$key" in
-+    macos-self-hosted)
-+      first_nonempty "${MELLIFERA_PLACEMENT_URL_MACOS:-}" "${MELLIFERA_PLACEMENT_URL:-}"
-+      ;;
-+    linux-self-hosted)
-+      first_nonempty "${MELLIFERA_PLACEMENT_URL_LINUX:-}" "${MELLIFERA_PLACEMENT_URL:-}"
-+      ;;
-+    linux-nested-virt-self-hosted)
-+      first_nonempty "${MELLIFERA_PLACEMENT_URL_LINUX_NESTED:-}" "${MELLIFERA_PLACEMENT_URL:-}"
-+      ;;
-+    *)
-+      first_nonempty "${MELLIFERA_PLACEMENT_URL:-}"
-+      ;;
-+  esac
-+}
-+
-+placement_body_valid() {
-+  local body="$1"
-+  printf '%s' "$body" | jq -e '
-+    (.hosted.total.free | type) == "number"
-+    and (.hosted.macos.free | type) == "number"
-+    and (.overflow.headroom | type) == "number"
-+  ' >/dev/null 2>&1
-+}
-+
-+require_cmd jq
-+require_cmd curl
-+
-+CLASS="${INPUT_CLASS:-}"
-+MODE="$(first_nonempty "${INPUT_MODE:-}" "${RUNNER_SELECT_MODE:-}")"
-+
-+case "$CLASS" in
-+  macos)
-+    DEFAULT_RAW="$(first_nonempty "${INPUT_DEFAULT_RUNS_ON:-}" "${MELLIFERA_DEFAULT_RUNS_ON_MACOS:-}" "${MELLIFERA_DEFAULT_RUNS_ON:-}")"
-+    OVERFLOW_RAW="$(first_nonempty "${INPUT_OVERFLOW_RUNS_ON:-}" "${MELLIFERA_OVERFLOW_RUNS_ON_MACOS:-}" "macos-self-hosted")"
-+    ;;
-+  other)
-+    DEFAULT_RAW="$(first_nonempty "${INPUT_DEFAULT_RUNS_ON:-}" "${MELLIFERA_DEFAULT_RUNS_ON_LINUX:-}" "${MELLIFERA_DEFAULT_RUNS_ON:-}")"
-+    OVERFLOW_RAW="$(first_nonempty "${INPUT_OVERFLOW_RUNS_ON:-}" "${MELLIFERA_OVERFLOW_RUNS_ON_LINUX:-}" "linux-self-hosted")"
-+    ;;
-+  *)
-+    DEFAULT_RAW="$(first_nonempty "${INPUT_DEFAULT_RUNS_ON:-}" "${MELLIFERA_DEFAULT_RUNS_ON:-}")"
-+    OVERFLOW_RAW="$(first_nonempty "${INPUT_OVERFLOW_RUNS_ON:-}")"
-+    ;;
-+esac
-+
-+read_default_json "$DEFAULT_RAW"
-+if [[ -n "$OVERFLOW_RAW" ]]; then
-+  read_overflow_json "$OVERFLOW_RAW"
-+fi
-+
-+case "$MODE" in
-+  off)
-+    emit "$DEFAULT_JSON" default off
-+    exit 0
-+    ;;
-+  fixed | github-app)
-+    ;;
-+  '')
-+    emit "$DEFAULT_JSON" default error
-+    exit 0
-+    ;;
-+  *)
-+    emit "$DEFAULT_JSON" default error
-+    exit 0
-+    ;;
-+esac
-+
-+case "$CLASS" in
-+  macos | other) ;;
-+  *)
-+    emit "$DEFAULT_JSON" default error
-+    exit 0
-+    ;;
-+esac
-+
-+TOKEN="$(first_nonempty "${INPUT_PLACEMENT_TOKEN:-}" "${MELLIFERA_PLACEMENT_TOKEN:-}")"
-+CA_PEM="$(first_nonempty "${INPUT_PLACEMENT_CA:-}" "${MELLIFERA_PLACEMENT_CA:-}")"
-+if [[ -n "${INPUT_PLACEMENT_URL:-}" ]]; then
-+  URL="${INPUT_PLACEMENT_URL}"
-+else
-+  URL="$(placement_url_for_overflow "$(overflow_label_key "$OVERFLOW_RAW")")"
-+fi
-+
-+if [[ -z "$TOKEN" ]
-```
-
-**File**: `.github/workflows/create_test_patches.yml` (modified, +8/-1)
-```diff
-@@ -28,9 +28,16 @@ concurrency:
-   cancel-in-progress: true
+@@ -154,7 +154,7 @@ jobs:
  
- jobs:
-+  route-linux:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   main:
-     name: Create patch-package Patches
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-linux.outputs.runs-on) }}
-+    needs: route-linux
-     steps:
-       # https://github.com/actions/checkout/releases
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       # One sticky cache per module combination; distinct from the test-expo link cache.
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           key: ${{ runner.os }}-expo-fixture-dupes-ios-v1-xcode27-${{ matrix.slug }}-${{ steps.xcode_cache_key.outputs.key }}
 ```
 
-**File**: `.github/workflows/linting.yml` (modified, +40/-5)
+**File**: `.github/workflows/test_expo_ios_link.yml` (modified, +1/-1)
 ```diff
-@@ -18,10 +18,17 @@ concurrency:
-   cancel-in-progress: true
+@@ -101,7 +101,7 @@ jobs:
  
- jobs:
-+  route-linting:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   linting:
-     name: Lint
-     timeout-minutes: 30
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-linting.outputs.runs-on) }}
-+    needs: route-linting
-     env:
-       NX_NO_CLOUD: true
-       NX_CACHE_DIRECTORY: .nx/cache
-@@ -100,9 +107,16 @@ jobs:
-           path: .nx/cache
-           key: ${{ runner.os }}-nx-v1-${{ hashFiles('yarn.lock', 'nx.json', 'lerna.json') }}
- 
-+  route-typescript:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   typescript:
-     name: TypeScript Build Validation
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-typescript.outputs.runs-on) }}
-+    needs: route-typescript
-     timeout-minutes: 30
-     env:
-       NX_NO_CLOUD: true
-@@ -164,9 +178,16 @@ jobs:
-           path: .nx/cache
-           key: ${{ runner.os }}-nx-v1-${{ hashFiles('yarn.lock', 'nx.json', 'lerna.json') }}
- 
-+  route-attw:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   attw:
-     name: Published Package Types (attw)
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-attw.outputs.runs-on) }}
-+    needs: route-attw
-     timeout-minutes: 30
-     steps:
-       # https://github.com/actions/checkout/releases
-@@ -206,9 +227,16 @@ jobs:
-           key: ${{ runner.os }}-yarn-v1-${{ hashFiles('yarn.lock') }}
- 
- 
-+  route-consumer-types:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   consumer-types:
-     name: Consumer Type Test
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-consumer-types.outputs.runs-on) }}
-+    needs: route-consumer-types
-     timeout-minutes: 30
-     env:
-       NX_NO_CLOUD: true
-@@ -268,9 +296,16 @@ jobs:
-           path: .nx/cache
-           key: ${{ runner.os }}-nx-v1-${{ hashFiles('yarn.lock', 'nx.json', 'lerna.json') }}
- 
-+  route-typedoc:
-+    uses: ./.github/workflows/mellifera-route.yml
-+    secrets: inherit
-+    with:
-+      class: other
-+      default-runs-on: ubuntu-latest
-   typedoc:
-     name: TypeDoc Generation
--    runs-on: ubuntu-latest
-+    runs-on: ${{ fromJSON(needs.route-typedoc.outputs.runs-on) }}
-+    needs: route-typedoc
-     timeout-minutes: 30
-     env:
-       NX_NO_CLOUD: true
+       # Sticky content-hash key (append-timestamp: false). Distinct from e2e (`expo-link` app id).
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           key: ${{ runner.os }}-expo-link-ios-v4-xcode27-${{ steps.xcode_cache_key.outputs.key }}
 ```
 
-**File**: `.github/workflows/mellifera-route-matrix.yml` (added, +86/-0)
+**File**: `.github/workflows/test_rn_bare_ios_build.yml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,86 @@
-+name: Mellifera route matrix
+@@ -118,7 +118,7 @@ jobs:
+ 
+       # Sticky content-hash key (append-timestamp: false). Distinct from e2e/expo (`rn-bare` app id).
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           key: ${{ runner.os }}-rn-bare-ios-v3-xcode27-${{ steps.xcode_cache_key.outputs.key }}
+@@ -220,7 +220,7 @@ jobs:
+ 
+       # Sticky content-hash key (append-timestamp: false). Distinct from shipped-path job (`rn-bare-dynfb`).
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           key: ${{ runner.os }}-rn-bare-dynfb-ios-v3-xcode27-${{ steps.xcode_cache_key.outputs.key }}
+```
+
+**File**: `.github/workflows/tests_e2e_android.yml` (modified, +1/-1)
+```diff
+@@ -167,7 +167,7 @@ jobs:
+ 
+       - name: Configure JDK
+         # https://github.com/actions/setup-java/releases
+-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
++        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+         with:
+           distribution: 'temurin'
+           java-version: '21'
+```
+
+**File**: `.github/workflows/tests_e2e_ios.yml` (modified, +3/-3)
+```diff
+@@ -160,7 +160,7 @@ jobs:
+ 
+       - name: Configure JDK
+         # https://github.com/actions/setup-java/releases
+-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
++        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+         with:
+           distribution: 'temurin'
+           java-version: '21'
+@@ -211,7 +211,7 @@ jobs:
+ 
+       # Detox is compiled during yarn install, using Xcode, set up cache first
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           # Sticky content-hash key (append-timestamp: false). SPM-only matrix (no cocoapods leg); debug/release stay distinct.
+@@ -672,7 +672,7 @@ jobs:
+         id: xcode_cache_key
+         run: echo "key=$(bash .github/workflows/scripts/compute-xcode-ccache-key.sh e2e-ios)" >> "$GITHUB_OUTPUT"
+ 
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           # Sticky content-hash key (append-timestamp: false). SPM-only archive job.
+```
+
+**File**: `.github/workflows/tests_e2e_other.yml` (modified, +2/-2)
+```diff
+@@ -141,7 +141,7 @@ jobs:
+ 
+       - name: Configure JDK
+         # https://github.com/actions/setup-java/releases
+-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
++        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+         with:
+           distribution: 'temurin'
+           java-version: '21'
+@@ -182,7 +182,7 @@ jobs:
+         run: echo "key=$(bash .github/workflows/scripts/compute-xcode-ccache-key.sh e2e-macos)" >> "$GITHUB_OUTPUT"
+ 
+       # https://github.com/hendrikmuhs/ccache-action/releases
+-      - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
++      - uses: hendrikmuhs/ccache-action@e91f31892a1d1b8c44424b1a94c0b7f52d337168 # v1.2.26
+         name: Xcode Compile Cache
+         with:
+           # Sticky content-hash key (append-timestamp: false). Native sources live under packages/*/ios (no packages/*/macos tree).
+```
+
+**File**: `yarn.lock` (modified, +39/-93)
+```diff
+@@ -3014,14 +3014,24 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@expo/env@npm:~2.5.4":
+-  version: 2.5.4
+-  resolution: "@expo/env@npm:2.5.4"
++"@expo/env@npm:~2.1.3":
++  version: 2.1.3
++  resolution: "@expo/env@npm:2.1.3"
+   dependencies:
+     chalk: "npm:^4.0.0"
+     debug: "npm:^4.3.4"
+     getenv: "npm:^2.0.0"
+-  checksum: 10/78799754728307ac0933a217c2e8b53693ba189bd0f1551ae5c2ad6c62bfd27d074b925b6d339259a12c2b12bbec19bef58f23863aa3f8f23177de47a1e380f3
++  checksum: 10/d47662d389c21d914da0327666202809a6ba8eada84bb276db2c1912d2a2d73f65104d8059b5c7a15d908e6d43e55d2d0223244c368a39086a6b1668962f5c8d
++  languageName: node
++  linkType: hard
 +
-+# One placement read per matrix cell. GitHub keeps a single output from a
-+# matrix of reusable workflows, so this job runs the read once per cell and
-+# returns a map the consuming matrix indexes.
-+on:
-+  workflow_call:
-+    inputs:
-+      class:
-+        description: macos or other
-+        required: true
-+        type: string
-+      default-runs-on:
-+        description: Hosted label string or JSON array
-+        required: true
-+        type: string
-+      overflow-runs-on:
-+        description: Set only for linux-nested-virt-self-hosted
-+        required: false
-+        type: string
-+        default: ''
-+      matrix:
-+        description: strategy.matrix JSON from matrix_prep
-+        required: true
-+        type: string
-+      key-fields:
-+        description: Comma-separated matrix fields, joined with '-' as the choice key
-+        required: true
-+        type: string
-+    outputs:
-+      choices:
-+        description: JSON object of cell key to runs-on JSON
-+        value: ${{ jobs.route.outputs.choices }}
-+      fallback:
-+        description: JSON hosted label used when a cell read fails
-+        value: ${{ jobs.route.outputs.fallback }}
-+jobs:
-+  route:
-+    runs-on: ubuntu-latest
-+    outputs:
-+      choices: ${{ steps.out.outputs.choices || steps.rescue.outputs.choices }}
-+      fallback: ${{ steps.out.outputs.fallback || steps.rescue.outputs.fallback }}
-+    env:
-+      RUNNER_SELECT_MODE: ${{ vars.RUNNER_SELECT_MODE }}
-+      MELLIFERA_PLACEMENT_TOKEN: ${{ secrets.MELLIFERA_PLACEMENT_TOKEN }}
-+      MELLIFERA_PLACEMENT_CA: ${{ vars.MELLIFERA_PLACEMENT_CA }}
-+      MELLIFERA_PLACEMENT_URL: ${{ vars.MELLIFERA_PLACEMENT_URL }}
-+      MELLIFERA_PLACEMENT_URL_MACOS: ${{ vars.MELLIFERA_PLACEMENT_URL_MACOS || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=macos-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+      MELLIFERA_PLACEMENT_URL_LINUX: ${{ vars.MELLIFERA_PLACEMENT_URL_LINUX || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=linux-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+      MELLIFERA_PLACEMENT_URL_LINUX_NESTED: ${{ vars.MELLIFERA_PLACEMENT_URL_LINUX_NESTED || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=linux-nested-virt-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+    steps:
-+      - name: Checkout runner-select
-+        # https://github.com/actions/checkout/releases
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          sparse-checkout: .github/actions/runner-select
-+          persist-credentials: false
-+      - id: out
-+        continue-on-error: true
-+        env:
-+          MATRIX_JSON: ${{ inputs.matrix }}
-+          KEY_FIELDS: ${{ inputs.key-fields }}
-+          INPUT_CLASS: ${{ inputs.class }}
-+          INPUT_DEFAULT_RUNS_ON: ${{ inputs.default-runs-on }}
-+          INPUT_OVERFLOW_RUNS_ON: ${{ inputs.overflow-runs-on }}
-+        run: bash .github/actions/runner-select/route-matrix.sh
-+      - id: rescue
-+        if: steps.out.outcome != 'success' || steps.out.outputs.choices == ''
-+        env:
-+          DEFAULT_RUNS_ON: ${{ inputs.default-runs-on }}
-+        run: |
-+          set -euo pipefail
-+          if printf '%s' "$DEFAULT_RUNS_ON" | jq -e . >/dev/null 2>&1; then
-+            parsed="$(printf '%s' "$DEFAULT_RUNS_ON" | jq -c .)"
-+          else
-+            parsed="$(jq -nc --arg s "$DEFAULT_RUNS_ON" '$s')"
-+          fi
-+          {
-+            echo 'choices<<EOF'
-+            echo '{}'
-+            echo EOF
-+            echo 'fallback<<EOF'
-+            echo "$parsed"
-+            echo EOF
-+          } >> "$GITHUB_OUTPUT"
-+          echo "runner-select: branch=default reason=route-fallback" >&2
-```
-
-**File**: `.github/workflows/mellifera-route.yml` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+name: Mellifera route
-+on:
-+  workflow_call:
-+    inputs:
-+      class:
-+        description: macos or other
-+        required: true
-+        type: string
-+      default-runs-on:
-+        description: Hosted label string or JSON array
-+        required: true
-+        type: string
-+      overflow-runs-on:
-+        description: Set only for linux-nested-virt-self-hosted
-+        required: false
-+        type: string
-+        default: ''
-+    outputs:
-+      runs-on:
-+        description: JSON for fromJSON()
-+        value: ${{ jobs.route.outputs.runs-on }}
-+      summary:
-+        description: One-line route decision
-+        value: ${{ jobs.route.outputs.summary }}
-+jobs:
-+  route:
-+    runs-on: ubuntu-latest
-+    outputs:
-+      runs-on: ${{ steps.sel.outputs.runs-on || steps.fallback.outputs.runs-on }}
-+      summary: ${{ steps.sel.outputs.summary || 'branch=default reason=route-fallback' }}
-+    env:
-+      RUNNER_SELECT_MODE: ${{ vars.RUNNER_SELECT_MODE }}
-+      MELLIFERA_PLACEMENT_TOKEN: ${{ secrets.MELLIFERA_PLACEMENT_TOKEN }}
-+      MELLIFERA_PLACEMENT_CA: ${{ vars.MELLIFERA_PLACEMENT_CA }}
-+      MELLIFERA_PLACEMENT_URL: ${{ vars.MELLIFERA_PLACEMENT_URL }}
-+      MELLIFERA_PLACEMENT_URL_MACOS: ${{ vars.MELLIFERA_PLACEMENT_URL_MACOS || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=macos-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+      MELLIFERA_PLACEMENT_URL_LINUX: ${{ vars.MELLIFERA_PLACEMENT_URL_LINUX || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=linux-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+      MELLIFERA_PLACEMENT_URL_LINUX_NESTED: ${{ vars.MELLIFERA_PLACEMENT_URL_LINUX_NESTED || (vars.MELLIFERA_PLACEMENT_ORIGIN && format('{0}/v1/gha/placement?repo={1}&label=linux-nested-virt-self-hosted', vars.MELLIFERA_PLACEMENT_ORIGIN, github.repository)) || '' }}
-+    steps:
-+      - id: sel
-+        continue-on-error: true
-+        uses: $/.github/actions/runner-select
-+        with:
-+          class: ${{ inputs.class }}
-+          default-runs-on: ${{ inputs.default-runs-on }}
-+          overflow-runs-on: ${{ inputs.overflow-runs-on }}
-+      - id: fallback
-+        if: steps.sel.outcome != 'success' || steps.sel.outputs.runs-on == ''
-+        env:
-+          DEFAULT_RUNS_ON: ${{ inputs.default-runs-on }}
-+        run: |
-+          set -euo pipefail
-+          if printf '%s' "$DEFAULT_RUNS_ON" | jq -e . >/dev/null 2>&1; then
-+            parsed="$(printf '%s' "$DEFAULT_RUNS_ON" | jq -c .)"
-+          else
-+            parsed="$(jq -nc --arg s "$DEFAULT_RUNS_ON" '$s')"
-+          fi
-+          echo "runs-on=${parsed}" >> "$GITHUB_OUTPUT"
-+          echo "runner-select: branch=default reason=route-fallback" >&2
++"@expo/env@npm:~2.6.0":
++  version: 2.6.0
++  resolution: "@expo/env@npm:2.6.0"
++  dependencies:
++    chalk: "npm:^4.0.0"
++    debug: "npm:^4.3.4"
++  checksum: 10/96f28a44aad8fefd4efe1d9d64f35253fc415e9e33c2009f91bf1fdf53cca82b758ff61a7a6b2470cd004ce0f0da1ea94e0d9de5d6d2224614b73f8507008f4f
+   languageName: node
+   linkType: hard
+ 
+@@ -3518,9 +3528,9 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@expo/require-utils@npm:^58.0.5":
+-  version: 58.0.5
+-  resolution: "@expo/require-utils@npm:58.0.5"
++"@expo/require-utils@npm:^58.0.6":
++  version: 58.0.6
++  resolution: "@expo/require-utils@npm:58.0.6"
+   dependencies:
+     "@babel/code-frame": "npm:^7.20.0"
+     "@babel/core": "npm:^7.25.2"
+@@ -3530,7 +3540,7 @@ __metadata:
+   peerDependenciesMeta:
+     typescript:
+       optional: true
+-  checksum: 10/e7f7ee8c29e03078540fd54f64c54c737387891a0fe15e6eff1ee12bd05e21753a65cea74dfc9d1a0abe084d6b2492a62987058b0b0064c1d323ba8e8c9cb478
++  checksum: 10/b67b633100320ef2e161b1f1a90767b64585c472aff6a7671541890202c2655b10ae814af715e3173dc8cba00ccd365f5c364f13fbde5da879edbd6b8e403d2b
+   languageName: node
+   linkType: hard
+ 
+@@ -5204,22 +5214,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@isaacs/balanced-match@npm:^4.0.1":
+-  version: 4.0.1
+-  resolution: "@isaacs/balanced-match@npm:4.0.1"
+-  checksum: 10/102fbc6d2c0d5edf8f6dbf2b3feb21695a21bc850f11bc47c4f06aa83bd8884fde3fe9d6d797d619901d96865fdcb4569ac2a54c937992c48885c5e3d9967fe8
+-  languageName: node
+-  linkType: hard
+-
+-"@isaacs/brace-expansion@npm:^5.0.0":
+-  version: 5.0.0
+-  resolution: "@isaacs/brace-expansion@npm:5.0.0"
+-  dependencies:
+-    "@isaacs/balanced-match": "npm:^4.0.1"
+-  checksum: 10/cf3b7f206aff12128214a1df764ac8cdbc517c110db85249b945282407e3dfc5c6e66286383a7c9391a059fc8e6e6a8ca82262fc9d2590bd615376141fbebd2d
+-  languageName: node
+-  linkType: hard
+-
+ "@isaacs/cliui@npm:^8.0.2":
+   version: 8.0.2
+   resolution: "@isaacs/cliui@npm:8.0.2"
+@@ -11155,7 +11149,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:5.0.8, brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.5":
++"brace-expansion@npm:5.0.8, brace-expansion@npm:^5.0.5":
+   version: 5.0.8
+   resolution: "brace-expansion@npm:5.0.8"
+   dependencies:
+@@ -14502,40 +14496,27 @@ __metadata:
+   linkType: hard
+ 
+ "expo-constants@npm:~55.0.15":
+-  version: 55.0.15
+-  resolution: "expo-constants@npm:55.0.15"
+-  dependencies:
+-    "@expo/env": "npm:~2.1.1"
+-  peerDependencies:
+-    expo: "*"
+-    react-native: "*"
+-  checksum: 10/b0992b543ef9258168932deeddf48754ba007b2950bbf2564c9407119fee6e644fa0e63ad5979e739e7e86cdc40f72fa9b785786ebbf2e39c0aa020d085cb027
+-  languageName: node
+-  linkType: hard
+-
+-"expo-constants@npm:~58.0.15":
+-  version: 58.0.15
+-  resolution: "expo-constants@npm:58.0.15"
++  version: 55.0.17
++  resolution: "expo-constants@npm:55.0.17"
+   dependencies:
+-    "@expo/env": "npm:~2.5.4"
+-    "@expo/require-utils": "npm:^58.0.5"
++    "@expo/env": "npm:~2.1.3"
+   peerDependencies:
+     expo: "*"
+     react-native: "*"
+-  checksum: 10/24d263e1df4c90e28c0b110fd90d54e26884daf56e26df8edf1e9293b231ea99d81f5c2684a182e017676fa426fbf1b6045a35f206a37760d584af390d742643
++  checksum: 10/346832bcccfd63ff75251ce106691539e2f2ee2f35b82c2c8011c66f9c92a5dfb03b9fb093ee89384ab554bec0478582903ac2ab2500102b0a1c6c1661b9e468
+   languageName: node
+   linkType: hard
+ 
+-"expo-constants@npm:~58.0.9":
+-  version: 58.0.9
+-  resolution: "expo-constants@npm:58.0.9"
++"expo-constants@npm:~58.0.15, expo-constants@npm:~58.0.9":
++  version: 58.0.16
++  resolution: "expo-constants@npm:58.0.16"
+   dependencies:
+-    "@expo/env": "npm:~2.5.1"
+-    "@expo/require-utils": "npm:^58.0.2"
++    "@expo/env": "npm:~2.6.0"
++    "@expo/require-utils": "npm:^58.0.6"
+   peerDependencies:
+     expo: "*"
+     react-native: "*"
+-  checksum: 10/fd1ebab86390278f1f64036f00fd993c78e122680b19bb06fcd82fbd769bb81e581c839e993a744b22cd09bf78dbe96e942f6c3b0ac59db870fbf3f633c2c954
++  checksum: 10/33cfb477dbf49ed969b5e3ffe77490a56d13a6874425496d2a193a0993a76f10ea2471b5ff817438e5f01040a3fcb277a0a56e3c8206846a4a671dd4ea4bbf77
+   languageName: node
+   linkType: hard
+ 
+@@ -17555,12 +17536,13 @@ __metadata:
+   linkType: hard
+ 
+ "install-artifact-from-github@npm:^1.4.0":
+-  version: 1.4.0
+-  resolution: "install-artifact-from-github@npm:1.4.0"
++  version: 1.8.1
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9517** (closed): build(deps): bump the github-actions-minor-patch group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #9515** (2026-11-20): ci(android): skip hosted disk cleanup on self-hosted runners (@Mastersam07)
+- **PR #9514** (closed): build(deps): bump install-artifact-from-github from 1.4.0 to 1.8.1 (@dependabot[bot])
 - **PR #9512** (closed): test(firestore, pipelines): stop asserting backend rejection of a scalar IN (@Mastersam07)
-- **PR #9501** (2026-11-20): ci: route heavy jobs through a vendored runner-select (@mikehardy)
-- **PR #9495** (2026-11-17): build(deps): dependency updates 20261117 (@russellwheatley)
-- **PR #9494** (2026-11-18): docs(messaging): fix background and quit state anchor link (@AbdElRahmanMostafa1)
-- **PR #9492** (2026-11-16): fix(android): tolerate deprecated JNI invokeJavaMethod on RN 0.89+ (@mikehardy)
+- **PR #9510** (2026-11-23): build(deps): dependency updates 20261119 (@russellwheatley)
+- **PR #9506** (closed): build(deps): bump expo-constants from 58.0.9 to 58.0.16 (@dependabot[bot])
 
 ---
 
@@ -2307,32 +1920,31 @@ useful on GitHub-hosted runners.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(android): skip hosted disk cleanup on self-hosted runners
+## X. build(deps): dependency updates 20261119
 
 **RULE**:
-When implementing operations in `.github/workflows/tests_e2e_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/linting.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74471603`: ci(android): skip hosted disk cleanup on self-hosted runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce0f96f1`: build(deps): dependency updates 20261119. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests_e2e_android.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/linting.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        # Hosted runners only: self-hosted overflow runners have ample disk and no docker CLI.
-        if: runner.environment == 'github-hosted'
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74471603` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce0f96f1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

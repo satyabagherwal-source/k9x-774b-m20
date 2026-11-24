@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:05:20.467Z",
+  "last_updated": "2026-11-24T12:19:04.234Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T12:05:19.551Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T12:05:18.735Z",
+      "processed_at": "2026-11-24T12:19:03.336Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2278,7 +2278,7 @@
       "staged_for_review": 0
     },
     "invertase-react-native-firebase-learnings.md": {
-      "processed_at": "2026-11-21T19:11:47.188Z",
+      "processed_at": "2026-11-24T12:19:02.018Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3816,9 +3816,14 @@
       "processed_at": "2026-11-24T11:31:00.451Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md": {
+      "processed_at": "2026-11-24T12:19:01.483Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3753,
-  "total_canonical_promoted": 504,
-  "total_staged_for_review": 2838
+  "total_dossiers_evaluated": 3756,
+  "total_canonical_promoted": 505,
+  "total_staged_for_review": 2840
 }

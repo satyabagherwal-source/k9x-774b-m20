@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:05:14.395Z",
-  "total_cycles_completed": 12033,
-  "total_learnings_persisted": 12033,
-  "total_rules_promoted": 11106,
+  "last_updated": "2026-11-24T12:18:29.987Z",
+  "total_cycles_completed": 12035,
+  "total_learnings_persisted": 12035,
+  "total_rules_promoted": 11107,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:51:23.137Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:00:19.589Z",
-      "repository": "jhspetersson/fselect",
-      "learningId": "learn-github-jhspetersson-fselect",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:08:34.319Z",
       "repository": "pingcap/tidb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T12:05:14.395Z",
       "repository": "open-policy-agent/opa",
       "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:18:19.568Z",
+      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:18:29.987Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

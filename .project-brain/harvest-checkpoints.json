@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:05:14.407Z",
+  "last_updated": "2026-11-24T12:18:29.997Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
-      "verified_at": "2026-11-21T19:07:36.776Z",
+      "content_hash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
+      "verified_at": "2026-11-24T12:18:29.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T19:07:36.776Z"
+      "last_updated": "2026-11-24T12:18:29.996Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -20114,6 +20114,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T11:30:08.387Z"
+    },
+    "nari-labs/Qwen3.8-27B-NariQ-GGUF": {
+      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
+      "content_hash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
+      "verified_at": "2026-11-24T12:18:19.576Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T12:18:19.576Z"
     }
   },
   "repos": {

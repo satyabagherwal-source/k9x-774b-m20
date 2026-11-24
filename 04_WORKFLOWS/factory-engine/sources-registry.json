@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T12:05:17.686Z",
-    "lastVerified": "2026-11-24T12:05:17.686Z",
+    "lastChecked": "2026-11-24T12:18:33.704Z",
+    "lastVerified": "2026-11-24T12:18:33.704Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -185,8 +185,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T11:21:59.196Z",
-    "lastVerified": "2026-11-24T11:21:59.196Z",
+    "lastChecked": "2026-11-24T12:18:33.696Z",
+    "lastVerified": "2026-11-24T12:18:33.696Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -455,8 +455,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T06:11:15.119Z",
-    "lastVerified": "2026-11-24T06:11:15.119Z",
+    "lastChecked": "2026-11-24T12:18:28.711Z",
+    "lastVerified": "2026-11-24T12:18:28.711Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2752,14 +2752,14 @@
     "officialUrl": "https://github.com/invertase/react-native-firebase",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T19:07:35.616Z",
-    "lastVerified": "2026-11-21T19:07:35.616Z",
+    "lastChecked": "2026-11-24T12:18:28.858Z",
+    "lastVerified": "2026-11-24T12:18:28.858Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
+    "contentHash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4901,9 +4901,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-23T15:54:50.153Z",
+    "lastChecked": "2026-11-24T12:18:31.350Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-23T15:54:50.153Z"
+    "lastVerified": "2026-11-24T12:18:31.350Z"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -6831,9 +6831,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-23T16:44:40.179Z",
+    "lastChecked": "2026-11-24T12:18:26.191Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-23T16:44:40.180Z"
+    "lastVerified": "2026-11-24T12:18:26.191Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -10150,9 +10150,9 @@
   "giuucmp-seoaudit": {
     "name": "seoaudit",
     "officialUrl": "https://github.com/giuucmp/seoaudit",
-    "lastChecked": "2026-11-20T06:58:26.294Z",
+    "lastChecked": "2026-11-24T12:18:21.238Z",
     "revisionIdentifier": "9d5b0d4f",
-    "lastVerified": "2026-11-20T06:58:26.294Z"
+    "lastVerified": "2026-11-24T12:18:21.238Z"
   },
   "yshrsmz-buildkonfig": {
     "name": "BuildKonfig",
@@ -14906,6 +14906,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
     "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nari-labs-qwen3.8-27b-nariq-gguf": {
+    "name": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "officialUrl": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-24T12:18:18.879Z",
+    "lastVerified": "2026-11-24T12:18:18.879Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
+    "contentHash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

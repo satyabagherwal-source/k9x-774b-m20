@@ -22123,5 +22123,17 @@
     "downloads": 0,
     "qualityScore": 880,
     "discoveredAt": "2026-11-24T11:27:53.077Z"
+  },
+  {
+    "name": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "fullName": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "url": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nari-labs/Qwen3.8-27B-NariQ-GGUF (82 likes, 8795 downloads)",
+    "likes": 82,
+    "downloads": 8795,
+    "qualityScore": 2820,
+    "discoveredAt": "2026-11-24T12:16:04.663Z"
   }
 ]

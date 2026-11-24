@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "74471603",
+    "sourceVersion": "ce0f96f1",
     "license": "NOASSERTION",
-    "contentHash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
-    "lastHarvestedAt": "2026-11-21T19:07:36.768Z",
+    "contentHash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
+    "lastHarvestedAt": "2026-11-24T12:18:29.982Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -13328,5 +13328,15 @@
     "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
     "lastHarvestedAt": "2026-11-24T11:30:08.370Z",
     "learningId": "learn-huggingface-llamaindex-ocria-nano-1"
+  },
+  "hf-nari-labs-qwen3.8-27b-nariq-gguf": {
+    "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
+    "sourceVersion": "hf-nari-labs-qwen3.8-27b-nariq-gguf",
+    "license": "Open-Source",
+    "contentHash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
+    "lastHarvestedAt": "2026-11-24T12:18:19.562Z",
+    "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T12:05:20.130Z",
-  "total_records": 2516,
+  "last_updated": "2026-11-24T12:19:03.870Z",
+  "total_records": 2519,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 952,
+      "total": 955,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1022,7 +1022,10 @@
         "DOM-D-F29632A9",
         "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-nano-1-core-invariants",
         "DOM-D-4A125361",
-        "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-nari-labs-qwen3-8-27b-nariq-gguf-core-invariants",
+        "DOM-D-07A2BC67",
+        "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co"
       ]
     },
     "E": {
@@ -9249,8 +9252,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "cbf105e471d6fa32d317055174598a9ecbf096e13d740efe01ed79c7e968c245",
-      "created_at": "2026-11-24T12:05:19.206Z"
+      "content_hash": "e560b59fb1bff1571ce4344aba1454d452728e55d318222cf06bff7e1e6ba351",
+      "created_at": "2026-11-24T12:19:03.870Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12305,8 +12308,8 @@
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "repository": "invertase/react-native-firebase",
-      "content_hash": "552fc126917564e42fb4409ac7caa1acf75b37c5cbee32b947d309851c890914",
-      "created_at": "2026-11-21T19:07:37.157Z"
+      "content_hash": "581c50c020da499f4d0a764a0a16429b6cbd2ecb8c5d618c9a87a8e0296d4770",
+      "created_at": "2026-11-24T12:18:30.391Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -12408,8 +12411,8 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-learnings-technical-construction-intelligence-in.md",
       "repository": "invertase-react-native-firebase-learnings",
-      "content_hash": "397c9cf830e14f163170b1a1b8e7c6f8380f54530a13e531e019150e07744796",
-      "created_at": "2026-11-21T19:11:47.818Z"
+      "content_hash": "ffde92c23158fe0dae844de1d33933161097dfbd6277b4d7ee54dc0470b3f5ac",
+      "created_at": "2026-11-24T12:19:02.940Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
@@ -42207,6 +42210,66 @@
       "repository": "skyzh-mini-lsm-learnings",
       "content_hash": "c787ef1685ed622c979ec3fa69bdadf395cd946baf12e8d836177242ad5839b7",
       "created_at": "2026-11-24T11:31:03.660Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nari-labs-qwen3-8-27b-nariq-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nari-labs-qwen3-8-27b-nariq-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nari-labs/Qwen3.8-27B-NariQ-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nari-labs-qwen3-8-27b-nariq-gguf-research-knowledge-intelligence-nari-labs-qw.md",
+      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "content_hash": "37b94b1d88aa7660311837deeb2694fc68d6a69bd953c6cf3fd9a505e821782e",
+      "created_at": "2026-11-24T12:18:19.784Z"
+    },
+    "DOM-D-07A2BC67": {
+      "record_id": "DOM-D-07A2BC67",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF](https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF))  \n> **Source Version**: `hf-nari-labs`  \n> **Lice",
+      "content_hash": "8ac98cdb8a259b1e9dac548fb47591a3f02bac24f9f338bfbfdd2df76f88d2c0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-nari-labs-qwen3.8-27b-nariq-gguf/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T12:18:33.814Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nari-labs-qwen3.8-27b-nariq-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nari-labs-qwen3.8-27b-nariq-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T12:19:01.446Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings",
+      "content_hash": "5dac5dbc4dc186bfefe7651d9d62234ba81c9c85e0e9b161aa38384e1a761e12",
+      "created_at": "2026-11-24T12:19:01.781Z"
     }
   }
 }
