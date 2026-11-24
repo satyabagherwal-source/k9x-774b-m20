@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:51:16.252Z",
+  "last_updated": "2026-11-24T23:04:43.742Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T22:30:19.141Z",
+      "processed_at": "2026-11-24T23:04:42.582Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1093,8 +1093,8 @@
       "staged_for_review": 1
     },
     "solidjs-solid-learnings.md": {
-      "processed_at": "2026-11-20T23:22:00.043Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T23:04:40.579Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "gocd-gocd-learnings.md": {
@@ -3866,9 +3866,14 @@
       "processed_at": "2026-11-24T22:16:05.062Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "zilliztech-claude-context-learnings.md": {
+      "processed_at": "2026-11-24T23:04:41.564Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3954,
+  "total_dossiers_evaluated": 3957,
   "total_canonical_promoted": 519,
-  "total_staged_for_review": 3015
+  "total_staged_for_review": 3018
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md`  
 > **Source**: github ([https://github.com/zilliztech/claude-context](https://github.com/zilliztech/claude-context))  
-> **Source Version**: `64a87f9b`  
+> **Source Version**: `c5326ccb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:41:41.133Z  
+> **Timestamp**: 2026-11-24T23:04:35.873Z  
 > **Learning ID**: `learn-github-zilliztech-claude-context`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zilliztech/claude-context](https://github.com/zilliztech/claude-context))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:41:41.117Z  
+> **Harvest Timestamp**: 2026-11-24T23:04:35.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code search MCP for Claude Code. Make entire codebase the context for any coding agent.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12689 stars
+- **Stars / Engagement**: 12724 stars
 
 ---
 
@@ -1333,11 +1333,11 @@ export class OllamaEmbedding extends Embedding {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #445** (2026-11-12): **ci: allow more time for npm publication processing**
-  *Symptoms*: The registry accepted the prerelease upload, but MCP took more than five minutes to become publicly available. This made a successful publish report a timeout.  Wait up to ten minutes per package and print polling progress. Existing-version checks still make retries safe. Verified with actionlint and simulated registry responses covering delayed availability beyond five minutes and a persistent timeout. 
+- **Issue #450** (2026-11-24): **fix(core): escape double quotes in the file chunk deletion filter**
+  *Symptoms*: Fixes #448 (thanks @xmgzxmgz for the report).  `deleteFileChunks` escaped backslashes before putting the path in the Milvus expression, but not double quotes:  ```ts const escapedPath = relativePath.replace(/\\/g, '\\\\'); // relativePath == "${escapedPath}" ```  A file named `say "hi".md` (valid on Linux and macOS) gives `relativePath == "say "hi".md"`, which ends the string literal early. Depending on the rest of the name the query fails, so the old chunks for that file are never deleted, or it matches other files' chunks and those get deleted.  Milvus string literals take backslash escapes, so this escapes `"` the same way as `\`:  ```ts const escapedPath = relativePath.replace(/[\\"]/g, '\\$&'); ```  ### Test plan  - New `context.delete-filter.test.ts`: `reindexByChange` with a synchronizer that reports a removed file, checking the expression passed to `query` for a name with quotes, a Windows path, and a name that tries to close the literal and add a condition. - I couldn't run the suite in my environment, so CI is the first run of the new test. 
 
-- **Issue #444** (2026-11-12): **ci: use trusted publishing for npm releases**
-  *Symptoms*: Local npm releases require session renewal and interactive verification. Move Core and MCP publishing to GitHub Actions OIDC, with Core published and available before MCP. Build and pack with pnpm 10, then publish the archives with npm 11 so workspace dependencies resolve to concrete versions.  The workflow validates matching package/tag versions, supports dry runs, skips published versions on retries, and uses `next` for prereleases. VS Code publishing moves to its own workflow and tag prefix. The release guide records the required npm trust configuration and first-publish activation deadline.  Validation: actionlint; clean builds; 52 Core and 15 MCP tests; npm archive dry runs; VSIX packaging; release-script checks for existing and partially published versions, registry failures, publish failures, and tag mismatches. Live OIDC validation will use 0.1.17-rc.0 on `next`, preserving stable 0.1.16. 
+- **Issue #448** (2026-11-24): **core: deleteFileChunks builds a Milvus filter by interpolating an unescaped file name**
+  *Symptoms*: **What**  `packages/core/src/context.ts:507-508` builds a Milvus `delete` filter by interpolating the file name into an expression string. The name comes from the indexed file path and is not escaped, so a `"` in it terminates the string literal early:  ```ts filter: `relativePath == "${relativePath}"` ```  A path containing a quote lets the rest of the expression be interpreted as filter syntax rather than as part of the path.  **Why it matters**  `deleteFileChunks` runs with the collection credentials. If the expression can be shaped by a file name, a caller who controls a path (a file in a cloned repo, a synced directory) can widen the match — `deleteFileChunks` would then drop chunks belonging to other files in the same collection. The result is silent data loss in the index rather than a crash, which makes it hard to notice.  **Where**  `packages/core/src/context.ts:507`, `:508`  **Suggested direction**  Build the expression through Milvus's parameterised form if the SDK supports it, or escape the value before interpolation. If neither is available, reject names containing the quote character with a clear error rather than passing them through.  I did not write a patch because the correct escaping depends on how upstream Milvus treats quotes inside `expr` literals (backslash vs doubled quote) and whether array fields need different handling. Happy to implement whichever the project already relies on. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1354,601 +1354,210 @@ export class OllamaEmbedding extends Embedding {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e8af511` (2026-11-12)
-**Commit Message**: fix(core): preserve source coverage in AST chunks
+### Incident Patch 1: `c5326ccb` (2026-11-24)
+**Commit Message**: Merge pull request #450 from OsamaAnsar/fix/escape-delete-filter
 
-Partition the complete source at AST boundaries and pack adjacent ranges
-within the chunk size. Use contiguous overlap within the same size budget
-and text boundaries for oversized leaves, unsupported languages, and parse
-failures. Derive line metadata from the original source offsets.
+fix(core): escape double quotes in the file chunk deletion filter
 
-Cover nine languages, adjacent definitions, large and deeply nested code,
-Unicode, overlap, and fallback behavior with regression tests.
-
-Existing indexes remain readable; reindex to apply the new chunks to
-unchanged files.
-
-**File**: `CLAUDE.md` (modified, +1/-1)
+**File**: `packages/core/src/context.delete-filter.test.ts` (added, +71/-0)
 ```diff
-@@ -58,7 +58,7 @@ Configuration is entirely via environment variables (see `.env.example` and `pac
- 
- - **Embedding** (`src/embedding/`) — `base-embedding.ts` interface with `OpenAIEmbedding`, `VoyageAIEmbedding`, `GeminiEmbedding`, `OllamaEmbedding` implementations.
- - **VectorDatabase** (`src/vectordb/`) — `MilvusVectorDatabase` (gRPC, Node-only) and `MilvusRestfulVectorDatabase` (HTTP, browser-safe). `zilliz-utils.ts` (`ClusterManager`) can provision a free Zilliz cluster and resolve an address from a token.
--- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) which falls back to `LangChainCodeSplitter` for unsupported languages or parse failures.
-+- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) partitions the complete source using AST boundaries, packs adjacent ranges, and adds overlap within the size limit. Unsupported languages and parse failures use line/character boundaries. `LangChainCodeSplitter` is available as an explicit alternative.
- 
- The public surface (`indexCodebase`, `reindexByChange`, `semanticSearch`, `clearIndex`, `hasIndex`) is re-exported from `src/index.ts`. Indexing reads files honoring ignore rules, splits them, embeds in batches, and upserts vectors. Collection name is derived from a hash of the absolute codebase path (overridable).
- 
-```
-
-**File**: `packages/core/src/splitter/ast-splitter.test.ts` (added, +167/-0)
-```diff
-@@ -0,0 +1,167 @@
-+import { AstCodeSplitter } from './ast-splitter';
-+import type { CodeChunk } from './index';
+@@ -0,0 +1,71 @@
++import { Context } from './context';
++import { Embedding, EmbeddingVector } from './embedding';
++import { Splitter } from './splitter';
++import { FileSynchronizer } from './sync/synchronizer';
++import { VectorDatabase } from './vectordb';
 +
-+function expectSourceCoverage(code: string, chunks: CodeChunk[], size: number, overlap = 0): void {
-+    let covered = 0;
-+    for (const chunk of chunks) {
-+        expect(chunk.content.length).toBeGreaterThan(0);
-+        expect(chunk.content.length).toBeLessThanOrEqual(size);
-+        const earliestStart = Math.max(0, covered - overlap, covered - chunk.content.length + 1);
-+        const start = code.indexOf(chunk.content, earliestStart);
-+        expect(start).toBeGreaterThanOrEqual(earliestStart);
-+        expect(start).toBeLessThanOrEqual(covered);
-+        const end = start + chunk.content.length;
-+        expect(end).toBeGreaterThan(covered);
-+        expect(chunk.metadata.startLine).toBe(code.slice(0, start).split('\n').length);
-+        expect(chunk.metadata.endLine).toBe(code.slice(0, end - 1).split('\n').length);
-+        covered = end;
++class TestEmbedding extends Embedding {
++    protected maxTokens = 8192;
++
++    async detectDimension(): Promise<number> {
++        return 3;
 +    }
-+    expect(covered).toBe(code.length);
-+    if (overlap === 0) expect(chunks.map(chunk => chunk.content).join('')).toBe(code);
++
++    async embed(): Promise<EmbeddingVector> {
++        return { vector: [1, 0, 0], dimension: 3 };
++    }
++
++    async embedBatch(texts: string[]): Promise<EmbeddingVector[]> {
++        return texts.map(() => ({ vector: [1, 0, 0], dimension: 3 }));
++    }
++
++    getDimension(): number {
++        return 3;
++    }
++
++    getProvider(): string {
++        return 'test';
++    }
 +}
 +
-+describe('AstCodeSplitter source coverage', () => {
-+    beforeEach(() => {
-+        jest.spyOn(console, 'log').mockImplementation(() => {});
-+        jest.spyOn(console, 'warn').mockImplementation(() => {});
++const createVectorDatabase = (): jest.Mocked<VectorDatabase> => ({
++    createCollection: jest.fn().mockResolvedValue(undefined),
++    createHybridCollection: jest.fn().mockResolvedValue(undefined),
++    dropCollection: jest.fn().mockResolvedValue(undefined),
++    hasCollection: jest.fn().mockResolvedValue(true),
++    listCollections: jest.fn().mockResolvedValue([]),
++    insert: jest.fn().mockResolvedValue(undefined),
++    insertHybrid: jest.fn().mockResolvedValue(undefined),
++    search: jest.fn().mockResolvedValue([]),
++    hybridSearch: jest.fn().mockResolvedValue([]),
++    delete: jest.fn().mockResolvedValue(undefined),
++    query: jest.fn().mockResolvedValue([]),
++    getCollectionDescription: jest.fn().mockResolvedValue(''),
++    checkCollectionLimit: jest.fn().mockResolvedValue(true),
++    getCollectionRowCount: jest.fn().mockResolvedValue(0),
++});
++
++describe('Context file chunk deletion filter', () => {
++    it.each([
++        ['say "hi".md', 'relativePath == "say \\"hi\\".md"'],
++        ['src\\windows\\path.ts', 'relativePath == "src\\\\windows\\\\path.ts"'],
++        ['a\\" or relativePath != "', 'relativePath == "a\\\\\\" or relativePath != \\""'],
++    ])('escapes %s in the query expression', async (relativePath, expected) => {
++        const vectorDatabase = createVectorDatabase();
++        const codeSplitter: Splitter = {
++            split: jest.fn().mockResolvedValue([]),
++            setChunkSize: jest.fn(),
++            setChunkOverlap: jest.fn(),
++        };
++        const context = new Context({ embedding: new TestEmbedding(), vectorDatabase, codeSplitter });
++        const codebasePath = '/project';
++        const synchronizer = {
++            checkForChanges: jest.fn().mockResolvedValue({ added: [], removed: [relativePath], modified: [] }),
++        } as unknown as FileSynchronizer;
++        context.setSynchronizer(context.getCollectionName(codebasePath), synchronizer);
++
++        await context.reindexByChange(codebasePath);
++
++        expect(vectorDatabase.query).toHaveBeenCalledWith(expect.any(String), expected, ['id']);
 +    });
-+
-+    afterEach(() => jest.restoreAllMocks());
-+
-+    const sources = [
-+        ['javascript', `// Response configuration\nconst DEFAULT_LIMIT = 17;\nres.json = function json(obj) { return JSON.stringify(obj); };\nfunction helper(value) { return String(value); }\nstart();\n`],
-+        ['typescript', `// Handler configuration\nconst DEFAULT_LIMIT: number = 17;\nconst handler = function handler(): number { return DEFAULT_LIMIT; };\nfunction helper(): number { return 1; }\nhandler();\n`],
-+        ['python', `# Request configuration\nimport os\nDEFAULT_TIMEOUT = 17\n\ndef timeout():\n    return DEFAULT_TIMEOUT\n\nprint(timeout())\n`],
-+        ['go', `// Application entry point\npackage example\nimport "fmt"\nconst defaultLimit = 17\nfunc run() { fmt.Println(defaultLimit) }\n`],
-+        ['rust', `// Retry configuration\nuse std::time::Duration;\nconst RETRY_LIMIT: u32 = 17;\nfn limit() -> u32 { RETRY_LIMIT }\n`],
-+        ['cpp', `// Retry configuration\n#include <vector>\n#define RETRY_LIMIT 17\nint limit() { return RETRY_LIMIT; }\n`],
-+        ['java', `package example;\nimport java.time.Duration;\nclass Example { static final int RETRY_LIMIT = 17; int limit() { return RETRY_LIMIT; } }\n`],
-+        ['csharp', `using System;\nnamespace Example { class App { public const int Limit = 17; public void Run() { Console.WriteLine(Limit); } } }\n`],
-+        ['scala', `import scala.util.Try\nobject Example { val retryLimit = 17; def limit(): Int = retryLimit; println(limit()) }\n`],
-+    ];
-+
-+    it.each(sources)('preserves every source interval when splitting %s', async (language, code) => {
-+        const chunks = await new AstCodeSplitter(80, 0).split(code, language, 'example');
-+        expect(chunks.length).toBeGreaterThan(1);
-+        expectSourceCoverage(code, chunks, 80);
-+        for (const chunk of chunks) {
-+            expect(chunk.metadata).toMatchObject({ language, filePath: 'example' });
-+        }
-+    });
-+
-+    it('packs adjacent small functions and definitions into one chunk', async () => {
-+        const code = 'function a() { return 1; }\nconst limit = 17;\nfunction b() { return limit; }\n';
-+        const chunks = await new AstCodeSplitter(2500, 0).split(code, 'javascript');
-+        expect(chunks).toHaveLength(1);
-+        expectSourceCoverage(code, chunks, 2500);
-+    });
-+
-+    it('merges short definitions with the preceding function when they fit', async () => {
-+        const a = `function a() { return '${'a'.repeat(100)}'; }`;
-+        const definitions = '\nconst limit = 17;';
-+        const b = `\nfunction b() { return '${'b'.repeat(100)}'; }`;
-+        const code = a + definitions + b;
-+        const chunks = await new AstCodeSplitter(180, 0).split(code, 'javascript');
-+        expect(chunks.map(c => c.content)).toEqual([a + definitions, b]);
-+        expectSourceCoverage(code, chunks, 180);
-+    });
-+
-+    it('merges short definitions with the next function when the preceding chunk is full', async () => {
-+        const a = `function a() { return '${'a'.repeat(140)}'; }`;
-+        const definitions = '\nconst limit = 17;';
-+        const b = '\nfunction b() { return limit; }';
-+        const code = a + definitions + b;
-+        const chunks = await new AstCodeSplitter(180, 0).split(code, 'javascript');
-+        expect(chunks.map(c => c.content)).toEqual([a, definitions + b]);
-+        expectSourceCoverage(code, chunks, 180);
-+    });
-+
-+    it('splits large functions without losing or duplicating nested code', async () => {
-+        const body = Array.from({ length: 120 }, (_, i) => `    total += ${i};`).join('\n');
-+        const code = `// Header\nclass Counter {\n  a(
++});
 ```
 
-**File**: `packages/core/src/splitter/ast-splitter.ts` (modified, +114/-215)
+**File**: `packages/core/src/context.ts` (modified, +2/-2)
 ```diff
-@@ -1,7 +1,6 @@
- import Parser from 'tree-sitter';
--import { Splitter, CodeChunk } from './index';
-+import type { Splitter, CodeChunk } from './index';
- 
--// Language parsers
- const JavaScript = require('tree-sitter-javascript');
- const TypeScript = require('tree-sitter-typescript').typescript;
- const Python = require('tree-sitter-python');
-@@ -12,259 +11,159 @@ const Rust = require('tree-sitter-rust');
- const CSharp = require('tree-sitter-c-sharp');
- const Scala = require('tree-sitter-scala');
- 
--// Node types that represent logical code units
--const SPLITTABLE_NODE_TYPES = {
--    javascript: ['function_declaration', 'arrow_function', 'class_declaration', 'method_definition', 'export_statement'],
--    typescript: ['function_declaration', 'arrow_function', 'class_declaration', 'method_definition', 'export_statement', 'interface_declaration', 'type_alias_declaration'],
--    python: ['function_definition', 'class_definition', 'decorated_definition', 'async_function_definition'],
--    java: ['method_declaration', 'class_declaration', 'interface_declaration', 'constructor_declaration'],
--    cpp: ['function_definition', 'class_specifier', 'namespace_definition', 'declaration'],
--    go: ['function_declaration', 'method_declaration', 'type_declaration', 'var_declaration', 'const_declaration'],
--    rust: ['function_item', 'impl_item', 'struct_item', 'enum_item', 'trait_item', 'mod_item'],
--    csharp: ['method_declaration', 'class_declaration', 'interface_declaration', 'struct_declaration', 'enum_declaration'],
--    scala: ['method_declaration', 'class_declaration', 'interface_declaration', 'constructor_declaration']
-+const LANGUAGE_PARSERS: Record<string, any> = {
-+    javascript: JavaScript, js: JavaScript,
-+    typescript: TypeScript, ts: TypeScript,
-+    python: Python, py: Python,
-+    java: Java,
-+    cpp: Cpp, 'c++': Cpp, c: Cpp,
-+    go: Go,
-+    rust: Rust, rs: Rust,
-+    csharp: CSharp, cs: CSharp,
-+    scala: Scala,
- };
- 
-+interface SourceRange {
-+    start: number;
-+    end: number;
-+}
-+
- export class AstCodeSplitter implements Splitter {
--    private chunkSize: number = 2500;
--    private chunkOverlap: number = 300;
-+    private chunkSize = 2500;
-+    private chunkOverlap = 300;
-     private parser: Parser;
--    private langchainFallback: any; // LangChainCodeSplitter for fallback
- 
--    constructor(chunkSize?: number, chunkOverlap?: number) {
--        if (chunkSize) this.chunkSize = chunkSize;
--        if (chunkOverlap) this.chunkOverlap = chunkOverlap;
-+    constructor(chunkSize = 2500, chunkOverlap = 300) {
-+        this.setChunkSize(chunkSize);
-+        this.setChunkOverlap(chunkOverlap);
-         this.parser = new Parser();
--
--        // Initialize fallback splitter
--        const { LangChainCodeSplitter } = require('./langchain-splitter');
--        this.langchainFallback = new LangChainCodeSplitter(chunkSize, chunkOverlap);
+@@ -504,8 +504,8 @@ export class Context {
      }
  
-     async split(code: string, language: string, filePath?: string): Promise<CodeChunk[]> {
--        // Check if language is supported by AST splitter
--        const langConfig = this.getLanguageConfig(language);
--        if (!langConfig) {
--            console.log(`📝 Language ${language} not supported by AST, using LangChain splitter for: ${filePath || 'unknown'}`);
--            return await this.langchainFallback.split(code, language, filePath);
-+        if (code.length === 0) return [];
-+
-+        let root: Parser.SyntaxNode | undefined;
-+        if (AstCodeSplitter.isLanguageSupported(language)) {
-+            try {
-+                this.parser.setLanguage(LANGUAGE_PARSERS[language.toLowerCase()]);
-+                const tree = this.parser.parse(code);
-+                if (!tree.rootNode.hasError) root = tree.rootNode;
-+            } catch (error) {
-+                console.warn('[ASTSplitter] Using text boundaries for ' + (filePath || language) + ': ' + error);
-+            }
-         }
- 
--        try {
--            console.log(`🌳 Using AST splitter for ${language} file: ${filePath || 'unknown'}`);
--
--            this.parser.setLanguage(langConfig.parser);
--            const tree = this.parser.parse(code);
--
--            if (!tree.rootNode) {
--                console.warn(`[ASTSplitter] ⚠️  Failed to parse AST for ${language}, falling back to LangChain: ${filePath || 'unknown'}`);
--                return await this.langchainFallback.split(code, language, filePath);
-+        // Ranges partition the entire source. Pack adjacent ranges without
-+        // emitting a parent node again alongside its children.
-+        const ranges: SourceRange[] = [];
-+        for (const range of this.splitRange(code, 0, code.length, root)) {
-+            const previous = ranges[ranges.length - 1];
-+            if (previous && range.end - previous.start <= this.chunkSize) {
-+                previous.end = range.end;
-+            } else {
-+                ranges.push({ ...range });
-             }
-+        }
- 
--            // Extract chunks based on AST nodes
--            const chu
+     private async deleteFileChunks(collectionName: string, relativePath: string): Promise<void> {
+-        // Escape backslashes for Milvus query expression (Windows path compatibility)
+-        const escapedPath = relativePath.replace(/\\/g, '\\\\');
++        // Escape backslashes (Windows paths) and double quotes, which would otherwise end the string literal
++        const escapedPath = relativePath.replace(/[\\"]/g, '\\$&');
+         const results = await this.vectorDatabase.query(
+             collectionName,
+             `relativePath == "${escapedPath}"`,
 ```
 
 ---
 
-### Incident Patch 2: `98133626` (2026-11-11)
-**Commit Message**: fix(mcp): preserve active indexing during snapshot recovery
+### Incident Patch 2: `67938861` (2026-11-21)
+**Commit Message**: fix(core): escape double quotes in the file chunk deletion filter
 
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
+deleteFileChunks escaped backslashes but not double quotes, so a file
+name containing " ended the string literal in the Milvus expression.
 
-**File**: `packages/mcp/src/handlers.reconcile-snapshot.test.ts` (added, +227/-0)
+Fixes #448
+
+**File**: `packages/core/src/context.delete-filter.test.ts` (added, +71/-0)
 ```diff
-@@ -0,0 +1,227 @@
-+import assert from "node:assert/strict";
-+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
-+import { syncBuiltinESMExports } from "node:module";
-+import os from "node:os";
-+import path from "node:path";
-+import test, { type TestContext } from "node:test";
-+import type { Context } from "@zilliz/claude-context-core";
+@@ -0,0 +1,71 @@
++import { Context } from './context';
++import { Embedding, EmbeddingVector } from './embedding';
++import { Splitter } from './splitter';
++import { FileSynchronizer } from './sync/synchronizer';
++import { VectorDatabase } from './vectordb';
 +
-+import { ToolHandlers } from "./handlers.js";
-+import { SnapshotManager } from "./snapshot.js";
++class TestEmbedding extends Embedding {
++    protected maxTokens = 8192;
 +
-+function deferred<T>() {
-+    let resolve!: (value: T) => void;
-+    let reject!: (error: Error) => void;
-+    const promise = new Promise<T>((resolvePromise, rejectPromise) => {
-+        resolve = resolvePromise;
-+        reject = rejectPromise;
-+    });
-+    return { promise, resolve, reject };
-+}
++    async detectDimension(): Promise<number> {
++        return 3;
++    }
 +
-+async function withFixture(
-+    t: TestContext,
-+    run: (codebasePath: string, snapshot: SnapshotManager) => Promise<void>
-+): Promise<void> {
-+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "mcp-reconcile-"));
-+    const stateDirectory = path.join(tempRoot, "state");
-+    const codebasePath = path.join(tempRoot, "repo");
-+    await mkdir(path.join(stateDirectory, ".context"), { recursive: true });
-+    await mkdir(codebasePath);
-+    await writeFile(path.join(codebasePath, "index.ts"), "export const value = 1;\n");
++    async embed(): Promise<EmbeddingVector> {
++        return { vector: [1, 0, 0], dimension: 3 };
++    }
 +
-+    const homeMock = t.mock.method(os, "homedir", () => stateDirectory);
-+    syncBuiltinESMExports();
-+    try {
-+        await run(codebasePath, new SnapshotManager());
-+    } finally {
-+        homeMock.mock.restore();
-+        syncBuiltinESMExports();
-+        await rm(tempRoot, { recursive: true, force: true });
++    async embedBatch(texts: string[]): Promise<EmbeddingVector[]> {
++        return texts.map(() => ({ vector: [1, 0, 0], dimension: 3 }));
++    }
++
++    getDimension(): number {
++        return 3;
++    }
++
++    getProvider(): string {
++        return 'test';
 +    }
 +}
 +
-+function createHarness(codebasePath: string, snapshot: SnapshotManager) {
-+    const collectionName = "hybrid_code_chunks_reconcile_test";
-+    let collectionExists = false;
-+    let rowCount = 0;
-+    const entered = deferred<void>();
-+    const completion = deferred<void>();
-+    const database = {
-+        listCollections: async () => collectionExists ? [collectionName] : [],
-+        getCollectionDescription: async () => `codebasePath:${codebasePath}`,
-+        getCollectionRowCount: async () => rowCount,
-+        checkCollectionLimit: async () => true
-+    };
-+    const context = {
-+        getCollectionName: () => collectionName,
-+        getVectorDatabase: () => database,
-+        hasIndex: async () => collectionExists,
-+        getEffectiveIgnorePatterns: async () => [],
-+        getEffectiveSupportedExtensions: () => [".ts"],
-+        getPreparedCollection: async () => { collectionExists = true; },
-+        setSynchronizer: () => {},
-+        getEmbedding: () => ({ getProvider: () => "test", getDimension: () => 1 }),
-+        indexCodebase: async (_path: string, progress: (value: object) => void) => {
-+            rowCount = 4;
-+            progress({ phase: "Indexing", percentage: 33, current: 4, total: 12 });
-+            entered.resolve();
-+            await completion.promise;
-+            rowCount = 24;
-+            return { indexedFiles: 12, totalChunks: 24, status: "completed" as const };
-+        },
-+        semanticSearch: async () => [{
-+            relativePath: "index.ts", startLine: 1, endLine: 1,
-+            content: "export const value = 1;", score: 0.9
-+        }]
-+    };
-+    const handlers = new ToolHandlers(context as unknown as Context, snapshot);
-+    return {
-+        handlers,
-+        database,
-+        prepareCollection(rows: number) { collectionExists = true; rowCount = rows; },
-+        finish(error?: Error) {
-+            if (error) completion.reject(error);
-+            else completion.resolve();
-+        },
-+        async start() {
-+            const response = await handlers.handleIndexCodebase({ path: codebasePath });
-+            assert.equal(response.isError, undefined, response.content[0].text);
-+            // Only read the registered promise to join the task during cleanup.
-+            // The public handler creates and removes the task itself.
-+            const task = (handlers as any).indexingTasks.get(codebasePath);
-+            assert.ok(task);
-+            await Promise.race([
-+                entered.promise,
-+                task.promise.then(() => { throw new Error("Indexing ended before reaching the test barrier"); })
-+            ]);
-+            return { settled: task.promise as Promise<void> };
-+        }
-+    };
-+}
++const createVectorDatabase = (): jest.Mocked<VectorDatabase> => ({
++    createCollection: jest.fn().mockResolvedValue(undefined),
++    createHybridCollection: jest.fn().mockResolvedValue(undefined),
++    dropCollection: jest.fn().mockResolvedValue(undefined),
++    hasCollection: jest.fn().mockResolvedValue(true),
++    listCollections: jest.fn().mockResolvedValue([]),
++    insert: jest.fn().mockResolvedValue(undefined),
++    insertHybrid: jest.fn().mockResolvedValue(undefined),
++    search: jest.fn().mockResolvedValue([]),
++    hybridSearch: jest.fn().mockResolvedValue([]),
++    delete: jest.fn().mockResolvedValue(undefined),
++    query: jest.fn().mockResolvedValue([]),
++    getCollectionDescription: jest.fn().mockResolvedValue(''),
++    checkCollectionLimit: jest.fn().mockResolvedValue(true),
++    getCollectionRowCount: jest.fn().mockResolvedValue(0),
++});
 +
-+test("status and search preserve an active indexing task until it completes", async t => {
-+    await withFixture(t, async (codebasePath, snapshot) => {
-+        const harness = createHarness(codebasePath, snapshot);
-+        const { settled } = await harness.start();
-+        try {
-+            const status = await harness.handlers.handleGetIndexingStatus({ path: codebasePath });
-+            assert.match(status.content[0].text, /currently being indexed/);
-+            assert.equal(snapshot.getCodebaseStatus(codebasePath), "indexing");
-+            assert.deepEqual(snapshot.getIndexedCodebases(), []);
++describe('Context file chunk deletion filter', () => {
++    it.each([
++        ['say "hi".md', 'relativePath == "say \\"hi\\".md"'],
++        ['src\\windows\\path.ts', 'relativePath == "src\\\\windows\\\\path.ts"'],
++        ['a\\" or relativePath != "', 'relativePath == "a\\\\\\" or relativePath != \\""'],
++    ])('escapes %s in the query expression', async (relativePath, expected) => {
++        const vectorDatabase = createVectorDatabase();
++        const codeSplitter: Splitter = {
++            split: jest.fn().mockResolvedValue([]),
++            setChunkSize: jest.fn(),
++            setChunkOverlap: jest.fn(),
++        };
++        const context = new Context({ embedding: new TestEmbedding(), vectorDatabase, codeSplitter });
++        const codebasePath = '/project';
++        const synchronizer = {
++            checkForChanges: jest.fn().mockResolvedValue({ added: [], removed: [relativePath], modified: [] }),
++        } as unknown as FileSynchronizer;
++        context.setSynchronizer(context.getCollectionName(codebasePath), synchronizer);
 +
-+            const search = awa
++        await context.reindexByChange(codebasePath);
++
++        expect(vectorDatabase.query).toHaveBeenCalledWith(expect.any(String), expected, ['id']);
++    });
++});
 ```
 
-**File**: `packages/mcp/src/handlers.ts` (modified, +15/-0)
+**File**: `packages/core/src/context.ts` (modified, +2/-2)
 ```diff
-@@ -287,8 +287,23 @@ export class ToolHandlers {
-             // Query Milvus for the real row count — if unknown/empty, skip the write
-             // so we don't persist a poisoning 0/0+completed entry (Issue #295).
-             for (const databaseCodebase of databaseCodebases) {
-+                // Partial rows from our active task do not establish completion.
-+                // Persisted 'indexing' entries alone may be stale and still need recovery.
-+                if (this.indexingTasks.has(databaseCodebase)) {
-+                    continue;
-+                }
-+
-                 if (!localCodebases.has(databaseCodebase)) {
-+                    const infoBeforeQuery = this.snapshotManager.getCodebaseInfo(databaseCodebase);
-                     const stats = await this.queryCollectionStats(databaseCodebase);
-+
-+                    // A task can start, finish, or fail while the database query awaits I/O.
-+                    // State transitions replace the info object; preserve the newer state.
-+                    if (this.indexingTasks.has(databaseCodebase)
-+                        || this.snapshotManager.getCodebaseInfo(databaseCodebase) !== infoBeforeQuery) {
-+                        continue;
-+                    }
-+
-                     if (stats) {
-                         this.snapshotManager.setCodebaseIndexed(databaseCodebase, {
-                             ...stats,
-```
-
----
-
-### Incident Patch 3: `4efb4bfe` (2026-11-12)
-**Commit Message**: Merge pull request #443 from zc277584121/codex/fix-ast-source-coverage
-
-fix(core): preserve source coverage in AST chunks
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ Configuration is entirely via environment variables (see `.env.example` and `pac
- 
- - **Embedding** (`src/embedding/`) — `base-embedding.ts` interface with `OpenAIEmbedding`, `VoyageAIEmbedding`, `GeminiEmbedding`, `OllamaEmbedding` implementations.
- - **VectorDatabase** (`src/vectordb/`) — `MilvusVectorDatabase` (gRPC, Node-only) and `MilvusRestfulVectorDatabase` (HTTP, browser-safe). `zilliz-utils.ts` (`ClusterManager`) can provision a free Zilliz cluster and resolve an address from a token.
--- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) which falls back to `LangChainCodeSplitter` for unsupported languages or parse failures.
-+- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) partitions the complete source using AST boundaries, packs adjacent ranges, and adds overlap within the size limit. Unsupported languages and parse failures use line/character boundaries. `LangChainCodeSplitter` is available as an explicit alternative.
- 
- The public surface (`indexCodebase`, `reindexByChange`, `semanticSearch`, `clearIndex`, `hasIndex`) is re-exported from `src/index.ts`. Indexing reads files honoring ignore rules, splits them, embeds in batches, and upserts vectors. Collection name is derived from a hash of the absolute codebase path (overridable).
- 
-```
-
-**File**: `packages/core/src/splitter/ast-splitter.test.ts` (added, +167/-0)
-```diff
-@@ -0,0 +1,167 @@
-+import { AstCodeSplitter } from './ast-splitter';
-+import type { CodeChunk } from './index';
-+
-+function expectSourceCoverage(code: string, chunks: CodeChunk[], size: number, overlap = 0): void {
-+    let covered = 0;
-+    for (const chunk of chunks) {
-+        expect(chunk.content.length).toBeGreaterThan(0);
-+        expect(chunk.content.length).toBeLessThanOrEqual(size);
-+        const earliestStart = Math.max(0, covered - overlap, covered - chunk.content.length + 1);
-+        const start = code.indexOf(chunk.content, earliestStart);
-+        expect(start).toBeGreaterThanOrEqual(earliestStart);
-+        expect(start).toBeLessThanOrEqual(covered);
-+        const end = start + chunk.content.length;
-+        expect(end).toBeGreaterThan(covered);
-+        expect(chunk.metadata.startLine).toBe(code.slice(0, start).split('\n').length);
-+        expect(chunk.metadata.endLine).toBe(code.slice(0, end - 1).split('\n').length);
-+        covered = end;
-+    }
-+    expect(covered).toBe(code.length);
-+    if (overlap === 0) expect(chunks.map(chunk => chunk.content).join('')).toBe(code);
-+}
-+
-+describe('AstCodeSplitter source coverage', () => {
-+    beforeEach(() => {
-+        jest.spyOn(console, 'log').mockImplementation(() => {});
-+        jest.spyOn(console, 'warn').mockImplementation(() => {});
-+    });
-+
-+    afterEach(() => jest.restoreAllMocks());
-+
-+    const sources = [
-+        ['javascript', `// Response configuration\nconst DEFAULT_LIMIT = 17;\nres.json = function json(obj) { return JSON.stringify(obj); };\nfunction helper(value) { return String(value); }\nstart();\n`],
-+        ['typescript', `// Handler configuration\nconst DEFAULT_LIMIT: number = 17;\nconst handler = function handler(): number { return DEFAULT_LIMIT; };\nfunction helper(): number { return 1; }\nhandler();\n`],
-+        ['python', `# Request configuration\nimport os\nDEFAULT_TIMEOUT = 17\n\ndef timeout():\n    return DEFAULT_TIMEOUT\n\nprint(timeout())\n`],
-+        ['go', `// Application entry point\npackage example\nimport "fmt"\nconst defaultLimit = 17\nfunc run() { fmt.Println(defaultLimit) }\n`],
-+        ['rust', `// Retry configuration\nuse std::time::Duration;\nconst RETRY_LIMIT: u32 = 17;\nfn limit() -> u32 { RETRY_LIMIT }\n`],
-+        ['cpp', `// Retry configuration\n#include <vector>\n#define RETRY_LIMIT 17\nint limit() { return RETRY_LIMIT; }\n`],
-+        ['java', `package example;\nimport java.time.Duration;\nclass Example { static final int RETRY_LIMIT = 17; int limit() { return RETRY_LIMIT; } }\n`],
-+        ['csharp', `using System;\nnamespace Example { class App { public const int Limit = 17; public void Run() { Console.WriteLine(Limit); } } }\n`],
-+        ['scala', `import scala.util.Try\nobject Example { val retryLimit = 17; def limit(): Int = retryLimit; println(limit()) }\n`],
-+    ];
-+
-+    it.each(sources)('preserves every source interval when splitting %s', async (language, code) => {
-+        const chunks = await new AstCodeSplitter(80, 0).split(code, language, 'example');
-+        expect(chunks.length).toBeGreaterThan(1);
-+        expectSourceCoverage(code, chunks, 80);
-+        for (const chunk of chunks) {
-+            expect(chunk.metadata).toMatchObject({ language, filePath: 'example' });
-+        }
-+    });
-+
-+    it('packs adjacent small functions and definitions into one chunk', async () => {
-+        const code = 'function a() { return 1; }\nconst limit = 17;\nfunction b() { return limit; }\n';
-+        const chunks = await new AstCodeSplitter(2500, 0).split(code, 'javascript');
-+        expect(chunks).toHaveLength(1);
-+        expectSourceCoverage(code, chunks, 2500);
-+    });
-+
-+    it('merges short definitions with the preceding function when they fit', async () => {
-+        const a = `function a() { return '${'a'.repeat(100)}'; }`;
-+        const definitions = '\nconst limit = 17;';
-+        const b = `\nfunction b() { return '${'b'.repeat(100)}'; }`;
-+        const code = a + definitions + b;
-+        const chunks = await new AstCodeSplitter(180, 0).split(code, 'javascript');
-+        expect(chunks.map(c => c.content)).toEqual([a + definitions, b]);
-+        expectSourceCoverage(code, chunks, 180);
-+    });
-+
-+    it('merges short definitions with the next function when the preceding chunk is full', async () => {
-+        const a = `function a() { return '${'a'.repeat(140)}'; }`;
-+        const definitions = '\nconst limit = 17;';
-+        const b = '\nfunction b() { return limit; }';
-+        const code = a + definitions + b;
-+        const chunks = await new AstCodeSplitter(180, 0).split(code, 'javascript');
-+        expect(chunks.map(c => c.content)).toEqual([a, definitions + b]);
-+        expectSourceCoverage(code, chunks, 180);
-+    });
-+
-+    it('splits large functions without losing or duplicating nested code', async () => {
-+        const body = Array.from({ length: 120 }, (_, i) => `    total += ${i};`).join('\n');
-+        const code = `// Header\nclass Counter {\n  a(
-```
-
-**File**: `packages/core/src/splitter/ast-splitter.ts` (modified, +114/-215)
-```diff
-@@ -1,7 +1,6 @@
- import Parser from 'tree-sitter';
--import { Splitter, CodeChunk } from './index';
-+import type { Splitter, CodeChunk } from './index';
- 
--// Language parsers
- const JavaScript = require('tree-sitter-javascript');
- const TypeScript = require('tree-sitter-typescript').typescript;
- const Python = require('tree-sitter-python');
-@@ -12,259 +11,159 @@ const Rust = require('tree-sitter-rust');
- const CSharp = require('tree-sitter-c-sharp');
- const Scala = require('tree-sitter-scala');
- 
--// Node types that represent logical code units
--const SPLITTABLE_NODE_TYPES = {
--    javascript: ['function_declaration', 'arrow_function', 'class_declaration', 'method_definition', 'export_statement'],
--    typescript: ['function_declaration', 'arrow_function', 'class_declaration', 'method_definition', 'export_statement', 'interface_declaration', 'type_alias_declaration'],
--    python: ['function_definition', 'class_definition', 'decorated_definition', 'async_function_definition'],
--    java: ['method_declaration', 'class_declaration', 'interface_declaration', 'constructor_declaration'],
--    cpp: ['function_definition', 'class_specifier', 'namespace_definition', 'declaration'],
--    go: ['function_declaration', 'method_declaration', 'type_declaration', 'var_declaration', 'const_declaration'],
--    rust: ['function_item', 'impl_item', 'struct_item', 'enum_item', 'trait_item', 'mod_item'],
--    csharp: ['method_declaration', 'class_declaration', 'interface_declaration', 'struct_declaration', 'enum_declaration'],
--    scala: ['method_declaration', 'class_declaration', 'interface_declaration', 'constructor_declaration']
-+const LANGUAGE_PARSERS: Record<string, any> = {
-+    javascript: JavaScript, js: JavaScript,
-+    typescript: TypeScript, ts: TypeScript,
-+    python: Python, py: Python,
-+    java: Java,
-+    cpp: Cpp, 'c++': Cpp, c: Cpp,
-+    go: Go,
-+    rust: Rust, rs: Rust,
-+    csharp: CSharp, cs: CSharp,
-+    scala: Scala,
- };
- 
-+interface SourceRange {
-+    start: number;
-+    end: number;
-+}
-+
- export class AstCodeSplitter implements Splitter {
--    private chunkSize: number = 2500;
--    private chunkOverlap: number = 300;
-+    private chunkSize = 2500;
-+    private chunkOverlap = 300;
-     private parser: Parser;
--    private langchainFallback: any; // LangChainCodeSplitter for fallback
- 
--    constructor(chunkSize?: number, chunkOverlap?: number) {
--        if (chunkSize) this.chunkSize = chunkSize;
--        if (chunkOverlap) this.chunkOverlap = chunkOverlap;
-+    constructor(chunkSize = 2500, chunkOverlap = 300) {
-+        this.setChunkSize(chunkSize);
-+        this.setChunkOverlap(chunkOverlap);
-         this.parser = new Parser();
--
--        // Initialize fallback splitter
--        const { LangChainCodeSplitter } = require('./langchain-splitter');
--        this.langchainFallback = new LangChainCodeSplitter(chunkSize, chunkOverlap);
+@@ -504,8 +504,8 @@ export class Context {
      }
  
-     async split(code: string, language: string, filePath?: string): Promise<CodeChunk[]> {
--        // Check if language is supported by AST splitter
--        const langConfig = this.getLanguageConfig(language);
--        if (!langConfig) {
--            console.log(`📝 Language ${language} not supported by AST, using LangChain splitter for: ${filePath || 'unknown'}`);
--            return await this.langchainFallback.split(code, language, filePath);
-+        if (code.length === 0) return [];
-+
-+        let root: Parser.SyntaxNode | undefined;
-+        if (AstCodeSplitter.isLanguageSupported(language)) {
-+            try {
-+                this.parser.setLanguage(LANGUAGE_PARSERS[language.toLowerCase()]);
-+                const tree = this.parser.parse(code);
-+                if (!tree.rootNode.hasError) root = tree.rootNode;
-+            } catch (error) {
-+                console.warn('[ASTSplitter] Using text boundaries for ' + (filePath || language) + ': ' + error);
-+            }
-         }
- 
--        try {
--            console.log(`🌳 Using AST splitter for ${language} file: ${filePath || 'unknown'}`);
--
--            this.parser.setLanguage(langConfig.parser);
--            const tree = this.parser.parse(code);
--
--            if (!tree.rootNode) {
--                console.warn(`[ASTSplitter] ⚠️  Failed to parse AST for ${language}, falling back to LangChain: ${filePath || 'unknown'}`);
--                return await this.langchainFallback.split(code, language, filePath);
-+        // Ranges partition the entire source. Pack adjacent ranges without
-+        // emitting a parent node again alongside its children.
-+        const ranges: SourceRange[] = [];
-+        for (const range of this.splitRange(code, 0, code.length, root)) {
-+            const previous = ranges[ranges.length - 1];
-+            if (previous && range.end - previous.start <= this.chunkSize) {
-+                previous.end = range.end;
-+            } else {
-+                ranges.push({ ...range });
-             }
-+        }
- 
--            // Extract chunks based on AST nodes
--            const chu
+     private async deleteFileChunks(collectionName: string, relativePath: string): Promise<void> {
+-        // Escape backslashes for Milvus query expression (Windows path compatibility)
+-        const escapedPath = relativePath.replace(/\\/g, '\\\\');
++        // Escape backslashes (Windows paths) and double quotes, which would otherwise end the string literal
++        const escapedPath = relativePath.replace(/[\\"]/g, '\\$&');
+         const results = await this.vectorDatabase.query(
+             collectionName,
+             `relativePath == "${escapedPath}"`,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #450** (2026-11-24): fix(core): escape double quotes in the file chunk deletion filter (@OsamaAnsar)
 - **PR #445** (2026-11-12): ci: allow more time for npm publication processing (@zc277584121)
 - **PR #444** (2026-11-12): ci: use trusted publishing for npm releases (@zc277584121)
 - **PR #443** (2026-11-12): fix(core): preserve source coverage in AST chunks (@zc277584121)
 - **PR #442** (2026-11-11): fix(mcp): preserve active indexing during snapshot recovery (@zc277584121)
 - **PR #423** (closed): fix: zilliztech/claude-context#421 (@Zewang0217)
-- **PR #407** (2026-07-14): docs: add CLAUDE.md and AGENTS.md repository guide (@zc277584121)
 
 ---
 
@@ -1968,28 +1577,65 @@ fix(core): preserve source coverage in AST chunks
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): preserve source coverage in AST chunks
+## X. Empirical Invariant Guard in context.delete-filter.test.ts
 
 **RULE**:
-When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zilliztech/claude-context. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/src/context.delete-filter.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zilliztech/claude-context. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e8af511`: core): preserve source coverage in AST chunks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5326ccb`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/context.delete-filter.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) partitions the complete source using AST boundaries, packs adjacent ranges, and adds overlap within the size limit. Unsupported languages and parse failures use line/character boundaries. `LangChainCodeSplitter` is available as an explicit alternative.
+import { Context } from './context';
+import { Embedding, EmbeddingVector } from './embedding';
+import { Splitter } from './splitter';
+import { FileSynchronizer } from './sync/synchronizer';
+import { VectorDatabase } from './vectordb';
+
+class TestEmbedding extends Embedding {
+    protected maxTokens = 8192;
+
+    async detectDimension(): Promise<number> {
+        return 3;
+    }
+
+    async embed(): Promise<EmbeddingVector> {
+        return { vector: [1, 0, 0], dimension: 3 };
+    }
+
+    async embedBatch(texts: string[]): Promise<EmbeddingVector[]> {
+        return texts.map(() => ({ vector: [1, 0, 0], dimension: 3 }));
+    }
+
+    getDimension(): number {
+        return 3;
+    }
+
+    getProvider(): string {
+        return 'test';
+    }
+}
+
+const createVectorDatabase = (): jest.Mocked<VectorDatabase> => ({
+    createCollection: jest.fn().mockResolvedValue(undefined),
+    createHybridCollection: jest.fn().mockResolvedValue(undefined),
+    dropCollection: jest.fn().mockResolvedValue(undefined),
+    hasCollection: jest.fn().mockResolvedValue(true),
+    listCollections: jest.fn().mockResolvedValue([]),
+    insert: jest.fn().mockResolvedValue(undefined),
+    insertHybrid: jest.fn().mockResol
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-- **Splitter** (`src/splitter/`) — `AstCodeSplitter` (tree-sitter, the default at 2500/300 chunk/overlap) which falls back to `LangChainCodeSplitter` for unsupported languages or parse failures.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e8af511` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5326ccb` are properly handled with clean fallback behavior.

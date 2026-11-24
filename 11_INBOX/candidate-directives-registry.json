@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:51:15.786Z",
+  "last_updated": "2026-11-24T23:04:43.064Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-PV91",
+      "id": "CD-Y3AT",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-PV91-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y3AT-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -57640,6 +57640,57 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2CA157-draft-nuc-141-reactive-cosecant.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-XR65",
+      "directive_title": "send an empty revalidate declaration as a non-empty header",
+      "source_repo": "solidjs/solid",
+      "source_commit": "72b5111f",
+      "staged_file": "11_INBOX/candidate-directives/CD-XR65-send-an-empty-revalidate-declaration-as-a-non-empty-header.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-Y2ID",
+      "directive_title": "Empirical Invariant Guard in context.delete-filter.test.ts",
+      "source_repo": "zilliztech-claude-context-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y2ID-empirical-invariant-guard-in-context-delete-filter-test-ts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-Y1PC",
+      "directive_title": "web): send an empty revalidate declaration as a non-empty header",
+      "source_repo": "solidjs-solid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y1PC-web-send-an-empty-revalidate-declaration-as-a-non-empty-header.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-F378C2",
+      "directive_title": "Empirical Invariant Guard in context.delete-filter.test.ts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zilliztech-claude-context",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F378C2-empirical-invariant-guard-in-context-del.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-ABA7CD",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ABA7CD-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-24"
     }
   ]

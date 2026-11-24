@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T22:51:16.108Z",
-  "total_verified_learnings": 9103,
+  "last_updated": "2026-11-24T23:04:43.589Z",
+  "total_verified_learnings": 9104,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24975,
+  "total_items": 24987,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "02d13638127ceb9b6d4c3184e96d850be14025b3205223eda0db6e8cf20dc82d",
+      "content_hash": "edba3467d6afdd6c55e1a5794c999549f031e2880ff3a31581e8916117307812",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T22:30:20.262Z"
+      "persisted_at": "2026-11-24T23:04:43.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c126afe56f7850e272d9f438accc1e9bfb34a9ed5d7cc5b9028c8897279c47c",
+      "content_hash": "4bac704baec5c96ed6417febbe0052705266cb46da979ddbaad65bb8d9a6ef27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:30:20.450Z"
+      "persisted_at": "2026-11-24T23:04:43.589Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -256525,9 +256525,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b43db5fe94e8755a6afc07309c51388761a302c78b01526f81fd938acdf31c59",
+      "content_hash": "0dea89eea531f2f1c9337c4328285ee4419e7eb8b18da35d08f16eac6e1166f2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T22:30:20.009Z"
+      "persisted_at": "2026-11-24T23:04:43.249Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269223,8 +269223,8 @@
       "slug": "solidjs-solid",
       "platform": "github",
       "source_url": "https://github.com/solidjs/solid",
-      "source_version": "5a43d6f8",
-      "content_hash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
+      "source_version": "72b5111f",
+      "content_hash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
       "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "promoted_rules": [
@@ -269237,6 +269237,11 @@
           "number": 9660,
           "title": "a server projection over a pending async store waits for it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10378,
+          "title": "send an empty revalidate declaration as a non-empty header",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269244,7 +269249,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:21:21.991Z",
+      "verified_at": "2026-11-24T23:04:26.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269298,10 +269303,10 @@
       "relative_path": "08_VERIFICATION/solidjs-solid-verification-protocol-empirical-defect-shield-for-solidjs-solid.md",
       "title": "Verification Protocol: Empirical Defect Shield for solidjs/solid",
       "repository": "solidjs/solid",
-      "source_version": "5a43d6f8",
-      "content_hash": "35ba90f11b53b713deadc33d9d3288194829b5496e408815142e59db02b07d24",
+      "source_version": "72b5111f",
+      "content_hash": "d3a2b0aca441e2ad959946764271219dd84b4ea91e3ab88f89d74b531e20fe04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:21:22.715Z"
+      "persisted_at": "2026-11-24T23:04:27.748Z"
     },
     "learn-github-software-mansion-react-native-screens": {
       "learning_id": "learn-github-software-mansion-react-native-screens",
@@ -269442,9 +269447,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for solidjs-solid-learnings",
       "repository": "solidjs-solid-learnings",
       "source_version": "HEAD",
-      "content_hash": "da8c1e6715165fc9502a77c0482af6aa486b6e773b440c6f67b93a4c3ba4904f",
+      "content_hash": "8eebfdd713adc823687958959819e754030bfeabfa369a530dbbe88b4fdda46f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:22:00.706Z"
+      "persisted_at": "2026-11-24T23:04:41.377Z"
     },
     "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops": {
       "item_id": "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops",
@@ -330593,13 +330598,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PV91-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y3AT-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "54f71c83896a1f446a1f599668afff1519b2ce04477f6de48414b3b66ea167db",
+      "content_hash": "f964c6fcdcded07b3bc29bd863bae5d4d993cfb78e5957540e7828482a5ac861",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T22:30:19.772Z"
+      "persisted_at": "2026-11-24T23:04:43.064Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -341253,6 +341258,175 @@
       "content_hash": "23ab4b2412e6189589ca9df2f3d678da341de58b2bacbe758a4955109ed98776",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T22:51:14.827Z"
+    },
+    "rule-10378": {
+      "learning_id": "rule-10378",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10378,
+      "title": "send an empty revalidate declaration as a non-empty header",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "72b5111f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:04:26.809Z"
+    },
+    "candidate_directive-send-an-empty-revalidate-declaration-as-a-non-empty-header": {
+      "item_id": "candidate_directive-send-an-empty-revalidate-declaration-as-a-non-empty-header",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XR65-send-an-empty-revalidate-declaration-as-a-non-empty-header.md",
+      "title": "send an empty revalidate declaration as a non-empty header",
+      "repository": "solidjs/solid",
+      "source_version": "72b5111f",
+      "content_hash": "70967628804453d1f4133a4d4fefbbae16b104567ef18a69bd65ef0824fbe594",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:27.342Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-solidjs-solid-technical-construction-intelligence-solidjs-solid-core-invariants.md",
+      "title": "Technical Construction Intelligence: solidjs/solid Core Invariants",
+      "repository": "solidjs/solid",
+      "source_version": "72b5111f",
+      "content_hash": "9e6646565cb2c7de01ec532d17f3fc2b2d6f4eca61ddd94243f73feb39eb77d5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:27.532Z"
+    },
+    "learn-github-zilliztech-claude-context": {
+      "learning_id": "learn-github-zilliztech-claude-context",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zilliztech/claude-context",
+      "repository": "zilliztech/claude-context",
+      "slug": "zilliztech-claude-context",
+      "platform": "github",
+      "source_url": "https://github.com/zilliztech/claude-context",
+      "source_version": "c5326ccb",
+      "content_hash": "3586ad5e4b12cd45e25ae9812f48575e0d1e1c8bca45102307e757d199ff91ab",
+      "dossier_path": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10379,
+          "title": "Empirical Invariant Guard in context.delete-filter.test.ts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T23:04:36.842Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10379": {
+      "learning_id": "rule-10379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10379,
+      "title": "Empirical Invariant Guard in context.delete-filter.test.ts",
+      "source_url": "https://github.com/zilliztech/claude-context",
+      "source_version": "c5326ccb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:04:36.842Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-context-delete-filter-test-ts": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-context-delete-filter-test-ts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y2ID-empirical-invariant-guard-in-context-delete-filter-test-ts.md",
+      "title": "Empirical Invariant Guard in context.delete-filter.test.ts",
+      "repository": "zilliztech-claude-context-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df6a4fecb9ff9fb503163e1c2bab8f55dade9a12c2bfd52f059241d90eec169d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T23:04:42.038Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zilliztech-claude-context-technical-construction-intelligence-zilliztech-claude-.md",
+      "title": "Technical Construction Intelligence: zilliztech/claude-context Core Invariants",
+      "repository": "zilliztech/claude-context",
+      "source_version": "c5326ccb",
+      "content_hash": "9f1dd83b62c7242abca12dab613d346b86604cf260bc88275752f5fa4363b922",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:37.525Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zilliztech-claude-context": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zilliztech-claude-context",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zilliztech-claude-context-verification-protocol-empirical-defect-shield-for-zill.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zilliztech/claude-context",
+      "repository": "zilliztech/claude-context",
+      "source_version": "c5326ccb",
+      "content_hash": "008710083b1a3070ca01c3665a15f93a7c1d8898c087ff7129d87ebe71b358ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T23:04:37.718Z"
+    },
+    "candidate_directive-web-send-an-empty-revalidate-declaration-as-a-non-empty-header": {
+      "item_id": "candidate_directive-web-send-an-empty-revalidate-declaration-as-a-non-empty-header",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y1PC-web-send-an-empty-revalidate-declaration-as-a-non-empty-header.md",
+      "title": "web): send an empty revalidate declaration as a non-empty header",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef1ef5ba73b1d9f33ef9db5734b152bd2719b447a322cba1271151e3293a4896",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:40.993Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-solidjs-solid-learnings-technical-construction-intelligence-solidjs-solid-learni.md",
+      "title": "Technical Construction Intelligence: solidjs-solid-learnings Core Invariants",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "513fe7f5ff52fd07967eeb7a29cda152ea1aae68b136e838b40acb1ef25f59a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:41.185Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zilliztech-claude-context-learnings-technical-construction-intelligence-zillizte.md",
+      "title": "Technical Construction Intelligence: zilliztech-claude-context-learnings Core Invariants",
+      "repository": "zilliztech-claude-context-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eea37f3ee12dae2a4f9a454cfba249dc89cb3170705db5f14eb7c17f3d344b73",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:04:42.220Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zilliztech-claude-context-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zilliztech-claude-context-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zilliztech-claude-context-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zilliztech-claude-context-learnings",
+      "repository": "zilliztech-claude-context-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25d4a1e3a5b8bfb25bb57b0537ebeaf8660cf6adddc664b20e7f0ef6ac63de96",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T23:04:42.403Z"
     }
   },
   "ai-builder-brain": {

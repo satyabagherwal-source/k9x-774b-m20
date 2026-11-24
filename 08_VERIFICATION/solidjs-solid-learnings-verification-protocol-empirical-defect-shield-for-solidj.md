@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T23:22:00.262Z",
+  "timestamp": "2026-11-24T23:04:40.856Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-solidjs-solid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [solidjs-solid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T23:22:00.262Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:04:40.856Z`  
 > **Learning ID**: `LEARN-EVO-solidjs-solid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source**: github ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
-> **Source Version**: `5a43d6f8`  
+> **Source Version**: `72b5111f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:21:21.170Z  
+> **Timestamp**: 2026-11-24T23:04:25.875Z  
 > **Learning ID**: `learn-github-solidjs-solid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:21:21.165Z  
+> **Harvest Timestamp**: 2026-11-24T23:04:25.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A declarative, efficient, and flexible JavaScript library for building user interfaces.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 36881 stars
+- **Stars / Engagement**: 36950 stars
 
 ---
 
@@ -595,780 +595,328 @@ export default function Shell(props: ParentProps<{ clientEntry: string }>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc0dac0c` (2026-11-20)
-**Commit Message**: fix(solid): a server projection over a pending async store waits for it (#5097) (#5105)
+### Incident Patch 1: `21822b29` (2026-11-24)
+**Commit Message**: fix(web): send an empty revalidate declaration as a non-empty header (#5190)
 
-* fix(solid): a server projection over a pending async store waits for it (#5097)
+* fix(release): skip already-published packages in artifact verification
 
-The sync result of a projection's fn was adopted after the NotReady
-retry's try block, so returning a pending store (() => rows) threw out
-of the component body. Adopt it inside the try, so it takes the same
-retry as a derive that reads the store.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL
-
-* test(web): type the #5097 spec's function-form projection as the issue writes it
+Since #4985, h, html and element version on their own, so a core release
+leaves them at a version already on npm. verify-release-artifacts.mjs
+dry-run-published every public package, and npm refuses even a dry run over
+a published version, so the 2.0.1 release failed before publishing anything.
+It now skips a published version the same way release.mjs does, with
+packageIsPublished shared from release-packages.mjs.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL
+Claude-Session: https://claude.ai/code/session_0117BoWMR7ndYUnqBW5NjTbC
 
----------
+* fix(signals): a reader linked to a settled source no longer stays pending on it
 
-Co-authored-by: Claude <[REDACTED_EMAIL]>
+retryReaches counted a dep that is the source itself as a path even after
+that source settled, so settleFamily and the re-park sweep in recompute
+kept a settled derive node in a reader's pending sources. With an
+optimistic store over one async memo and a slower sibling memo whose
+re-ask answers unchanged, the reader stayed pending and the action's
+transaction never landed. A direct link now counts only while the source
 
-**File**: `.changeset/ssr-projection-pending-store-5097.md` (added, +5/-0)
+**File**: `.changeset/fix-web-empty-revalidate-header.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@solidjs/web": patch
++---
++
++An empty `revalidate` declaration (`[]` or `""`) is now sent as `X-Revalidate: ,` instead of an empty header value, which intermediaries such as CDNs drop, turning "revalidate nothing" into "revalidate everything".
+```
+
+**File**: `packages/web/server-functions/src/server.ts` (modified, +2/-2)
+```diff
+@@ -180,7 +180,7 @@ export interface ServerFunctionOutcome {
+   /**
+    * The outcome's `X-Revalidate` keys, split — the invalidation scope the
+    * mutation declared. Undefined when the outcome carries none (integrations
+-   * typically collect everything for the target in that case); `[""]` for
++   * typically collect everything for the target in that case); `[]` for
+    * an empty declaration (nothing); `["*"]` for `REVALIDATE_ALL`, delivered
+    * as declared so a collector can tell "everything" from named keys.
+    */
+@@ -2338,7 +2338,7 @@ async function foldFlightData(hooks, event, headers, outcome, context = {}) {
+ //   produce data for) and for redirects leaving the app's origin.
+ function digestOutcome(event, outcome) {
+   const { request, response } = outcome;
+-  outcome.revalidateKeys = response?.headers.get(REVALIDATE_HEADER)?.split(",");
++  outcome.revalidateKeys = response?.headers.get(REVALIDATE_HEADER)?.split(",").filter(Boolean);
+   outcome.foldedHeaders = foldSetCookies(request.headers, [
+     ...(event.response?.headers?.getSetCookie() ?? []),
+     ...(response?.headers?.getSetCookie() ?? [])
+```
+
+**File**: `packages/web/src/response.ts` (modified, +4/-2)
+```diff
+@@ -155,7 +155,7 @@ export interface ResponseHelperInit extends ResponseInit {
+    * scopes: omitted sends no header — the host's default (Solid Router
+    * revalidates everything after any mutation, form action or direct call;
+    * a router without that convention reloads only what it owns); an empty
+-   * list (or `""`) sends an empty header — nothing, explicitly; `REVALIDATE_ALL` (`"*"`) — every entry,
++   * list (or `""`) sends `,`, a header naming no key — nothing, explicitly; `REVALIDATE_ALL` (`"*"`) — every entry,
+    * whatever the host's default. How named keys are matched (prefixes,
+    * namespaces) is each integration's business.
+    */
+@@ -218,7 +218,9 @@ function initWithRevalidate(init: number | ResponseHelperInit = {}) {
+           `the runtime refuses rather than trims.`
+       );
+     }
+-    headers.set(REVALIDATE_HEADER, keys);
++    // An empty value is droppable in transit (#5167): "nothing" goes as `,`,
++    // which every reader splits into no key.
++    headers.set(REVALIDATE_HEADER, keys.trim() ? keys : ",");
+   }
+   return { responseInit, headers };
+ }
+```
+
+**File**: `packages/web/test/runtime/redirect-href.spec.js` (modified, +9/-0)
+```diff
+@@ -109,4 +109,13 @@ describe("composed response headers refuse rather than overflow (#3131)", () =>
+     const ordinary = reload({ revalidate: ["orders", "orders:list"] });
+     expect(ordinary.headers.get(REVALIDATE_HEADER)).toBe("orders,orders:list");
+   });
++
++  it("writes an empty revalidate declaration as a non-empty header naming no key", () => {
++    for (const revalidate of [[], "", [""], " \t "]) {
++      expect(reload({ revalidate }).headers.get(REVALIDATE_HEADER)).toBe(",");
++      expect(redirect("/done", { revalidate }).headers.get(REVALIDATE_HEADER)).toBe(",");
++    }
++    expect(reload().headers.has(REVALIDATE_HEADER)).toBe(false);
++    expect(reload({ revalidate: "\u00a0*" }).headers.get(REVALIDATE_HEADER)).toBe("\u00a0*");
++  });
+ });
+```
+
+**File**: `packages/web/test/server/server-functions-outcome-digest.spec.tsx` (modified, +22/-1)
+```diff
+@@ -206,12 +206,33 @@ describe("the invalidation scope", () => {
+     registerServerFunction("digest-all", async () => reload({ revalidate: REVALIDATE_ALL }));
+ 
+     const empty = await collect(post("digest-empty", { referer: "https://app.example/cart" }));
+-    expect(empty.revalidateKeys).toEqual([""]);
++    expect(empty.revalidateKeys).toEqual([]);
+ 
+     const all = await collect(post("digest-all", { referer: "https://app.example/cart" }));
+     expect(all.revalidateKeys).toEqual(["*"]);
+   });
+ 
++  it("answers an empty declaration with a non-empty header that names no key", async () => {
++    registerServerFunction("digest-empty-wire", async () => respond({}, { revalidate: [] }));
++
++    let outcome!: ServerFunctionOutcome;
++    const response = await handleServerFunctionRequest(
++      post("digest-empty-wire", { referer: "https://app.example/cart" }),
++      {
++        createEvent,
++        collectFlightData: (_event, received) => {
++          outcome = received;
++          return { collected: true };
++        }
++      }
++    );
++
++    const declared = response.headers.get("X-Revalidate");
++    expect(declared).toBe(",");
++    expect(declared!.split(",").filter(Boolean)).toEqual([]);
++    expect(outcome.revalidateKeys).toEqual([]);
++  });
++
+   it("the helpers refuse the all key beside named keys", () => {
+     // "everything and also these" is a mistake, not a scope — refused at
+     // the helper, inside the function body, so it lands on the ordinary
+```
+
+---
+
+### Incident Patch 2: `e847ed1b` (2026-11-24)
+**Commit Message**: fix(web): a server function's ReadableStream result stays a ReadableStream (#5184)
+
+* fix(release): skip already-published packages in artifact verification
+
+Since #4985, h, html and element version on their own, so a core release
+leaves them at a version already on npm. verify-release-artifacts.mjs
+dry-run-published every public package, and npm refuses even a dry run over
+a published version, so the 2.0.1 release failed before publishing anything.
+It now skips a published version the same way release.mjs does, with
+packageIsPublished shared from release-packages.mjs.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0117BoWMR7ndYUnqBW5NjTbC
+
+* fix(signals): a reader linked to a settled source no longer stays pending on it
+
+retryReaches counted a dep that is the source itself as a path even after
+that source settled, so settleFamily and the re-park sweep in recompute
+kept a settled derive node in a reader's pending sources. With an
+optimistic store over one async memo and a slower sibling memo whose
+re-ask answers unchanged, the reader stayed pending and the action's
+transaction never landed. A direct link now counts only while the 
+
+**File**: `.changeset/server-function-readable-stream-result.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@solidjs/web": patch
++---
++
++A server function that returns a `ReadableStream` resolves on the client to that `ReadableStream` (`getReader()`, `pipeTo()`, `tee()`), not to a plain async iterable. The top-level abort wrapper applies only to other async iterables, such as an async generator's result. To cancel the call behind a returned stream, call it through `invoke(fn, { signal })` and abort the signal; `cancel()` on the stream stops reading but does not abort the call, the same as for a stream nested in an object.
+```
+
+**File**: `packages/web/server-functions/src/client.ts` (modified, +3/-2)
+```diff
+@@ -1017,8 +1017,9 @@ async function dispatchServerFunction(base, id, options, args, meta, callArgs =
+   // Streaming result: wrap so stopping consumption stops the CALL. Without
+   // this, `return()` (a `break` in for-await) only detaches the local
+   // iterator — the fetch keeps downloading and the server keeps producing.
+-  // Top-level only, matching the server's value-tier teardown scope.
+-  if (controller && result?.[Symbol.asyncIterator]) {
++  // Top-level only, matching the server's value-tier teardown scope. A
++  // decoded `ReadableStream` passes through as one, as it does nested.
++  if (controller && result?.[Symbol.asyncIterator] && !result.getReader) {
+     return {
+       [Symbol.asyncIterator]() {
+         const it = result[Symbol.asyncIterator]();
+```
+
+**File**: `packages/web/test/server/server-functions-invoke.spec.tsx` (modified, +29/-0)
+```diff
+@@ -254,6 +254,35 @@ describe("invoke — per-call invocation (built bundles)", () => {
+     }
+   });
+ 
++  it("a streamed ReadableStream result stays a ReadableStream (#5175)", async () => {
++    let source!: ReadableStreamDefaultController<number>;
++    registerServerFunction(
++      "inv-readable-stream",
++      async () =>
++        new ReadableStream<number>({
++          start: c => {
++            source = c;
++            c.enqueue(0);
++            c.enqueue(1);
++          }
++        })
++    );
++    const transport = connectTransport();
++    try {
++      const ref = createServerReference("inv-readable-stream") as () => Promise<
++        ReadableStream<number>
++      >;
++      const stream = await ref();
++      expect(stream).toBeInstanceOf(ReadableStream);
++      const reader = stream.getReader();
++      expect(await reader.read()).toEqual({ done: false, value: 0 });
++      source.error(new Error("producer failed"));
++      await expect(reader.closed).rejects.toBeTruthy();
++    } finally {
++      transport.restore();
++    }
++  });
++
+   it("server mirror: in-process call, signal rejects the caller", async () => {
+     let calls = 0;
+     let finished = 0;
+```
+
+---
+
+### Incident Patch 3: `430314c9` (2026-11-24)
+**Commit Message**: fix(solid): an SSR owner disposed into a full pool drops its render's context (#5181)
+
+Fixes #5180
+
+**File**: `.changeset/ssr-owner-pool-full-context-5180.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"solid-js": patch
 +---
 +
-+On the server, a projection or derived optimistic store whose function returns a pending async store (`createProjection(() => rows, …)`, `createOptimisticStore(() => rows, …)`) now waits for that store like a derive that read it, so `<Loading>` shows its fallback and the answer streams in. Before, adopting the pending store threw `NotReadyError` out of the component body.
++An SSR owner disposed while the owner pool is full now drops its render's context too, so a stale reference to a reused owner no longer keeps later renders alive.
 ```
 
-**File**: `packages/solid/src/server/signals.ts` (modified, +11/-4)
+**File**: `packages/solid/src/server/signals.ts` (modified, +7/-7)
 ```diff
-@@ -3181,6 +3181,17 @@ export function createProjection<T extends object = {}>(
-   let result: void | T | Promise<void | T> | AsyncIterable<void | T>;
-   try {
-     result = runProjection();
-+    // Synchronous: fn either mutated state directly (void) or returned a new
-+    // value. Adopted here, a pending store it returns (`() => rows`) takes
-+    // the NotReady retry below like a derive that read it (#5097).
-+    if (
-+      result !== undefined &&
-+      result !== state &&
-+      result !== draft &&
-+      !isThenable(result) &&
-+      typeof (result as any)[Symbol.asyncIterator] !== "function"
-+    )
-+      replaceState(state, result as T);
-   } catch (error) {
-     if (!(error instanceof NotReadyError)) throw error;
-     // The derive read a client hole synchronously: FINAL at discovery, the
-@@ -3411,10 +3422,6 @@ export function createProjection<T extends object = {}>(
-     return recordSlot(pending);
-   }
- 
--  // Synchronous: fn either mutated state directly (void) or returned a new value
--  if (result !== undefined && result !== state && result !== draft) {
--    replaceState(state, result as T);
+@@ -546,15 +546,15 @@ export function setContext<T>(
+  * are dropped here: `_context` holds the render's provided values (and, under
+  * a boundary, its error handler and HTML), and a pooled owner can sit idle
+  * for as long as the process runs while concurrent renders fill the pool
+- * (#4890). `_parent` / `_nextSibling` are cleared by `unlinkOwner`,
+- * `_firstChild` / `_disposal` by the dispose walk.
++ * (#4890). An owner a full pool turns away is reset too: a closure of an
++ * earlier render that reused it can still reach it (#5180). `_parent` /
++ * `_nextSibling` are cleared by `unlinkOwner`, `_firstChild` / `_disposal` by
++ * the dispose walk.
+  */
+ function recycleOwner(node: SSROwner): void {
+-  if (ownerPool.length < OWNER_POOL_MAX) {
+-    node.id = undefined;
+-    node._context = defaultSSRContext;
+-    ownerPool.push(node);
 -  }
-   return state;
++  node.id = undefined;
++  node._context = defaultSSRContext;
++  if (ownerPool.length < OWNER_POOL_MAX) ownerPool.push(node);
  }
  
+ function unlinkOwner(node: SSROwner): void {
 ```
 
-**File**: `packages/web/test/server/projection-over-pending-store-5097.spec.tsx` (added, +62/-0)
+**File**: `packages/solid/test/server/owner-pool-full-context-5180.spec.ts` (added, +37/-0)
 ```diff
-@@ -0,0 +1,62 @@
-+/**
-+ * @jsxImportSource @solidjs/web
-+ */
-+// #5097: on the server, a projection whose fn returns a pending async store
-+// (`createProjection(() => rows, …)`, and `createOptimisticStore(() => rows,
-+// …)` through the same path) adopted it at creation, outside the NotReady
-+// retry, so the pending proxy's read escaped the component body. It now
-+// waits for the store like a derive that read it, as on the client.
-+import { describe, expect, test } from "vitest";
-+import { renderToStream } from "@solidjs/web";
-+import { createOptimisticStore, createProjection, createStore, Loading } from "solid-js";
-+
-+const render = (App: () => any) =>
-+  new Promise<string>((resolve, reject) => {
-+    let out = "";
-+    renderToStream(() => <App />, { onError: reject }).pipe({
-+      write: (c: string) => {
-+        out += c;
-+      },
-+      end: () => resolve(out)
-+    });
-+  });
-+
-+const rowsStore = () =>
-+  createStore(
-+    async () => {
-+      await new Promise(r => setTimeout(r, 10));
-+      return [{ id: 1, t: "A" }];
-+    },
-+    [] as { id: number; t: string }[],
-+    { key: "id" } as any
-+  )[0];
-+
-+describe("#5097: a projection over a pending async store on the server", () => {
-+  test("createProjection(() => store) waits for the store", async () => {
-+    function App() {
-+      const rows = rowsStore();
-+      const view = createProjection((() => rows) as any, [] as any[], { key: "id" } as any);
-+      return (
-+        <Loading fallback="loading">
-+          <p>{view.map((r: any) => r.t).join(",")}</p>
-+        </Loading>
-+      );
-+    }
-+    const html = await render(App);
-+    expect(html).toMatch(/loading.*<p[^>]*>A<\/p>/s);
-+  });
-+
-+  test("createOptimisticStore(() => store) waits for the store", async () => {
-+    function App() {
-+      const rows = rowsStore();
-+      const [view] = createOptimisticStore((() => rows) as any, [] as any[], { key: "id" } as any);
-+      return (
-+        <Loading fallback="loading">
-+          <p>{view.map((r: any) => r.t).join(",")}</p>
-+        </Loading>
-+      );
-+    }
-+    const html = await render(App);
-+    expect(html).toMatch(/loading.*<p[^>]*>A<\/p>/s);
-+  });
-+});
-```
-
----
-
-### Incident Patch 2: `83d42bae` (2026-11-20)
-**Commit Message**: fix(signals): a removed row's cleanup can call an action during teardown (#5123) (#5124)
-
-#4168 let a cleanup write during teardown by standing the owned-scope write
-guard down while disposalDepth is raised. The action() guard, which its
-comment calls the same scope test as setSignal, did not get the exemption, so
-a keyed row whose cleanup invokes an action threw ACTION_CALLED_IN_OWNED_SCOPE
-in development while production ran it.
-
-Co-authored-by: Chris Gaafary <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/cleanup-action-during-teardown.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@solidjs/signals": patch
-+---
-+
-+Allow calling an action from a cleanup during teardown, as #4165 allowed writes. Removing a keyed row ran its cleanups inside the list's pass, so an action invoked from an `onCleanup` or an effect's returned cleanup threw `ACTION_CALLED_IN_OWNED_SCOPE` in development, while the same cleanup under a branch switching away ran. The dev-only action guard now stands down while cleanups run, like the owned-scope write guard. Production builds are unchanged.
-```
-
-**File**: `packages/signals/src/core/action.ts` (modified, +10/-3)
-```diff
-@@ -1,6 +1,6 @@
- import { CONFIG_CHILDREN_FORBIDDEN } from "./constants.js";
- import { isThenable } from "./async.js";
--import { enterCallback, exitCallback, inRefCallback } from "./core.js";
-+import { disposalDepth, enterCallback, exitCallback, inRefCallback } from "./core.js";
- import { getOwner } from "./owner.js";
- import type { Owner } from "./types.js";
- import { emitDiagnostic } from "./dev.js";
-@@ -136,10 +136,17 @@ export function action<Args extends any[], Y, R>(
-     // and a computation tracking what its action writes livelocks (every
-     // write retriggers the compute, which fires a fresh invocation). Same
-     // scope test as setSignal: leaf imperative scopes (tracked effects,
--    // onSettled) stay legal.
-+    // onSettled) stay legal, and so do cleanups during teardown — a cleanup
-+    // is not part of the computation disposing its owner (a list pass
-+    // removing a row), so invoking an action there is imperative (#4165).
-     if (__DEV__) {
-       const owner = getOwner();
--      if (owner && !(owner._config & CONFIG_CHILDREN_FORBIDDEN) && !inRefCallback()) {
-+      if (
-+        owner &&
-+        !(owner._config & CONFIG_CHILDREN_FORBIDDEN) &&
-+        !disposalDepth &&
-+        !inRefCallback()
-+      ) {
-         emitDiagnostic({
-           code: "ACTION_CALLED_IN_OWNED_SCOPE",
-           kind: "write",
-```
-
-**File**: `packages/signals/tests/for-row-cleanup-action.test.ts` (added, +118/-0)
-```diff
-@@ -0,0 +1,118 @@
-+/**
-+ * #4165 let a cleanup write during teardown: a cleanup is teardown, not part
-+ * of whichever computation is disposing its owner. Invoking an action from a
-+ * cleanup is the same imperative act, so the action guard stands down there
-+ * too. Without it, removing a keyed row whose cleanup calls an action threw
-+ * ACTION_CALLED_IN_OWNED_SCOPE in development, while the same cleanup under a
-+ * branch switching away ran.
-+ */
-+import { afterEach, expect, it } from "vitest";
-+import {
-+  action,
-+  createEffect,
-+  createMemo,
-+  createRenderEffect,
-+  createRoot,
-+  createSignal,
-+  flush,
-+  mapArray,
-+  onCleanup,
-+  untrack
-+} from "../src/index.js";
-+
-+afterEach(() => flush());
-+
-+it("a removed row's onCleanup can call an action", async () => {
-+  const [rows, setRows] = createSignal([1, 2]);
-+  const [count, setCount] = createSignal(0);
-+  const release = action(function* () {
-+    setCount(n => n + 1);
-+  });
-+  const seen: unknown[] = [];
-+  createRoot(() => {
-+    const mapped = mapArray(rows, r => {
-+      onCleanup(() => void release());
-+      return r;
-+    });
-+    createRenderEffect(
-+      () => mapped(),
-+      v => void seen.push([...v])
-+    );
-+  });
-+  flush();
-+  setRows([2]);
-+  flush();
-+  await Promise.resolve();
-+  flush();
-+  setRows([2, 3]);
-+  flush();
-+  expect(seen).toEqual([[1, 2], [2], [2, 3]]);
-+  expect(count()).toBe(1);
-+});
-+
-+it("a removed row's effect-returned cleanup can call an action", async () => {
-+  const [rows, setRows] = createSignal([1, 2]);
-+  const [count, setCount] = createSignal(0);
-+  const release = action(function* () {
-+    setCount(n => n + 1);
-+  });
-+  createRoot(() => {
-+    const mapped = mapArray(rows, r => {
-+      createEffect(
-+        () => r,
-+        () => () => void release()
-+      );
-+      return r;
-+    });
-+    createRenderEffect(mapped, () => {});
-+  });
-+  flush();
-+  setRows([2]);
-+  flush();
-+  await Promise.resolve();
-+  flush();
-+  expect(count()).toBe(1);
-+});
-+
-+it("a branch's cleanup can call an action when the branch switches away", async () => {
-+  const [on, setOn] = createSignal(true);
-+  const [count, setCount] = createSignal(0);
-+  const release = action(function* () {
-+    setCount(n => n + 1);
-+  });
-+  createRoot(() => {
-+    const branch = createMemo(() => {
-+      if (!on()) return null;
-+      return untrack(() => {
-+        onCleanup(() => void release());
-+        return 1;
-+      });
-+    });
-+    createRenderEffect(branch, () => {});
-+  });
-+  flush();
-+  setOn(false);
-+  flush();
-+  await Promise.resolve();
-+  flush();
-+  expect(count()).toBe(1);
-+});
-+
-+it("still rejects an action called in a row's mapping body", () => {
-+  const [rows] = createSignal([1]);
-+  const noop = action(function* () {});
-+  let caught: unknown;
-+  createRoot(() => {
-+    const mapped = mapArray(rows, r => {
-+      try {
-+        noop();
-+      } catch (e) {
-+        caught = e;
-+      }
-+      return r;
-+    });
-+    createRenderEffect(mapped, () => {});
-+  });
-+  flush();
-+  expect(String(caught)).toMatch(/ACTION_CALLED_IN_OWNED_SCOPE/);
-+});
-```
-
-**File**: `packages/web/test/for-row-cleanup-action.spec.tsx` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+/**
-+ * @jsxImportSource @solidjs/web
-+ * @vitest-environment jsdom
-+ */
-+// #4165 let a removed <For> row's cleanup write; invoking an action from the
-+// same cleanup is the same imperative act and must not be rejected as a call
-+// in the list's owned scope.
-+import { afterEach, expect, test } from "vitest";
-+import { action, createSignal, flush, For, onCleanup, onSettled, resetErrorHalt } from "solid-js";
-+import { render } from "../src/index.js";
-+
-+afterEach(() => resetErrorHalt());
-+
-+for (const [label, register] of [
-+  ["onSettled cleanup", (fn: () => void) => onSettled(() => fn)],
-+  ["onCleanup", (fn: () => void) => onCleanup(fn)]
-+] as const)
-+  test(`a row's ${label} can call an action when the row is removed`, async () => {
-+    const [rows, setRows] = createSignal([1, 2]);
-+    const [released, setReleased] = createSignal<number[]>([]);
-+    const release = action(function* (n: number) {
-+      yield Promise.resolve();
-+      setReleased(r => [...r, n]);
-+    });
-+    function Row(props: { n: number }) {
-+      register(() => void release(props.n));
-+      return <i>{props.n}</i>;
-+    }
-+    const div = document.createElement("div");
-+    const dispose = render(() => <For each={rows()}>{n => <Row n={n} />}</For>, div);
-+    flush();
-+    expect(div.textContent).toBe("12");
-+    setRows([2]);
-+    flush();
-+    await Promise.resolve();
-+    await Promise.resolve();
-+    flush();
-+    expect(div.textContent).toBe("2");
-+    expect(released()).toEqual([1]);
-+    setRows([2, 3]);
-+    flush();
-+    expect(div.textContent).toBe("23");
-+    dispose();
-+  });
-```
-
----
-
-### Incident Patch 3: `99db9bce` (2026-11-20)
-**Commit Message**: fix(signals): refresh() while its answer is out waits for it, then re-asks once (#5094) (#5101)
-
-A refresh() re-asks the same question (D-34, F-9), so the answer already
-in flight is a valid value. Superseding it, a poll faster than the
-response never landed an answer, and a hold that read the polled node
-never settled.
-
-Outside an action, a refresh() made while the node's promise flight is
-pending now marks after that answer lands (a microtask after its flush).
-Calls made meanwhile share one re-ask, and their waiters deliver its
-answer. An action's refresh() still re-asks in its hold at once (D-31).
-The change lives in refresh() alone: bundles without refresh() are
-unchanged.
-
-
-Claude-Session: https://claude.ai/code/session_0117BoWKDYxhpjoT3aFUwrQv
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `.changeset/refresh-overlapping-poll-5094.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@solidjs/signals": patch
-+---
-+
-+`refresh()` called while the same question's answer is still out no longer drops that answer (#5094). It waits for the answer to land, then re-asks once, however many times it was called meanwhile. Polling on an interval shorter than the response time now shows each answer, and other changes no longer wait behind the poll. A `refresh()` inside an action still re-asks at once in the action's hold.
-```
-
-**File**: `packages/signals/docs/RULES-INDEX.md` (modified, +3/-3)
-```diff
-@@ -58,7 +58,7 @@ Status legend: **live** stated and standing · **ruled** carries an explicit rul
- | F-5 | live | `docs/RULES-FUNDAMENTALS.md:77` | boundaries.ts×1 | lean.test.ts×1 loading-on-errorboundary-sibling-4638.test.ts×1 loading-on-held-change-4605.test.ts×2 loading-reveal-held-outside-4593.test.ts×1 | A disarmed boundary forwards: it keeps its content and holds like any reader, until `on` arms it again |
- | F-6 | live | `docs/RULES-FUNDAMENTALS.md:85` | boundaries.ts×1 constants.ts×2 core.ts×5 effect.ts×1 lanes.ts×10 scheduler.ts×4 seat.ts×2 verdict.ts×2 optimistic.ts×4 projection.ts×1 store.ts×3 | async-reads-ahead-edges.test.ts×1 async-reads-ahead-matrix.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-lane-derive.test.ts×1 error-is-an-answer.test.ts×1 gc.test.ts×1 ispending-async-derivation-4677.test.ts×3 ispending-memo-parked-seam-4439.test.ts×1 ispending-memo-wrapped-asker-4778.test.ts×2 latest-beside-staged-read-4365.test.ts×1 latest-derived-held-error-4106.test.ts×1 latest-derived-sync-error-4377.test.ts×1 latest-first-one-pass-4402.test.ts×1 latest-memo-inline-parity.test.ts×3 latest-stale-branch-hold-4661.test.ts×2 latest-two-readers-one-ask-4393.test.ts×5 loading-on-latest-fallback-4337.test.ts×1 optimistic-guess-beside-reask-4824.test.ts×1 optimistic-held-write-leak.test.ts×1 optimistic-layered-filter-4336.test.ts×1 optimistic-outside-reask-4690.test.ts×2 optimistic-question-change-4336.test.ts×6 optimistic-second-guess-reask-4629.test.ts×1 optimistic-second-log-guess-4666.test.ts×1 projection-lane-length-4631.test.ts×1 projection-second-guess-4629.test.ts×1 rejection-beside-ispending-3957.test.ts×1 derived-latest-confirmed-key.test.ts×1 derived-store-heal-4451.test.ts×1 unread-derive-midflight-mount-4491.test.ts×2 verdict-memo-after-staged-read.test.ts×1 verdict-memo-flight-no-reask.test.ts×7 verdict-memo-held-branch-4544.test.ts×3 verdict-memo-under-held-memo-4050.test.ts×1 verdict-read-order.test.ts×1 | Display-ahead readers show now and never hold the change they read ahead of; their own async holds them, in their own lane |
- | F-7 | live | `docs/RULES-FUNDAMENTALS.md:93` | boundaries.ts×2 action.ts×1 constants.ts×1 core.ts×8 effect.ts×2 lanes.ts×2 signals.ts×1 | error-staged-recovery.test.ts×1 ispending-async-derivation-4677.test.ts×1 loading-reveal-held-outside-4593.test.ts×1 optimistic-held-write-leak.test.ts×1 optimistic-lane-seam-loop-4643.test.ts×4 ref-born-held-staged-4767.test.ts×2 verdict-memo-after-staged-read.test.ts×2 | Nothing else reveals ahead of the hold it belongs to |
--| F-9 | live | `docs/RULES-FUNDAMENTALS.md:101` | boundaries.ts×2 async.ts×6 constants.ts×1 core.ts×10 effect.ts×1 lanes.ts×1 scheduler.ts×1 seat.ts×4 types.ts×4 verdict.ts×17 deferred.ts×2 projection.ts×1 store.ts×1 | action-refresh-ispending-loop-4349.test.ts×1 answered-then-reasked-released-reader.test.ts×1 answered-then-reasked-same-tick.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-derive-settle.test.ts×2 derived-store-first-landing-verdict.test.ts×1 first-load-superseded-answer-4569.test.ts×1 latest-first-one-pass-4402.test.ts×2 latest-ispending-refetch-loop.test.ts×1 loading-on-held-filter-refresh-4379.test.ts×1 midflight-memo-over-reask-4504.test.ts×1 optimistic-question-change-4336.test.ts×2 settle-diamond-revisit.test.ts×1 staged-error-netted-write.test.ts×1 staged-error-through-async-memo-4640.test.ts×1 two-sources-answered-reasked-4495.test.ts×2 verdict-memo-flight-no-reask.test.ts×9 verdict-probe-committed-4648.test.ts×2 | `isPending` is about a new question; a re-ask is quiet; a first load is loading, not pending |
-+| F-9 | live | `docs/RULES-FUNDAMENTALS.md:101` | boundaries.ts×2 async.ts×6 constants.ts×1 core.ts×10 effect.ts×1 lanes.ts×1 scheduler.ts×1 seat.ts×4 types.ts×4 verdict.ts×17 deferred.ts×2 signals.ts×1 projection.ts×1 store.ts×1 | action-refresh-ispending-loop-4349.test.ts×1 answered-then-reasked-released-reader.test.ts×1 answered-then-reasked-same-tick.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-derive-settle.test.ts×2 derived-store-first-landing-verdict.test.ts×1 first-load-superseded-answer-4569.test.ts×1 latest-first-one-pass-4402.test.ts×2 latest-ispending-refetch-loop.test.ts×1 loading-on-held-filter-refresh-4379.test.ts×1 midflight-memo-over-reask-4504.test.ts×1 optimistic-question-change-4336.test.ts×2 refresh-overlapping-poll-5094.test.ts×1 settle-diamond-revisit.test.ts×1 staged-error-netted-write.test.ts×1 staged-error-through-async-memo-4640.test.ts×1 two-sources-answered-reasked-4495.test.ts×2 verdict-memo-flight-no-reask.test.ts×9 verdict-probe-committed-4648.test.ts×2 | `isPending` is about a new question; a re-ask is quiet; a first load is loading, not pending |
- | F-10 | live | `docs/RULES-FUNDAMENTALS.md:109` | async.ts×1 constants.ts×1 core.ts×8 guesses.ts×1 scheduler.ts×1 seat.ts×6 types.ts×1 verdict.ts×4 | latest-memo-inline-parity.test.ts×1 optimistic-lane-seam-loop-4643.test.ts×1 proto-key-removal
-```
-
-**File**: `packages/signals/src/core/core.ts` (modified, +4/-3)
-```diff
-@@ -2470,8 +2470,9 @@ export function staleValues<T>(fn: () => T, set = true): T {
- }
- 
- /** Core half of `refresh()` (signals.ts): marks the next recompute a quiet
-- * re-ask and schedules it. */
--export function markRefresh(node: Computed<any>): void {
-+ * re-ask and schedules it. `check`: the owned-scope check alone, the mark
-+ * coming after the answer out lands (#5094). */
-+export function markRefresh(node: Computed<any>, check?: boolean): void {
-   if (
-     __DEV__ &&
-     context &&
-@@ -2492,7 +2493,7 @@ export function markRefresh(node: Computed<any>): void {
-     });
-     throw new Error(REACTIVE_WRITE_IN_OWNED_SCOPE_REFRESH_MESSAGE);
-   }
--  if (typeof node._fn === "function" && !(node._flags & REACTIVE_DISPOSED)) {
-+  if (!check && typeof node._fn === "function" && !(node._flags & REACTIVE_DISPOSED)) {
-     // A refresh in a manual write's frame re-asks with the write as `prev`
-     // (D-8, #3026). The next pass's flight is a quiet re-ask (F-9), unless an
-     // input changed this tick.
-```
-
-**File**: `packages/signals/src/signals.ts` (modified, +35/-7)
-```diff
-@@ -42,7 +42,13 @@ import {
-   staleReader,
-   type Transaction
- } from "./core/scheduler.js";
--import { REACTIVE_JOINED, STATUS_ERROR, STATUS_PENDING } from "./core/constants.js";
-+import {
-+  REACTIVE_CHECK,
-+  REACTIVE_DIRTY,
-+  REACTIVE_JOINED,
-+  STATUS_ERROR,
-+  STATUS_PENDING
-+} from "./core/constants.js";
- import { unwrapStatusError } from "./core/error.js";
- import { optimisticWrite } from "./core/guesses.js";
- import { truthConfirmed, truthRead } from "./core/truth.js";
-@@ -900,9 +906,12 @@ export function resolve<T>(fn: () => T): Promise<T> {
-  * - Accessor targets resolve with the settled value; store targets resolve
-  *   with the store node passed (reads through it are fresh after the await).
-  * - A failed re-ask rejects with the error.
-- * - Semantics are quiescence, not flight identity: if another refresh (or
-- *   any invalidation) supersedes this one mid-flight, the promise waits for
-- *   — and delivers — whatever finally lands.
-+ * - Semantics are quiescence, not flight identity: if an invalidation
-+ *   supersedes this one mid-flight, the promise waits for — and delivers —
-+ *   whatever finally lands.
-+ * - Called while the target's previous answer is still out (outside an
-+ *   action), it waits for that answer to land, then re-asks once; calls made
-+ *   meanwhile share that re-ask, and the promise delivers its answer.
-  *
-  * @example
-  * ```ts
-@@ -949,12 +958,27 @@ export function refresh<T>(
-   // answer. resolve()'s own eager compute is untouched: created after a
-   // refresh it still settles stale-while-revalidate (#2930) — its contract is
-   // "first settled value", not "next quiescent state".
--  markRefresh(node);
-   // The transaction `refresh()` is called in (an action's slice): the
-   // waiter, created on the microtask below, is its reader (`watch`).
-   const own = flushTransaction;
-+  // A re-ask while the same question's answer is out waits for that answer,
-+  // then re-asks once: the answer is a valid value (D-34, F-9). Superseding
-+  // it, a poll faster than the response never landed one, and a hold that
-+  // read the polled node never settled (#5094). The calls made meanwhile mark
-+  // after the landing's flush, so they coalesce as same-tick calls do, and
-+  // their waiters deliver the re-ask's answer. An action's `refresh()`
-+  // re-asks in its hold at once (D-31).
-+  const flight = node._x?._inFlight as PromiseLike<unknown> | null | undefined;
-+  const later = !!(
-+    own === null &&
-+    node._statusFlags & STATUS_PENDING &&
-+    !(node._flags & (REACTIVE_CHECK | REACTIVE_DIRTY)) &&
-+    typeof (flight as any)?.then === "function"
-+  );
-+  markRefresh(node, later);
-   const promise = new Promise<any>((res, rej) => {
--    queueMicrotask(() => {
-+    const run = () => {
-+      if (later && node._x?._inFlight === flight) markRefresh(node);
-       // The root is load-bearing: an ownerless computed is auto-disposing,
-       // and the settle walk releases an unobserved one instead of re-running
-       // it, so the waiter would never see the refetch land (#3888). Settle
-@@ -990,7 +1014,11 @@ export function refresh<T>(
-           own
-         );
-       createRoot(make);
--    });
-+    };
-+    if (later) {
-+      const re = () => queueMicrotask(run);
-+      flight!.then(re, re);
-+    } else queueMicrotask(run);
-   });
-   // Fire-and-forget refresh must not turn a failed refetch into an unhandled
-   // rejection; awaiting callers attach their own handlers to `promise`.
-```
-
-**File**: `packages/signals/tests/optimistic-lane-seam-loop-4643.test.ts` (modified, +5/-2)
-```diff
-@@ -346,7 +346,8 @@ for (const withMemo of [true, false])
-         "a list lands=read:",
-         "filter all=all:[2][4]",
-         ...rest,
--        "land list=all:[2][4]",
-+        // The second poll, made while the first's answer was out, waited for
-+        // it and re-asked once (#5094): one list request fewer.
-         "land list=all:[1][2][4]",
-         "poll=all:[1][2][4]",
-         "land list=all:[1][2][4]"
-@@ -471,8 +472,10 @@ it("#4643: a toggle beside a held poll answer shows the screen's other rows, who
-     "land poll=[1o][2o][3o] 3 left",
-     "t3=[1o][2o][3x] 2 left",
-     "land toggle:1=[1o][2o][3x] 2 left",
--    "land list=[1o][2o][3x] 2 left",
-+    // A refresh made while the poll's answer was out re-asks after it lands
-+    // (#5094), so its list request comes after the add's.
-     "land add:3=[1o][2o][3x] 2 left",
-+    "land list=[1o][2o][3x] 2 left",
-     "land toggle:3=[1o][2o][3x] 2 left",
-     "land list=[1o][2o][3x] 2 left",
-     "land list=[1o][2o][3x] 2 left",
-```
-
-**File**: `packages/signals/tests/refresh-await.test.ts` (modified, +12/-7)
-```diff
-@@ -4,8 +4,9 @@
-  * Contract under test:
-  * - Accessor targets resolve with the settled value; store targets resolve
-  *   with the store node passed (root or nested — the family re-asks as one).
-- * - Quiescence, not flight identity: a superseding refresh (or any newer
-- *   invalidation) folds every waiter onto whatever finally lands.
-+ * - Quiescence, not flight identity: a newer invalidation (an input change)
-+ *   folds every waiter onto whatever finally lands. A refresh made while a
-+ *   re-ask's answer is out waits for it and re-asks once (#5094).
-  * - The seam is the landing itself, not graph notification: an equal-value
-  *   landing (completely silent to subscribers) still settles the promise.
-  * - A failed re-ask rejects with the error; `yield refresh(x)` in an action
-@@ -191,7 +192,7 @@ test("fire-and-forget refresh with a failing re-ask surfaces no unhandled reject
-   dispose();
- });
- 
--test("supersession: waiters from both refreshes deliver the final landing", async () => {
-+test("overlapping refreshes: the answer out lands, then one re-ask (#5094)", async () => {
-   const gates: ReturnType<typeof deferred<string>>[] = [];
-   let m!: SourceAccessor<string>;
-   let dispose!: () => void;
-@@ -212,18 +213,22 @@ test("supersession: waiters from both refreshes deliver the final landing", asyn
-   const p1 = refresh(m);
-   flush();
-   await tick();
--  const p2 = refresh(m); // supersedes flight 2 with flight 3
-+  // Flight 2 is out: this re-ask waits for its answer, then asks once.
-+  const p2 = refresh(m);
-   flush();
-   await tick();
-+  expect(gates.length).toBe(2);
- 
--  // The superseded flight landing is ignored — not delivered to anyone.
--  gates[1].resolve("stale");
-+  // Flight 2's answer is a valid value of the same question (D-34): it lands
-+  // and settles p1; p2's re-ask goes up after it.
-+  gates[1].resolve("second");
-   await tick();
-   flush();
-+  await expect(p1).resolves.toBe("second");
-+  expect(gates.length).toBe(3);
-   gates[2].resolve("final");
-   await tick();
-   flush();
--  await expect(p1).resolves.toBe("final");
-   await expect(p2).resolves.toBe("final");
-   expect(m()).toBe("final");
-   dispose();
-```
-
-**File**: `packages/signals/tests/refresh-overlapping-poll-5094.test.ts` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+/**
-+ * #5094: `refresh()` while the same question's answer is still out waits for
-+ * that answer and re-asks once after it lands. A re-ask asks the same
-+ * question (D-34, F-9), so the answer in flight is a valid value: superseding
-+ * it, a poll faster than the response never showed a new value, and an
-+ * unrelated write that read the polled memo waited behind the poll forever.
-+ */
+@@ -0,0 +1,37 @@
++/** @vitest-environment node */
 +import { expect, test } from "vitest";
-+import {
-+  action,
-+  createMemo,
-+  createRenderEffect,
-+  createRoot,
-+  createSignal,
-+  flush,
-+  isPending,
-+  refresh
-+} from "../src/index.js";
++import { createContext, createOwner, createRoot } from "../../src/server/index.js";
 +
-+const tick = () => new Promise<void>(r => setTimeout(r, 0));
++// #5180: an owner disposed while the pool is full was dropped without the
++// #4890 reset, so a reference an earlier render kept to it (after a later
++// render reused it) reached the later render's provided values.
++test("an owner disposed while the owner pool is full does not keep its render's context", () => {
++  const Payload = createContext<{ id: number } | undefined>(undefined, { name: "Payload" });
++  const created: any[] = [];
 +
-+function setup() {
-+  const answers: ((v: number) => void)[] = [];
-+  let asked = 0;
-+  const seen: number[] = [];
-+  let stats!: () => number;
-+  createRoot(() => {
-+    stats = createMemo(() => {
-+      const n = ++asked;
-+      return new Promise<number>(r => answers.push(() => r(n)));
++  function render(id: number, owners: number) {
++    const payload = { id };
++    createRoot(dispose => {
++      (Payload as any)({
++        value: payload,
++        children: () => {
++          for (let i = 0; i < owners; i++) created.push(createOwner());
++          return "";
++        }
++      })();
++      dispose();
 +    });
-+    createRenderEffect(stats, v => {
-+      seen.push(v);
-+    });
-+  });
-+  flush();
-+  const answer = async () => {
-+    answers.shift()!(0);
-+    await tick();
-+    await tick();
-+  };
-+  return { answers, seen, stats: () => stats, asked: () => asked, answer };
-+}
-+
-+test("refreshes while an answer is out coalesce into one re-ask after it lands", async () => {
-+  const { seen, stats, asked, answer } = setup();
-+  await answer();
-+  expect(seen).toEqual([1]);
-+
-+  refresh(stats());
-+  await tick();
-+  expect(asked()).toBe(2);
-+
-+  // Two more polls while #2 is out: no new request yet.
-+  refresh(stats());
-+  refresh(stats());
-+  await tick();
-+  expect(asked()).toBe(2);
-+
-+  // #2 lands and shows; the polls owe one re-ask.
-+  await answer();
-+  expect(seen).toEqual([1, 2]);
-+  expect(asked()).toBe(3);
-+
-+  await answer();
-+  expect(seen).toEqual([1, 2, 3]);
-+  // Nothing was owed after #3.
-+  expect(asked()).toBe(3);
-+});
-+
-+test("a poll faster than the response shows every answer", async () => {
-+  const { seen, stats, asked, answer } = setup();
-+  await answer();
-+  for (let i = 0; i < 4; i++) {
-+    refresh(stats());
-+    await tick();
-+    refresh(stats());
-+    await tick();
-+    await answer();
 +  }
-+  expect(seen).toEqual([1, 2, 3, 4, 5]);
-+  expect(asked()).toBe(6);
-+});
 +
-+test("the awaited refresh() settles at the answer that lands", async () => {
-+  const { stats, answer } = setup();
-+  await answer();
-+  refresh(stats());
-+  await tick();
-+  const p = refresh(stats());
-+  await answer();
-+  await answer();
-+  expect(await p).toBeGreaterThanOrEqual(2);
-+});
++  // Two renders, each with more owners than the pool holds: the second
++  // reuses every pooled owner and disposes into an already-full pool.
++  render(1, 5000);
++  created.length = 0;
++  render(2, 5000);
 +
-+test("a write that reads the polled memo is not held behind the poll", async () => {
-+  const answers: ((v: string) => void)[] = [];
-+  const seen: string[] = [];
-+  let stats!: () => string;
-+  let setRange!: (v: number) => void;
-+  createRoot(() => {
-+    const [range, set] = createSignal(1);
-+    setRange = set;
-+    stats = createMemo(() => {
-+      const r = range();
-+      return new Promise<string>(res => answers.push(() => res("range " + r)));
-+    });
-+    createRenderEffect(stats, v => {
-+      seen.push(v);
-+    });
-+  });
-+  flush();
-+  answers.shift()!("");
-+  await tick();
-+  expect(seen).toEqual(["range 1"]);
-+
-+  refresh(stats);
-+  await tick();
-+  setRange(2);
-+  flush();
-+  // Polls keep coming while the range's answer is out.
-+  refresh(stats);
-+  await tick();
-+  while (answers.length) {
-+    answers.shift()!("");
-+    await tick();
-+    await tick();
++  expect(created).toHaveLength(5000);
++  for (const o of created) {
++    expect(o._disposed).toBe(true);
++    expect(o._context[(Payload as any).id]).toBeUndefined();
 +  }
-+  expect(seen[seen.length - 1]).toBe("range 2");
-+});
-+
-+test("refresh() with nothing out re-asks at once", async () => {
-+  const { stats, asked, answer } = setup();
-+  await answer();
-+  refresh(stats());
-+  await tick();
-+  expect(asked()).toBe(2);
-+  await answer();
-+  refresh(stats());
-+  await tick();
-+  expect(asked()).toBe(3);
-+});
-+
-+test("the coalesced re-ask stays quiet", async () => {
-+  const { stats, answer } = setup();
-+  await answer();
-+  refresh(stats());
-+  await tick();
-+  refresh(stats());
-+  let pending: boolean | undefined;
-+  createRoot(() =>
-+    createRenderEffect(
-+      () => isPending(stats()),
-+      v => void (pending = v)
-+    )
-+  );
-+  flush();
-+  expect(pending).toBe(false);
-+  await answer();
-+  expect(pending).toBe(false);
-+});
-+
-+test("an action's refresh() still re-asks inside its hold", async () => {
-+  const { stats, asked, answer } = setup();
-+  await answer();
-+  refresh(stats());
-+  await tick();
-+  expect(asked()).toBe(2);
-+  const run = action(function* () {
-+    yield refresh(stats());
-+  });
-+  const done = run();
-+  await tick();
-+  expect(asked()).toBe(3);
-+  await answer();
-+  await answer();
-+  await done;
 +});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5138** (2026-11-20): docs(signals): a pass stops at its first throw; read order decides a rejection's first screen (#5114) (@ryansolid)
-- **PR #5137** (2026-11-20): refactor(signals): a guessed node stores two values; its lane holds the waiting guess (@ryansolid)
-- **PR #5135** (2026-11-20): docs: optimistic writes always revert; examples keep the truth (#5129) (@devagrawal09)
-- **PR #5134** (2026-11-20): test(babel-plugin): accept @babel/generator 8.1.3's NaN output (fixes red babel-8 job) (@ryansolid)
-- **PR #5133** (2026-11-20): docs: state the engine's value model in AGENTS.md (@ryansolid)
-- **PR #5132** (closed): fix(compiler): keep JSX setup of a later declarator in place (#5102) (@devagrawal09)
+- **PR #5190** (2026-11-24): fix(web): send an empty revalidate declaration as a non-empty header (@ryansolid)
+- **PR #5189** (2026-11-24): fix(web): settle a frame landing when the server sends :error and :complete in one batch (@Marve10s)
+- **PR #5187** (2026-11-24): fix(web): type Portal's mount as Element | ShadowRoot (@Marve10s)
+- **PR #5185** (2026-11-24): fix(web): read ternary props from handlers while the source re-asks (@brenelz)
+- **PR #5184** (2026-11-24): fix(web): a server function's ReadableStream result stays a ReadableStream (@ryansolid)
+- **PR #5183** (2026-11-24): fix(compiler): treat only a leading comment equal to the static marker as the marker (@ryansolid)
 
 ---
 
@@ -1388,25 +936,25 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. solid): a server projection over a pending async store waits for it
+## X. web): send an empty revalidate declaration as a non-empty header
 
 **RULE**:
-When implementing operations in `.changeset/ssr-projection-pending-store-5097.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-web-empty-revalidate-header.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc0dac0c`: solid): a server projection over a pending async store waits for it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21822b29`: web): send an empty revalidate declaration as a non-empty header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssr-projection-pending-store-5097.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-web-empty-revalidate-header.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"solid-js": patch
+"@solidjs/web": patch
 ---
 
-On the server, a projection or derived optimistic store whose function returns a pending async store (`createProjection(() => rows, …)`, `createOptimisticStore(() => rows, …)`) now waits for that store like a derive that read it, so `<Loading>` shows its fallback and the answer streams in. Before, adopting the pending store threw `NotReadyError` out of the component body.
+An empty `revalidate` declaration (`[]` or `""`) is now sent as `X-Revalidate: ,` instead of an empty header value, which intermediaries such as CDNs drop, turning "revalidate nothing" into "revalidate everything".
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1416,7 +964,7 @@ On the server, a projection or derived optimistic store whose function returns a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc0dac0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21822b29` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

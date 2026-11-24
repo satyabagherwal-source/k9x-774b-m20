@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:51:10.060Z",
-  "total_cycles_completed": 12192,
-  "total_learnings_persisted": 12192,
-  "total_rules_promoted": 11246,
+  "last_updated": "2026-11-24T23:04:37.091Z",
+  "total_cycles_completed": 12194,
+  "total_learnings_persisted": 12194,
+  "total_rules_promoted": 11248,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:38:25.050Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:38:28.680Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:46:13.287Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T22:51:10.060Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:04:27.073Z",
+      "repository": "solidjs/solid",
+      "learningId": "learn-github-solidjs-solid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:04:37.091Z",
+      "repository": "zilliztech/claude-context",
+      "learningId": "learn-github-zilliztech-claude-context",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

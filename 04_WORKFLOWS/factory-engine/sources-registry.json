@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T22:15:59.119Z",
-    "lastVerified": "2026-11-24T22:15:59.119Z",
+    "lastChecked": "2026-11-24T23:04:34.701Z",
+    "lastVerified": "2026-11-24T23:04:34.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T22:51:13.255Z",
-    "lastVerified": "2026-11-24T22:51:13.255Z",
+    "lastChecked": "2026-11-24T23:04:40.412Z",
+    "lastVerified": "2026-11-24T23:04:40.412Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1575,9 +1575,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-24T18:17:29.559Z",
+    "lastChecked": "2026-11-24T23:04:29.831Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-24T18:17:29.559Z"
+    "lastVerified": "2026-11-24T23:04:29.831Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1938,11 +1938,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
-    "name": "claude-context",
+    "name": "zilliztech/claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-24T02:21:10.175Z",
-    "revisionIdentifier": "64a87f9b",
-    "lastVerified": "2026-11-24T02:21:10.175Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-24T23:04:35.867Z",
+    "lastVerified": "2026-11-24T23:04:35.867Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zilliztech-claude-context",
+    "contentHash": "3586ad5e4b12cd45e25ae9812f48575e0d1e1c8bca45102307e757d199ff91ab",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -4404,9 +4414,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-24T03:33:27.123Z",
+    "lastChecked": "2026-11-24T23:04:27.361Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-24T03:33:27.123Z"
+    "lastVerified": "2026-11-24T23:04:27.361Z"
   },
   "helixdb-helix-db": {
     "name": "helix-db",
@@ -7032,12 +7042,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "onejs-one": {
-    "name": "onejs/one",
+    "name": "one",
     "officialUrl": "https://github.com/onejs/one",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T08:09:21.969Z",
-    "lastVerified": "2026-11-22T08:09:21.969Z",
+    "lastChecked": "2026-11-24T23:04:24.748Z",
+    "lastVerified": "2026-11-24T23:04:24.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-onejs-one",
@@ -7046,7 +7056,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "23a33ef5"
   },
   "temporalio-temporal": {
     "name": "temporalio/temporal",
@@ -7654,9 +7665,9 @@
   "crate-ci-typos": {
     "name": "typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-11-23T20:08:19.931Z",
+    "lastChecked": "2026-11-24T23:04:19.702Z",
     "revisionIdentifier": "e7647d64",
-    "lastVerified": "2026-11-23T20:08:19.931Z"
+    "lastVerified": "2026-11-24T23:04:19.702Z"
   },
   "hf-cactus-compute-whistle": {
     "name": "Cactus-Compute/whistle",
@@ -11581,14 +11592,14 @@
     "officialUrl": "https://github.com/solidjs/solid",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T23:21:21.165Z",
-    "lastVerified": "2026-11-20T23:21:21.165Z",
+    "lastChecked": "2026-11-24T23:04:25.689Z",
+    "lastVerified": "2026-11-24T23:04:25.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-solidjs-solid",
-    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
+    "contentHash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 25,
+    "recentFixesCount": 28,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

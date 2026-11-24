@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T22:51:10.070Z",
+  "last_updated": "2026-11-24T23:04:37.103Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11136,14 +11136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zilliztech-claude-context",
-      "content_hash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
-      "verified_at": "2026-11-12T21:42:00.851Z",
+      "content_hash": "3586ad5e4b12cd45e25ae9812f48575e0d1e1c8bca45102307e757d199ff91ab",
+      "verified_at": "2026-11-24T23:04:37.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:42:00.851Z"
+      "last_updated": "2026-11-24T23:04:37.102Z"
     },
     "killercup/cargo-edit": {
       "repository": "killercup/cargo-edit",
@@ -15006,14 +15006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-solidjs-solid",
-      "content_hash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
-      "verified_at": "2026-11-20T23:21:22.204Z",
+      "content_hash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
+      "verified_at": "2026-11-24T23:04:27.094Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:21:22.204Z"
+      "last_updated": "2026-11-24T23:04:27.094Z"
     },
     "zekunyan/TTGTagCollectionView": {
       "repository": "zekunyan/TTGTagCollectionView",

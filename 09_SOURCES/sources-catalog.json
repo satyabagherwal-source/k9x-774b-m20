@@ -7393,10 +7393,10 @@
     "repository": "zilliztech/claude-context",
     "platform": "github",
     "sourceUrl": "https://github.com/zilliztech/claude-context",
-    "sourceVersion": "64a87f9b",
+    "sourceVersion": "c5326ccb",
     "license": "MIT",
-    "contentHash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
-    "lastHarvestedAt": "2026-11-12T21:42:00.839Z",
+    "contentHash": "3586ad5e4b12cd45e25ae9812f48575e0d1e1c8bca45102307e757d199ff91ab",
+    "lastHarvestedAt": "2026-11-24T23:04:37.085Z",
     "learningId": "learn-github-zilliztech-claude-context"
   },
   "killercup-cargo-edit": {
@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "5a43d6f8",
+    "sourceVersion": "72b5111f",
     "license": "MIT",
-    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
-    "lastHarvestedAt": "2026-11-20T23:21:22.195Z",
+    "contentHash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
+    "lastHarvestedAt": "2026-11-24T23:04:27.067Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {

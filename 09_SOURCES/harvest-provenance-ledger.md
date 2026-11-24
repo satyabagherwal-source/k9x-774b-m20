@@ -12866,3 +12866,5 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `36cb19ee` | Multi-dimensional audit evidence | 2026-11-24T22:51:00.061Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `212cbf3c` | Multi-dimensional audit evidence | 2026-11-24T22:51:07.504Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f45b916b` | Multi-dimensional audit evidence | 2026-11-24T22:51:10.055Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `72b5111f` | Multi-dimensional audit evidence | 2026-11-24T23:04:27.067Z |
+| `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `c5326ccb` | Multi-dimensional audit evidence | 2026-11-24T23:04:37.085Z |

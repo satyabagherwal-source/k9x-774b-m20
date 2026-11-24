@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T22:51:15.947Z",
-  "total_records": 2587,
+  "last_updated": "2026-11-24T23:04:43.249Z",
+  "total_records": 2591,
   "domains": {
     "A": {
       "total": 22,
@@ -1632,7 +1632,7 @@
       ]
     },
     "H": {
-      "total": 617,
+      "total": 621,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2250,7 +2250,11 @@
         "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv"
       ]
     },
     "I": {
@@ -23758,8 +23762,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b43db5fe94e8755a6afc07309c51388761a302c78b01526f81fd938acdf31c59",
-      "created_at": "2026-11-24T22:30:20.009Z"
+      "content_hash": "0dea89eea531f2f1c9337c4328285ee4419e7eb8b18da35d08f16eac6e1166f2",
+      "created_at": "2026-11-24T23:04:43.249Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -43422,6 +43426,42 @@
       "repository": "kotest-kotest-learnings",
       "content_hash": "373351312bd9c29276e626aad8cfdffcc2c3cedb137bc8e80683e8159d5f8b54",
       "created_at": "2026-11-24T22:30:18.665Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: solidjs/solid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-solidjs-solid-technical-construction-intelligence-solidjs-solid-core-invariants.md",
+      "repository": "solidjs/solid",
+      "content_hash": "9e6646565cb2c7de01ec532d17f3fc2b2d6f4eca61ddd94243f73feb39eb77d5",
+      "created_at": "2026-11-24T23:04:27.532Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zilliztech/claude-context Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zilliztech-claude-context-technical-construction-intelligence-zilliztech-claude-.md",
+      "repository": "zilliztech/claude-context",
+      "content_hash": "9f1dd83b62c7242abca12dab613d346b86604cf260bc88275752f5fa4363b922",
+      "created_at": "2026-11-24T23:04:37.525Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: solidjs-solid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-solidjs-solid-learnings-technical-construction-intelligence-solidjs-solid-learni.md",
+      "repository": "solidjs-solid-learnings",
+      "content_hash": "513fe7f5ff52fd07967eeb7a29cda152ea1aae68b136e838b40acb1ef25f59a0",
+      "created_at": "2026-11-24T23:04:41.185Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zilliztech-claude-context-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zilliztech-claude-context-learnings-technical-construction-intelligence-zillizte.md",
+      "repository": "zilliztech-claude-context-learnings",
+      "content_hash": "eea37f3ee12dae2a4f9a454cfba249dc89cb3170705db5f14eb7c17f3d344b73",
+      "created_at": "2026-11-24T23:04:42.220Z"
     }
   }
 }
