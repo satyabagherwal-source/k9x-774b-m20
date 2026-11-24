@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "9991542c",
+    "sourceVersion": "7ecaf212",
     "license": "MIT",
-    "contentHash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
-    "lastHarvestedAt": "2026-11-22T23:57:17.723Z",
+    "contentHash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
+    "lastHarvestedAt": "2026-11-24T08:34:30.876Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

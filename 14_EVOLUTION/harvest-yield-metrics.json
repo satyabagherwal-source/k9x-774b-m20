@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:25:06.819Z",
-  "total_cycles_completed": 12011,
-  "total_learnings_persisted": 12011,
+  "last_updated": "2026-11-24T08:34:30.881Z",
+  "total_cycles_completed": 12012,
+  "total_learnings_persisted": 12012,
   "total_rules_promoted": 11088,
   "history": [
-    {
-      "timestamp": "2026-11-23T18:50:29.476Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T18:50:49.777Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1403,6 +1396,13 @@
       "repository": "zulip/zulip",
       "learningId": "learn-github-zulip-zulip",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:34:30.881Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -4,24 +4,24 @@
 {
   "source_repository": "1jehuang/jcode",
   "source_url": "https://github.com/1jehuang/jcode",
-  "source_version": "9991542c",
+  "source_version": "7ecaf212",
   "license": "MIT",
-  "timestamp": "2026-11-22T23:57:17.968Z",
+  "timestamp": "2026-11-24T08:34:31.102Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-1jehuang-jcode",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `9991542c`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T23:57:17.968Z`  
+> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `7ecaf212`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T08:34:31.102Z`  
 > **Learning ID**: `learn-github-1jehuang-jcode`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from 1jehuang/jcode:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:57:16.626Z  
+> **Harvest Timestamp**: 2026-11-24T08:34:18.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21989 stars
+- **Stars / Engagement**: 22016 stars
 
 ---
 
@@ -2058,454 +2058,197 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9991542c` (2026-11-22)
-**Commit Message**: fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592
+### Incident Patch 1: `18132de3` (2026-11-23)
+**Commit Message**: fix(tui): flush paced stream buffer immediately on Done instead of deferring
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +0/-8)
 ```diff
-@@ -2680,9 +2680,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -9659,9 +9659,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+@@ -1000,14 +1000,6 @@ fn handle_server_event_inner(
+             let completes_resumed_turn =
+                 app.current_message_id.is_none() && app.is_processing && has_resumed_turn_evidence;
+             if app.current_message_id == Some(id) || completes_resumed_turn {
+-                if !app.stream_buffer.is_empty() {
+-                    crate::logging::info(&format!(
+-                        "Deferring Done id={} until paced stream backlog drains",
+-                        id
+-                    ));
+-                    app.deferred_stream_done_id = Some(id);
+-                    return true;
+-                }
+                 app.deferred_stream_done_id = None;
+                 // A delivery acknowledgement is not proof that an AI turn ran.
+                 // This catches hidden continuation dedup/no-op completions at
 ```
 
----
-
-### Incident Patch 2: `ed73ff8a` (2026-11-22)
-**Commit Message**: test(tui): update login prompt and progress card test assertions for v1.1.0
-
-**File**: `crates/jcode-tui/src/tui/app/tests/onboarding_flow.rs` (modified, +6/-2)
+**File**: `crates/jcode-tui/src/tui/app/remote/turn_identity_tests.rs` (modified, +3/-21)
 ```diff
-@@ -99,7 +99,9 @@ fn direct_api_key_login_does_not_advertise_a_static_model_default() {
-         .last()
-         .expect("missing OpenAI API key prompt")
-         .content;
--    assert!(openai_prompt.contains("Endpoint: https://api.openai.com/v1"));
-+    assert!(openai_prompt.contains("OpenAI API Key"));
-+    assert!(openai_prompt.contains("Paste your API key below"));
-+    assert!(!openai_prompt.contains("Default model:"));
-     assert!(!openai_prompt.contains("Suggested default model:"));
- 
-     app.start_login_provider(
-@@ -111,7 +113,9 @@ fn direct_api_key_login_does_not_advertise_a_static_model_default() {
-         .last()
-         .expect("missing Anthropic API key prompt")
-         .content;
--    assert!(anthropic_prompt.contains("Endpoint: https://api.anthropic.com"));
-+    assert!(anthropic_prompt.contains("Anthropic API Key"));
-+    assert!(anthropic_prompt.contains("Paste your API key below"));
-+    assert!(!anthropic_prompt.contains("Default model:"));
-     assert!(!anthropic_prompt.contains("Suggested default model:"));
- }
- 
+@@ -288,29 +288,11 @@ fn paced_done_keeps_its_identity_across_reconnect_and_cannot_finish_new_turn() {
+         ),
+         &mut remote,
+     );
+-    handle_server_event(
+-        &mut app,
+-        scoped("runtime", 1, ServerEvent::Done { id: 42 }),
+-        &mut remote,
+-    );
+-    assert_eq!(app.deferred_stream_done_id, Some(42));
+-    handle_server_event(
+-        &mut app,
+-        ServerEvent::TurnState {
+-            session_id: "session".into(),
+-            runtime_generation: "runtime".into(),
+-            latest_turn_id: 1,
+-            turn_id: None,
+-        },
+-        &mut remote,
+-    );
+-    assert_eq!(app.deferred_stream_done_id, Some(42));
+-    let ops = app.stream_buffer.flush();
+-    app.apply_stream_ops(ops);
+-    let id = app.deferred_stream_done_id.take().unwrap();
+-    let event = scoped("runtime", 1, ServerEvent::Done { id });
++    let event = scoped("runtime", 1, ServerEvent::Done { id: 42 });
+     handle_server_event(&mut app, event.clone(), &mut remote);
+     assert!(!app.is_processing);
++    assert!(app.stream_buffer.is_empty());
++    assert_eq!(app.deferred_stream_done_id, None);
+     start(&mut app, &mut remote, "runtime", 2);
+     handle_server_event(&mut app, event, &mut remote);
+     assert!(app.is_processing);
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/tests/remote_events_reload_04.rs` (modified, +2/-2)
+**File**: `crates/jcode-tui/src/tui/app/tests/remote_events_reload_01/token_usage_streaming.rs` (modified, +2/-21)
 ```diff
-@@ -963,8 +963,8 @@ fn test_tui_grok_build_login_starts_managed_oauth_flow() {
-         .map(|message| message.content.as_str())
-         .collect::<Vec<_>>()
-         .join("\n");
--    assert!(rendered.contains("xAI sign-in URL and device code"));
--    assert!(rendered.contains("You do not need to install the Grok CLI"));
-+    assert!(rendered.contains("Grok Build login: requesting xAI device code"));
-+    assert!(rendered.contains("Type /cancel to abort."));
-     assert!(!rendered.contains("run `jcode login"));
- }
- 
-```
-
-**File**: `scripts/test_size_budget.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "crates/jcode-tui/src/tui/app/tests/commands_accounts_01/part_01.rs": 1590,
-     "crates/jcode-tui/src/tui/app/tests/commands_accounts_02/part_01.rs": 1215,
-     "crates/jcode-tui/src/tui/app/tests/onboarding_eval.rs": 3306,
--    "crates/jcode-tui/src/tui/app/tests/onboarding_flow.rs": 1694,
-+    "crates/jcode-tui/src/tui/app/tests/onboarding_flow.rs": 1698,
-     "crates/jcode-tui/src/tui/app/tests/remote_events_reload_01/part_01.rs": 1689,
-     "crates/jcode-tui/src/tui/app/tests/remote_events_reload_04.rs": 2587,
-     "crates/jcode-tui/src/tui/app/tests/remote_failover_routes.rs": 1275,
-```
-
----
-
-### Incident Patch 3: `95861dcc` (2026-11-22)
-**Commit Message**: fix(ci): resolve formatting, clippy, dead-code, and guardrail baselines for v1.1.0
-
-**File**: `crates/jcode-app-core/src/build.rs` (modified, +12/-12)
-```diff
-@@ -10,18 +10,18 @@ pub use jcode_build_support::{
-     current_source_state, current_version_file, ensure_source_state_matches, find_dev_binary,
-     find_repo_in_ancestors, get_commit_message, get_repo_dir, install_binary_at_version,
-     install_local_release, install_version, is_dynamic_loader_path, is_jcode_repo,
--    is_working_tree_dirty,
--    launcher_binary_path, launcher_dir, load_migration_context, manifest_path,
--    migration_context_path, preferred_reload_candidate, promote_version_to_shared_server,
--    prune_old_versions, publish_local_current_build, publish_local_current_build_for_source,
--    read_build_progress, read_current_version, read_shared_server_version, read_stable_version,
--    release_binary_path, repair_stale_shared_server_channel, repo_build_version, repo_scope_key,
--    resolve_binary_payload, rollback_pending_activation_for_session, run_selfdev_build,
--    save_migration_context, selfdev_binary_path, selfdev_build_command,
--    selfdev_build_command_for_target, shared_server_binary_path, shared_server_tracks_stable,
--    shared_server_update_candidate, shared_server_version_file, smoke_test_binary,
--    smoke_test_server_binary, stable_binary_path, stable_version_file, update_canary_symlink,
--    update_current_symlink, update_launcher_symlink_to_current, update_launcher_symlink_to_stable,
-+    is_working_tree_dirty, launcher_binary_path, launcher_dir, load_migration_context,
-+    manifest_path, migration_context_path, preferred_reload_candidate,
-+    promote_version_to_shared_server, prune_old_versions, publish_local_current_build,
-+    publish_local_current_build_for_source, read_build_progress, read_current_version,
-+    read_shared_server_version, read_stable_version, release_binary_path,
-+    repair_stale_shared_server_channel, repo_build_version, repo_scope_key, resolve_binary_payload,
-+    rollback_pending_activation_for_session, run_selfdev_build, save_migration_context,
-+    selfdev_binary_path, selfdev_build_command, selfdev_build_command_for_target,
-+    shared_server_binary_path, shared_server_tracks_stable, shared_server_update_candidate,
-+    shared_server_version_file, smoke_test_binary, smoke_test_server_binary, stable_binary_path,
-+    stable_version_file, update_canary_symlink, update_current_symlink,
-+    update_launcher_symlink_to_current, update_launcher_symlink_to_stable,
-     update_shared_server_symlink, update_stable_symlink, version_binary_path,
-     version_matches_installed_channel, worktree_scope_key, write_build_progress,
-     write_current_dev_binary_source_metadata, write_dev_binary_source_metadata,
-```
-
-**File**: `crates/jcode-app-core/src/tool/selfdev/ui_diff.rs` (modified, +8/-2)
-```diff
-@@ -191,7 +191,9 @@ pub(super) async fn do_before_after(
-         let root = repo_dir
-             .clone()
-             .or_else(|| std::env::current_dir().ok())
--            .ok_or_else(|| anyhow::anyhow!("cannot resolve repo directory for attach_to_discord"))?;
-+            .ok_or_else(|| {
-+                anyhow::anyhow!("cannot resolve repo directory for attach_to_discord")
-+            })?;
-         let slug = sanitize_slug(
-             args.label
-                 .as_deref()
-@@ -242,7 +244,11 @@ pub(super) async fn do_before_after(
-             .arg("--after")
-             .arg(&after_path);
-     }
--    if let Some(label) = args.before_label.as_deref().filter(|s| !s.trim().is_empty()) {
-+    if let Some(label) = args
-+        .before_label
-+        .as_deref()
-+        .filter(|s| !s.trim().is_empty())
-+    {
-         cmd.arg("--before-label").arg(label.trim());
-     }
-     if let Some(label) = args.after_label.as_deref().filter(|s| !s.trim().is_empty()) {
-```
-
-**File**: `crates/jcode-app-core/src/update_preview.rs` (modified, +10/-12)
-```diff
-@@ -24,11 +24,7 @@ pub(super) fn selfdev_prerelease_sha(tag: &str) -> Option<&str> {
-     {
-         return None;
-     }
--    if sha.len() != 40
--        || !sha
--            .bytes()
--            .all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'))
--    {
-+    if sha.len() != 40 || !sha.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f')) {
-         return None;
-     }
-     Some(sha)
-@@ -112,9 +108,12 @@ fn preview_is_installable(candidate: &PreviewRelease) -> bool {
-             .is_some_and(|asset| asset._size > 0 && !asset.browser_download_url.is_empty())
- }
- 
--fn preview_sort_key(
--    release: &GitHubRelease,
--) -> (Option<chrono::DateTime<chrono::Utc>>, Option<(u64, u64, u64, u64)>) {
-+type PreviewSortKey = (
-+    Option<chrono::DateTime<chrono::Utc>>,
-+    Option<(u64, u64, u64, u64)>,
-+);
-+
-+fn preview_sort_key(release: &GitHubRelease) -> PreviewSortKey {
-     (
-         parse_release_timestamp(release._published_at.as_deref()),
-         semver_preview_version(&release.tag_name),
-@@ -126,10 +125,9 @@ fn select_latest_preview(
-     releases: impl IntoIterator<Item = PreviewRelease>,
- ) {
-     for candidate in releases.into_iter().filter(preview_is_installable) {
--        if latest
--            .as_ref()
--            .is_none_or(|previous| preview_sort_key(&candidate.release) > preview_sort_key(previous))
--        {
-+        if latest.as_ref().is_none_or(|previous| {
-+            preview_sort_key(&candidate.release) > preview_sort_key(previous)
-+        }) {
-             *latest = Some(candidate.release);
-         }
-     }
-```
-
-**File**: `crates/jcode-app-core/src/update_preview_tests.rs` (modified, +3/-1)
-```diff
-@@ -48,7 +48,9 @@ fn preview_discovery_accepts_selfdev_and_semver_preview_tags() {
-     ] {
-         assert!(!preview_is_installable(&preview_fixture(tag)), "{tag}");
-     }
--    assert!(semver_preview_version("v1.0.0-preview.10") > semver_preview_version("v1.0.0-preview.9"));
-+    assert!(
-+        semver_preview_version("v1.0.0-preview.10") > semver_preview_version("v1.0.0-preview.9")
-+    );
+@@ -190,7 +190,7 @@ fn test_handle_server_event_message_end_marks_stream_as_finalizing_without_stall
  }
  
  #[test]
+-fn test_remote_done_waits_for_paced_backlog_and_one_live_frame() {
++fn test_remote_done_flushes_paced_backlog_immediately() {
+     let mut app = create_test_app();
+     let rt = tokio::runtime::Runtime::new().unwrap();
+     let _guard = rt.enter();
+@@ -210,26 +210,7 @@ fn test_remote_done_waits_for_paced_backlog_and_one_live_frame() {
+     );
+     app.handle_server_event(crate::protocol::ServerEvent::Done { id: 42 }, &mut remote);
+ 
+-    assert!(app.is_processing, "Done must not force-flush the backlog");
+-    assert_eq!(app.deferred_stream_done_id, Some(42));
+-    assert!(
+-        app.display_messages
+-            .iter()
+-            .all(|message| { message.role != "assistant" || !message.content.contains(response) })
+-    );
+-
+-    // The first tick drains the short backlog, but deliberately leaves the live
+-    // streaming representation visible for one frame before committing it.
+-    std::thread::sleep(Duration::from_millis(60));
+-    rt.block_on(crate::tui::app::remote::handle_tick(&mut app, &mut remote));
+-    assert!(app.stream_buffer.is_empty());
+-    assert!(app.is_processing);
+-    assert_eq!(app.deferred_stream_done_id, Some(42));
+-    assert_eq!(app.streaming.streaming_text, response);
+-
+-    // The following tick replays Done now that the preceding live frame was
+-    // eligible to render, committing exactly the text that was paced out.
+-    rt.block_on(crate::tui::app::remote::handle_tick(&mut app, &mut remote));
++    assert!(app.stream_buffer.is_empty(), "Done should flush remaining backlog immediately");
+     assert!(!app.is_processing);
+     assert_eq!(app.deferred_stream_done_id, None);
+     assert!(
 ```
 
-**File**: `crates/jcode-base/src/auth/api_key_login.rs` (modified, +20/-12)
+---
+
+### Incident Patch 2: `2e8684ec` (2026-11-23)
+**Commit Message**: fix(tui): keep streaming label during paced reveal and reset stream_message_ended after tools/local phase
+
+**File**: `crates/jcode-tui/src/tui/app/remote/server_event_handlers.rs` (modified, +1/-0)
 ```diff
-@@ -12,10 +12,7 @@ pub enum ApiKeyValidationOutcome {
-     /// Endpoint returned 2xx; credentials are valid.
-     Verified,
-     /// Endpoint explicitly rejected the credentials (401/403).
--    Rejected {
--        status: u16,
--        detail: Option<String>,
--    },
-+    Rejected { status: u16, detail: Option<String> },
-     /// Probe could not determine validity (offline, timeout, 404/5xx, or unsupported provider).
-     Unverified { reason: String },
- }
-@@ -169,7 +166,11 @@ pub fn save_api_key_for_provider(
- 
-     let saved = match provider.target {
-         LoginProviderTarget::ClaudeApiKey => {
--            crate::provider_catalog::save_named_api_key("anthropic.env", "ANTHROPIC_API_KEY", &key)?;
-+            crate::provider_catalog::save_named_api_key(
-+                "anthropic.env",
-+                "ANTHROPIC_API_KEY",
-+                &key,
-+            )?;
-             SavedApiKeyLogin {
-                 provider_id: provider.id,
-                 display_name: provider.display_name,
-@@ -206,7 +207,11 @@ pub fn save_api_key_for_provider(
-             }
-         }
-         LoginProviderTarget::Bedrock => {
--            crate::provider_catalog::save_named_api_key("bedrock.env", "AWS_BEARER_TOKEN_BEDROCK", &key)?;
-+            crate::provider_catalog::save_named_api_key(
-+                "bedrock.env",
-+                "AWS_BEARER_TOKEN_BEDROCK",
-+                &key,
-+            )?;
-             crate::provider_catalog::save_env_value_to_env_file(
-                 "AWS_REGION",
-                 "bedrock.env",
-@@ -234,7 +239,10 @@ pub fn save_api_key_for_provider(
-         }
-         LoginProviderTarget::OpenAiCompatible(profile) => {
-             if profile.id == "muse-subscription" {
--                bail!("{} uses device code login, not an API key.", provider.display_name);
-+                bail!(
-+                    "{} uses device code login, not an API key.",
-+                    provider.display_name
-+                );
-             }
-             let resolved = crate::provider_catalog::resolve_openai_compatible_profile(profile);
-             if resolved.requires_api_key {
-@@ -264,10 +272,7 @@ pub fn save_api_key_for_provider(
-                 default_model: resolved.default_model,
-             }
-         }
--        _ => bail!(
--            "{} does not use API key login.",
--            provider.display_name
--        ),
-+        _ => bail!("{} does not use API key login.", provider.display_name),
-     };
- 
-     crate::auth::AuthStatus::invalidate_cache();
-@@ -336,6 +341,9 @@ mod tests {
-         let client = reqwest::Client::new();
-         let outcome =
-             validate_api_key_with_client(&client, provider, "sk-proj-test", Some(&base)).await;
--        assert!(matches!(outcome, ApiKeyValidationOutcome::Unverified { .. }));
-+        assert!(matches!(
-+            outcome,
-+            ApiKeyValidationOutcome::Unverified { .. }
-+        ));
-     }
+@@ -61,6 +61,7 @@ pub(super) fn handle_tool_done(
+     // input/intent are still waiting for their own ToolDone; clearing the
+     // whole list here made their rows render with no intent or summary.
+     app.streaming_tool_calls.retain(|tc| tc.id != id);
++    app.stream_message_ended = false;
+     app.status = ProcessingStatus::Streaming;
+     true
  }
 ```
 
-**File**: `crates/jcode-base/src/config.rs` (modified, +3/-3)
+**File**: `crates/jcode-tui/src/tui/app/turn.rs` (modified, +1/-0)
 ```diff
-@@ -11,9 +11,9 @@ pub use jcode_config_types::{
-     LaunchHotkeyEntry, LaunchHotkeysConfig, MarkdownSpacingMode, MenubarConfig, NamedProviderAuth,
-     NamedProviderConfig, NamedProviderModelConfig, NamedProviderType, NativeScrollbarConfig,
-     NotificationsConfig, PowerConfig, ProviderCompactionConfig, ProviderConfig,
--    ReasoningDisplayMode, ResumeOpenElsewhere,
--    ResumeTimeMode, SafetyConfig, SessionConfig, SessionPickerResumeAction, SponsorsConfig,
--    SwarmSpawnMode, TerminalConfig, UpdateChannel, WebSearchConfig, WebSearchEngine,
-+    ReasoningDisplayMode, ResumeOpenElsewhere, ResumeTimeMode, SafetyConfig, SessionConfig,
-+    SessionPickerResumeAction, SponsorsConfig, SwarmSpawnMode, TerminalConfig, UpdateChannel,
-+    WebSearchConfig, WebSearchEngine,
- };
- use serde::{Deserialize, Serialize};
- use std::collections::{BTreeMap, BTreeSet, HashSet};
+@@ -775,6 +775,7 @@ impl App {
+                                         self.update_terminal_title();
+                                     }
+                                     StreamEvent::ConnectionPhase { phase } => {
++                                        self.stream_message_ended = false;
+                                         let was_connecting = matches!(
+                                             self.status,
+                                             ProcessingStatus::Connecting(_)
 ```
 
-**File**: `crates/jcode-base/src/external_auth.rs` (modified, +52/-22)
+**File**: `crates/jcode-tui/src/tui/ui_input_status_rendering.rs` (modified, +10/-1)
 ```diff
-@@ -693,21 +693,26 @@ async fn validate_external_auth_review_candidate(
-         ExternalAuthReviewAction::SharedExternal(source) => {
-             validate_shared_external_import(source).await
-         }
--        ExternalAuthReviewAction::CodexLegacy => {
--            Ok((validate_openai_import().await?, candidate.telemetry_auth_labels()))
--        }
--        ExternalAuthReviewAction::ClaudeCode | ExternalAuthReviewAction::ClaudeCodeNative => {
--            Ok((validate_claude_import().await?, candidate.telemetry_auth_labels()))
--        }
--        ExternalAuthReviewAction::GeminiCli => {
--            Ok((validate_gemini_import().await?, candidate.telemetry_auth_labels()))
--        }
--        ExternalAuthReviewAction::Copilot(_) => {
--            Ok((validate_copilot_import().await?, candidate.telemetry_auth_labels()))
--        }
--        ExternalAuthReviewAction::Cursor(_) => {
--            Ok((validate_cursor_import().await?, candidate.telemetry_auth_labels()))
--        }
-+        ExternalAuthReviewAction::CodexLegacy => Ok((
-+            validate_openai_import().await?,
-+            candidate.telemetry_auth_labels(),
-+        )),
-+        ExternalAuthReviewAction::ClaudeCode | ExternalAuthReviewAction::ClaudeCodeNative => Ok((
-+            validate_claude_import().await?,
-+            candidate.telemetry_auth_labels(),
-+        )),
-+        ExternalAuthReviewAction::GeminiCli => Ok((
-+            validate_gemini_import().await?,
-+            candidate.telemetry_auth_labels(),
-+        )),
-+        ExternalAuthReviewAction::Copilot(_) => Ok((
-+            validate_copilot_import().await?,
-+            candidate.telemetry_auth_labels(),
-+        )),
-+        ExternalAuthReviewAction::Cursor(_) => Ok((
-+            validate_cursor_import().await?,
-+            candidate.telemetry_auth_labels(),
-+        )),
-     }
- }
- 
-@@ -945,11 +950,29 @@ mod rerun_safety_tests {
- 
-     #[test]
-     fn parse_selection_accepts_whitespace_and_skip_words() {
--        assert_eq!(parse_external_auth_review_selection("1 3", 3).unwrap(), vec![0, 2]);
--        assert_eq!(parse_external_auth_review_selection("1, 2", 3).unwrap(), vec![0, 1]);
--        assert!(parse_external_auth_review_selection("skip", 3).unwrap().is_empty());
--        assert!(parse_external_auth_review_selection("none", 3).unwrap().is_empty());
--        assert!(parse_external_auth_review_selection("n", 3).unwrap().is_empty());
-+        assert_eq!(
-+            parse_external_auth_review_selection("1 3", 3).unwrap(),
-+            vec![0, 2]
-+        );
-+        assert_eq!(
-+            parse_external_auth_review_selection("1, 2", 3).unwrap(),
-+            vec![0, 1]
-+        );
-+        assert!(
-+            parse_external_auth_review_selection("skip", 3)
-+                .unwrap()
-+                .is_empty()
-+        );
-+        assert!(
-+            parse_external_auth_review_selection("none", 3)
-+                .unwrap()
-+                .is_empty()
-+        );
-+        assert!(
-+            parse_external_auth_review_selection("n", 3)
-+                .unwrap()
-+                .is_empty()
-+        );
-     }
- 
-     #[tokio::test]
-@@ -1044,7 +1067,11 @@ mod rerun_safety_tests {
-         )
-         .unwrap();
- 
--        assert!(pending_external_auth_review_candidates().unwrap().is_empty());
-+        assert!(
-+            pending_external_auth_review_candidates()
-+                .unwrap()
-+                .is_empty()
-+        );
-         assert!(!auth::AuthStatus::has_any_untrusted_external_auth());
-     }
- 
-@@ -1073,7 +1100,10 @@ mod rerun_safety_tests {
-             .unwrap();
-         assert_eq!(outcome.imported, 1, "messages: {:?}", outcome.messages);
-         assert!(
--            outcome.messages.iter().any(|m| m.contains("auth_file=true")),
-+            outcome
-+                .messages
-+                .iter()
-+                .any(|m| m.contains("auth_file=true")),
-             "messages: {:?}",
-             outcome.messages
-         );
+@@ -128,7 +128,16 @@ pub(in super::super) fn draw_status(
+             ProcessingStatus::Streaming => {
+                 let mut snapshot = live_status_snapshot(app, elapsed);
+                 snapshot.phase = "streaming".into();
+-                let mut spans = live_processing_status_line(&snapshot, stale_secs, spinner).spans;
++                if app.stream_reveal_pending() {
++                    snapshot.stream_message_ended = false;
++                }
++                let effective_stale_secs = if app.stream_message_ended() {
++                    None
++                } else {
++                    stale_secs
++                };
++                let mut spans =
++                    live_processing_status_line(&snapshot, effective_stale_secs, spinner).spans;
+                 if let Some(upstream) = app.upstream_provider() {
+                     spans.push(Span::styled(
+                         format!(" · via {upstream}"),
 ```
 
-**File**: `crates/jcode-build-support/src/lib.rs` (modified, +5/-5)
+---
+
+### Incident Patch 3: `4644e663` (2026-11-23)
+**Commit Message**: fix(tui): reset stream_message_ended when next stream or connection phase starts
+
+**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +3/-0)
 ```diff
-@@ -10,11 +10,11 @@ pub use paths::{
-     SELFDEV_CARGO_PROFILE, binary_name, binary_stem, client_update_candidate,
-     current_binary_build_time_string, current_binary_built_at, find_dev_binary,
-     find_repo_in_ancestors, get_repo_dir, is_dynamic_loader_path, is_jcode_repo,
--    launcher_binary_path, launcher_dir,
--    preferred_reload_candidate, release_binary_path, resolve_binary_payload, run_selfdev_build,
--    selfdev_binary_path, selfdev_build_command, selfdev_build_command_for_target,
--    shared_server_update_candidate, update_launcher_symlink_to_current,
--    update_launcher_symlink_to_stable, version_matches_installed_channel,
-+    launcher_binary_path, launcher_dir, preferred_reload_candidate, release_binary_path,
-+    resolve_binary_payload, run_selfdev_build, selfdev_binary_path, selfdev_build_command,
-+    selfdev_build_command_for_target, shared_server_update_candidate,
-+    update_launcher_symlink_to_current, update_launcher_symlink_to_stable,
-+    version_matches_installed_channel,
- };
- pub use source_state::{
-     current_build_info, current_git_diff, current_git_hash, current_git_hash_full,
+@@ -343,6 +343,7 @@ fn handle_server_event_inner(
+                 app.insert_thought_line(thought_line);
+                 return eager_stream_redraw;
+             }
++            app.stream_message_ended = false;
+             app.streaming.response_output.text(&text);
+             let mut needs_redraw = false;
+             if matches!(
+@@ -392,6 +393,7 @@ fn handle_server_event_inner(
+             // client TPS timer), so the status arrives here as `Streaming`; flip it
+             // to `Thinking` while reasoning deltas flow. The next `TextDelta` moves
+             // it back to `Streaming`.
++            app.stream_message_ended = false;
+             if !matches!(app.status, ProcessingStatus::RunningTool(_)) {
+                 let thinking_start = *app.thinking_start.get_or_insert_with(Instant::now);
+                 if !matches!(app.status, ProcessingStatus::Thinking(_)) {
+@@ -744,6 +746,7 @@ fn handle_server_event_inner(
+                 }
+                 _ => crate::message::ConnectionPhase::Connecting,
+             };
++            app.stream_message_ended = false;
+             app.status = if matches!(cp, crate::message::ConnectionPhase::Streaming) {
+                 app.resume_streaming_tps();
+                 app.connection_phase_started = None;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2283** (closed): fix/wake on goal clippy (@adminwat)
+- **PR #2282** (closed): fix/compaction root causes (@adminwat)
+- **PR #2278** (closed): kv freeze stall retry (@adminwat)
 - **PR #2257** (closed): feat(zcode): add native ZCode OAuth, Client Request Signing v4, provider, and usage (@navidRashik)
 - **PR #2222** (closed): fix(harness): require architectural intent for understand routing (@adminwat)
 - **PR #2199** (closed): style: restore rustfmt-clean state so the Format gate can pass (@KooshaPari)
-- **PR #2197** (closed): docs: freeze new kcode/jcode lanes and evaluate the churn (@KooshaPari)
-- **PR #2195** (closed): build(app-core): drop a call to the reverted todo-plan tracker (@KooshaPari)
-- **PR #2194** (closed): style(ci): clear the Format gate and the macOS warning budget for every PR (@KooshaPari)
 
 ---
 
@@ -2519,43 +2262,6 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): update url to 2.5.9 for RUSTSEC-2026-0592
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `9991542c`: deps): update url to 2.5.9 for RUSTSEC-2026-0592. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9991542c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

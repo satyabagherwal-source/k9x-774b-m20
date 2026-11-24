@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T08:25:06.831Z",
+  "last_updated": "2026-11-24T08:34:30.884Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
-      "verified_at": "2026-11-22T23:57:17.731Z",
+      "content_hash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
+      "verified_at": "2026-11-24T08:34:30.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:57:17.732Z"
+      "last_updated": "2026-11-24T08:34:30.884Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",

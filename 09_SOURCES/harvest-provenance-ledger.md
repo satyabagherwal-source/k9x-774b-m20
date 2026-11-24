@@ -12668,3 +12668,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `fe85b027` | Multi-dimensional audit evidence | 2026-11-24T07:55:47.529Z |
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `0e6e2990` | Multi-dimensional audit evidence | 2026-11-24T08:24:33.007Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `eca8048b` | Multi-dimensional audit evidence | 2026-11-24T08:25:06.814Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `7ecaf212` | Multi-dimensional audit evidence | 2026-11-24T08:34:30.876Z |
+| `learn-dom-d-f29632a9` | `project://1jehuang-jcode` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | 2026-11-24T08:35:01.096Z |

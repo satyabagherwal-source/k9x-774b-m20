@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T08:25:14.164Z",
+  "last_updated": "2026-11-24T08:35:03.699Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b690ed2b89cc0737490d9c592250ca5d8d05ee4add6210106064f4c0b4e86dd0",
+      "content_hash": "b03366b662b067ad2ba60333d91acd15e980452255e05544844197042c5b5281",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:25:13.284Z"
+      "persisted_at": "2026-11-24T08:35:03.506Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "82741c3b523e96cb81e56b2e6bc80ab8c69df443cf983d69897e6485fb9453cf",
+      "content_hash": "b9f1b3c4830031b150e0ad6874a9e7934ac26144a9a2d3c6d82c8a8f2c15aa30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:25:13.450Z"
+      "persisted_at": "2026-11-24T08:35:03.699Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a19abf3e2c998976cf71cad4d21a0f28ccb0ac09a90f6a0e20c887d2d323928",
+      "content_hash": "ba6e2fc35468378a18b959ec0be726b8a40be3fae12e5ef0eb583b5f6df25e5e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:55:24.681Z"
+      "persisted_at": "2026-11-24T08:35:02.473Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d50cf172ff1ef7cf5047750a40de44832ffb9fb9f6bc3a966302f1da0c0be9d",
+      "content_hash": "806b17f5a8f93418f2a2b4fe05c014125d188b87a69c4461beea4f9dfdd40e76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:55:24.851Z"
+      "persisted_at": "2026-11-24T08:35:02.668Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -245088,8 +245088,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "9991542c",
-      "content_hash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
+      "source_version": "7ecaf212",
+      "content_hash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -245129,7 +245129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:57:17.501Z",
+      "verified_at": "2026-11-24T08:34:30.645Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245183,10 +245183,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "9991542c",
-      "content_hash": "3445491c0ffc8e7b7b08f9fad6de418385053488541967cb611fdf7e55e3ca13",
+      "source_version": "7ecaf212",
+      "content_hash": "942086dd6ccced3a68516ae5277de6206cbf3c858b06390387ab75357fc98ab9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:18.332Z"
+      "persisted_at": "2026-11-24T08:34:31.275Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -245195,10 +245195,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "9991542c",
-      "content_hash": "f931708adbae0490015fb2159e8c81714c2f6df2a3dac22769a67ae2315e95dc",
+      "source_version": "7ecaf212",
+      "content_hash": "ef63de81a6e4454a3d7b741788b6505b37f407d5632d4f5461794e5ba439c668",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:57:18.484Z"
+      "persisted_at": "2026-11-24T08:34:31.414Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -245283,9 +245283,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b67374a9da5a3967c914a74c6ff36802a07e734fb8b9e3be93ff24daeeca97c",
+      "content_hash": "7b80df1b76039942f994821763f7c5eac3d671a4d1d5df1c452d955e7ccaf43a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:29.711Z"
+      "persisted_at": "2026-11-24T08:35:01.612Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -245295,9 +245295,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a2fff39facd875ec68b1b6aae09cc84ddfcc9adff4308203f5f0fbfcc7193b0",
+      "content_hash": "8ba4664ad70703880da44e8342dd092d914101c0475296149739d309cc8e725f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:57:29.874Z"
+      "persisted_at": "2026-11-24T08:35:01.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -287439,10 +287439,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "9991542c",
-      "content_hash": "6d02bc290c365529716cb3f74c49281c74adca72e3791897df0bf9bea1a1d67f",
+      "source_version": "7ecaf212",
+      "content_hash": "22702985f74a5bdf0c05fa4ae40e47aa931f879a824a17be3c950b2319923ffe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:18.152Z"
+      "persisted_at": "2026-11-24T08:34:31.106Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -287464,9 +287464,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "f56cc69536877bf9c52b09bb7249e088e88a9c1a57c755eaaadf1a5025707b67",
+      "content_hash": "8448cf114a34cc91a9006db2b1971054e05ef9a656c17772b28f059bd246ef84",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:29.529Z"
+      "persisted_at": "2026-11-24T08:35:01.420Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -319868,13 +319868,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BJVK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VOCD-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d26cfdee1eec8827cdf73eef92e664b8d402579ca0099a94d6f2d799806c0c0c",
+      "content_hash": "f9f00506256da68f86def6243bb713b4649bd2e3655b9f3691dadcfafce5a8ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:55:24.515Z"
+      "persisted_at": "2026-11-24T08:35:02.278Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334847,13 +334847,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-J1RE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VP52-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d611b42c8a6f448cad0d3fd228c55d976ae7a098cac5d4d2480e1d69fb93397d",
+      "content_hash": "95b7a35c2ffc127c6d005840871eaaca398b2ef3f0ee698d5ba69b2ea6c02a06",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:25:13.135Z"
+      "persisted_at": "2026-11-24T08:35:03.315Z"
     }
   },
   "ai-builder-brain": {

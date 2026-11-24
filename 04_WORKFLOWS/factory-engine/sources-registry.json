@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T08:25:10.036Z",
-    "lastVerified": "2026-11-24T08:25:10.036Z",
+    "lastChecked": "2026-11-24T08:34:34.068Z",
+    "lastVerified": "2026-11-24T08:34:34.068Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T07:47:13.897Z",
+    "lastChecked": "2026-11-24T08:34:30.250Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T07:47:13.897Z"
+    "lastVerified": "2026-11-24T08:34:30.250Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1522,9 +1522,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-24T03:05:22.642Z",
+    "lastChecked": "2026-11-24T08:34:25.270Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-24T03:05:22.642Z"
+    "lastVerified": "2026-11-24T08:34:25.270Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1553,9 +1553,9 @@
   "react-native-elements-react-native-elements": {
     "name": "react-native-elements",
     "officialUrl": "https://github.com/react-native-elements/react-native-elements",
-    "lastChecked": "2026-11-21T15:17:38.611Z",
+    "lastChecked": "2026-11-24T08:34:20.242Z",
     "revisionIdentifier": "32ae0eda",
-    "lastVerified": "2026-11-21T15:17:38.611Z"
+    "lastVerified": "2026-11-24T08:34:20.242Z"
   },
   "go-kratos-kratos": {
     "name": "go-kratos/kratos",
@@ -2846,14 +2846,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T23:57:16.626Z",
-    "lastVerified": "2026-11-22T23:57:16.626Z",
+    "lastChecked": "2026-11-24T08:34:18.911Z",
+    "lastVerified": "2026-11-24T08:34:18.911Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "contentHash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3974,9 +3974,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-23T13:06:54.212Z",
+    "lastChecked": "2026-11-24T08:34:27.744Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-23T13:06:54.212Z"
+    "lastVerified": "2026-11-24T08:34:27.744Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -5843,9 +5843,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-23T14:38:05.698Z",
+    "lastChecked": "2026-11-24T08:34:22.752Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-23T14:38:05.698Z"
+    "lastVerified": "2026-11-24T08:34:22.752Z"
   },
   "apache-zookeeper": {
     "name": "apache/zookeeper",
@@ -9829,9 +9829,9 @@
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
     "officialUrl": "https://github.com/adobe/structured-data-validator",
-    "lastChecked": "2026-11-20T04:37:45.824Z",
+    "lastChecked": "2026-11-24T08:34:17.724Z",
     "revisionIdentifier": "6918b526",
-    "lastVerified": "2026-11-20T04:37:45.824Z"
+    "lastVerified": "2026-11-24T08:34:17.724Z"
   },
   "thebaselab-codeapp": {
     "name": "codeapp",
