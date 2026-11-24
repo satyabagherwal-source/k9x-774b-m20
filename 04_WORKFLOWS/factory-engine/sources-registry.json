@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T09:18:44.048Z",
-    "lastVerified": "2026-11-24T09:18:44.048Z",
+    "lastChecked": "2026-11-24T09:28:53.273Z",
+    "lastVerified": "2026-11-24T09:28:53.273Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T08:34:30.250Z",
+    "lastChecked": "2026-11-24T09:28:53.259Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T08:34:30.250Z"
+    "lastVerified": "2026-11-24T09:28:53.259Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1834,8 +1834,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T03:41:42.958Z",
-    "lastVerified": "2026-11-24T03:41:42.958Z",
+    "lastChecked": "2026-11-24T09:28:48.307Z",
+    "lastVerified": "2026-11-24T09:28:48.307Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1902,9 +1902,9 @@
   "feathersjs-feathers": {
     "name": "feathers",
     "officialUrl": "https://github.com/feathersjs/feathers",
-    "lastChecked": "2026-11-21T16:18:43.422Z",
+    "lastChecked": "2026-11-24T09:28:43.311Z",
     "revisionIdentifier": "8c007bc4",
-    "lastVerified": "2026-11-21T16:18:43.422Z"
+    "lastVerified": "2026-11-24T09:28:43.311Z"
   },
   "siderolabs-talos": {
     "name": "siderolabs/talos",
@@ -3041,9 +3041,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-11-23T00:39:23.614Z",
+    "lastChecked": "2026-11-24T09:28:38.301Z",
     "revisionIdentifier": "e2c66002",
-    "lastVerified": "2026-11-23T00:39:23.614Z"
+    "lastVerified": "2026-11-24T09:28:38.301Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -4216,9 +4216,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-23T14:21:11.687Z",
+    "lastChecked": "2026-11-24T09:28:50.788Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-23T14:21:11.687Z"
+    "lastVerified": "2026-11-24T09:28:50.788Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -6108,9 +6108,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-23T15:12:38.137Z",
+    "lastChecked": "2026-11-24T09:28:45.815Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-23T15:12:38.137Z"
+    "lastVerified": "2026-11-24T09:28:45.815Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -9907,9 +9907,9 @@
   "mitrovicsinisaa-schemaorg-rs": {
     "name": "schemaorg-rs",
     "officialUrl": "https://github.com/mitrovicsinisaa/schemaorg-rs",
-    "lastChecked": "2026-11-20T05:16:09.635Z",
+    "lastChecked": "2026-11-24T09:28:40.802Z",
     "revisionIdentifier": "34463033",
-    "lastVerified": "2026-11-20T05:16:09.635Z"
+    "lastVerified": "2026-11-24T09:28:40.802Z"
   },
   "obytes-react-native-template-obytes": {
     "name": "react-native-template-obytes",
