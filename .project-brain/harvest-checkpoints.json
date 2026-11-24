@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T15:36:10.386Z",
+  "last_updated": "2026-11-24T15:44:35.598Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
-      "verified_at": "2026-11-23T14:29:17.508Z",
+      "content_hash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
+      "verified_at": "2026-11-24T15:44:30.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:29:17.508Z"
+      "last_updated": "2026-11-24T15:44:30.203Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
-      "verified_at": "2026-11-23T20:08:34.322Z",
+      "content_hash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
+      "verified_at": "2026-11-24T15:44:35.597Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:08:34.322Z"
+      "last_updated": "2026-11-24T15:44:35.597Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

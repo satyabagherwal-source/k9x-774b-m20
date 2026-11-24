@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:36:10.376Z",
-  "total_cycles_completed": 12092,
-  "total_learnings_persisted": 12092,
-  "total_rules_promoted": 11157,
+  "last_updated": "2026-11-24T15:44:35.586Z",
+  "total_cycles_completed": 12094,
+  "total_learnings_persisted": 12094,
+  "total_rules_promoted": 11159,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:18:09.333Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T23:18:12.503Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:18:21.004Z",
       "repository": "kgateway-dev/kgateway",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T15:36:10.376Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:44:30.192Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T15:44:35.586Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

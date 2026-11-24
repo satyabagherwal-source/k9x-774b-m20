@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "5fb737cd",
+    "sourceVersion": "17b3b541",
     "license": "Apache-2.0",
-    "contentHash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
-    "lastHarvestedAt": "2026-11-23T14:29:17.499Z",
+    "contentHash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
+    "lastHarvestedAt": "2026-11-24T15:44:30.187Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "6775607e",
+    "sourceVersion": "0103aff4",
     "license": "Apache-2.0",
-    "contentHash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
-    "lastHarvestedAt": "2026-11-23T20:08:34.314Z",
+    "contentHash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
+    "lastHarvestedAt": "2026-11-24T15:44:35.581Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

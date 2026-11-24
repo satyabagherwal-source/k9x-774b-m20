@@ -12725,3 +12725,5 @@
 | `CYCLE-20261124-X29L` | `2026-11-24T15:36:01.209Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10295` | Yes (`24a4a8d5...`) |
 | `CYCLE-20261124-X6FS` | `2026-11-24T15:36:06.616Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9826` | Yes (`2055607c...`) |
 | `CYCLE-20261124-X9C0` | `2026-11-24T15:36:10.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`9e8a2fe3...`) |
+| `CYCLE-20261124-7YZQ` | `2026-11-24T15:44:30.182Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10296` | Yes (`a95b57d9...`) |
+| `CYCLE-20261124-835K` | `2026-11-24T15:44:35.576Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10297` | Yes (`ed1bf2c6...`) |

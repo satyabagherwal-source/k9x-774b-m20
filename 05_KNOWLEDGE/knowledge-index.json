@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T15:36:15.960Z",
+  "last_updated": "2026-11-24T15:44:41.496Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24730,
+  "total_items": 24735,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f5300536f28e3acf82be325d12b0a27b04d90f6c486e9ff025db2a3d18fb480",
+      "content_hash": "b9ad767bfb764b5e3639f2e16bf2b48dbf6ff62b2d31b5840a54321f7985da7d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T15:09:06.235Z"
+      "persisted_at": "2026-11-24T15:44:41.321Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "973b5bca9ed89b928cf8576bede96b0925f10dfc58223a7155daa0c994fa4975",
+      "content_hash": "ba28998f444fe3654651af85a32b06704d22ab6a83571cca860181c42ea9b83c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:09:06.460Z"
+      "persisted_at": "2026-11-24T15:44:41.496Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -213115,8 +213115,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "5fb737cd",
-      "content_hash": "a40250463049b6cd0b7791ee544028f5dea4e67505b08480862d8219628f0fbf",
+      "source_version": "17b3b541",
+      "content_hash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -213164,6 +213164,11 @@
           "number": 10051,
           "title": "Empirical Invariant Guard in nrf54lm20_app.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10296,
+          "title": "stm32/hsem: fix secondary core boot; RCC enable registers are per-core",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213171,7 +213176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:29:17.276Z",
+      "verified_at": "2026-11-24T15:44:29.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213213,10 +213218,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "5fb737cd",
-      "content_hash": "6c16bfbbd53583a3cfda320a63e12c9374c390f8e407919f3de34ee3bba1e899",
+      "source_version": "17b3b541",
+      "content_hash": "7aea22bffeb59a21824b72f5e64d113400cf7275bf9eb9acb83efc699ae158fb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:29:17.930Z"
+      "persisted_at": "2026-11-24T15:44:30.619Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213225,10 +213230,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "5fb737cd",
-      "content_hash": "e2cae5320f73dd696641100844139c84d6fa3ba872bd3c19c8ca6f344f629545",
+      "source_version": "17b3b541",
+      "content_hash": "ce5f4314c7c0bcffe657951fe41cda1898ddc764724223117225b1a3233379ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:29:18.121Z"
+      "persisted_at": "2026-11-24T15:44:30.797Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213778,9 +213783,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdcfcc50db0bb00b7c90404e0c5860bad893d2b50d1c78ec326952e9dc91568e",
+      "content_hash": "f4b2ab2b4a4ed249c6120bbc31c73cf3ed7d7afa91523d9b9f744149bbd640c7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:29:26.755Z"
+      "persisted_at": "2026-11-24T15:44:39.542Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213790,9 +213795,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a3ceb3ff245117111c1df131dc6d92a8adeb77a9f90b03681f393c60933fc29",
+      "content_hash": "7b12ffb5a20599391bb573f56b9c7b5105c79875f54f5cd859c2e2df5e5ebb05",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:29:26.940Z"
+      "persisted_at": "2026-11-24T15:44:39.712Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -221379,8 +221384,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "6775607e",
-      "content_hash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
+      "source_version": "0103aff4",
+      "content_hash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -221428,6 +221433,11 @@
           "number": 10110,
           "title": "executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10297,
+          "title": "require reorg when MODIFY COLUMN changes column charset or indexed collatio",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221435,7 +221445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:08:34.093Z",
+      "verified_at": "2026-11-24T15:44:35.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221477,10 +221487,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "6775607e",
-      "content_hash": "de062d5416c3c191b75d93d99a95433ed5718b0fe2284fb6ab584e24aef6bfb1",
+      "source_version": "0103aff4",
+      "content_hash": "1690408cd849ed651597a70c5caeeb060cb13aaedf3d40b89767a3daa3a57662",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T20:08:34.739Z"
+      "persisted_at": "2026-11-24T15:44:35.992Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -221489,10 +221499,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "6775607e",
-      "content_hash": "1dcf7c43c9f5d49983f249eac58b7fe1ceb08bdf21f69120a7af2f0556b0c9dc",
+      "source_version": "0103aff4",
+      "content_hash": "6cbae6668d1deeac9fddc25100c8e2bd08dc666b4fdc518778df9557d8263c7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:08:34.934Z"
+      "persisted_at": "2026-11-24T15:44:36.188Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -221564,9 +221574,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdba715d323b2f208d1c277c04726491ac5e5f905a80422cf43bec18eb521ce5",
+      "content_hash": "21caab18b25048f34995a42d15149581ba14f15aea8d8cf86bbb52b48321991f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T20:08:38.279Z"
+      "persisted_at": "2026-11-24T15:44:40.517Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -221576,9 +221586,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f51664d6658fc37ab6a2c5be39c632dac3dcf38ab58a5bd684debca903ce58d",
+      "content_hash": "9619f8fb4cd3d632c524a754f6eb627aeaa551f17943a0b5008cce0eed9f3d1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:08:38.461Z"
+      "persisted_at": "2026-11-24T15:44:40.689Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -320158,13 +320168,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YFYU-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-87GE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "01ea1a9c74590e8c9ef9cf3a8f6ad81f4f1da76c028db81fcc051665d9d78d73",
+      "content_hash": "5de0eb9febf5b94568a7db02fb200a8e7a1b7bdee262ac16901a8c77ab15b508",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:09:06.012Z"
+      "persisted_at": "2026-11-24T15:44:41.153Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -337628,6 +337638,70 @@
       "content_hash": "5f6762191dc6f0824c28edb3b229b8734ceb904af21b7793e90cd8e761b4360d",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T15:36:14.022Z"
+    },
+    "rule-10296": {
+      "learning_id": "rule-10296",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10296,
+      "title": "stm32/hsem: fix secondary core boot; RCC enable registers are per-core",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "17b3b541",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:44:29.963Z"
+    },
+    "candidate_directive-stm32-hsem-fix-secondary-core-boot-rcc-enable-registers-are-per-core": {
+      "item_id": "candidate_directive-stm32-hsem-fix-secondary-core-boot-rcc-enable-registers-are-per-core",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-862I-stm32-hsem-fix-secondary-core-boot-rcc-enable-registers-are-per-core.md",
+      "title": "stm32/hsem: fix secondary core boot; RCC enable registers are per-core",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ab517271de98b0fc9cccc788b3dee31c394f9028bc817875632ca4232232ebe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:44:39.357Z"
+    },
+    "rule-10297": {
+      "learning_id": "rule-10297",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10297,
+      "title": "require reorg when MODIFY COLUMN changes column charset or indexed collatio",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "0103aff4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:44:35.363Z"
+    },
+    "candidate_directive-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio": {
+      "item_id": "candidate_directive-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-83C5-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio.md",
+      "title": "require reorg when MODIFY COLUMN changes column charset or indexed collatio",
+      "repository": "pingcap/tidb",
+      "source_version": "0103aff4",
+      "content_hash": "dbef137b2b4a90c4e14574af5fba2baf52b41341ad2b81378c434c318777d053",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T15:44:35.817Z"
+    },
+    "candidate_directive-ddl-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio": {
+      "item_id": "candidate_directive-ddl-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-86TG-ddl-require-reorg-when-modify-column-changes-column-charset-or-indexed-collatio.md",
+      "title": "ddl: require reorg when MODIFY COLUMN changes column charset or indexed collatio",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "232e270690ffcd6dfea66b7562da3af7c6f384aa1c2ba81315aab172ada03af2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T15:44:40.327Z"
     }
   },
   "ai-builder-brain": {

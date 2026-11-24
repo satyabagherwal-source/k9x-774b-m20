@@ -12758,3 +12758,5 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c16dbace` | Multi-dimensional audit evidence | 2026-11-24T15:36:01.212Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `549d8f57` | Multi-dimensional audit evidence | 2026-11-24T15:36:06.619Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `04985e7d` | Multi-dimensional audit evidence | 2026-11-24T15:36:10.372Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `17b3b541` | Multi-dimensional audit evidence | 2026-11-24T15:44:30.187Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `0103aff4` | Multi-dimensional audit evidence | 2026-11-24T15:44:35.581Z |

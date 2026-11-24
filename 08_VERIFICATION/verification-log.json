@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-50GJ",
-    "timestamp": "2026-11-22T20:46:47.443Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-GUK7",
-    "timestamp": "2026-11-22T20:55:59.671Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "577f5fcb9472a09fabd7712d310df0df908d626b4f2d38d30b1536c56bd2f734",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-H32D",
     "timestamp": "2026-11-22T20:56:10.693Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7460,36 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-7YZQ",
+    "timestamp": "2026-11-24T15:44:30.182Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-835K",
+    "timestamp": "2026-11-24T15:44:35.576Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

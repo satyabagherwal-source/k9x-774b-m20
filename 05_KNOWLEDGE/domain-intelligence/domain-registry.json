@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:36:15.811Z",
+  "last_updated": "2026-11-24T15:44:41.321Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -9277,8 +9277,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9f5300536f28e3acf82be325d12b0a27b04d90f6c486e9ff025db2a3d18fb480",
-      "created_at": "2026-11-24T15:09:06.235Z"
+      "content_hash": "b9ad767bfb764b5e3639f2e16bf2b48dbf6ff62b2d31b5840a54321f7985da7d",
+      "created_at": "2026-11-24T15:44:41.321Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10357,8 +10357,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "6c16bfbbd53583a3cfda320a63e12c9374c390f8e407919f3de34ee3bba1e899",
-      "created_at": "2026-11-23T14:29:17.930Z"
+      "content_hash": "7aea22bffeb59a21824b72f5e64d113400cf7275bf9eb9acb83efc699ae158fb",
+      "created_at": "2026-11-24T15:44:30.619Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10402,8 +10402,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "cdcfcc50db0bb00b7c90404e0c5860bad893d2b50d1c78ec326952e9dc91568e",
-      "created_at": "2026-11-23T14:29:26.755Z"
+      "content_hash": "f4b2ab2b4a4ed249c6120bbc31c73cf3ed7d7afa91523d9b9f744149bbd640c7",
+      "created_at": "2026-11-24T15:44:39.542Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -12592,8 +12592,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "de062d5416c3c191b75d93d99a95433ed5718b0fe2284fb6ab584e24aef6bfb1",
-      "created_at": "2026-11-23T20:08:34.739Z"
+      "content_hash": "1690408cd849ed651597a70c5caeeb060cb13aaedf3d40b89767a3daa3a57662",
+      "created_at": "2026-11-24T15:44:35.992Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -12661,8 +12661,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "bdba715d323b2f208d1c277c04726491ac5e5f905a80422cf43bec18eb521ce5",
-      "created_at": "2026-11-23T20:08:38.279Z"
+      "content_hash": "21caab18b25048f34995a42d15149581ba14f15aea8d8cf86bbb52b48321991f",
+      "created_at": "2026-11-24T15:44:40.517Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",

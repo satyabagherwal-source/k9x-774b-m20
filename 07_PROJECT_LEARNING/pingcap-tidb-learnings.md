@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `6775607e`  
+> **Source Version**: `0103aff4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T20:08:33.254Z  
+> **Timestamp**: 2026-11-24T15:44:34.473Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:08:33.095Z  
+> **Harvest Timestamp**: 2026-11-24T15:44:34.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40765 stars
+- **Stars / Engagement**: 40770 stars
 
 ---
 
@@ -1916,11 +1916,14 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73620** (2026-11-23): **infoschema: name lookup and scan return different metadata in the same transaction after RENAME TABLE**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  Open two sessions with metadata locking enabled. Session A starts a transaction and reads an unrelated table. Session B swaps the names of two persistent tables. After A reads the renamed table, two equivalent filters on `INFORMATION_SCHEMA.COLUMNS` return different columns for it. All three tables in this example are ordinary persistent tables.  Run the blocks in order in a fresh test database.  **1. Session B** — set up tables with distinct column names.  ```sql CREATE DATABASE rename_repro; CREATE TABLE rename_repro.anchor (i INT); CREATE TABLE rename_repro.x (x_col INT); CREATE TABLE rename_repro.y (y_col INT); ```  **2. Session A** — start the transaction before the rename.  ```sql SELECT @@tidb_enable_metadata_lock; -- 1 BEGIN; SELECT * FROM rename_repro.anchor; ```  **3. Session B** — swap the names in one statement.  ```sql RENAME TABLE rename_repro.x TO rename_repro.z,              rename_repro.y TO rename_repro.x,              rename_repro.z TO rename_repro.y; ```  **4. Session A** — access the new `x`, then compare the two metadata queries in the still-open transaction.  ```sql SELECT y_col FROM rename_repro.x; -- succeeds  SELECT column_name FROM information_schema.columns WHERE table_schema = 'rename_repro' AND table_name = 'x';  SELECT column_name FROM information_schema.columns WHERE table_schema = 'rename_repro' AND CONCAT(table_name, '') = 'x'; ```  <details> <summary>Check the physical table ID and com
+- **Issue #73726** (2026-11-24): **tests: stabilize read-only staleness transaction test**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #65731  Problem Summary:  `TestValidateReadOnlyInStalenessTransaction` waits about one second after creating its tables, then reads at `NOW(3) - INTERVAL 5 SECOND`. The snapshot can precede the test DDL, so the test may see an older table definition or fail with `Table 'test.t' doesn't exist`. Both symptoms appeared in CheckDev2 for #73724.  ### What changed and how does it work?  Take a PD timestamp after both tables have been created, then wait for its physical component to advance. This keeps the snapshot after the DDL when `tidb_parse_tso` drops the logical bits. Use the same snapshot for both read-only transaction forms.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  With local PD and TiKV v8.5.7, the test reproduced the missing-table error bef
 
-- **Issue #73617** (2026-11-23): **INFORMATION_SCHEMA ID lookups silently omit tables when metadata loading fails**
-  *Symptoms*: ## Bug Report  Please answer these questions before submitting your issue. Thanks!  ### 1. Minimal reproduce step (Required)  Use InfoSchema v2 and create a table with one partition.  ```sql CREATE TABLE test.lookup_err (a INT) PARTITION BY HASH(a) PARTITIONS 1; SELECT tidb_table_id FROM information_schema.tables WHERE table_schema = 'test' AND table_name = 'lookup_err'; SELECT tidb_partition_id FROM information_schema.partitions WHERE table_schema = 'test' AND table_name = 'lookup_err'; ```  In a failpoint-enabled test, evict `test.lookup_err` with `EvictTable` and enable `github.com/pingcap/tidb/pkg/infoschema/mockLoadTableInfoError` with `return(true)`. Run each query with the ID obtained above.  ```sql SELECT table_name FROM information_schema.tables WHERE tidb_table_id = <table_id>; SELECT table_name FROM information_schema.partitions WHERE tidb_partition_id = <partition_id>; ```  ### 2. What did you expect to see? (Required)  Both queries should report the metadata read error for an existing object. A lookup for a genuinely unknown ID should return an empty result.  ### 3. What did you see instead (Required)  Both queries succeed and omit the existing table. With the failpoint disabled, both cold-cache queries return `lookup_err`.  ### 4. What is your TiDB version? (Required)  Reproduced on upstream master at `bca43971a06d31e4711ba6c0c4e13a503ffd91ec` using the mock store.  ### 5. Where was this issue found? (Required)  <!-- Check all that apply, or specify the environm
+- **Issue #73718** (2026-11-24): **planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078)**
+  *Symptoms*: This is an automated cherry-pick of #72078  /assign terry1purcell  ```release-note Improve row count estimation for indexes without statistics when their columns have statistics, and apply the missing-statistics index selection rule regardless of tidb_opt_prefer_range_scan. ```
+  **Post-Mortem & Fix Analysis**:
+  > This cherry pick PR is for a release branch and has not yet been approved by triage owners. Adding the `do-not-merge/cherry-pick-not-approved` label.  To merge this cherry pick: 1. It must be LGTMed and approved by the reviewers firstly. 2. For pull requests to TiDB-x branches, it must have no failed tests. 3. **AFTER** it has `lgtm` and `approved` labels, please wait for the cherry-pick merging approval from triage owners.   <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
+  > @terry1purcell This PR has conflicts, I have held it. Please resolve them or ask others to resolve them, then comment `/unhold` to remove the hold label.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1937,413 +1940,145 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec579a79` (2026-11-23)
-**Commit Message**: executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb_rowid and reorg (#73537)
+### Incident Patch 1: `a935aa47` (2026-11-24)
+**Commit Message**: ddl: require reorg when MODIFY COLUMN changes column charset or indexed collation (#73524)
 
-close pingcap/tidb#73536
+close pingcap/tidb#73028
 
-**File**: `pkg/executor/point_get.go` (modified, +36/-7)
+**File**: `pkg/ddl/column_modify_test.go` (modified, +41/-0)
 ```diff
-@@ -334,6 +334,25 @@ func (e *PointGetExecutor) Next(ctx context.Context, req *chunk.Chunk) error {
+@@ -674,3 +674,44 @@ func TestIssue37611(t *testing.T) {
+ 	tk.MustExec("create table t2(a char(5), b char(6) as (concat(a, a)) stored, index idx(b));")
+ 	tk.MustGetErrCode("alter table t2 modify b char(10) as (concat(a, a)) stored;", errno.ErrUnsupportedOnGeneratedColumn)
+ }
++
++func TestModifyColumnCrossCharsetRequiresReorg(t *testing.T) {
++	store := testkit.CreateMockStoreWithSchemaLease(t, columnModifyLease)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++
++	// BINARY(2) -> VARCHAR(10) utf8mb4 with invalid UTF-8 bytes must reorg and fail.
++	tk.MustExec("create table t0 (id int primary key, c binary(2))")
++	tk.MustExec("insert into t0 values (1, x'FFFE')")
++	tk.MustGetErrCode("alter table t0 modify column c varchar(10) character set utf8mb4 collate utf8mb4_general_ci", errno.ErrTruncatedWrongValueForField)
++
++	// CHAR(4) utf8mb4 -> VARCHAR(10) ascii with non-ASCII character must reorg and fail.
++	tk.MustExec("create table t2 (id int primary key, c char(4) character set utf8mb4)")
++	tk.MustExec("insert into t2 values (1, 'é')")
++	tk.MustGetErrCode("alter table t2 modify column c varchar(10) character set ascii", errno.ErrTruncatedWrongValueForField)
++
++	// CHAR(4) utf8mb4 -> VARBINARY(4) with 8-byte UTF-8 value must reorg and fail with truncation.
++	tk.MustExec("create table t3 (id int primary key, c char(4) character set utf8mb4)")
++	tk.MustExec("insert into t3 values (1, 'éééé')")
++	tk.MustGetErrCode("alter table t3 modify column c varbinary(4)", errno.WarnDataTruncated)
++
++	// Same-charset collation change with multi-byte chars must check character length, not byte length.
++	tk.MustExec("create table t4 (id int primary key, c varchar(4) character set utf8mb4 collate utf8mb4_bin)")
++	tk.MustExec("insert into t4 values (1, 'éééé')")
++	tk.MustExec("alter table t4 modify column c varchar(4) character set utf8mb4 collate utf8mb4_general_ci")
++
++	// utf8 -> utf8mb4 with compatible collation does not require reorg even with an index or narrowing.
++	tk.MustExec("create table t5 (id int primary key, c varchar(10) character set utf8 collate utf8_bin, key idx_c(c))")
++	tk.MustExec("insert into t5 values (1, 'abc')")
++	tk.MustExec("alter table t5 modify column c varchar(10) character set utf8mb4 collate utf8mb4_bin")
++	tk.MustQuery("select row_count from information_schema.ddl_jobs where table_name = 't5' order by job_id desc limit 1").Check(testkit.Rows("0"))
++	tk.MustExec("alter table t5 modify column c varchar(5) character set utf8mb4 collate utf8mb4_bin")
++	tk.MustQuery("select row_count from information_schema.ddl_jobs where table_name = 't5' order by job_id desc limit 1").Check(testkit.Rows("0"))
++	tk.MustExec("admin check table t5")
++
++	// Same-length utf8mb4 -> utf8 is rejected upfront; narrowing utf8mb4 -> utf8 triggers row reorg and rejects 4-byte UTF-8 data.
++	tk.MustExec("create table t6 (id int primary key, c varchar(10) character set utf8mb4 collate utf8mb4_bin)")
++	tk.MustExec("insert into t6 values (1, '🐱')")
++	tk.MustGetErrCode("alter table t6 modify column c varchar(10) character set utf8 collate utf8_bin", errno.ErrUnsupportedDDLOperation)
++	tk.MustGetErrCode("alter table t6 modify column c varchar(5) character set utf8 collate utf8_bin", errno.ErrTruncatedWrongValueForField)
++}
+```
+
+**File**: `pkg/ddl/executor.go` (modified, +13/-4)
+```diff
+@@ -3912,6 +3912,18 @@ func checkVisibleColumnCnt(t table.Table, addCnt, dropCnt int) error {
+ 	return dbterror.ErrCantRemoveAllFields
+ }
  
- 			// lockNonExistIdxKey indicates the key will be locked regardless of its existence.
- 			lockNonExistIdxKey := !e.Ctx().GetSessionVars().IsPessimisticReadConsistency()
-+			// Under RR, avoid acquiring a pessimistic lock on a global-index key whose
-+			// snapshot entry already belongs to a DDL-ignored (dropping) partition.
-+			// Under RC, always perform the locking current read so concurrent partition
-+			// moves into requested partitions are not missed.
-+			if e.idxInfo.Global && e.lock && lockNonExistIdxKey {
-+				preVal, preErr := e.get(ctx, e.idxKey)
-+				if preErr != nil && !kv.ErrNotExist.Equal(preErr) {
-+					return preErr
-+				}
-+				if len(preVal) > 0 {
-+					pid, _, visErr := e.checkGlobalIndexPartition(preVal)
-+					if visErr != nil {
-+						return visErr
-+					}
-+					if slices.Contains(e.tblInfo.GetPartitionInfo().IDsInDDLToIgnore(), pid) {
-+						return nil
-+					}
-+				}
++func isCharsetAllowingDirectCollationChange(origCharset, toCharset string) bool {
++	return (origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8MB4) ||
++		(origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8) ||
++		(origCharset == charset.CharsetUTF8MB4 && toCharset == charset.CharsetUTF8MB4) ||
++		(origCharset == charset.CharsetLatin1 && toCharset == charset.CharsetUTF8MB4)
++}
++
++func canModifyCharsetAndCollateWithoutReorg(origCharset, origCollate, toCharset, toCollate string) bool {
++	return isCharsetAllowingDirectCollationChange(origCharset, toCharset) ||
++		(toCharset == origCharset && toCollate == origCollate)
++}
++
+ // checkModifyCharsetAndCollation returns error when the charset or collation is not modifiable.
+ // needRewriteCollationData is used when trying to modify the collation of a column, it is true when the column is with
+ // index because index of a string column is collation-aware.
+@@ -3924,10 +3936,7 @@ func checkModifyCharsetAndCollation(toCharset, toCollate, origCharset, origColla
+ 		return dbterror.ErrUnsupportedModifyCollation.GenWithStackByArgs(origCollate, toCollate)
+ 	}
+ 
+-	if (origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8MB4) ||
+-		(origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8) ||
+-		(origCharset == charset.CharsetUTF8MB4 && toCharset == charset.CharsetUTF8MB4) ||
+-		(origCharset == charset.CharsetLatin1 && toCharset == charset.CharsetUTF8MB4) {
++	if isCharsetAllowingDirectCollationChange(origCharset, toCharset) {
+ 		// TiDB only allow utf8/latin1 to be changed to utf8mb4, or changing the collation when the charset is utf8/utf8mb4/latin1.
+ 		return nil
+ 	}
+```
+
+**File**: `pkg/ddl/modify_column.go` (modified, +16/-2)
+```diff
+@@ -1177,7 +1177,12 @@ func needRowReorg(oldCol, changingCol *model.ColumnInfo) bool {
+ 		return true
+ 	}
+ 
+-	// We have checked charset before, only need to check binary string, which needs padding.
++	// Charset/collation changes outside the direct-convertible set require row reorg.
++	if !canModifyCharsetAndCollateWithoutReorg(oldCol.GetCharset(), oldCol.GetCollate(), changingCol.GetCharset(), changingCol.GetCollate()) {
++		return true
++	}
++
++	// Binary strings need padding reorg.
+ 	return types.IsBinaryStr(&oldCol.FieldType) || types.IsBinaryStr(&changingCol.FieldType)
+ }
+ 
+@@ -1240,7 +1245,11 @@ func buildCheckSQLFromModifyColumn(
+ 			// Integer conversion
+ 			conditions = append(conditions, buildCheckRangeForIntegerTypes(oldCol, changingCol))
+ 		} else {
+-			conditions = append(conditions, fmt.Sprintf("LENGTH(%s) > %d", checkColName, changingCol.FieldType.GetFlen()))
++			lenFn := "LENGTH"
++			if isCharChange(oldCol, changingCol) && !types.IsBinaryStr(&changingCol.FieldType) {
++				lenFn = "CHAR_LENGTH"
 +			}
- 			// Non-exist keys are also locked if the isolation level is not read consistency,
- 			// lock it before read here, then it's able to read from pessimistic lock cache.
- 			if lockNonExistIdxKey {
-@@ -388,20 +407,18 @@ func (e *PointGetExecutor) Next(ctx context.Context, req *chunk.Chunk) error {
- 				failpoint.InjectContext(ctx, "pointGetRepeatableReadTest-step2", nil)
- 			})
- 			if e.idxInfo.Global {
--				_, pid, err := codec.DecodeInt(tablecodec.SplitIndexValue(e.handleVal).PartitionID)
-+				pid, visible, err := e.checkGlobalIndexPartition(e.handleVal)
- 				if err != nil {
- 					return err
- 				}
--				tblID = pid
--				pi := e.tblInfo.GetPartitionInfo()
--				if !matchPartitionNames(tblID, e.partitionNames, pi) {
--					return nil
--				}
--				if slices.Contains(pi.IDsInDDLToIgnore(), pid) {
-+				if !visible {
- 					return nil
- 				}
-+				tblID = pid
++			conditions = append(conditions, fmt.Sprintf("%s(%s) > %d", lenFn, checkColName, changingCol.FieldType.GetFlen()))
+ 			if oldTp == mysql.TypeVarchar && changingTp == mysql.TypeString {
+ 				conditions = append(conditions, fmt.Sprintf("%s LIKE '%% '", checkColName))
  			}
- 		}
-+	} else if pi := e.tblInfo.GetPartitionInfo(); pi != nil && slices.Contains(pi.IDsInDDLToIgnore(), tblID) {
-+		return nil
- 	}
- 
- 	key := tablecodec.EncodeRowKeyWithHandle(tblID, e.handle)
-@@ -590,6 +607,18 @@ func (e *PointGetExecutor) getAndLock(ctx context.Context, key kv.Key) (val []by
- 	return val, nil
- }
- 
-+func (e *PointGetExecutor) checkGlobalIndexPartition(handleVal []byte) (int64, bool, error) {
-+	_, pid, err := codec.DecodeInt(tablecodec.SplitIndexValue(handleVal).PartitionID)
-+	if err != nil {
-+		return 0, false, err
+@@ -2549,6 +2558,11 @@ func validateMaterializedViewBaseModifyColumn(
+ // noReorgDataStrict is a strong check to decide whether we need to change the column data.
+ // If it returns true, it means we don't need the reorg no matter what the data is.
+ func noReorgDataStrict(tblInfo *model.TableInfo, oldCol, newCol *model.ColumnInfo) bool {
++	// Incompatible index collation changes are already rejected by checkModifyCharsetAndCollation.
++	// Charset/collation changes outside the direct-convertible set require row reorg.
++	if !canModifyCharsetAndCollateWithoutReorg(oldCol.GetCharset(), oldCol.GetCollate(), newCol.GetCharset(), newCol.GetCollate()) {
++		return false
 +	}
-+	pi := e.tblInfo.GetPartitionInfo()
-+	if !matchPartitionNames(pid, e.partitionNames, pi) || slices.Contains(pi.IDsInDDLToIgnore(), pid) {
-+		return pid, false, nil
-+	}
-+	return pid, true, nil
-+}
-+
- func (e *PointGetExecutor) lockKeyIfNeeded(ctx context.Context, key []byte) error {
- 	_, err := e.lockKeyBase(ctx, key, false)
- 	return err
-```
-
-**File**: `pkg/meta/model/table.go` (modified, +11/-0)
-```diff
-@@ -1366,6 +1366,17 @@ func (pi *PartitionInfo) IDsInDDLToIgnore() []int64 {
- 			}
- 			return ids
- 		}
-+	case ActionReorganizePartition, ActionRemovePartitioning, ActionAlterTablePartitioning:
-+		// Reorganize-family DDLs populate DroppingDefinitions before backfill;
-+		// Definitions still includes them during StateDeleteOnly/WriteOnly/WriteReorganization.
-+		// Only ignore them once backfill swaps Definitions (StateDeleteReorganization/StatePublic).
-+		if (pi.DDLState == StateDeleteReorganization || pi.DDLState == StatePublic) && len(pi.DroppingDefinitions) > 0 {
-+			ids := make([]int64, 0, len(pi.DroppingDefinitions))
-+			for _, def := range pi.DroppingDefinitions {
-+				ids = append(ids, def.ID)
-+			}
-+			return ids
-+		}
- 	case ActionAddTablePartition:
- 		// TODO: Add tests for ADD PARTITION multi-domain with Global Index!
- 		if len(pi.AddingDefinitions) > 0 {
-```
-
-**File**: `pkg/meta/model/table_test.go` (modified, +31/-0)
-```diff
-@@ -311,3 +311,34 @@ func TestTTLDefaultJobInterval(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, time.Hour, d)
- }
-+
-+func TestPartitionIDsInDDLToIgnore(t *testing.T) {
-+	dropPI := &PartitionInfo{
-+		DDLAction:           ActionDropTablePartition,
-+		DroppingDefinitions: []PartitionDefinition{{ID: 101}, {ID: 102}},
-+	}
-+	require.Equal(t, []int64{101, 102}, dropPI.IDsInDDLToIgnore())
-+
-+	for _, action := range []ActionType{
-+		ActionReorganizePartition,
-+		ActionRemovePartitioning,
-+		ActionAlterTablePartitioning,
-+	} {
-+		// Before visibility switch (StateDeleteOnly/WriteOnly/WriteReorganization), DroppingDefinitions are still live.
-+		pi := &PartitionInfo{
-+			DDLAction:           action,
-+			DDLState:            StateDeleteOnly,
-+			DroppingDefinitions: []PartitionDefinition{{ID: 101}, {ID: 102}},
-+		}
-+		require.Nil(t, pi.IDsInDDLToIgnore())
-+
-+		pi.DDLState = StateWriteReorganization
-+		require.Nil(t, pi.IDsInDDLToIgnore())
-+
-+		pi.DDLState = StateDeleteReorganization
-+		require.Equal(t, []int64{101, 102}, pi.IDsInDDLToIgnore())
-+
-+		pi.DDLState = StatePublic
-+		require.Equal(t, []int64{101, 102}, pi.IDsInDDLToIgnore())
-+	}
-+}
-```
-
-**File**: `pkg/planner/core/operator/physicalop/physical_batch_point_get.go` (modified, +4/-0)
-```diff
-@@ -16,6 +16,7 @@ package physicalop
- 
- import (
- 	"context"
-+	"slices"
- 	"sort"
- 	"strconv"
- 	"strings"
-@@ -360,6 +361,9 @@ func (p *PointGetPlan) PrunePartitions(sctx sessionctx.Context) (bool, error) {
- 	if p.IndexInfo == nil && !p.TblInfo.HasClusteredIndex() && len(p.PartitionNames) == 1 {
- 		for i, def := range pi.Definitions {
- 			if def.Name.L == p.PartitionNames[0].L {
-+				if slices.Contains(pi.IDsInDDLToIgnore(), def.ID) {
-+					return true, nil
-+				}
- 				idx := i
- 				p.PartitionIdx = &idx
- 				break
-```
-
----
-
-### Incident Patch 2: `f7539bde` (2026-11-23)
-**Commit Message**: br: fix iv panic (#73545)
-
-close pingcap/tidb#73544
-
-**File**: `br/pkg/encryption/master_key/BUILD.bazel` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ go_test(
-     ],
-     embed = [":master_key"],
-     flaky = True,
--    shard_count = 11,
-+    shard_count = 12,
-     deps = [
-         "@com_github_pingcap_errors//:errors",
-         "@com_github_pingcap_kvproto//pkg/encryptionpb",
-```
-
-**File**: `br/pkg/encryption/master_key/mem_backend.go` (modified, +4/-0)
-```diff
-@@ -79,6 +79,10 @@ func (m *MemAesGcmBackend) DecryptContent(_ctx context.Context, content *encrypt
- 		return nil, err
- 	}
- 
-+	if iv.Type != IvTypeGcm {
-+		return nil, errors.Errorf("invalid IV length for AES-GCM: expected %d, got %d", GcmIv12, len(ivValue))
-+	}
-+
- 	tag, ok := content.Metadata[MetadataKeyAesGcmTag]
- 	if !ok {
- 		return nil, errors.New("aes gcm tag not found")
-```
-
-**File**: `br/pkg/encryption/master_key/mem_backend_test.go` (modified, +17/-0)
-```diff
-@@ -113,3 +113,20 @@ func TestEncryptDecryptLargeData(t *testing.T) {
- 
- 	require.True(t, bytes.Equal(plaintext, decrypted), "Decrypted large data doesn't match original")
- }
-+
-+func TestDecryptWithInvalidIV(t *testing.T) {
-+	backend, err := NewMemAesGcmBackend(make([]byte, 32))
-+	require.NoError(t, err)
-+	iv, err := NewIVGcm()
-+	require.NoError(t, err)
-+	encrypted, err := backend.EncryptContent(context.Background(), []byte("data"), iv)
-+	require.NoError(t, err)
-+	for _, size := range []int{0, 11, 13, CtrIv16, 17} {
-+		encrypted.Metadata[MetadataKeyIv] = make([]byte, size)
-+		require.NotPanics(t, func() {
-+			data, err := backend.DecryptContent(context.Background(), encrypted)
-+			require.ErrorContains(t, err, "IV")
-+			require.Nil(t, data)
-+		})
-+	}
-+}
-```
-
-**File**: `br/pkg/stream/decode_kv.go` (modified, +6/-6)
-```diff
-@@ -116,23 +116,23 @@ func DecodeKVEntry(buff []byte) (k, v []byte, length uint32, err error) {
- 		return nil, nil, 0, errors.Annotate(berrors.ErrInvalidArgument, "invalid buff")
- 	}
- 
--	var pos uint32 = 0
--	kLen := binary.LittleEndian.Uint32(buff)
-+	var pos uint64 = 0
-+	kLen := uint64(binary.LittleEndian.Uint32(buff))
- 	pos += 4
--	if uint32(len(buff)) < 8+kLen {
-+	if uint64(len(buff)) < 8+kLen {
- 		return nil, nil, 0, errors.Annotate(berrors.ErrInvalidArgument, "invalid buff")
- 	}
- 
- 	k = buff[pos : pos+kLen]
- 	pos += kLen
--	vLen := binary.LittleEndian.Uint32(buff[pos:])
-+	vLen := uint64(binary.LittleEndian.Uint32(buff[pos:]))
- 	pos += 4
- 
--	if uint32(len(buff)) < 8+kLen+vLen {
-+	if uint64(len(buff)) < 8+kLen+vLen || 8+kLen+vLen > math.MaxUint32 {
- 		return nil, nil, 0, errors.Annotate(berrors.ErrInvalidArgument, "invalid buff")
- 	}
- 
- 	v = buff[pos : pos+vLen]
- 	pos += vLen
--	return k, v, pos, nil
-+	return k, v, uint32(pos), nil
- }
-```
-
-**File**: `br/pkg/stream/decode_kv_test.go` (modified, +29/-0)
-```diff
-@@ -3,6 +3,8 @@
- package stream_test
- 
- import (
-+	"encoding/binary"
-+	"math"
- 	"testing"
- 
- 	"github.com/pingcap/tidb/br/pkg/stream"
-@@ -57,3 +59,30 @@ func TestDecodeKVEntryError(t *testing.T) {
- 	ei.Next()
- 	require.Error(t, ei.GetError())
- }
-+
-+func TestDecodeKVEntryInvalidLengths(t *testing.T) {
-+	for _, tc := range []struct {
-+		name             string
-+		keyLen, valueLen uint32
-+	}{
-+		{"key overflow", math.MaxUint32, 0},
-+		{"key header overflow", math.MaxUint32 - 7, 0},
-+		{"value overflow", 0, math.MaxUint32},
-+		{"value header overflow", 0, math.MaxUint32 - 7},
-+		{"truncated key", 1, 0},
-+		{"truncated value", 0, 1},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			buff := make([]byte, 8)
-+			binary.LittleEndian.PutUint32(buff, tc.keyLen)
-+			binary.LittleEndian.PutUint32(buff[4:], tc.valueLen)
-+			require.NotPanics(t, func() {
-+				k, v, n, err := stream.DecodeKVEntry(buff)
-+				require.Error(t, err)
-+				require.Nil(t, k)
-+				require.Nil(t, v)
-+				require.Zero(t, n)
-+			})
-+		})
-+	}
-+}
-```
-
-**File**: `br/pkg/stream/stream_mgr.go` (modified, +7/-1)
-```diff
-@@ -285,7 +285,6 @@ func (m *MetadataHelper) ReadFile(
- 
- 	// unlock as soon as possible because the data slice is read only.
- 	cref.mu.Lock()
--	cref.ref -= 1
- 
- 	if len(cref.data) == 0 {
- 		cref.data, err = storage.ReadFile(ctx, path)
-@@ -294,7 +293,14 @@ func (m *MetadataHelper) ReadFile(
- 			return nil, errors.Trace(err)
- 		}
- 	}
-+	// Check using subtraction so corrupt metadata cannot overflow offset+length.
-+	dataLength := uint64(len(cref.data))
-+	if offset > dataLength || length > dataLength-offset {
-+		cref.mu.Unlock()
-+		return nil, errors.Errorf("invalid log file range: offset %d, length %d, file size %d", offset, length, dataLength)
-+	}
- 	data := cref.data[offset : offset+length]
-+	cref.ref -= 1
- 	if cref.ref <= 0 {
- 		// need reset reference information.
- 		cref.data = nil
-```
-
-**File**: `br/pkg/stream/stream_misc_test.go` (modified, +30/-0)
-```diff
-@@ -346,3 +346,33 @@ func TestFastUnmarshalMetaDataSkipConditionCanSkipEmptyMeta(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, int32(1), readCount.Load())
- }
-+
-+func TestMetadataHelperReadFileInvalidRange(t *testing.T) {
-+	ctx := context.Background()
-+	storage, err := objstore.NewLocalStorage(t.TempDir())
-+	require.NoError(t, err)
-+	require.NoError(t, storage.WriteFile(ctx, "log", []byte("data")))
-+	for _, tc := range []struct {
-+		name           string
-+		offset, length uint64
-+	}{
-+		{"truncated object", 0, 5},
-+		{"offset past end", 5, 0},
-+		{"offset overflow", ^uint64(0), 2},
-+		{"length overflow", 2, ^uint64(0)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			helper := stream.NewMetadataHelper()
-+			helper.InitCacheEntry("log", 1)
-+			require.NotPanics(t, func() {
-+				data, err := helper.ReadFile(ctx, "log", tc.offset, tc.length, 0, backuppb.CompressionType_UNKNOWN, storage, nil)
-+				require.Error(t, err)
-+				require.Nil(t, data)
-+			})
-+			// A failed read must release the cache lock so the next read can succeed.
-+			data, err := helper.ReadFile(ctx, "log", 0, 4, 4, backuppb.CompressionType_UNKNOWN, storage, nil)
-+			require.NoError(t, err)
-+			require.Equal(t, []byte("data"), data)
-+		})
-+	}
-+}
-```
-
-**File**: `br/pkg/utils/BUILD.bazel` (modified, +4/-1)
-```diff
-@@ -85,6 +85,7 @@ go_test(
-     srcs = [
-         "backoff_test.go",
-         "db_test.go",
-+        "encryption_test.go",
-         "error_handling_test.go",
-         "filter_test.go",
-         "json_test.go",
-@@ -99,7 +100,7 @@ go_test(
-     ],
-     embed = [":utils"],
-     flaky = True,
--    shard_count = 41,
-+    shard_count = 42,
-     deps = [
-         "//br/pkg/errors",
-         "//pkg/kv",
-@@ -111,10 +112,12 @@ go_test(
-         "//pkg/testkit/testsetup",
-         "//pkg/types",
-         "//pkg/util/chunk",
-+        "//pkg/util/encrypt",
-         "//pkg/util/sqlexec",
-         "@com_github_pingcap_errors//:errors",
-         "@com_github_pingcap_failpoint//:failpoint",
-         "@com_github_pingcap_kvproto//pkg/brpb",
-+        "@com_github_pingcap_kvproto//pkg/encryptionpb",
-         "@com_github_pingcap_kvproto//pkg/errorpb",
-         "@com_github_stretchr_testify//require",
-         "@com_github_tikv_client_go_v2//oracle",
+ 	toUnsigned := mysql.HasUnsignedFlag(newCol.GetFlag())
+ 	originUnsigned := mysql.HasUnsignedFlag(oldCol.GetFlag())
+ 	needTruncationOrToggleSign := func() bool {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73611** (closed): planner: restore SQL_CALC_FOUND_ROWS no-op fallback (@D3Hunter)
-- **PR #73596** (closed): planner, executor: ignore unsupported SQL_CALC_FOUND_ROWS when noop functions are enabled (@D3Hunter)
-- **PR #73594** (2026-11-23): session: close result sets when statement execution fails (@D3Hunter)
-- **PR #73546** (2026-11-22): *: add issue discovery source section to bug report template (@winoros)
-- **PR #73545** (2026-11-23): br: fix iv panic (@Leavrth)
-- **PR #73543** (closed): br: fix PITR index repair for foreign keys with quoted column names (@zhengdaodeguL)
+- **PR #73726** (2026-11-24): tests: stabilize read-only staleness transaction test (@winoros)
+- **PR #73718** (closed): planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078) (@ti-chi-bot[bot])
+- **PR #73701** (2026-11-24): mvservice: restore freshness alerts after rapid schedule changes (#73442) (@windtalker)
+- **PR #73700** (closed): planner: fall back to index stats when col has no stats (#69154) (@ti-chi-bot)
+- **PR #73663** (2026-11-24): deps: update client-go to fix batch response cancellation on release-8.5 (@cfzjywxk)
+- **PR #73649** (2026-11-24): ddl: support partial indexes with fast reorg on unistore (@D3Hunter)
 
 ---
 
@@ -2363,64 +2098,47 @@ close pingcap/tidb#73544
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb
+## X. ddl: require reorg when MODIFY COLUMN changes column charset or indexed collatio
 
 **RULE**:
-When implementing operations in `pkg/executor/point_get.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/column_modify_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec579a79`: executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb_rowid and reorg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a935aa47`: ddl: require reorg when MODIFY COLUMN changes column charset or indexed collation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/point_get.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/column_modify_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// Under RR, avoid acquiring a pessimistic lock on a global-index key whose
-			// snapshot entry already belongs to a DDL-ignored (dropping) partition.
-			// Under RC, always perform the locking current read so concurrent partition
-			// moves into requested partitions are not missed.
-			if e.idxInfo.Global && e.lock && lockNonExistIdxKey {
-				preVal, preErr := e.get(ctx, e.idxKey)
-				if preErr != nil && !kv.ErrNotExist.Equal(preErr) {
-					return preErr
-				}
-				if len(preVal) > 0 {
-					pid, _, visErr := e.checkGlobalIndexPartition(preVal)
-					if visErr != nil {
-						return visErr
-					}
-					if slices.Contains(e.tblInfo.GetPartitionInfo().IDsInDDLToIgnore(), pid) {
-						return nil
-					}
-				}
-			}
-				pid, visible, err := e.checkGlobalIndexPartition(e.handleVal)
-				if !visible {
-				tblID = pid
-	} else if pi := e.tblInfo.GetPartitionInfo(); pi != nil && slices.Contains(pi.IDsInDDLToIgnore(), tblID) {
-		return nil
-func (e *PointGetExecutor) checkGlobalIndexPartition(handleVal []byte) (int64, bool, error) {
-	_, pid, err := codec.DecodeInt(tablecodec.SplitIndexValue(handleVal).PartitionID)
-	if err != nil {
-		return 0, false, err
-	}
-	pi := e.tblInfo.GetPartitionInfo()
-	if
+
+func TestModifyColumnCrossCharsetRequiresReorg(t *testing.T) {
+	store := testkit.CreateMockStoreWithSchemaLease(t, columnModifyLease)
+	tk := testkit.NewTestKit(t, store)
+	tk.MustExec("use test")
+
+	// BINARY(2) -> VARCHAR(10) utf8mb4 with invalid UTF-8 bytes must reorg and fail.
+	tk.MustExec("create table t0 (id int primary key, c binary(2))")
+	tk.MustExec("insert into t0 values (1, x'FFFE')")
+	tk.MustGetErrCode("alter table t0 modify column c varchar(10) character set utf8mb4 collate utf8mb4_general_ci", errno.ErrTruncatedWrongValueForField)
+
+	// CHAR(4) utf8mb4 -> VARCHAR(10) ascii with non-ASCII character must reorg and fail.
+	tk.MustExec("create table t2 (id int primary key, c char(4) character set utf8mb4)")
+	tk.MustExec("insert into t2 values (1, 'é')")
+	tk.MustGetErrCode("alter table t2 modify column c varchar(10) character set ascii", errno.ErrTruncatedWrongValueForField)
+
+	// CHAR(4) utf8mb4 -> VARBINARY(4) with 8-byte UTF-8 value must reorg and fail with truncation.
+	tk.MustExec("create table t3 (id int primary key, c char(4) character set utf8mb4)")
+	tk.MustExec("insert into t3 values (1, 'éééé')")
+	tk.MustGetErrCode("alter table t3 modify column c varbinary(4)", errno.W
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				_, pid, err := codec.DecodeInt(tablecodec.SplitIndexValue(e.handleVal).PartitionID)
-				tblID = pid
-				pi := e.tblInfo.GetPartitionInfo()
-				if !matchPartitionNames(tblID, e.partitionNames, pi) {
-					return nil
-				}
-				if slices.Contains(pi.IDsInDDLToIgnore(), pid) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec579a79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a935aa47` are properly handled with clean fallback behavior.
