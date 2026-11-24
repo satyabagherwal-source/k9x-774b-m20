@@ -4,22 +4,22 @@
 {
   "source_repository": "NervJS/taro",
   "source_url": "https://github.com/NervJS/taro",
-  "source_version": "a48d43e3",
+  "source_version": "84cc57bc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T11:45:09.745Z",
+  "timestamp": "2026-11-24T07:33:13.765Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nervjs-taro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `a48d43e3`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T11:45:09.745Z`  
+> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `84cc57bc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T07:33:13.765Z`  
 > **Learning ID**: `learn-github-nervjs-taro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NervJS/taro` (Commit: `a48d43e3`)
+- **Target Repository**: `NervJS/taro` (Commit: `84cc57bc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:45:08.175Z  
+> **Harvest Timestamp**: 2026-11-24T07:32:06.768Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37755 stars
+- **Stars / Engagement**: 37766 stars
 
 ---
 
@@ -1206,16 +1206,15 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19686** (2026-11-23): **【Bug 反馈】React 适配层 AppWrapper.unmount 缺少 idx 越界保护，splice(-1, 1) 误删无关元素树，导致自定义 tabbar / 整页点击静默失效**
+  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  运行时  ### 使用框架  React  ### 相关平台  - [ ] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [x] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  Taro 4.3.0（React）编译到微信小程序时，使用 `tabBar.custom: true` 自定义 tabBar，页面跳转（`navigateTo` / `switchTab` / `navigateBack`）过程中偶发以下现象：  - 自定义 tabBar 点击完全失效（无任何响应） - 严重时**整个页面的点击/跳转全部失效**，但页面滚动始终正常 - 通过 Console 直接调用 `wx.switchTab` API 可以临时恢复，恢复后再点击又会失效 - 无固定规律，开发者工具与真机均可复现  经排查，根因在 React 适配层 `AppWrapper` 的 mount/unmount 实现：`unmount` 在 `findIndex` 扑空时执行 `splice(-1, 1)`，按 JS 数组语义会**误删 `elements` 数组的最后一棵元素树**（最近挂载、与本次操作无关的 tabbar 树或页面树），导致渲染层与逻辑层元素树失同步，后续点击在事件派发时被静默丢弃。       ### 复现链接  无  ### 复现步骤  1. Taro 4.3.0 + React 项目，`app.config.ts` 中 `tabBar.custom: true`，自定义 tabBar 内按钮调用 `Taro.switchTab` 2. 正常业务操作：在 tab 页与普通页之间反复跳转（`navigateTo` → `navigateBack`、`switchTab`），尤其关注**进入普通页面的瞬间**（此时框架会挂载/卸载 custom-tab-bar 组件实例） 3. 由于是时序竞态，需要多轮操作；我们在真实项目中原本为「每次必现」，打补丁后完全不再复现  > 注：竞态窗口取决于 `unmount` 与 React flush 的先后，难以做成确定性的最小复现仓库。如需要，我们可以提供带探针的复现工程或运行时插桩补丁。  ### 环境信息  ```bash - Taro：4.3.0（CLI 与全部 @tarojs/* 依赖） - 框架：React 18.3.1 - 平台：weapp（微信小程序） - 基础库：3.17.6；微信开发者工具（macOS）与 iOS / Android 真机均复现 ```  ### 开源贡献  - [ ] 我愿意修复这个错误。请参考 [(贡献指南)](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
+  **Post-Mortem & Fix Analysis**:
+  > 根因分析  `@tarojs/plugin-framework-react/dist/runtime.js` 中 `AppWrapper`（`createReactApp` 内）：  ```ts mount (pageComponent, id, cb) {   const pageWrapper = connectReactPage(react, id)(pageComponent)   const key = id + pageKeyId()   const page = () => h(pageWrapper, { key, tid: id })   this.pages.push(page)       // ① 元素先进暂存队列   this.forceUpdate(...)       // ② 下一次 render() 才真正压入 this.elements（异步 flush） }  unmount (id, cb) {   const elements = this.elements   const idx = elements.findIndex(item => item.props.tid === id)   elements.splice(idx, 1)     // ③ 无 idx === -1 保护；splice(-1, 1) 删除最后一项   this.forceUpdate(cb) }  render () {   const { pages, elements } = this   while (pages.length > 0) {     const page = pages.pop()     elements.push(page())     // ④ elements 在这里才被填充   }   ... } ```  最小修复（一行守卫，我们已通过 patch-package 应用并验证，原「必现」流程完全不再复现）：  ```diff  unmount (id, cb) {    const elements = this.elements    const idx = elements.findIndex(item => item.props.tid === id) +  if (idx === -1) return t
+
 - **Issue #19581** (2026-11-02): **[Vue3] Vue 3.5.31+ 文本框 v-model 更新时报 getRootNode is not a function**
   *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v3  ### 相关领域  None  ### 使用框架  Vue3  ### 相关平台  - [ ] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [x] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  ### 相关平台 微信小程序  ### 复现仓库 / 版本 - @tarojs/taro、@tarojs/runtime、@tarojs/plugin-framework-vue3：3.6.36 - 同样核对过 3.6.40 和 4.1.7 的 TaroNode，仍没有 getRootNode - vue：3.5.43（package.json 写的是 ^3.2.24，安装时升到了 3.5.43） - 开发者工具：Windows，lib 3.17.2  ### 复现步骤 1. Taro 3 + Vue 3 项目，依赖 vue@^3.2.24，实际安装 Vue >= 3.5.31 2. 页面使用文本框 v-model，例如 `<input v-model.trim="name" />` 3. 输入，或由脚本把值写回该字段（如识别图片后回填） 4. 微信开发者工具预览  ### 期望结果 输入框正常更新，不报错。  ### 实际结果 逻辑层报错，输入框更新中断，回填的值显示不出来：  TypeError: MiniProgramError t1.getRootNode is not a function     at beforeUpdate (appservice.getmainpackagebundle.js)  ### 原因 Vue 3.5.31（2026-03-25，#14196，commit 959ded2）在文本框 v-model 的 beforeUpdate 里，把原来的 `document.activeElement` 改成了：  const rootNode = el.getRootNode() if (   (rootNode instanceof Document || rootNode instanceof ShadowRoot) &&   rootNode.activeElement === el &&   el.type !== 'range' ) { ... }  Taro 模拟节点没有 getRootNode。小程序逻辑层也没有 Document、ShadowRoot。Vue 3.5.0 到 3.5.30 仍使用 document.activeElement，不会触发这个报错。  编译产物里 getRootNode 只出现在 Vue 的 vModelText.beforeUpdate。单选、复选不走这段逻辑。  ### 临时处理 在非 H5 入口给 TaroElement.prototype 补 g
   **Post-Mortem & Fix Analysis**:
   > 3.6.36 taro3版本为什么不更新这个 
-
-- **Issue #19544** (2026-11-13): **[Bug]: 官网地址无法打开**
-  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  None  ### 使用框架  React  ### 相关平台  - [x] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [ ] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  <img width="3406" height="1930" alt="Image" src="https://github.com/user-attachments/assets/c7881b12-a1f7-4d06-959c-8163f515aafd" /> 官网地址无法打开  ### 复现链接  https://docs.taro.zone/docs  ### 复现步骤  1. 访问https://docs.taro.zone/docs  ### 环境信息  ```bash Google Chrome：155.0.8059.40 (正式版本) (arm64) ```  ### 开源贡献  - [ ] 我愿意修复这个错误。请参考 [(贡献指南)](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
-  **Post-Mortem & Fix Analysis**:
-  > 一样打不开了
-  > 同问什么时候能修复呢？需要查看文档，是否有其他查看文档的方式？
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1232,639 +1231,258 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a48d43e3` (2026-11-18)
-**Commit Message**: feat(h5): 支持创建 Web Audio 上下文 (#19664)
+### Incident Patch 1: `99683d13` (2026-11-23)
+**Commit Message**: fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (#19684)
 
-* feat(h5): support creating a Web Audio context
+* fix(deps): bump webpack to 5.104.1 to address security advisories
 
-* fix(h5): make audio decode callbacks optional
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
 
-* fix(h5): align web audio types with native context
+* fix(deps): raise browserslist override to satisfy webpack 5.104.1
 
-**File**: `packages/taro-h5/__tests__/media/webAudioContext.test.ts` (added, +30/-0)
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test(jest-helper): normalize pnpm vue-loader dirs in snapshots across platforms
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test: use the normalized vue-loader path in the vue3 framework snapshot
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test: cover vue-loader path normalization for peer and hashed suffixes
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,30 @@
-+import { createWebAudioContext } from '@tarojs/taro-h5'
-+
-+describe('createWebAudioContext', () => {
-+  const original = Object.getOwnPropertyDescriptor(window, 'AudioContext')
-+
-+  afterEach(() => {
-+    if (original) {
-+      Object.defineProperty(window, 'AudioContext', original)
-+    } else {
-+      Reflect.deleteProperty(window, 'AudioContext')
-+    }
-+  })
-+
-+  it('returns a new native context for each call', () => {
-+    const resume = jest.fn()
-+    const AudioContext = jest.fn().mockImplementation(() => ({ resume }))
-+    Object.defineProperty(window, 'AudioContext', { configurable: true, value: AudioContext })
-+
-+    const first = createWebAudioContext()
-+    expect(first).not.toBe(createWebAudioContext())
-+    expect(AudioContext).toHaveBeenCalledTimes(2)
-+    first.resume()
-+    expect(resume).toHaveBeenCalledTimes(1)
-+  })
-+
-+  it('throws synchronously when AudioContext is unavailable', () => {
-+    Object.defineProperty(window, 'AudioContext', { configurable: true, value: undefined })
-+    expect(() => createWebAudioContext()).toThrow('AudioContext is not supported')
-+  })
-+})
+@@ -188,7 +188,7 @@
+       }
+     },
+     "overrides": {
+-      "browserslist": "^4.24.4",
++      "browserslist": "^4.28.1",
+       "@types/mapbox-gl": "3.4.1"
+     }
+   }
 ```
 
-**File**: `packages/taro-h5/src/api/media/audio/index.ts` (modified, +6/-1)
+**File**: `packages/jest-helper/src/snapshot/serializers.ts` (modified, +5/-1)
 ```diff
-@@ -10,7 +10,12 @@ export const setInnerAudioOption = /* @__PURE__ */ temporarilyNotSupport('setInn
- export const playVoice = /* @__PURE__ */ temporarilyNotSupport('playVoice')
- export const pauseVoice = /* @__PURE__ */ temporarilyNotSupport('pauseVoice')
- export const getAvailableAudioSources = /* @__PURE__ */ temporarilyNotSupport('getAvailableAudioSources')
--export const createWebAudioContext = /* @__PURE__ */ temporarilyNotSupport('createWebAudioContext')
-+export const createWebAudioContext: typeof Taro.createWebAudioContext = () => {
-+  if (typeof AudioContext === 'undefined') {
-+    throw new Error('createWebAudioContext:fail AudioContext is not supported')
-+  }
-+  return new AudioContext()
-+}
- export const createMediaAudioPlayer = /* @__PURE__ */ temporarilyNotSupport('createMediaAudioPlayer')
+@@ -6,6 +6,10 @@ export const print = (val: string) => {
+   return val.replace(/\\*\*\sfilePath:\s(.*)\s\*\*\//g, (replaceValue) => replaceValue.replace(/\\/g, '/'))
+ }
  
- /**
++// Note: 对齐各平台的 pnpm vue-loader 目录名（peer 依赖后缀过长时，Windows 上会被截断并追加 hash）
++const pnpmVueLoaderDir = /(\.pnpm[\\/]vue-loader@[^_\\/]+)_[^\\/]*/g
++export const normalizeVueLoaderPath = (val: string) => val.replace(pnpmVueLoaderDir, '$1')
++
+ const mockFilePath = '/** filePath:mockFilePath **/'
+ export const parseSnapshotByFilePath = (val: string) => {
+   const arr = val.split(new RegExp(os.EOL + '|\n'))
+@@ -44,7 +48,7 @@ export const serialize = (
+   // printer: Printer,
+ ) => {
+   if (typeof val === 'string') {
+-    return snapshotObject2String(parseSnapshotByFilePath(val))
++    return snapshotObject2String(parseSnapshotByFilePath(normalizeVueLoaderPath(val)))
+   }
+   return val
+ }
 ```
 
-**File**: `packages/taro/types/api/media/audio.d.ts` (modified, +37/-36)
+**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ declare module '../../index' {
-      * ```
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/AudioBuffer.copyFromChannel.html
-      */
--    copyFromChannel(): void
-+    copyFromChannel(destination: Float32Array, channelNumber: number, startInChannel?: number): void
- 
-     /** 从指定数组复制样本到 audioBuffer 的特定通道
-      * @supported weapp
-@@ -153,7 +153,7 @@ declare module '../../index' {
-       /** 需要复制到的目的通道号 */
-       channelNumber: number,
-       /** 复制偏移数据量 */
--      startInChannel: number
-+      startInChannel?: number
-     ): void
+@@ -87,7 +87,7 @@
+     "@babel/plugin-transform-class-properties": "7.25.9",
+     "@types/webpack-env": "^1.13.6",{{#if (includes "React" "Preact" s=framework)}}
+     "@types/react": "^18.0.0",{{/if}}{{#if (eq compiler "Webpack5") }}
+-    "webpack": "5.91.0",
++    "webpack": "5.104.1",
+     "@tarojs/taro-loader": "{{ version }}",
+     "@tarojs/webpack5-runner": "{{ version }}",{{/if}}{{#if (eq css "Sass") }}
+     "sass": "^1.75.0",{{/if}}{{#if (eq css "Less") }}
+```
+
+**File**: `packages/taro-framework-vue3/package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+     "@tarojs/taro": "workspace:*",
+     "@vue/compiler-core": "^3.4.25",
+     "vite": "^4.2.0",
+-    "webpack": "5.91.0",
++    "webpack": "5.104.1",
+     "vue": "^3.4.25"
+   },
+   "peerDependencies": {
+```
+
+**File**: `packages/taro-loader/package.json` (modified, +2/-2)
+```diff
+@@ -34,9 +34,9 @@
+   },
+   "devDependencies": {
+     "@tarojs/taro": "workspace:*",
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
+   },
+   "peerDependencies": {
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
    }
- 
-@@ -461,7 +461,7 @@ declare module '../../index' {
+ }
+```
+
+**File**: `packages/taro-platform-harmony/package.json` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@
+     "@tarojs/taro": "workspace:*",
+     "webpack-sources": "^3.2.3",
+     "@babel/preset-react": "^7.24.1",
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
+   },
+   "devDependencies": {
+     "fast-glob": "^3.3.1",
+```
+
+**File**: `packages/taro-service/package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+   },
+   "devDependencies": {
+     "@tarojs/taro": "workspace:*",
+-    "webpack": "^5.91.0",
++    "webpack": "^5.104.1",
+     "webpack-chain": "^6.5.1"
    }
- 
-   /** WebAudioContext 实例，通过 [Taro.createWebAudioContext](./createWebAudioContext) 接口获取该实例。
--   * @supported weapp
-+   * @supported weapp, h5
-    * @example
-    * 监听状态
-    *
-@@ -475,22 +475,22 @@ declare module '../../index' {
-    * ```
-    * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.html
-    */
--  interface WebAudioContext {
-+  interface WebAudioContext extends BaseAudioContext {
-     /** 当前 WebAudio 上下文的状态。
-      *
-      * 可能的值如下：suspended（暂停）、running（正在运行）、closed（已关闭）。
-      * 需要注意的是，不要在 audioContext close 后再访问 state 属性
-      */
--    state: string
-+    state: BaseAudioContext['state']
- 
-     /** 可写属性，开发者可以对该属性设置一个监听函数，当 WebAudio 状态改变的时候，会触发开发者设置的监听函数。 */
--    onstatechange: () => void
-+    onstatechange: BaseAudioContext['onstatechange']
- 
-     /** 获取当前上下文的时间戳。 */
-     currentTime: number
- 
-     /** 当前上下文的最终目标节点，一般是音频渲染设备。 */
--    destination: WebAudioContextNode
-+    destination: AudioDestinationNode
- 
-     /** 空间音频监听器。 */
-     listener: AudioListener
-@@ -502,7 +502,7 @@ declare module '../../index' {
-      *
-      * **注意事项**
-      * 同步关闭对应的 WebAudio 上下文。close 后会立即释放当前上下文的资源，**不要在 close 后再次访问 state 属性**。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
-      * const audioCtx = Taro.createWebAudioContext()
-@@ -515,19 +515,19 @@ declare module '../../index' {
-     close(): Promise<void>
- 
-     /** 同步恢复已经被暂停的 WebAudioContext 上下文
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.resume.html
-      */
-     resume(): Promise<void>
- 
-     /** 同步暂停 WebAudioContext 上下文
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.suspend.html
-      */
-     suspend(): Promise<void>
- 
-     /** 创建一个 IIRFilterNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
-      * let lowPassCoefs = [
-@@ -567,25 +567,25 @@ declare module '../../index' {
-     ): IIRFilterNode
- 
-     /** 创建一个 WaveShaperNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createWaveShaper.html
-      */
-     createWaveShaper(): WaveShaperNode
- 
-     /** 创建一个 ConstantSourceNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createConstantSource.html
-      */
-     createConstantSource(): ConstantSourceNode
- 
-     /** 创建一个 OscillatorNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createOscillator.html
-      */
-     createOscillator(): OscillatorNode
- 
-     /** 创建一个 GainNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createGain.html
-      */
-     createGain(): GainNode
-@@ -605,7 +605,7 @@ declare module '../../index' {
-      *
-      * const waveNode = audioContext.createPeriodicWave(real, imag, {disableNormalization: true})
-      * ```
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createPeriodicWave.html
-      */
-     createPeriodicWave(
-@@ -614,41 +614,41 @@ declare module '../../index' {
-       /** 一组余弦项(传统上是A项) */
-       imag: Float32Array,
-       /** 一个字典对象，它指定是否应该禁用规范化(默认启用规范化) */
--      constraints: WebAudioContext.createPeriodicWave.Constraints
-+      constraints?: WebAudioContext.createPeriodicWave.Constraints
-     ): PeriodicWave
- 
-     /** 创建一个BiquadFilterNode
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBiquadFilter.html
-      */
-     createBiquadFilter(): BiquadFilterNode
- 
-     /** 创建一个 BufferSourceNode 实例，通过 AudioBuffer 对象来播放音频数据。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBufferSource.html
-      */
-     createBufferSource(): AudioBufferSourceNode
- 
-     /** 创建一个ChannelMergerNode
--     * @
+ }
+```
+
+**File**: `packages/taro-service/src/platform-plugin-base/webpack/hmr-plugin.ts` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ export default class TaroMiniHMRPlugin {
+             const runtimeModules = compilation.chunkGraph.getChunkRuntimeModulesInOrder(chunk)
+             for (const module of runtimeModules) {
+               if (module.name === 'jsonp chunk loading') {
+-                const runtimeSource = compilation.codeGenerationResults.getSource(
++                const runtimeSource = compilation.codeGenerationResults!.getSource(
+                   module,
+                   chunk.runtime,
+                   'runtime'
 ```
 
 ---
 
-### Incident Patch 2: `2b04520c` (2026-11-18)
-**Commit Message**: feat(h5): support batch storage APIs on H5 (#19654)
+### Incident Patch 2: `29bfbed0` (2026-11-23)
+**Commit Message**: fix(cli): align vue3 vite template plugin versions with taro peer ranges (#19683)
 
-* feat(h5): support batch storage APIs on H5
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
 
-batchSetStorage, batchSetStorageSync, batchGetStorage and
-batchGetStorageSync were temporarilyNotSupport placeholders on H5, so
-code that reads or writes several cache entries at once in mini programs
-could not run in the browser without platform-specific fallbacks.
-
-Implement them on top of the existing localStorage-based storage APIs:
-
-- Entries are stored in the same format as setStorage, so data written
-  by the batch APIs can be read by getStorage and vice versa.
-- All values are serialized before anything is written, so a value that
-  cannot be serialized (e.g. a circular object) does not leave the batch
-  half written. The async API reports serialization and browser errors
-  (e.g. QuotaExceededError) through fail/complete; the sync API throws,
-  matching setStorageSync.
-- Missing keys, and keys not written by Taro, resolve to '' like
-  getStorageSync. Results keep the order of keyList, and batchGetStorage
-  returns them as dataList, matching WeChat.
-- kvList/keyList are validated like the other H5 storage APIs.
-
-Update the type declarations: mark the four APIs as supported on h
-
-**File**: `packages/taro-h5/__tests__/storage/batch.test.ts` (added, +273/-0)
+**File**: `packages/eslint-config-taro/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,273 @@
-+import * as Taro from '@tarojs/taro-h5'
-+
-+const mockConsole = require('jest-mock-console')
-+
-+describe('batch storage', () => {
-+  beforeEach(() => {
-+    localStorage.clear()
-+    mockConsole()
-+  })
-+
-+  afterEach(() => jest.restoreAllMocks())
-+
-+  describe('batchSetStorageSync', () => {
-+    test('should save every item to localStorage', () => {
-+      const data = { env: 'h5', mixArr: [1, { bar: '_bar' }, 'test'] }
-+
-+      Taro.batchSetStorageSync([
-+        { key: 'foo', value: 'bar' },
-+        { key: 'obj', value: data },
-+        { key: 'empty', value: undefined }
-+      ])
-+
-+      expect(localStorage.foo).toBe(JSON.stringify({ data: 'bar' }))
-+      expect(localStorage.obj).toBe(JSON.stringify({ data }))
-+      expect(localStorage.empty).toBe(JSON.stringify({ data: '' }))
-+      expect(Taro.getStorageSync('obj')).toEqual(data)
-+    })
-+
-+    test('should overwrite existing values', () => {
-+      Taro.setStorageSync('foo', 'old')
-+
-+      Taro.batchSetStorageSync([{ key: 'foo', value: 'new' }])
-+
-+      expect(Taro.getStorageSync('foo')).toBe('new')
-+    })
-+
-+    test('kvList should be an array', () => {
-+      Taro.batchSetStorageSync()
-+
-+      expect(console.error).toHaveBeenCalledWith('batchSetStorageSync:fail parameter error: parameter.kvList should be Array instead of Undefined')
-+    })
-+
-+    test('every key should be a string and nothing is written otherwise', () => {
-+      Taro.batchSetStorageSync([{ key: 'foo', value: 'bar' }, { value: 'baz' }])
-+
-+      expect(console.error).toHaveBeenCalledWith('batchSetStorageSync:fail parameter error: parameter.kvList[1].key should be String instead of Undefined')
-+      expect(localStorage.length).toBe(0)
-+    })
-+
-+    test('should not write any item when a value cannot be serialized', () => {
-+      const data: Record<string, unknown> = {}
-+      data.self = data
-+
-+      expect(() => Taro.batchSetStorageSync([
-+        { key: 'foo', value: 'bar' },
-+        { key: 'circular', value: data }
-+      ])).toThrow(TypeError)
-+      expect(localStorage.length).toBe(0)
-+    })
-+
-+    test('should restore earlier items when a write fails part way', () => {
-+      Taro.setStorageSync('foo', 'old')
-+      const setItem = Storage.prototype.setItem
-+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
-+        if (key === 'big') throw new DOMException('quota exceeded', 'QuotaExceededError')
-+        return setItem.call(this, key, value)
-+      })
-+
-+      expect(() => Taro.batchSetStorageSync([
-+        { key: 'foo', value: 'new' },
-+        { key: 'bar', value: 'baz' },
-+        { key: 'big', value: 'x' }
-+      ])).toThrow('quota exceeded')
-+      expect(Taro.getStorageSync('foo')).toBe('old')
-+      expect(localStorage.getItem('bar')).toBeNull()
-+      expect(localStorage.getItem('big')).toBeNull()
-+    })
-+
-+    test('should free the space used by the batch before restoring old values', () => {
-+      const limit = 120
-+      const used = (skip?: string) => Object.keys(localStorage).reduce((n, k) => k === skip ? n : n + (localStorage.getItem(k) as string).length, 0)
-+      Taro.setStorageSync('foo', 'o'.repeat(80))
-+      const setItem = Storage.prototype.setItem
-+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
-+        if (used(key) + value.length > limit) throw new DOMException('quota exceeded', 'QuotaExceededError')
-+        return setItem.call(this, key, value)
-+      })
-+
-+      expect(() => Taro.batchSetStorageSync([
-+        { key: 'foo', value: 'n' },
-+        { key: 'bar', value: 'b'.repeat(80) },
-+        { key: 'big', value: 'x'.repeat(200) }
-+      ])).toThrow('quota exceeded')
-+      expect(Taro.getStorageSync('foo')).toBe('o'.repeat(80))
-+      expect(localStorage.getItem('bar')).toBeNull()
-+      expect(localStorage.getItem('big')).toBeNull()
-+    })
-+
-+    test('should leave keys untouched when the first write fails', () => {
-+      Taro.setStorageSync('foo', 'old')
-+      const setItem = Storage.prototype.setItem
-+      const removeItem = jest.spyOn(Storage.prototype, 'removeItem')
-+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
-+        if (key === 'big') throw new DOMException('quota exceeded', 'QuotaExceededError')
-+        return setItem.call(this, key, value)
-+      })
-+
-+      expect(() => Taro.batchSetStorageSync([
-+        { key: 'big', value: 'x' },
-+        { key: 'foo', value: 'new' }
-+      ])).toThrow('quota exceeded')
-+      expect(removeItem).not.toHaveBeenCalled()
-+      expect(Taro.getStorageSync('foo')).toBe('old')
-+    })
-+  })
-+
-+  describe('batchSetStorage', () => {
-+    test('options should be object', () => {
-+      expect.assertions(2)
-+      return Taro.batchSetStorage()
-+        .catch(err => {
-+          const expectErrMsg = 'batchSetStorage:fail parameter error: parameter shou
+@@ -35,7 +35,7 @@
+     "eslint": "^8",
+     "eslint-plugin-react": "^7.33.2",
+     "eslint-plugin-react-hooks": "^4.4.0",
+-    "eslint-plugin-vue": "^8.0.0"
++    "eslint-plugin-vue": "^8.0.0 || ^9.0.0"
+   },
+   "peerDependenciesMeta": {
+     "eslint-plugin-react": {
 ```
 
-**File**: `packages/taro-h5/src/api/storage/index.ts` (modified, +143/-16)
+**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
 ```diff
-@@ -1,22 +1,91 @@
- import Taro from '@tarojs/api'
- 
--import { getParameterError, shouldBeObject, temporarilyNotSupport } from '../../utils'
-+import { getParameterError, shouldBeObject } from '../../utils'
- import { MethodHandler } from '../../utils/handler'
- 
- function getItem (key) {
-+  let raw
-+  try {
-+    raw = localStorage.getItem(key)
-+  } catch (e) {} // eslint-disable-line no-empty
-+  return parseItem(raw)
-+}
-+
-+function parseItem (raw: string | null | undefined) {
-   let item
-   try {
--    item = JSON.parse(localStorage.getItem(key) || '')
-+    item = JSON.parse(raw || '')
-   } catch (e) {} // eslint-disable-line no-empty
- 
-   // 只返回使用 Taro.setStorage API 存储的数据
--  if (item && typeof item === 'object' && item.hasOwnProperty('data')) {
-+  if (item && typeof item === 'object' && Object.prototype.hasOwnProperty.call(item, 'data')) {
-     return { result: true, data: item.data }
-   } else {
-     return { result: false }
-   }
- }
- 
-+function serializeItem (data: unknown = '') {
-+  return JSON.stringify(typeof data === 'symbol' ? { data: '' } : { data })
-+}
-+
-+function getKvListError (kvList: unknown, name?: string) {
-+  if (!Array.isArray(kvList)) {
-+    return getParameterError({ name, para: 'kvList', correct: 'Array', wrong: kvList })
-+  }
-+  for (let i = 0; i < kvList.length; i++) {
-+    const key = kvList[i]?.key
-+    if (typeof key !== 'string') {
-+      return getParameterError({ name, para: `kvList[${i}].key`, correct: 'String', wrong: key })
-+    }
-+  }
-+}
-+
-+function getKeyListError (keyList: unknown, name?: string) {
-+  if (!Array.isArray(keyList)) {
-+    return getParameterError({ name, para: 'keyList', correct: 'Array', wrong: keyList })
-+  }
-+  for (let i = 0; i < keyList.length; i++) {
-+    if (typeof keyList[i] !== 'string') {
-+      return getParameterError({ name, para: `keyList[${i}]`, correct: 'String', wrong: keyList[i] })
-+    }
-+  }
-+}
-+
-+function setItems (kvList: Taro.batchSetStorage.kv[]) {
-+  // 先序列化全部数据，避免部分数据无法序列化时只写入了一部分
-+  const items = kvList.map(({ key, value }) => [key, serializeItem(value)])
-+  // 写入失败（如超出存储配额）时恢复已写入的旧值，保证批量写入要么全部成功要么不改变数据
-+  const previous = items.map(([key]) => [key, localStorage.getItem(key)] as const)
-+  let written = 0
-+  try {
-+    items.forEach(([key, item]) => {
-+      localStorage.setItem(key, item)
-+      written++
-+    })
-+  } catch (e) {
-+    // 只回滚已经写入的 key：先移除以释放空间，再恢复旧值；单项恢复失败不应中断其余恢复
-+    const touched = previous.slice(0, written)
-+    touched.forEach(([key]) => localStorage.removeItem(key))
-+    touched.forEach(([key, item]) => {
-+      if (item === null) return
-+      try {
-+        localStorage.setItem(key, item)
-+      } catch (err) {} // eslint-disable-line no-empty
-+    })
-+    throw e
-+  }
-+}
-+
-+function getItems (keyList: string[]) {
-+  // 先读取原始数据，使存储不可用（如浏览器禁止访问）时抛出异常，而不是当作 key 不存在
-+  const rawList = keyList.map(key => localStorage.getItem(key))
-+  return rawList.map(raw => {
-+    const { result, data } = parseItem(raw)
-+    return result ? data : ''
-+  })
-+}
-+
- // 数据缓存
- export const setStorageSync: typeof Taro.setStorageSync = (key, data = '') => {
-   if (typeof key !== 'string') {
-@@ -28,15 +97,7 @@ export const setStorageSync: typeof Taro.setStorageSync = (key, data = '') => {
-     return
-   }
- 
--  const type = typeof data
--  let obj = {}
--
--  if (type === 'symbol') {
--    obj = { data: '' }
--  } else {
--    obj = { data }
--  }
--  localStorage.setItem(key, JSON.stringify(obj))
-+  localStorage.setItem(key, serializeItem(data))
- }
- 
- export const setStorage: typeof Taro.setStorage = (options) => {
-@@ -204,10 +265,76 @@ export const clearStorage: typeof Taro.clearStorage = ({ success, fail, complete
-   return handle.success()
- }
- 
--export const batchSetStorageSync = /* @__PURE__ */ temporarilyNotSupport('batchSetStorageSync')
--export const batchSetStorage = /* @__PURE__ */ temporarilyNotSupport('batchSetStorage')
--export const batchGetStorageSync = /* @__PURE__ */ temporarilyNotSupport('batchGetStorageSync')
--export const batchGetStorage = /* @__PURE__ */ temporarilyNotSupport('batchGetStorage')
-+export const batchSetStorageSync: typeof Taro.batchSetStorageSync = (kvList) => {
-+  const errMsg = getKvListError(kvList, 'batchSetStorageSync')
-+  if (errMsg) {
-+    console.error(errMsg)
-+    return
-+  }
-+
-+  setItems(kvList)
-+}
-+
-+export const batchSetStorage: typeof Taro.batchSetStorage = (options) => {
-+  // options must be an Object
-+  const isObject = shouldBeObject(options)
-+  if (!isObject.flag) {
-+    const res = { errMsg: `batchSetStorage:fail ${isObject.msg}` }
-+    console.error(res.errMsg)
-+    return Promise.reject(res)
-+  }
-+
-+  const { kvList, success, fail, complete } = options
-+  const handle = new MethodHandler({ name: 'batchSetStorage', success, fail, complete })
-+
-+  const errMsg = getKvListError(kvList)
-+  if (errMsg) {
-+    return handle.fail({ errMsg })
-+  }
-+
-+  try {
-+    setItems(kvList)
-+  } catch (e) {
-+    return handle.fail({ errMsg: e?.message || String(e) })
-+  }
-+  return handle.success()
-+}
-+
-+export c
+@@ -144,7 +144,7 @@
+     "@prefresh/core": "^1.5.2",
+     "@prefresh/babel-plugin": "^0.5.1",{{/if}}{{#if (eq framework "React") }}
+     "react-refresh": "^0.14.0",{{/if}}{{#if (eq framework "Vue3") }}
+-    "@vitejs/plugin-vue": "^5.0.4",
++    "@vitejs/plugin-vue": "^4.6.2",
+     "@vitejs/plugin-vue-jsx": "^3.1.0",
+     "eslint-plugin-vue": "^9.17.0",{{/if}}{{#if (eq framework "Solid") }}
+     "vite-plugin-solid": "2.10.0",{{/if}}{{#if (eq css "Sass") }}
 ```
 
-**File**: `packages/taro/types/api/storage/index.d.ts` (modified, +19/-15)
+---
+
+### Incident Patch 3: `544fff24` (2026-11-23)
+**Commit Message**: fix(react): skip the splice in AppWrapper.unmount when the page is not found (#19687)
+
+findIndex returns -1 when the page being unmounted is not in elements
+(for example while it is still queued in this.pages), and
+elements.splice(-1, 1) then removes the last, unrelated element tree.
+On weapp with a custom tabBar this drops the tabBar or page tree and
+later taps are silently ignored.
+
+Only splice when the page was found. Same guard in the Harmony React
+runtimes, which share this code.
+
+fix #19686
+
+**File**: `packages/taro-framework-react/src/runtime/connect.ts` (modified, +5/-1)
 ```diff
-@@ -133,15 +133,19 @@ declare module '../../index' {
-   }
- 
-   namespace batchGetStorage {
--    interface Option {
-+    interface Option<T = any> {
-       /** 本地缓存中指定的 keyList */
-       keyList: string[]
-       /** 接口调用结束的回调函数（调用成功、失败都会执行） */
-       complete?: (res: TaroGeneral.CallbackResult) => void
-       /** 接口调用失败的回调函数 */
-       fail?: (res: TaroGeneral.CallbackResult) => void
-       /** 接口调用成功的回调函数 */
--      success?: (res: TaroGeneral.CallbackResult) => void
-+      success?: (res: SuccessCallbackResult<T>) => void
-+    }
-+    interface SuccessCallbackResult<T = any> extends TaroGeneral.CallbackResult {
-+      /** keyList 中各个 key 对应的内容，顺序与 keyList 一致 */
-+      dataList: T[]
+@@ -242,7 +242,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
      }
-   }
  
-@@ -333,14 +337,14 @@ declare module '../../index' {
-     /** 将数据批量存储在本地缓存中指定的 key 中。
-      * 会覆盖掉原来该 key 对应的内容。除非用户主动删除或因存储空间原因被系统清理，否则数据都一直可用。
-      * 单个 key 允许存储的最大数据长度为 1MB，所有数据存储上限为 10MB。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
-      * try {
-      *   Taro.batchSetStorageSync([{key: 'key', value: 'value'}])
-      * } catch (e) { }
-      * ```
--     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorageSync.html
-+     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorageSync.html
-      */
-     batchSetStorageSync(option: {
-       /** key 本地缓存中指定的 key */
-@@ -352,22 +356,22 @@ declare module '../../index' {
-     /** 将数据批量存储在本地缓存中指定的 key 中。会覆盖掉原来该 key 对应的内容。
-      * 除非用户主动删除或因存储空间原因被系统清理，否则数据都一直可用。
-      * 单个 key 允许存储的最大数据长度为 1MB，所有数据存储上限为 10MB。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
--     * Taro.batchGetStorage({
--     *   keyList: ['key']
--     *   success(res) {
--     *     console.log(res)
--     *   }
-+     * Taro.batchSetStorage({
-+     *   kvList: [{
-+     *     key: 'key',
-+     *     value: 'value'
-+     *   }]
-      * })
-      * ```
--     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html
-+     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorage.html
-      */
-     batchSetStorage(option: batchSetStorage.Option): Promise<TaroGeneral.CallbackResult>
+```
+
+**File**: `packages/taro-platform-harmony-cpp/src/runtime/framework/app.ts` (modified, +5/-1)
+```diff
+@@ -141,7 +141,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
+     }
  
-     /** 从本地缓存中同步批量获取指定 key 的内容。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
-      * try {
-@@ -387,18 +391,18 @@ declare module '../../index' {
-     ): T[]
+```
+
+**File**: `packages/taro-platform-harmony/src/runtime-framework/react/app.ts` (modified, +5/-1)
+```diff
+@@ -140,7 +140,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
+     }
  
-     /** 从本地缓存中异步批量获取指定 key 的内容。
--     * @supported weapp
-+     * @supported weapp, h5
-      * @example
-      * ```tsx
-      * Taro.batchGetStorage({
-      *   keyList: ['key'],
-      *   success(res) {
--     *     console.log(res)
-+     *     console.log(res.dataList)
-      *   }
-      * })
-      * ```
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html
-      */
--    batchGetStorage(option: batchGetStorage.Option): Promise<TaroGeneral.CallbackResult>
-+    batchGetStorage<T = any>(option: batchGetStorage.Option<T>): Promise<batchGetStorage.SuccessCallbackResult<T>>
-   }
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19664** (2026-11-18): feat(h5): 支持创建 Web Audio 上下文 (@Jarvis636431)
-- **PR #19662** (2026-11-17): fix(h5): 支持同步查询视频画中画状态 (@Jarvis636431)
-- **PR #19660** (2026-11-16): feat(h5): support creating and revoking buffer URLs (@Jarvis636431)
-- **PR #19658** (2026-11-17): fix(vite-runner): await mini modifyBuildAssets hook (@Jarvis636431)
-- **PR #19656** (2026-11-16): feat(h5): support hideKeyboard on H5 (@officialasishkumar)
-- **PR #19654** (2026-11-18): feat(h5): support batch storage APIs on H5 (@officialasishkumar)
+- **PR #19687** (2026-11-23): fix(react): skip the splice in AppWrapper.unmount when the page is not found (@farisbasha)
+- **PR #19685** (2026-11-24): feat(types): TabBarItem 支持 name_locale 多语言配置 (@dhananjay6561)
+- **PR #19684** (2026-11-23): fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (@dhananjay6561)
+- **PR #19683** (2026-11-23): fix(cli): 修复 Vue3 + Vite 模板 npm install 依赖冲突 (@dhananjay6561)
+- **PR #19668** (2026-11-23): feat(h5): 支持 getRecorderManager 网页录音 (@Jarvis636431)
+- **PR #19666** (2026-11-23): feat(h5): 支持图片和视频混合预览 (@Jarvis636431)
 
 ---
 
@@ -1884,60 +1502,31 @@ Update the type declarations: mark the four APIs as supported on h
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): 支持创建 Web Audio 上下文
+## X. deps): 升级 webpack 至 5.104.1 修复安全漏洞
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/media/webAudioContext.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a48d43e3`: h5): 支持创建 Web Audio 上下文. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99683d13`: deps): 升级 webpack 至 5.104.1 修复安全漏洞. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/media/webAudioContext.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { createWebAudioContext } from '@tarojs/taro-h5'
-
-describe('createWebAudioContext', () => {
-  const original = Object.getOwnPropertyDescriptor(window, 'AudioContext')
-
-  afterEach(() => {
-    if (original) {
-      Object.defineProperty(window, 'AudioContext', original)
-    } else {
-      Reflect.deleteProperty(window, 'AudioContext')
-    }
-  })
-
-  it('returns a new native context for each call', () => {
-    const resume = jest.fn()
-    const AudioContext = jest.fn().mockImplementation(() => ({ resume }))
-    Object.defineProperty(window, 'AudioContext', { configurable: true, value: AudioContext })
-
-    const first = createWebAudioContext()
-    expect(first).not.toBe(createWebAudioContext())
-    expect(AudioContext).toHaveBeenCalledTimes(2)
-    first.resume()
-    expect(resume).toHaveBeenCalledTimes(1)
-  })
-
-  it('throws synchronously when AudioContext is unavailable', () => {
-    Object.defineProperty(window, 'AudioContext', { configurable: true, value: undefined })
-    expect(() => createWebAudioContext()).toThrow('AudioContext is not supported')
-  })
-})
+      "browserslist": "^4.28.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      "browserslist": "^4.24.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a48d43e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99683d13` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T07:07:45.981Z",
+  "last_updated": "2026-11-24T07:33:20.473Z",
   "total_records": 2505,
   "domains": {
     "A": {
@@ -8320,8 +8320,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "336984969576c2d7ed229543b759b5927f1b4b533e508be22bb9c61931844d56",
-      "created_at": "2026-11-24T04:37:08.146Z"
+      "content_hash": "246b3f33a7845eeb4521bb3c4ee3ee5e8dae7c3612f34e6503d5b13d4e1b712c",
+      "created_at": "2026-11-24T07:33:19.389Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -10336,8 +10336,8 @@
       "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
       "repository": "NervJS/taro",
-      "content_hash": "25294d7037058b422e45a57361385436013685527f64dbb4110fca50e34cf3d2",
-      "created_at": "2026-11-17T09:27:23.741Z"
+      "content_hash": "47a45ab1443a7784f858d3df96c631978bbc3c9c8e8857f5266436f14822abdc",
+      "created_at": "2026-11-24T07:33:14.017Z"
     },
     "domain_intelligence-architecture-intelligence-rook-rook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
@@ -10423,8 +10423,8 @@
       "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-learnings-technical-construction-intelligence-nervjs-taro-learnings-.md",
       "repository": "nervjs-taro-learnings",
-      "content_hash": "eb4ef31b22240770271f701344ecd19b23edaf6c7510e0d8842a18daf8b86c60",
-      "created_at": "2026-11-17T09:27:27.287Z"
+      "content_hash": "dfeaa8a3757bc9d36c4ee247c1b1bacd4e49d6b77423c5d34a8b21a3fe8dc1e5",
+      "created_at": "2026-11-24T07:33:17.780Z"
     },
     "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
@@ -23676,8 +23676,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3de63cae4bcfbfa1c0e555fbcea5b21cbf4c49f1bed3bc5195e846c73a6d3776",
-      "created_at": "2026-11-24T04:28:58.292Z"
+      "content_hash": "765f590c9202d82bf080b8d5bdb535da06ceed64289cb1a9b265f025612c646e",
+      "created_at": "2026-11-24T07:33:20.473Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

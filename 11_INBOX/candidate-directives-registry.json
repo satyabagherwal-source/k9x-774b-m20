@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T07:07:45.751Z",
+  "last_updated": "2026-11-24T07:33:20.249Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-388T",
+      "id": "CD-OBUB",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-388T-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-OBUB-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53645,6 +53645,46 @@
       "source_repo": "bridgecrewio-checkov",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F98287-general-support-cyclonedx-python-lib-up-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-O6UC",
+      "directive_title": "升级 webpack 至 5.104.1 修复安全漏洞",
+      "source_repo": "NervJS/taro",
+      "source_commit": "84cc57bc",
+      "staged_file": "11_INBOX/candidate-directives/CD-O6UC-webpack-5-104-1.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O9R6",
+      "directive_title": "deps): 升级 webpack 至 5.104.1 修复安全漏洞",
+      "source_repo": "nervjs-taro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O9R6-deps-webpack-5-104-1.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-FBAE02",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FBAE02-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-7896BD",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7896BD-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-24"
     }
   ]

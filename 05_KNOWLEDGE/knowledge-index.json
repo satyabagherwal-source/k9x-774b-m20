@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T07:07:46.416Z",
+  "last_updated": "2026-11-24T07:33:20.919Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24518,
+  "total_items": 24521,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5f076debc41b782b6dc1bf93c25a8c3633b81c4f8bed9d2e296e5f34457df8d",
+      "content_hash": "33d7001307eca3c73f7b83d0a39e1c55001d6d52549250aab40a44dd6ea4f2e6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T04:28:58.458Z"
+      "persisted_at": "2026-11-24T07:33:20.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a67f749602b6e143c0e64e11681b8991dd2b11ddc1cf34260bd2c31d84208075",
+      "content_hash": "8bd394376974fa26414df896155ca13752fd6632074f8f8ea206b5498428efcb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:28:58.597Z"
+      "persisted_at": "2026-11-24T07:33:20.919Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "336984969576c2d7ed229543b759b5927f1b4b533e508be22bb9c61931844d56",
+      "content_hash": "246b3f33a7845eeb4521bb3c4ee3ee5e8dae7c3612f34e6503d5b13d4e1b712c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:37:08.146Z"
+      "persisted_at": "2026-11-24T07:33:19.389Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -213273,8 +213273,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "a48d43e3",
-      "content_hash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
+      "source_version": "84cc57bc",
+      "content_hash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -213292,6 +213292,11 @@
           "number": 9211,
           "title": "支持创建 Web Audio 上下文",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10228,
+          "title": "升级 webpack 至 5.104.1 修复安全漏洞",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213299,7 +213304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:45:09.201Z",
+      "verified_at": "2026-11-24T07:33:13.179Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213341,10 +213346,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
       "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
       "repository": "NervJS/taro",
-      "source_version": "b6eaa4ef",
-      "content_hash": "25294d7037058b422e45a57361385436013685527f64dbb4110fca50e34cf3d2",
+      "source_version": "84cc57bc",
+      "content_hash": "47a45ab1443a7784f858d3df96c631978bbc3c9c8e8857f5266436f14822abdc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T09:27:23.741Z"
+      "persisted_at": "2026-11-24T07:33:14.017Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro",
@@ -213353,10 +213358,10 @@
       "relative_path": "08_VERIFICATION/nervjs-taro-verification-protocol-empirical-defect-shield-for-nervjs-taro.md",
       "title": "Verification Protocol: Empirical Defect Shield for NervJS/taro",
       "repository": "NervJS/taro",
-      "source_version": "a48d43e3",
-      "content_hash": "347ef3a225c2879c1d122416a6d6eb1fde6a26b6ea3e5bdd1d79744f7086cd8e",
+      "source_version": "84cc57bc",
+      "content_hash": "1a9733019527bd6e4e77d60d72f4c0dcd70fe53867e363cec0b000ee17fabfee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:45:10.141Z"
+      "persisted_at": "2026-11-24T07:33:14.240Z"
     },
     "learn-github-rook-rook": {
       "learning_id": "learn-github-rook-rook",
@@ -213796,9 +213801,9 @@
       "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb4ef31b22240770271f701344ecd19b23edaf6c7510e0d8842a18daf8b86c60",
+      "content_hash": "dfeaa8a3757bc9d36c4ee247c1b1bacd4e49d6b77423c5d34a8b21a3fe8dc1e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T09:27:27.287Z"
+      "persisted_at": "2026-11-24T07:33:17.780Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings",
@@ -213808,9 +213813,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nervjs-taro-learnings",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd4c38f71c7263119d6c46603c42ed7f9daaaca3439730e35ba080220ab485b4",
+      "content_hash": "045fb621b2aa98ff1538034f827a8895fd9f7bffbd9d49b7e89f6659e7c7669c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:45:21.381Z"
+      "persisted_at": "2026-11-24T07:33:18.007Z"
     },
     "learn-github-krishhgg-insomnia": {
       "learning_id": "learn-github-krishhgg-insomnia",
@@ -255990,9 +255995,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3de63cae4bcfbfa1c0e555fbcea5b21cbf4c49f1bed3bc5195e846c73a6d3776",
+      "content_hash": "765f590c9202d82bf080b8d5bdb535da06ceed64289cb1a9b265f025612c646e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T04:28:58.292Z"
+      "persisted_at": "2026-11-24T07:33:20.473Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -329852,13 +329857,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-388T-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OBUB-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f622e04cca3ba266b3708e0d41f6423c143c4cb330c9f905f5dd4f1df53bd03",
+      "content_hash": "f5925664136571f59cf598541926b79eff6359e0bb43a14b09b81b49663e7020",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T04:28:58.112Z"
+      "persisted_at": "2026-11-24T07:33:20.249Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -334541,6 +334546,44 @@
       "content_hash": "3b30745f3339be1a52ad37f6626e03f99e69973a7cf72b2843e51e43601b454f",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T07:07:43.171Z"
+    },
+    "rule-10228": {
+      "learning_id": "rule-10228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10228,
+      "title": "升级 webpack 至 5.104.1 修复安全漏洞",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "84cc57bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T07:33:13.179Z"
+    },
+    "candidate_directive-webpack-5-104-1": {
+      "item_id": "candidate_directive-webpack-5-104-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O6UC-webpack-5-104-1.md",
+      "title": "升级 webpack 至 5.104.1 修复安全漏洞",
+      "repository": "NervJS/taro",
+      "source_version": "84cc57bc",
+      "content_hash": "0d181fbcedbf50470fe5309d90e2a87d0ba358c6f6288f49bf78514425e25115",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:33:13.766Z"
+    },
+    "candidate_directive-deps-webpack-5-104-1": {
+      "item_id": "candidate_directive-deps-webpack-5-104-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O9R6-deps-webpack-5-104-1.md",
+      "title": "deps): 升级 webpack 至 5.104.1 修复安全漏洞",
+      "repository": "nervjs-taro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "19fee4d29c1814df113cecee45931f802f7ce6fd16fa583478984a30a45515bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:33:17.540Z"
     }
   },
   "ai-builder-brain": {

@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "a48d43e3",
+    "sourceVersion": "84cc57bc",
     "license": "NOASSERTION",
-    "contentHash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
-    "lastHarvestedAt": "2026-11-18T11:45:09.493Z",
+    "contentHash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
+    "lastHarvestedAt": "2026-11-24T07:33:13.445Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {

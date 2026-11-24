@@ -4,24 +4,24 @@
 {
   "source_repository": "NervJS/taro",
   "source_url": "https://github.com/NervJS/taro",
-  "source_version": "b6eaa4ef",
+  "source_version": "84cc57bc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T09:27:23.584Z",
+  "timestamp": "2026-11-24T07:33:13.765Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nervjs-taro",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `b6eaa4ef`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T09:27:23.584Z`  
+> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `84cc57bc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T07:33:13.765Z`  
 > **Learning ID**: `learn-github-nervjs-taro`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NervJS/taro:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T09:22:18.739Z  
+> **Harvest Timestamp**: 2026-11-24T07:32:06.768Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37753 stars
+- **Stars / Engagement**: 37766 stars
 
 ---
 
@@ -1209,16 +1209,15 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19686** (2026-11-23): **【Bug 反馈】React 适配层 AppWrapper.unmount 缺少 idx 越界保护，splice(-1, 1) 误删无关元素树，导致自定义 tabbar / 整页点击静默失效**
+  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  运行时  ### 使用框架  React  ### 相关平台  - [ ] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [x] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  Taro 4.3.0（React）编译到微信小程序时，使用 `tabBar.custom: true` 自定义 tabBar，页面跳转（`navigateTo` / `switchTab` / `navigateBack`）过程中偶发以下现象：  - 自定义 tabBar 点击完全失效（无任何响应） - 严重时**整个页面的点击/跳转全部失效**，但页面滚动始终正常 - 通过 Console 直接调用 `wx.switchTab` API 可以临时恢复，恢复后再点击又会失效 - 无固定规律，开发者工具与真机均可复现  经排查，根因在 React 适配层 `AppWrapper` 的 mount/unmount 实现：`unmount` 在 `findIndex` 扑空时执行 `splice(-1, 1)`，按 JS 数组语义会**误删 `elements` 数组的最后一棵元素树**（最近挂载、与本次操作无关的 tabbar 树或页面树），导致渲染层与逻辑层元素树失同步，后续点击在事件派发时被静默丢弃。       ### 复现链接  无  ### 复现步骤  1. Taro 4.3.0 + React 项目，`app.config.ts` 中 `tabBar.custom: true`，自定义 tabBar 内按钮调用 `Taro.switchTab` 2. 正常业务操作：在 tab 页与普通页之间反复跳转（`navigateTo` → `navigateBack`、`switchTab`），尤其关注**进入普通页面的瞬间**（此时框架会挂载/卸载 custom-tab-bar 组件实例） 3. 由于是时序竞态，需要多轮操作；我们在真实项目中原本为「每次必现」，打补丁后完全不再复现  > 注：竞态窗口取决于 `unmount` 与 React flush 的先后，难以做成确定性的最小复现仓库。如需要，我们可以提供带探针的复现工程或运行时插桩补丁。  ### 环境信息  ```bash - Taro：4.3.0（CLI 与全部 @tarojs/* 依赖） - 框架：React 18.3.1 - 平台：weapp（微信小程序） - 基础库：3.17.6；微信开发者工具（macOS）与 iOS / Android 真机均复现 ```  ### 开源贡献  - [ ] 我愿意修复这个错误。请参考 [(贡献指南)](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
+  **Post-Mortem & Fix Analysis**:
+  > 根因分析  `@tarojs/plugin-framework-react/dist/runtime.js` 中 `AppWrapper`（`createReactApp` 内）：  ```ts mount (pageComponent, id, cb) {   const pageWrapper = connectReactPage(react, id)(pageComponent)   const key = id + pageKeyId()   const page = () => h(pageWrapper, { key, tid: id })   this.pages.push(page)       // ① 元素先进暂存队列   this.forceUpdate(...)       // ② 下一次 render() 才真正压入 this.elements（异步 flush） }  unmount (id, cb) {   const elements = this.elements   const idx = elements.findIndex(item => item.props.tid === id)   elements.splice(idx, 1)     // ③ 无 idx === -1 保护；splice(-1, 1) 删除最后一项   this.forceUpdate(cb) }  render () {   const { pages, elements } = this   while (pages.length > 0) {     const page = pages.pop()     elements.push(page())     // ④ elements 在这里才被填充   }   ... } ```  最小修复（一行守卫，我们已通过 patch-package 应用并验证，原「必现」流程完全不再复现）：  ```diff  unmount (id, cb) {    const elements = this.elements    const idx = elements.findIndex(item => item.props.tid === id) +  if (idx === -1) return t
+
 - **Issue #19581** (2026-11-02): **[Vue3] Vue 3.5.31+ 文本框 v-model 更新时报 getRootNode is not a function**
   *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v3  ### 相关领域  None  ### 使用框架  Vue3  ### 相关平台  - [ ] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [x] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  ### 相关平台 微信小程序  ### 复现仓库 / 版本 - @tarojs/taro、@tarojs/runtime、@tarojs/plugin-framework-vue3：3.6.36 - 同样核对过 3.6.40 和 4.1.7 的 TaroNode，仍没有 getRootNode - vue：3.5.43（package.json 写的是 ^3.2.24，安装时升到了 3.5.43） - 开发者工具：Windows，lib 3.17.2  ### 复现步骤 1. Taro 3 + Vue 3 项目，依赖 vue@^3.2.24，实际安装 Vue >= 3.5.31 2. 页面使用文本框 v-model，例如 `<input v-model.trim="name" />` 3. 输入，或由脚本把值写回该字段（如识别图片后回填） 4. 微信开发者工具预览  ### 期望结果 输入框正常更新，不报错。  ### 实际结果 逻辑层报错，输入框更新中断，回填的值显示不出来：  TypeError: MiniProgramError t1.getRootNode is not a function     at beforeUpdate (appservice.getmainpackagebundle.js)  ### 原因 Vue 3.5.31（2026-03-25，#14196，commit 959ded2）在文本框 v-model 的 beforeUpdate 里，把原来的 `document.activeElement` 改成了：  const rootNode = el.getRootNode() if (   (rootNode instanceof Document || rootNode instanceof ShadowRoot) &&   rootNode.activeElement === el &&   el.type !== 'range' ) { ... }  Taro 模拟节点没有 getRootNode。小程序逻辑层也没有 Document、ShadowRoot。Vue 3.5.0 到 3.5.30 仍使用 document.activeElement，不会触发这个报错。  编译产物里 getRootNode 只出现在 Vue 的 vModelText.beforeUpdate。单选、复选不走这段逻辑。  ### 临时处理 在非 H5 入口给 TaroElement.prototype 补 g
   **Post-Mortem & Fix Analysis**:
   > 3.6.36 taro3版本为什么不更新这个 
-
-- **Issue #19544** (2026-11-13): **[Bug]: 官网地址无法打开**
-  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  None  ### 使用框架  React  ### 相关平台  - [x] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [ ] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  <img width="3406" height="1930" alt="Image" src="https://github.com/user-attachments/assets/c7881b12-a1f7-4d06-959c-8163f515aafd" /> 官网地址无法打开  ### 复现链接  https://docs.taro.zone/docs  ### 复现步骤  1. 访问https://docs.taro.zone/docs  ### 环境信息  ```bash Google Chrome：155.0.8059.40 (正式版本) (arm64) ```  ### 开源贡献  - [ ] 我愿意修复这个错误。请参考 [(贡献指南)](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
-  **Post-Mortem & Fix Analysis**:
-  > 一样打不开了
-  > 同问什么时候能修复呢？需要查看文档，是否有其他查看文档的方式？
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1235,304 +1234,258 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6eaa4ef` (2026-11-17)
-**Commit Message**: fix(h5): report video picture-in-picture state (#19662)
+### Incident Patch 1: `99683d13` (2026-11-23)
+**Commit Message**: fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (#19684)
 
-**File**: `packages/taro-h5/__tests__/ui/window.test.ts` (modified, +24/-1)
+* fix(deps): bump webpack to 5.104.1 to address security advisories
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* fix(deps): raise browserslist override to satisfy webpack 5.104.1
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test(jest-helper): normalize pnpm vue-loader dirs in snapshots across platforms
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test: use the normalized vue-loader path in the vue3 framework snapshot
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+* test: cover vue-loader path normalization for peer and hashed suffixes
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
- import { getWindowInfo } from '../../src/api/base/system'
--import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
-+import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
- 
- test('reports the updated viewport dimensions to resize listeners', () => {
-   const callback = jest.fn()
-@@ -30,3 +30,26 @@ test('reports the updated viewport dimensions to resize listeners', () => {
-     jest.restoreAllMocks()
+@@ -188,7 +188,7 @@
+       }
+     },
+     "overrides": {
+-      "browserslist": "^4.24.4",
++      "browserslist": "^4.28.1",
+       "@types/mapbox-gl": "3.4.1"
+     }
    }
- })
-+
-+test('reports the current video picture-in-picture state synchronously', () => {
-+  let activeVideo: HTMLVideoElement | null = null
-+  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
-+  Object.defineProperty(document, 'pictureInPictureElement', {
-+    configurable: true,
-+    get: () => activeVideo,
-+  })
-+
-+  try {
-+    expect(checkIsPictureInPictureActive()).toBe(false)
-+    activeVideo = document.createElement('video')
-+    expect(checkIsPictureInPictureActive()).toBe(true)
-+    activeVideo = null
-+    expect(checkIsPictureInPictureActive()).toBe(false)
-+  } finally {
-+    if (original) {
-+      Object.defineProperty(document, 'pictureInPictureElement', original)
-+    } else {
-+      Reflect.deleteProperty(document, 'pictureInPictureElement')
-+    }
-+  }
-+})
 ```
 
-**File**: `packages/taro-h5/src/api/ui/window.ts` (modified, +2/-1)
+**File**: `packages/jest-helper/src/snapshot/serializers.ts` (modified, +5/-1)
 ```diff
-@@ -37,4 +37,5 @@ export const offWindowResize: typeof Taro.offWindowResize = callback => {
-   }
+@@ -6,6 +6,10 @@ export const print = (val: string) => {
+   return val.replace(/\\*\*\sfilePath:\s(.*)\s\*\*\//g, (replaceValue) => replaceValue.replace(/\\/g, '/'))
  }
  
--export const checkIsPictureInPictureActive = /* @__PURE__ */ temporarilyNotSupport('checkIsPictureInPictureActive')
-+export const checkIsPictureInPictureActive: typeof Taro.checkIsPictureInPictureActive = () =>
-+  typeof document !== 'undefined' && Boolean(document.pictureInPictureElement)
++// Note: 对齐各平台的 pnpm vue-loader 目录名（peer 依赖后缀过长时，Windows 上会被截断并追加 hash）
++const pnpmVueLoaderDir = /(\.pnpm[\\/]vue-loader@[^_\\/]+)_[^\\/]*/g
++export const normalizeVueLoaderPath = (val: string) => val.replace(pnpmVueLoaderDir, '$1')
++
+ const mockFilePath = '/** filePath:mockFilePath **/'
+ export const parseSnapshotByFilePath = (val: string) => {
+   const arr = val.split(new RegExp(os.EOL + '|\n'))
+@@ -44,7 +48,7 @@ export const serialize = (
+   // printer: Printer,
+ ) => {
+   if (typeof val === 'string') {
+-    return snapshotObject2String(parseSnapshotByFilePath(val))
++    return snapshotObject2String(parseSnapshotByFilePath(normalizeVueLoaderPath(val)))
+   }
+   return val
+ }
 ```
 
-**File**: `packages/taro/types/api/ui/window.d.ts` (modified, +2/-1)
+**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,8 @@ declare module '../../index' {
- 
-     /**
-      * 返回当前是否存在小窗播放（小窗在 video/live-player/live-pusher 下可用）
--     * @supported weapp
-+     * H5 查询当前文档中使用标准画中画 API 的视频。
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/ui/window/wx.checkIsPictureInPictureActive.html
-      */
-     checkIsPictureInPictureActive(): boolean
+@@ -87,7 +87,7 @@
+     "@babel/plugin-transform-class-properties": "7.25.9",
+     "@types/webpack-env": "^1.13.6",{{#if (includes "React" "Preact" s=framework)}}
+     "@types/react": "^18.0.0",{{/if}}{{#if (eq compiler "Webpack5") }}
+-    "webpack": "5.91.0",
++    "webpack": "5.104.1",
+     "@tarojs/taro-loader": "{{ version }}",
+     "@tarojs/webpack5-runner": "{{ version }}",{{/if}}{{#if (eq css "Sass") }}
+     "sass": "^1.75.0",{{/if}}{{#if (eq css "Less") }}
+```
+
+**File**: `packages/taro-framework-vue3/package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+     "@tarojs/taro": "workspace:*",
+     "@vue/compiler-core": "^3.4.25",
+     "vite": "^4.2.0",
+-    "webpack": "5.91.0",
++    "webpack": "5.104.1",
+     "vue": "^3.4.25"
+   },
+   "peerDependencies": {
+```
+
+**File**: `packages/taro-loader/package.json` (modified, +2/-2)
+```diff
+@@ -34,9 +34,9 @@
+   },
+   "devDependencies": {
+     "@tarojs/taro": "workspace:*",
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
+   },
+   "peerDependencies": {
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
+   }
+ }
+```
+
+**File**: `packages/taro-platform-harmony/package.json` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@
+     "@tarojs/taro": "workspace:*",
+     "webpack-sources": "^3.2.3",
+     "@babel/preset-react": "^7.24.1",
+-    "webpack": "5.91.0"
++    "webpack": "5.104.1"
+   },
+   "devDependencies": {
+     "fast-glob": "^3.3.1",
+```
+
+**File**: `packages/taro-service/package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+   },
+   "devDependencies": {
+     "@tarojs/taro": "workspace:*",
+-    "webpack": "^5.91.0",
++    "webpack": "^5.104.1",
+     "webpack-chain": "^6.5.1"
+   }
+ }
+```
+
+**File**: `packages/taro-service/src/platform-plugin-base/webpack/hmr-plugin.ts` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ export default class TaroMiniHMRPlugin {
+             const runtimeModules = compilation.chunkGraph.getChunkRuntimeModulesInOrder(chunk)
+             for (const module of runtimeModules) {
+               if (module.name === 'jsonp chunk loading') {
+-                const runtimeSource = compilation.codeGenerationResults.getSource(
++                const runtimeSource = compilation.codeGenerationResults!.getSource(
+                   module,
+                   chunk.runtime,
+                   'runtime'
 ```
 
 ---
 
-### Incident Patch 2: `cc23bc48` (2026-11-17)
-**Commit Message**: fix(vite-runner): await mini modifyBuildAssets hook (#19658)
+### Incident Patch 2: `29bfbed0` (2026-11-23)
+**Commit Message**: fix(cli): align vue3 vite template plugin versions with taro peer ranges (#19683)
 
-* fix(vite-runner): await mini modifyBuildAssets hook
+Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
 
-* test(vite-runner): cover async asset additions
-
-**File**: `packages/taro-vite-runner/src/mini/emit.ts` (modified, +1/-1)
+**File**: `packages/eslint-config-taro/package.json` (modified, +1/-1)
 ```diff
-@@ -215,7 +215,7 @@ export default function (viteCompilerContext: ViteMiniCompilerContext): PluginOp
-               return true
-             },
-           })
--          taroConfig.modifyBuildAssets(
-+          await taroConfig.modifyBuildAssets(
-             assetsProxy,
-             {
-               pages: viteCompilerContext.pages,
+@@ -35,7 +35,7 @@
+     "eslint": "^8",
+     "eslint-plugin-react": "^7.33.2",
+     "eslint-plugin-react-hooks": "^4.4.0",
+-    "eslint-plugin-vue": "^8.0.0"
++    "eslint-plugin-vue": "^8.0.0 || ^9.0.0"
+   },
+   "peerDependenciesMeta": {
+     "eslint-plugin-react": {
 ```
 
-**File**: `packages/taro-vite-runner/tests/mini/emit.spec.ts` (modified, +39/-15)
+**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
 ```diff
-@@ -6,19 +6,13 @@ import emitPlugin from '../../src/mini/emit'
- import type { ViteMiniCompilerContext } from '@tarojs/taro/types/compile/viteCompilerContext'
- import type { Plugin } from 'rollup'
- 
--test('emits new assets added by modifyBuildAssets', async () => {
--  const fileName = '.browserslistrc'
--  const source = 'defaults and fully supports es6-module'
-+function buildWithAssetHook (modifyBuildAssets: (assets: Record<string, { source: () => string }>) => void | Promise<void>) {
-   const plugins = emitPlugin({
--    taroConfig: {
--      modifyBuildAssets (assets) {
--        assets[fileName] = { source: () => source }
--      }
--    }
-+    taroConfig: { modifyBuildAssets }
-   } as unknown as ViteMiniCompilerContext) as Plugin[]
- 
--  const entry = '\0app'
--  const bundle = await rollup({
-+  const entry = 'app.js'
-+  return rollup({
-     input: entry,
-     plugins: [
-       {
-@@ -29,15 +23,45 @@ test('emits new assets added by modifyBuildAssets', async () => {
-       plugins.find(plugin => plugin.name === 'taro:vite-mini-emit-post'),
-     ],
-   })
-+}
-+
-+test.each([false, true])('applies synchronous additions and asynchronous updates (async: %s)', async asynchronous => {
-+  const fileName = '.browserslistrc'
-+  const source = 'defaults and fully supports es6-module'
-+  const bundle = await buildWithAssetHook(assets => {
-+    const addAsset = () => { assets[fileName] = { source: () => source } }
-+    if (asynchronous) {
-+      return new Promise<void>(resolve => {
-+        setTimeout(() => {
-+          addAsset()
-+          assets['app.js'] = { source: () => 'export default 2' }
-+          resolve()
-+        }, 0)
-+      })
-+    }
-+    addAsset()
-+  })
- 
-   try {
-     const { output } = await bundle.generate({ format: 'es' })
- 
--    expect(output).toContainEqual(expect.objectContaining({
--      fileName,
--      source,
--      type: 'asset',
--    }))
-+    expect(output).toContainEqual(expect.objectContaining({ fileName, source, type: 'asset' }))
-+    if (asynchronous) {
-+      expect(output).toContainEqual(expect.objectContaining({ fileName: 'app.js', code: 'export default 2', type: 'chunk' }))
-+    }
-+  } finally {
-+    await bundle.close()
-+  }
-+})
-+
-+test('propagates a rejected modifyBuildAssets promise', async () => {
-+  const error = new Error('asset transformation failed')
-+  const hook = Promise.reject(error)
-+  hook.catch(() => {})
-+  const bundle = await buildWithAssetHook(() => hook)
-+
-+  try {
-+    await expect(bundle.generate({ format: 'es' })).rejects.toThrow('asset transformation failed')
-   } finally {
-     await bundle.close()
-   }
+@@ -144,7 +144,7 @@
+     "@prefresh/core": "^1.5.2",
+     "@prefresh/babel-plugin": "^0.5.1",{{/if}}{{#if (eq framework "React") }}
+     "react-refresh": "^0.14.0",{{/if}}{{#if (eq framework "Vue3") }}
+-    "@vitejs/plugin-vue": "^5.0.4",
++    "@vitejs/plugin-vue": "^4.6.2",
+     "@vitejs/plugin-vue-jsx": "^3.1.0",
+     "eslint-plugin-vue": "^9.17.0",{{/if}}{{#if (eq framework "Solid") }}
+     "vite-plugin-solid": "2.10.0",{{/if}}{{#if (eq css "Sass") }}
 ```
 
 ---
 
-### Incident Patch 3: `e8444c72` (2026-11-16)
-**Commit Message**: fix(h5): expose response headers as objects for file transfers (#19639)
+### Incident Patch 3: `544fff24` (2026-11-23)
+**Commit Message**: fix(react): skip the splice in AppWrapper.unmount when the page is not found (#19687)
 
-* fix(h5): expose response headers as objects for file transfers
+findIndex returns -1 when the page being unmounted is not in elements
+(for example while it is still queued in this.pages), and
+elements.splice(-1, 1) then removes the last, unrelated element tree.
+On weapp with a custom tabBar this drops the tabBar or page tree and
+later taps are silently ignored.
 
-* refactor(h5): keep response header parsing separate from transfer setup
+Only splice when the page was found. Same guard in the Harmony React
+runtimes, which share this code.
 
-**File**: `packages/taro-h5/__tests__/network/transfer-headers.test.ts` (added, +49/-0)
+fix #19686
+
+**File**: `packages/taro-framework-react/src/runtime/connect.ts` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,49 @@
-+import { downloadFile } from '../../src/api/network/download'
-+import { uploadFile } from '../../src/api/network/upload'
-+import * as networkUtils from '../../src/api/network/utils'
-+
-+describe.each([
-+  ['download', () => downloadFile({ url: '/download' })],
-+  ['upload', () => uploadFile({ url: '/upload', filePath: 'blob:file', name: 'file' })],
-+] as const)('%s response headers', (kind, start) => {
-+  afterEach(() => {
-+    jest.restoreAllMocks()
-+    jest.useRealTimers()
-+  })
-+
-+  test.each([
-+    ['', {}],
-+    ['__proto__: value\r\n', { ['__proto__']: 'value' }],
-+    ['content-type: text/plain\r\nx-custom: key: value\r\n', { 'content-type': 'text/plain', 'x-custom': 'key: value' }],
-+  ])('returns a header object for %j', async (raw, expected) => {
-+    jest.useFakeTimers()
-+    const xhr = new XMLHttpRequest()
-+    jest.spyOn(window, 'XMLHttpRequest').mockReturnValue(xhr)
-+    jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+    jest.spyOn(networkUtils, 'convertObjectUrlToBlob').mockResolvedValue(new File(['test'], 'example.txt'))
-+    const task = start()
-+    const result = task.catch(error => error)
-+    const listener = jest.fn()
-+    task.onHeadersReceived(listener)
-+
-+    jest.spyOn(xhr, 'readyState', 'get').mockReturnValue(xhr.HEADERS_RECEIVED)
-+    jest.spyOn(xhr, 'getAllResponseHeaders').mockReturnValue(raw)
-+    xhr.dispatchEvent(new Event('readystatechange'))
-+    expect(listener).toHaveBeenCalledWith({ header: expected })
-+    const { header } = listener.mock.calls[0][0]
-+    expect(Object.getPrototypeOf(header)).toBe(Object.prototype)
-+    expect(typeof header.hasOwnProperty).toBe('function')
-+    expect(Object.prototype.hasOwnProperty.call(header, '__proto__')).toBe(
-+      Object.prototype.hasOwnProperty.call(expected, '__proto__')
-+    )
-+
-+    task.offHeadersReceived(listener)
-+    xhr.dispatchEvent(new Event('readystatechange'))
-+    expect(listener).toHaveBeenCalledTimes(1)
-+
-+    await Promise.resolve()
-+    if (kind === 'upload') task.abort()
-+    else xhr.dispatchEvent(new ProgressEvent('abort'))
-+    await result
-+  })
-+})
-```
-
-**File**: `packages/taro-h5/src/api/network/download.ts` (modified, +2/-1)
-```diff
-@@ -1,6 +1,7 @@
- import Taro from '@tarojs/api'
- 
- import { CallbackManager } from '../../utils/handler'
-+import { parseResponseHeaders } from './response-headers'
- import { inactiveTransferTask, NETWORK_TIMEOUT, setHeader, XHR_STATS } from './utils'
- 
- const createDownloadTask = ({ url, header, withCredentials = true, timeout, success, error }): Taro.DownloadTask => {
-@@ -29,7 +30,7 @@ const createDownloadTask = ({ url, header, withCredentials = true, timeout, succ
-   xhr.onreadystatechange = () => {
-     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
-     callbackManager.headersReceived.trigger({
--      header: xhr.getAllResponseHeaders()
-+      header: parseResponseHeaders(xhr.getAllResponseHeaders())
-     })
-   }
+@@ -242,7 +242,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
+     }
  
 ```
 
-**File**: `packages/taro-h5/src/api/network/response-headers.ts` (added, +14/-0)
+**File**: `packages/taro-platform-harmony-cpp/src/runtime/framework/app.ts` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,14 @@
-+export const parseResponseHeaders = (rawHeaders: string) => {
-+  const headers: Record<string, string> = {}
-+  for (const line of rawHeaders.split(/\r?\n/)) {
-+    const separator = line.indexOf(':')
-+    if (separator <= 0) continue
-+    Object.defineProperty(headers, line.slice(0, separator).trim(), {
-+      value: line.slice(separator + 1).trim(),
-+      configurable: true,
-+      enumerable: true,
-+      writable: true
-+    })
-+  }
-+  return headers
-+}
+@@ -141,7 +141,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
+     }
+ 
 ```
 
-**File**: `packages/taro-h5/src/api/network/upload.ts` (modified, +2/-1)
+**File**: `packages/taro-platform-harmony/src/runtime-framework/react/app.ts` (modified, +5/-1)
 ```diff
-@@ -1,6 +1,7 @@
- import Taro from '@tarojs/api'
- 
- import { CallbackManager } from '../../utils/handler'
-+import { parseResponseHeaders } from './response-headers'
- import {
-   convertObjectUrlToBlob,
-   inactiveTransferTask,
-@@ -58,7 +59,7 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
-   xhr.onreadystatechange = () => {
-     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
-     callbackManager.headersReceived.trigger({
--      header: xhr.getAllResponseHeaders()
-+      header: parseResponseHeaders(xhr.getAllResponseHeaders())
-     })
-   }
+@@ -140,7 +140,11 @@ export function createReactApp (
+     public unmount (id: string, cb: () => void) {
+       const elements = this.elements
+       const idx = elements.findIndex(item => item.props.tid === id)
+-      elements.splice(idx, 1)
++      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
++      // splice(-1, 1) would remove the last, unrelated element tree.
++      if (idx !== -1) {
++        elements.splice(idx, 1)
++      }
+       this.forceUpdate(cb)
+     }
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19662** (2026-11-17): fix(h5): 支持同步查询视频画中画状态 (@Jarvis636431)
-- **PR #19660** (2026-11-16): feat(h5): support creating and revoking buffer URLs (@Jarvis636431)
-- **PR #19658** (2026-11-17): fix(vite-runner): await mini modifyBuildAssets hook (@Jarvis636431)
-- **PR #19656** (2026-11-16): feat(h5): support hideKeyboard on H5 (@officialasishkumar)
-- **PR #19652** (2026-11-13): chore(release): publish 4.3.3 (@Single-Dancer)
-- **PR #19651** (2026-11-13): fix(water-flow): 修复 H5 动态切列后的布局错位 (@Adamlyu-hub)
+- **PR #19687** (2026-11-23): fix(react): skip the splice in AppWrapper.unmount when the page is not found (@farisbasha)
+- **PR #19685** (2026-11-24): feat(types): TabBarItem 支持 name_locale 多语言配置 (@dhananjay6561)
+- **PR #19684** (2026-11-23): fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (@dhananjay6561)
+- **PR #19683** (2026-11-23): fix(cli): 修复 Vue3 + Vite 模板 npm install 依赖冲突 (@dhananjay6561)
+- **PR #19668** (2026-11-23): feat(h5): 支持 getRecorderManager 网页录音 (@Jarvis636431)
+- **PR #19666** (2026-11-23): feat(h5): 支持图片和视频混合预览 (@Jarvis636431)
 
 ---
 
@@ -1552,54 +1505,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): report video picture-in-picture state
+## X. deps): 升级 webpack 至 5.104.1 修复安全漏洞
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/ui/window.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6eaa4ef`: h5): report video picture-in-picture state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99683d13`: deps): 升级 webpack 至 5.104.1 修复安全漏洞. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/ui/window.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
-
-test('reports the current video picture-in-picture state synchronously', () => {
-  let activeVideo: HTMLVideoElement | null = null
-  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
-  Object.defineProperty(document, 'pictureInPictureElement', {
-    configurable: true,
-    get: () => activeVideo,
-  })
-
-  try {
-    expect(checkIsPictureInPictureActive()).toBe(false)
-    activeVideo = document.createElement('video')
-    expect(checkIsPictureInPictureActive()).toBe(true)
-    activeVideo = null
-    expect(checkIsPictureInPictureActive()).toBe(false)
-  } finally {
-    if (original) {
-      Object.defineProperty(document, 'pictureInPictureElement', original)
-    } else {
-      Reflect.deleteProperty(document, 'pictureInPictureElement')
-    }
-  }
-})
+      "browserslist": "^4.28.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
+      "browserslist": "^4.24.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6eaa4ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99683d13` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

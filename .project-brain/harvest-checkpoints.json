@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T07:07:38.726Z",
+  "last_updated": "2026-11-24T07:33:13.465Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
-      "verified_at": "2026-11-18T11:45:09.505Z",
+      "content_hash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
+      "verified_at": "2026-11-24T07:33:13.464Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:45:09.505Z"
+      "last_updated": "2026-11-24T07:33:13.464Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T07:07:38.701Z",
-  "total_cycles_completed": 12002,
-  "total_learnings_persisted": 12002,
-  "total_rules_promoted": 11080,
+  "last_updated": "2026-11-24T07:33:13.451Z",
+  "total_cycles_completed": 12003,
+  "total_learnings_persisted": 12003,
+  "total_rules_promoted": 11081,
   "history": [
-    {
-      "timestamp": "2026-11-23T18:15:55.627Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T18:16:01.723Z",
       "repository": "stakater/Reloader",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T07:07:38.701Z",
       "repository": "bridgecrewio/checkov",
       "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:33:13.451Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -12626,3 +12626,4 @@
 | `CYCLE-20261124-R8S4` | `2026-11-24T07:07:36.628Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10226` | Yes (`baa6a96a...`) |
 | `CYCLE-20261124-R9KH` | `2026-11-24T07:07:37.649Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10227` | Yes (`9cc3c6b7...`) |
 | `CYCLE-20261124-RADC` | `2026-11-24T07:07:38.688Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10043` | Yes (`7e85c9e3...`) |
+| `CYCLE-20261124-O6LC` | `2026-11-24T07:33:13.440Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10228` | Yes (`f1b6ed67...`) |
