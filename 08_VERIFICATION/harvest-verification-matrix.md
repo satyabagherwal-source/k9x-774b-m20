@@ -12835,3 +12835,6 @@
 | `CYCLE-20261124-GNZ8` | `2026-11-24T22:51:10.052Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10377` | Yes (`dbae65b4...`) |
 | `CYCLE-20261124-XQYE` | `2026-11-24T23:04:27.062Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10378` | Yes (`2cd91ae7...`) |
 | `CYCLE-20261124-XYOO` | `2026-11-24T23:04:37.080Z` | `zilliztech/claude-context` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10379` | Yes (`3586ad5e...`) |
+| `CYCLE-20261124-9SY3` | `2026-11-24T23:13:49.515Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`cdc03b2d...`) |
+| `CYCLE-20261124-9VPP` | `2026-11-24T23:13:53.101Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10360` | Yes (`8ff78b5c...`) |
+| `CYCLE-20261124-A2KA` | `2026-11-24T23:14:01.978Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10380` | Yes (`9f634c72...`) |

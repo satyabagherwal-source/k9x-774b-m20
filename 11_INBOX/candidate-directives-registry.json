@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:04:43.064Z",
+  "last_updated": "2026-11-24T23:14:08.194Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57179,11 +57179,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-KH5C",
+      "id": "CD-A6C7",
       "directive_title": "docs(site): say the rollout guide in plain words",
-      "source_repo": "dosco-graphjin-learnings",
+      "source_repo": "dosco-deeporg-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KH5C-docs-site-say-the-rollout-guide-in-plain-words.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-A6C7-docs-site-say-the-rollout-guide-in-plain-words.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -57692,6 +57692,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ABA7CD-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-9T5O",
+      "directive_title": "update all non-major dependencies",
+      "source_repo": "vitejs/vite",
+      "source_commit": "e16ca5a1",
+      "staged_file": "11_INBOX/candidate-directives/CD-9T5O-update-all-non-major-dependencies.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-A2RW",
+      "directive_title": "upgrade Apache HttpClient 5 to 5.6.5",
+      "source_repo": "lancedb/lancedb",
+      "source_commit": "fc6dfca1",
+      "staged_file": "11_INBOX/candidate-directives/CD-A2RW-upgrade-apache-httpclient-5-to-5-6-5.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-A5MG",
+      "directive_title": "deps): update all non-major dependencies",
+      "source_repo": "vitejs-vite-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A5MG-deps-update-all-non-major-dependencies.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E1AA16",
+      "directive_title": "docs(site): say the rollout guide in plain words",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-deeporg",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E1AA16-docs-site-say-the-rollout-guide-in-plain.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-A7CT",
+      "directive_title": "java): upgrade Apache HttpClient 5 to 5.6.5",
+      "source_repo": "lancedb-lancedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A7CT-java-upgrade-apache-httpclient-5-to-5-6-5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
     }
   ]
 }

@@ -12868,3 +12868,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f45b916b` | Multi-dimensional audit evidence | 2026-11-24T22:51:10.055Z |
 | `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `72b5111f` | Multi-dimensional audit evidence | 2026-11-24T23:04:27.067Z |
 | `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `c5326ccb` | Multi-dimensional audit evidence | 2026-11-24T23:04:37.085Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `e16ca5a1` | Multi-dimensional audit evidence | 2026-11-24T23:13:49.519Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `9d591e72` | Multi-dimensional audit evidence | 2026-11-24T23:13:53.105Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `fc6dfca1` | Multi-dimensional audit evidence | 2026-11-24T23:14:01.982Z |

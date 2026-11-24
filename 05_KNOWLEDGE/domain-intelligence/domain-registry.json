@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:04:43.249Z",
-  "total_records": 2591,
+  "last_updated": "2026-11-24T23:14:08.382Z",
+  "total_records": 2593,
   "domains": {
     "A": {
       "total": 22,
@@ -1175,7 +1175,7 @@
       ]
     },
     "G": {
-      "total": 452,
+      "total": 454,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1628,7 +1628,9 @@
         "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants",
         "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants",
         "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants",
+        "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants"
       ]
     },
     "H": {
@@ -21085,8 +21087,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "0a5455a506b61a8ea1da3fad9f72f97ad79b6e8d61f71c48d9da76092f3bd61a",
-      "created_at": "2026-11-24T02:31:13.707Z"
+      "content_hash": "bfc899a4976983ce502524e407f96d50391ecfb770b3db0c34d192669cbf3516",
+      "created_at": "2026-11-24T23:14:02.477Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -21146,8 +21148,8 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "8698356a7b0912171b8b3969baf630cba89fd75371b9dacf5cab3e83f176f8be",
-      "created_at": "2026-11-24T02:31:18.720Z"
+      "content_hash": "73c5277bbac71d89bf69c26ab8a6e6cbf6ee45f6a1c023480835983b12c4d743",
+      "created_at": "2026-11-24T23:14:08.382Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
@@ -39293,10 +39295,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "762a3ad7bf32c330d8c803dfbe19b498f367d06f40fa2bfff855f32c3bd3dead",
-      "created_at": "2026-11-24T21:01:30.228Z"
+      "content_hash": "51a7aeaadfe03ea1ea21e93efc842e9dbbee1020201f917191cb270a2a0a2b89",
+      "created_at": "2026-11-24T23:13:53.588Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -39521,8 +39523,8 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "4c6708e0cdfe5c1a3c6f26a238f524e64a1269a9525dc5c2f5467877fabbb45f",
-      "created_at": "2026-11-24T03:41:55.555Z"
+      "content_hash": "3203d57f48c76eb4f4b7d216e7b281681a91672d55f735745414605b33c4697f",
+      "created_at": "2026-11-24T23:14:07.064Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -43462,6 +43464,24 @@
       "repository": "zilliztech-claude-context-learnings",
       "content_hash": "eea37f3ee12dae2a4f9a454cfba249dc89cb3170705db5f14eb7c17f3d344b73",
       "created_at": "2026-11-24T23:04:42.220Z"
+    },
+    "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vitejs/vite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-architecture-intelligence-vitejs-vite-core-invariants.md",
+      "repository": "vitejs/vite",
+      "content_hash": "7b24c025f0cb2f1c5b8ef9199d7fa1088e1bddb108eb30ff824c78fb2d3a4c41",
+      "created_at": "2026-11-24T23:13:49.990Z"
+    },
+    "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vitejs-vite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-learnings-architecture-intelligence-vitejs-vite-learnings-core-invar.md",
+      "repository": "vitejs-vite-learnings",
+      "content_hash": "d2986f182cd4feaa0a5b06427437d42e91fdfcdd4f5abd314950e9a2989a8590",
+      "created_at": "2026-11-24T23:14:06.199Z"
     }
   }
 }

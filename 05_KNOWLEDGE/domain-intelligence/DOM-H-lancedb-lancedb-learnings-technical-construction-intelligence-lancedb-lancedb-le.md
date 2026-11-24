@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T02:31:18.337Z",
+  "timestamp": "2026-11-24T23:14:08.063Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lancedb-lancedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lancedb-lancedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T02:31:18.337Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:14:08.063Z`  
 > **Learning ID**: `LEARN-EVO-lancedb-lancedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb-lancedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `52209f10`  
+> **Source Version**: `fc6dfca1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:31:11.748Z  
+> **Timestamp**: 2026-11-24T23:14:00.779Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:31:11.742Z  
+> **Harvest Timestamp**: 2026-11-24T23:14:00.773Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11973 stars
+- **Stars / Engagement**: 11978 stars
 
 ---
 
@@ -591,6 +591,8 @@ def retry_with_exponential_backoff(
     jitter: bool = True,
     max_retries: int = 7,
     max_delay: float = 60,
+    *,
+    do_not_retry: Callable[[Exception], bool] | None = None,
 ):
     """Retry a function with exponential backoff.
 
@@ -614,6 +616,7 @@ def retry_with_exponential_backoff(
         max_retries (int): Maximum number of retries (default is 7).
         max_delay (float): Maximum delay between two attempts, in seconds
             (default is 60).
+        do_not_retry: Optional predicate for additional permanent failures.
 
     Returns:
         function: The decorated function.
@@ -635,7 +638,9 @@ def retry_with_exponential_backoff(
             except Exception as e:  # noqa: PERF203
                 # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
                 # won't be fixed by retrying and would only delay the real error.
-                if _is_non_retryable_error(e):
+                if _is_non_retryable_error(e) or (
+                    do_not_retry is not None and do_not_retry(e)
+                ):
                     raise
 
                 num_retries += 1
@@ -671,15 +676,7 @@ _RETRYABLE_AWS_ERROR_CODES = (
     "TooManyRequests",
     "RequestLimitExceeded",
     "ProvisionedThroughputExceeded",
-    "ModelNotReady",
-    "ModelTimeout",
-)
 
-
-def _get_http_status(error: Exception):
-    """Best-effort extraction of an HTTP status code from an exception.
-
-    Provider SDKs expose it in different ways: ``status_code`` (openai, co
 ```
 
 ### Core Architecture Module: `python/python/lancedb/namespace_utils.py`
@@ -1294,11 +1291,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5170** (2026-11-23): **fix: resolve agent plugin marketplace source (UAX-250)**
-  *Symptoms*: Looks like we have an issue with the plugin config pointing to a non-existent dir.   Part of UAX-250. Related to UAX-245.  Clicktest, can ask Chat for example to create a fresh disposable config.   <img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM" src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342" />  Clicktesting: Use a disposable Claude configuration. Add this checkout as a marketplace, then install `lancedb@lancedb`. Confirm that installation fetches `lancedb/lancedb-agent-plugins` and exposes its skill.  *original prompt:*  "Work on Linear issue UAX-250:\ \ Suggested branch name: luciacerchie/uax-250-add-enterprise-functions-guidance-to\ \ \<issue identifier="UAX-250">\ \<title>Add Enterprise Functions guidance to the lancedb agent skill\</title>\ \<description>\ The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`, v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes "UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant to replace. Agents using the skill steer users away from our newest product.\ \ \## Problem\ \ \* Nothing on \`@function\`, \`create_function\`, computed columns, \`refresh_column_async\`, secrets, GPU classes, chunkers, or function failure handling.\ \* The skill description does not trigger on Functions tasks.\ \* Function refresh jobs are not covered. \`remote_jobs.md\` only describes \`geneva_jobs\`.\ \* \`lancedb/la
+- **Issue #5195** (2026-11-24): **fix(python): skip OpenAI embedding requests when no valid text remains**
+  *Symptoms*: ## Summary  Follows up on #4005, which handled mixed batches in `OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch is empty (`[]`) or filtering leaves no valid texts (such as `[None, ""]`), `generate_embeddings` still imports the `openai` SDK and calls `embeddings.create(input=[], ...)`.  - Return `[None] * len(texts)` early in `python/python/lancedb/embeddings/openai.py` when no valid texts remain (`[]` for empty input, one `None` per item when all inputs are filtered), before importing the `openai` SDK or sending a request. - Add regression tests in `python/python/tests/test_embeddings.py` covering empty batches, all-filtered batches, and native-backed `table.add(..., on_bad_vectors="null")` verifying rows are kept with null vectors and no OpenAI request is made.  ## Attribution  Successor to #3152. The early return and nullable ingestion test were originally contributed by @saudademjj in #3152.  ## Verification  - 3 new regression tests failed before the fix (observing `embeddings.create(input=[], ...)`) and passed after. - Related embedding test suite: `148 passed, 1 skipped, 9 deselected` (mocked client only; no live OpenAI API calls). - Ruff check and format checks are clean for the changed `python/` tree (scoped to `python/` only).  Co-authored-by: saudademjj <128795969+saudademjj@users.noreply.github.com> 
 
-- **Issue #5162** (2026-11-23): **fix(rust): validate batch vector column before planning**
-  *Symptoms*: Batch vector queries resolved an explicit vector column with an infallible schema lookup before the existing vector-column validation ran. A column that could not be resolved would abort planning instead of returning the SDK's normal validation error.  Use the resolved column with `get_vector_type` so the batch path reports the same typed error as ordinary vector queries, while keeping explicit and inferred columns, multivector and binary routing, namespace pushdown, and query-plan selection unchanged.  Adds a focused synthetic-schema validation test for the error path.
+- **Issue #5194** (2026-11-24): **fix(java): upgrade Apache HttpClient 5 to 5.6.5**
+  *Symptoms*: Supersedes #5185.  ## Summary  Upgrades `org.apache.httpcomponents.client5:httpclient5` from `5.2.1` to `5.6.5` in `java/lancedb-core/pom.xml`, and updates the inline dependency comment to reflect how the transport is used and resolved.  ## Why 5.6.5  - [CVE-2026-64607](https://www.cve.org/CVERecord?id=CVE-2026-64607) affects the Apache HttpClient 5 classic transport and is fixed in `5.6.3`. - At `5.6.3`, the same exported `org.apache.httpcomponents.client5:httpclient5` Maven artifact remains affected by [CVE-2026-71290](https://www.cve.org/CVERecord?id=CVE-2026-71290), an async TLS hostname verification issue fixed in `5.6.4` (classic transport is unaffected). - `5.6.5` includes both fixes.  ## Scope and Transport Resolution  Only `java/lancedb-core/pom.xml` is modified:  - `LanceDbRestClient` (constructed via `LanceDbNamespaceClientBuilder.buildRestClient()`) uses Apache HttpClient 5's classic transport directly. - `LanceDbNamespaceClientBuilder.build()` uses the JNI-backed `org.lance.namespace.RestNamespace` from `lance-core`, not the Apache HttpClient namespace transport. - Separately, the transitive `lance-namespace-apache-client` dependency (exposing `NamespaceApi` over Apache HttpClient 5's classic transport) declares `httpclient5` `5.2.1`. Declaring `5.6.5` directly on `lancedb-core` lets Maven's nearest-wins mediation select `5.6.5` over that transitive declaration for both `LanceDbRestClient` and `lance-namespace-apache-client`.  ## Verification  - **Dependency reso
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1315,302 +1312,776 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f648bba` (2026-11-23)
-**Commit Message**: fix: allow BTree indexes on LargeUtf8 columns (#5089)
+### Incident Patch 1: `ef59dcfe` (2026-11-24)
+**Commit Message**: fix(java): upgrade Apache HttpClient 5 to 5.6.5 (#5194)
 
-## What changed
+Supersedes #5185.
 
-`supported_btree_data_type` in `rust/lancedb/src/utils/mod.rs` now
-accepts `LargeUtf8` next to `Utf8`. This is the only code change, one
-line.
+## Summary
 
-Python and TypeScript have no BTree type check of their own and call
-into this function, so the fix covers all three SDKs. `Index::Auto` also
-picks BTree for `LargeUtf8` columns now, locally and in the remote
-client.
+Upgrades `org.apache.httpcomponents.client5:httpclient5` from `5.2.1` to
+`5.6.5` in `java/lancedb-core/pom.xml`, and updates the inline
+dependency comment to reflect how the transport is used and resolved.
 
-## Why
+## Why 5.6.5
 
-Fixes #5088
+- [CVE-2026-64607](https://www.cve.org/CVERecord?id=CVE-2026-64607)
+affects the Apache HttpClient 5 classic transport and is fixed in
+`5.6.3`.
+- At `5.6.3`, the same exported
+`org.apache.httpcomponents.client5:httpclient5` Maven artifact remains
+affected by
+[CVE-2026-71290](https://www.cve.org/CVERecord?id=CVE-2026-71290), an
+async TLS hostname verification issue fixed in `5.6.4` (classic
+transport is unaffected).
+- `5.6.5` includes both fixes.
 
-Lance builds BTree indexes on `LargeUtf8`, but this check in lancedb
-rejected them with `A BTree index cannot be created on the field ...
-which has data type LargeUtf8`. pandas 3 stores text columns as
-`large_string`, so `create_index(col, config=BTree())` and
-`create_scalar_index(col)` fail on tables created from a plain
-DataFrame. #2297 removed a similar extra check for `FixedSizeBinary`.
+## Scope and Transport Resolution
 
-`Binary`, `LargeBinary` and `Utf8View` may also be supported by Lance
-but are left out of this PR.
+Only `java/lancedb-core/pom.xml` is modified:
 
-## How it was tested
+- `LanceDbRestClient` (constructed via
+`LanceDbNamespaceClientBuilder.buildRestClient()`) uses Apache
+HttpClient 5's classic transport directly.
+- `LanceDbNamespaceClientBuilder.build()` uses the JNI-backed
+`org.lance.namespace.RestNamespace` from `lance-core`, not the Apache
+HttpClient namespace transport.
+- Separately, the transitive `lance-namespace-apac
 
-Run in a `rust:1.97.0-bookworm` container with `--profile ci --locked
---features remote`, on `main` at e29ec0e0. The branch is now rebased on
-a6d7d02f, which only changes version numbers in
-`Cargo.toml`/`Cargo.lock`; the commits
-
-**File**: `rust/lancedb/src/table/create_index.rs` (modified, +68/-0)
+**File**: `java/lancedb-core/pom.xml` (modified, +3/-3)
 ```diff
-@@ -1664,6 +1664,74 @@ mod tests {
-         assert_eq!(null_count, 1);
+@@ -37,12 +37,12 @@
+             <artifactId>arrow-memory-netty</artifactId>
+         </dependency>
+ 
+-        <!-- Transport for the LanceDB routes outside the Lance Namespace spec.
+-             Versions match what lance-namespace-apache-client resolves to. -->
++        <!-- Direct transport dependency for LanceDbRestClient. Maven also selects this
++             version for the transitive lance-namespace-apache-client transport. -->
+         <dependency>
+             <groupId>org.apache.httpcomponents.client5</groupId>
+             <artifactId>httpclient5</artifactId>
+-            <version>5.2.1</version>
++            <version>5.6.5</version>
+         </dependency>
+ 
+         <dependency>
+```
+
+---
+
+### Incident Patch 2: `90419814` (2026-11-24)
+**Commit Message**: fix(sdk): validate SQL job receipts consistently (#5175)
+
+Compact and data PREWARM accepted whitespace-only job IDs that Cleanup
+rejected. All three remote SDK commands now use the same Flight SQL
+receipt reader to validate the registry ID before returning a job
+handle.
+
+This was accomplished with the following changes:
+
+- Read through the end of the stream, retaining at most one candidate
+row. Require exactly one row with a nonblank UTF-8 `job_id` and preserve
+the ID as returned.
+- Validate PREWARM’s additional non-null UInt64 table version and
+preserve each command’s SQL error diagnostics.
+- Build the handle from the registry ID without a status poll. A
+malformed receipt tells the caller to inspect jobs before retrying,
+since the server may already have accepted the submission.
+
+**File**: `rust/lancedb/src/remote/sql_test.rs` (modified, +201/-1)
+```diff
+@@ -150,6 +150,7 @@ struct TestSqlService {
+     /// How many exchange responses have been dropped, finished or not.
+     exchange_drops: Arc<AtomicUsize>,
+     result: RecordBatch,
++    result_tail: Vec<std::result::Result<RecordBatch, Status>>,
+     large_result: RecordBatch,
+     dictionary_result: RecordBatch,
+ }
+@@ -330,6 +331,7 @@ impl Default for TestSqlService {
+             prewarm_azure_supported: false,
+             exchange_drops: Arc::new(AtomicUsize::new(0)),
+             result,
++            result_tail: vec![],
+             large_result,
+             dictionary_result,
+         }
+@@ -569,7 +571,16 @@ impl FlightService for TestSqlService {
+             }
+             (!empty).then_some(Ok(result))
+         })
+-        .filter_map(futures::future::ready);
++        .filter_map(futures::future::ready)
++        .chain(
++            futures::stream::iter(self.result_tail.clone()).then(|item| async {
++                // Let tonic flush the preceding batch before sending an error trailer.
++                if item.is_err() {
++                    tokio::task::yield_now().await;
++                }
++                item.map_err(|status| FlightError::Tonic(Box::new(status)))
++            }),
++        );
+         let mut encoder = FlightDataEncoderBuilder::new().with_schema(schema);
+         if large {
+             encoder = encoder.with_max_flight_data_size(8 * 1024 * 1024);
+@@ -711,6 +722,13 @@ impl FlightService for TestSqlService {
+         }
+         let rows =
+             parameters.ok_or_else(|| Status::invalid_argument("exchange without parameters"))?;
++        let rows = self
++            .result_overrides
++            .lock()
++            .unwrap()
++            .get(&query)
++            .cloned()
++            .unwrap_or(rows);
+         let schema = rows.schema();
+         let rest: BoxStream<'static, arrow_flight::error::Result<RecordBatch>> =
+             if query == "SELECT exchange slow" {
+@@ -4563,6 +4581,188 @@ fn prewarm_result() -> RecordBatch {
+     .unwrap()
+ }
+ 
++fn receipt_test_table(
++    sql: SqlClient,
++) -> RemoteTable<crate::remote::client::test_utils::MockSender> {
++    RemoteTable::new_with_sql_client(
++        client_with_handler(|r| -> http::Response<String> {
++            panic!(
++                "unexpected HTTP request while reading a job receipt: {}",
++                r.url()
++            )
++        }),
++        "analytics".into(),
++        "events".into(),
++        vec!["team".into()],
++        "team$events".into(),
++        Default::default(),
++        Some(sql),
++    )
++}
++
++#[tokio::test]
++async fn remote_maintenance_job_receipts_require_one_row_and_a_complete_stream() {
++    let receipt = prewarm_result();
++    let empty = receipt.slice(0, 0);
++    let with_ids = |ids: ArrayRef| {
++        let versions = arrow_array::UInt64Array::from(vec![42; ids.len()]);
++        RecordBatch::try_from_iter([
++            ("job_id", ids),
++            ("table_version", Arc::new(versions) as ArrayRef),
++        ])
++        .unwrap()
++    };
++    let ids = |values: Vec<Option<&str>>| with_ids(Arc::new(StringArray::from(values)));
++    let invalid = "inspect jobs before retrying";
++    // All three commands receive the same wire response.
++    for (first, tail, expected) in [
++        (
++            empty.clone(),
++            vec![Ok(receipt.clone()), Ok(empty.clone())],
++            Ok("warming-job"),
++        ),
++        (ids(vec![Some(" id ")]), vec![], Ok(" id ")),
++        (empty, vec![], Err(invalid)),
++        (ids(vec![None]), vec![], Err(invalid)),
++        (ids(vec![Some("")]), vec![], Err(invalid)),
++        (ids(vec![Some(" \t ")]), vec![], Err(invalid)),
++        (
++            with_ids(Arc::new(Int64Array::from(vec![7]))),
++            vec![],
++            Err(invalid),
++        ),
++        (receipt.project(&[1]).unwrap(), vec![], Err(invalid)),
++        (ids(vec![Some("one"), Some("two")]), vec![], Err(invalid)),
++        (receipt.clone(), vec![Ok(receipt.clone())], Err(invalid)),
++        (
++            receipt,
++            vec![Err(Status::data_loss("receipt stream interrupted"))],
++            Err("receipt stream interrupted"),
++        ),
++    ] {
++        let service = TestSqlService {
++            adaptive: true,
++            result: first,
++            result_tail: tail,
++            ..Default::default()
++        };
++        let statements = service.statements.clone();
++        let (sql, shutdown) = start_sql_service(service, ClientConfig::default()).await;
++        let table = receipt_test_table(sql);
++        let compact = table.compact_async(Default::default()).await;
++        let prewarm = table.prewarm_data_async(Default::default()).await;
++        let cleanup = table.cleanup_async(Default::default()).await;
++        for (result, command) in [
++            (compact.as_ref().map(|j| j.id()), "OPTIMIZE"),
++            (prewarm.as_ref().map(|j| j.id()), "PREWARM"),
++            (cleanup.as_ref().map(|j| j.id()), "VACUUM"),
++        ] {
++            match exp
+```
+
+**File**: `rust/lancedb/src/remote/table.rs` (modified, +11/-44)
+```diff
+@@ -9,10 +9,12 @@ mod optimize;
+ mod prewarm;
+ #[cfg(test)]
+ mod profile_tests;
++mod receipt;
+ #[cfg(test)]
+ mod write_tests;
+ 
+ use self::insert::{RemoteWriteExec, WriteOp};
++use self::receipt::JobReceipt;
+ use super::client::RequestResultExt;
+ use super::client::{HttpSend, RestfulLanceDbClient, Sender};
+ use super::db::ServerVersion;
+@@ -4315,25 +4317,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+                 message: "manual cleanup requires a Flight SQL endpoint and SQL VACUUM support"
+                     .into(),
+             })?;
+-        let query = client
++        let submission = client
+             .execute(crate::database::ExecuteQueryRequest {
+                 query: statement,
+                 default_namespace_path: self.namespace.clone(),
+                 parameters: None,
+                 options: Default::default(),
+             })
+-            .await
+-            .map_err(cleanup::map_error)?;
+-        let mut reader = query.reader().await.map_err(cleanup::map_error)?;
+-        let mut batches = Vec::new();
+-        while let Some(batch) = reader.try_next().await.map_err(cleanup::map_error)? {
+-            batches.push(batch);
+-        }
+-        let job_id = cleanup::receipt(&batches)?;
+-        Ok(Job::new_typed(Box::new(RemoteJob::new(
+-            self.client.clone(),
+-            job_id,
+-        ))))
++            .await;
++        JobReceipt::Cleanup.accept(submission, &self.client).await
      }
  
-+    #[tokio::test]
-+    async fn test_create_btree_index_on_large_utf8() {
-+        let conn = connect("memory://").execute().await.unwrap();
-+        let schema = Arc::new(Schema::new(vec![
-+            Field::new("explicit", DataType::LargeUtf8, true),
-+            Field::new("auto", DataType::LargeUtf8, true),
-+        ]));
-+        let values = || {
-+            Arc::new(LargeStringArray::from(vec![
-+                Some("alpha"),
-+                None,
-+                Some("omega"),
-+                Some("alpha"),
-+            ])) as ArrayRef
+     async fn compact_async(
+@@ -4348,29 +4340,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+             .ok_or_else(|| Error::NotSupported {
+                 message: "compaction jobs require a Flight SQL endpoint".into(),
+             })?;
+-        let query = client
++        let submission = client
+             .execute(crate::database::ExecuteQueryRequest {
+                 query: statement,
+                 default_namespace_path: self.namespace.clone(),
+                 parameters: None,
+                 options: Default::default(),
+             })
+-            .await
+-            .map_err(optimize::map_optimize_error)?;
+-        let mut reader = query.reader().await.map_err(optimize::map_optimize_error)?;
+-        let mut batches = Vec::new();
+-        while let Some(batch) = reader
+-            .try_next()
+-            .await
+-            .map_err(optimize::map_optimize_error)?
+-        {
+-            batches.push(batch);
+-        }
+-        let job_id = optimize::receipt(&batches)?;
+-        Ok(Job::new_typed(Box::new(RemoteJob::new(
+-            self.client.clone(),
+-            job_id,
+-        ))))
++            .await;
++        JobReceipt::Compact.accept(submission, &self.client).await
+     }
+ 
+     async fn add_columns(
+@@ -5000,26 +4978,15 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+                 message: "data prewarm requires a Flight SQL endpoint and SQL PREWARM support"
+                     .into(),
+             })?;
+-        let query = client
++        let submission = client
+             .execute_prewarm(crate::database::ExecuteQueryRequest {
+                 query: statement,
+                 default_namespace_path: self.namespace.clone(),
+                 parameters: options.parameters,
+                 options: Default::default(),
+             })
+-            .await
+-            .map_err(prewarm::map_error)?;
+-        let mut reader = query.reader().await.map_err(prewarm::map_error)?;
+-        let mut batches = Vec::new();
+-        while let Some(batch) = reader.try_next().await.map_err(prewarm::map_error)? {
+-            batches.push(batch);
+-        }
+-        let (job_id, _table_version) = prewarm::receipt(&batches)?;
+-        // Construct lazily: submission must not require an HTTP status round trip.
+-        Ok(Job::new_typed(Box::new(RemoteJob::new(
+-            self.client.clone(),
+-            job_id,
+-        ))))
++            .await;
++        JobReceipt::Prewarm.accept(submission, &self.client).await
+     }
+ 
+     async fn explain_prewarm_data(
+```
+
+**File**: `rust/lancedb/src/remote/table/cleanup.rs` (modified, +0/-50)
+```diff
+@@ -40,27 +40,6 @@ pub(super) fn statement(
+     Ok(sql)
+ }
+ 
+-pub(super) fn receipt(batches: &[RecordBatch]) -> Result<String> {
+-    let invalid = || {
+-        Error::Runtime { message: "VACUUM did not return a single nonempty job_id receipt; inspect jobs before retrying because cleanup may already have been submitted".into() }
+-    };
+-    if batches.iter().map(RecordBatch::num_rows).sum::<usize>() != 1 {
+-        return Err(invalid());
+-    }
+-    let batch = batches
+-        .iter()
+-        .find(|batch| batch.num_rows() == 1)
+-        .ok_or_else(invalid)?;
+-    let ids = batch
+-        .column_by_name("job_id")
+-        .and_then(|array| array.as_any().downcast_ref::<StringArray>())
+-        .ok_or_else(invalid)?;
+-    if ids.is_null(0) || ids.value(0).trim().is_empty() {
+-        return Err(invalid());
+-    }
+-    Ok(ids.value(0).to_string())
+-}
+-
+ pub(super) fn plan(batches: &[RecordBatch]) -> Result<crate::table::CleanupPlan> {
+     let invalid = || {
+         Error::Runtime { message: "EXPLAIN VACUUM did not return a valid versioned preview; a compatible EXPLAIN (FORMAT JSON) VACUUM server is required. No execution fallback was attempted".into() }
+@@ -170,35 +149,6 @@ mod tests {
+         assert!(statement("t", None, &CleanupOptions::new().min_age_seconds(u64::MAX)).is_err());
+     }
+ 
+-    #[test]
+-    fn ambiguous_cleanup_receipts_never_become_query_handles() {
+-        let batch = |values: Vec<Option<&str>>| {
+-            RecordBatch::try_from_iter([(
+-                "job_id",
+-                Arc::new(StringArray::from(values)) as arrow_array::ArrayRef,
+-            )])
+-            .unwrap()
+-        };
+-        for batches in [
+-            vec![],
+-            vec![batch(vec![])],
+-            vec![batch(vec![None])],
+-            vec![batch(vec![Some("")])],
+-            vec![batch(vec![Some("one"), Some("two")])],
+-        ] {
+-            assert!(
+-                receipt(&batches)
+-                    .unwrap_err()
+-                    .to_string()
+-                    .contains("inspect jobs before retrying")
+-            );
+-        }
+-        assert_eq!(
+-            receipt(&[batch(vec![]), batch(vec![Some("durable-job")])]).unwrap(),
+-            "durable-job"
+-        );
+-    }
+-
+     #[test]
+     fn cleanup_compatibility_preserves_permissions_and_transport_errors() {
+         for (code, diagnostic, expected) in [
+```
+
+**File**: `rust/lancedb/src/remote/table/optimize.rs` (modified, +0/-58)
+```diff
+@@ -23,30 +23,6 @@ pub(super) fn statement(
+     Ok(sql)
+ }
+ 
+-/// Submission can already have created work: reject ambiguous receipts without
+-/// retrying or confusing the SQL query's identity with the compaction job.
+-pub(super) fn receipt(batches: &[arrow_array::RecordBatch]) -> Result<String> {
+-    use arrow_array::{Array, StringArray};
+-    let invalid = || {
+-        Error::Runtime { message: "OPTIMIZE did not return a single nonempty job_id receipt; inspect jobs before retrying because compaction may already have been submitted".into() }
+-    };
+-    if batches.iter().map(|batch| batch.num_rows()).sum::<usize>() != 1 {
+-        return Err(invalid());
+-    }
+-    let batch = batches
+-        .iter()
+-        .find(|batch| batch.num_rows() == 1)
+-        .ok_or_else(invalid)?;
+-    let ids = batch
+-        .column_by_name("job_id")
+-        .and_then(|a| a.as_any().downcast_ref::<StringArray>())
+-        .ok_or_else(invalid)?;
+-    if ids.is_null(0) || ids.value(0).is_empty() {
+-        return Err(invalid());
+-    }
+-    Ok(ids.value(0).into())
+-}
+-
+ pub(super) fn compaction_sql_options(
+     options: &crate::table::optimize::CompactionOverrides,
+ ) -> Result<Vec<String>> {
+@@ -301,37 +277,3 @@ mod tests {
+         }
+     }
+ }
+-
+-#[cfg(test)]
+-mod receipt_tests {
+-    use super::*;
+-    use arrow_array::{ArrayRef, RecordBatch, StringArray};
+-    use std::sync::Arc;
+-
+-    #[test]
+-    fn compaction_receipt_requires_one_unambiguous_registry_id() {
+-        let batch = |ids: Vec<Option<&str>>| {
+-            RecordBatch::try_from_iter([("job_id", Arc::new(StringArray::from(ids)) as ArrayRef)])
+-                .unwrap()
+-        };
+-        assert_eq!(
+-            receipt(&[batch(vec![Some("compacting-job")])]).unwrap(),
+-            "compacting-job"
+-        );
+-        for batches in [
+-            vec![],
+-            vec![batch(vec![])],
+-            vec![batch(vec![None])],
+-            vec![batch(vec![Some("")])],
+-            vec![batch(vec![Some("a"), Some("b")])],
+-            vec![batch(vec![Some("a")]), batch(vec![Some("b")])],
+-        ] {
+-            assert!(
+-                receipt(&batches)
+-                    .unwrap_err()
+-                    .to_string()
+-                    .contains("inspect jobs before retrying")
+-            );
+-        }
+-    }
+-}
+```
+
+**File**: `rust/lancedb/src/remote/table/prewarm.rs` (modified, +2/-70)
+```diff
+@@ -1,9 +1,9 @@
+ // SPDX-License-Identifier: Apache-2.0
+ // SPDX-FileCopyrightText: Copyright The LanceDB Authors
+ 
+-//! SQL submission and receipt validation for data-cache prewarm jobs.
++//! SQL submission and preview decoding for data-cache prewarm jobs.
+ 
+-use arrow_array::{Array, RecordBatch, StringArray, UInt64Array};
++use arrow_array::{Array, RecordBatch, StringArray};
+ use datafusion_sql::sqlparser::{dialect::GenericDialect, parser::Parser, tokenizer::Token};
+ 
+ use super::{quote_sql_identifier, quote_sql_string};
+@@ -84,33 +84,6 @@ pub(super) fn statement(
+     Ok(sql)
+ }
+ 
+-pub(super) fn receipt(batches: &[RecordBatch]) -> Result<(String, u64)> {
+-    let invalid = || {
+-        Error::Runtime {
+-        message: "PREWARM did not return a single (job_id, table_version) receipt; inspect jobs before retrying because work may already have been submitted".into(),
+-    }
+-    };
+-    if batches.iter().map(RecordBatch::num_rows).sum::<usize>() != 1 {
+-        return Err(invalid());
+-    }
+-    let batch = batches
+-        .iter()
+-        .find(|batch| batch.num_rows() == 1)
+-        .ok_or_else(invalid)?;
+-    let id = batch
+-        .column_by_name("job_id")
+-        .and_then(|array| array.as_any().downcast_ref::<StringArray>())
+-        .ok_or_else(invalid)?;
+-    let version = batch
+-        .column_by_name("table_version")
+-        .and_then(|array| array.as_any().downcast_ref::<UInt64Array>())
+-        .ok_or_else(invalid)?;
+-    if id.is_null(0) || id.value(0).is_empty() || version.is_null(0) {
+-        return Err(invalid());
+-    }
+-    Ok((id.value(0).into(), version.value(0)))
+-}
+-
+ /// Decode the versioned JSON payload without depending on the display text.
+ pub(super) fn plan(batches: &[RecordBatch]) -> Result<crate::table::PrewarmDataPlan> {
+     let invalid = || {
+@@ -219,7 +192,6 @@ pub(super) fn map_error(error: Error) -> Error {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use arrow_schema::{DataType, Field, Schema};
+     use std::sync::Arc;
+ 
+     #[test]
+@@ -357,46 +329,6 @@ mod tests {
+         }
+     }
+ 
+-    fn batch(ids: Vec<Option<&str>>, versions: Vec<Option<u64>>) -> RecordBatch {
+-        RecordBatch::try_from_iter([
+-            (
+-                "job_id",
+-                Arc::new(StringArray::from(ids)) as arrow_array::ArrayRef,
+-            ),
+-            (
+-                "table_version",
+-                Arc::new(UInt64Array::from(versions)) as arrow_array::ArrayRef,
+-            ),
+-        ])
+-        .unwrap()
+-    }
+-
+-    #[test]
+-    fn receipt_requires_one_non_null_job_and_version() {
+-        assert_eq!(
+-            receipt(&[batch(vec![Some("job-1")], vec![Some(42)])]).unwrap(),
+-            ("job-1".into(), 42)
+-        );
+-        for batches in [
+-            vec![],
+-            vec![batch(vec![], vec![])],
+-            vec![batch(vec![None], vec![Some(42)])],
+-            vec![batch(vec![Some("")], vec![Some(42)])],
+-            vec![batch(vec![Some("job")], vec![None])],
+-            vec![batch(vec![Some("a"), Some("b")], vec![Some(1), Some(2)])],
+-            vec![
+-                batch(vec![Some("a")], vec![Some(1)]),
+-                batch(vec![Some("b")], vec![Some(2)]),
+-            ],
+-            vec![RecordBatch::new_empty(Arc::new(Schema::new(vec![
+-                Field::new("wrong", DataType::Utf8, false),
+-            ])))],
+-        ] {
+-            let error = receipt(&batches).unwrap_err().to_string();
+-            assert!(error.contains("inspect jobs before retrying"), "{error}");
+-        }
+-    }
+-
+     #[test]
+     fn compatibility_errors_preserve_permission_and_predicate_diagnostics() {
+         for (code, message, unsupported) in [
+```
+
+**File**: `rust/lancedb/src/remote/table/receipt.rs` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++use arrow_array::{Array, StringArray, UInt64Array};
++use futures::TryStreamExt;
++use serde::de::DeserializeOwned;
++
++use super::{cleanup, optimize, prewarm};
++use crate::job::Job;
++use crate::remote::client::{HttpSend, RestfulLanceDbClient};
++use crate::remote::job::RemoteJob;
++use crate::sql::Query;
++use crate::{Error, Result};
++
++#[derive(Clone, Copy)]
++pub(super) enum JobReceipt {
++    Compact,
++    Prewarm,
++    Cleanup,
++}
++
++impl JobReceipt {
++    fn invalid(self) -> Error {
++        let receipt = match self {
++            Self::Compact => "OPTIMIZE did not return a single nonempty job_id receipt",
++            Self::Prewarm => "PREWARM did not return a single (job_id, table_version) receipt",
++            Self::Cleanup => "VACUUM did not return a single nonempty job_id receipt",
 +        };
-+        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
-+        let table = conn
-+            .create_table("large_utf8_btree_table", batch)
-+            .execute()
-+            .await
-+            .unwrap();
-+
-+        table
-+            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
-+            .execute()
-+            .await
-+            .unwrap();
-+        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
-+        table
-+            .create_index(&["auto"], Index::Auto)
-+            .execute()
-+            .await
-+            .unwrap();
-+        table
-+            .wait_for_index(&["explicit_idx", "auto_idx"], Duration::from_millis(10))
-+            .await
-+            .unwrap();
-+
-+        let index_configs = table.list_indices().await.unwrap();
-+        assert_eq!(index_configs.len(), 2);
-+        for index in index_configs {
-+            assert_eq!(index.index_type, crate::index::IndexType::BTree);
++        Error::Runtime {
++            message: format!(
++                "{receipt}; inspect jobs before retrying because work may already have been submitted"
++            ),
 +        }
++    }
 +
-+        for column in ["explicit", "auto"] {
-+            for (filter, expected_rows) in [
-+                (format!("{column} = 'alpha'"), 2),
-+                (format!("{column} > 'beta'"), 1),
-+                (format!("{column} IS NULL"), 1),
-+            ] {
-+                let query = table.query().only_if(filter.as_str());
-+                let plan = query.explain_plan(false).await.unwrap();
-+                assert!(plan.contains("ScalarIndexQuery"), "{filter}: {plan}");
-+                let num_rows = query
-+                    .execute()
-+                    .await
-+                    .unwrap()
-+                    .try_collect::<Vec<_>>()
-+                    .await
-+                    .unwrap()
-+                    .iter()
-+                    .map(|b| b.num_rows())
-+                    .sum::<usize>();
-+                assert_eq!(num_rows, expected_rows, "{filter}");
++    /// A registry job can already be running when its SQL response is lost.
++    /// Only construct the handle after reading one valid row and the end of the stream.
++    pub(super) async fn accept<T, S>(
++        self,
++        submission: Result<Query>,
++        client: &RestfulLanceDbClient<S>,
++    ) -> Result<Job<T>>
++    where
++        T: Clone + DeserializeOwned + Send + Sync + 'static,
++        S: HttpSend,
++    {
++        let map_error = match self {
++            Self::Compact => optimize::map_optimize_error,
++            Self::Prewarm => prewarm::map_error,
++            Self::Cleanup => cleanup::map_error,
++        };
++        let query = submission.map_err(map_error)?;
++        let mut reader = query.reader().await.map_err(map_error)?;
++        let mut receipt = None;
++        let mut rows = 0usize;
++        while let Some(batch) = reader.try_next().await.map_err(map_error)? {
++            rows = rows.saturating_add(batch.num_rows());
++            if rows == 1 && batch.num_rows() == 1 {
++                receipt = Some(batch);
 +            }
 +        }
++        let batch = receipt
++            .filter(|_| rows == 1)
++            .ok_or_else(|| self.invalid())?;
++        let ids = batch
++            .column_by_name("job_id")
++            .and_then(|column| column.as_any().downcast_ref::<StringArray>())
++            .filter(|ids| !ids.is_null(0) && !ids.value(0).trim().is_empty())
++            .ok_or_else(|| self.invalid())?;
++        if matches!(self, Self::Prewarm) {
++            batch
++                .column_by_name("table_version")
++                .and_then(|column| column.as_any().downcast_ref::<UInt64Array>())
++                .filter(|versions| !versions.is_null(0))
++                .ok_or_else(|| self.invalid())?;
++        }
++        let job_id = ids.value(0).to_owned();
++        Ok(Job::new_typed(Box::new(RemoteJob::new(
++            client.clone(),
++            job_id,
++        ))))
 +    }
-+
-     #[tokio::test]
-     async fn test_create_builtin_scalar_index() {
-         for (index, index_type, predicate, invalid_column) in [
-```
-
-**File**: `rust/lancedb/src/utils/mod.rs` (modified, +1/-0)
-```diff
-@@ -539,6 +539,7 @@ pub fn supported_btree_data_type(dtype: &DataType) -> bool {
-             dtype,
-             DataType::Boolean
-                 | DataType::Utf8
-+                | DataType::LargeUtf8
-                 | DataType::Time32(_)
-                 | DataType::Time64(_)
-                 | DataType::Date32
++}
 ```
 
 ---
 
-### Incident Patch 2: `7c7765c9` (2026-11-23)
-**Commit Message**: fix(rust): validate batch vector column before planning (#5162)
+### Incident Patch 3: `7a866175` (2026-11-24)
+**Commit Message**: fix(python): skip OpenAI embedding requests when no valid text remains (#5195)
 
-Batch vector queries resolved an explicit vector column with an
-infallible schema lookup before the existing vector-column validation
-ran. A column that could not be resolved would abort planning instead of
-returning the SDK's normal validation error.
+## Summary
 
-Use the resolved column with `get_vector_type` so the batch path reports
-the same typed error as ordinary vector queries, while keeping explicit
-and inferred columns, multivector and binary routing, namespace
-pushdown, and query-plan selection unchanged.
+Follows up on #4005, which handled mixed batches in
+`OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch
+is empty (`[]`) or filtering leaves no valid texts (such as `[None,
+""]`), `generate_embeddings` still imports the `openai` SDK and calls
+`embeddings.create(input=[], ...)`.
 
-Adds a focused synthetic-schema validation test for the error path.
+- Return `[None] * len(texts)` early in
+`python/python/lancedb/embeddings/openai.py` when no valid texts remain
+(`[]` for empty input, one `None` per item when all inputs are
+filtered), before importing the `openai` SDK or sending a request.
+- Add regression tests in `python/python/tests/test_embeddings.py`
+covering empty batches, all-filtered batches, and native-backed
+`table.add(..., on_bad_vectors="null")` verifying rows are kept with
+null vectors and no OpenAI request is made.
 
-**File**: `rust/lancedb/src/table/query.rs` (modified, +57/-6)
+## Attribution
+
+Successor to #3152. The early return and nullable ingestion test were
+originally contributed by @saudademjj in #3152.
+
+## Verification
+
+- 3 new regression tests failed before the fix (observing
+`embeddings.create(input=[], ...)`) and passed after.
+- Related embedding test suite: `148 passed, 1 skipped, 9 
+
+**File**: `python/python/lancedb/embeddings/openai.py` (modified, +5/-2)
 ```diff
-@@ -273,13 +273,11 @@ pub async fn create_plan(
-                 Some(query.query_vector[0].len() as i32),
-             )?);
-         }
--        let vector_field = schema.field(column.as_ref().unwrap()).unwrap();
--        let (_, element_type) =
-+        let (vector_type, element_type) =
-             lance::index::vector::utils::get_vector_type(schema, column.as_ref().unwrap())?;
-+        let is_list_vector = matches!(&vector_type, DataType::List(_));
-         let is_binary = matches!(element_type, DataType::UInt8);
--        if matches!(vector_field.data_type(), DataType::List(_))
--            || (query.base.offset.unwrap_or(0) == 0 && !is_binary)
--        {
-+        if is_list_vector || (query.base.offset.unwrap_or(0) == 0 && !is_binary) {
-             // Lance distinguishes these cases from the vector column type: a
-             // list-like query against a List column is one multivector query,
-             // while the same query against a FixedSizeList column is a batch of
-@@ -315,7 +313,7 @@ pub async fn create_plan(
-                 fsl_builder.append(true);
-             }
-             query_vector = Some(Arc::new(fsl_builder.finish()));
--            is_batch_query = !matches!(vector_field.data_type(), DataType::List(_));
-+            is_batch_query = !is_list_vector;
-         } else {
-             // Lance's batch path has no per-query offset, and its binary path
-             // requires primitive UInt8 queries rather than a fixed-size list.
-@@ -2091,6 +2089,59 @@ mod tests {
-             "plan should add query_index column, got:\n{display}"
-         );
-     }
+@@ -99,15 +99,18 @@ def generate_embeddings(
+         texts: list[str] or np.ndarray (of str)
+             The texts to embed
+         """
+-        openai = attempt_import_or_raise("openai")
+-
+         valid_texts = []
+         valid_indices = []
+         for idx, text in enumerate(texts):
+             if text:
+                 valid_texts.append(text)
+                 valid_indices.append(idx)
+ 
++        if not valid_texts:
++            return [None] * len(texts)
 +
-+    #[tokio::test]
-+    async fn test_create_plan_batch_vector_missing_column_returns_sdk_error() {
-+        use crate::connect;
-+        use crate::table::query::create_plan;
-+        use arrow_array::{Float32Array, RecordBatch};
-+        use arrow_schema::{DataType, Field, Schema};
++        openai = attempt_import_or_raise("openai")
 +
-+        let conn = connect("memory://").execute().await.unwrap();
-+        let schema = Arc::new(Schema::new(vec![
-+            Field::new("id", DataType::Int32, false),
-+            Field::new(
-+                "vector",
-+                DataType::FixedSizeList(Arc::new(Field::new("item", DataType::Float32, true)), 2),
-+                false,
-+            ),
-+        ]));
-+        let batch = RecordBatch::new_empty(schema);
-+        let table = conn
-+            .create_table("test_batch_vector_missing_column", vec![batch])
-+            .execute()
-+            .await
-+            .unwrap();
-+        let native_table = table.as_native().unwrap();
-+
-+        let query = AnyQuery::VectorQuery(VectorQueryRequest {
-+            base: QueryRequest {
-+                limit: Some(1),
-+                ..Default::default()
-+            },
-+            column: Some("missing_vector".to_string()),
-+            query_vector: vec![
-+                Arc::new(Float32Array::from(vec![1.0, 2.0])),
-+                Arc::new(Float32Array::from(vec![3.0, 4.0])),
-+            ],
-+            ..Default::default()
-+        });
-+
-+        let error = create_plan(native_table, &query, QueryExecutionOptions::default())
-+            .await
-+            .unwrap_err();
-+
-+        assert!(
-+            matches!(
-+                &error,
-+                Error::Lance {
-+                    source: lance::Error::Index { message, .. }
-+                } if message.contains("column missing_vector does not exist in schema")
-+            ),
-+            "expected ordinary vector column validation error, got: {error:?}"
-+        );
-+    }
-+
-     #[rstest::rstest]
-     #[case::modern(false)]
-     #[case::legacy(true)]
+         # TODO retry, rate limit, token limit
+         def embed_batch(texts_batch, indices_batch):
+             kwargs = {
 ```
 
----
-
-### Incident Patch 3: `e9319c86` (2026-11-23)
-**Commit Message**: fix: resolve agent plugin marketplace source (UAX-250) (#5170)
-
-Looks like we have an issue with the plugin config pointing to a
-non-existent dir.
-
-Part of UAX-250. Related to UAX-245.
-
-Clicktest, can ask Chat for example to create a fresh disposable config.
-
-<img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM"
-src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342"
-/>
-
-Clicktesting: Use a disposable Claude configuration. Add this checkout
-as a marketplace, then install `lancedb@lancedb`. Confirm that
-installation fetches `lancedb/lancedb-agent-plugins` and exposes its
-skill.
-
-*original prompt:*
-
-"Work on Linear issue UAX-250:\
-\
-Suggested branch name:
-luciacerchie/uax-250-add-enterprise-functions-guidance-to\
-\
-\<issue identifier="UAX-250">\
-\<title>Add Enterprise Functions guidance to the lancedb agent
-skill\</title>\
-\<description>\
-The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`,
-v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes
-"UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant
-to replace. Agents using the skill steer users away from our newest
-product.\
-\
-\## Prob
-
-**File**: `.claude-plugin/marketplace.json` (modified, +4/-1)
+**File**: `python/python/tests/test_embeddings.py` (modified, +41/-0)
 ```diff
-@@ -7,7 +7,10 @@
-   "plugins": [
-     {
-       "name": "lancedb",
--      "source": "./plugins/lancedb",
-+      "source": {
-+        "source": "github",
-+        "repo": "lancedb/lancedb-agent-plugins"
-+      },
-       "description": "Write, review, debug, and document LanceDB pipelines in Python and TypeScript that work with both LanceDB Embedded and LanceDB Enterprise.",
-       "version": "0.1.0",
-       "author": {
+@@ -1107,6 +1107,47 @@ def fake_create(input, model=None, **kwargs):
+     assert embeddings[1] is None
+ 
+ 
++@pytest.fixture
++def mock_openai_client(monkeypatch):
++    client = MagicMock()
++    client.embeddings.create.return_value.data = []
++    monkeypatch.setattr(
++        "lancedb.embeddings.openai.attempt_import_or_raise", MagicMock()
++    )
++    monkeypatch.setattr(get_registry().get("openai"), "_openai_client", client)
++    return client
++
++
++@pytest.mark.parametrize(
++    ("texts", "expected"),
++    [([], []), ([None, ""], [None, None])],
++    ids=["empty-batch", "all-inputs-filtered"],
++)
++def test_openai_skips_batches_without_valid_text(mock_openai_client, texts, expected):
++    model = get_registry().get("openai").create()
++
++    assert model.compute_source_embeddings(texts) == expected
++    mock_openai_client.embeddings.create.assert_not_called()
++
++
++def test_openai_add_all_invalid_texts_as_null_vectors(mock_openai_client, tmp_path):
++    model = get_registry().get("openai").create(name="text-embedding-3-small", dim=2)
++
++    class TextModel(LanceModel):
++        text: Optional[str] = model.SourceField()
++        vector: Optional[Vector(model.ndims())] = model.VectorField()
++
++    db = lancedb.connect(tmp_path)
++    table = db.create_table("words", schema=TextModel)
++    table.add([{"text": None}, {"text": ""}], on_bad_vectors="null")
++
++    assert table.to_arrow().to_pylist() == [
++        {"text": None, "vector": None},
++        {"text": "", "vector": None},
++    ]
++    mock_openai_client.embeddings.create.assert_not_called()
++
++
+ def test_ollama_embeddings_pickle():
+     """OllamaEmbeddings must pickle even after the cached client is created."""
+     registry = get_registry()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5172** (2026-11-24): chore!: drop Python 3.10 support (@rahulsjha)
-- **PR #5170** (2026-11-23): fix: resolve agent plugin marketplace source (UAX-250) (@Cerchie)
-- **PR #5163** (2026-11-23): chore: update lance dependency to v15.0.0-beta.28 (@lancedb-robot)
-- **PR #5162** (2026-11-23): fix(rust): validate batch vector column before planning (@Xuanwo)
-- **PR #5160** (2026-11-22): fix: reject blob request concurrency above semaphore limit (@Xuanwo)
-- **PR #5159** (2026-11-22): chore: update lance dependency to v15.0.0-beta.27 (@lancedb-robot)
+- **PR #5198** (2026-11-24): docs(search): clarify Hamming distance without a vector index (@definitelynotguru)
+- **PR #5197** (2026-11-24): docs: add Homebrew installation to the CLI guide (@ChilePiquin)
+- **PR #5195** (2026-11-24): fix(python): skip OpenAI embedding requests when no valid text remains (@Xuanwo)
+- **PR #5194** (2026-11-24): fix(java): upgrade Apache HttpClient 5 to 5.6.5 (@Xuanwo)
+- **PR #5193** (2026-11-24): feat(embeddings): support Cohere v2 endpoints for Foundry text retrieval (@Xuanwo)
+- **PR #5192** (2026-11-24): chore(docs): upgrade mkdocs-material to 9.8.2 and mkdocstrings (@Xuanwo)
 
 ---
 
@@ -1630,65 +2101,35 @@ product.\
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow BTree indexes on LargeUtf8 columns
+## X. java): upgrade Apache HttpClient 5 to 5.6.5
 
 **RULE**:
-When implementing operations in `rust/lancedb/src/table/create_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/lancedb-core/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f648bba`: allow BTree indexes on LargeUtf8 columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef59dcfe`: java): upgrade Apache HttpClient 5 to 5.6.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table/create_index.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/lancedb-core/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[tokio::test]
-    async fn test_create_btree_index_on_large_utf8() {
-        let conn = connect("memory://").execute().await.unwrap();
-        let schema = Arc::new(Schema::new(vec![
-            Field::new("explicit", DataType::LargeUtf8, true),
-            Field::new("auto", DataType::LargeUtf8, true),
-        ]));
-        let values = || {
-            Arc::new(LargeStringArray::from(vec![
-                Some("alpha"),
-                None,
-                Some("omega"),
-                Some("alpha"),
-            ])) as ArrayRef
-        };
-        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
-        let table = conn
-            .create_table("large_utf8_btree_table", batch)
-            .execute()
-            .await
-            .unwrap();
-
-        table
-            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
-            .execute()
-            .await
-            .unwrap();
-        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
-        table
-            .create_index(&["auto"], Index::Auto)
-            .execute()
-            .await
-            .unwrap();
-        table
-            .wait_for_inde
+        <!-- Direct transport dependency for LanceDbRestClient. Maven also selects this
+             version for the transitive lance-namespace-apache-client transport. -->
+            <version>5.6.5</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        <!-- Transport for the LanceDB routes outside the Lance Namespace spec.
+             Versions match what lance-namespace-apache-client resolves to. -->
+            <version>5.2.1</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f648bba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef59dcfe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

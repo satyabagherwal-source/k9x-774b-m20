@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "52209f10",
+    "sourceVersion": "fc6dfca1",
     "license": "Apache-2.0",
-    "contentHash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
-    "lastHarvestedAt": "2026-11-24T02:31:13.162Z",
+    "contentHash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
+    "lastHarvestedAt": "2026-11-24T23:14:01.982Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "35674719",
+    "sourceVersion": "e16ca5a1",
     "license": "MIT",
-    "contentHash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
-    "lastHarvestedAt": "2026-11-20T23:29:53.791Z",
+    "contentHash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
+    "lastHarvestedAt": "2026-11-24T23:13:49.519Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "4c697dc8",
+    "sourceVersion": "9d591e72",
     "license": "Apache-2.0",
-    "contentHash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
-    "lastHarvestedAt": "2026-11-24T03:41:45.036Z",
+    "contentHash": "8ff78b5c15483f66a90038c105df38d124e687a712d133c2c2f92bfd4209ba1b",
+    "lastHarvestedAt": "2026-11-24T23:13:53.105Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {

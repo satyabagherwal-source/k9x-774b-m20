@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T23:04:43.589Z",
+  "last_updated": "2026-11-24T23:14:08.576Z",
   "total_verified_learnings": 9104,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24987,
+  "total_items": 24994,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217151,8 +217151,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "52209f10",
-      "content_hash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
+      "source_version": "fc6dfca1",
+      "content_hash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -217205,6 +217205,11 @@
           "number": 10182,
           "title": "allow BTree indexes on LargeUtf8 columns",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10380,
+          "title": "upgrade Apache HttpClient 5 to 5.6.5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217212,7 +217217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:31:12.822Z",
+      "verified_at": "2026-11-24T23:14:01.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217266,10 +217271,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "52209f10",
-      "content_hash": "52cd5b619f77acaa32524353e980473659c93a8bfb1f838f9f8b6c9bb3243ce0",
+      "source_version": "fc6dfca1",
+      "content_hash": "1897e08abee336ac54e4cfd79379cc4b67c7e8f8e2c9679e7c404c7707b16266",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:31:13.944Z"
+      "persisted_at": "2026-11-24T23:14:02.664Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -247747,10 +247752,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "52209f10",
-      "content_hash": "0a5455a506b61a8ea1da3fad9f72f97ad79b6e8d61f71c48d9da76092f3bd61a",
+      "source_version": "fc6dfca1",
+      "content_hash": "bfc899a4976983ce502524e407f96d50391ecfb770b3db0c34d192669cbf3516",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:31:13.707Z"
+      "persisted_at": "2026-11-24T23:14:02.477Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -247951,9 +247956,9 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "8698356a7b0912171b8b3969baf630cba89fd75371b9dacf5cab3e83f176f8be",
+      "content_hash": "73c5277bbac71d89bf69c26ab8a6e6cbf6ee45f6a1c023480835983b12c4d743",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:31:18.720Z"
+      "persisted_at": "2026-11-24T23:14:08.382Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings",
@@ -247975,9 +247980,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b68e4052185d7f0f2678d714d43231d2818df1ba0d2f9e366e2ec1ca23ed4b63",
+      "content_hash": "25d4f302e5f5cf801d6097f980cff8664e4df529f28c1c24d5a1a5a95a1d9ec0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:31:18.994Z"
+      "persisted_at": "2026-11-24T23:14:08.576Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -269507,8 +269512,8 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "35674719",
-      "content_hash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
+      "source_version": "e16ca5a1",
+      "content_hash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
@@ -269521,6 +269526,11 @@
           "number": 9662,
           "title": "detect in-place patch file edits in lockfile hash",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "update all non-major dependencies",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269528,7 +269538,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:29:53.591Z",
+      "verified_at": "2026-11-24T23:13:49.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269582,10 +269592,10 @@
       "relative_path": "08_VERIFICATION/vitejs-vite-verification-protocol-empirical-defect-shield-for-vitejs-vite.md",
       "title": "Verification Protocol: Empirical Defect Shield for vitejs/vite",
       "repository": "vitejs/vite",
-      "source_version": "35674719",
-      "content_hash": "3023c057cbb6055451ae3fde9b9cb5c39ce1a96d2ab44c2943eb8a1d4b0a4a91",
+      "source_version": "e16ca5a1",
+      "content_hash": "7708ec6ea9b4c0b48d3dc82a6f2746e1ce4a9e84c703808e6284e5571c053b54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:29:54.415Z"
+      "persisted_at": "2026-11-24T23:13:50.211Z"
     },
     "learn-github-tauri-apps-tauri": {
       "learning_id": "learn-github-tauri-apps-tauri",
@@ -269750,9 +269760,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vitejs-vite-learnings",
       "repository": "vitejs-vite-learnings",
       "source_version": "HEAD",
-      "content_hash": "68329b4e7f52d3397fa063f009e29e9028d27de6105a7f6849ee5fba0a8cf096",
+      "content_hash": "63b0f8059f7d5b14e811a7844a6b7608246fbb1a5acb787cee705a1d68e8cda8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:30:00.855Z"
+      "persisted_at": "2026-11-24T23:14:06.387Z"
     },
     "candidate_directive-cli-accept-an-inherited-package-version-in-the-cargo-manifest": {
       "item_id": "candidate_directive-cli-accept-an-inherited-package-version-in-the-cargo-manifest",
@@ -312870,13 +312880,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
+      "source_url": "https://github.com/dosco/deeporg",
       "source_version": "9d591e72",
-      "content_hash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "content_hash": "8ff78b5c15483f66a90038c105df38d124e687a712d133c2c2f92bfd4209ba1b",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -312901,7 +312911,7 @@
         {
           "number": 10360,
           "title": "docs(site): say the rollout guide in plain words",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -312909,7 +312919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T21:01:29.564Z",
+      "verified_at": "2026-11-24T23:13:52.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -312934,13 +312944,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
       "source_version": "9d591e72",
-      "content_hash": "ad657f4dc4c8f35f5ee442536c28151068b438a2c3c9c9564d1dc0c1bafb06ee",
+      "content_hash": "606776bd298f2382423cef7524b74b0568180bfd56e4db85977dc795e20f6e59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:01:30.561Z"
+      "persisted_at": "2026-11-24T23:13:53.943Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -313014,9 +313024,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c212a62c7160e71007b57b12b6674967e7ac84bd91d3505ee94fd5310ffd404",
+      "content_hash": "86200de956c83d99455bd4615d41c531d48bca9a3af552db6e9af87ef39eb8ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:55.888Z"
+      "persisted_at": "2026-11-24T23:14:07.442Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -320754,13 +320764,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
       "source_version": "9d591e72",
-      "content_hash": "762a3ad7bf32c330d8c803dfbe19b498f367d06f40fa2bfff855f32c3bd3dead",
+      "content_hash": "51a7aeaadfe03ea1ea21e93efc842e9dbbee1020201f917191cb270a2a0a2b89",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:01:30.228Z"
+      "persisted_at": "2026-11-24T23:13:53.588Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -321504,9 +321514,9 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c6708e0cdfe5c1a3c6f26a238f524e64a1269a9525dc5c2f5467877fabbb45f",
+      "content_hash": "3203d57f48c76eb4f4b7d216e7b281681a91672d55f735745414605b33c4697f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:41:55.555Z"
+      "persisted_at": "2026-11-24T23:14:07.064Z"
     },
     "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci": {
       "item_id": "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci",
@@ -326969,13 +326979,13 @@
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg",
       "artifact_type": "skill_playbook",
       "target_folder": "03_SKILLS",
-      "relative_path": "03_SKILLS/dosco-graphjin-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "relative_path": "03_SKILLS/dosco-deeporg-skill-operational-integration-playbook-for-dosco-deeporg.md",
       "title": "Skill: Operational & Integration Playbook for dosco/deeporg",
       "repository": "dosco/deeporg",
       "source_version": "9d591e72",
-      "content_hash": "d176efeded4fec1ec75e6278819139013f1f0d10b39c6ac130bd50fe715ea1c4",
+      "content_hash": "035ee7e36ec364d40a676f6821f4f70b7cee8e222ec82f59c09da545a354aa9b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:01:30.410Z"
+      "persisted_at": "2026-11-24T23:13:53.779Z"
     },
     "rule-10028": {
       "learning_id": "rule-10028",
@@ -327011,9 +327021,9 @@
       "title": "Skill: Operational & Integration Playbook for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc2048e7bf0bb3c1e3071aceac22498dcf97e82c9d1b4494261831687395aeeb",
+      "content_hash": "e0c9b78e459faaaac0ea4af57ded0a417b8d3333b8c7b3c25f25f34dc8783aee",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:41:55.731Z"
+      "persisted_at": "2026-11-24T23:14:07.254Z"
     },
     "rule-10029": {
       "learning_id": "rule-10029",
@@ -340541,26 +340551,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10360,
       "title": "docs(site): say the rollout guide in plain words",
-      "source_url": "https://github.com/dosco/graphjin",
+      "source_url": "https://github.com/dosco/deeporg",
       "source_version": "9d591e72",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T21:01:29.564Z"
+      "verified_at": "2026-11-24T23:13:52.861Z"
     },
     "candidate_directive-docs-site-say-the-rollout-guide-in-plain-words": {
       "item_id": "candidate_directive-docs-site-say-the-rollout-guide-in-plain-words",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KH5C-docs-site-say-the-rollout-guide-in-plain-words.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-A6C7-docs-site-say-the-rollout-guide-in-plain-words.md",
       "title": "docs(site): say the rollout guide in plain words",
-      "repository": "dosco-graphjin-learnings",
+      "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb0b795cee36b3982ddb222aa5efb98b156919a14792abc2b851ebe81d7d6f63",
+      "content_hash": "3f034d11b9789f00e559cb994b0c0009151aa5aa62e03331675295596e3a50e4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T21:02:09.373Z"
+      "persisted_at": "2026-11-24T23:14:06.876Z"
     },
     "rule-10361": {
       "learning_id": "rule-10361",
@@ -341427,6 +341437,92 @@
       "content_hash": "25d4a1e3a5b8bfb25bb57b0537ebeaf8660cf6adddc664b20e7f0ef6ac63de96",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T23:04:42.403Z"
+    },
+    "candidate_directive-update-all-non-major-dependencies": {
+      "item_id": "candidate_directive-update-all-non-major-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9T5O-update-all-non-major-dependencies.md",
+      "title": "update all non-major dependencies",
+      "repository": "vitejs/vite",
+      "source_version": "e16ca5a1",
+      "content_hash": "46a4cb193d2d3e656ba9ffb3e0fafa08b1d1307ce9cb0d317e49102a4eb0d4bb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T23:13:49.789Z"
+    },
+    "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-architecture-intelligence-vitejs-vite-core-invariants.md",
+      "title": "Architecture Intelligence: vitejs/vite Core Invariants",
+      "repository": "vitejs/vite",
+      "source_version": "e16ca5a1",
+      "content_hash": "7b24c025f0cb2f1c5b8ef9199d7fa1088e1bddb108eb30ff824c78fb2d3a4c41",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T23:13:49.990Z"
+    },
+    "rule-10380": {
+      "learning_id": "rule-10380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10380,
+      "title": "upgrade Apache HttpClient 5 to 5.6.5",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "fc6dfca1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:14:01.710Z"
+    },
+    "candidate_directive-upgrade-apache-httpclient-5-to-5-6-5": {
+      "item_id": "candidate_directive-upgrade-apache-httpclient-5-to-5-6-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A2RW-upgrade-apache-httpclient-5-to-5-6-5.md",
+      "title": "upgrade Apache HttpClient 5 to 5.6.5",
+      "repository": "lancedb/lancedb",
+      "source_version": "fc6dfca1",
+      "content_hash": "1b37355b8d60f867ce186a693f02235469885c811072eda29386b7357024851a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:14:02.258Z"
+    },
+    "candidate_directive-deps-update-all-non-major-dependencies": {
+      "item_id": "candidate_directive-deps-update-all-non-major-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A5MG-deps-update-all-non-major-dependencies.md",
+      "title": "deps): update all non-major dependencies",
+      "repository": "vitejs-vite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3ddd534314f60c46243bf359b591e3e5b907196e0d16125f335ba9413f315d02",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T23:14:05.945Z"
+    },
+    "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-learnings-architecture-intelligence-vitejs-vite-learnings-core-invar.md",
+      "title": "Architecture Intelligence: vitejs-vite-learnings Core Invariants",
+      "repository": "vitejs-vite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2986f182cd4feaa0a5b06427437d42e91fdfcdd4f5abd314950e9a2989a8590",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T23:14:06.199Z"
+    },
+    "candidate_directive-java-upgrade-apache-httpclient-5-to-5-6-5": {
+      "item_id": "candidate_directive-java-upgrade-apache-httpclient-5-to-5-6-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A7CT-java-upgrade-apache-httpclient-5-to-5-6-5.md",
+      "title": "java): upgrade Apache HttpClient 5 to 5.6.5",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56310af6320dcb3c77193ebc5f606a3872d681d86fd7bfa73f40a45648f02ab0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:14:08.194Z"
     }
   },
   "ai-builder-brain": {

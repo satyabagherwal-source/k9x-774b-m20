@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:04:37.091Z",
-  "total_cycles_completed": 12194,
-  "total_learnings_persisted": 12194,
-  "total_rules_promoted": 11248,
+  "last_updated": "2026-11-24T23:14:01.988Z",
+  "total_cycles_completed": 12197,
+  "total_learnings_persisted": 12197,
+  "total_rules_promoted": 11251,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:46:13.287Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:46:18.056Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:46:25.667Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:55:13.396Z",
       "repository": "meshery/meshery",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T23:04:37.091Z",
       "repository": "zilliztech/claude-context",
       "learningId": "learn-github-zilliztech-claude-context",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:13:49.525Z",
+      "repository": "vitejs/vite",
+      "learningId": "learn-github-vitejs-vite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:13:53.111Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:14:01.988Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

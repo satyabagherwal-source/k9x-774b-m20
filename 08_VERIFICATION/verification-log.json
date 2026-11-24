@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-D78I",
-    "timestamp": "2026-11-23T07:37:00.642Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-NGBX",
-    "timestamp": "2026-11-23T07:44:58.989Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-NM7A",
-    "timestamp": "2026-11-23T07:45:06.598Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-NNWI",
     "timestamp": "2026-11-23T07:45:08.802Z",
     "repository": "saltstack/salt",
@@ -7490,6 +7445,51 @@
     "repository": "zilliztech/claude-context",
     "learningId": "learn-github-zilliztech-claude-context",
     "contentHash": "3586ad5e4b12cd45e25ae9812f48575e0d1e1c8bca45102307e757d199ff91ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-9SY3",
+    "timestamp": "2026-11-24T23:13:49.515Z",
+    "repository": "vitejs/vite",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-9VPP",
+    "timestamp": "2026-11-24T23:13:53.101Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "8ff78b5c15483f66a90038c105df38d124e687a712d133c2c2f92bfd4209ba1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-A2KA",
+    "timestamp": "2026-11-24T23:14:01.978Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

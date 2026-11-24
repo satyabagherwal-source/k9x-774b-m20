@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T23:04:40.412Z",
-    "lastVerified": "2026-11-24T23:04:40.412Z",
+    "lastChecked": "2026-11-24T23:14:05.380Z",
+    "lastVerified": "2026-11-24T23:14:05.380Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:30:15.959Z",
-    "lastVerified": "2026-11-24T22:30:15.959Z",
+    "lastChecked": "2026-11-24T23:13:55.029Z",
+    "lastVerified": "2026-11-24T23:13:55.029Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1675,9 +1675,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-24T18:25:57.474Z",
+    "lastChecked": "2026-11-24T23:13:49.808Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-24T18:25:57.474Z"
+    "lastVerified": "2026-11-24T23:13:49.808Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2045,14 +2045,14 @@
     "officialUrl": "https://github.com/lancedb/lancedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T02:31:11.742Z",
-    "lastVerified": "2026-11-24T02:31:11.742Z",
+    "lastChecked": "2026-11-24T23:14:00.773Z",
+    "lastVerified": "2026-11-24T23:14:00.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
+    "contentHash": "9f634c724810c92deb7a5f2556aa894df22d5d5c96816c84ddf0fd161be8d782",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7120,9 +7120,9 @@
   "tangshimin-mujing": {
     "name": "MuJing",
     "officialUrl": "https://github.com/tangshimin/MuJing",
-    "lastChecked": "2026-11-22T08:22:36.534Z",
+    "lastChecked": "2026-11-24T23:13:44.725Z",
     "revisionIdentifier": "9ca8c14e",
-    "lastVerified": "2026-11-22T08:22:36.534Z"
+    "lastVerified": "2026-11-24T23:13:44.725Z"
   },
   "envoyproxy-envoy": {
     "name": "envoyproxy/envoy",
@@ -7713,9 +7713,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-23T20:21:50.389Z",
+    "lastChecked": "2026-11-24T23:13:39.822Z",
     "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-23T20:21:50.389Z"
+    "lastVerified": "2026-11-24T23:13:39.822Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -11616,14 +11616,14 @@
     "officialUrl": "https://github.com/vitejs/vite",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T23:29:52.672Z",
-    "lastVerified": "2026-11-20T23:29:52.672Z",
+    "lastChecked": "2026-11-24T23:13:48.395Z",
+    "lastVerified": "2026-11-24T23:13:48.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vitejs-vite",
-    "contentHash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
+    "contentHash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11900,14 +11900,14 @@
     "officialUrl": "https://github.com/dosco/deeporg",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T03:41:44.263Z",
-    "lastVerified": "2026-11-24T03:41:44.263Z",
+    "lastChecked": "2026-11-24T23:13:52.256Z",
+    "lastVerified": "2026-11-24T23:13:52.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
+    "contentHash": "8ff78b5c15483f66a90038c105df38d124e687a712d133c2c2f92bfd4209ba1b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

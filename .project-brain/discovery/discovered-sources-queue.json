@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T23:04:41.786Z",
+  "updated_at": "2026-11-24T23:14:07.926Z",
   "stats": {
-    "total_discovered": 8978,
-    "approved_pending_harvest": 8500,
+    "total_discovered": 8982,
+    "approved_pending_harvest": 8504,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
@@ -13,7 +13,7 @@
       "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 46,
+      "SECURITY_ADVISORIES": 50,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -194197,6 +194197,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
         "fileName": "zilliztech-claude-context-learnings.md"
+      }
+    },
+    "SRC-5398798C6801": {
+      "id": "SRC-5398798C6801",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-64607",
+      "title": "https://www.cve.org/CVERecord?id=CVE-2026-64607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:14:07.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-43B888534476": {
+      "id": "SRC-43B888534476",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-71290",
+      "title": "https://www.cve.org/CVERecord?id=CVE-2026-71290",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:14:07.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-3D0F0E18B2C3": {
+      "id": "SRC-3D0F0E18B2C3",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-64607",
+      "title": "Vulnerability Advisory CVE-2026-64607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:14:07.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-10BB4BE16F98": {
+      "id": "SRC-10BB4BE16F98",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-71290",
+      "title": "Vulnerability Advisory CVE-2026-71290",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:14:07.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
       }
     }
   }
