@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "92416031",
+    "sourceVersion": "063f358d",
     "license": "Apache-2.0",
-    "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
-    "lastHarvestedAt": "2026-11-20T01:12:44.890Z",
+    "contentHash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
+    "lastHarvestedAt": "2026-11-24T23:50:57.783Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "32ba4b5c",
+    "sourceVersion": "3db63451",
     "license": "AGPL-3.0",
-    "contentHash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
-    "lastHarvestedAt": "2026-11-24T03:22:43.059Z",
+    "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
+    "lastHarvestedAt": "2026-11-24T23:51:03.471Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -10043,10 +10043,10 @@
     "repository": "parcel-bundler/parcel",
     "platform": "github",
     "sourceUrl": "https://github.com/parcel-bundler/parcel",
-    "sourceVersion": "c0396a56",
+    "sourceVersion": "63a71c9c",
     "license": "MIT",
-    "contentHash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
-    "lastHarvestedAt": "2026-11-21T00:11:27.717Z",
+    "contentHash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
+    "lastHarvestedAt": "2026-11-24T23:50:54.167Z",
     "learningId": "learn-github-parcel-bundler-parcel"
   },
   "tanstack-query": {

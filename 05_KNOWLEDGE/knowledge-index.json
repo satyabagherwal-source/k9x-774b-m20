@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T23:42:00.639Z",
+  "last_updated": "2026-11-24T23:51:10.652Z",
   "total_verified_learnings": 9105,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25019,
+  "total_items": 25024,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218255,8 +218255,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "32ba4b5c",
-      "content_hash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
+      "source_version": "3db63451",
+      "content_hash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -218304,6 +218304,11 @@
           "number": 10186,
           "title": "migrate Rust test fixtures to V2 syntax",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10390,
+          "title": "Synchronize resource cleanup on abort",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218311,7 +218316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:22:42.851Z",
+      "verified_at": "2026-11-24T23:51:03.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218353,10 +218358,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-technical-construction-intelligence-paradedb-paradedb-core-inv.md",
       "title": "Technical Construction Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "98188786",
-      "content_hash": "86618b71f49dd0713f785b80778ebf66e4f144e9093e721a072549353f00f9dd",
+      "source_version": "3db63451",
+      "content_hash": "336990c6ecd4da59e9838adc5c692b699f3b7f369a72b358e76d9e5ca8595e47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:38:05.261Z"
+      "persisted_at": "2026-11-24T23:51:04.026Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb",
@@ -218365,10 +218370,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "32ba4b5c",
-      "content_hash": "59e8286d8a79a616be80994c53bf3942f5bda18ff09429504632b05eb218762c",
+      "source_version": "3db63451",
+      "content_hash": "42eb3dd277dd63ad3159ec0ed88942855acfbe243d874ea89ad2c8eb21120f11",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:22:43.643Z"
+      "persisted_at": "2026-11-24T23:51:04.257Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -255240,8 +255245,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "92416031",
-      "content_hash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
+      "source_version": "063f358d",
+      "content_hash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -255271,7 +255276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T01:12:44.707Z",
+      "verified_at": "2026-11-24T23:50:57.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255313,10 +255318,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "repository": "clastix/kamaji",
-      "source_version": "92416031",
-      "content_hash": "e7f2ffd1671c278d526d5d08aef33523e33ddb5489f529d73139ee27443f254e",
+      "source_version": "063f358d",
+      "content_hash": "e46cb33eeb96fd67e1bbd92cd557e30f96f9ebe3967f84c7f3854e7f3f458267",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T01:12:45.200Z"
+      "persisted_at": "2026-11-24T23:50:58.407Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji",
@@ -255325,10 +255330,10 @@
       "relative_path": "08_VERIFICATION/clastix-kamaji-verification-protocol-empirical-defect-shield-for-clastix-kamaji.md",
       "title": "Verification Protocol: Empirical Defect Shield for clastix/kamaji",
       "repository": "clastix/kamaji",
-      "source_version": "92416031",
-      "content_hash": "f3195001744fc4da3ed7d5e3416adc29a0ef350d77a50dc7cf461e85b0d93290",
+      "source_version": "063f358d",
+      "content_hash": "2d37bad474a8647d35b36c461f8ecc294d1f2048a5085322c8dbdf1d9add9e80",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:12:45.329Z"
+      "persisted_at": "2026-11-24T23:50:58.671Z"
     },
     "candidate_directive-datastore-exclusive-etcd-datastore": {
       "item_id": "candidate_directive-datastore-exclusive-etcd-datastore",
@@ -255350,9 +255355,9 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "71bbd11b59db6d4615c7a073ee5fdbf2a6f6aaff11fb39425179cd5482050492",
+      "content_hash": "cfda9230f8db01d685a8e641506419daaf4ae75b75f361c36ddacb56da7281bb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T01:12:48.416Z"
+      "persisted_at": "2026-11-24T23:51:08.988Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings",
@@ -255362,9 +255367,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clastix-kamaji-learnings",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "24b67993ee2cfe096ef6461e156727863b21d8c0a55b836a4bc2755720ad63dd",
+      "content_hash": "d4aba4c82f197f895e21ef4dc92967d284252054b8463337e9274e60b5fcf189",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:12:48.567Z"
+      "persisted_at": "2026-11-24T23:51:09.224Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -264207,9 +264212,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for paradedb-paradedb-learnings",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "897cb40b4b07bde1080535a9c93a45b4d665558084e296f1d1d74cc090b0e575",
+      "content_hash": "c584bbeef9522e03331c7875c0745042e46188b8d51c726facd3b24fa0220e7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:23:15.830Z"
+      "persisted_at": "2026-11-24T23:51:10.652Z"
     },
     "rule-8794": {
       "learning_id": "rule-8794",
@@ -300757,9 +300762,9 @@
       "title": "Technical Construction Intelligence: paradedb-paradedb-learnings Core Invariants",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7cd6f377f7fb4e1709d139a72a83a4b2de2ed049ed144ef50aeca09a319b7a55",
+      "content_hash": "adfa7fe6698eb131ee7ff62f5625197ed082cf908c2539de729d277da1172309",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:43:23.663Z"
+      "persisted_at": "2026-11-24T23:51:10.410Z"
     },
     "rule-9422": {
       "learning_id": "rule-9422",
@@ -312225,8 +312230,8 @@
       "slug": "parcel-bundler-parcel",
       "platform": "github",
       "source_url": "https://github.com/parcel-bundler/parcel",
-      "source_version": "c0396a56",
-      "content_hash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
+      "source_version": "63a71c9c",
+      "content_hash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
       "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "promoted_rules": [
@@ -312244,6 +312249,11 @@
           "number": 9671,
           "title": "Chunked Zero-Copy Text Arena for High-Throughput Aggregation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10389,
+          "title": "filename/dirname handling in JS plugin runtime",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -312251,7 +312261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:11:27.413Z",
+      "verified_at": "2026-11-24T23:50:53.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -312345,10 +312355,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-technical-construction-intelligence-parcel-bundler-parcel-.md",
       "title": "Technical Construction Intelligence: parcel-bundler/parcel Core Invariants",
       "repository": "parcel-bundler/parcel",
-      "source_version": "c0396a56",
-      "content_hash": "8591d8a78ad9a9ed80667195b25afbe84559ea192901f6c17fadcfc1dc4c4b84",
+      "source_version": "63a71c9c",
+      "content_hash": "e491aed1cbba77c7a918d1424f7c447f9975b18260c269f8ac5475161cf2ee7d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:11:28.633Z"
+      "persisted_at": "2026-11-24T23:50:54.744Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel",
@@ -312357,10 +312367,10 @@
       "relative_path": "08_VERIFICATION/parcel-bundler-parcel-verification-protocol-empirical-defect-shield-for-parcel-b.md",
       "title": "Verification Protocol: Empirical Defect Shield for parcel-bundler/parcel",
       "repository": "parcel-bundler/parcel",
-      "source_version": "c0396a56",
-      "content_hash": "07ead108bba31bd0d7cda0764d077398bafde4edc329b4636343127c01e6abf3",
+      "source_version": "63a71c9c",
+      "content_hash": "756a094211985acbdb6bc1a1964bf27a53fb0d16a12880ce5a160583cf5dd447",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:11:28.880Z"
+      "persisted_at": "2026-11-24T23:50:54.974Z"
     },
     "rule-9672": {
       "learning_id": "rule-9672",
@@ -312472,9 +312482,9 @@
       "title": "Technical Construction Intelligence: parcel-bundler-parcel-learnings Core Invariants",
       "repository": "parcel-bundler-parcel-learnings",
       "source_version": "HEAD",
-      "content_hash": "616bc3653b743fee4e0d4139ee4e294e2393922b9c130a754ab572835ffcca26",
+      "content_hash": "defdeac774fd9109c415848aedd204c5c95654499c1aecc487049e3bdc9b0085",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:13:23.660Z"
+      "persisted_at": "2026-11-24T23:51:07.950Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel-learning",
@@ -312484,9 +312494,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for parcel-bundler-parcel-learnings",
       "repository": "parcel-bundler-parcel-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d334b5130aa811b80509b739c589417ddc6ea86f54147c81b221ea4914a7448",
+      "content_hash": "53063272f3389e94793ea8e7fbe505450405fc26be169fd16bf6356925d18b00",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:13:23.908Z"
+      "persisted_at": "2026-11-24T23:51:08.178Z"
     },
     "rule-9675": {
       "learning_id": "rule-9675",
@@ -341887,6 +341897,70 @@
       "content_hash": "56d068c51585badf9f404c43e86b00c6d11a296f43a9920712e0d33c71466bbe",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T23:41:59.292Z"
+    },
+    "rule-10389": {
+      "learning_id": "rule-10389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10389,
+      "title": "filename/dirname handling in JS plugin runtime",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "63a71c9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:50:53.883Z"
+    },
+    "candidate_directive-filename-dirname-handling-in-js-plugin-runtime": {
+      "item_id": "candidate_directive-filename-dirname-handling-in-js-plugin-runtime",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LRXX-filename-dirname-handling-in-js-plugin-runtime.md",
+      "title": "filename/dirname handling in JS plugin runtime",
+      "repository": "parcel-bundler-parcel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97e5d68f9f62a4eabd409a502e9504ad66daef4510d0f7227f000713c52cea19",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:51:07.709Z"
+    },
+    "candidate_directive-docs-guides-run-tenant-control-planes-under-the-restricted-pod-security-standa": {
+      "item_id": "candidate_directive-docs-guides-run-tenant-control-planes-under-the-restricted-pod-security-standa",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LSR1-docs-guides-run-tenant-control-planes-under-the-restricted-pod-security-standa.md",
+      "title": "docs(guides): run tenant control planes under the restricted pod security standa",
+      "repository": "clastix-kamaji-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9eba238856820fa62a43477a86cf37d3dfa7d2dd1d2e6bfc9b541c501ef0a6be",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T23:51:08.750Z"
+    },
+    "rule-10390": {
+      "learning_id": "rule-10390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10390,
+      "title": "Synchronize resource cleanup on abort",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "3db63451",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:51:03.204Z"
+    },
+    "candidate_directive-synchronize-resource-cleanup-on-abort": {
+      "item_id": "candidate_directive-synchronize-resource-cleanup-on-abort",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LTUN-synchronize-resource-cleanup-on-abort.md",
+      "title": "Synchronize resource cleanup on abort",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd2d3371daadb62009d95bf322922d24b5a75ea9117da118635d99b6a5c01547",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:51:10.181Z"
     }
   },
   "ai-builder-brain": {

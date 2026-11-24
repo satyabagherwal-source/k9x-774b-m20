@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T23:41:57.707Z",
-    "lastVerified": "2026-11-24T23:41:57.707Z",
+    "lastChecked": "2026-11-24T23:51:07.015Z",
+    "lastVerified": "2026-11-24T23:51:07.015Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T23:13:55.029Z",
-    "lastVerified": "2026-11-24T23:13:55.029Z",
+    "lastChecked": "2026-11-24T23:51:01.052Z",
+    "lastVerified": "2026-11-24T23:51:01.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2026,12 +2026,12 @@
     "revisionIdentifier": "5f12fdd2"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T19:00:38.028Z",
-    "lastVerified": "2026-11-24T19:00:38.028Z",
+    "lastChecked": "2026-11-24T23:50:56.077Z",
+    "lastVerified": "2026-11-24T23:50:56.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2040,7 +2040,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "12d12a40"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2399,14 +2400,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T03:22:41.984Z",
-    "lastVerified": "2026-11-24T03:22:41.984Z",
+    "lastChecked": "2026-11-24T23:51:02.086Z",
+    "lastVerified": "2026-11-24T23:51:02.086Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
+    "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4669,22 +4670,21 @@
     "lastVerified": "2026-11-24T16:45:56.000Z"
   },
   "clastix-kamaji": {
-    "name": "kamaji",
+    "name": "clastix/kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T04:28:49.344Z",
-    "lastVerified": "2026-11-24T04:28:49.344Z",
+    "lastChecked": "2026-11-24T23:50:57.113Z",
+    "lastVerified": "2026-11-24T23:50:57.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "92416031"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -7413,9 +7413,9 @@
   "hasaneyldrm-exercises-dataset": {
     "name": "exercises-dataset",
     "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
-    "lastChecked": "2026-11-22T09:35:11.690Z",
+    "lastChecked": "2026-11-24T23:50:50.898Z",
     "revisionIdentifier": "7455efae",
-    "lastVerified": "2026-11-22T09:35:11.690Z"
+    "lastVerified": "2026-11-24T23:50:50.898Z"
   },
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
@@ -7952,9 +7952,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-23T20:47:38.874Z",
+    "lastChecked": "2026-11-24T23:50:45.900Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-23T20:47:38.874Z"
+    "lastVerified": "2026-11-24T23:50:45.900Z"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
     "name": "Qwen-Image-2.1-Turbo",
@@ -11735,14 +11735,14 @@
     "officialUrl": "https://github.com/parcel-bundler/parcel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T00:08:53.410Z",
-    "lastVerified": "2026-11-21T00:08:53.410Z",
+    "lastChecked": "2026-11-24T23:50:52.616Z",
+    "lastVerified": "2026-11-24T23:50:52.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-parcel-bundler-parcel",
-    "contentHash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

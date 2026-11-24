@@ -12881,3 +12881,6 @@ Every entry in this ledger must capture:
 | `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `ce7030fd` | Multi-dimensional audit evidence | 2026-11-24T23:33:26.037Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ad7c0f73` | Multi-dimensional audit evidence | 2026-11-24T23:41:53.286Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `28ed7681` | Multi-dimensional audit evidence | 2026-11-24T23:41:54.476Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `63a71c9c` | Multi-dimensional audit evidence | 2026-11-24T23:50:54.167Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `063f358d` | Multi-dimensional audit evidence | 2026-11-24T23:50:57.783Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `3db63451` | Multi-dimensional audit evidence | 2026-11-24T23:51:03.471Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:42:00.178Z",
+  "last_updated": "2026-11-24T23:51:10.181Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57914,6 +57914,66 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BDB725-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-LRXX",
+      "directive_title": "filename/dirname handling in JS plugin runtime",
+      "source_repo": "parcel-bundler-parcel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LRXX-filename-dirname-handling-in-js-plugin-runtime.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-LSR1",
+      "directive_title": "docs(guides): run tenant control planes under the restricted pod security standa",
+      "source_repo": "clastix-kamaji-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LSR1-docs-guides-run-tenant-control-planes-under-the-restricted-pod-security-standa.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LTUN",
+      "directive_title": "Synchronize resource cleanup on abort",
+      "source_repo": "paradedb-paradedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LTUN-synchronize-resource-cleanup-on-abort.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C32FEE",
+      "directive_title": "filename/dirname handling in JS plugin runtime",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "parcel-bundler-parcel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C32FEE-filename-dirname-handling-in-js-plugin-r.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-78FD01",
+      "directive_title": "docs(guides): run tenant control planes under the restricted pod security standa",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clastix-kamaji",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-78FD01-docs-guides-run-tenant-control-planes-un.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-743B56",
+      "directive_title": "Synchronize resource cleanup on abort",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "paradedb-paradedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-743B56-synchronize-resource-cleanup-on-abort.md",
       "staged_date": "2026-11-24"
     }
   ]

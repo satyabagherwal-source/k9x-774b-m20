@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:42:00.337Z",
+  "last_updated": "2026-11-24T23:51:10.410Z",
   "total_records": 2598,
   "domains": {
     "A": {
@@ -11692,8 +11692,8 @@
       "title": "Technical Construction Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-technical-construction-intelligence-paradedb-paradedb-core-inv.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "86618b71f49dd0713f785b80778ebf66e4f144e9093e721a072549353f00f9dd",
-      "created_at": "2026-11-19T17:38:05.261Z"
+      "content_hash": "336990c6ecd4da59e9838adc5c692b699f3b7f369a72b358e76d9e5ca8595e47",
+      "created_at": "2026-11-24T23:51:04.026Z"
     },
     "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants",
@@ -23520,8 +23520,8 @@
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "repository": "clastix/kamaji",
-      "content_hash": "e7f2ffd1671c278d526d5d08aef33523e33ddb5489f529d73139ee27443f254e",
-      "created_at": "2026-11-20T01:12:45.200Z"
+      "content_hash": "e46cb33eeb96fd67e1bbd92cd557e30f96f9ebe3967f84c7f3854e7f3f458267",
+      "created_at": "2026-11-24T23:50:58.407Z"
     },
     "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
@@ -23529,8 +23529,8 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-learnings-architecture-intelligence-clastix-kamaji-learnings-core.md",
       "repository": "clastix-kamaji-learnings",
-      "content_hash": "71bbd11b59db6d4615c7a073ee5fdbf2a6f6aaff11fb39425179cd5482050492",
-      "created_at": "2026-11-20T01:12:48.416Z"
+      "content_hash": "cfda9230f8db01d685a8e641506419daaf4ae75b75f361c36ddacb56da7281bb",
+      "created_at": "2026-11-24T23:51:08.988Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -34310,8 +34310,8 @@
       "title": "Technical Construction Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-learnings-technical-construction-intelligence-paradedb-paraded.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "7cd6f377f7fb4e1709d139a72a83a4b2de2ed049ed144ef50aeca09a319b7a55",
-      "created_at": "2026-11-19T17:43:23.663Z"
+      "content_hash": "adfa7fe6698eb131ee7ff62f5625197ed082cf908c2539de729d277da1172309",
+      "created_at": "2026-11-24T23:51:10.410Z"
     },
     "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants",
@@ -37336,8 +37336,8 @@
       "title": "Technical Construction Intelligence: parcel-bundler/parcel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-technical-construction-intelligence-parcel-bundler-parcel-.md",
       "repository": "parcel-bundler/parcel",
-      "content_hash": "8591d8a78ad9a9ed80667195b25afbe84559ea192901f6c17fadcfc1dc4c4b84",
-      "created_at": "2026-11-21T00:11:28.633Z"
+      "content_hash": "e491aed1cbba77c7a918d1424f7c447f9975b18260c269f8ac5475161cf2ee7d",
+      "created_at": "2026-11-24T23:50:54.744Z"
     },
     "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants",
@@ -37431,8 +37431,8 @@
       "title": "Technical Construction Intelligence: parcel-bundler-parcel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-learnings-technical-construction-intelligence-parcel-bundl.md",
       "repository": "parcel-bundler-parcel-learnings",
-      "content_hash": "616bc3653b743fee4e0d4139ee4e294e2393922b9c130a754ab572835ffcca26",
-      "created_at": "2026-11-21T00:13:23.660Z"
+      "content_hash": "defdeac774fd9109c415848aedd204c5c95654499c1aecc487049e3bdc9b0085",
+      "created_at": "2026-11-24T23:51:07.950Z"
     },
     "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",

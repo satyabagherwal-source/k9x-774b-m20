@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `32ba4b5c`  
+> **Source Version**: `3db63451`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:22:41.990Z  
+> **Timestamp**: 2026-11-24T23:51:02.094Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:22:41.984Z  
+> **Harvest Timestamp**: 2026-11-24T23:51:02.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9560 stars
+- **Stars / Engagement**: 9563 stars
 
 ---
 
@@ -57,8 +57,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use std::cell::{OnceCell, UnsafeCell};
+use std::cell::{OnceCell, RefCell, UnsafeCell};
 use std::collections::BTreeMap;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::api::{FieldName, HashMap, OrderByFeature, OrderByInfo, Varno};
@@ -74,6 +75,7 @@ use crate::postgres::customscan::basescan::projections::window_agg::WindowAggreg
 use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
 use crate::postgres::customscan::bitmap_intersection::BitmapExec;
 use crate::postgres::customscan::builders::custom_path::ExecMethodType;
+use crate::postgres::customscan::mpp::interrupt::{PgTokioRuntime, PgTokioRuntimeShutdownHandle};
 use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
 use crate::postgres::customscan::qual_inspect::Qual;
 use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
@@ -107,6 +109,10 @@ pub struct BaseScanState {
     pub telemetry: ScanTelemetry,
     /// Set when this scan is parallel-aware (DSM attached).
     pub parallel: Option<ParallelScanHandle>,
+    /// Shared slot populated with this scan's [`PgTokioRuntimeShutdownHandle`] while an async exec
+    /// method (`TopKScanExecState` or `ColumnarExecState`) holds a `PgTokioRuntime` under a `Gather`
+    /// DSM segment, so `on_basescan_dsm_detach` shuts down only this scan's runtime on abort.
+    dsm_runtime_shutdown: Option<Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>>>,
     /// Workers wait for the leader to publish this plan when they first need it.
     pub vector_routing_plan: Option<Arc<SharedVectorRouting>>,
     pub vector_routing_pending: bool,
@@ -217,6 +223,26 @@ impl CustomScanState for BaseScanState {
 }
 
 impl BaseScanState {
+    pub(super) fn alloc_dsm_runtime_shutdown_slot(
+        &mut self,
+    ) -> Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>> {
+        let slot = Rc::new(RefCell::new(None));
+        self.dsm_runtime_shutdown = Some(Rc::clone(&slot));
+        slot
+    }
+
+    pub(super) fn register_runtime_for_dsm_detach(&self, runtime: &PgTokioRuntime) {
+        if let Some(slot) = &self.dsm_runtime_shutdown {
+            *slot.borrow_mut() = Some(runtime.shutdown_handle());
+        }
+    }
+
+    pub(super) fn clear_runtime_for_dsm_detach(&self) {
+        if let Some(slot) = &self.dsm_runtime_shutdown {
+            *slot.borrow_mut() = None;
+        }
+    }
+
     pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
         self.lockmode = lockmode;
         if self.heaprel.is_none() {
@@ -231,36 +257,7 @@ impl BaseScanState {
             self.indexrel = if lockmode == pg_sys::NoLock as pg_sys::LOCKMODE {
                 Some(PgSearchRelation::open(self.indexrelid))
             } else {
-                Some(PgSearchRelation::with_lock(self.indexrelid, lockmode))
-            }
-        };
-    }
-
-    pub fn set_base_search_query_input(&mut self, input: Arc<SearchQueryInput>) {
-        self.base_search_query_input = input;
-    }
-
-    pub fn search_query_input(&self) -> Arc<SearchQueryInput> {
-        if matches!(*self.search_query_input, SearchQueryInput::Uninitialized) {
-            panic!("search_query_input should be initialized");
-        }
-        self.search_query_input.clone()
-    }
-
-    /// Get the original base search query input before any modifications
-    pub fn base_search_query_input(&self) -> Arc<SearchQueryInput> {
-        self.base_search_query_input.clone()
-    }
-
-    /// Drop the active search results (whose scorers hold bitmap cursors),
-    /// keeping the selected exec method: `reset()` re-binds it to the rebuilt
-    /// reader after a rescan. Replacing the method here would leave the
-    /// default `UnknownScanStyle`, which panics on its next use. No reader means
-    /// the scan never executed: there are no scorers, and the exec method may
-    /// not even be bound yet.
-    pub fn reset_exec_results(&mut self) {
-        if self.search_reader.is_some() {
-            
+                Some(PgSearchRelation::with_lock(self.indexrelid
 ```
 
 ### Core Architecture Module: `benchmarks/src/utils.rs`
@@ -449,22 +446,28 @@ enum TocKeys {
     WalUsage = 0xE000_0000_0000_000A,
 }
 
-pub struct WorkerStatsGuard {
+/// Flushes parallel worker buffer/WAL instrumentation into DSM via `InstrEndParallelQuery`.
+///
+/// Intentionally does NOT implement `Drop`: [`run_parallel_worker`] invokes [`Self::finish`]
+/// explicitly on normal worker completion while the backing DSM segment is guaranteed mapped.
+pub(crate) struct WorkerStatsGuard {
     buf_usage: *mut pg_sys::BufferUsage,
     wal_usage: *mut pg_sys::WalUsage,
     worker_idx: usize,
 }
 
-crate::impl_safe_drop!(WorkerStatsGuard, |self| {
-    if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
-        unsafe {
-            pg_sys::InstrEndParallelQuery(
-                self.buf_usage.add(self.worker_idx),
-                self.wal_usage.add(self.worker_idx),
-            );
+impl WorkerStatsGuard {
+    pub(crate) unsafe fn finish(self) {
+        if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
+            unsafe {
+                pg_sys::InstrEndParallelQuery(
+                    self.buf_usage.add(self.worker_idx),
+                    self.wal_usage.add(self.worker_idx),
+                );
+            }
         }
     }
-});
+}
 
 impl From<TocKeys> for u64 {
     fn from(key: TocKeys) -> Self {
@@ -698,15 +701,7 @@ impl Display for ValueError {
 }
 
 impl ParallelStateManager {
-    pub fn new(toc: *mut pg_sys::shm_toc, seg: *mut pg_sys::dsm_segment) -> Self {
-        assert!(!toc.is_null());
-        unsafe {
-            let ptr = pg_sys::shm_toc_lookup(toc, TocKeys::UserStateLength.into(), true);
-            let len = *ptr.cast();
-
-            Self {
-                toc: NonNull::new(toc).unwrap_unchecked(),
-                len,
+    pub fn new
 ```
 
 ### Core Architecture Module: `common/src/parallel_worker/mqueue.rs`
@@ -733,17 +728,19 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::ptr::NonNull;
 
+/// Owns a PostgreSQL `shm_mq_handle` attached to a parallel DSM segment.
+///
+/// Intentionally does NOT implement `Drop`: on normal completion, the owning lifecycle step
+/// (`ParallelProcessLauncher::destroy` on the leader, or `MessageQueueSender::finish` via
+/// `run_parallel_worker` on a worker) calls [`Self::detach`] while the backing DSM segment is
+/// guaranteed mapped. On any abnormal `ereport(ERROR)` / panic unwind / subtransaction abort,
+/// PostgreSQL's own `shm_mq_detach_callback` (registered by `shm_mq_attach`) detaches the queue
+/// before unmapping the DSM; calling `shm_mq_detach` later from a `MemoryContextCallback` / `Drop`
+/// after `AtEOSubXact_Parallel` would dereference unmapped shared memory (even when
+/// `IsInParallelMode()` is still `true` due to an enclosing outer `Gather`).
 struct MessageQueueHandle {
     handle: NonNull<pg_sys::shm_mq_handle>,
 }
-
-crate::impl_safe_drop!(MessageQueueHandle, |self| {
-    unsafe {
-        if pg_sys::IsInParallelMode() {
-            pg_sys::shm_mq_detach(self.handle.as_ptr());
-        }
-    }
-});
 
 impl MessageQueueHandle {
     unsafe fn attach_sender(seg: *mut pg_sys::dsm_segment, mq: *mut pg_sys::shm_mq) -> Self {
@@ -771,6 +768,17 @@ impl MessageQueueHandle {
 
     fn as_ptr(&self) -> *mut pg_sys::shm_mq_handle {
         self.handle.as_ptr()
+    }
+
+    /// Explicitly detaches this handle while its backing DSM segment is still mapped.
+    ///
+    /// # Safety
+    /// The DSM segment passed to `attach_sender` / `attach_receiver` must still be attached in
+    /// the current backend.
+    unsafe fn detach(self) {
+        unsafe {
+            pg_sys::shm_mq_detach(self.handle.as_ptr());
+        }
     }
 }
 
@@ -804,15 +812,11 @@ impl From<pg_sys::shm_mq_result::Type> for MessageQueueSendError {
 }
 
 pub struct MessageQueueSender {
-    // Declared before `handle` so Rust's field drop order runs `WorkerStatsGuard::drop`
-    // (`InstrEndParallelQuery`) before `MessageQueueHandle::drop` detaches the `shm_mq` and
-    // unblocks `ParallelProcessFinish::recv()` on the leader.
-    _stats: Option<crate::parallel_worker::WorkerStatsGuard>,
+    stats: Option<crate::parallel_worker::WorkerStatsGuard>,
     handle: MessageQueueHandle,
 }
 
 impl MessageQueueSender {
-    #[doc(hidden)]
     pub(crate) unsafe fn new(
         seg: *mut pg_sys::dsm_segment,
         mq: *mut pg_sys::shm_mq,
@@ -820,10 +824,23 @@ impl MessageQueueSender {
     ) -> Self {
         unsafe {
             Self {
-                _stats: stats,
+                stats,
                 handle: MessageQueueHandle::attach_sender(seg, mq),
             }
         }
+    }
+
+    /// Flushes parallel worker buffer/WAL stats (`InstrEndParallelQuery`) into DSM and then
+    /// detaches the completion queue so `ParallelProcessFinish::recv()` on the leader unblocks
+    /// only after stats are written.
+    ///
+    /// # Safety
+    /// Must be called on normal worker completion while the backing DSM segment is still mapped.
+    pub(crate) unsafe fn finish(self) {
+        if let Some(stats) = self.stats {
+            unsafe { stats.finish() };
+        }
+        unsafe { self.handle.detach() };
     }
 
     pub fn send<B: AsRef<[u8]>>(&self, msg: B) -> Result<(), MessageQueueSendError> {
@@ -909,6 +926,10 @@ impl MessageQueueReceiver {
                 handle: MessageQueueHandle::attach_receiver(pcxt, mq),
             }
         }
+    }
+
+    pub(crate) unsafe fn detach(self) {
+        unsafe { self.handle.detach() };
     }
 
     pub fn recv(&self) -> Result<Vec<u8>, MessageQueueRecvError> {
@@ -1041,8 +1062,14 @@ pub fn vacuum_delay_point() {
 /// Postgres resource in `crate::postgres::customscan::mpp::MainThread` or forward their cleanup
 /// payload via `crate::postgres::customscan::mpp::drop_on_main_thread` from a plain `impl Drop`.
 ///
-/// PostgreSQL's transaction abort mechanism will clean up resources (buffers, relations, etc.)
-/// when the transaction is aborted due to the error.
+/// PostgreSQL's transaction and subtransaction abort mechanisms release `ResourceOwner`-managed
+/// resources (buffers, relations, locks, temp files, tuple descriptors) before a scan state's
+/// `MemoryContext` callback necessarily runs (for example, a failed outer cursor dropped later at
+/// `CLOSE` or `COMMIT`, or an SPI query failing inside an inner PL/pgSQL `EXCEPTION` block while
+/// `IsTransactionState()` is `true`). Wrappers that can live inside a `MemoryContext` should
+/// capture [`crate::postgres::resowner::ResourceOwnerStamp::current`] at acquisition time and gate
+/// C cleanup through [`crate::postgres::resowner::ResourceOwnerStamp::run_if_live`] rather than
+/// checking `IsTransactionState()` alone.
 ///
 /// Cleanup is also skipped once `proc_exit` has started: a FATAL doesn't unwind, so `panicking()`
 /// can't see it, and the abort that `proc_exit` runs releases those resources too. Skipping the body
@@ -1052,11 +1079,10 @@ pub fn vacuum_delay_point() {
 /// # Example
 /// ```ignore
 /// impl_safe_drop!(MyStruct, |self| {
-///     unsafe {
-///         if crate::postgres::utils::IsTransactionState() {
-///             pg_sys::some_cleanup_function(self.handle);
-///         }
-///     }
+///     let handle = self.handle;
+///     self.owner.run_if_live(|| unsafe {
+///         pg_sys::some_cleanup_function(handle);
+///     });
 /// });
 /// ```
 ///
@@ -1155,24 +1181,7 @@ impl PgMemoryContextsExt for PgMemoryContexts {
     }
 }
 
-/// Whether this backend is running `proc_exit`, where a FATAL may have left Rust state mid-use.
-#[cfg(not(test))]
-pub fn proc_exit_in_progress() -> bool {
-    // SAFETY: plain read of a backend-local flag on the backend thread.
-    unsafe { pgrx::pg_sys::proc_exit_inprogress }
-}
-
-/// The lib-test binary doesn't link the PG globals, and no test runs `proc_exit`.
-#[cfg(test)]
-pub fn proc_exit_in_progress() -> bool {
-    false
-}
-
-/// RAII guard for PostgreSQL standalone expression context
-/// Automatically frees the context when dropped
-///
-/// let context_guard = ExprContextGuard::new();
-/// // Use context_g
+/// Whether this backend is running `proc_exit`, where a FATAL m
 ```
 
 ### Core Architecture Module: `index_read/src/index/directory/utils.rs`
@@ -1514,6 +1523,9 @@ pub struct DeferredScorer {
     weight: Arc<LazyWeight>,
     segment_reader: SegmentReader,
     scorer: OnceLock<Box<dyn PruningScorer>>,
+    /// Pruning threshold recorded via [`Self::set_threshold`] before the underlying scorer is
+    /// opened, so `pruning_scorer` receives it before its initial `advance()`.
+    initial_threshold: Score,
 }
 
 impl DeferredScorer {
@@ -1522,6 +1534,7 @@ impl DeferredScorer {
             weight,
             segment_reader,
             scorer: Default::default(),
+            initial_threshold: Score::MIN,
         }
     }
 
@@ -1542,13 +1555,20 @@ impl DeferredScorer {
             test_support::SCORERS_OPENED.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             self.weight
                 .get()
-                .pruning_scorer(&self.segment_reader, 1.0, Score::MIN)
+                .pruning_scorer(&self.segment_reader, 1.0, self.initial_threshold)
                 .expect("pruning scorer should be constructable")
         })
     }
 
     fn set_threshold(&mut self, threshold: Score) {
-        self.scorer_mut().set_threshold(threshold);
+        if let Some(scorer) = self.scorer.get_mut() {
+            scorer.set_threshold(threshold);
+        } else {
+            // Avoid opening the underlying scorer just to record a threshold: opening with
+            // `Score::MIN` runs an initial unpruned `advance()` (evaluating filters on a full
+            // warmup batch) before `set_threshold` takes effect.
+            self.initial_threshold = threshold;
+        }
     }
 }
 
@@ -1666,6 +1686,60 @@ impl Iterator for ScorerIter {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    use tantivy::columnar::ColumnType;
+    use tantivy::query::{TermPredicate, TermPredicateQuery, TermQuery, TinySet};
+    use tantivy::schema::{FAST, IndexRecordOption, STRING, Schema, TEXT};
+    use tantivy::{Index, ProbeCost, Term, doc};
+
+    #[derive(Debug)]
+    struct CountingMatchAllPredicate {
+        calls: Arc<AtomicUsize>,
+    }
+
+    impl TermPredicate for CountingMatchAllPredicate {
+        fn filter_bytes(&self, _data: &[u8], offsets: &[u32], out: &mut [TinySet]) {
+            self.calls.fetch_add(1, Ordering::Relaxed);
+            let count = offsets.len().saturating_sub(1);
+            for i in 0..count {
+                out[i / 64].insert_mut((i % 64) as u32);
+            }
+        }
+
+        fn filter_monotonic_u64s(
+            &self,
+            _col_type: ColumnType,
+            values: &[u64],
+            out: &mut [TinySet],
+        ) {
+            self.calls.fetch_add(1, Ordering::Relaxed);
+            for i in 0..values.len() {
+                out[i / 64].insert_mut((i % 64) as u32);
+            }
+        }
+
+        fn probe_cost(&self) -> ProbeCost {
+            ProbeCost::per_doc(5)
+        }
+    }
+
+    #[test]
+    fn deferred_scorer_applies_threshold_before_opening() {
+        let mut schema_builder = Schema::builder();
+        let title = schema_builder.add_text_field("title", TEXT);
+        let key = schema_builder.add_text_field("key", STRING | FAST);
+        let schema = schema_builder.build();
+
+        let index = Index::create_in_ram(schema);
+        let mut writer = index.writer_with_num_threads(1, 15_000_000).unwrap();
+        // Enough distinct high-entropy keys (no common delta prefix) to span > 2 SSTable blocks
+        // so `TermSetWeight` chooses lazy `CachedDictPredicateDocSet` under `ExecutionMode::Pruning`.
+        for i in 0..500u64 {
+            let hi = i.wrapping_mul(0x9e37_79b9_7f4a_7c15);
+            let lo = i.wrapping_mul(0xbf58_476d_1ce4_e5b9)
 ```
 
 ### Core Architecture Module: `index_read/src/query/proximity/scorer.rs`
@@ -1820,6 +1894,9 @@ impl Iterator for ProxIter<'_> {
     }
 }
 
+// TODO: Override `DocSet::cost()` (scaled drive cost + `ProbeCost::POSITIONAL`, matching
+// `PhraseScorer`) and `DocSet::seek_danger()` (so a miss does not walk forward to the next
+// proximity match).
 impl DocSet for ProximityScorer {
     fn advance(&mut self) -> DocId {
         loop {
@@ -1946,6 +2023,8 @@ impl Scorer for ScoreFilterScorer {
     }
 }
 
+// TODO: Override `DocSet::cost()` to forward `self.scorer.cost()` rather than inheriting the
+// default `size_hint()` / `ProbeCost::TERM`.
 impl DocSet for ScoreFilterScorer {
     fn advance(&mut self) -> DocId {
         loop {
@@ -2239,244 +2318,948 @@ impl SolvePostgresExpressions for DataFusionAggState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32ba4b5c` (2026-11-24)
-**Commit Message**: test: migrate Rust test fixtures to V2 syntax (#7637)
+### Incident Patch 1: `3db63451` (2026-11-24)
+**Commit Message**: fix: Synchronize resource cleanup on abort (#7609)
 
-## Changes
+## Ticket(s) Closed
 
-Use V2 predicates and index definitions in the in-server Rust test
-fixtures for index reads, planner filtering, spills, and storage.
+- Closes #7594 
 
-The catalog test still creates a legacy `bm25` index so it covers
-discovery of both access methods. The analyzed UUID segment-pruning case
-still needs the legacy field configuration to retain the UUID field
-type.
+## What
 
-## Tests
+Synchronizes `PgTokioRuntime` worker shutdown, MPP DSM unmap, and
+`ResourceOwner`-backed destructors across abnormal transaction,
+subtransaction, cursor, and process abort paths.
 
-All 10 targeted in-server Rust tests passed on PostgreSQL 18.4 across
-`index_read`, `joinscan`, `scan`, and `storage`.
+## Why
 
-**File**: `index_read/src/index/directory/mvcc.rs` (modified, +1/-1)
+On abnormal abort, PostgreSQL unmaps DSM segments (`AtEOXact_Parallel`,
+`AtEOSubXact_Parallel`) and releases `ResourceOwner`-managed resources
+before `MemoryContextDelete` drops scan states:
+
+- `tokio-rt-worker` threads could stay in-flight in `DsmAsyncStream`
+across `dsm_detach`'s `munmap` (`SIGSEGV`) or outlive buffer pins and
+`PGSharedMemoryDetach`.
+- Deferred `MemoryContextDelete` drops (e.g., an outer cursor failing
+inside a `SAVEPOINT` and later dropped at `CLOSE` or `COMMIT` while
+`IsTransactionState()` is `true`) could double-release already-freed
+relations, locks, buffers, or slots.
+
+## How
+
+- Replaced `dsm_detached` with `DsmLease` (`RwLock<bool>`) so
+`on_dsm_detach` waits for in-flight ring/header accesses before
+`munmap`.
+- Tracked live runtimes per backend, installed per-PID lifecycle
+callbacks (`before_shmem_exit`, `XactCallback`, `SubXactCallback`,
+`ResourceReleaseCallback`), and wired
+
+**File**: `.github/scripts/check_impl_drop.py` (modified, +89/-7)
 ```diff
-@@ -1267,7 +1267,7 @@ mod tests {
-                     CASE WHEN i % 3 = 0 THEN 'b' END, CASE WHEN i % 7 = 0 THEN 'c' END, 'all')
-                 FROM generate_series(0, 2302) i;
-             CREATE INDEX bitmap_counts_idx ON bitmap_counts USING paradedb
--                (id, (data::pdb.simple)) WITH (key_field='id');",
-+                (id, (data::pdb.simple));",
-         )
-         .unwrap();
-         let index_oid = Spi::get_one::<pg_sys::Oid>("SELECT 'bitmap_counts_idx'::regclass::oid")
-```
-
-**File**: `index_read/src/index/reader/index.rs` (modified, +2/-2)
-```diff
-@@ -5193,13 +5193,13 @@ mod tests {
-             ("", 2, false),
-             ("AND category = 'keep'", 2, false),
-             (
--                "AND id @@@ paradedb.parse_with_field('category', current_setting('vector_parallelism.filter'))",
-+                "AND category @@@ pdb.parse_with_field(current_setting('vector_parallelism.filter'))",
-                 2,
-                 false,
-             ),
-             ("AND id > 1", 2, true),
-             (
--                "AND id @@@ paradedb.parse_with_field('id', current_setting('vector_parallelism.range'))",
-+                "AND id @@@ pdb.parse_with_field(current_setting('vector_parallelism.range'))",
-                 2,
-                 true,
-             ),
-```
-
-**File**: `index_read/src/index/stats/tests.rs` (modified, +3/-3)
-```diff
-@@ -604,9 +604,9 @@ mod tests {
-         Spi::run(
-             r#"
-             CREATE TABLE stats_text_norm (id BIGSERIAL PRIMARY KEY, name TEXT);
--            CREATE INDEX stats_text_norm_idx ON stats_text_norm USING paradedb (id, name)
--                WITH (target_segment_count = 8, background_layer_sizes = '0',
--                      text_fields = '{"name": {"tokenizer": {"type": "keyword"}, "fast": true, "normalizer": "lowercase"}}');
-+            CREATE INDEX stats_text_norm_idx ON stats_text_norm USING paradedb
-+                (id, (name::pdb.literal_normalized('lowercase=false', 'normalizer=lowercase')))
-+                WITH (target_segment_count = 8, background_layer_sizes = '0');
-             SET paradedb.global_mutable_segment_rows = 0;
-             INSERT INTO stats_text_norm (name) SELECT 'Zed' || i FROM generate_series(1, 10) i;
-             INSERT INTO stats_text_norm (name) SELECT 'alice' || i FROM generate_series(1, 10) i;
-```
-
-**File**: `index_read/src/query/pdb_query.rs` (modified, +1/-1)
-```diff
-@@ -3641,7 +3641,7 @@ mod tests {
+@@ -1,13 +1,19 @@
+ #!/usr/bin/env python3
+ """
+ Fail on any `impl Drop` or `DropGuard` in pgrx-linking crates that does not say why it skips
+-`impl_safe_drop!`.
++`impl_safe_drop!`, or any direct `IsTransactionState()` call inside `impl_safe_drop!` that does
++not say why it skips `ResourceOwnerStamp`.
  
-         Spi::run(
-             "CREATE TABLE term_positions (id BIGINT, title TEXT);
--             CREATE INDEX term_positions_idx ON term_positions USING bm25 (id, title);",
-+             CREATE INDEX term_positions_idx ON term_positions USING paradedb (id, title);",
-         )
-         .unwrap();
-         let oid = Spi::get_one::<pg_sys::Oid>("SELECT 'term_positions_idx'::regclass::oid")
+ A `Drop` that calls into Postgres has to skip its body while a panic unwinds or the backend
+ exits (#6479), which is what `impl_safe_drop!` in common/src/postgres/utils.rs does. A bare
+ `impl Drop` or `DropGuard::new` needs a comment directly above it that opts out in so many
+-words: "We intentionally do NOT use `impl_safe_drop!` here because ...". Every workspace crate
+-that depends on `pgrx` is scanned.
++words: "We intentionally do NOT use `impl_safe_drop!` here because ...".
++
++Inside `impl_safe_drop!`, checking `IsTransactionState()` alone is not enough when a scan state
++lives in a `MemoryContext` whose `ResourceOwner` has already been released (#7609); wrappers
++should gate cleanup with `ResourceOwnerStamp` from common/src/postgres/resowner.rs, or opt out
++directly above the call with "We intentionally call `IsTransactionState()` here because ...".
++Every workspace crate that depends on `pgrx` is scanned.
+ """
+ 
+ import json
+@@ -24,8 +30,15 @@
+     re.MULTILINE,
+ )
+ DROP_GUARD = re.compile(r"\bDropGuard::new\b|\bDropGuard\s+as\b")
++SAFE_DROP_START = re.compile(r"^[ \t]*(?:[A-Za-z0-9_]+::)*impl_safe_drop!\s*\(")
++IS_TX_STATE = re.compile(r"\bIsTransactionState\s*\(")
++STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\])*"')
+ # A comment that only names the macro, like a TODO, is not an opt out.
+ OVERRIDE = re.compile(r"\bnot\s+us(?:e|ing)\W+impl_safe_drop\b", re.IGNORECASE)
++TX_STATE_OVERRIDE = re.compile(
++    r"\bnot\s+us(?:e|ing)\W+ResourceOwnerStamp\b|\bintentionally\b.*\bIsTransactionState\b",
++    re.IGNORECASE,
++)
+ 
+ # Shapes the matcher must get right, with the findings each should produce.
+ SELF_TEST = [
+@@ -60,9 +73,55 @@
+         ),
+         1,
+     ),
++    (
++        "crate::impl_safe_drop!(Foo, |self| {\n    if unsafe { IsTransactionState() } {}\n});",
++        1,
++    ),
++    (
++        (
++            "crate::impl_safe_drop!([T] Foo<T>, |self| {\n"
++            "    // TODO: switch to ResourceOwnerStamp.\n"
++            "    if unsafe { pg_sys::IsTransactionState() } {}\n"
++            "});"
++        ),
++        1,
++    ),
++    (
++        (
++            "crate::impl_safe_drop!(Foo, |self| {\n"
++            "    // We intentionally call `IsTransactionState()` here because fallback.\n"
++            "    if unsafe { IsTransactionState() } {}\n"
++            "});"
++        ),
++        0,
++    ),
++    (
++        (
++            "impl_safe_drop!(Foo, |self| {\n"
++            "    // We intentionally do not use `ResourceOwnerStamp` here because ...\n"
++            "    if unsafe { IsTransactionState() } {}\n"
++            "});"
++        ),
++        0,
++    ),
++    (
++        (
++            "impl_safe_drop!(Foo, |self| {\n"
++            "    // IsTransactionState() in a comment is fine.\n"
++            '    let _s = "IsTransactionState()";\n'
++            "});\n"
++            "fn outside() { unsafe { IsTransactionState() }; }"
++        ),
++        0,
++    ),
+ ]
+ 
+ 
++def _code_only(line):
++    """Strip string literals and `//` comments so paren counting and regexes see code only."""
++    return STRING_LITERAL.sub('""', line).split("//", 1)[0]
++
++
+ def _preceding_comment_block(lines, idx):
+     """Return the `//` comment block directly above the statement at `idx`."""
+     stmt = idx
+@@ -80,14 +139,15 @@ def _preceding_comment_block(lines, idx):
+ 
+ 
+ def find_bare_drops(text):
+-    """Return (line, header) for every unexcused `impl Drop` or `DropGuard`."""
++    """Return (line, header) for unexcused `impl Drop`, `DropGuard`, or `IsTransactionState()`."""
+     findings = [
+         (text.count("\n", 0, m.start(2)) + 1, " ".join(m.group(2).split()))
+         for m in BARE_DROP.finditer(text)
+         # `$ty` is the macro's own expansion.
+         if not m.group(3).startswith("$") and not OVERRIDE.search(m.group(1))
+     ]
+     lines = text.splitlines()
++    safe_drop_paren_depth = 0
+     for idx, line in enumerate(lines):
+         stripped = line.strip()
+         if stripped.startswith("//"):
+@@ -96,6 +156,25 @@ def find_bare_drops(text):
+             _preceding_comment_block(lines, idx)
+         ):
+             findings.append((idx + 1, stripped))
++
++        code = _code_only(line)
++        if safe_drop_paren_depth == 0:
++            m = SAFE_DROP_START.match(code)
++            if m:
++                rest = code[m.end() - 1 :]
++                safe_drop_paren_depth = rest.count("(") - rest.count(")")
++                if IS_TX_STATE.search(rest) and not TX_STATE_OVERRIDE.search(
++                    _preceding_comment_block(lines, idx)
++                ):
++                    findings.append((idx + 1, stripped))
++        else:
++            if IS_TX_STATE.search(code) and not TX_STATE_OVERRIDE.search(
++       
 ```
 
-**File**: `joinscan/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +2/-2)
+**File**: `basescan/src/postgres/customscan/basescan/exec_methods/fast_fields/columnar.rs` (modified, +5/-4)
 ```diff
-@@ -1146,9 +1146,9 @@ mod tests {
-             "SELECT i.id FROM prop_items i \
-              WHERE NOT EXISTS ( \
-                  SELECT 1 FROM prop_exclusions e \
--                 WHERE e.id @@@ paradedb.all() AND ({expr}) \
-+                 WHERE e.id @@@ pdb.all()::pdb.const(0) AND ({expr}) \
-              ) \
--             AND i.id @@@ paradedb.all() \
-+             AND i.id @@@ pdb.all()::pdb.const(0) \
-              ORDER BY i.id LIMIT 10"
-         )
+@@ -427,10 +427,10 @@ impl ExecMethod for ColumnarExecState {
+         // Create Postgres-integrated Tokio runtime on first use (same pattern as JoinScan)
+         // to drive DataFusion's async streams while servicing main-thread Postgres FFI.
+         if self.runtime.is_none() {
+-            self.runtime = Some(
+-                PgTokioRuntime::new()
+-                    .expect("Failed to create tokio runtime for DataFusion stream execution"),
+-            );
++            let runtime = PgTokioRuntime::new()
++                .expect("Failed to create tokio runtime for DataFusion stream execution");
++            state.register_runtime_for_dsm_detach(&runtime);
++            self.runtime = Some(runtime);
+         }
+ 
+         loop {
+@@ -567,6 +567,7 @@ impl ExecMethod for ColumnarExecState {
+         self.current_record_batch = None;
+         self.current_batch_row_idx = 0;
+         self.runtime = None;
++        state.clear_runtime_for_dsm_detach();
+ 
+         // Reset inner FastFieldExecState
+         self.inner.reset(state);
+```
+
+**File**: `basescan/src/postgres/customscan/basescan/exec_methods/top_k.rs` (modified, +5/-4)
+```diff
+@@ -440,10 +440,10 @@ impl ExecMethod for TopKScanExecState {
+         }
+ 
+         if self.runtime.is_none() {
+-            self.runtime = Some(
+-                PgTokioRuntime::new()
+-                    .expect("Failed to create tokio runtime for DataFusion stream execution"),
+-            );
++            let runtime = PgTokioRuntime::new()
++                .expect("Failed to create tokio runtime for DataFusion stream execution");
++            state.register_runtime_for_dsm_detach(&runtime);
++            self.runtime = Some(runtime);
+         }
+ 
+         loop {
+@@ -534,6 +534,7 @@ impl ExecMethod for TopKScanExecState {
+         self.current_record_batch = None;
+         self.current_batch_row_idx = 0;
+         self.runtime = None;
++        state.clear_runtime_for_dsm_detach();
+         self.found = 0;
+ 
+         // Get window aggregates from state if available
+```
+
+**File**: `basescan/src/postgres/customscan/basescan/parallel.rs` (modified, +32/-12)
+```diff
+@@ -19,8 +19,10 @@
+ //! Parallel-aware BaseScan: DSM attach hooks and the process-local handle to
+ //! shared work assignment / telemetry IPC.
+ 
++use std::cell::RefCell;
+ use std::os::raw::c_void;
+ use std::ptr::NonNull;
++use std::rc::Rc;
+ use std::sync::Arc;
+ 
+ use crate::index::reader::io_stats::Trace;
+@@ -29,6 +31,7 @@ use crate::postgres::customscan::basescan::BaseScan;
+ use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
+ use crate::postgres::customscan::builders::custom_state::CustomScanStateWrapper;
+ use crate::postgres::customscan::dsm::ParallelQueryCapable;
++use crate::postgres::customscan::mpp::interrupt::PgTokioRuntimeShutdownHandle;
+ 
+ use pgrx::pg_sys::{self, Size, dsa_area, shm_toc};
+ 
+@@ -98,16 +101,33 @@ impl ParallelScanHandle {
      }
-```
-
-**File**: `scan/src/postgres/customscan/datafusion/spill.rs` (modified, +1/-3)
-```diff
-@@ -469,10 +469,8 @@ mod tests {
-             );
+ }
  
-             CREATE INDEX mpp_spill_items_idx ON mpp_spill_items
--            USING bm25 (id, group_key, content, size_bytes)
-+            USING paradedb (id, (group_key::pdb.unicode_words('columnar=true')), content, size_bytes)
-             WITH (
--                numeric_fields = '{"id": {"fast": true}, "size_bytes": {"fast": true}}',
--                text_fields = '{"group_key": {"fast": true}, "content": {}}',
-                 target_segment_count = 3,
-                 layer_sizes = '0',
-                 background_layer_sizes = '0'
++struct BaseScanDsmDetach {
++    parallel: ParallelScanHandle,
++    trace: Option<Trace>,
++    runtime_shutdown: Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>>,
++}
++
+ // LIMIT can shut down the leader scan before its workers; collect after Gather joins them.
++// On abnormal transaction/subtransaction abort (`!IsTransactionState()`), `AtEOXact_Parallel` /
++// `AtEOSubXact_Parallel` detaches `Gather`'s DSM segment before `AtSubAbort_Portals` and
++// `XactCallback` / `SubXactCallback` run, so shut down this specific `BaseScan`'s `PgTokioRuntime`
++// directly via its handle before the segment unmaps while leaving unrelated runtimes intact.
+ #[pgrx::pg_guard]
+-unsafe extern "C-unwind" fn collect_buffer_hits_on_detach(
++unsafe extern "C-unwind" fn on_basescan_dsm_detach(
+     _seg: *mut pg_sys::dsm_segment,
+     arg: pg_sys::Datum,
+ ) {
+-    let (parallel, trace) =
+-        *unsafe { Box::from_raw(arg.cast_mut_ptr::<(ParallelScanHandle, Trace)>()) };
++    let BaseScanDsmDetach {
++        parallel,
++        trace,
++        runtime_shutdown,
++    } = *unsafe { Box::from_raw(arg.cast_mut_ptr::<BaseScanDsmDetach>()) };
+     if unsafe { pg_sys::IsTransactionState() } {
+-        parallel.finalize_buffer_hits(&trace);
++        if let Some(trace) = trace {
++            parallel.finalize_buffer_hits(&trace);
++        }
++    } else if let Some(handle) = runtime_shutdown.borrow_mut().take() {
++        handle.shutdown_workers();
+     }
+ }
+ 
+@@ -151,16 +171,16 @@ impl ParallelQueryCapable for BaseScan {
+                 .attach_parallel(pscan_state, ParallelRole::Leader);
+             leader_publish_query(state, &mut *pscan_state, area);
+ 
+-            if !(*pcxt).seg.is_null()
+-                && let Some(trace) = state.custom_state().io_trace.clone()
+-            {
+-                let callback = Box::new((
+-                    ParallelScanHandle::new(pscan_state, ParallelRole::Leader),
+-                    trace,
+-                ));
++            if !(*pcxt).seg.is_null() {
++                let runtime_shutdown = state.custom_state_mut().alloc_dsm_runtime_shutdown_slot();
++                let callback = Box::new(BaseScanDsmDetach {
++                    parallel: ParallelScanHandle::new(pscan_state, ParallelRole::Leader),
++                    trace: state.custom_state().io_trace.clone(),
++                    runtime_shutdown,
++                });
+                 pg_sys::on_dsm_detach(
+                     (*pcxt).seg,
+-                    Some(collect_buffer_hits_on_detach),
++                    Some(on_basescan_dsm_detach),
+                     pg_sys::Datum::from(Box::into_raw(callback)),
+                 );
+             }
 ```
 
-**File**: `storage/src/postgres/storage/blocklist.rs` (modified, +5/-2)
+**File**: `basescan/src/postgres/customscan/basescan/scan_state.rs` (modified, +27/-1)
 ```diff
-@@ -705,7 +705,10 @@ pub mod reader {
-         #[pg_test]
-         fn test_blocklist_directory_lookup() {
-             Spi::run("CREATE TABLE directory_lookup (id SERIAL, data TEXT)").unwrap();
--            Spi::run("CREATE INDEX directory_lookup_idx ON directory_lookup USING bm25 (id, data) WITH (key_field='id')").unwrap();
-+            Spi::run(
-+                "CREATE INDEX directory_lookup_idx ON directory_lookup USING paradedb (id, data)",
-+            )
-+            .unwrap();
-             let oid = Spi::get_one::<pg_sys::Oid>("SELECT 'directory_lookup_idx'::regclass::oid")
-                 .unwrap()
-                 .unwrap();
-@@ -768,7 +771,7 @@ pub mod reader {
-             use crate::postgres::storage::blocklist::directory::ROOT_CAPACITY;
-             use crate::postgres::storage::blocklist::tree::Entry;
-             Spi::run("CREATE TABLE directory_overflow (id SERIAL, data TEXT)").unwrap();
--            Spi::run("CREATE INDEX directory_overflow_idx ON directory_overflow USING bm25 (id, data) WITH (key_field='id')").unwrap();
-+            Spi::run("CREATE INDEX directory_overflow_idx ON directory_overflow USING paradedb (id, data)").unwrap();
-             let oid = Spi::get_one::<pg_sys::Oid>("SELECT 'directory_overflow_idx'::regclass::oid")
-                 .unwrap()
-                 .unwrap();
+@@ -16,8 +16,9 @@
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
+ #![allow(unsafe_op_in_unsafe_fn)]
+ 
+-use std::cell::{OnceCell, UnsafeCell};
++use std::cell::{OnceCell, RefCell, UnsafeCell};
+ use std::collections::BTreeMap;
++use std::rc::Rc;
+ use std::sync::Arc;
+ 
+ use crate::api::{FieldName, HashMap, OrderByFeature, OrderByInfo, Varno};
+@@ -33,6 +34,7 @@ use crate::postgres::customscan::basescan::projections::window_agg::WindowAggreg
+ use crate::postgres::customscan::basescan::telemetry::ScanTelemetry;
+ use crate::postgres::customscan::bitmap_intersection::BitmapExec;
+ use crate::postgres::customscan::builders::custom_path::ExecMethodType;
++use crate::postgres::customscan::mpp::interrupt::{PgTokioRuntime, PgTokioRuntimeShutdownHandle};
+ use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
+ use crate::postgres::customscan::qual_inspect::Qual;
+ use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
+@@ -66,6 +68,10 @@ pub struct BaseScanState {
+     pub telemetry: ScanTelemetry,
+     /// Set when this scan is parallel-aware (DSM attached).
+     pub parallel: Option<ParallelScanHandle>,
++    /// Shared slot populated with this scan's [`PgTokioRuntimeShutdownHandle`] while an async exec
++    /// method (`TopKScanExecState` or `ColumnarExecState`) holds a `PgTokioRuntime` under a `Gather`
++    /// DSM segment, so `on_basescan_dsm_detach` shuts down only this scan's runtime on abort.
++    dsm_runtime_shutdown: Option<Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>>>,
+     /// Workers wait for the leader to publish this plan when they first need it.
+     pub vector_routing_plan: Option<Arc<SharedVectorRouting>>,
+     pub vector_routing_pending: bool,
+@@ -176,6 +182,26 @@ impl CustomScanState for BaseScanState {
+ }
+ 
+ impl BaseScanState {
++    pub(super) fn alloc_dsm_runtime_shutdown_slot(
++        &mut self,
++    ) -> Rc<RefCell<Option<PgTokioRuntimeShutdownHandle>>> {
++        let slot = Rc::new(RefCell::new(None));
++        self.dsm_runtime_shutdown = Some(Rc::clone(&slot));
++        slot
++    }
++
++    pub(super) fn register_runtime_for_dsm_detach(&self, runtime: &PgTokioRuntime) {
++        if let Some(slot) = &self.dsm_runtime_shutdown {
++            *slot.borrow_mut() = Some(runtime.shutdown_handle());
++        }
++    }
++
++    pub(super) fn clear_runtime_for_dsm_detach(&self) {
++        if let Some(slot) = &self.dsm_runtime_shutdown {
++            *slot.borrow_mut() = None;
++        }
++    }
++
+     pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
+         self.lockmode = lockmode;
+         if self.heaprel.is_none() {
 ```
 
-**File**: `storage/src/postgres/storage/linked_bytes.rs` (modified, +2/-1)
+**File**: `common/src/parallel_worker/builder.rs` (modified, +18/-8)
 ```diff
-@@ -627,7 +627,8 @@ mod tests {
-     #[pg_test]
-     unsafe fn test_linked_bytes_directory_compatibility() {
-         Spi::run("CREATE TABLE directory_compat (id SERIAL, data TEXT)").unwrap();
--        Spi::run("CREATE INDEX directory_compat_idx ON directory_compat USING bm25 (id, data) WITH (key_field='id')").unwrap();
-+        Spi::run("CREATE INDEX directory_compat_idx ON directory_compat USING paradedb (id, data)")
-+            .unwrap();
-         let oid = Spi::get_one::<pg_sys::Oid>("SELECT 'directory_compat_idx'::regclass::oid")
-             .unwrap()
-             .unwrap();
+@@ -170,6 +170,7 @@ impl ParallelProcessBuilder {
+     }
+ }
+ 
++#[must_use = "must be launched before parallel mode ends"]
+ pub struct ParallelProcessLauncher {
+     pcxt: NonNull<pg_sys::ParallelContext>,
+     state_manager: ParallelStateManager,
+@@ -179,6 +180,17 @@ pub struct ParallelProcessLauncher {
+ }
+ 
+ impl ParallelProcessLauncher {
++    /// Detaches all receiver message queues while the backing DSM segment is still mapped, then
++    /// destroys the parallel context and exits parallel mode.
++    unsafe fn destroy(self) {
++        let pcxt = self.pcxt.as_ptr();
++        for mq in self.mq_handles {
++            mq.detach();
++        }
++        pg_sys::DestroyParallelContext(pcxt);
++        pg_sys::ExitParallelMode();
++    }
++
+     /// Read-only access to the mapped state between `build()` and `launch()`. The DSM is mapped in
+     /// the leader once `InitializeParallelDSM` runs (inside `build`), so the leader can initialize a
+     /// shared region in place here, before workers spawn and attach to it.
+@@ -208,10 +220,9 @@ impl ParallelProcessLauncher {
+                 return Some(ParallelProcessAttach { launcher: self });
+             }
+ 
+-            // Detach queues while their shared memory is still mapped.
+-            drop(self);
+-            pg_sys::DestroyParallelContext(pcxt);
+-            pg_sys::ExitParallelMode();
++            // Detach queues while their shared memory is still mapped, then tear down the
++            // parallel context and exit parallel mode.
++            self.destroy();
+             None
+         }
+     }
+@@ -228,6 +239,7 @@ enum WorkerQueueState {
+     Accumulated,
+ }
+ 
++#[must_use = "must call wait_for_attach() before parallel mode ends"]
+ #[repr(transparent)]
+ pub struct ParallelProcessAttach {
+     launcher: ParallelProcessLauncher,
+@@ -245,6 +257,7 @@ impl ParallelProcessAttach {
+     }
+ }
+ 
++#[must_use = "must call wait_for_finish() or exhaust the iterator to detach queues and exit parallel mode"]
+ pub struct ParallelProcessFinish {
+     launcher: ParallelProcessLauncher,
+     worker_states: Vec<WorkerQueueState>,
+@@ -385,10 +398,7 @@ impl ParallelProcessFinish {
+             pg_sys::WaitForParallelWorkersToFinish(pcxt);
+             self.accumulate_all_workers();
+ 
+-            drop(self.launcher);
+-
+-            pg_sys::DestroyParallelContext(pcxt);
+-            pg_sys::ExitParallelMode();
++            self.launcher.destroy();
+ 
+             messages
+         }
+```
+
+**File**: `common/src/parallel_worker/mod.rs` (modified, +43/-22)
+```diff
+@@ -57,22 +57,28 @@ enum TocKeys {
+     WalUsage = 0xE000_0000_0000_000A,
+ }
+ 
+-pub struct WorkerStatsGuard {
++/// Flushes parallel worker buffer/WAL instrumentation into DSM via `InstrEndParallelQuery`.
++///
++/// Intentionally does NOT implement `Drop`: [`run_parallel_worker`] invokes [`Self::finish`]
++/// explicitly on normal worker completion while the backing DSM segment is guaranteed mapped.
++pub(crate) struct WorkerStatsGuard {
+     buf_usage: *mut pg_sys::BufferUsage,
+     wal_usage: *mut pg_sys::WalUsage,
+     worker_idx: usize,
+ }
+ 
+-crate::impl_safe_drop!(WorkerStatsGuard, |self| {
+-    if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
+-        unsafe {
+-            pg_sys::InstrEndParallelQuery(
+-                self.buf_usage.add(self.worker_idx),
+-                self.wal_usage.add(self.worker_idx),
+-            );
++impl WorkerStatsGuard {
++    pub(crate) unsafe fn finish(self) {
++        if !self.buf_usage.is_null() && !self.wal_usage.is_null() {
++            unsafe {
++                pg_sys::InstrEndParallelQuery(
++                    self.buf_usage.add(self.worker_idx),
++                    self.wal_usage.add(self.worker_idx),
++                );
++            }
+         }
+     }
+-});
++}
+ 
+ impl From<TocKeys> for u64 {
+     fn from(key: TocKeys) -> Self {
+@@ -574,16 +580,16 @@ macro_rules! launch_parallel_process {
+                 seg: *mut pgrx::pg_sys::dsm_segment,
+                 toc: *mut pgrx::pg_sys::shm_toc,
+             ) {
+-                let (state_manager, mq_sender) =
+-                    $crate::parallel_worker::generic_parallel_worker_entry_point(
+-                        seg,
+-                        toc,
+-                        $mq_size as usize,
+-                    );
+-
+-                $crate::parallel_worker::finish_parallel_worker(
+-                    <$parallel_worker_type>::new_parallel_worker(state_manager)
+-                        .run(&mq_sender, unsafe { pgrx::pg_sys::ParallelWorkerNumber }),
++                $crate::parallel_worker::run_parallel_worker(
++                    seg,
++                    toc,
++                    $mq_size as usize,
++                    |state_manager, mq_sender| {
++                        $crate::parallel_worker::finish_parallel_worker(
++                            <$parallel_worker_type>::new_parallel_worker(state_manager)
++                                .run(mq_sender, unsafe { pgrx::pg_sys::ParallelWorkerNumber }),
++                        );
++                    },
+                 );
+             }
+         }
+@@ -605,12 +611,26 @@ macro_rules! launch_parallel_process {
+     }};
+ }
+ 
++/// Scoped entry point for PostgreSQL parallel workers launched via `ParallelProcessBuilder`.
++///
++/// Attaches `ParallelStateManager`, `WorkerStatsGuard`, and `MessageQueueSender` for the duration
++/// of `f`, then flushes worker buffer/WAL stats and detaches the completion queue on normal
++/// return while `seg` is guaranteed mapped. On `ereport(ERROR)` / panic unwind, `finish()` is
++/// skipped and PostgreSQL's own `shm_mq_detach_callback` detaches the queue before `seg` is
++/// unmapped.
++///
++/// # Safety
++/// Must be called directly from a PostgreSQL parallel worker entry point with the `seg` and
++/// `toc` pointers supplied by `ParallelWorkerMain`, which remain mapped for the entire callback.
+ #[doc(hidden)]
+-pub unsafe fn generic_parallel_worker_entry_point(
++pub unsafe fn run_parallel_worker<F>(
+     seg: *mut pg_sys::dsm_segment,
+     toc: *mut pg_sys::shm_toc,
+     mq_size: usize,
+-) -> (ParallelStateManager, MessageQueueSender) {
++    f: F,
++) where
++    F: FnOnce(ParallelStateManager, &MessageQueueSender),
++{
+     unsafe {
+         pg_sys::InstrStartParallelQuery();
+     }
+@@ -644,7 +664,8 @@ pub unsafe fn generic_parallel_worker_entry_point(
+ 
+     let state_manager = ParallelStateManager::new(toc, seg);
+     let mq_sender = MessageQueueSender::new(seg, mq, stats);
+-    (state_manager, mq_sender)
++    f(state_manager, &mq_sender);
++    mq_sender.finish();
+ }
+ 
+ #[inline(always)]
+```
+
+**File**: `common/src/parallel_worker/mqueue.rs` (modified, +40/-14)
+```diff
+@@ -20,18 +20,20 @@ use std::error::Error;
+ use std::fmt::{Display, Formatter};
+ use std::ptr::NonNull;
+ 
++/// Owns a PostgreSQL `shm_mq_handle` attached to a parallel DSM segment.
++///
++/// Intentionally does NOT implement `Drop`: on normal completion, the owning lifecycle step
++/// (`ParallelProcessLauncher::destroy` on the leader, or `MessageQueueSender::finish` via
++/// `run_parallel_worker` on a worker) calls [`Self::detach`] while the backing DSM segment is
++/// guaranteed mapped. On any abnormal `ereport(ERROR)` / panic unwind / subtransaction abort,
++/// PostgreSQL's own `shm_mq_detach_callback` (registered by `shm_mq_attach`) detaches the queue
++/// before unmapping the DSM; calling `shm_mq_detach` later from a `MemoryContextCallback` / `Drop`
++/// after `AtEOSubXact_Parallel` would dereference unmapped shared memory (even when
++/// `IsInParallelMode()` is still `true` due to an enclosing outer `Gather`).
+ struct MessageQueueHandle {
+     handle: NonNull<pg_sys::shm_mq_handle>,
+ }
+ 
+-crate::impl_safe_drop!(MessageQueueHandle, |self| {
+-    unsafe {
+-        if pg_sys::IsInParallelMode() {
+-            pg_sys::shm_mq_detach(self.handle.as_ptr());
+-        }
+-    }
+-});
+-
+ impl MessageQueueHandle {
+     unsafe fn attach_sender(seg: *mut pg_sys::dsm_segment, mq: *mut pg_sys::shm_mq) -> Self {
+         unsafe {
+@@ -59,6 +61,17 @@ impl MessageQueueHandle {
+     fn as_ptr(&self) -> *mut pg_sys::shm_mq_handle {
+         self.handle.as_ptr()
+     }
++
++    /// Explicitly detaches this handle while its backing DSM segment is still mapped.
++    ///
++    /// # Safety
++    /// The DSM segment passed to `attach_sender` / `attach_receiver` must still be attached in
++    /// the current backend.
++    unsafe fn detach(self) {
++        unsafe {
++            pg_sys::shm_mq_detach(self.handle.as_ptr());
++        }
++    }
+ }
+ 
+ #[derive(Debug, Copy, Clone)]
+@@ -91,28 +104,37 @@ impl From<pg_sys::shm_mq_result::Type> for MessageQueueSendError {
+ }
+ 
+ pub struct MessageQueueSender {
+-    // Declared before `handle` so Rust's field drop order runs `WorkerStatsGuard::drop`
+-    // (`InstrEndParallelQuery`) before `MessageQueueHandle::drop` detaches the `shm_mq` and
+-    // unblocks `ParallelProcessFinish::recv()` on the leader.
+-    _stats: Option<crate::parallel_worker::WorkerStatsGuard>,
++    stats: Option<crate::parallel_worker::WorkerStatsGuard>,
+     handle: MessageQueueHandle,
+ }
+ 
+ impl MessageQueueSender {
+-    #[doc(hidden)]
+     pub(crate) unsafe fn new(
+         seg: *mut pg_sys::dsm_segment,
+         mq: *mut pg_sys::shm_mq,
+         stats: Option<crate::parallel_worker::WorkerStatsGuard>,
+     ) -> Self {
+         unsafe {
+             Self {
+-                _stats: stats,
++                stats,
+                 handle: MessageQueueHandle::attach_sender(seg, mq),
+             }
+         }
+     }
+ 
++    /// Flushes parallel worker buffer/WAL stats (`InstrEndParallelQuery`) into DSM and then
++    /// detaches the completion queue so `ParallelProcessFinish::recv()` on the leader unblocks
++    /// only after stats are written.
++    ///
++    /// # Safety
++    /// Must be called on normal worker completion while the backing DSM segment is still mapped.
++    pub(crate) unsafe fn finish(self) {
++        if let Some(stats) = self.stats {
++            unsafe { stats.finish() };
++        }
++        unsafe { self.handle.detach() };
++    }
++
+     pub fn send<B: AsRef<[u8]>>(&self, msg: B) -> Result<(), MessageQueueSendError> {
+         unsafe {
+             let msg = msg.as_ref();
+@@ -198,6 +220,10 @@ impl MessageQueueReceiver {
+         }
+     }
+ 
++    pub(crate) unsafe fn detach(self) {
++        unsafe { self.handle.detach() };
++    }
++
+     pub fn recv(&self) -> Result<Vec<u8>, MessageQueueRecvError> {
+         unsafe {
+             let mut len = 0usize;
 ```
 
 ---
 
-### Incident Patch 2: `130a81ea` (2026-11-23)
-**Commit Message**: chore: Fix RUSTSEC-2026-0592 (#7642)
+### Incident Patch 2: `5566f155` (2026-11-24)
+**Commit Message**: ci: speed up vector and parallel build unit tests (#7561)
 
-Fix `RUSTSEC-2026-0592`, and a regress collision.
+## What
 
----------
+Reduce the work done by the slow parallel-build and vector unit tests
+while retaining their behavioral assertions.
 
-Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
+## Why
 
-**File**: `Cargo.lock` (modified, +8/-8)
+Recent CI runs spend several minutes in these tests. Most of the cost
+comes from repeated index builds, exhaustive checks over oversized
+fixtures, and constructing high-dimensional quantization settings for
+metadata tests.
+
+## How
+
+- Replace the 24-case parallel-build Cartesian product with a property
+test configured for eight generated cases over the same memory,
+worker-count, leader-participation, and segment-target settings. Keep
+the 35,000-row fixture and existing segment/document-count assertions,
+with shrinking enabled for failing configurations.
+- Reduce the vector-partition fixture from 4,000 to 256 ordinary rows,
+retaining the null and zero vectors, all three metrics, serial/parallel
+builds, implicit/explicit partitioning, and reindex checks. Lower the
+fixture's clustering threshold and explicitly assert IVF storage.
+- Reuse a 128-row, 128-dimensional metadata fixture across the four
+existing consumers, keeping both quantization layers `[1,4]`. Update the
+independent stored/configured
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -3234,9 +3234,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -5995,7 +5995,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "be769465445e8c1474e9c5dac2018218498557af32d9ed057325ec9a41ae81bf"
- dependencies = [
-  "heck",
-- "itertools 0.10.5",
-+ "itertools 0.14.0",
-  "log",
-  "multimap",
-  "once_cell",
-@@ -6015,7 +6015,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8a56d757972c98b346a9b766e3f02746cde6dd1cd1d1d563472929fdd74bec4d"
- dependencies = [
-  "anyhow",
-- "itertools 0.10.5",
-+ "itertools 0.14.0",
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
-@@ -6028,7 +6028,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
- dependencies = [
-  "anyhow",
-- "itertools 0.10.5",
-+ "itertools 0.14.0",
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
-@@ -7616,7 +7616,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.5",
-  "windows-sys 0.61.2",
-@@ -8219,9 +8219,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+@@ -4047,6 +4047,7 @@ dependencies = [
+  "pgrx",
+  "pgrx-tests",
+  "postcard",
++ "proptest 1.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+  "rand 0.10.3",
+  "serde",
+  "serde_json",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `index_write/Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -167,7 +167,7 @@ tokio-stream = "0.1.17"
- tonic = "0.14.2"
- tower = "0.5.2"
- hyper-util = { version = "0.1.16", features = ["tokio"] }
--url = "2.5.4"
-+url = "2.5.9"
- libc = "0.2"
- bytes = { version = "1", features = ["serde"] }
- # Here and the equivalent in our datafusion-distributed fork will need to be updated in sync so that
+@@ -13,7 +13,7 @@ pg15 = ["pgrx/pg15", "index_read/pg15"]
+ pg16 = ["pgrx/pg16", "index_read/pg16"]
+ pg17 = ["pgrx/pg17", "index_read/pg17"]
+ pg18 = ["pgrx/pg18", "index_read/pg18"]
+-pg_test = ["index_read/pg_test"]
++pg_test = ["dep:proptest", "index_read/pg_test"]
+ 
+ # Keep this crate focused on Tantivy index building, merging, and vacuum/cleanup. Do NOT add
+ # `datafusion` or `arrow-*` here so `index_write` compiles in parallel with `scan` and `planner`.
+@@ -25,6 +25,7 @@ bytemuck.workspace = true
+ log.workspace = true
+ pgrx.workspace = true
+ postcard.workspace = true
++proptest = { workspace = true, optional = true }
+ rand.workspace = true
+ serde.workspace = true
+ serde_json.workspace = true
+@@ -45,3 +46,4 @@ index_read = { path = "../index_read", default-features = false, features = [
+   "pg_test",
+ ] }
+ pgrx-tests.workspace = true
++proptest.workspace = true
+```
+
+**File**: `index_write/src/postgres/build_parallel.rs` (modified, +61/-83)
+```diff
+@@ -1694,9 +1694,12 @@ pub mod plan {
+ #[pgrx::pg_schema]
+ mod tests {
+     use pgrx::prelude::*;
++    use proptest::{prelude::*, sample::select};
++
++    const PARALLEL_BUILD_ROWS: i64 = 35_000;
+ 
+     fn setup_parallel_build_large_table() {
+-        Spi::run(
++        Spi::run(&format!(
+             r#"
+             DROP TABLE IF EXISTS parallel_build_large;
+             CREATE TABLE parallel_build_large (
+@@ -1705,9 +1708,9 @@ mod tests {
+             );
+             INSERT INTO parallel_build_large (name)
+             SELECT 'lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+-            FROM generate_series(1, 35000);
++            FROM generate_series(1, {PARALLEL_BUILD_ROWS});
+             "#,
+-        )
++        ))
+         .expect("failed to setup parallel_build_large table");
+     }
+ 
+@@ -1823,7 +1826,7 @@ mod tests {
+         assert_eq!(
+             Spi::get_one::<i64>("SELECT count(*) FROM parallel_build_large WHERE name ||| 'lorem'")
+                 .unwrap(),
+-            Some(35000)
++            Some(PARALLEL_BUILD_ROWS)
+         );
+     }
+ 
+@@ -1897,91 +1900,66 @@ mod tests {
+         ).unwrap();
+     }
+ 
+-    /// Tests parallel index building with various configurations.
+-    ///
+-    /// This test creates 35,000 rows and tests different configuration
+-    /// combinations of maintenance_work_mem, workers, leader participation,
+-    /// and target segment count.
+     #[pg_test]
+     fn test_parallel_build_large_configurations() {
+-        setup_parallel_build_large_table();
++        const CONFIGURATION_CASES: u32 = 8;
++        const LARGE_SEGMENT_TARGET: i64 = 32;
++        const MIN_LARGE_SEGMENTS: i64 = LARGE_SEGMENT_TARGET * 3 / 4;
++        const MAX_LARGE_SEGMENTS: i64 = LARGE_SEGMENT_TARGET + 1;
+ 
++        setup_parallel_build_large_table();
+         Spi::run("SET max_parallel_workers = 8;").unwrap();
+ 
+-        let maintenance_work_mem = ["2GB", "128MB"];
+-        let maintenance_workers = [6, 2];
+-        let leader_participation = [true, false];
+-        let target_segments = [4, 7, 32];
+-
+-        for mwm in &maintenance_work_mem {
+-            for mw in &maintenance_workers {
+-                for lp in &leader_participation {
+-                    for ts in &target_segments {
+-                        // Set configuration
+-                        Spi::run(&format!("SET max_parallel_maintenance_workers = {};", mw))
+-                            .unwrap();
+-                        Spi::run(&format!("SET parallel_leader_participation = {};", lp)).unwrap();
+-                        Spi::run(&format!("SET maintenance_work_mem = '{}';", mwm)).unwrap();
+-
+-                        // Create index
+-                        Spi::run(&format!(
+-                            "CREATE INDEX parallel_build_large_idx ON parallel_build_large USING paradedb (id, name) WITH (target_segment_count = {});",
+-                            ts
+-                        ))
+-                        .unwrap_or_else(|e| {
+-                            panic!(
+-                                "CREATE INDEX failed with workers={}, leader={}, mem={}, segments={}: {:?}",
+-                                mw, lp, mwm, ts, e
+-                            )
+-                        });
+-
+-                        // Verify segment count
+-                        let count: i64 = Spi::get_one(
+-                            "SELECT COUNT(*)::bigint FROM paradedb.index_info('parallel_build_large_idx');",
+-                        )
+-                        .unwrap()
+-                        .unwrap();
+-
+-                        if *ts == 4 {
+-                            assert_eq!(
+-                                count, 4,
+-                                "Expected 4 segments with workers={}, leader={}, mem={}, segments={}, got {}",
+-                                mw, lp, mwm, ts, count
+-                            );
+-                        } else if *ts == 7 {
+-                            assert_eq!(count, 7, "prime target: {count} segments");
+-                        } else if *ts == 32 {
+-                            // The parallel heap scan hands out blocks on demand, so a participant
+-                            // short on CPU scans fewer rows and flushes fewer segments than its
+-                            // quota, while its peers merge back down to theirs. Skew only ever
+-                            // pulls the total below the target. The floor tolerates about a
+-                            // quarter of the rows moving between participants.
+-                            let expected = 24..=33;
+-                            assert!(
+-
+```
+
+**File**: `index_write/src/postgres/build_partitioning.rs` (modified, +20/-7)
+```diff
+@@ -947,16 +947,23 @@ mod tests {
+ 
+     #[pg_test]
+     fn vector_partitions_group_neighbors_and_keep_nulls() {
+-        Spi::run(
++        const PARTITIONS: usize = 2;
++        const ROWS_PER_PARTITION: usize = VECTOR_MIN_SAMPLES_PER_PARTITION * 2;
++        const SOURCE_ROWS: usize = PARTITIONS * ROWS_PER_PARTITION;
++        const TOTAL_ROWS: i64 = SOURCE_ROWS as i64 + 2;
++        const CLUSTERING_THRESHOLD: usize = ROWS_PER_PARTITION / 2;
++
++        Spi::run(&format!(
+             r#"
+             CREATE EXTENSION IF NOT EXISTS vector;
++            SET paradedb.vector_clustering_threshold = {CLUSTERING_THRESHOLD};
+             CREATE TABLE vector_partition_src (id BIGINT, region INTEGER, emb vector(2));
+             INSERT INTO vector_partition_src
+             SELECT i, i % 2, ARRAY[CASE WHEN i % 2 = 0 THEN -10 ELSE 10 END, (i % 7) * 0.01]::vector
+-            FROM generate_series(1, 4000) i;
+-            INSERT INTO vector_partition_src VALUES (4001, NULL, NULL), (4002, NULL, '[0,0]');
++            FROM generate_series(1, {SOURCE_ROWS}) i;
++            INSERT INTO vector_partition_src VALUES ({SOURCE_ROWS} + 1, NULL, NULL), ({TOTAL_ROWS}, NULL, '[0,0]');
+         "#,
+-        )
++        ))
+         .unwrap();
+         for workers in [0, 2] {
+             Spi::run("SET parallel_leader_participation = false").unwrap();
+@@ -970,7 +977,7 @@ mod tests {
+                         r#"
+                     CREATE INDEX vector_partition_idx ON vector_partition_src
+                     USING paradedb (id, region, emb {metric})
+-                    WITH (target_segment_count = 2{partition_option});
++                    WITH (target_segment_count = {PARTITIONS}{partition_option});
+                 "#
+                     ))
+                     .unwrap();
+@@ -983,14 +990,20 @@ mod tests {
+                                 "SELECT count(*) FROM paradedb.index_info('vector_partition_idx')"
+                             )
+                             .unwrap(),
+-                            Some(2)
++                            Some(PARTITIONS as i64)
+                         );
+                         assert_eq!(
+                             Spi::get_one::<i64>(
+                                 "SELECT count(*) FROM vector_partition_src WHERE id @@@ pdb.all()"
+                             )
+                             .unwrap(),
+-                            Some(4002)
++                            Some(TOTAL_ROWS)
++                        );
++                        assert_eq!(
++                            Spi::get_one::<bool>(
++                                "SELECT bool_and(vector_format = 'ivf') FROM paradedb.vector_info('vector_partition_idx', 'emb')"
++                            ).unwrap(),
++                            Some(true)
+                         );
+                         let (_, indexrel) =
+                             open_rels("vector_partition_src", "vector_partition_idx");
+```
+
+**File**: `index_write/src/postgres/merge.rs` (modified, +13/-5)
+```diff
+@@ -1091,9 +1091,14 @@ mod tests {
+             .filter(|entry| !entry.is_deleted())
+             .map(|entry| entry.segment_id())
+             .collect::<Vec<_>>();
+-        Spi::run(
+-            "INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real FROM generate_series(1,1024) i)::vector FROM generate_series(2049,4096) g",
+-        ).unwrap();
++        let total_rows = VECTOR_METADATA_ROWS * 2;
++        let first_inserted_row = VECTOR_METADATA_ROWS + 1;
++        Spi::run(&format!(
++            "INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real
++             FROM generate_series(1,{VECTOR_METADATA_DIMENSIONS}) i)::vector
++             FROM generate_series({first_inserted_row},{total_rows}) g",
++        ))
++        .unwrap();
+         let current = unsafe { MetaPage::open(&indexrel).segment_metas().list(None) };
+         assert!(old.iter().all(|id| {
+             current
+@@ -1102,15 +1107,18 @@ mod tests {
+         }));
+         assert!(WARNED_VECTOR_INDEXES.with(|warned| warned.borrow().contains(&oid)));
+         // A repeated write keeps the same backend warning state while skipping the unsupported segment.
+-        Spi::run("UPDATE metadata_vectors SET vec = vec WHERE id = 4096").unwrap();
++        Spi::run(&format!(
++            "UPDATE metadata_vectors SET vec = vec WHERE id = {total_rows}"
++        ))
++        .unwrap();
+         assert!(WARNED_VECTOR_INDEXES.with(|warned| warned.borrow().contains(&oid)));
+         expect_reindex(&vector_query());
+         drop(indexrel);
+         Spi::run("REINDEX INDEX metadata_vectors_idx").unwrap();
+         Spi::run(&vector_query()).unwrap();
+         assert_eq!(
+             Spi::get_one::<i64>("SELECT count(*) FROM metadata_vectors").unwrap(),
+-            Some(4096)
++            Some(total_rows)
+         );
+     }
+ 
 ```
 
 **File**: `nix/pg_search.nix` (modified, +1/-1)
@@ -2485,57 +3268,382 @@ Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@use
    # If maintainers forget to do so, Nix will throw an error message that begins
    # like this and then provides the correct new hash:
    # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-E5ADdQYe5yTWz+FPFXihXT4n0UI+wOpEhMAoUUa2l+A=";
-+  cargoHash = "sha256-2jmSXbyLJJxta0KjMhL3OltKXg0YW8TF9FYb9v/LAh4=";
+-  cargoHash = "sha256-yXrVmriGzaRvDXBFp8X+Vp2o4jTLflzlidTCvLSjEiI=";
++  cargoHash = "sha256-/a7Ya0Vgm4xMOK+J6mgl+s0pxFIVB/1em/OvIhbNj8E=";
  
    inherit postgresql;
    # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/issue_6931.out` (modified, +5/-5)
+**File**: `pg_search/src/api/vector.rs` (modified, +10/-7)
 ```diff
-@@ -550,14 +550,14 @@ WHERE m.body @@@ 'x' AND m.a * n.b > 3 GROUP BY m.grp ORDER BY m.grp;
-          DataFusion Physical Plan: 
-            : ┌───── DistributedExec
-            : │ CoalescePartitionsExec
--           : │   [Stage 3] => NetworkCoalesceExec: output_partitions=6, input_tasks=2
-+           : │   [Stage 3] => NetworkCoalesceExec: output_partitions=8, input_tasks=2
-            : └──────────────────────────────────────────────────
--           :   ┌───── Stage 3 ── tasks=2, partitions=3
-+           :   ┌───── Stage 3 ── tasks=2, partitions=4
-            :   │ AggregateExec: mode=FinalPartitioned, gby=[grp@0 as grp], aggr=[sum(m_0.a) as agg_0]
--           :   │   [Stage 2] => NetworkShuffleExec: output_partitions=3, input_tasks=2
-+           :   │   [Stage 2] => NetworkShuffleExec: output_partitions=4, input_tasks=2
-            :   └──────────────────────────────────────────────────
--           :     ┌───── Stage 2 ── tasks=2, partitions=6
--           :     │ RepartitionExec: partitioning=Hash([grp@0], 6), input_partitions=1
-+           :     ┌───── Stage 2 ── tasks=2, partitions=8
-+           :     │ RepartitionExec: partitioning=Hash([grp@0], 8), input_partitions=1
-            :     │   AggregateExec: mode=Partial, gby=[grp@0 as grp], aggr=[sum(m_0.a) as agg_0]
-            :     │     HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@2, id@0)], filter=pdb_int_mul(CAST(a@0 AS Int32), CAST(b@1 AS Int32)) > 3, projection=[grp@0, a@1]
-            :     │       CoalescePartitionsExec
+@@ -1239,21 +1239,24 @@ mod tests {
+     // Stored segment layers are independent of the field build target.
+     #[pg_test]
+     fn vector_metadata_is_independent_of_build_target() {
++        const SINGLE_LAYER_BYTES_PER_ROW: i64 = 32;
++        const STORED_LAYERS_BYTES_PER_ROW: i64 = 108;
++
+         let indexrel = vector_metadata_fixture();
+         set_single_layer_target(&indexrel);
+         assert_eq!(
+-            Spi::get_one::<bool>(
+-                "SELECT layers=ARRAY[1] AND bytes_per_row=144 AND settings_version=3
++            Spi::get_one::<bool>(&format!(
++                "SELECT layers=ARRAY[1] AND bytes_per_row={SINGLE_LAYER_BYTES_PER_ROW} AND settings_version=3
+             FROM paradedb.vector_config('metadata_vectors_idx','vec')"
+-            )
++            ))
+             .unwrap(),
+             Some(true)
+         );
+         assert_eq!(
+-            Spi::get_one::<bool>(
+-                "SELECT bool_and(layers=ARRAY[1,4] AND bytes_per_row=668)
++            Spi::get_one::<bool>(&format!(
++                "SELECT bool_and(layers=ARRAY[1,4] AND bytes_per_row={STORED_LAYERS_BYTES_PER_ROW})
+             FROM paradedb.vector_info('metadata_vectors_idx','vec')"
+-            )
++            ))
+             .unwrap(),
+             Some(true)
+         );
+@@ -1290,7 +1293,7 @@ mod tests {
+             assert_eq!(
+                 Spi::get_one::<i64>("SELECT count(*) FROM metadata_vectors WHERE id @@@ pdb.all()")
+                     .unwrap(),
+-                Some(2048)
++                Some(VECTOR_METADATA_ROWS)
+             );
+             Spi::run("SELECT * FROM paradedb.vector_config('metadata_vectors_idx','vec')").unwrap();
+             if version != 5 {
 ```
 
-**File**: `stressgres/Cargo.toml` (modified, +1/-1)
+**File**: `storage/src/lib.rs` (modified, +18/-6)
 ```diff
-@@ -43,7 +43,7 @@ sysinfo = { version = "0.40.1", features = ["multithread"] }
- tokio = { version = "1.54.1", features = ["rt", "time"] }
- tokio-postgres = "0.7.18"
- toml = "1.1.6"
--url = "2.5.8"
-+url = "2.5.9"
+@@ -28,14 +28,26 @@ pub mod api {
+         use crate::postgres::storage::metadata::MetaPage;
+         use pgrx::prelude::*;
  
- [dev-dependencies]
- tempfile = "3.27.0"
++        const VECTOR_METADATA_CLUSTERING_THRESHOLD: i64 = 64;
++        pub const VECTOR_METADATA_ROWS: i64 = VECTOR_METADATA_CLUSTERING_THRESHOLD * 2;
++        pub const VECTOR_METADATA_DIMENSIONS: usize = 128;
++
+         pub fn vector_metadata_fixture() -> PgSearchRelation {
+-            Spi::run("CREATE EXTENSION IF NOT EXISTS vector;
+-                SET paradedb.vector_clustering_threshold = 64;
+-                CREATE TABLE metadata_vectors(id int PRIMARY KEY, vec vector(1024));
++            Spi::run(&format!("CREATE EXTENSION IF NOT EXISTS vector;
++                SET paradedb.vector_clustering_threshold = {VECTOR_METADATA_CLUSTERING_THRESHOLD};
++                CREATE TABLE metadata_vectors(id int PRIMARY KEY, vec vector({VECTOR_METADATA_DIMENSIONS}));
+                 INSERT INTO metadata_vectors SELECT g, ARRAY(SELECT ((g+i)%17+1)::real
+-                    FROM generate_series(1,1024) i)::vector FROM generate_series(1,2048) g;
++                    FROM generate_series(1,{VECTOR_METADATA_DIMENSIONS}) i)::vector FROM generate_series(1,{VECTOR_METADATA_ROWS}) g;
+                 CREATE INDEX metadata_vectors_idx ON metadata_vectors USING paradedb(id, vec vector_l2_ops)
+-                    WITH (quantization='[1,4]', target_segment_count=1);").unwrap();
++                    WITH (quantization='[1,4]', target_segment_count=1);")).unwrap();
++            assert_eq!(
++                Spi::get_one::<bool>(
++                    "SELECT bool_and(vector_format = 'ivf' AND layers = ARRAY[1,4])
++                     FROM paradedb.vector_info('metadata_vectors_idx', 'vec')"
++                )
++                .unwrap(),
++                Some(true)
++            );
+             PgSearchRelation::open(
+                 Spi::get_one::<pg_sys::Oid>("SELECT 'metadata_vectors_idx'::regclass::oid")
+                     .unwrap()
+@@ -60,7 +72,7 @@ pub mod api {
+         }
+ 
+         pub fn vector_query() -> String {
+-            let query = vec!["1"; 1024].join(",");
++            let query = vec!["1"; VECTOR_METADATA_DIMENSIONS].join(",");
+             format!(
+                 "SELECT id FROM metadata_vectors WHERE id @@@ pdb.all() ORDER BY vec <-> '[{query}]'::vector LIMIT 5"
+             )
+```
+
+---
+
+### Incident Patch 3: `5a0e9f3b` (2026-11-24)
+**Commit Message**: build: make DST optional for the extension (#7659)
+
+## What
+
+Make `dst` optional for the extension build. The `pg_search/dst` feature
+still enables the Antithesis SDK and coverage shim. Normal builds use
+local debug assertions and keep observations type-checked in release
+builds.
+
+Schemabot and Stressgres are already outside the extension build. The
+separate integration test harness still uses the DST crate directly.
+
+## Tests
+
+- `cargo check --offline --locked -p pg_search`
+- `cargo fmt --all -- --check` and `git diff --check`
+- Verified Cargo's default build graph excludes DST, Schemabot,
+Stressgres, and Antithesis. The extension's `dst` feature still resolves
+DST and Antithesis.
+- The instrumented compile on macOS stops in the SDK's Linux-specific
+`.init_array` section. Instrumented Linux validation is pending.
+
+---------
+
+Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-4)
+```diff
+@@ -1483,6 +1483,7 @@ dependencies = [
+  "bytemuck",
+  "chrono",
+  "decimal-bytes",
++ "dst",
+  "futures",
+  "libc",
+  "once_cell",
+@@ -4015,7 +4016,6 @@ dependencies = [
+  "bytemuck",
+  "common",
+  "decimal-bytes",
+- "dst",
+  "parking_lot 0.13.0",
+  "pgrx",
+  "pgrx-tests",
+@@ -4041,7 +4041,7 @@ version = "0.27.0"
+ dependencies = [
+  "anyhow",
+  "bytemuck",
+- "dst",
++ "common",
+  "index_read",
+  "log",
+  "pgrx",
+@@ -5336,7 +5336,6 @@ dependencies = [
+  "anyhow",
+  "basescan",
+  "common",
+- "dst",
+  "env_logger",
+  "half 2.7.1",
+  "index_read",
+@@ -7202,7 +7201,6 @@ dependencies = [
+  "bitpacking",
+  "bytemuck",
+  "common",
+- "dst",
+  "parking_lot 0.13.0",
+  "pgrx",
+  "pgrx-tests",
+```
+
+**File**: `common/Cargo.toml` (modified, +2/-0)
+```diff
+@@ -14,6 +14,7 @@ pg16 = ["pgrx/pg16"]
+ pg17 = ["pgrx/pg17"]
+ pg18 = ["pgrx/pg18"]
+ pg_test = ["dep:proptest"]
++dst = ["dep:dst", "dst/enabled"]
+ 
+ # Keep this crate's dependency list minimal: every workspace crate depends on `common`, so
+ # heavy dependencies added here serialize the entire build graph. In particular, do NOT add
+@@ -26,6 +27,7 @@ arrow-schema.workspace = true
+ bytemuck.workspace = true
+ chrono.workspace = true
+ decimal-bytes.workspace = true
++dst = { path = "../dst", optional = true }
+ futures.workspace = true
+ libc.workspace = true
+ once_cell.workspace = true
+```
+
+**File**: `common/src/dst.rs` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++// Copyright (c) 2023-2026 ParadeDB, Inc.
++//
++// This file is part of ParadeDB - Postgres for Search and Analytics
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU Affero General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU Affero General Public License for more details.
++//
++// You should have received a copy of the GNU Affero General Public License
++// along with this program. If not, see <http://www.gnu.org/licenses/>.
++
++//! Local extension assertions when the DST SDK is disabled.
++
++pub use crate::dst_observe as observe;
++pub use crate::{
++    dst_assert_always as assert_always, dst_assert_always as assert_always_or_unreachable,
++    dst_assert_unreachable as assert_unreachable,
++};
++
++/// Run a read-only observation in debug builds. Release builds still type-check the closure.
++#[inline]
++#[doc(hidden)]
++pub fn run_observation<F: Fn()>(check: F) {
++    if cfg!(debug_assertions) {
++        check();
++    }
++}
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! dst_observe {
++    ($check:expr $(,)?) => {
++        $crate::dst::run_observation($check)
++    };
++}
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! dst_assert_always {
++    ($condition:expr, $message:literal) => {
++        ::core::debug_assert!($condition, "{}", $message)
++    };
++    ($condition:expr, $message:literal, $details:expr) => {
++        ::core::debug_assert!($condition, "{}: {}", $message, $details)
++    };
++}
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! dst_assert_unreachable {
++    ($message:literal $(, $details:expr)?) => {
++        $crate::dst_assert_always!(false, $message $(, $details)?)
++    };
++}
+```
+
+**File**: `common/src/lib.rs` (modified, +4/-0)
+```diff
+@@ -18,6 +18,10 @@
+ pub use pgrx::pgrx_sql_entity_graph;
+ 
+ pub mod api;
++#[cfg(not(feature = "dst"))]
++pub mod dst;
++#[cfg(feature = "dst")]
++pub use ::dst;
+ pub mod gucs;
+ pub mod index;
+ pub mod parallel_worker;
+```
+
+**File**: `docker/Dockerfile.proptests` (modified, +5/-5)
+```diff
+@@ -3,7 +3,7 @@
+ # - Minimum 2 CPU cores for compilation
+ #
+ # This image pre-builds the `qgen` property test binary and bundles it with
+-# Antithesis singleton driver scripts. The binary is invoked in a loop against
++# DST singleton driver scripts. The binary is invoked in a loop against
+ # the in-cluster ParadeDB primary by the driver script (see
+ # tests/antithesis/singleton_driver_property-tests.sh).
+ 
+@@ -14,7 +14,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ 
+ # Install build and runtime dependencies. `jq` is used during build to extract
+ # the test binary path from cargo's JSON output; `curl` is needed by the
+-# antithesis-instrumentation build script, which `--features dst` pulls in.
++# DST coverage shim build script, which `--features dst` pulls in.
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+     build-essential \
+     lld \
+@@ -39,7 +39,7 @@ WORKDIR /home/app
+ # is built).
+ COPY --chown=app:app . .
+ 
+-# Configure Antithesis test singletons.
++# Configure DST test singletons.
+ RUN mkdir -p /opt/antithesis/test/v1/quickstart
+ COPY tests/antithesis/ /opt/antithesis/test/v1/quickstart/
+ RUN chmod +x /opt/antithesis/test/v1/quickstart/*.sh
+@@ -50,7 +50,7 @@ ENV RUST_LOG=info
+ ENV PGCLIENTENCODING=UTF8
+ 
+ # Prefetch deps and build the qgen test binary while we have Internet. This
+-# Docker image will run in an air-gapped environment in Antithesis, so the
++# Docker image will run in an air-gapped DST environment, so the
+ # binary must already exist on disk. The `--message-format=json` output lets
+ # us pick out the unhashed test executable path and copy it to a stable
+ # location.
+@@ -62,7 +62,7 @@ RUN cargo fetch --locked --manifest-path /home/app/Cargo.toml && \
+     QGEN_BIN=$(jq -r 'select(.profile.test == true and .target.name == "qgen") | .executable' /tmp/build.json | tail -n 1) && \
+     test -x "$QGEN_BIN" && \
+     cp "$QGEN_BIN" /home/app/qgen && \
+-    /home/app/qgen --exact antithesis_sdk_initializes && \
++    /home/app/qgen --exact dst_sdk_initializes && \
+     rm /tmp/build.json
+ 
+ CMD ["sleep", "infinity"]
+```
+
+**File**: `docker/Dockerfile.source` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ WORKDIR /build
+ COPY . .
+ # Scope SanitizerCoverage to the explicit target so host build scripts and
+ # cargo-pgrx stay uninstrumented. Keep the release path identical for benchmarks.
+-# DST runs currently use Antithesis instrumentation and require linux/amd64.
++# The instrumented DST build requires linux/amd64.
+ ARG DST=false
+ RUN /bin/bash <<'BUILD'
+ set -euo pipefail
+```
+
+**File**: `docker/Dockerfile.stressgres` (modified, +3/-3)
+```diff
+@@ -54,7 +54,7 @@ RUN cargo fetch --manifest-path /home/app/Cargo.toml && \
+ FROM debian:trixie-slim AS runtime
+ 
+ # Upgrade the runtime packages so a rebuild picks up all available Debian
+-# security fixes. psql is used by the Antithesis setup/verification scripts;
++# security fixes. psql is used by the DST setup and verification scripts;
+ # util-linux provides flock for the recovery-liveness script.
+ # Graph generation is disabled in this image, avoiding Fontconfig and its
+ # transitive font/XML dependencies. Normal source builds retain graph support.
+@@ -71,8 +71,8 @@ RUN useradd --create-home --shell /bin/bash app
+ 
+ WORKDIR /home/app
+ 
+-# Preserve the paths used by the public Docker examples and Antithesis while copying only runtime
+-# inputs. The unstripped binary under /symbols lets Antithesis symbolize instrumented crashes.
++# Preserve the paths used by the public Docker examples and DST runner while copying only runtime
++# inputs. The unstripped binary under /symbols lets the DST runner symbolize instrumented crashes.
+ COPY --chown=app:app --from=builder /tmp/stressgres /symbols/stressgres
+ # Copy the native client without postgresql-client-common and its unused Perl runtime. Because the
+ # Debian package database is not copied with it, package-based scanners may not inventory psql.
+```
+
+**File**: `docker/README.md` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ postgresql:
+ 
+ ## Manifests
+ 
+-`manifests/cnpg.yaml` is the CloudNativePG operator, rendered from the upstream Helm chart with default values and bundled into the Antithesis config images. To upgrade the operator, re-render it with the chart version whose `appVersion` is the CNPG release you want ([chart index](https://github.com/cloudnative-pg/charts)):
++`manifests/cnpg.yaml` is the CloudNativePG operator, rendered from the upstream Helm chart with default values and bundled into the DST config images. To upgrade the operator, re-render it with the chart version whose `appVersion` is the CNPG release you want ([chart index](https://github.com/cloudnative-pg/charts)):
+ 
+ ```bash
+ helm repo add cnpg https://cloudnative-pg.github.io/charts
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7649** (2026-11-23): chore: Upgrade pgrx to 0.20.1 (@paradedb-github-bot[bot])
-- **PR #7644** (2026-11-23): chore: Fix RUSTSEC-2026-0592 (@paradedb-github-bot[bot])
-- **PR #7643** (2026-11-23): chore: Fix RUSTSEC-2026-0592 (@paradedb-github-bot[bot])
-- **PR #7642** (2026-11-23): chore: Fix RUSTSEC-2026-0592 (@stuhood)
-- **PR #7638** (2026-11-24): test: migrate benchmarks to V2 syntax (@jamessewell)
-- **PR #7637** (2026-11-24): test: migrate Rust test fixtures to V2 syntax (@jamessewell)
+- **PR #7667** (2026-11-24): fix: Synchronize resource cleanup on abort (@paradedb-github-bot[bot])
+- **PR #7666** (2026-11-24): perf: Add support for pushing dynamic hash expression filters into Tantivy (@paradedb-github-bot[bot])
+- **PR #7663** (2026-11-24): ci: use a SQL smoke test after extension upgrades (@paradedb-github-bot[bot])
+- **PR #7660** (2026-11-24): ci: use a SQL smoke test after extension upgrades (@philippemnoel)
+- **PR #7659** (2026-11-24): build: make DST optional for the extension (@philippemnoel)
+- **PR #7658** (2026-11-24): fix: report vector index build training phases (@paradedb-github-bot[bot])
 
 ---
 
@@ -2555,28 +3663,54 @@ Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@use
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: migrate Rust test fixtures to V2 syntax
+## X. Synchronize resource cleanup on abort
 
 **RULE**:
-When implementing operations in `index_read/src/index/directory/mvcc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/check_impl_drop.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32ba4b5c`: test: migrate Rust test fixtures to V2 syntax. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3db63451`: Synchronize resource cleanup on abort. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_read/src/index/directory/mvcc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_impl_drop.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                (id, (data::pdb.simple));",
+`impl_safe_drop!`, or any direct `IsTransactionState()` call inside `impl_safe_drop!` that does
+not say why it skips `ResourceOwnerStamp`.
+words: "We intentionally do NOT use `impl_safe_drop!` here because ...".
+
+Inside `impl_safe_drop!`, checking `IsTransactionState()` alone is not enough when a scan state
+lives in a `MemoryContext` whose `ResourceOwner` has already been released (#7609); wrappers
+should gate cleanup with `ResourceOwnerStamp` from common/src/postgres/resowner.rs, or opt out
+directly above the call with "We intentionally call `IsTransactionState()` here because ...".
+Every workspace crate that depends on `pgrx` is scanned.
+SAFE_DROP_START = re.compile(r"^[ \t]*(?:[A-Za-z0-9_]+::)*impl_safe_drop!\s*\(")
+IS_TX_STATE = re.compile(r"\bIsTransactionState\s*\(")
+STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\])*"')
+TX_STATE_OVERRIDE = re.compile(
+    r"\bnot\s+us(?:e|ing)\W+ResourceOwnerStamp\b|\bintentionally\b.*\bIsTransactionState\b",
+    re.IGNORECASE,
+)
+    (
+        "crate::impl_safe_drop!(Foo, |self| {\n    if unsafe { IsTransactionState() } {}\n});",
+        1,
+    ),
+    (
+        (
+            "crate::impl_safe_drop!([T] Foo<T>, |self| {\n"
+            "    // TODO
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                (id, (data::pdb.simple)) WITH (key_field='id');",
+`impl_safe_drop!`.
+words: "We intentionally do NOT use `impl_safe_drop!` here because ...". Every workspace crate
+that depends on `pgrx` is scanned.
+    """Return (line, header) for every unexcused `impl Drop` or `DropGuard`."""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32ba4b5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3db63451` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:42:00.768Z",
+  "last_updated": "2026-11-24T23:51:10.843Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -943,7 +943,7 @@
       "staged_for_review": 1
     },
     "clastix-kamaji-learnings.md": {
-      "processed_at": "2026-11-20T01:12:48.086Z",
+      "processed_at": "2026-11-24T23:51:08.405Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1148,9 +1148,9 @@
       "staged_for_review": 1
     },
     "parcel-bundler-parcel-learnings.md": {
-      "processed_at": "2026-11-21T00:13:22.638Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-24T23:51:07.203Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "tanstack-query-learnings.md": {
       "processed_at": "2026-11-21T00:32:49.052Z",
@@ -1298,9 +1298,9 @@
       "staged_for_review": 1
     },
     "paradedb-paradedb-learnings.md": {
-      "processed_at": "2026-11-24T03:23:14.802Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-24T23:51:09.446Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "matthart1983-netwatch-learnings.md": {
       "processed_at": "2026-11-22T18:21:37.527Z",
@@ -3878,7 +3878,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3969,
+  "total_dossiers_evaluated": 3972,
   "total_canonical_promoted": 520,
-  "total_staged_for_review": 3029
+  "total_staged_for_review": 3032
 }

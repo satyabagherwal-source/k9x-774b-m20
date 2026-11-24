@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T23:41:54.491Z",
+  "last_updated": "2026-11-24T23:51:03.491Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
-      "verified_at": "2026-11-20T01:12:44.897Z",
+      "content_hash": "20d684bf82e880e1728373de318b1e30a35a59187cbce68f843fba50afe63a68",
+      "verified_at": "2026-11-24T23:50:57.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T01:12:44.897Z"
+      "last_updated": "2026-11-24T23:50:57.845Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
-      "verified_at": "2026-11-24T03:22:43.073Z",
+      "content_hash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
+      "verified_at": "2026-11-24T23:51:03.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:22:43.073Z"
+      "last_updated": "2026-11-24T23:51:03.490Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -15111,14 +15111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-parcel-bundler-parcel",
-      "content_hash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
-      "verified_at": "2026-11-21T00:11:27.727Z",
+      "content_hash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
+      "verified_at": "2026-11-24T23:50:54.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:11:27.727Z"
+      "last_updated": "2026-11-24T23:50:54.191Z"
     },
     "TanStack/query": {
       "repository": "TanStack/query",

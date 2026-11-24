@@ -12848,3 +12848,6 @@
 | `CYCLE-20261124-Z0R6` | `2026-11-24T23:33:26.034Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10386` | Yes (`a7a9b316...`) |
 | `CYCLE-20261124-9W5D` | `2026-11-24T23:41:53.281Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10387` | Yes (`8feceb94...`) |
 | `CYCLE-20261124-9X2G` | `2026-11-24T23:41:54.472Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10388` | Yes (`ccce81f3...`) |
+| `CYCLE-20261124-LHHT` | `2026-11-24T23:50:54.161Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10389` | Yes (`1963c926...`) |
+| `CYCLE-20261124-LKAA` | `2026-11-24T23:50:57.778Z` | `clastix/kamaji` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | Yes (`20d684bf...`) |
+| `CYCLE-20261124-LOOA` | `2026-11-24T23:51:03.466Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10390` | Yes (`6ba9f5f7...`) |
