@@ -12705,3 +12705,8 @@
 | `CYCLE-20261124-ZDQQ` | `2026-11-24T14:41:50.162Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10282` | Yes (`d80755e5...`) |
 | `CYCLE-20261124-ZJCV` | `2026-11-24T14:41:57.439Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9571` | Yes (`2cca6be8...`) |
 | `CYCLE-20261124-ZKE6` | `2026-11-24T14:41:58.782Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10283` | Yes (`a627c424...`) |
+| `CYCLE-20261124-AJBZ` | `2026-11-24T14:50:30.623Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10284` | Yes (`5b085065...`) |
+| `CYCLE-20261124-AOZL` | `2026-11-24T14:50:37.953Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10285` | Yes (`1d734a6b...`) |
+| `CYCLE-20261124-AS7L` | `2026-11-24T14:50:42.129Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`7cc33e0f...`) |
+| `CYCLE-20261124-AU7M` | `2026-11-24T14:50:44.722Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10286` | Yes (`9249333b...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:51:14.723Z` | `kube-rs-kube` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-01E5EB37` [Domain H] | Yes (`52639cab...`) |

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-6SB1",
-    "timestamp": "2026-11-22T19:52:10.957Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-7545",
-    "timestamp": "2026-11-22T19:52:27.557Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-H7OM",
-    "timestamp": "2026-11-22T20:00:17.446Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-HDPM",
-    "timestamp": "2026-11-22T20:00:25.258Z",
-    "repository": "siteline/swiftui-introspect",
-    "learningId": "learn-github-siteline-swiftui-introspect",
-    "contentHash": "b60993a38146cee3505787da4b5a2b7fa76a3ed2fba8ef150894db7330dd6925",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-SCV8",
     "timestamp": "2026-11-22T20:08:57.380Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7430,66 @@
     "repository": "citusdata/citus",
     "learningId": "learn-github-citusdata-citus",
     "contentHash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AJBZ",
+    "timestamp": "2026-11-24T14:50:30.623Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AOZL",
+    "timestamp": "2026-11-24T14:50:37.953Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AS7L",
+    "timestamp": "2026-11-24T14:50:42.129Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AU7M",
+    "timestamp": "2026-11-24T14:50:44.722Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

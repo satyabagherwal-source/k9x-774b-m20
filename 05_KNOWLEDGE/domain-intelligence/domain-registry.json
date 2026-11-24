@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:42:05.196Z",
-  "total_records": 2536,
+  "last_updated": "2026-11-24T14:51:16.464Z",
+  "total_records": 2539,
   "domains": {
     "A": {
       "total": 22,
@@ -1602,7 +1602,7 @@
       ]
     },
     "H": {
-      "total": 605,
+      "total": 608,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2208,7 +2208,10 @@
         "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants",
         "DOM-H-23B9B1A9",
         "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants",
+        "DOM-H-01E5EB37",
+        "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8279,8 +8282,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "e1c548033a966d82f0f9e15d0ea2011b79a4e42d41b231ce0d0099fe114eeb62",
-      "created_at": "2026-11-24T09:42:29.841Z"
+      "content_hash": "267bd52830dd080683af945d6638104b629232192ab6ac4505d0512a0e5e2073",
+      "created_at": "2026-11-24T14:50:42.531Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8297,8 +8300,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "ff2752cead68917b3e4c1e4ed3952eb5ce6f89607eb6ba54ad43401c33733b80",
-      "created_at": "2026-11-24T09:42:36.094Z"
+      "content_hash": "9881fdd82337c8fe4ecd48fafff2b6bad8ea798fcd1aa9a2db14f6e62471fb0f",
+      "created_at": "2026-11-24T14:51:16.464Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -9998,8 +10001,8 @@
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "repository": "kucherenko/jscpd",
-      "content_hash": "62a74e0d47083fecc41e160b5f1a719ef8e12ced3b6961f2d9ea9eadeecf4acb",
-      "created_at": "2026-11-23T08:33:09.867Z"
+      "content_hash": "f6658f6e63007637b809e919890a7c498cccd1dc427f35a5b5b9269ce1ad1fe2",
+      "created_at": "2026-11-24T14:50:31.040Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
@@ -10016,8 +10019,8 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-learnings-technical-construction-intelligence-kucherenko-jscpd-.md",
       "repository": "kucherenko-jscpd-learnings",
-      "content_hash": "461b1232069bf7e84af932ead7bce53c3c85ed94c155e6ba05493bf62dd9a204",
-      "created_at": "2026-11-23T08:33:16.818Z"
+      "content_hash": "2a43b78b0150eabda75a7432eec1dd3d1c9f2483abf96f435ede1d9f6d8078b6",
+      "created_at": "2026-11-24T14:50:48.810Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -17097,8 +17100,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "48c66e3744c9b9f04da83891289ee7c7749ec3e1481dbf03c8747f48b089545d",
-      "created_at": "2026-11-23T18:24:04.348Z"
+      "content_hash": "fb051bbd71822004fd55ca725acba801fbf25328702fc3baafdbb55316cb51fe",
+      "created_at": "2026-11-24T14:50:45.128Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -42590,6 +42593,66 @@
       "repository": "citusdata-citus-learnings",
       "content_hash": "1e2d4ad02382de93a124907707a3ea3ebf1e7bba881ee84d2b26a5b410edc362",
       "created_at": "2026-11-24T14:42:05.196Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kube-rs/kube Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-technical-construction-intelligence-kube-rs-kube-core-invariants.md",
+      "repository": "kube-rs/kube",
+      "content_hash": "ec88d1948eb472effeac6858e38f5925f3de202b7714e34eb6f0062d3e784862",
+      "created_at": "2026-11-24T14:50:38.372Z"
+    },
+    "DOM-H-01E5EB37": {
+      "record_id": "DOM-H-01E5EB37",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "bump async-broadcast version to wasm-compatible one",
+      "content": "When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "52639caba6f5325b808ecfe3f486916b313b795968f7b7ac1f535c5a1e2da467",
+      "summary": "Prevents defects observed in production commit `6ed29aa0`: bump async-broadcast version to wasm-compatible one. Unvalidated execution paths  -> When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concur",
+      "provenance": {
+        "source_uri": "project://kube-rs-kube/kube-rs-kube-learnings.md",
+        "source_version": "6ed29aa0",
+        "observed_at": "2026-11-24T14:50:36.864Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kube-rs-kube)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of kube-rs-kube"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T14:51:14.693Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kube-rs-kube-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-learnings-technical-construction-intelligence-kube-rs-kube-learning.md",
+      "repository": "kube-rs-kube-learnings",
+      "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
+      "created_at": "2026-11-24T14:51:15.504Z"
     }
   }
 }

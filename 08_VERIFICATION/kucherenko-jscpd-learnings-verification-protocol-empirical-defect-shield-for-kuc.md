@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T08:33:16.467Z",
+  "timestamp": "2026-11-24T14:50:48.504Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kucherenko-jscpd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kucherenko-jscpd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T08:33:16.467Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:50:48.504Z`  
 > **Learning ID**: `LEARN-EVO-kucherenko-jscpd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `a46ba6ab`  
+> **Source Version**: `28d22360`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T08:33:08.083Z  
+> **Timestamp**: 2026-11-24T14:50:29.489Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T08:33:04.608Z  
+> **Harvest Timestamp**: 2026-11-24T14:50:29.301Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6598 stars
+- **Stars / Engagement**: 6611 stars
 
 ---
 
@@ -1904,521 +1904,444 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2130bbce` (2026-11-22)
-**Commit Message**: fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592
+### Incident Patch 1: `29e50f90` (2026-11-23)
+**Commit Message**: fix(walk): review of #1307
 
-Url::origin() overflowed the stack on a URL with nested blob: prefixes.
-jscpd uses url only in the language server, to turn a file URI into a
-path and back, and never calls origin(), so this is a lockfile bump for
-the cargo deny check. form_urlencoded moves to 1.2.3 with it.
+Test files and folders named together, and the same file named twice,
+against walking every root. Say in the docs that a followed link named
+on the command line is reported by its target's path. Drop the timing
+claim from the docs, the fixture README has the numbers. Add the
+changelog entry.
 
-**File**: `rust/Cargo.lock` (modified, +4/-4)
+**File**: `docs/rust.md` (modified, +1/-1)
 ```diff
-@@ -1140,9 +1140,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+@@ -72,7 +72,7 @@ jscpd [OPTIONS] [PATH]...
  
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -3543,9 +3543,9 @@ dependencies = [
+ jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
  
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+-A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. A list of 3,000 files is read in a fraction of a second. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md).
++A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
+ 
+ ### Options
+ 
 ```
 
----
-
-### Incident Patch 2: `1d7085df` (2026-11-22)
-**Commit Message**: fix(detect): review of #1320
-
-- the floor comes from the clones that went out: one dropped under
-  --min-lines no longer stops the next clone of the same two files
-- a clone doesn't reach back onto tokens a stream put on later lines
-  (#1221), where its fragment would go back and the clone be dropped
-- two copies in one file reach back as two files do; the limit for them
-  made the clone depend on the third file it was meant to ignore
-- the secondary pass drops every candidate whose window overlaps a
-  primary clone on the same diagonal, not only those inside it: with
-  --ignore-identifiers, 8 fixture pairs got a second clone over the last
-  lines of the first
-- reach_back compares tokens only, as forward growth does; checking the
-  names there lost the first part of a clone that consistent_runs cuts
-- tests: the floor, a dropped clone, one file with and without a third
-  file, a later line, a name that stands for two, and the protobuf
-  fixture pair under --ignore-identifiers; each fails without its fix
-- changelog entry and the identifier modes in the nway-demo README
-
-**File**: `fixtures/nway-demo/README.md` (modified, +4/-0)
+**File**: `fixtures/file-list-demo/README.md` (modified, +1/-1)
 ```diff
-@@ -51,6 +51,10 @@ agree (see `stolen-head/` below); before, it was a few tokens on one line
- and fell under `--min-lines`. Scanned alone, the two files give the same
- pair.
+@@ -1,6 +1,6 @@
+ # Files named one by one
  
-+`--ignore-identifiers` and `--ignore-identifiers=blind` report the same four
-+pairs, and the pairs where only the names differ start at line 1 as
-+`renamed` (`Found 4 clones.`).
-+
- ## `stolen-head/` — a third file must not move the start of a clone
+-Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk.
++Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name.
  
- `orders.md` and `users.md` hold the same table. `catalog.md` ends with the
+ Up to jscpd 5.4.3 every path started its own pool of walker threads, so 3,000 files named one by one took about a hundred times longer than their folder (issue #1306). A file root now skips the walker.
+ 
 ```
 
-**File**: `rust/CHANGELOG.md` (modified, +6/-0)
+**File**: `rust/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,12 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
+@@ -8,6 +8,8 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
  
- ---
+ ### Bug Fixes
  
-+## Unreleased
++- **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
 +
-+### Bug Fixes
-+
-+- **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
-+
+ - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
+ 
  ## 5.4.3
- 
- ### New Features
 ```
 
-**File**: `rust/crates/cpd-core/src/detect.rs` (modified, +134/-42)
+**File**: `rust/crates/cpd-finder/src/walker.rs` (modified, +39/-2)
 ```diff
-@@ -615,12 +615,8 @@ fn detect_in_group(
-             } else {
-                 // The anchor stopped (or nothing was open): flush, then start a
-                 // new clone on whatever the store matched, if anything.
--                if let Some(oc) = &open_clone {
--                    floors.insert(
--                        oc.stored_occurrence.source_id,
--                        oc.current_start + oc.match_len,
--                    );
--                }
-+                let other = open_clone.as_ref().map(|oc| oc.stored_occurrence.source_id);
-+                let reported = clones.len();
-                 flush_clone(
-                     open_clone.take(),
-                     file_idx,
-@@ -630,10 +626,19 @@ fn detect_in_group(
-                     filters,
-                     &mut clones,
+@@ -843,8 +843,8 @@ mod tests {
                  );
-+                // Only a clone that went out stops the next one: one dropped
-+                // under `--min-lines` covers nothing in the report.
-+                let end = clones[reported..]
-+                    .iter()
-+                    .map(|c| c.fragment_b.range[1] as usize + 1)
-+                    .max();
-+                if let (Some(other), Some(end)) = (other, end) {
-+                    floors.insert(other, end);
+             }
+         }
+-        // Some files are taken and some left out, under each rule.
+-        assert!(taken > 10 && taken < cases / 2, "{taken} of {cases}");
++        // Some files are taken and some left out.
++        assert!(taken > 0 && taken < cases, "{taken} of {cases}");
+         let one = |path: &Path, config: WalkConfig| {
+             let found = walk(&WalkConfig {
+                 paths: vec![path.to_path_buf()],
+@@ -879,6 +879,43 @@ mod tests {
+         let _ = std::fs::remove_dir_all(&dir);
+     }
+ 
++    /// Files and folders named together, as `jscpd . src/a.js` or a hook
++    /// passing the same file twice: one copy of each file, as when every
++    /// root is walked.
++    #[test]
++    fn file_roots_mixed_with_folders_find_each_file_once() {
++        let dir = temp_dir("mixed-roots");
++        let kept = write(&dir, "src/kept.js", "let a = 1;\n");
++        let other = write(&dir, "src/other.ts", "let b = 2;\n");
++        write(&dir, "lib/third.js", "let c = 3;\n");
++        let src = dir.join("src");
++        let cases = [
++            (vec![dir.clone(), kept.clone()], 3),
++            (vec![kept.clone(), other.clone()], 2),
++            (vec![kept.clone(), src.clone()], 2),
++            (vec![src.clone(), kept.clone(), kept.clone()], 2),
++        ];
++        for (paths, count) in cases {
++            for follow_symlinks in [false, true] {
++                let config = WalkConfig {
++                    paths: paths.clone(),
++                    follow_symlinks,
++                    ..Default::default()
++                };
++                let rules = Rules::new(&config);
++                let mut walked = Vec::new();
++                for given in &paths {
++                    walk_dir(&Root::new(given, None), &rules, &[], &mut walked);
 +                }
-                 match stored {
-                     Some(stored) => {
-                         let floor = floors.get(&stored.source_id).copied().unwrap_or(0);
--                        let back = reach_back(stored, current, prepared, min_tokens, floor);
-+                        let back = reach_back(stored, current, prepared, floor);
-                         open_clone = Some(OpenClone {
-                             stored_occurrence: Occurrence {
-                                 source_id: stored.source_id,
-@@ -921,32 +926,36 @@ fn window_continues(
- /// the text they share. Its start then depended on the other files of the
- /// scan and on their order.
- ///
--/// The clone does not reach back past `floor`, the end of the last clone of
--/// the current source against the same other source: the two would overlap
--/// on one pair of files, as copies of a repeating text do.
-+/// The clone reaches back
-+/// - not past `floor`, the end of the last reported clone of the current
-+///   source against the same other source, so the two don't overlap on one
-+///   pair of files, as copies of a repeating text would;
-+/// - not onto a token on a later line than the window starts, where a
-+///   stream put tokens out of the order of the text (issue #1221): the
-+///   fragment would go back and be dropped.
-+///
-+/// It compares the tokens alone, as a clone grows forward. With names
-+/// matched consistently, a clone that reaches back past a name that would
-+/// stand for two is cut there by [`consistent_runs`], into the parts the
-+/// two sources give scanned alone. Two copies in one file reach back as
-+/// two files do, so a clone between them is the one the file gives scanned
-+/// alone.
- fn reach_back(
-     stored: Occurrence,
-     current: Occurrence,
-     prepared: &[PreparedSource],
--    min_tokens: usize,
-     floor: usize,
- ) -> usize {
-     let (a, b) = (&prepared[stored.source_id], &prepared[current.source_id]);
--    let most = stored
--        .token_start
--        .min(current.token_start.saturating_sub(floor));
--    // Two copies in one file do not grow into each other this way.
--    let most = match stored.source_id == current.source_id {
--        true => most.min(
--            current
--                .token_start
--                .abs_diff(stored.token_start)
--                .saturating_sub(min_tokens),
--        ),
--        false => most,
--    };
-+    let (sa, sb) = (stored.token_start, current.token_start);
-+    let most = sa.min(sb.saturating_sub(floor));
-+    let (line_a, line_b) = (a.spans[sa].0.line, b.spans[sb].0.line);
-     (1..=most)
--        .take_while(|&k| a.hashes[stored.token_start - k] == b.hashes[current.token_start - k])
-+        .take_while(|&k| {
-+            a.hashes[sa - k] == b.hashes[sb - k]
-+                && a.spans[sa - k].0.line <= line_a
-+                && b.spans[sb - k].0.line <= line_b
-+        })
-         .count()
- }
- 
-@@ -1556,11 +1565,13 @@ fn add_secondary_clones(
-     );
- }
- 
--/// Drops the candidates that lie in a primary clone of their two sources at
--/// the same distance between the copies: the clone holds those tokens
--/// already. Such a candidate used to start where the primary clone did, and
--/// went out with the duplicates; a clone that reaches back ([`reach_back`])
--/// starts earlier than the windows it was found by.
-+/// Drops the candidates whose window overlaps a primary clone of their two
-+/// sources at the same distance between the copies: the clone holds those
-+/// tokens already, and a run of such windows that starts before it would go
-+/// out as a second clone over its first lines. These candidates used to
-+/// start where the primary clone did and went out with the duplicates; a
-+/// clone th
-```
-
-**File**: `rust/crates/cpd/tests/integration.rs` (modified, +34/-0)
-```diff
-@@ -652,6 +652,40 @@ fn config_ignore_pattern_without_glob_chars_is_applied() {
-     let _ = std::fs::remove_dir_all(&dir);
- }
- 
-+/// A clone that reaches back to where its two files start to agree (issue
-+/// #1319) is not reported a second time by the windows inside it: the two
-+/// protobuf fixtures, which differ in names only, give two clones that don't
-+/// overlap under `--ignore-identifiers`.
-+#[test]
-+fn a_clone_is_not_reported_again_over_its_own_lines() {
-+    if maybe_bin().is_none() {
-+        return;
++                dedup_by_real_path(&mut walked);
++                let found_now = found(&walk(&config));
++                assert_eq!(found_now, found(&walked), "{paths:?}");
++                assert_eq!(found_now.len(), count, "{paths:?}");
++            }
++        }
++        let _ = std::fs::remove_dir_all(&dir);
 +    }
-+    let fixtures = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../fixtures/protobuf");
-+    let dir = std::env::temp_dir().join(format!("cpd-reach-back-{}", std::process::id()));
-+    let out = std::env::temp_dir().join(format!("cpd-reach-back-report-{}", std::process::id()));
-+    let _ = std::fs::remove_dir_all(&dir);
-+    std::fs::create_dir_all(&dir).unwrap();
-+    for name in ["file1.proto", "file2.proto"] {
-+        std::fs::copy(fixtures.join(name), dir.join(name)).unwrap();
-+    }
-+    let (json, _) = scan_json(&dir, &out, &["--min-tokens", "50", "--ignore-identifiers"]);
-+    let _ = std::fs::remove_dir_all(&dir);
-+    let _ = std::fs::remove_dir_all(&out);
-+    let lines: Vec<(u64, u64)> = json["duplicates"]
-+        .as_array()
-+        .unwrap()
-+        .iter()
-+        .map(|d| {
-+            (
-+                d["firstFile"]["start"].as_u64().unwrap(),
-+                d["firstFile"]["end"].as_u64().unwrap(),
-+            )
-+        })
-+        .collect();
-+    assert_eq!(lines, [(1, 44), (49, 103)]);
-+}
 +
- /// Type-2 detection (issue #998): renamed identifiers are only a clone with
- /// `--ignore-identifiers`, and such a clone is reported as `kind: renamed`
- /// while an exact copy in the same run stays `kind: exact`.
+     #[test]
+     fn a_scan_root_inside_another_adds_no_second_copy() {
+         let dir = fixtures();
 ```
 
 ---
 
-### Incident Patch 3: `0f124120` (2026-11-22)
-**Commit Message**: fix(detect): start a clone where its two files start to agree
+### Incident Patch 2: `28d22360` (2026-11-23)
+**Commit Message**: Merge pull request #1321 from kucherenko/fix/url-rustsec-2026-0592
 
-The store keeps one occurrence of a window, the first. When a third file
-holds the start of what two others share and is scanned before them, the
-windows of that start are stored for the third file, and the clone of
-the two opened on the first window the third one lacks, some tokens into
-the shared text. Its start depended on a file that is no part of it, and
-on the scan order: adding the file moved the start, changed the
-fingerprint, and a baseline took the clone for a new one (#1319).
+fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592
 
-A clone now reaches back from the window it was found by while the
-tokens before it match, but not past the end of the last clone of the
-same two files, and not so that two copies in one file grow into each
-other.
 
-A clone that reaches back starts earlier than the windows the secondary
-pass finds it by, so that pass no longer relies on the start line to
-drop what the primary pass reported: it drops the candidates that lie in
-a primary clone of the same two files at the same distance.
 
-fixtures/nway-demo gets stolen-head/, and lost-pair/ now reports its
-fourth pair, timeouts.js with uptime.js, as a scan of those two files
-alone does.
+---
 
-Fi
+### Incident Patch 3: `65b7bf4b` (2026-11-23)
+**Commit Message**: Merge pull request #1307 from kucherenko/fix/walk-file-roots
 
-**File**: `fixtures/nway-demo/README.md` (modified, +44/-13)
+fix(walk): take a file named on the command line without the walker
+
+**File**: `docs/rust.md` (modified, +2/-0)
 ```diff
-@@ -8,7 +8,8 @@ thresholds; the `Found N clones.` line is the console reporter's.
+@@ -72,6 +72,8 @@ jscpd [OPTIONS] [PATH]...
  
- | Directory | Shape | Expected |
- |-----------|-------|----------|
--| `lost-pair/` | a copy, two renamed copies, a copy followed by more code | 3 clones |
-+| `lost-pair/` | a copy, two renamed copies, a copy followed by more code | 4 clones |
-+| `stolen-head/` | two copies of a table, a third file with its header alone | 1 clone, from line 1 |
+ jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
  
- ## `lost-pair/` — a third file must not steal the anchor
- 
-@@ -20,8 +21,9 @@ by another function. While `uptime.js` is scanned, the clone anchored on
- matches the window `timeouts.js` stored earlier. Extending on that stored
- window would stretch the anchored fragment past the end of `duration.js`, and
- the clone was silently dropped ([#1033](https://github.com/kucherenko/jscpd/issues/1033)).
--A clone now grows only while its own anchor keeps matching, so all three
--pairs are reported and each covers identical tokens on both sides.
-+A clone now grows only while its own anchor keeps matching, so the three
-+pairs with `duration.js` are reported and each covers identical tokens on
-+both sides.
- 
- ```bash
- jscpd fixtures/nway-demo/lost-pair
-@@ -34,15 +36,44 @@ jscpd fixtures/nway-demo/lost-pair
- # Clone found (javascript)
- #  - duration.js [1:1 - 9:2] (9 lines, 110 tokens)
- #    uptime.js [1:1 - 9:2]
--# Found 3 clones.
-+# Clone found (javascript)
-+#  - timeouts.js [1:29 - 11:16] (11 lines, 109 tokens)
-+#    uptime.js [1:30 - 11:16]
-+# Found 4 clones.
-+```
++A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
 +
-+The two `duration.js ↔ timeouts.js` pairs start after the function name
-+because the names differ. The fourth pair is the first function of
-+`timeouts.js` against `uptime.js`: both go on with `export function` after
-+the body, two tokens that `duration.js` lacks. That pair was found by the
-+window with those two tokens and now starts where the two files start to
-+agree (see `stolen-head/` below); before, it was a few tokens on one line
-+and fell under `--min-lines`. Scanned alone, the two files give the same
-+pair.
+ ### Options
+ 
+ | Option | Short | Description | Default |
+```
+
+**File**: `fixtures/file-list-demo/README.md` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++# Files named one by one
 +
-+## `stolen-head/` — a third file must not move the start of a clone
++Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name.
 +
-+`orders.md` and `users.md` hold the same table. `catalog.md` ends with the
-+header of that table and shares nothing else with them. It is scanned first,
-+so the windows of the header are stored for it. `orders.md` matches them
-+there and stores only the windows `catalog.md` lacks, the first of which
-+starts in the middle of the second header line. The clone of `orders.md`
-+and `users.md` used to open on that window, so it was reported from 2:32:
-+its start depended on a file that is no part of it, and a baseline saved
-+without `catalog.md` took the clone for a new one
-+([#1319](https://github.com/kucherenko/jscpd/issues/1319)). A clone now
-+reaches back from the window it was found by to the first token the two
-+files share.
++Up to jscpd 5.4.3 every path started its own pool of walker threads, so 3,000 files named one by one took about a hundred times longer than their folder (issue #1306). A file root now skips the walker.
++
++Run the commands from the repository root. They use the default thresholds.
++
++| Command | Files analyzed | Clones |
++|---------|----------------|--------|
++| the folder `src` | 3 | 1 |
++| the three files of `src` | 3 | 1 |
++| two files, one of them matched by `--ignore` | 1 | 0 |
++| three files, `--pattern` matching one | 1 | 0 |
++
++`src/shipping-quote.js` and `src/return-quote.js` price a parcel with the same code under two names. `src/parcel-id.js` holds unrelated code.
++
++## The folder and its files
 +
 +```bash
-+jscpd fixtures/nway-demo/stolen-head --min-tokens 30
-+# Clone found (markdown)
-+#  - orders.md:markdown [1:1 - 7:15] (7 lines, 133 tokens)
-+#    users.md:markdown [1:1 - 7:15]
++jscpd fixtures/file-list-demo/src
 +# Found 1 clones.
- ```
- 
--The two `timeouts.js` pairs start after the function name because the names
--differ; with `--ignore-identifiers` they are reported from line 1 as
--`renamed` (`Found 3 clones.`). `--ignore-identifiers=blind` adds a fourth
--`renamed` pair for the `… } export function` tail shared by `timeouts.js`
--and `uptime.js` (`Found 4 clones.`), although `text` stands for `text` in
--that tail and for `parsed` in the next function's head. Scan order
--decides the anchor, not whether a pair is found: with the files renamed so
--that `uptime.js` is scanned first, the report still holds three pairs, now
--anchored on `uptime.js`.
-+The header is shorter than the default `--min-tokens 50`, so at the default
-+no window lies in it and the clone starts at line 1 either way. The two
-+header-only pairs with `catalog.md` span two lines and fall under
-+`--min-lines`; `--min-lines 1` shows them (`Found 3 clones.`).
-```
-
-**File**: `fixtures/nway-demo/stolen-head/catalog.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+# public.third_catalog_entries
 +
-+## Columns
-+| Name | Type | Default | Nullable | Children | Parents | Comment |
-+| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
++jscpd fixtures/file-list-demo/src/shipping-quote.js \
++  fixtures/file-list-demo/src/return-quote.js \
++  fixtures/file-list-demo/src/parcel-id.js
++# Found 1 clones.
++```
++
++Both commands report one clone: lines 1 to 24 of `return-quote.js` and of `shipping-quote.js`.
++
++## Filters on files named one by one
++
++```bash
++jscpd fixtures/file-list-demo/src/shipping-quote.js \
++  fixtures/file-list-demo/src/return-quote.js --ignore '**/return-*.js'
++# Found 0 clones.
++
++jscpd fixtures/file-list-demo/src/shipping-quote.js \
++  fixtures/file-list-demo/src/return-quote.js \
++  fixtures/file-list-demo/src/parcel-id.js --pattern '**/shipping-*.js'
++# Found 0 clones.
++```
++
++In a glob, `*` also matches `/`. So `**/s*.js` keeps `src/return-quote.js` too, through its folder name `src`.
++
++## Timing a long file list
++
++This loop writes 3,000 small files into a temporary folder and scans them both ways:
++
++```bash
++dir=$(mktemp -d) && mkdir -p "$dir/src"
++for d in $(seq 1 30); do for f in $(seq 1 100); do
++  printf 'export function f%d_%d(a, b) {\n  const x = a + %d;\n  return x * b - %d;\n}\n' \
++    $d $f $f $d > "$dir/src/m${d}_$f.js"
++done; done
++time jscpd --silent "$dir/src"
++time (find "$dir/src" -name '*.js' | xargs jscpd --silent)
++```
++
++The files are below the default thresholds, so both runs warn that they analyzed no files. The loop measures how long it takes to collect the files. On an 8-core machine the folder takes about 0.05 s. The file list took about 8 s with jscpd 5.4.3 and takes about 0.3 s now.
 ```
 
-**File**: `fixtures/nway-demo/stolen-head/orders.md` (added, +7/-0)
+**File**: `fixtures/file-list-demo/src/parcel-id.js` (added, +19/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+| Name | Type | Default | Nullable | Children | Parents | Comment |
-+| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-+| name | varchar(255) |  | false |  |  |  |
-+| last_path | varchar(255) |  | true |  |  |  |
-+| created_at | timestamp(0) without time zone |  | true |  |  |  |
-+| updated_at | timestamp(0) without time zone |  | true |  |  |  |
-+## Constraints
-```
-
-**File**: `fixtures/nway-demo/stolen-head/users.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+| Name | Type | Default | Nullable | Children | Parents | Comment |
-+| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-+| name | varchar(255) |  | false |  |  |  |
-+| last_path | varchar(255) |  | true |  |  |  |
-+| created_at | timestamp(0) without time zone |  | true |  |  |  |
-+| updated_at | timestamp(0) without time zone |  | true |  |  |  |
-+## Constraints
-```
-
-**File**: `rust/crates/cpd-core/src/detect.rs` (modified, +186/-19)
-```diff
-@@ -537,6 +537,10 @@ fn detect_in_group(
-         // subsequent windows also match. flush_clone is called when the match breaks
-         // or the file scan ends — only one clone per contiguous matching region.
-         let mut open_clone: Option<OpenClone> = None;
-+        // Where the last clone of this file against each other source ended,
-+        // in tokens of this file: a new clone against that source does not
-+        // reach back past it (see `reach_back`).
-+        let mut floors: FxHashMap<usize, usize> = FxHashMap::default();
- 
-         let consistent = !source.renames.is_empty();
-         if consistent {
-@@ -611,6 +615,12 @@ fn detect_in_group(
-             } else {
-                 // The anchor stopped (or nothing was open): flush, then start a
-                 // new clone on whatever the store matched, if anything.
-+                if let Some(oc) = &open_clone {
-+                    floors.insert(
-+                        oc.stored_occurrence.source_id,
-+                        oc.current_start + oc.match_len,
-+                    );
-+                }
-                 flush_clone(
-                     open_clone.take(),
-                     file_idx,
-@@ -622,10 +632,15 @@ fn detect_in_group(
-                 );
-                 match stored {
-                     Some(stored) => {
-+                        let floor = floors.get(&stored.source_id).copied().unwrap_or(0);
-+                        let back = reach_back(stored, current, prepared, min_tokens, floor);
-                         open_clone = Some(OpenClone {
--                            stored_occurrence: stored,
--                            current_start: token_start,
--                            match_len: min_tokens,
-+                            stored_occurrence: Occurrence {
-+                                source_id: stored.source_id,
-+                                token_start: stored.token_start - back,
-+                            },
-+                            current_start: token_start - back,
-+                            match_len: min_tokens + back,
-                         });
-                     }
-                     None => {
-@@ -897,6 +912,44 @@ fn window_continues(
-     last_a < a.hashes.len() && last_b < b.hashes.len() && a.hashes[last_a] == b.hashes[last_b]
- }
- 
-+/// How many tokens before the windows at `stored` and `current` match as
-+/// well, so that a clone opened on them starts where the two sources start
-+/// to agree (issue #1319). The store keeps one occurrence of a window, the
-+/// first: when a third source holds the start of what two others share, the
-+/// windows of that start are stored for the third source, and the clone of
-+/// the two opens on the first window the third one lacks, some tokens into
-+/// the text they share. Its start then depended on the other files of the
-+/// scan and on their order.
-+///
-+/// The clone does not reach back past `floor`, the end of the last clone of
-+/// the current source against the same other source: the two would overlap
-+/// on one pair of files, as copies of a repeating text do.
-+fn reach_back(
-+    stored: Occurrence,
-+    current: Occurrence,
-+    prepared: &[PreparedSource],
-+    min_tokens: usize,
-+    floor: usize,
-+) -> usize {
-+    let (a, b) = (&prepared[stored.source_id], &prepared[current.source_id]);
-+    let most = stored
-+        .token_start
-+        .min(current.token_start.saturating_sub(floor));
-+    // Two copies in one file do not grow into each other this way.
-+    let most = match stored.source_id == current.source_id {
-+        true => most.min(
-+            current
-+                .token_start
-+                .abs_diff(stored.token_start)
-+                .saturating_sub(min_tokens),
-+        ),
-+        false => most,
-+    };
-+    (1..=most)
-+        .take_while(|&k| a.hashes[stored.token_start - k] == b.hashes[current.token_start - k])
-+        .count()
+@@ -0,0 +1,19 @@
++const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
++
++export function parcelId(seed, length = 10) {
++  let state = seed >>> 0;
++  let id = '';
++  for (let i = 0; i < length; i += 1) {
++    state = (state * 1103515245 + 12345) >>> 0;
++    id += ALPHABET[state % ALPHABET.length];
++  }
++  return id;
 +}
 +
- /// Flush an open clone to the clones list.
- ///
- /// A clone is rejected if its line span is shorter than `min_lines`.
-@@ -1426,6 +1479,10 @@ fn add_secondary_clones(
-     }
-     candidates.sort_unstable();
-     candidates.dedup();
-+    drop_reported(&mut candidates, prepared, clones, min_tokens);
-+    if candidates.is_empty() {
-+        return;
-+    }
++export function checkDigit(id) {
++  let sum = 0;
++  for (const char of id) {
++    sum = (sum * 31 + ALPHABET.indexOf(char)) % 97;
++  }
++  return String(sum).padStart(2, '0');
++}
+```
+
+**File**: `fixtures/file-list-demo/src/return-quote.js` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++export function returnQuote(parcel, zone, rates) {
++  const weight = Math.max(parcel.weightKg, 0.1);
++  const volume = parcel.lengthCm * parcel.widthCm * parcel.heightCm;
++  const billable = Math.max(weight, volume / 5000);
++  const band = rates.bands.find((entry) => billable <= entry.upToKg);
++  if (!band) {
++    throw new Error(`no rate band for ${billable.toFixed(2)} kg`);
++  }
++  let price = band.base + band.perKg * billable;
++  if (zone.remote) {
++    price += rates.remoteSurcharge;
++  }
++  if (parcel.fragile) {
++    price *= 1 + rates.fragileShare;
++  }
++  return {
++    zone: zone.code,
++    billableKg: Number(billable.toFixed(2)),
++    price: Math.round(price * 100) / 100,
++    currency: rates.currency,
++  };
++}
++
++export const returnWindowDays = (order) => (order.member ? 60 : 30);
+```
+
+**File**: `fixtures/file-list-demo/src/shipping-quote.js` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++export function shippingQuote(parcel, zone, rates) {
++  const weight = Math.max(parcel.weightKg, 0.1);
++  const volume = parcel.lengthCm * parcel.widthCm * parcel.heightCm;
++  const billable = Math.max(weight, volume / 5000);
++  const band = rates.bands.find((entry) => billable <= entry.upToKg);
++  if (!band) {
++    throw new Error(`no rate band for ${billable.toFixed(2)} kg`);
++  }
++  let price = band.base + band.perKg * billable;
++  if (zone.remote) {
++    price += rates.remoteSurcharge;
++  }
++  if (parcel.fragile) {
++    price *= 1 + rates.fragileShare;
++  }
++  return {
++    zone: zone.code,
++    billableKg: Number(billable.toFixed(2)),
++    price: Math.round(price * 100) / 100,
++    currency: rates.currency,
++  };
++}
++
++export const quoteLabel = (quote) => `${quote.zone}: ${quote.price} ${quote.currency}`;
+```
+
+**File**: `rust/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -8,6 +8,8 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
  
-     // Build line-coverage from already-found primary clones.
-     let mut coverage = LineCoverage::from_clones(prepared, clones);
-@@ -1499,6 +1556,59 @@ fn add_secondary_clones(
-     );
+ ### Bug Fixes
+ 
++- **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
++
+ - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
+ 
+ ## 5.4.3
+```
+
+**File**: `rust/crates/cpd-finder/src/walker.rs` (modified, +348/-163)
+```diff
+@@ -115,15 +115,20 @@ pub fn walk(config: &WalkConfig) -> Vec<DiscoveredFile> {
+ /// nested project a scan of its own. The folders are absolute paths,
+ /// compared with the walked paths of an absolute root.
+ pub fn walk_excluding(config: &WalkConfig, exclude_dirs: &[PathBuf]) -> Vec<DiscoveredFile> {
++    let rules = Rules::new(config);
+     let mut results = Vec::new();
+-    for (i, root) in config.paths.iter().enumerate() {
+-        walk_one(
+-            root,
+-            config.match_as.get(i),
+-            config,
+-            exclude_dirs,
+-            &mut results,
+-        );
++    for (i, given) in config.paths.iter().enumerate() {
++        let root = Root::new(given, config.match_as.get(i));
++        // A file root is taken as the walker would take it: the walker hands
++        // a root to the callback without checking the ignore files or
++        // `filter_entry`, but it starts a thread pool for every root, which
++        // made a list of 3,000 files a hundred times slower than their
++        // folder (issue #1306).
++        if given.is_file() {
++            results.extend(rules.take(given, &root));
++        } else {
++            walk_dir(&root, &rules, exclude_dirs, &mut results);
++        }
+     }
+     if config.follow_symlinks || config.paths.len() > 1 {
+         dedup_by_real_path(&mut results);
+@@ -158,14 +163,158 @@ fn anchor_at_root(path: &Path, root: &Path, root_canon: &Path) -> PathBuf {
+     }
  }
  
-+/// Drops the candidates that lie in a primary clone of their two sources at
-+/// the same distance between the copies: the clone holds those tokens
-+/// already. Such a candidate used to start where the primary clone did, and
-+/// went out with the duplicates; a clone that reaches back ([`reach_back`])
-+/// starts earlier than the windows it was found by.
-+fn drop_reported(
-+    candidates: &mut Vec<Candidate>,
-+    prepared: &[PreparedSource],
-+    clones: &[CpdClone],
-+    min_tokens: usize,
-+) {
-+    let ids: FxHashMap<&str
+-fn walk_one(
+-    root: &Path,
+-    match_as: Option<&PathBuf>,
+-    config: &WalkConfig,
++/// What a walk with one config takes, its globs compiled once for all the
++/// roots and files it looks at: the format filters, `--pattern`, `--ignore`
++/// and the size limit.
++struct Rules<'a> {
++    config: &'a WalkConfig,
++    ignore_set: GlobSet,
++    /// The positive `--pattern` filter, if set. In v4, `pattern` (e.g.
++    /// `**/*.ts`) was appended to each scan path to form the glob passed to
++    /// fast-glob; here files are filtered as they are walked.
++    pattern_set: Option<GlobSet>,
++}
++
++/// One scan root as the walk sees it.
++struct Root {
++    /// The root as given: the walked paths start with it.
++    given: PathBuf,
++    /// The root resolved once, for the ids of its files.
++    canon: PathBuf,
++    /// The tree the patterns see when the root stands for another one
++    /// (`WalkConfig::match_as`), as given and canonical.
++    stand_in: Option<(PathBuf, PathBuf)>,
++}
++
++impl Root {
++    fn new(given: &Path, match_as: Option<&PathBuf>) -> Self {
++        let canonical =
++            |path: &Path| std::fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
++        Self {
++            given: given.to_path_buf(),
++            canon: canonical(given),
++            stand_in: match_as.map(|tree| (tree.clone(), canonical(tree))),
++        }
++    }
++}
++
++impl<'a> Rules<'a> {
++    fn new(config: &'a WalkConfig) -> Self {
++        Self {
++            config,
++            ignore_set: build_ignore_glob_set(&config.ignore_patterns),
++            pattern_set: config.pattern.as_deref().map(build_positive_glob_set),
++        }
++    }
++
++    /// Whether `--pattern` lets `path` through. Both the path relative to
++    /// `root` and the whole path are tried, so relative patterns (e.g.
++    /// `src/**/*.ts`) and absolute ones (e.g. `/project/src/**/*.ts`) work.
++    fn pattern_allows(&self, path: &Path, root: &Path) -> bool {
++        match &self.pattern_set {
++            Some(set) if !set.is_empty() => {
++                let relative = path.strip_prefix(root).unwrap_or(path);
++                set.is_match(relative) || set.is_match(path)
++            }
++            _ => true,
++        }
++    }
++
++    fn ignored(&self, path: &Path) -> bool {
++        !self.ignore_set.is_empty() && self.ignore_set.is_match(path)
++    }
++
++    /// Over the size limit; a file not on disk is not.
++    fn too_big(&self, path: &Path) -> bool {
++        self.config
++            .max_size
++            .is_some_and(|max| std::fs::metadata(path).is_ok_and(|meta| meta.len() > max))
++    }
++
++    fn format(&self, path: &Path) -> Option<String> {
++        detect_format(
++            path,
++            &self.config.extensions,
++            &self.config.formats_exts,
++            &self.config.formats_names,
++        )
++    }
++
++    /// The file a walk of `root` found at `path`, if the walk takes it. The
++    /// ignore files are the walker's to apply, before it gets here.
++    fn take(&self, path: &Path, root: &Root) -> Option<DiscoveredFile> {
++        if !path.is_file() {
++            return None;
++        }
++        let follow_symlinks = self.config.follow_symlinks;
++        if !follow_symlinks
++            && std::fs::symlink_metadata(path).is_ok_and(|meta| meta.file_type().is_symlink())
++        {
++            return None;
++        }
++        // Metadata only, before the format detection may read the file.
++        if self.too_big(path) {
++            return None;
++        }
++        // The path the patterns match
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1321** (2026-11-23): fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592 (@kucherenko)
 - **PR #1320** (2026-11-22): fix(detect): start a clone where its two files start to agree (@kucherenko)
 - **PR #1318** (2026-11-20): chore(deps): bump ureq from 3.5.1 to 3.5.2 in /rust (@dependabot[bot])
 - **PR #1317** (2026-11-20): chore(deps): bump clap from 4.6.7 to 4.6.8 in /rust (@dependabot[bot])
 - **PR #1316** (2026-11-20): chore(deps): bump serde-saphyr from 2.0.0 to 2.1.1 in /rust (@dependabot[bot])
 - **PR #1315** (2026-11-20): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
-- **PR #1314** (2026-11-20): chore(deps): bump taiki-e/install-action from 2.90.3 to 2.90.5 (@dependabot[bot])
 
 ---
 
@@ -2438,37 +2361,31 @@ Fi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump url to 2.5.9 for RUSTSEC-2026-0592
+## X. walk): review of #1307
 
 **RULE**:
-When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/rust.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2130bbce`: deps): bump url to 2.5.9 for RUSTSEC-2026-0592. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `29e50f90`: walk): review of #1307. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/rust.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. A list of 3,000 files is read in a fraction of a second. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2130bbce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `29e50f90` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

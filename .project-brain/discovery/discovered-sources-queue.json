@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T14:42:04.795Z",
+  "updated_at": "2026-11-24T14:51:15.058Z",
   "stats": {
-    "total_discovered": 8677,
-    "approved_pending_harvest": 8217,
+    "total_discovered": 8681,
+    "approved_pending_harvest": 8221,
     "harvested_count": 0,
     "rejected_count": 460,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8219,
+      "COMMUNITY_AND_EXPERT": 8223,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 125,
       "ENGINEERING_BLOGS": 7,
@@ -187697,6 +187697,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/citusdata-citus-learnings.md",
         "fileName": "citusdata-citus-learnings.md"
+      }
+    },
+    "SRC-F29836996853": {
+      "id": "SRC-F29836996853",
+      "url": "https://github.com/atlas-loadbudget",
+      "title": "https://github.com/atlas-loadbudget",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:50:48.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-7401CACA139A": {
+      "id": "SRC-7401CACA139A",
+      "url": "https://github.com/kucherenko/jscpd/issues/1306",
+      "title": "https://github.com/kucherenko/jscpd/issues/1306",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:50:48.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-ADDA70749F1B": {
+      "id": "SRC-ADDA70749F1B",
+      "url": "https://github.com/kucherenko/jscpd/pull/1307",
+      "title": "https://github.com/kucherenko/jscpd/pull/1307",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:50:48.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-81149F7977E4": {
+      "id": "SRC-81149F7977E4",
+      "url": "https://github.com/djc/hostname",
+      "title": "https://github.com/djc/hostname",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:51:15.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
       }
     }
   }

@@ -4,22 +4,22 @@
 {
   "source_repository": "StarRocks/starrocks",
   "source_url": "https://github.com/StarRocks/starrocks",
-  "source_version": "520e2886",
+  "source_version": "07de763f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T18:24:04.180Z",
+  "timestamp": "2026-11-24T14:50:44.959Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-starrocks-starrocks",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `520e2886`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T18:24:04.180Z`  
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `07de763f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:50:44.959Z`  
 > **Learning ID**: `learn-github-starrocks-starrocks`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `StarRocks/starrocks` (Commit: `520e2886`)
+- **Target Repository**: `StarRocks/starrocks` (Commit: `07de763f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:24:02.837Z  
+> **Harvest Timestamp**: 2026-11-24T14:50:43.633Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12280 stars
+- **Stars / Engagement**: 12283 stars
 
 ---
 
@@ -1829,844 +1829,523 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53b41a5c` (2026-11-23)
-**Commit Message**: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer (#83959)
+### Incident Patch 1: `86395ed6` (2026-11-24)
+**Commit Message**: [BugFix] Report the original error when the Paimon JNI reader fails (#84242)
 
-Signed-off-by: Gavin <[REDACTED_EMAIL]>
-Co-authored-by: Gavin <[REDACTED_EMAIL]>
+Co-authored-by: trueeyu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java` (modified, +30/-0)
+**File**: `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java` (modified, +29/-9)
 ```diff
-@@ -774,6 +774,36 @@ public OperatorStr visitPhysicalSplitConsumer(OptExpression optExpression, Expla
-             return new OperatorStr(sb.toString(), context.step,
-                     buildChildOperatorStr(optExpression, context.step));
+@@ -115,10 +115,7 @@ public void open() throws IOException {
+             initOffHeapTableWriter(requiredTypes, requiredFields, fetchSize);
+             initReader();
+         } catch (Exception e) {
+-            close();
+-            String msg = "Failed to open the paimon reader for table " + table.name();
+-            LOG.error(msg, e);
+-            throw new IOException(msg, e);
++            throw closeAndWrap("Failed to open the paimon reader", e);
          }
-+
-+        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
-+        @Override
-+        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
-+            return visitUnhandled(optExpression, context);
-+        }
-+
-+        @Override
-+        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
-+            return visitUnhandled(optExpression, context);
-+        }
-+
-+        @Override
-+        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
-+            return visitUnhandled(optExpression, context);
-+        }
-+
-+        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
-+            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
-+            StringBuilder sb = new StringBuilder("- ")
-+                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
-+                    .append(buildOutputColumns(op, ""))
-+                    .append("\n");
-+            // LookUp carries no statistics
-+            if (optExpression.getStatistics() != null) {
-+                buildCostEstimate(sb, optExpression, context.step);
-+            }
-+            buildCommonProperty(sb, op, context.step);
-+            return new OperatorStr(sb.toString(), context.step, buildChildOperatorStr(optExpression, context.step));
-+        }
      }
  
-     private void buildCostEstimate(StringBuilder sb, OptExpression optExpression, int step) {
+@@ -129,12 +126,38 @@ public void close() throws IOException {
+                 iterator.close();
+             }
+         } catch (Exception e) {
+-            String msg = "Failed to close the paimon reader for table " + table.name();
++            String msg = "Failed to close the paimon reader for table " + tableName() + ", caused by: " + rootCause(e);
+             LOG.error(msg, e);
+             throw new IOException(msg, e);
+         }
+     }
+ 
++    // The table may not be decoded yet, e.g. when the FE and BE bundle Paimon versions whose
++    // Java-serialized classes are incompatible, so never dereference it while reporting an error.
++    private String tableName() {
++        return table == null ? "<not decoded>" : table.name();
++    }
++
++    // Only the first lines of the Java exception reach the client, so put the root cause in the message.
++    private static String rootCause(Throwable t) {
++        Throwable cause = t;
++        while (cause.getCause() != null && cause.getCause() != cause) {
++            cause = cause.getCause();
++        }
++        return cause.toString();
++    }
++
++    private IOException closeAndWrap(String action, Exception e) {
++        try {
++            close();
++        } catch (Exception closeException) {
++            e.addSuppressed(closeException);
++        }
++        String msg = action + " for table " + tableName() + ", caused by: " + rootCause(e);
++        LOG.error(msg, e);
++        return new IOException(msg, e);
++    }
++
+     @Override
+     public int getNext() throws IOException {
+         try (ThreadContextClassLoader ignored = new ThreadContextClassLoader(classLoader)) {
+@@ -157,10 +180,7 @@ public int getNext() throws IOException {
+             }
+             return numRows;
+         } catch (Exception e) {
+-            close();
+-            String msg = "Failed to get the next off-heap table chunk for table " + table.name();
+-            LOG.error(msg, e);
+-            throw new IOException(msg, e);
++            throw closeAndWrap("Failed to get the next off-heap table chunk", e);
+         }
+ 
+     }
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExplainTest.java` (modified, +75/-0)
+**File**: `java-extensions/paimon-reader/src/test/java/com/starrocks/paimon/reader/TestPaimonSplitScanner.java` (modified, +31/-0)
 ```diff
-@@ -14,13 +14,26 @@
- 
- package com.starrocks.sql.plan;
- 
-+import com.starrocks.catalog.Column;
-+import com.starrocks.catalog.IcebergTable;
- import com.starrocks.common.Config;
-+import com.starrocks.qe.SessionVariable;
- import com.starrocks.sql.Explain;
- import com.starrocks.sql.ast.QueryStatement;
- import com.starrocks.sql.ast.StatementBase;
-+import com.starrocks.sql.optimizer.OptExpression;
-+import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergEqualityDeleteScanOperator;
-+import com.starrocks.sql.optimizer.operator.physical.PhysicalIcebergEqualityDeleteScanOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
-+import com.starrocks.sql.optimizer.statistics.Statistics;
-+import com.starrocks.type.IntegerType;
- import com.starrocks.utframe.UtFrameUtils;
- import org.junit.jupiter.api.Assertions;
+@@ -19,11 +19,42 @@
  import org.junit.jupiter.api.Test;
+ 
+ import java.io.IOException;
++import java.io.StreamCorruptedException;
+ import java.net.URL;
++import java.nio.charset.StandardCharsets;
++import java.util.Base64;
+ import java.util.HashMap;
+ 
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertInstanceOf;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++
+ public class TestPaimonSplitScanner {
+ 
++    // An encoded table the BE cannot deserialize, e.g. one written by an FE that bundles an
++    // incompatible Paimon version, must surface its own error rather than an NPE on the null table.
++    @Test
++    public void testOpenReportsTableDecodeFailure() {
++        String notJavaSerialized = Base64.getUrlEncoder().withoutPadding()
++                .encodeToString("not a java serialized object".getBytes(StandardCharsets.UTF_8));
++        HashMap<String, String> params = new HashMap<>();
++        params.put("required_fields", "uuid");
++        params.put("native_table", notJavaSerialized);
++        params.put("split_info", notJavaSerialized);
++        params.put("predicate_info", notJavaSerialized);
++        params.put("time_zone", "UTC");
++
++        PaimonSplitScanner scanner = new PaimonSplitScanner(4096, params);
++        IOException e = assertThrows(IOException.class, scanner::open);
++
++        assertTrue(e.getMessage().startsWith("Failed to open the paimon reader for table <not decoded>"),
++                e.getMessage());
++        assertTrue(e.getMessage().contains(StreamCorruptedException.class.getName()), e.getMessage());
++        assertFalse(e.getMessage().contains(NullPointerException.class.getName()), e.getMessage());
++        assertInstanceOf(StreamCorruptedException.class, e.getCause().getCause());
++    }
++
+     @Disabled("Unusable ut, because of lack native_table parameter")
+     @Test
+     public void runScan() throws IOException {
+```
+
+---
+
+### Incident Patch 2: `f98257d3` (2026-11-23)
+**Commit Message**: [BugFix] Abort a failed merge-commit load with the tablets it has written (#84152)
+
+Co-authored-by: mervinsr <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/load/batchwrite/MergeCommitTask.java` (modified, +4/-1)
+```diff
+@@ -385,7 +385,10 @@ public void run() {
+                 if (localTxnId != -1) {
+                     // remove callback before abortTransaction(), so that the afterAborted() callback will not be called again
+                     GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().getCallbackFactory().removeCallback(taskId);
+-                    GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().abortTransaction(dbId, localTxnId, abortReason);
++                    // Pass the tablets the load has written. A shared-data abort without them tells the compute nodes
++                    // to skip the cleanup, and the segments of this transaction are left on the object storage.
++                    GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().abortTransaction(dbId, localTxnId, abortReason,
++                            Coordinator.getCommitInfos(coordinator), Coordinator.getFailInfos(coordinator), null);
+                 }
+             } catch (Exception ie) {
+                 LOG.warn("Failed to abort transaction. db={}, table={}, label={}, txnId={}, reason={}",
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/load/batchwrite/MergeCommitTaskAbortCleanupTest.java` (added, +225/-0)
+```diff
+@@ -0,0 +1,225 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.starrocks.load.batchwrite;
++
++import com.starrocks.catalog.Database;
++import com.starrocks.catalog.Partition;
++import com.starrocks.common.Status;
++import com.starrocks.common.util.DebugUtil;
++import com.starrocks.common.util.UUIDUtil;
++import com.starrocks.lake.LakeTable;
++import com.starrocks.load.streamload.StreamLoadHttpHeader;
++import com.starrocks.load.streamload.StreamLoadInfo;
++import com.starrocks.load.streamload.StreamLoadKvParams;
++import com.starrocks.proto.AbortTxnRequest;
++import com.starrocks.proto.AbortTxnResponse;
++import com.starrocks.proto.TxnInfoPB;
++import com.starrocks.qe.ConnectContext;
++import com.starrocks.qe.scheduler.Coordinator;
++import com.starrocks.server.GlobalStateMgr;
++import com.starrocks.server.RunMode;
++import com.starrocks.server.WarehouseManager;
++import com.starrocks.sql.LoadPlanner;
++import com.starrocks.task.LoadEtlTask;
++import com.starrocks.thrift.TStatusCode;
++import com.starrocks.thrift.TTabletCommitInfo;
++import com.starrocks.thrift.TUniqueId;
++import com.starrocks.transaction.TransactionStatus;
++import com.starrocks.utframe.MockedBackend;
++import com.starrocks.utframe.StarRocksAssert;
++import com.starrocks.utframe.UtFrameUtils;
++import com.starrocks.warehouse.cngroup.CRAcquireContext;
++import mockit.Invocation;
++import mockit.Mock;
++import mockit.MockUp;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
 +import org.mockito.Mockito;
 +
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.HashSet;
 +import java.util.List;
 +import java.util.Map;
- 
- public class ExplainTest extends PlanTestBase {
-     @Test
-@@ -158,4 +171,66 @@ public void testExplainUsesConfiguredDefaultLevel() throws Exception {
-         Assertions.assertEquals(StatementBase.ExplainLevel.NORMAL, queryStatement.getExplainLevel());
- 
-     }
++import java.util.Optional;
++import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.Future;
++import java.util.stream.Collectors;
 +
-+    @Test
-+    public void testExplainLogicalIcebergEqualityDeleteScan() {
-+        IcebergTable table = Mockito.mock(IcebergTable.class);
-+        Mockito.when(table.getName()).thenReturn("eqd_repro");
-+        Column column = new Column("id", IntegerType.INT);
-+        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
-+        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
-+                table, Map.of(ref, column), Map.of(column, ref), -1, null);
-+        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyInt;
++import static org.mockito.Mockito.when;
 +
-+        String plan = new Explain(false, false, "    ", "    ").print(root, List.of(ref));
-+        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id]");
-+    }
++// A merge-commit load that fails after it has written data aborts its transaction. On a shared-data cluster the
++// abort has to name the tablets that were written: without them the compute nodes are told to skip the cleanup, and
++// the segments of the transaction stay on the object storage. Autovacuum deletes only the txn logs, and the full
++// vacuum, which would delete the segments, is off by default.
++public class MergeCommitTaskAbortCleanupTest {
 +
-+    @Test
-+    public void testExplainLogicalIcebergEqualityDeleteScanWithRows() {
-+        IcebergTable table = Mockito.mock(IcebergTable.class);
-+        Mockito.when(table.getName()).thenReturn("eqd_repro");
-+        Column column = new Column("id", IntegerType.INT);
-+        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
-+        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
-+                table, Map.of(ref, column), Map.of(column, ref), -1, null);
-+        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
-+        root.setStatistics(Statistics.builder().setOutputRowCount(5).build());
++    private static final String DB_NAME = "merge_commit_abort_cleanup_db";
++    private static final String TABLE_NAME = "merge_commit_abort_cleanup_tbl";
 +
-+        String plan = new Explain(true, true, " ", " |").print(root, List.of(ref));
-+        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id] {rows: 5}");
-+    }
++    // The abort requests the compute nodes received, by transaction id.
++    private static final Map<Long, List<AbortTxnRequest>> ABORT_REQUESTS = new ConcurrentHashMap<>();
 +
-+    @Test
-+    public void testExplainLogicalRawValues() throws Exception {
-+        SessionVariable sv = connectContext.getSessionVariable();
-+        int threshold = sv.getLargeInPredicateThreshold();
-+        sv.setLargeInPredicateThreshold(3);
-+        try {
-+            String plan = getExecPlan("select * from t0 where v1 in (1, 2, 3, 4)")
-+                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
-+            assertContains(plan, "LEFT SEMI JOIN");
-+            assertContains(plan, "- RAW-VALUES");
-+        } finally {
-+            sv.setLargeInPredicateThreshold(threshold);
-+        }
-+    }
++    private static Database database;
++    private static LakeTable table;
++    // The only node of the cluster, which writes every tablet.
++    private static long nodeId;
 +
-+    @Test
-+    public void testExplainLogicalFetch() throws Exception {
-+        SessionVariable sv = connectContext.getSessionVariable();
-+        boolean glm = sv.isEnableGlobalLateMaterialization();
-+        boolean costBased = sv.isEnableGlobalLateMaterializationCostBased();
-+        sv.setEnableGlobalLateMaterialization(true);
-+        sv.setEnableGlobalLateMaterializationCostBased(false);
-+        try {
-+            String plan = getExecPlan("select * from supplier where S_SUPPKEY < 10 order by 1,2 limit 10")
-+                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
-+            assertContains(plan, "- FETCH");
-+            assertContains(plan, "- LOOKUP");
-+        } finally {
-+            sv.setEnableGlobalLateMaterialization(glm);
-+            sv.setEnableGlobalLateMaterializationCostBased(costBased);
-+        }
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `520e2886` (2026-11-23)
-**Commit Message**: [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (#84190)
-
-Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `be/src/compute_env/query/scan_conjuncts_manager.cpp` (modified, +17/-1)
-```diff
-@@ -567,6 +567,17 @@ requires(!lt_is_date<SlotType>) Status ChunkPredicateBuilder<E, Type>::normalize
-             values.insert(decoder.decode(value));
-         }
- 
-+        if (values.empty()) {
-+            // and col in (null, null): no value is left once NULL is eliminated, so the predicate is never
-+            // true. Empty the range instead of calling `add_fixed_values`, which reads an empty set as
-+            // "no constraint". The root builder then ends the scan; a builder under OR gives up the push-down.
-+            if constexpr (!Negative) {
-+                range->clear_to_empty();
-+                _normalized_exprs[i] = true;
-+            }
-+            return Status::OK();
-+        }
++    private StreamLoadKvParams kvParams;
++    private StreamLoadInfo streamLoadInfo;
++    private Coordinator.Factory coordinatorFactory;
++    private Coordinator coordinator;
 +
-         if (range->add_fixed_values(FILTER_IN, values).ok()) {
-             _normalized_exprs[i] = true;
-         }
-@@ -702,7 +713,12 @@ requires lt_is_date<SlotType> Status ChunkPredicateBuilder<E, Type>::normalize_i
-                     }
-                 }
-                 if (values.empty()) {
--                    status = Status::EndOfFile("const false predicate result");
-+                    // No value can match (all NULL, or DATETIME values that are not a whole day),
-+                    // so the predicate is never true.
-+                    if constexpr (!Negative) {
-+                        range->clear_to_empty();
-+                        _normalized_exprs[i] = true;
-+                    }
-                     continue;
-                 }
-                 if (range->add_fixed_values(FILTER_IN, values).ok()) {
-```
-
-**File**: `be/test/exec/olap_scan_prepare_test.cpp` (modified, +99/-0)
-```diff
-@@ -102,6 +102,34 @@ static TExpr create_or_pred_with_false_and_branch(SlotId slot_id) {
-     return texpr;
- }
- 
-+// Appends `slot IN (NULL, NULL)`.
-+static void append_int_in_all_null_pred(std::vector<TExprNode>* nodes, SlotId slot_id) {
-+    nodes->emplace_back(ExprsTestHelper::create_in_pred_node<TYPE_INT>(3));
-+    nodes->emplace_back(ExprsTestHelper::create_slot_expr_node_t<TYPE_INT>(0, slot_id, true));
-+    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
-+    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
-+}
++    @BeforeAll
++    public static void beforeClass() throws Exception {
++        UtFrameUtils.createMinStarRocksCluster(RunMode.SHARED_DATA);
++        ConnectContext connectContext = UtFrameUtils.createDefaultCtx();
++        new StarRocksAssert(connectContext).withDatabase(DB_NAME).useDatabase(DB_NAME)
++                .withTable("CREATE TABLE " + TABLE_NAME + " (k BIGINT NOT NULL, v STRING) PRIMARY KEY (k) " +
++                        "DISTRIBUTED BY HASH(k) BUCKETS 3");
++        database = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(DB_NAME);
++        table = (LakeTable) database.getTable(TABLE_NAME);
++        nodeId = GlobalStateMgr.getCurrentState().getNodeMgr().getClusterInfo().getBackendIds().get(0);
 +
-+// (slot IN (NULL, NULL) AND slot = 1) OR slot = 2
-+static TExpr create_or_pred_with_in_all_null_and_branch(SlotId slot_id) {
-+    TExpr texpr;
-+    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
-+    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_AND));
-+    append_int_in_all_null_pred(&texpr.nodes, slot_id);
-+    append_int_eq_pred(&texpr.nodes, slot_id, 1);
-+    append_int_eq_pred(&texpr.nodes, slot_id, 2);
-+    return texpr;
-+}
-+
-+// slot IN (NULL, NULL) OR slot = 2
-+static TExpr create_or_pred_with_in_all_null_branch(SlotId slot_id) {
-+    TExpr texpr;
-+    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
-+    append_int_in_all_null_pred(&texpr.nodes, slot_id);
-+    append_int_eq_pred(&texpr.nodes, slot_id, 2);
-+    return texpr;
-+}
-+
- template <LogicalType Type>
- StatusOr<RuntimeFilterProbeDescriptor*> ChunkPredicateBuilderTest::_gen_runtime_filter_desc(SlotId slot_id) {
-     TRuntimeFilterDescription tRuntimeFilterDescription;
-@@ -415,6 +443,77 @@ TEST_F(ChunkPredicateBuilderTest, normalize_or_with_false_and_branch) {
-     ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
- }
- 
-+// `c1 IN (NULL, NULL)` is never true, so the scan ends instead of reading every row.
-+TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_is_eof) {
-+    SlotId slot_id = 1;
-+    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
-+    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
-+
-+    TExpr texpr;
-+    append_int_in_all_null_pred(&texpr.nodes, slot_id);
-+    _texprs.emplace_back(std::move(texpr));
-+    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
-+    ASSERT_EQ(_expr_ctxs.size(), 1);
-+    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
-+
-+    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
-+    auto ret = builder.parse_conjuncts();
-+    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
-+}
-+
-+TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_date_is_eof) {
-+    SlotId slot_id = 1;
-+    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_DATE_DESC, 1}, {"c2", TYPE_DATE_DESC, 2}, {""}};
-+    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
-+
-+    _texprs.emplace_back(ExprsTestHelper::create_in_pred_texpr<TYPE_DATE, std::string>(slot_id, {}, true));
-+    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
-+    ASSERT_EQ(_expr_ctxs.size(), 1);
-+    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
-+
-+    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
-+    auto ret = builder.parse_conjuncts();
-+    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
-+}
-+
-+// Under OR the always-false branch must not end the scan: `(c1 IN (NULL, NULL) AND c1 = 1) OR c1 = 2`
-+// keeps the rows where c1 = 2. The OR is left unnormalized and evaluated as an expression.
-+TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_and_branch) {
-+    SlotId slot_id = 1;
-+    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
-+    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
-+
-+    _texprs.emplace_back(create_or_pred_with_in_all_null_and_branch(slot_id));
-+    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
-+    ASSERT_EQ(_expr_ctxs.size(), 1);
-+    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
-+
-+    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
-+    ASSIGN_OR_ASSERT_FAIL(auto normalized, builder.parse_conjuncts());
-+    ASSERT_TRUE(normalized);
-+    ASSERT_FALSE(builder.is_pred_normalized(0));
-+
-+    ASSIGN_OR_ASSERT_FAIL(auto pred, builder.get_predicate_tree_root(_int_pred_parser, _predicate_free_pool));
-+    ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
-+}
-+
-+// `c1 IN (NULL, NULL) OR c1 = 2`: same, the scan must not end.
-+TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_branch) {
-+    SlotId slot_id = 1;
-+    parquet::Utils::Slo
-```
-
-**File**: `test/sql/test_push_down_predicate/R/test_in_all_null_push_down` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+-- name: test_in_all_null_push_down
-+CREATE TABLE t_in_null_${uuid0} (
-+    k INT,
-+    v SMALLINT NOT NULL,
-+    w SMALLINT NULL,
-+    s VARCHAR(16) NULL,
-+    d DATE NULL
-+)
-+DUPLICATE KEY(k)
-+DISTRIBUTED BY HASH(k) BUCKETS 1
-+PROPERTIES ("replication_num" = "1");
-+-- result:
-+-- !result
-+INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
-+-- result:
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
-+-- result:
-+0
-+-- !result
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
-+-- result:
-+3
-+-- !result
-+SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
-+-- result:
-+2
-+-- !result
-+SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
-+-- result:
-+2
-+-- !result
-+SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
-+-- result:
-+3
-+-- !result
-+SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
-+-- result:
-+2
-+-- !result
-+SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
-+-- result:
-+3
-+-- !result
-+DROP TABLE t_in_null_${uuid0};
-+-- result:
-+-- !result
-\ No newline at end of file
-```
-
-**File**: `test/sql/test_push_down_predicate/T/test_in_all_null_push_down` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+-- name: test_in_all_null_push_down
-+CREATE TABLE t_in_null_${uuid0} (
-+    k INT,
-+    v SMALLINT NOT NULL,
-+    w SMALLINT NULL,
-+    s VARCHAR(16) NULL,
-+    d DATE NULL
-+)
-+DUPLICATE KEY(k)
-+DISTRIBUTED BY HASH(k) BUCKETS 1
-+PROPERTIES ("replication_num" = "1");
-+INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
-+SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
-+SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
-+SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
-+SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
-+SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
-+SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
-+DROP TABLE t_in_null_${uuid0};
-```
-
----
-
-### Incident Patch 3: `61e67dcb` (2026-11-23)
-**Commit Message**: [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (#84189)
-
-Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
-Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/SplitTabletJob.java` (modified, +81/-26)
-```diff
-@@ -473,10 +473,10 @@ protected void runRunningJob() {
-     /*
-      * 1. Abort in-flight lake compactions on the partitions where a tablet was really split, then wait for the
-      *    remaining previous transactions finished
--     * 2. Remove old versions of materialized index
--     * 3. Unregister resharding tablets
--     * 4. Release the new shards' creation-time placement pin
--     * 5. Durably publish FINISHED and update aggregate table state and metrics
-+     * 2. Unregister resharding tablets
-+     * 3. Release the new shards' creation-time placement pin
-+     * 4. Durably publish FINISHED, then recycle the old versions of materialized index and release any query pin
-+     *    left on them (applyFinishedLocked), and update aggregate table state and metrics
-      */
-     @Override
-     protected void runCleaningJob() {
-@@ -499,14 +499,20 @@ protected void runCleaningJob() {
-         }
- 
-         // ORDER BY != PK children inherit complete shared rowsets. Keep queries on the parent layout
--        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling.
-+        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling. An empty
-+        // INSERT OVERWRITE temporary partition to which nothing has committed since the split inherited
-+        // nothing, and nothing can still be cross-published into its children: a publish only exists for a
-+        // committed transaction, and the resharding tablets are unregistered below under the same table
-+        // lock, which keeps every commit out. It needs no UNSHARE; applyFinishedLocked releases its pin.
-         CompactionMgr compactionMgr = GlobalStateMgr.getCurrentState().getCompactionMgr();
--        boolean waitingForUnshare = false;
-         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.READ)) {
-             OlapTable olapTable = lockedTable.get();
--            for (Long physicalPartitionId : reshardingPhysicalPartitions.keySet()) {
-+            boolean waitingForUnshare = false;
-+            for (ReshardingPhysicalPartition reshardingPhysicalPartition : reshardingPhysicalPartitions.values()) {
-+                long physicalPartitionId = reshardingPhysicalPartition.getPhysicalPartitionId();
-                 PhysicalPartition physicalPartition = olapTable.getPhysicalPartition(physicalPartitionId);
--                if (physicalPartition == null || !physicalPartition.isUnsharing()) {
-+                if (physicalPartition == null || !physicalPartition.isUnsharing()
-+                        || inheritsNothingFromParent(olapTable, reshardingPhysicalPartition, physicalPartition)) {
-                     continue;
-                 }
-                 waitingForUnshare = true;
-@@ -515,25 +521,78 @@ protected void runCleaningJob() {
-                     compactionMgr.triggerUnshareCompaction(identifier);
-                 }
-             }
--        }
--        if (waitingForUnshare) {
--            return;
--        }
--
--        // 2. Remove old versions of materialized index
--        removeOldMaterializedIndexes();
-+            if (waitingForUnshare) {
-+                return;
-+            }
- 
--        // 3. Unregister resharding tablets
--        unregisterReshardingTablets();
-+            // 2. Unregister resharding tablets
-+            unregisterReshardingTablets();
-+        }
- 
--        // 4. Release the child shards' creation-time placement pin so the balancer can spread them
-+        // 3. Release the child shards' creation-time placement pin so the balancer can spread them
-         //    now, instead of when the parent shards are finally reclaimed tens of minutes later.
-         clearPlacementPreference(reshardingPhysicalPartitions);
- 
--        // 5. Durably publish FINISHED
-+        // 4. Durably publish FINISHED
-         setJobState(JobState.FINISHED);
-     }
- 
-+    // Whether the split left this partition's children nothing of the parent's: the split read version 1, so the
-+    // parent had no file to share, and no transaction has committed to the partition since, so no load can have
-+    // brought one in either. Committed, not visible: a writer that resolved the old layout but took its transaction
-+    // id after the end transaction id (a bypass write, which registers the index of the tablets it wrote, or a
-+    // replication job, which caches its indexes) is not waited on above, and its publish may already be on its way
-+    // to the children while the version is unchanged.
-+    //
-+    // Only a temporary partition that a running static INSERT OVERWRITE (a materialized view refresh included) created
-+    // for its own write and has not swapped in yet: no other writer targets one. Elsewhere, including a temporary
-+    // partition a user added, such a writer could still commit after the unregister below: its publish would reach
-+    // the parent only, and since the parent and child indexes share a meta id, the file bundle of that version would
-+    // carry no met
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/TabletReshardJob.java` (modified, +13/-2)
-```diff
-@@ -340,6 +340,9 @@ private void publishFinalState(JobState desiredState) {
-                         if (isDone()) {
-                             return;
-                         }
-+                        if (desiredState == JobState.FINISHED && table != null) {
-+                            applyFinishedLocked(table);
-+                        }
-                         finishedTimeMs = snapshot.finishedTimeMs;
-                         stateStartedTimeMs = snapshot.stateStartedTimeMs;
-                         jobState = desiredState;
-@@ -351,6 +354,14 @@ private void publishFinalState(JobState desiredState) {
-         LOG.info("Tablet reshard job set job state. {}", this);
-     }
- 
-+    /**
-+     * Applies, on the leader, what the FINISHED record changes in the catalog beyond the job itself. Runs under the
-+     * table WRITE lock once the record is durable, so nothing it changes can be seen before the record that makes
-+     * every replaying FE change it too.
-+     */
-+    protected void applyFinishedLocked(OlapTable table) {
-+    }
-+
-     private void recordTerminalMetrics(JobState state) {
-         if (!MetricRepo.hasInit) {
-             return;
-@@ -609,8 +620,8 @@ protected static void checkNewIndexesInstallable(OlapTable olapTable,
-      * never a partition-directory delete, which for a split would destroy the live child tablets that
-      * share the parent's object-storage directory.
-      *
--     * <p>Runs on both the leader (runCleaningJob) and the replay path (replayFinishedJob); it is
--     * deterministic (the index keeps its own id, no id allocation) and
-+     * <p>Runs on both the leader (a merge from runCleaningJob, a split from applyFinishedLocked) and the replay
-+     * path (replayFinishedJob); it is deterministic (the index keeps its own id, no id allocation) and
-      * {@code recycleMaterializedIndex} is idempotent, so a re-run is safe. The caller holds the table
-      * WRITE lock and passes the locked table.
-      */
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/lake/compaction/CompactionMgr.java` (modified, +6/-1)
-```diff
-@@ -30,6 +30,7 @@
- import com.starrocks.persist.metablock.SRMetaBlockWriter;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.common.MetaUtils;
-+import org.apache.logging.log4j.Level;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -351,6 +352,7 @@ public PartitionStatistics triggerManualCompaction(PartitionIdentifier partition
-     }
- 
-     public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partition) {
-+        boolean[] newRequest = new boolean[1];
-         PartitionStatistics statistics = partitionStatisticsHashMap.compute(partition, (k, v) -> {
-             if (v == null) {
-                 v = new PartitionStatistics(partition);
-@@ -365,11 +367,14 @@ public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partitio
-                 // re-triggers a pending UNSHARE on every reshard tick, so keep the retry deadline of a request
-                 // that is already pending, or one the scheduler deferred would be retried every cycle.
-                 v.clearCompactionRetryTimes();
-+                newRequest[0] = true;
-             }
-             v.setPriority(PartitionStatistics.CompactionPriority.UNSHARE);
-             return v;
-         });
--        LOG.info("Trigger UNSHARE compaction, {}", statistics);
-+        // The priority stays UNSHARE until the compaction starts or the request is dropped, so the reshard tick's
-+        // repeats of a pending request are logged at DEBUG only.
-+        LOG.log(newRequest[0] ? Level.INFO : Level.DEBUG, "Trigger UNSHARE compaction, {}", statistics);
-         return statistics;
-     }
- 
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/load/InsertOverwriteJobMgr.java` (modified, +22/-0)
-```diff
-@@ -142,6 +142,28 @@ public boolean hasRunningOverwriteJob(long tableId) {
-         }
-     }
- 
-+    // Whether the partition is one of the temporary partitions a running static (not dynamic) overwrite job on the
-+    // table created for its own write.
-+    public boolean isTmpPartitionOfRunningStaticJob(long tableId, long partitionId) {
-+        lock.readLock().lock();
-+        try {
-+            List<Long> jobIds = tableToOverwriteJobs.get(tableId);
-+            if (jobIds == null) {
-+                return false;
-+            }
-+            for (Long jobId : jobIds) {
-+                InsertOverwriteJob job = overwriteJobMap.get(jobId);
-+                if (job != null && !job.isDynamicOverwrite() && job.getTmpPartitionIds() != null
-+                        && job.getTmpPartitionIds().contains(partitionId)) {
-+                    return true;
-+                }
-+            }
-+            return false;
-+        } finally {
-+            lock.readLock().unlock();
-+        }
-+    }
-+
-     public void replayCreateInsertOverwrite(CreateInsertOverwriteJobLog jobInfo) {
-         InsertOverwriteJob insertOverwriteJob = new InsertOverwriteJob(jobInfo.getJobId(),
-                 jobInfo.getDbId(), jobInfo.getTableId(), jobInfo.getTargetPartitionIds(), jobInfo.isDynamicOverwrite());
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/ReshardJournalReplay.java` (modified, +61/-0)
-```diff
-@@ -229,6 +229,67 @@ static void checkFailedCleaningJournalLeavesLayoutUnchanged(TabletReshardJob job
-         Assertions.assertEquals(newTabletIds, tabletIds(newIndex));
-     }
- 
-+    /**
-+     * An ORDER BY != PK split that left a partition's children nothing of the parent's finishes without an UNSHARE, so
-+     * no UNSHARE transaction unpins the partition on a replaying FE. Its FINISHED record has to: until then the
-+     * follower keeps serving queries from the parent, and after it, from the children.
-+     *
-+     * <p>Runs the job (not yet admitted, on the given physical partition, the only one it reshards) to FINISHED, then
-+     * replays its records onto a follower's copy of the table taken at RUNNING, checking the follower after each one.
-+     */
-+    static void checkFinishedRecordReleasesQueryPin(Database db, OlapTable table, PhysicalPartition partition,
-+                                                    TabletReshardJob job) throws Exception {
-+        // Replaying puts the job's records into TabletReshardJobMgr, whose daemon would run them as the leader's.
-+        new MockUp<TabletReshardJobMgr>() {
++        new MockUp<LoadPlanner>() {
 +            @Mock
-+            protected void runAfterLeaseValid() {
++            public void plan() {
++                // The coordinator is mocked, so there is no plan to run.
 +            }
 +        };
-+        long partitionId = partition.getId();
-+        long baseMetaId = table.getBaseIndexMetaId();
-+        long oldIndexId = partition.getLatestBaseIndex().getId();
-+        job.init();
-+        job.run();
-+        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
-+        long newIndexId = job.getReshardingPhysicalPartitions().get(partitionId).getReshardingIndexes()
-+                .get(oldIndexId).getMaterializedIndex().getId();
-+
-+        OlapTable followerTable = copyTable(table);
-+        ReshardJournalReplay recorder = new ReshardJournalReplay(() -> {
-+        });
-+        for (int i = 0; i < 10 && !job.isDone(); i++) {
-+            job.run();
-+        }
-+        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
-+
-+        List<JournalEntity> records = recorder.recordsOf(job.getJobId(), -1L);
-+        TabletReshardJobMgr tabletReshardJobMgr = GlobalStateMgr.getCurrentState().getTabletReshardJobMgr();
-+        try {
-+            withFollowerTable(db, followerTable, () -> {
-+                PhysicalPartition followerPartition = followerTable.getPhysicalPartition(partitionId);
-+                List<TabletReshardJob.JobState> replayed = new ArrayList<>();
-+                for (JournalEntity record : records) {
-+                    replay(record);
-+                    replayed.add(((TabletReshardJob) record.data()).getJobState());
-+                    if (isJobRecord(record, TabletReshardJob.JobState.CLEANING)) {
-+                        Assertions.assertTrue(followerPartition.isQueryableIndexPinned(baseMetaId));
-+                        Assertions.assertEquals(oldIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
-+                    } else if (isJobRecord(record, TabletReshardJob.JobState.FINISHED)) {
-+                        Assertions.assertFalse(followerPartition.isUnsharing());
-+                        Assertions.assertEquals(newIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
++        new MockUp<MockedBackend.MockLakeService>() {
++            @Mock
++            public Future<AbortTxnResponse> abortTxn(Invocation invocation, AbortTxn
+```
+
+---
+
+### Incident Patch 3: `07de763f` (2026-11-24)
+**Commit Message**: [BugFix] Reject a [_SYNC_MV_] read of a rollup name shared by tables (#84307)
+
+Signed-off-by: trueeyu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/Database.java` (modified, +7/-4)
+```diff
+@@ -418,16 +418,19 @@ public Table getTable(String tableName) {
+     }
+ 
+     /**
+-     * A visible rollup or synchronous materialized view named {@code indexName}, with its table.
++     * Every visible rollup or synchronous materialized view named {@code indexName}, with its table. A synchronous
++     * materialized view's name is unique in the database, but a rollup's only in its table, so more than one table
++     * can have one.
+      *
+      * <p>The base index of a table, which is named after the table, is left out: {@code [_SYNC_MV_]} reads a
+      * materialized index that cannot be read by a table name, and a table is read by its name.
+      *
+      * <p>A temporary table is visible only in the session that created it, and {@link #idToTable} holds every
+      * session's: the ones of other sessions than {@code sessionId} are left out, as a name lookup leaves them out.
+      */
+-    public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String indexName, UUID sessionId) {
++    public List<Pair<Table, MaterializedIndexMeta>> getMaterializedViewIndexes(String indexName, UUID sessionId) {
+         // TODO: add an index to speed it up.
++        List<Pair<Table, MaterializedIndexMeta>> indexes = new ArrayList<>();
+         for (Table table : idToTable.values()) {
+             if (table instanceof OlapTable) {
+                 OlapTable olapTable = (OlapTable) table;
+@@ -443,12 +446,12 @@ public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String indexN
+                         continue;
+                     }
+                     if (name.equals(indexName)) {
+-                        return Pair.create(table, mvMeta);
++                        indexes.add(Pair.create(table, mvMeta));
+                     }
+                 }
+             }
+         }
+-        return null;
++        return indexes;
+     }
+ 
+     @Override
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/server/LocalMetastore.java` (modified, +6/-6)
+```diff
+@@ -3200,21 +3200,21 @@ public List<Table> getTables(Long dbId) {
+     }
+ 
+     /**
+-     * Get Table descriptor and materialized index for the rollup or synchronous materialized view named
++     * Get the tables and materialized indexes of every visible rollup or synchronous materialized view named
+      * `dbName`.`indexName`. The base index of a table is left out.
+      *
+      * @param dbName    - the string represents the database name
+      * @param indexName - the string represents the rollup or synchronous materialized view name
+      * @param sessionId - the session reading it: the temporary tables of other sessions are left out
+-     * @return the index with its table, or null
++     * @return each matching index with its table; empty when there is none or the database does not exist
+      */
+-    public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String dbName, String indexName,
+-                                                                       UUID sessionId) {
++    public List<Pair<Table, MaterializedIndexMeta>> getMaterializedViewIndexes(String dbName, String indexName,
++                                                                               UUID sessionId) {
+         Database database = getDb(dbName);
+         if (database == null) {
+-            return null;
++            return List.of();
+         }
+-        return database.getMaterializedViewIndex(indexName, sessionId);
++        return database.getMaterializedViewIndexes(indexName, sessionId);
+     }
+ 
+     public Table getTableIncludeRecycleBin(Database db, long tableId) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +10/-2)
+```diff
+@@ -2874,9 +2874,17 @@ public Table resolveTable(TableRelation tableRelation) {
+                 try (Timer ignored = Tracers.watchScope("AnalyzeSyncMV")) {
+                     // [_SYNC_MV_] gives a materialized index name where a table name goes.
+                     String indexName = tbName;
+-                    Pair<Table, MaterializedIndexMeta> materializedIndex =
+-                            GlobalStateMgr.getCurrentState().getLocalMetastore().getMaterializedViewIndex(dbName,
++                    List<Pair<Table, MaterializedIndexMeta>> materializedIndexes =
++                            GlobalStateMgr.getCurrentState().getLocalMetastore().getMaterializedViewIndexes(dbName,
+                                     indexName, session.getSessionId());
++                    if (materializedIndexes.size() > 1) {
++                        // A rollup's name is unique only in its table. Which of them a read would get is up to the
++                        // order of a hash map, and can change as tables come and go: refuse to pick one.
++                        throw new SemanticException("Duplicate rollup name '%s': more than one table has a rollup "
++                                + "of that name", indexName);
 +                    }
-+                }
-+                Assertions.assertEquals(List.of(TabletReshardJob.JobState.CLEANING, TabletReshardJob.JobState.FINISHED),
-+                        replayed);
-+            });
++                    Pair<Table, MaterializedIndexMeta> materializedIndex =
++                            materializedIndexes.isEmpty() ? null : materializedIndexes.get(0);
+                     if (materializedIndex != null) {
+                         Table mvTable = materializedIndex.first;
+                         Preconditions.checkState(mvTable != null);
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/analysis/CreateSyncMaterializedViewTest.java` (modified, +68/-0)
+```diff
+@@ -231,6 +231,74 @@ public void testSelectFromSyncMV() throws Exception {
+         starRocksAssert.dropMaterializedView("sync_mv1");
+     }
+ 
++    /**
++     * A rollup's name is unique only in its table. When two tables of the database have one of the name a
++     * [_SYNC_MV_] read gives, which of them it would read is not determined, so the read is rejected. With one left,
++     * it reads that one.
++     */
++    @Test
++    public void testSelectFromRollupNameSharedByTwoTables() throws Exception {
++        String rollup = "r_shared_by_two_tables";
++        for (String table : List.of("t_rollup_shared_a", "t_rollup_shared_b")) {
++            starRocksAssert.withTable("CREATE TABLE test." + table + " (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) "
++                    + "DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (" + rollup + " (k2, k1)) "
++                    + "PROPERTIES ('replication_num' = '1')");
++        }
++        String sql = "select * from " + rollup + " [_SYNC_MV_]";
++        try {
++            Exception e = Assertions.assertThrows(Exception.class,
++                    () -> UtFrameUtils.getPlanAndFragment(connectContext, sql));
++            Assertions.assertTrue(e.getMessage().contains("Duplicate rollup name '" + rollup + "': more than one "
++                    + "table has a rollup of that name"), e.getMessage());
++
++            starRocksAssert.dropTable("t_rollup_shared_b");
++            String explain = UtFrameUtils.getPlanAndFragment(connectContext, sql).second
++                    .getExplainString(StatementBase.ExplainLevel.NORMAL);
++            Assertions.assertTrue(explain.contains("TABLE: t_rollup_shared_a"), explain);
++            Assertions.assertTrue(explain.contains("rollup: " + rollup), explain);
 +        } finally {
-+            // The replay registered the job's records in the shared manager; the leader's job never was.
-+            if (tabletReshardJobMgr.getTabletReshardJob(job.getJobId()) != null) {
-+                tabletReshardJobMgr.replayRemoveTabletReshardJob(job.getJobId());
-+            }
++            starRocksAssert.dropTable("if exists test.t_rollup_shared_a");
++            starRocksAssert.dropTable("if exists test.t_rollup_shared_b");
++        }
++    }
++
++    /**
++     * A temporary table is visible only in the session that created it, rollups included. Another session's
++     * temporary table with a rollup of the name a [_SYNC_MV_] read gives neither makes the read ambiguous nor is
++     * read. In its own session it is a table like any other, so there the read is ambiguous.
++     */
++    @Test
++    public void testSelectFromRollupNameSharedWithAnotherSessionsTemporaryTable() throws Exception {
++        String rollup = "r_shared_with_a_temporary_table";
++        starRocksAssert.withTable("CREATE TABLE test.t_rollup_temporary (k1 INT, k2 INT, v1 INT) "
++                + "DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (" + rollup + " (k2, k1)) "
++                + "PROPERTIES ('replication_num' = '1')");
++        ConnectContext otherSession = UtFrameUtils.createDefaultCtx();
++        StarRocksAssert otherSessionAssert = new StarRocksAssert(otherSession).useDatabase("test");
++        String sql = "select k2, k1 from " + rollup + " [_SYNC_MV_]";
++        try {
++            otherSessionAssert.withTemporaryTable("create temporary table t_temporary_with_shared_rollup "
++                    + "(k1 int, k2 int, v1 int) engine=olap duplicate key(k1, k2) distributed by hash(k1) buckets 1 "
++                    + "rollup (" + rollup + " (k2, k1)) properties('replication_num' = '1')");
++
++            connectContext.setThreadLocalInfo();
++            String explain = UtFrameUtils.getPlanAndFragment(connectContext, sql).second
++                    .getExplainString(StatementBase.ExplainLevel.NORMAL);
++            Assertions.assertTrue(explain.contains("TABLE: t_rollup_temporary"), explain);
++            Assertions.assertTrue(explain.contains("rollup: " + rollup), explain);
++
++            otherSession.setThreadLocalInfo();
++            Exception e = Assertions.assertThrows(Exception.class,
++                    () -> UtFrameUtils.getPlanAndFragment(otherSession, sql));
++            Assertions.assertTrue(e.getMessage().contains("Duplicate rollup name '" + rollup + "'"), e.getMessage());
++        } finally {
++            otherSession.setThreadLocalInfo();
++            otherSessionAssert.dropTemporaryTable("t_temporary_with_shared_rollup", true);
++            connectContext.setThreadLocalInfo();
++            starRocksAssert.dropTable("if exists test.t_rollup_temporary");
 +        }
 +    }
 +
      /**
-      * Counts the CLEANING records of reshard jobs journaled from now on. With closeJournalFirst, the leader's journal is
-      * closed, as giving up leadership closes it, just before the first one is written, so that write fails; the caller
+      * A temporary table is visible only in the session that created it, rollups included: another session cannot
+      * read its rollup through [_SYNC_MV_], while its own session can. Not through the test harness's CREATE VIEW
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +409/-0)
+**File**: `test/sql/test_rollup/R/test_sync_mv_hint_shared_rollup_name` (added, +42/-0)
 ```diff
-@@ -32,14 +32,19 @@
- import com.starrocks.common.StarRocksException;
- import com.starrocks.common.lock.LockTestUtils;
- import com.starrocks.common.util.PropertyAnalyzer;
-+import com.starrocks.common.util.concurrent.lock.AutoCloseableLock;
- import com.starrocks.common.util.concurrent.lock.LockHoldDepth;
- import com.starrocks.common.util.concurrent.lock.LockType;
- import com.starrocks.lake.LakeTable;
- import com.starrocks.lake.LakeTablet;
- import com.starrocks.lake.StarOSAgent;
- import com.starrocks.lake.Utils;
- import com.starrocks.lake.compaction.CompactionMgr;
-+import com.starrocks.lake.compaction.PartitionIdentifier;
-+import com.starrocks.lake.compaction.PartitionStatistics;
-+import com.starrocks.load.InsertOverwriteJob;
- import com.starrocks.persist.EditLog;
-+import com.starrocks.persist.WALApplier;
- import com.starrocks.proto.AggregatePublishVersionRequest;
- import com.starrocks.proto.PublishVersionRequest;
- import com.starrocks.proto.PublishVersionResponse;
-@@ -54,8 +59,10 @@
- import com.starrocks.server.WarehouseManager;
- import com.starrocks.sql.ast.SplitTabletClause;
- import com.starrocks.sql.ast.TabletList;
-+import com.starrocks.sql.common.MetaUtils;
- import com.starrocks.thrift.TStatusCode;
- import com.starrocks.transaction.GlobalTransactionMgr;
-+import com.starrocks.transaction.TabletCommitInfo;
- import com.starrocks.transaction.TransactionState;
- import com.starrocks.transaction.TransactionStatus;
- import com.starrocks.type.IntegerType;
-@@ -79,6 +86,7 @@
- import java.util.Set;
- import java.util.concurrent.Callable;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.ConcurrentHashMap;
- import java.util.concurrent.CopyOnWriteArrayList;
- import java.util.concurrent.Future;
- import java.util.concurrent.ThreadPoolExecutor;
-@@ -444,6 +452,407 @@ public void testPkOrderByFactoryLeavesBoundarySelectionToBePkIndex() throws Exce
-         Assertions.assertTrue(splittingTablet.getNewTabletIds().size() > 1);
-     }
- 
-+    /**
-+     * The pre-split that INSERT OVERWRITE runs on its new, empty temporary partition leaves the ORDER BY != PK
-+     * children nothing inherited from the parent, so CLEANING does not wait for an UNSHARE compaction. The parent
-+     * stays queryable until the FINISHED record is durable, and only then is it unpinned and recycled.
-+     */
-+    @Test
-+    public void testEmptyTemporaryPartitionSplitFinishesWithoutUnshare() throws Exception {
-+        installLakeServiceMock(this::addDataDrivenRanges);
-+        OlapTable pkTable = createSeparateSortKeyTable("split_empty_partition_pk_sort");
-+        PhysicalPartition partition = temporaryPartition(pkTable, "tp1");
-+        InsertOverwriteJob overwrite = registerOverwriteJob(pkTable, partition);
-+        long baseMetaId = pkTable.getBaseIndexMetaId();
-+        long oldIndexId = partition.getLatestBaseIndex().getId();
-+        Assertions.assertEquals(PhysicalPartition.PARTITION_INIT_VERSION, partition.getVisibleVersion());
-+        Map<Long, Integer> unshareTriggers = countUnshareTriggers();
-+        SplitTabletJob job = (SplitTabletJob) createTabletReshardJob(pkTable, partition);
-+
-+        AtomicBoolean unsharingAtFinish = new AtomicBoolean();
-+        AtomicBoolean recycledAtFinish = new AtomicBoolean(true);
-+        AtomicLong schemaUpdateTimeAtFinish = new AtomicLong();
-+        AtomicInteger parentInfosAtFinish = new AtomicInteger(-1);
-+        new MockUp<EditLog>() {
-+            @Mock
-+            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob record, WALApplier applier) {
-+                if (record.getJobState() == TabletReshardJob.JobState.FINISHED) {
-+                    unsharingAtFinish.set(partition.isUnsharing());
-+                    recycledAtFinish.set(GlobalStateMgr.getCurrentState().getRecycleBin()
-+                            .isMaterializedIndexRecycled(oldIndexId));
-+                    schemaUpdateTimeAtFinish.set(pkTable.lastSchemaUpdateTime.get());
-+                    parentInfosAtFinish.set(job.collectParentPublishInfos(
-+                            Set.copyOf(partition.getLatestBaseIndex().getTabletIdsInOrder())).size());
-+                }
-+                invocation.proceed();
-+            }
-+        };
-+
-+        job.init();
-+        job.run();
-+        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
-+        job.run();
-+        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
-+        Assertions.assertTrue(unshareTriggers.isEmpty(), "no UNSHARE was needed: " + unshareTriggers);
-+
-+        MaterializedIndex newIndex = partition.getLatestBaseIndex();
-+        Assertions.assertNotEquals(oldIndexId, newIndex.getId());
-+        Assertions.assertFalse(partition.isUnsharing());
-+        Assertions.assertEquals(newIndex.getId(), partition.getQueryableIndex(baseMetaId).getId());
-+        Assertions.assertTrue(GlobalStateMgr.getCurrentState().getRecycleBin().isMaterializedIndexRecycled(oldIndexId));
+@@ -0,0 +1,42 @@
++-- name: test_sync_mv_hint_shared_rollup_name
++create database db_${uuid0};
++-- result:
++-- !result
++use db_${uuid0};
++-- result:
++-- !result
++CREATE TABLE t_a (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
++-- result:
++-- !result
++CREATE TABLE t_b (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
++-- result:
++-- !result
++INSERT INTO t_a VALUES (1, 10, 100), (2, 20, 200);
++-- result:
++-- !result
++INSERT INTO t_b VALUES (3, 30, 300);
++-- result:
++-- !result
++function: assert_query_error_contains("SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2", "Duplicate rollup name 'r_shared': more than one table has a rollup of that name")
++-- result:
++None
++-- !result
++function: assert_query_error_contains("SELECT count(*) FROM t_a WHERE k2 IN (SELECT k2 FROM r_shared [_SYNC_MV_])", "Duplicate rollup name 'r_shared'")
++-- result:
++None
++-- !result
++ALTER TABLE t_b RENAME ROLLUP r_shared r_b;
++-- result:
++-- !result
++SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2;
++-- result:
++10	1
++20	2
++-- !result
++SELECT k2, k1 FROM r_b [_SYNC_MV_] ORDER BY k2;
++-- result:
++30	3
++-- !result
++drop database db_${uuid0} force;
++-- result:
++-- !result
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/lake/compaction/CompactionMgrTest.java` (modified, +44/-0)
+**File**: `test/sql/test_rollup/T/test_sync_mv_hint_shared_rollup_name` (added, +13/-0)
 ```diff
-@@ -34,10 +34,16 @@
- import mockit.Mock;
- import mockit.MockUp;
- import mockit.Mocked;
-+import org.apache.logging.log4j.Level;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.core.LogEvent;
-+import org.apache.logging.log4j.core.appender.AbstractAppender;
-+import org.apache.logging.log4j.core.config.Configurator;
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.Test;
- 
- import java.io.IOException;
-+import java.util.ArrayList;
- import java.util.Collections;
- import java.util.HashMap;
- import java.util.HashSet;
-@@ -250,6 +256,44 @@ public void testRepeatedUnshareTriggerKeepsRetryDeadline() {
-         }
-     }
- 
-+    // A split waiting for UNSHARE re-triggers its pending request on every reshard tick. Only the request itself is
-+    // worth an INFO line; the repeats go to DEBUG.
-+    @Test
-+    public void testUnshareTriggerLogsOncePerRequest() {
-+        CompactionMgr compactionManager = new CompactionMgr();
-+        PartitionIdentifier partition = new PartitionIdentifier(1, 2, 3);
-+
-+        List<String> logs = new ArrayList<>();
-+        AbstractAppender appender = new AbstractAppender("unshare-trigger-log-capture", null, null) {
-+            @Override
-+            public void append(LogEvent event) {
-+                String message = event.getMessage().getFormattedMessage();
-+                if (message.startsWith("Trigger UNSHARE compaction")) {
-+                    logs.add(event.getLevel().name());
-+                }
-+            }
-+        };
-+        org.apache.logging.log4j.core.Logger logger =
-+                (org.apache.logging.log4j.core.Logger) LogManager.getLogger(CompactionMgr.class);
-+        Level oldLevel = logger.getLevel();
-+        appender.start();
-+        logger.addAppender(appender);
-+        Configurator.setLevel(CompactionMgr.class.getName(), Level.DEBUG);
-+        try {
-+            compactionManager.triggerUnshareCompaction(partition);
-+            compactionManager.triggerUnshareCompaction(partition);
-+            // Once the request has run (or been dropped) its priority is reset, so the next trigger is a new request.
-+            compactionManager.resetPriority(partition);
-+            compactionManager.triggerUnshareCompaction(partition);
-+        } finally {
-+            Configurator.setLevel(CompactionMgr.class.getName(), oldLevel);
-+            logger.removeAppender(appender);
-+            appender.stop();
-+        }
-+
-+        Assertions.assertEquals(List.of("INFO", "DEBUG", "INFO"), logs);
-+    }
-+
-     @Test
-     public void testTriggerClearsRetryDeadline() {
-         String oldSelector = Config.lake_compaction_selector;
+@@ -0,0 +1,13 @@
++-- name: test_sync_mv_hint_shared_rollup_name
++create database db_${uuid0};
++use db_${uuid0};
++CREATE TABLE t_a (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
++CREATE TABLE t_b (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
++INSERT INTO t_a VALUES (1, 10, 100), (2, 20, 200);
++INSERT INTO t_b VALUES (3, 30, 300);
++function: assert_query_error_contains("SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2", "Duplicate rollup name 'r_shared': more than one table has a rollup of that name")
++function: assert_query_error_contains("SELECT count(*) FROM t_a WHERE k2 IN (SELECT k2 FROM r_shared [_SYNC_MV_])", "Duplicate rollup name 'r_shared'")
++ALTER TABLE t_b RENAME ROLLUP r_shared r_b;
++SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2;
++SELECT k2, k1 FROM r_b [_SYNC_MV_] ORDER BY k2;
++drop database db_${uuid0} force;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #84200** (closed): [BugFix] Stop answering COUNT of a NULL-valued constant expression with the row count (@Hyper-FF)
-- **PR #84198** (2026-11-23): [Enhancement] Resolve sync conflict for the StarCache write overwrite config (@starrocks-xupeng)
-- **PR #84195** (2026-11-23): [Enhancement] Support multimodal data in AI functions (backport #84113) (@mergify[bot])
-- **PR #84190** (2026-11-23): [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (@Hyper-FF)
-- **PR #84189** (2026-11-23): [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (@starrocks-bot[bot])
-- **PR #84186** (2026-11-23): [Enhancement] Share the sort key description across the chunks of a heap merge (backport #83692) (@mergify[bot])
+- **PR #84337** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (backport #84330) (@mergify[bot])
+- **PR #84336** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (backport #84330) (@mergify[bot])
+- **PR #84330** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (@trueeyu)
+- **PR #84327** (2026-11-24): [BugFix] Re-add a resharding job's new tablets to the inverted index when an FE loads an image taken before CLEANING (backport #84315) (@mergify[bot])
+- **PR #84326** (2026-11-24): [BugFix] Re-add a resharding job's new tablets to the inverted index when an FE loads an image taken before CLEANING (backport #84315) (@mergify[bot])
+- **PR #84325** (2026-11-24): [BugFix] Leave other sessions' temporary tables out of a [_SYNC_MV_] read (backport #84313) (@mergify[bot])
 
 ---
 
@@ -2686,56 +2365,66 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic
+## X. [BugFix] Report the original error when the Paimon JNI reader fails
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53b41a5c`: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86395ed6`: [BugFix] Report the original error when the Paimon JNI reader fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
+            throw closeAndWrap("Failed to open the paimon reader", e);
+            String msg = "Failed to close the paimon reader for table " + tableName() + ", caused by: " + rootCause(e);
+    // The table may not be decoded yet, e.g. when the FE and BE bundle Paimon versions whose
+    // Java-serialized classes are incompatible, so never dereference it while reporting an error.
+    private String tableName() {
+        return table == null ? "<not decoded>" : table.name();
+    }
 
-        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
-        @Override
-        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
-            return visitUnhandled(optExpression, context);
+    // Only the first lines of the Java exception reach the client, so put the root cause in the message.
+    private static String rootCause(Throwable t) {
+        Throwable cause = t;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
         }
+        return cause.toString();
+    }
 
-        @Override
-        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
-            return visitUnhandled(optExpression, context);
+    private IOException closeAndWrap(String action, Exception e) {
+        try {
+            close();
+        } catch (Exception closeException) {
+            e.addSuppressed(closeException);
         }
+        String msg = action + " for table " + tableName() + ", caused by: " + rootCause(e);
+        LOG.error(msg, e);
+        return new IOException(msg, e);
+    }
 
-        @Override
-        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
-            return visitUnhandled(optExpression, context);
-        }
-
-        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
-            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
-            StringBuilder sb = new StringBuilder("- ")
-                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
-                    .append(buildOutputColumns(op, ""))
-                    .append("\n");
-            // LookUp carries no statistics
-            if (optExpression.getStatistics() != null) {
-   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            close();
+            String msg = "Failed to open the paimon reader for table " + table.name();
+            LOG.error(msg, e);
+            throw new IOException(msg, e);
+            String msg = "Failed to close the paimon reader for table " + table.name();
+            close();
+            String msg = "Failed to get the next off-heap table chunk for table " + table.name();
+            LOG.error(msg, e);
+            throw new IOException(msg, e);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53b41a5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86395ed6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

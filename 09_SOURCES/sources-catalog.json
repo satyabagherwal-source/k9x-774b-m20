@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "1fec0cd4",
+    "sourceVersion": "4bc6dc81",
     "license": "Apache-2.0",
-    "contentHash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
-    "lastHarvestedAt": "2026-11-24T09:42:29.291Z",
+    "contentHash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
+    "lastHarvestedAt": "2026-11-24T14:50:42.133Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "a46ba6ab",
+    "sourceVersion": "28d22360",
     "license": "MIT",
-    "contentHash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
-    "lastHarvestedAt": "2026-11-23T08:33:09.361Z",
+    "contentHash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
+    "lastHarvestedAt": "2026-11-24T14:50:30.628Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "520e2886",
+    "sourceVersion": "07de763f",
     "license": "Apache-2.0",
-    "contentHash": "a0b8f3fddcb8e7061774acbe405ead03c740eaa47b18bc2ddf3c09e9de89ae01",
-    "lastHarvestedAt": "2026-11-23T18:24:03.946Z",
+    "contentHash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
+    "lastHarvestedAt": "2026-11-24T14:50:44.726Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "6a339634",
+    "sourceVersion": "6ed29aa0",
     "license": "Apache-2.0",
-    "contentHash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
-    "lastHarvestedAt": "2026-11-23T19:17:57.733Z",
+    "contentHash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
+    "lastHarvestedAt": "2026-11-24T14:50:37.957Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

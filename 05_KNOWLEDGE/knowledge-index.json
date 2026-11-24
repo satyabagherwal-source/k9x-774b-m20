@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:42:05.361Z",
+  "last_updated": "2026-11-24T14:51:16.655Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24694,
+  "total_items": 24703,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "1fec0cd4",
-      "content_hash": "e1c548033a966d82f0f9e15d0ea2011b79a4e42d41b231ce0d0099fe114eeb62",
+      "source_version": "4bc6dc81",
+      "content_hash": "267bd52830dd080683af945d6638104b629232192ab6ac4505d0512a0e5e2073",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T09:42:29.841Z"
+      "persisted_at": "2026-11-24T14:50:42.531Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "1fec0cd4",
-      "content_hash": "34bdba4355b17b3b2b521754822526dc959c01fd905692f5897a00cb21a7b961",
+      "source_version": "4bc6dc81",
+      "content_hash": "c0a21aa3f7dbf72a26a9229ef1f24d098b6cfce731a5fa6713deb9e780f2473b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:42:30.063Z"
+      "persisted_at": "2026-11-24T14:50:42.700Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff2752cead68917b3e4c1e4ed3952eb5ce6f89607eb6ba54ad43401c33733b80",
+      "content_hash": "9881fdd82337c8fe4ecd48fafff2b6bad8ea798fcd1aa9a2db14f6e62471fb0f",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T09:42:36.094Z"
+      "persisted_at": "2026-11-24T14:51:16.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbdf3c7791eab84ec9aaa77d36d6c9c7cfa2f6cd2a0093ab430e095cca681516",
+      "content_hash": "5371dd5bfbb76408dfe38e00b86142d58ffe81b71443181ab27af87d88b321a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:42:36.317Z"
+      "persisted_at": "2026-11-24T14:51:16.655Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -114801,10 +114801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "repository": "kucherenko/jscpd",
-      "source_version": "a46ba6ab",
-      "content_hash": "62a74e0d47083fecc41e160b5f1a719ef8e12ced3b6961f2d9ea9eadeecf4acb",
+      "source_version": "28d22360",
+      "content_hash": "f6658f6e63007637b809e919890a7c498cccd1dc427f35a5b5b9269ce1ad1fe2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:33:09.867Z"
+      "persisted_at": "2026-11-24T14:50:31.040Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd",
@@ -114813,10 +114813,10 @@
       "relative_path": "08_VERIFICATION/kucherenko-jscpd-verification-protocol-empirical-defect-shield-for-kucherenko-js.md",
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko/jscpd",
       "repository": "kucherenko/jscpd",
-      "source_version": "a46ba6ab",
-      "content_hash": "8459ccd8f817b662bc0329bd049e1a470c27480b54894327c1264495a9bc231e",
+      "source_version": "28d22360",
+      "content_hash": "5b2aa834977a538ac9134eb9efe44b4d9c5e93db56299143e7583bb0bf8168c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:33:10.082Z"
+      "persisted_at": "2026-11-24T14:50:31.237Z"
     },
     "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359": {
       "item_id": "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359",
@@ -114862,9 +114862,9 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "461b1232069bf7e84af932ead7bce53c3c85ed94c155e6ba05493bf62dd9a204",
+      "content_hash": "2a43b78b0150eabda75a7432eec1dd3d1c9f2483abf96f435ede1d9f6d8078b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:33:16.818Z"
+      "persisted_at": "2026-11-24T14:50:48.810Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings",
@@ -114874,9 +114874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko-jscpd-learnings",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "90f9ce56d255743f155596f618c62f29f3ddae62abf2d0739c21d95662d7a918",
+      "content_hash": "9325d6a659cca4ff8876518cfe56da467b63072dd77d4243f46659403099853a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:33:17.041Z"
+      "persisted_at": "2026-11-24T14:50:48.992Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -214312,8 +214312,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "1fec0cd4",
-      "content_hash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
+      "source_version": "4bc6dc81",
+      "content_hash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214324,7 +214324,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "update all go dependencies main",
+          "title": "update cilium-{runtime,builder}",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -214443,7 +214443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T09:42:29.031Z",
+      "verified_at": "2026-11-24T14:50:41.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234746,8 +234746,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "520e2886",
-      "content_hash": "a0b8f3fddcb8e7061774acbe405ead03c740eaa47b18bc2ddf3c09e9de89ae01",
+      "source_version": "07de763f",
+      "content_hash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -234805,6 +234805,11 @@
           "number": 10091,
           "title": "[BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10286,
+          "title": "[BugFix] Report the original error when the Paimon JNI reader fails",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234812,7 +234817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:24:03.663Z",
+      "verified_at": "2026-11-24T14:50:44.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234854,10 +234859,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "520e2886",
-      "content_hash": "48c66e3744c9b9f04da83891289ee7c7749ec3e1481dbf03c8747f48b089545d",
+      "source_version": "07de763f",
+      "content_hash": "fb051bbd71822004fd55ca725acba801fbf25328702fc3baafdbb55316cb51fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T18:24:04.348Z"
+      "persisted_at": "2026-11-24T14:50:45.128Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -234866,10 +234871,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "520e2886",
-      "content_hash": "bc5da286ed84f14bfd6410c28ba3a6bf5814a948496ad80b5f3ce96f61fcdd25",
+      "source_version": "07de763f",
+      "content_hash": "9c77f06625c49e563f71dfa2acdc9b65e5fc17909a26abc68309632ba865d2de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:24:04.518Z"
+      "persisted_at": "2026-11-24T14:50:45.291Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -260465,13 +260470,13 @@
       "item_id": "candidate_directive-update-cilium-runtime-builder",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AZK1-update-cilium-runtime-builder.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ASE5-update-cilium-runtime-builder.md",
       "title": "update cilium-{runtime,builder}",
       "repository": "cilium/cilium",
-      "source_version": "b613df15",
-      "content_hash": "4cbc45c26fe1b46205e8114812155b8174d639bd926cd85fbd88fb8a133a1200",
+      "source_version": "4bc6dc81",
+      "content_hash": "7305ac1ded56271a66c582131c49b02459de9fc436a8f1040cafd090c2b394e4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:35:28.898Z"
+      "persisted_at": "2026-11-24T14:50:42.366Z"
     },
     "learn-github-weaviate-weaviate": {
       "learning_id": "learn-github-weaviate-weaviate",
@@ -306073,8 +306078,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "a46ba6ab",
-      "content_hash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
+      "source_version": "28d22360",
+      "content_hash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -306092,6 +306097,11 @@
           "number": 10040,
           "title": "bump url to 2.5.9 for RUSTSEC-2026-0592",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10284,
+          "title": "review of #1307",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -306099,7 +306109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T08:33:09.104Z",
+      "verified_at": "2026-11-24T14:50:30.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -317408,8 +317418,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "6a339634",
-      "content_hash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
+      "source_version": "6ed29aa0",
+      "content_hash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -317422,6 +317432,11 @@
           "number": 10100,
           "title": "attach id for ReflectHandle to eliminate drop clash chance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10285,
+          "title": "bump async-broadcast version to wasm-compatible one",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -317429,7 +317444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:17:57.522Z",
+      "verified_at": "2026-11-24T14:50:37.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -317483,10 +317498,10 @@
       "relative_path": "08_VERIFICATION/kube-rs-kube-verification-protocol-empirical-defect-shield-for-kube-rs-kube.md",
       "title": "Verification Protocol: Empirical Defect Shield for kube-rs/kube",
       "repository": "kube-rs/kube",
-      "source_version": "6a339634",
-      "content_hash": "9b337c9f625c0265b6911ab7d07c6665c2b2946d55892b1baa17a3fb431c1e7a",
+      "source_version": "6ed29aa0",
+      "content_hash": "06c943130119bd044083d731dc90357046ae4020059e592d81239f5aa5737fae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:17:58.326Z"
+      "persisted_at": "2026-11-24T14:50:38.541Z"
     },
     "rule-9816": {
       "learning_id": "rule-9816",
@@ -323841,13 +323856,13 @@
       "item_id": "candidate_directive-images-update-cilium-runtime-builder",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B892-images-update-cilium-runtime-builder.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BIJS-images-update-cilium-runtime-builder.md",
       "title": "images: update cilium-{runtime,builder}",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "023140bbb323ba6c8d17182976c84b999bc7100eed3c65f80f8ed267bc3b909a",
+      "content_hash": "214508c2e32e6beb06b1267c9d4bdd4853fa8e02b8866cb888bb6794beff3ce4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:35:40.167Z"
+      "persisted_at": "2026-11-24T14:51:16.265Z"
     },
     "rule-9965": {
       "learning_id": "rule-9965",
@@ -329733,9 +329748,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kube-rs-kube-learnings",
       "repository": "kube-rs-kube-learnings",
       "source_version": "HEAD",
-      "content_hash": "478e3292b7ccf65c371a8aed6d60370a2abdd7d61f51c04e393dd87f68375fba",
+      "content_hash": "0cbc5069481f3293c4b5762a12eebe78b090ef93f21ef7f5cecd91b4016cddde",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:18:02.394Z"
+      "persisted_at": "2026-11-24T14:51:15.692Z"
     },
     "rule-10101": {
       "learning_id": "rule-10101",
@@ -337112,6 +337127,120 @@
       "content_hash": "9f2e213a3d1fce252c6af4e66513d3f31a8b8f227c60703c26d9745b8588b77f",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T14:42:05.361Z"
+    },
+    "rule-10284": {
+      "learning_id": "rule-10284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10284,
+      "title": "review of #1307",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "28d22360",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:50:30.403Z"
+    },
+    "candidate_directive-review-of-1307": {
+      "item_id": "candidate_directive-review-of-1307",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AJIJ-review-of-1307.md",
+      "title": "review of #1307",
+      "repository": "kucherenko/jscpd",
+      "source_version": "28d22360",
+      "content_hash": "b801309f1ce27ff890e707699145d13054cd897546f11cc4c99afca4d1951ea4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:50:30.863Z"
+    },
+    "rule-10285": {
+      "learning_id": "rule-10285",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10285,
+      "title": "bump async-broadcast version to wasm-compatible one",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "6ed29aa0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:50:37.750Z"
+    },
+    "candidate_directive-bump-async-broadcast-version-to-wasm-compatible-one": {
+      "item_id": "candidate_directive-bump-async-broadcast-version-to-wasm-compatible-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BHT8-bump-async-broadcast-version-to-wasm-compatible-one.md",
+      "title": "bump async-broadcast version to wasm-compatible one",
+      "repository": "kube-rs-kube-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c203d4bc1e41a74dd6632c65087709884cb52c6f6208eb6d63e88e654677c18",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:51:15.317Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kube-rs-kube-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-technical-construction-intelligence-kube-rs-kube-core-invariants.md",
+      "title": "Technical Construction Intelligence: kube-rs/kube Core Invariants",
+      "repository": "kube-rs/kube",
+      "source_version": "6ed29aa0",
+      "content_hash": "ec88d1948eb472effeac6858e38f5925f3de202b7714e34eb6f0062d3e784862",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:50:38.372Z"
+    },
+    "rule-10286": {
+      "learning_id": "rule-10286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10286,
+      "title": "[BugFix] Report the original error when the Paimon JNI reader fails",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "07de763f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:50:44.514Z"
+    },
+    "candidate_directive-bugfix-report-the-original-error-when-the-paimon-jni-reader-fails": {
+      "item_id": "candidate_directive-bugfix-report-the-original-error-when-the-paimon-jni-reader-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AUE4-bugfix-report-the-original-error-when-the-paimon-jni-reader-fails.md",
+      "title": "[BugFix] Report the original error when the Paimon JNI reader fails",
+      "repository": "StarRocks/starrocks",
+      "source_version": "07de763f",
+      "content_hash": "78d1e9e0dd38aef968588a827b7e50e52174f6e9a695777db097a4549f161e07",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:50:44.960Z"
+    },
+    "candidate_directive-walk-review-of-1307": {
+      "item_id": "candidate_directive-walk-review-of-1307",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AX8C-walk-review-of-1307.md",
+      "title": "walk): review of #1307",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7ecb59a5585d6379991b60e89f43877f576f9d44e5a879739a56e36b5c3c5adb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:50:48.639Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-learnings-technical-construction-intelligence-kube-rs-kube-learning.md",
+      "title": "Technical Construction Intelligence: kube-rs-kube-learnings Core Invariants",
+      "repository": "kube-rs-kube-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:51:15.504Z"
     }
   },
   "ai-builder-brain": {

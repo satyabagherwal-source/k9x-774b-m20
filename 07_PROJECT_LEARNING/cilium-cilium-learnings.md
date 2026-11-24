@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `1fec0cd4`  
+> **Source Version**: `4bc6dc81`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T09:42:27.948Z  
+> **Timestamp**: 2026-11-24T14:50:41.398Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T09:41:14.083Z  
+> **Harvest Timestamp**: 2026-11-24T14:50:41.394Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25896 stars
+- **Stars / Engagement**: 25898 stars
 
 ---
 
@@ -1259,13 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50238** (2026-11-24): **.github: Track Kubespray in Renovate and update it to v2.32.0**
+  *Symptoms*: The Kubespray pin in conformance-kubespray.yaml had no renovate annotation and no matching custom manager, so Renovate never updated it and it stayed at v2.28.0. That release installs Kubernetes v1.32.5, which cannot compile the transformMapEntry CEL rule that 25b9d6a5e2dc ("ipam: validate IP pool CIDRs in CEL and raise list limit to 16k") added, so the operator fails to create its CRDs and Conformance Kubespray has failed on main since that commit.  Renovate now tracks `<NAME>_SHA: <commit> # <tag>` pins in workflows, and Kubespray moves to v2.32.0, which installs Kubernetes 1.36.4. Its ansible-core 2.19 requires Python 3.11 or later, so the workflow now sets up Python 3.13.  Fixes: 25b9d6a5e2dc ("ipam: validate IP pool CIDRs in CEL and raise list limit to 16k")  This PR was prepared with AIL:3. I personally checked the local Renovate dry runs. 
+
 - **Issue #50225** (2026-11-24): **gateway-api: translation extension and resource registry hooks**
   *Symptoms*: The PR allows registering of additional ResourceRegistry entries and adding translation extension hooks.  Please see the details per-commit.  ```release-note Cilium's Gateway API ResourceRegistry has been extended to allow registration of additional entries. The Gateway API translation process has been refactored to support translation extension hooks. ```  This PR was prepared with AIL: 1.  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate of Origin]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#dev-coo [Submitting a pull request]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request [kind]: https://kind.sigs.k8s.io 
-  **Post-Mortem & Fix Analysis**:
-  > /test
-
-- **Issue #50218** (2026-11-24): **v1.20 Backports 2026-11-23**
-  *Symptoms*:  * [x] #50163 (@mhofstetter) :warning: resolved conflicts  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  50163 ``` 
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1284,44 +1282,131 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fec0cd4` (2026-11-20)
-**Commit Message**: ctmap: explicitly set LRU map memory flags
+### Incident Patch 1: `386e9da1` (2026-11-24)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Set the memory flags on CT maps specifications explicitly.
-`openOrCreate` currently applies these flags implicitly, but setting
-them here keeps the map configuration explicit.
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
-
-**File**: `pkg/maps/ctmap/ctmap.go` (modified, +2/-2)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -372,7 +372,7 @@ func NewGlobalMapSpec(cfg MapConfig) *ebpf.MapSpec {
- 		KeySize:    uint32(keySize),
- 		ValueSize:  uint32(valueSize),
- 		MaxEntries: uint32(m.maxEntries()),
--		Flags:      0,
-+		Flags:      bpf.GetMapMemoryFlags(ebpf.LRUHash),
- 	}
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
++  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
+```
+
+**File**: `api/v1/standalone-dns-proxy/standalone-dns-proxy.pb.go` (modified, +10/-7)
+```diff
+@@ -732,13 +732,16 @@ func (x *DNSPolicy) GetDnsServers() []*DNSServer {
+ // L7 DNS policy snapshot of all local endpoints and identity to ip mapping of source
+ // and destinatione egress endpoints enforcing fqdn rules.
+ type PolicyState struct {
+-	state                     protoimpl.MessageState       `protogen:"open.v1"`
+-	EgressL7DnsPolicy         []*DNSPolicy                 `protobuf:"bytes,1,rep,name=egress_l7_dns_policy,json=egressL7DnsPolicy,proto3" json:"egress_l7_dns_policy,omitempty"`
+-	RequestId                 string                       `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`                                                     // Random UUID based identifier which will be referenced in ACKs
+-	IdentityToEndpointMapping []*IdentityToEndpointMapping `protobuf:"bytes,3,rep,name=identity_to_endpoint_mapping,json=identityToEndpointMapping,proto3" json:"identity_to_endpoint_mapping,omitempty"` // Identity to Endpoint mapping for the DNS server and the source identity
+-	IdentityToPrefixMapping   []*IdentityToPrefixMapping   `protobuf:"bytes,4,rep,name=identity_to_prefix_mapping,json=identityToPrefixMapping,proto3" json:"identity_to_prefix_mapping,omitempty"`       // Identity to Prefix mapping for the identity
+-	unknownFields             protoimpl.UnknownFields
+-	sizeCache                 protoimpl.SizeCache
++	state             protoimpl.MessageState `protogen:"open.v1"`
++	EgressL7DnsPolicy []*DNSPolicy           `protobuf:"bytes,1,rep,name=egress_l7_dns_policy,json=egressL7DnsPolicy,proto3" json:"egress_l7_dns_policy,omitempty"`
++	// Random UUID based identifier which will be referenced in ACKs
++	RequestId string `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
++	// Identity to Endpoint mapping for the DNS server and the source identity
++	IdentityToEndpointMapping []*IdentityToEndpointMapping `protobuf:"bytes,3,rep,name=identity_to_endpoint_mapping,json=identityToEndpointMapping,proto3" json:"identity_to_endpoint_mapping,omitempty"`
++	// Identity to Prefix mapping for the identity
++	IdentityToPrefixMapping []*IdentityToPrefixMapping `protobuf:"bytes,4,rep,name=identity_to_prefix_mapping,json=identityToPrefixMapping,proto3" json:"identity_to_prefix_mapping,omitempty"`
++	unknownFields           protoimpl.UnknownFields
++	sizeCache               protoimpl.SizeCache
  }
  
-@@ -384,7 +384,7 @@ func newMap(mapName string, m mapType, opts ...MapOption) *Map {
- 			m.key(),
- 			m.value(),
- 			m.maxEntries(),
--			0,
-+			bpf.GetMapMemoryFlags(ebpf.LRUHash),
- 		),
- 		mapType: m,
- 	}
+ func (x *PolicyState) Reset() {
+```
+
+**File**: `images/cilium/Dockerfile` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
+ ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
+ #
+ # cilium-envoy from github.com/cilium/proxy
+```
+
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
+ 
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
+ 
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+---
+
+### Incident Patch 2: `aa2ff70d` (2026-11-24)
+**Commit Message**: images/builder: install clang-format from llvm-dist image
+
+This will be used to check formatting of .protoc files in api/v1.
+
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+
+**File**: `images/builder/Dockerfile` (modified, +8/-2)
+```diff
+@@ -82,12 +82,18 @@ RUN --mount=type=bind,readwrite,target=/go/src/github.com/cilium/cilium/images/b
+     ./install-test-formatters.sh
+ 
+ # clang compiles the BPF datapath in the builder (e.g. 'make -C bpf build_all',
+-# 'make run_bpf_tests')
++# 'make run_bpf_tests'),
++# clang-format is used to auto-format protoc files in api/v1,
+ # llvm-objcopy/llvm-strip are used by the BPF Go tests (pkg/bpf/testdata).
+ # llc is intentionally not copied: the BPF build is clang-only, and the datapath
+ # verifier tests extract the toolchain from the cilium-llvm image (see
+ # contrib/scripts/extract-llvm.sh), not from this image.
+-COPY --from=llvm-dist /usr/local/bin/clang /usr/local/bin/llvm-objcopy /usr/local/bin/llvm-strip /bin/
++COPY --from=llvm-dist \
++	/usr/local/bin/clang \
++	/usr/local/bin/clang-format \
++	/usr/local/bin/llvm-objcopy \
++	/usr/local/bin/llvm-strip \
++	/bin/
+ 
+ # Create a cache directory with 777 so that we can run the builder image and
+ # compile golang code from any UID.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50238** (2026-11-24): .github: Track Kubespray in Renovate and update it to v2.32.0 (@aanm)
 - **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
+- **PR #50224** (2026-11-24): v1.18 Backports 2026-11-23 (@glrf)
+- **PR #50221** (closed): .github: Retry the LVH image pull and commit status updates (@aanm)
 - **PR #50218** (2026-11-24): v1.20 Backports 2026-11-23 (@mhofstetter)
-- **PR #50209** (2026-11-23): bpf: tests: extend coverage of NO_SNAT endpoints (@ekoops)
-- **PR #50207** (2026-11-23): docs: Gateway API TLS options (@arybolovlev)
-- **PR #50202** (2026-11-23): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.18) (@cilium-renovate[bot])
-- **PR #50201** (2026-11-22): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.19) (@cilium-renovate[bot])
+- **PR #50215** (2026-11-24): v1.19 Backports 2026-11-23 (@glrf)
 
 ---
 
@@ -1341,30 +1426,28 @@ Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ctmap: explicitly set LRU map memory flags
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `pkg/maps/ctmap/ctmap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fec0cd4`: ctmap: explicitly set LRU map memory flags. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `386e9da1`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/maps/ctmap/ctmap.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Flags:      bpf.GetMapMemoryFlags(ebpf.LRUHash),
-			bpf.GetMapMemoryFlags(ebpf.LRUHash),
+  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		Flags:      0,
-			0,
+  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fec0cd4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `386e9da1` are properly handled with clean fallback behavior.

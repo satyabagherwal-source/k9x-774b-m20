@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:41:58.802Z",
+  "last_updated": "2026-11-24T14:50:44.741Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
-      "verified_at": "2026-11-24T09:42:29.310Z",
+      "content_hash": "7cc33e0fbb2b1dda05a81462eba0ac264be8e82186b6f4b9a5f6af66d10eaf7c",
+      "verified_at": "2026-11-24T14:50:42.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:42:29.310Z"
+      "last_updated": "2026-11-24T14:50:42.149Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
-      "verified_at": "2026-11-23T08:33:09.372Z",
+      "content_hash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
+      "verified_at": "2026-11-24T14:50:30.645Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T08:33:09.372Z"
+      "last_updated": "2026-11-24T14:50:30.645Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "a0b8f3fddcb8e7061774acbe405ead03c740eaa47b18bc2ddf3c09e9de89ae01",
-      "verified_at": "2026-11-23T18:24:03.956Z",
+      "content_hash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
+      "verified_at": "2026-11-24T14:50:44.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:24:03.956Z"
+      "last_updated": "2026-11-24T14:50:44.741Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
-      "verified_at": "2026-11-23T19:17:57.741Z",
+      "content_hash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
+      "verified_at": "2026-11-24T14:50:37.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:17:57.741Z"
+      "last_updated": "2026-11-24T14:50:37.973Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",

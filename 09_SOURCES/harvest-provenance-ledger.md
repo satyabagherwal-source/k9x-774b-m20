@@ -12738,3 +12738,8 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `531bc329` | Multi-dimensional audit evidence | 2026-11-24T14:41:50.166Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `f69505a5` | Multi-dimensional audit evidence | 2026-11-24T14:41:57.444Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `3a78aa0d` | Multi-dimensional audit evidence | 2026-11-24T14:41:58.786Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `28d22360` | Multi-dimensional audit evidence | 2026-11-24T14:50:30.628Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `6ed29aa0` | Multi-dimensional audit evidence | 2026-11-24T14:50:37.957Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `4bc6dc81` | Multi-dimensional audit evidence | 2026-11-24T14:50:42.133Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `07de763f` | Multi-dimensional audit evidence | 2026-11-24T14:50:44.726Z |
+| `learn-dom-h-01e5eb37` | `project://kube-rs-kube` | `6ed29aa0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md` | 2026-11-24T14:51:14.723Z |

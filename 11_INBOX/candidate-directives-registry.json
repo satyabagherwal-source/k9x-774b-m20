@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:42:05.028Z",
+  "last_updated": "2026-11-24T14:51:16.265Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19268,14 +19268,14 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-AZK1",
+      "id": "CD-ASE5",
       "directive_title": "update cilium-{runtime,builder}",
       "source_repo": "cilium/cilium",
-      "source_commit": "b613df15",
-      "staged_file": "11_INBOX/candidate-directives/CD-AZK1-update-cilium-runtime-builder.md",
+      "source_commit": "4bc6dc81",
+      "staged_file": "11_INBOX/candidate-directives/CD-ASE5-update-cilium-runtime-builder.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-24",
       "domain_letter": "H"
     },
     {
@@ -46838,14 +46838,14 @@
       "domain_letter": "F"
     },
     {
-      "id": "CD-B892",
+      "id": "CD-BIJS",
       "directive_title": "images: update cilium-{runtime,builder}",
       "source_repo": "cilium-cilium-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-B892-images-update-cilium-runtime-builder.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BIJS-images-update-cilium-runtime-builder.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-24",
       "domain_letter": "H"
     },
     {
@@ -55270,6 +55270,59 @@
       "source_repo": "citusdata-citus",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1D70AC-add-manual-addresssanitizer-builds-for-p.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-AJIJ",
+      "directive_title": "review of #1307",
+      "source_repo": "kucherenko/jscpd",
+      "source_commit": "28d22360",
+      "staged_file": "11_INBOX/candidate-directives/CD-AJIJ-review-of-1307.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BHT8",
+      "directive_title": "bump async-broadcast version to wasm-compatible one",
+      "source_repo": "kube-rs-kube-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BHT8-bump-async-broadcast-version-to-wasm-compatible-one.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-AUE4",
+      "directive_title": "[BugFix] Report the original error when the Paimon JNI reader fails",
+      "source_repo": "StarRocks/starrocks",
+      "source_commit": "07de763f",
+      "staged_file": "11_INBOX/candidate-directives/CD-AUE4-bugfix-report-the-original-error-when-the-paimon-jni-reader-fails.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-AX8C",
+      "directive_title": "walk): review of #1307",
+      "source_repo": "kucherenko-jscpd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AX8C-walk-review-of-1307.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-80A5AB",
+      "directive_title": "images: update cilium-{runtime,builder}",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-80A5AB-images-update-cilium-runtime-builder-.md",
       "staged_date": "2026-11-24"
     }
   ]

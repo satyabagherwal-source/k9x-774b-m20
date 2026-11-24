@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T14:15:45.712Z",
+  "updated_at": "2026-11-24T14:51:14.720Z",
   "statistics": {
-    "total_nodes": 508,
-    "total_edges": 211,
+    "total_nodes": 509,
+    "total_edges": 212,
     "domain_distribution": {
       "D": 306,
       "M": 1,
-      "H": 93,
+      "H": 94,
       "J": 22,
       "K": 31,
       "L": 9,
@@ -20,7 +20,7 @@
       "I": 12
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 207,
+      "CONSTRAINED_BY_ARCHITECTURE": 208,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11340,6 +11340,29 @@
       "tags": [],
       "created_at": "2026-11-24T14:15:45.712Z",
       "updated_at": "2026-11-24T14:15:45.712Z"
+    },
+    "DOM-H-01E5EB37": {
+      "id": "DOM-H-01E5EB37",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "bump async-broadcast version to wasm-compatible one",
+      "summary": "Prevents defects observed in production commit `6ed29aa0`: bump async-broadcast version to wasm-compatible one. Unvalidated execution paths  -> When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concur",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kube-rs-kube/kube-rs-kube-learnings.md",
+        "source_version": "6ed29aa0",
+        "observed_at": "2026-11-24T14:50:36.864Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kube-rs-kube)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-24T14:51:14.720Z",
+      "updated_at": "2026-11-24T14:51:14.720Z"
     }
   },
   "edges": [
@@ -13452,6 +13475,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-K-3AEE5D3A [K] with Domain I",
       "created_at": "2026-11-24T14:15:45.712Z"
+    },
+    {
+      "id": "EDGE-6AE3EB54D013",
+      "sourceId": "DOM-H-01E5EB37",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-01E5EB37 [H] with Domain G",
+      "created_at": "2026-11-24T14:51:14.720Z"
     }
   ]
 }
