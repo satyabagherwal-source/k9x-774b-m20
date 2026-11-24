@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-3ZQN",
-    "timestamp": "2026-11-22T05:50:12.143Z",
-    "repository": "VideoRebirthAI/hyperflow-h3-flash",
-    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-    "contentHash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-4BBY",
-    "timestamp": "2026-11-22T05:50:27.166Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-L4XM",
     "timestamp": "2026-11-22T06:03:32.026Z",
     "repository": "MiniMaxAI/MiniMax-H3-Image",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-6J2P",
+    "timestamp": "2026-11-24T01:15:34.801Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-6OLG",
+    "timestamp": "2026-11-24T01:15:41.956Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

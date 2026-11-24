@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:07:24.953Z",
-  "total_cycles_completed": 11930,
-  "total_learnings_persisted": 11930,
-  "total_rules_promoted": 11012,
+  "last_updated": "2026-11-24T01:15:41.966Z",
+  "total_cycles_completed": 11932,
+  "total_learnings_persisted": 11932,
+  "total_rules_promoted": 11014,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:38:18.016Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:46:24.044Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:46:36.407Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T01:07:24.953Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:15:34.811Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:15:41.966Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

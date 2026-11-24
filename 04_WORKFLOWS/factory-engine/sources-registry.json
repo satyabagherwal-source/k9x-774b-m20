@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T01:07:28.477Z",
-    "lastVerified": "2026-11-24T01:07:28.477Z",
+    "lastChecked": "2026-11-24T01:15:45.211Z",
+    "lastVerified": "2026-11-24T01:15:45.211Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -181,12 +181,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T00:40:15.160Z",
-    "lastVerified": "2026-11-24T00:40:15.160Z",
+    "lastChecked": "2026-11-24T01:15:43.847Z",
+    "lastVerified": "2026-11-24T01:15:43.847Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -195,7 +195,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "24d967b5"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -640,9 +641,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-23T20:47:48.887Z",
+    "lastChecked": "2026-11-24T01:15:38.702Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-23T20:47:48.887Z"
+    "lastVerified": "2026-11-24T01:15:38.702Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1351,9 +1352,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-22T23:25:07.092Z",
+    "lastChecked": "2026-11-24T01:15:41.239Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-22T23:25:07.092Z"
+    "lastVerified": "2026-11-24T01:15:41.239Z"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -3568,8 +3569,8 @@
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T00:31:19.462Z",
-    "lastVerified": "2026-11-23T00:31:19.462Z",
+    "lastChecked": "2026-11-24T01:15:36.325Z",
+    "lastVerified": "2026-11-24T01:15:36.325Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -8881,14 +8882,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T17:44:30.222Z",
-    "lastVerified": "2026-11-22T17:44:30.222Z",
+    "lastChecked": "2026-11-24T01:15:33.475Z",
+    "lastVerified": "2026-11-24T01:15:33.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
+    "contentHash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9144,9 +9145,9 @@
   "istifano-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "lastChecked": "2026-11-19T20:00:15.822Z",
+    "lastChecked": "2026-11-24T01:15:31.156Z",
     "revisionIdentifier": "87ba51e6",
-    "lastVerified": "2026-11-19T20:00:15.822Z"
+    "lastVerified": "2026-11-24T01:15:31.156Z"
   },
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
@@ -11959,14 +11960,14 @@
     "officialUrl": "https://github.com/electron/electron",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-21T02:08:35.574Z",
-    "lastVerified": "2026-11-21T02:08:35.574Z",
+    "lastChecked": "2026-11-24T01:15:40.851Z",
+    "lastVerified": "2026-11-24T01:15:40.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-electron-electron",
-    "contentHash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
+    "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

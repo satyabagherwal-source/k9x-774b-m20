@@ -12548,3 +12548,5 @@
 | `CYCLE-20261124-VXSR` | `2026-11-24T01:07:20.667Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10164` | Yes (`fb381402...`) |
 | `CYCLE-20261124-VZD7` | `2026-11-24T01:07:22.699Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10165` | Yes (`801ecb3c...`) |
 | `CYCLE-20261124-W13I` | `2026-11-24T01:07:24.942Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`51e4d066...`) |
+| `CYCLE-20261124-6J2P` | `2026-11-24T01:15:34.801Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10166` | Yes (`5ce41970...`) |
+| `CYCLE-20261124-6OLG` | `2026-11-24T01:15:41.956Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10167` | Yes (`d60b6fdc...`) |

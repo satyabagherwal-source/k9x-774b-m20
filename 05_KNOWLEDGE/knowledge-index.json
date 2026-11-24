@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T01:07:34.154Z",
+  "last_updated": "2026-11-24T01:15:48.378Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24324,
+  "total_items": 24329,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e9e6bb911321ce63bb02cf665610b3b2992e01cebaa08c4f5d600a96f646d34",
+      "content_hash": "8ce55320d9e1995f2e9fcce904cef4178cdaab698539869099951df6f6ba56cc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:33:14.328Z"
+      "persisted_at": "2026-11-24T01:15:48.240Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffc3ebda0f6eeb84f3fc294d124af42ecaa4b934c6e343b3616489484188fcc5",
+      "content_hash": "fcb519fc3c5a728122e3f3317d6e19148076b0d5d5d720ae447756b5632b820e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:33:14.512Z"
+      "persisted_at": "2026-11-24T01:15:48.378Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112329,10 +112329,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-electron-electron-architecture-intelligence-electron-electron-core-invariants.md",
       "title": "Architecture Intelligence: electron/electron Core Invariants",
       "repository": "electron/electron",
-      "source_version": "cb318e5a",
-      "content_hash": "10cbb968eaf43ced5dab1f8c4761f2acd0841758b629053d5688aafbb2263da4",
+      "source_version": "26919e55",
+      "content_hash": "cffae5529333a8eb201b0de077add341fd460e83c0a199bc3d7e8aa78125d54b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:18:32.800Z"
+      "persisted_at": "2026-11-24T01:15:42.370Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-electron-electron": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-electron-electron",
@@ -112341,10 +112341,10 @@
       "relative_path": "08_VERIFICATION/electron-electron-verification-protocol-empirical-defect-shield-for-electron-ele.md",
       "title": "Verification Protocol: Empirical Defect Shield for electron/electron",
       "repository": "electron/electron",
-      "source_version": "c7ba9db4",
-      "content_hash": "3d7d8436bac6dc3e8cd8d7bc4047ef1e1f342cbf117211e1d757851ad0462887",
+      "source_version": "26919e55",
+      "content_hash": "509e04284d7e3e2e5e99a3ce8b0dbe9a4d5b830b979907a44c64ae5182f28dba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:08:37.054Z"
+      "persisted_at": "2026-11-24T01:15:42.554Z"
     },
     "candidate_directive-runtimes-finish-internal-call-request-on-validation-error": {
       "item_id": "candidate_directive-runtimes-finish-internal-call-request-on-validation-error",
@@ -112486,9 +112486,9 @@
       "title": "Architecture Intelligence: electron-electron-learnings Core Invariants",
       "repository": "electron-electron-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4daef068dd4ced9f4398c1660632a21dff72872189d051cad3e834a784fd440",
+      "content_hash": "46aaff4e271a6bed5d249446407e208960e6a425c28cd9f3daf66a3b1424ead5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:19:16.932Z"
+      "persisted_at": "2026-11-24T01:15:47.119Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-electron-electron-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-electron-electron-learnings",
@@ -112498,9 +112498,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for electron-electron-learnings",
       "repository": "electron-electron-learnings",
       "source_version": "HEAD",
-      "content_hash": "b270a457e917f36e8673b764bfac2bb055192d5464d2cf1b766a27b9b0682796",
+      "content_hash": "9b146e9739c111566e314a2da73ff96bb2529f8fb297e5a50af52ef54829cc3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:13:40.506Z"
+      "persisted_at": "2026-11-24T01:15:47.294Z"
     },
     "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
@@ -236987,8 +236987,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "0df927f6",
-      "content_hash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
+      "source_version": "705f738d",
+      "content_hash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -237021,6 +237021,11 @@
           "number": 9965,
           "title": "never send a sign-in popup home from the menu or the shortcut",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10166,
+          "title": "keep zbus on 5.19, since zbus 6 removed its blocking API",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237028,7 +237033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:44:31.176Z",
+      "verified_at": "2026-11-24T01:15:34.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237070,10 +237075,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "repository": "tw93/Pake",
-      "source_version": "0df927f6",
-      "content_hash": "7ffd899f61e8a76fa92881b91015895fea20c6681263c995198d6700128aee2f",
+      "source_version": "705f738d",
+      "content_hash": "8a6b07dce52efb7d557610a39dabbf436cc11d8bd51d9cc975ecba057d7ad177",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:44:31.794Z"
+      "persisted_at": "2026-11-24T01:15:35.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
@@ -237082,10 +237087,10 @@
       "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
       "repository": "tw93/Pake",
-      "source_version": "0df927f6",
-      "content_hash": "603976dbccc54cd2789db3ae516c8f68fbedaf7299adf6d9a7321b9bc8959e6b",
+      "source_version": "705f738d",
+      "content_hash": "f4f0b6307e79c71625f74b520bf07a24ca9c9bf0fe5595e8ef920bd782a520df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:44:31.970Z"
+      "persisted_at": "2026-11-24T01:15:35.412Z"
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -237246,9 +237251,9 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dd3cb3ac3428fe0533b0eda165bb91c693d74805bf65efb1e32f13a204f21e1",
+      "content_hash": "d95e45dc86734509a3e149d6e4633d201881e9234341c8001aa5b3d081ec6708",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:44:41.696Z"
+      "persisted_at": "2026-11-24T01:15:46.013Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
@@ -237258,9 +237263,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "969f99fb8afb20beaf682a00dfac9f298a781b5782e4d6e988f8e3d4623fa5b3",
+      "content_hash": "7f893030ea5828ce66fcc254babe93ec750061052064de0dd140108d0cc7fd30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:44:41.874Z"
+      "persisted_at": "2026-11-24T01:15:46.198Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -255800,9 +255805,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e75497f96930e3a7d3487a7be11d08635805520bdd54deb09c3718293c88ebcd",
+      "content_hash": "de8a008c5d388e58ce04f13ecae5e2c802c99fff7935cabff82727cf77b7a0e2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:33:14.079Z"
+      "persisted_at": "2026-11-24T01:15:48.059Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269050,8 +269055,8 @@
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "c7ba9db4",
-      "content_hash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
+      "source_version": "26919e55",
+      "content_hash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "promoted_rules": [
@@ -269064,6 +269069,11 @@
           "number": 9698,
           "title": "replace the loading benchmark page and keep partial benchmark results",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10167,
+          "title": "SharedWorker crash with --enable-experimental-web-platform-features",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269071,7 +269081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:08:36.421Z",
+      "verified_at": "2026-11-24T01:15:41.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -329562,13 +329572,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DQWS-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6T6A-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "aaf2d2c9ae5b1861f4d625a8b3770781321724876ffe0677a502e2e2be7f612d",
+      "content_hash": "c691f3da880cb38687664a48b9191b78bce0fbf39ab02e3bd95420ac951146c9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:33:13.858Z"
+      "persisted_at": "2026-11-24T01:15:47.893Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -331725,6 +331735,70 @@
       "content_hash": "d49360c7f81f9b0962db02954b2d962b178284d6aa7d0aeaca78979b574c1cef",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T01:07:33.511Z"
+    },
+    "rule-10166": {
+      "learning_id": "rule-10166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10166,
+      "title": "keep zbus on 5.19, since zbus 6 removed its blocking API",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "705f738d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:15:34.584Z"
+    },
+    "candidate_directive-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api": {
+      "item_id": "candidate_directive-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6J9Q-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api.md",
+      "title": "keep zbus on 5.19, since zbus 6 removed its blocking API",
+      "repository": "tw93/Pake",
+      "source_version": "705f738d",
+      "content_hash": "20d6cbe13742b31c0f3909bc2980444f94d87adf8000d9f023a01b92b7332066",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:15:35.055Z"
+    },
+    "rule-10167": {
+      "learning_id": "rule-10167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10167,
+      "title": "SharedWorker crash with --enable-experimental-web-platform-features",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "26919e55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:15:41.741Z"
+    },
+    "candidate_directive-sharedworker-crash-with-enable-experimental-web-platform-features": {
+      "item_id": "candidate_directive-sharedworker-crash-with-enable-experimental-web-platform-features",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6SG2-sharedworker-crash-with-enable-experimental-web-platform-features.md",
+      "title": "SharedWorker crash with --enable-experimental-web-platform-features",
+      "repository": "electron-electron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85efbc42cc8e848e85e0bad0beb4904be5639da4273e01143e81f4f37a119fc2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:15:46.946Z"
+    },
+    "candidate_directive-deps-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api": {
+      "item_id": "candidate_directive-deps-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6RLC-deps-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api.md",
+      "title": "deps): keep zbus on 5.19, since zbus 6 removed its blocking API",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a9653ca1ac8e5d8745887d2e6c2ef91f318a8356df6e688fca885f9f9f9f3fa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:15:45.841Z"
     }
   },
   "ai-builder-brain": {

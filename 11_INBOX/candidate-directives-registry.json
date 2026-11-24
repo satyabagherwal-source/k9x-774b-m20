@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:07:33.511Z",
+  "last_updated": "2026-11-24T01:15:47.893Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,14 +50870,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-DQWS",
+      "id": "CD-6T6A",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DQWS-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-6T6A-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-24",
       "domain_letter": "D"
     },
     {
@@ -52037,6 +52037,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-6J9Q",
+      "directive_title": "keep zbus on 5.19, since zbus 6 removed its blocking API",
+      "source_repo": "tw93/Pake",
+      "source_commit": "705f738d",
+      "staged_file": "11_INBOX/candidate-directives/CD-6J9Q-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6SG2",
+      "directive_title": "SharedWorker crash with --enable-experimental-web-platform-features",
+      "source_repo": "electron-electron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6SG2-sharedworker-crash-with-enable-experimental-web-platform-features.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6RLC",
+      "directive_title": "deps): keep zbus on 5.19, since zbus 6 removed its blocking API",
+      "source_repo": "tw93-pake-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6RLC-deps-keep-zbus-on-5-19-since-zbus-6-removed-its-blocking-api.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7C351D",
+      "directive_title": "SharedWorker crash with --enable-experimental-web-platform-features",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "electron-electron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7C351D-sharedworker-crash-with-enable-experimen.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-A20F26",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A20F26-rust-resolve-python-calls-through-annota.md",
+      "staged_date": "2026-11-24"
     }
   ]
 }

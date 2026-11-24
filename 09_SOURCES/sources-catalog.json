@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "0df927f6",
+    "sourceVersion": "705f738d",
     "license": "GPL-3.0",
-    "contentHash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
-    "lastHarvestedAt": "2026-11-22T17:44:31.396Z",
+    "contentHash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
+    "lastHarvestedAt": "2026-11-24T01:15:34.806Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "c7ba9db4",
+    "sourceVersion": "26919e55",
     "license": "MIT",
-    "contentHash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
-    "lastHarvestedAt": "2026-11-21T02:08:36.582Z",
+    "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
+    "lastHarvestedAt": "2026-11-24T01:15:41.960Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {

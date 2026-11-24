@@ -12581,3 +12581,5 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `21298eb3` | Multi-dimensional audit evidence | 2026-11-24T01:07:20.672Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `d0c52cdf` | Multi-dimensional audit evidence | 2026-11-24T01:07:22.704Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `84382d49` | Multi-dimensional audit evidence | 2026-11-24T01:07:24.946Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `705f738d` | Multi-dimensional audit evidence | 2026-11-24T01:15:34.806Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `26919e55` | Multi-dimensional audit evidence | 2026-11-24T01:15:41.960Z |

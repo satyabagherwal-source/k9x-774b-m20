@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T01:07:24.958Z",
+  "last_updated": "2026-11-24T01:15:41.970Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
-      "verified_at": "2026-11-22T17:44:31.405Z",
+      "content_hash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
+      "verified_at": "2026-11-24T01:15:34.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:44:31.405Z"
+      "last_updated": "2026-11-24T01:15:34.814Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
-      "verified_at": "2026-11-21T02:08:36.590Z",
+      "content_hash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
+      "verified_at": "2026-11-24T01:15:41.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:08:36.590Z"
+      "last_updated": "2026-11-24T01:15:41.969Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

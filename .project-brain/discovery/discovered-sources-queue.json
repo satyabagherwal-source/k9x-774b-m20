@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T01:07:32.012Z",
+  "updated_at": "2026-11-24T01:15:46.716Z",
   "stats": {
-    "total_discovered": 8188,
-    "approved_pending_harvest": 7755,
+    "total_discovered": 8194,
+    "approved_pending_harvest": 7761,
     "harvested_count": 0,
     "rejected_count": 433,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7736,
+      "COMMUNITY_AND_EXPERT": 7742,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -177128,6 +177128,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-CA75FB3EDB97": {
+      "id": "SRC-CA75FB3EDB97",
+      "url": "https://claude.ai/code/session_01NayLZk7gS5yUKDf6LGHL4w",
+      "title": "https://claude.ai/code/session_01NayLZk7gS5yUKDf6LGHL4w",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-625272CC83F4": {
+      "id": "SRC-625272CC83F4",
+      "url": "https://claude.ai/code/session_01KX1hkP6PRU6bu5Ti85THi7",
+      "title": "https://claude.ai/code/session_01KX1hkP6PRU6bu5Ti85THi7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-3EE68EC04E0F": {
+      "id": "SRC-3EE68EC04E0F",
+      "url": "https://github.com/nodejs/reliability/issues/1687",
+      "title": "https://github.com/nodejs/reliability/issues/1687",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-CD6BD889554A": {
+      "id": "SRC-CD6BD889554A",
+      "url": "https://github.com/nodejs/node/pull/66722",
+      "title": "https://github.com/nodejs/node/pull/66722",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-4E4FA98D17E9": {
+      "id": "SRC-4E4FA98D17E9",
+      "url": "https://github.com/nodejs/reliability/issues/1686",
+      "title": "https://github.com/nodejs/reliability/issues/1686",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-DD93D5674ADC": {
+      "id": "SRC-DD93D5674ADC",
+      "url": "https://github.com/nodejs/reliability/issues/1690",
+      "title": "https://github.com/nodejs/reliability/issues/1690",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:15:46.716Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
       }
     }
   }

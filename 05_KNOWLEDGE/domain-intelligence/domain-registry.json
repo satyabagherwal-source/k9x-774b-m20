@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T01:07:33.733Z",
+  "last_updated": "2026-11-24T01:15:48.059Z",
   "total_records": 2476,
   "domains": {
     "A": {
@@ -8345,8 +8345,8 @@
       "title": "Architecture Intelligence: electron/electron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-electron-electron-architecture-intelligence-electron-electron-core-invariants.md",
       "repository": "electron/electron",
-      "content_hash": "10cbb968eaf43ced5dab1f8c4761f2acd0841758b629053d5688aafbb2263da4",
-      "created_at": "2026-11-13T15:18:32.800Z"
+      "content_hash": "cffae5529333a8eb201b0de077add341fd460e83c0a199bc3d7e8aa78125d54b",
+      "created_at": "2026-11-24T01:15:42.370Z"
     },
     "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants",
@@ -8432,8 +8432,8 @@
       "title": "Architecture Intelligence: electron-electron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-electron-electron-learnings-architecture-intelligence-electron-electron-learning.md",
       "repository": "electron-electron-learnings",
-      "content_hash": "f4daef068dd4ced9f4398c1660632a21dff72872189d051cad3e834a784fd440",
-      "created_at": "2026-11-13T15:19:16.932Z"
+      "content_hash": "46aaff4e271a6bed5d249446407e208960e6a425c28cd9f3daf66a3b1424ead5",
+      "created_at": "2026-11-24T01:15:47.119Z"
     },
     "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
@@ -17829,8 +17829,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "7ffd899f61e8a76fa92881b91015895fea20c6681263c995198d6700128aee2f",
-      "created_at": "2026-11-22T17:44:31.794Z"
+      "content_hash": "8a6b07dce52efb7d557610a39dabbf436cc11d8bd51d9cc975ecba057d7ad177",
+      "created_at": "2026-11-24T01:15:35.235Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -17847,8 +17847,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "7dd3cb3ac3428fe0533b0eda165bb91c693d74805bf65efb1e32f13a204f21e1",
-      "created_at": "2026-11-22T17:44:41.696Z"
+      "content_hash": "d95e45dc86734509a3e149d6e4633d201881e9234341c8001aa5b3d081ec6708",
+      "created_at": "2026-11-24T01:15:46.013Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -23647,8 +23647,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e75497f96930e3a7d3487a7be11d08635805520bdd54deb09c3718293c88ebcd",
-      "created_at": "2026-11-23T22:33:14.079Z"
+      "content_hash": "de8a008c5d388e58ce04f13ecae5e2c802c99fff7935cabff82727cf77b7a0e2",
+      "created_at": "2026-11-24T01:15:48.059Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
