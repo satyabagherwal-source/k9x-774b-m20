@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:00:48.265Z",
+  "last_updated": "2026-11-24T19:10:47.886Z",
   "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24858,
+  "total_items": 24868,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113817,10 +113817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "36dabf36",
-      "content_hash": "2edc65768b450f34b52609b887b23a57bbe406de7e8cfba0b7403a93995b49b4",
+      "source_version": "9dbecfa0",
+      "content_hash": "a65a7c218bc1fe3ff2b6bfd7ec87f56bb7d88f52f00dfff9c391a067ec3f5f94",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T22:43:01.929Z"
+      "persisted_at": "2026-11-24T19:10:00.630Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113829,10 +113829,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "36dabf36",
-      "content_hash": "d4ca08354482795e12a006497c8a9d5b77e3bce92ae09f54bedd76765b7997b8",
+      "source_version": "9dbecfa0",
+      "content_hash": "97993a0d8fe989b40a220f43997e95d73638d679439b2b310635b0cbc0b573c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:43:02.152Z"
+      "persisted_at": "2026-11-24T19:10:00.869Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -215091,9 +215091,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity-trufflehog-learnings",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8297ed6f2916a602c518f288109767ea94fc13c414ec4f5c59074dde3d577ca",
+      "content_hash": "2d8c58906565ce6b49bc7883bd5283c42f0bb74c47072a1e511229619895523b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:02:33.611Z"
+      "persisted_at": "2026-11-24T19:10:47.886Z"
     },
     "learn-huggingface-cloudflare-clef-flash": {
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
@@ -223291,8 +223291,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "22e51338",
-      "content_hash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
+      "source_version": "2921dcc5",
+      "content_hash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -223330,6 +223330,11 @@
           "number": 10147,
           "title": "Update dependency golangci/golangci-lint to v2.15.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10342,
+          "title": "Stop detector integration tests from panicking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223337,7 +223342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:31:35.722Z",
+      "verified_at": "2026-11-24T19:09:57.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223379,10 +223384,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "22e51338",
-      "content_hash": "04d6d491f0f161236c970d67e3eb736263c7c057b3e14cf253f958c6ed42b4f5",
+      "source_version": "2921dcc5",
+      "content_hash": "08be166612cdeb350f11d79f4d564c21bd467961d93189bf84f0ac0404c86979",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T23:31:36.347Z"
+      "persisted_at": "2026-11-24T19:09:58.017Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog",
@@ -223391,10 +223396,10 @@
       "relative_path": "08_VERIFICATION/trufflesecurity-trufflehog-verification-protocol-empirical-defect-shield-for-tru.md",
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity/trufflehog",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "22e51338",
-      "content_hash": "703547a8ff0ab671000a0b50d614bbcc37a3065ef57bcd85f824e0720b9b5eaf",
+      "source_version": "2921dcc5",
+      "content_hash": "a5a094431872901b3a02ba94df65841de0232f7c26795c86b84aacde295b4967",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:31:36.537Z"
+      "persisted_at": "2026-11-24T19:09:58.288Z"
     },
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
@@ -228485,8 +228490,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "504582d8",
-      "content_hash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
+      "source_version": "9ecae93f",
+      "content_hash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -228524,6 +228529,11 @@
           "number": 10150,
           "title": "fall back to default last updated dates on Vercel previews",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10341,
+          "title": "fix(cli/market): show Market's reason for a 403 and correct clone h",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228531,7 +228541,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:48:52.417Z",
+      "verified_at": "2026-11-24T19:09:54.525Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228559,10 +228569,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "504582d8",
-      "content_hash": "fa3556f8bc8d4c4d2d5d63980265548700b9826525d4ab109cd34bbfbc46172f",
+      "source_version": "9ecae93f",
+      "content_hash": "09949902c660ba3d6f862dc14171716f43da4572ff3951c1b4f3ca1063090e81",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:48:52.999Z"
+      "persisted_at": "2026-11-24T19:09:55.441Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -228571,10 +228581,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "504582d8",
-      "content_hash": "20ed46bba272320c27de06d2c291e1225bee7e06b4be082a89128a6816022f02",
+      "source_version": "9ecae93f",
+      "content_hash": "fe3cdfffea8f13d656b18f708f30182b4c4b388f45469b6828027d04151038b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:48:53.162Z"
+      "persisted_at": "2026-11-24T19:09:55.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -228608,9 +228618,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "f27d5858d4b133c06ca90ee3945c685b8305864af9adcfb17a754004370837a3",
+      "content_hash": "adeb6c21063118384c0afa806f97422740105dc517a13fbf728e75558ee7c3b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:48:57.926Z"
+      "persisted_at": "2026-11-24T19:10:45.389Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -228620,9 +228630,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c23991ee0f21d8f6dfd90a19c020ce825f333f01ae822c588f6fb6a3e2eef27",
+      "content_hash": "9ae9ea393dacb7255678756365b916704c9a20807313e2cc4e44f2b3b0c713bd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:48:58.084Z"
+      "persisted_at": "2026-11-24T19:10:45.670Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -253415,9 +253425,9 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "f22f9fe07e5ea4cf2471a19049d73f2c05e6f3a560618daf15d81bb33c91ae5a",
+      "content_hash": "3329cf0c5bf0aae9ed56847cb6649dffa83d46daf2acdfab647f852310be285d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:02:33.468Z"
+      "persisted_at": "2026-11-24T19:10:47.616Z"
     },
     "learn-huggingface-microsoft-florence-2-base": {
       "learning_id": "learn-huggingface-microsoft-florence-2-base",
@@ -258993,8 +259003,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "36dabf36",
-      "content_hash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
+      "source_version": "9dbecfa0",
+      "content_hash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -259017,6 +259027,11 @@
           "number": 9595,
           "title": "Empirical Invariant Guard in test-suite.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10343,
+          "title": "Empirical Invariant Guard in perform.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259024,7 +259039,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:43:01.123Z",
+      "verified_at": "2026-11-24T19:09:59.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264650,8 +264665,8 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "9f0f4ddf",
-      "content_hash": "4a50a28058378a979daba47a519d21ec912c9fcb403e3103e7a95ce2cc12ae53",
+      "source_version": "a35e6f4e",
+      "content_hash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
@@ -264664,6 +264679,11 @@
           "number": 9632,
           "title": "bump follow-redirects from 1.16.2 to 1.16.3 in the production_dependencie",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10340,
+          "title": "bump the development_dependencies group with 6 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -264671,7 +264691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:02:21.499Z",
+      "verified_at": "2026-11-24T19:09:49.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264713,10 +264733,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-technical-construction-intelligence-axios-axios-core-invariants.md",
       "title": "Technical Construction Intelligence: axios/axios Core Invariants",
       "repository": "axios/axios",
-      "source_version": "9f0f4ddf",
-      "content_hash": "c1847fe98b068fc6a829b95bcb67f315138e9c13b02833a2cbca61790d6de6c3",
+      "source_version": "a35e6f4e",
+      "content_hash": "71a606de1f051f4e75a81da712d309d5617d54bbaa97ab3a3fd392d33bf387ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:02:21.969Z"
+      "persisted_at": "2026-11-24T19:09:50.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios",
@@ -264725,10 +264745,10 @@
       "relative_path": "08_VERIFICATION/axios-axios-verification-protocol-empirical-defect-shield-for-axios-axios.md",
       "title": "Verification Protocol: Empirical Defect Shield for axios/axios",
       "repository": "axios/axios",
-      "source_version": "9f0f4ddf",
-      "content_hash": "5b5993dc119b43daf0c3371bffd31dd5a149df8111f4d100b5e09b649d0c10ed",
+      "source_version": "a35e6f4e",
+      "content_hash": "45db49b8d5a36650173abddf4ab7e7dad751e9fc9de06b2630dc988e567b7464",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:02:22.144Z"
+      "persisted_at": "2026-11-24T19:09:50.880Z"
     },
     "rule-8805": {
       "learning_id": "rule-8805",
@@ -264776,9 +264796,9 @@
       "title": "Technical Construction Intelligence: axios-axios-learnings Core Invariants",
       "repository": "axios-axios-learnings",
       "source_version": "HEAD",
-      "content_hash": "d1637f27394c9e21c1b0e18874d122cbea14affc021a73d1df725b296e558eb0",
+      "content_hash": "2490759acbb278740b4a10075edc6990adab1c483798b5e3ec4f2b9bfe39d7ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:02:32.637Z"
+      "persisted_at": "2026-11-24T19:10:06.661Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-axios-axios-learnings",
@@ -264788,9 +264808,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for axios-axios-learnings",
       "repository": "axios-axios-learnings",
       "source_version": "HEAD",
-      "content_hash": "472bf1e12190a6494e0a45dbf7fc9893c8fb74ee2d85ebb71f99e9aadd6d9a07",
+      "content_hash": "90537e6d6598cb4d5fa4676fa9bc5b7dfb39569cb41f2b44dc3d740678a64c31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:02:32.761Z"
+      "persisted_at": "2026-11-24T19:10:06.913Z"
     },
     "rule-8806": {
       "learning_id": "rule-8806",
@@ -339543,6 +339563,134 @@
       "content_hash": "c37850c33c14b78c262f04096cb1eb7a0820644d7b430f14eedb173d151637f6",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T19:00:47.849Z"
+    },
+    "rule-10340": {
+      "learning_id": "rule-10340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10340,
+      "title": "bump the development_dependencies group with 6 updates",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "a35e6f4e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:09:49.756Z"
+    },
+    "candidate_directive-bump-the-development_dependencies-group-with-6-updates": {
+      "item_id": "candidate_directive-bump-the-development_dependencies-group-with-6-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K1C1-bump-the-development_dependencies-group-with-6-updates.md",
+      "title": "bump the development_dependencies group with 6 updates",
+      "repository": "axios/axios",
+      "source_version": "a35e6f4e",
+      "content_hash": "05c21432d9edb5d0f0ab19052fcec2616f58a1183712f9ef3f6a418b57bb2e91",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:09:50.408Z"
+    },
+    "rule-10341": {
+      "learning_id": "rule-10341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10341,
+      "title": "fix(cli/market): show Market's reason for a 403 and correct clone h",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "9ecae93f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:09:54.525Z"
+    },
+    "candidate_directive-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h": {
+      "item_id": "candidate_directive-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K51B-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h.md",
+      "title": "fix(cli/market): show Market's reason for a 403 and correct clone h",
+      "repository": "beclab/Olares",
+      "source_version": "9ecae93f",
+      "content_hash": "c6f0ca33161a90cf18864f0ce0fb8a07057ee981ffc7d33fd21bd670346b4ad7",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-24T19:09:55.201Z"
+    },
+    "rule-10342": {
+      "learning_id": "rule-10342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10342,
+      "title": "Stop detector integration tests from panicking",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "2921dcc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:09:57.137Z"
+    },
+    "candidate_directive-stop-detector-integration-tests-from-panicking": {
+      "item_id": "candidate_directive-stop-detector-integration-tests-from-panicking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L99L-stop-detector-integration-tests-from-panicking.md",
+      "title": "Stop detector integration tests from panicking",
+      "repository": "trufflesecurity-trufflehog-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37e5f7137d63efcef049f4bd8df9691ed2fc91968d348c58582116d091d0e6db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T19:10:47.338Z"
+    },
+    "rule-10343": {
+      "learning_id": "rule-10343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10343,
+      "title": "Empirical Invariant Guard in perform.rs",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "9dbecfa0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:09:59.765Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-perform-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-perform-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K918-empirical-invariant-guard-in-perform-rs.md",
+      "title": "Empirical Invariant Guard in perform.rs",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "9dbecfa0",
+      "content_hash": "32bc8b37da09154bea6839bf77bfa2a9830c080c0f57b99fb60739fbc5c8e958",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T19:10:00.387Z"
+    },
+    "candidate_directive-deps-dev-bump-the-development_dependencies-group-with-6-updates": {
+      "item_id": "candidate_directive-deps-dev-bump-the-development_dependencies-group-with-6-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KDOT-deps-dev-bump-the-development_dependencies-group-with-6-updates.md",
+      "title": "deps-dev): bump the development_dependencies group with 6 updates",
+      "repository": "axios-axios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c3511520e95c89cf991336bb16334085d0de9bab6e7f8160f37c94fd8466536",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:10:06.420Z"
+    },
+    "candidate_directive-cherry-pick-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h": {
+      "item_id": "candidate_directive-cherry-pick-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L7IW-cherry-pick-fix-cli-market-show-market-s-reason-for-a-403-and-correct-clone-h.md",
+      "title": "cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone h",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c31120bd1c42f9f94fdd023d06c54d003d0034e05b48e165bc8e34229f67843",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-24T19:10:45.095Z"
     }
   },
   "ai-builder-brain": {

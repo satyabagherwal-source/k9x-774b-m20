@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "504582d8",
+    "sourceVersion": "9ecae93f",
     "license": "AGPL-3.0",
-    "contentHash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
-    "lastHarvestedAt": "2026-11-23T23:48:52.621Z",
+    "contentHash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
+    "lastHarvestedAt": "2026-11-24T19:09:54.809Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "22e51338",
+    "sourceVersion": "2921dcc5",
     "license": "AGPL-3.0",
-    "contentHash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
-    "lastHarvestedAt": "2026-11-23T23:31:35.935Z",
+    "contentHash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
+    "lastHarvestedAt": "2026-11-24T19:09:57.436Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "36dabf36",
+    "sourceVersion": "9dbecfa0",
     "license": "NOASSERTION",
-    "contentHash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
-    "lastHarvestedAt": "2026-11-23T22:43:01.402Z",
+    "contentHash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
+    "lastHarvestedAt": "2026-11-24T19:10:00.046Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "9f0f4ddf",
+    "sourceVersion": "a35e6f4e",
     "license": "MIT",
-    "contentHash": "4a50a28058378a979daba47a519d21ec912c9fcb403e3103e7a95ce2cc12ae53",
-    "lastHarvestedAt": "2026-11-20T20:02:21.657Z",
+    "contentHash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
+    "lastHarvestedAt": "2026-11-24T19:09:50.066Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

@@ -12784,3 +12784,8 @@
 | `CYCLE-20261124-827L` | `2026-11-24T19:00:31.665Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10337` | Yes (`3dc06406...`) |
 | `CYCLE-20261124-8816` | `2026-11-24T19:00:39.210Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10338` | Yes (`5099bcd9...`) |
 | `CYCLE-20261124-8922` | `2026-11-24T19:00:40.538Z` | `vcaesar/riot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10339` | Yes (`36fc1d2e...`) |
+| `CYCLE-20261124-K12L` | `2026-11-24T19:09:50.061Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10340` | Yes (`793d4800...`) |
+| `CYCLE-20261124-K4QB` | `2026-11-24T19:09:54.803Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10341` | Yes (`99d9e26f...`) |
+| `CYCLE-20261124-K6RB` | `2026-11-24T19:09:57.431Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10342` | Yes (`faf46387...`) |
+| `CYCLE-20261124-K8RT` | `2026-11-24T19:10:00.041Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10343` | Yes (`6100f770...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T19:10:44.611Z` | `beclab-olares` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-C-AF8B1B7F` [Domain C] | Yes (`e8a021ad...`) |

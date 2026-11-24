@@ -4,22 +4,22 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "36dabf36",
+  "source_version": "9dbecfa0",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T22:43:01.708Z",
+  "timestamp": "2026-11-24T19:10:00.386Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `36dabf36`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T22:43:01.708Z`  
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `9dbecfa0`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T19:10:00.386Z`  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meilisearch/meilisearch` (Commit: `36dabf36`)
+- **Target Repository**: `meilisearch/meilisearch` (Commit: `9dbecfa0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:43:00.410Z  
+> **Harvest Timestamp**: 2026-11-24T19:09:58.601Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59977 stars
+- **Stars / Engagement**: 59985 stars
 
 ---
 
@@ -2060,390 +2060,348 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36dabf36` (2026-11-23)
-**Commit Message**: Merge pull request #6750 from meilisearch/update-version-v1.58.0
+### Incident Patch 1: `9dbecfa0` (2026-11-24)
+**Commit Message**: Merge pull request #6496 from 0xfandom/fix/6482-max-total-hits-metadata
 
-Update version for the next release (v1.58.0) in Cargo.toml
+Respect pagination.maxTotalHits in total hits metadata
 
-**File**: `Cargo.lock` (modified, +19/-19)
+**File**: `crates/meilisearch/src/search/federated/perform.rs` (modified, +1/-1)
 ```diff
-@@ -779,7 +779,7 @@ dependencies = [
- 
- [[package]]
- name = "build-info"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "time",
-@@ -1958,7 +1958,7 @@ dependencies = [
- 
- [[package]]
- name = "dump"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "big_s",
-  "flate2",
-@@ -2216,7 +2216,7 @@ dependencies = [
- 
- [[package]]
- name = "file-store"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "tempfile",
-  "thiserror 2.0.20",
-@@ -2236,7 +2236,7 @@ dependencies = [
- 
- [[package]]
- name = "filter-parser"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "insta",
-  "itertools 0.14.0",
-@@ -2265,7 +2265,7 @@ dependencies = [
- 
- [[package]]
- name = "flatten-serde-json"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -2449,7 +2449,7 @@ dependencies = [
- 
- [[package]]
- name = "fuzzers"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "arbitrary",
-  "bumpalo",
-@@ -3189,7 +3189,7 @@ dependencies = [
- 
- [[package]]
- name = "http-client"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "cidr",
-  "hyper-util",
-@@ -3509,7 +3509,7 @@ dependencies = [
- 
- [[package]]
- name = "index-scheduler"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "backoff",
-@@ -3758,7 +3758,7 @@ dependencies = [
- 
- [[package]]
- name = "json-depth-checker"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -4196,7 +4196,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
- 
- [[package]]
- name = "meili-snap"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "insta",
-  "md5",
-@@ -4206,7 +4206,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-cors",
-  "actix-http",
-@@ -4299,7 +4299,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-auth"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "base64 0.22.1",
-  "enum-iterator",
-@@ -4318,7 +4318,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-types"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-web",
-  "anyhow",
-@@ -4357,7 +4357,7 @@ dependencies = [
- 
- [[package]]
- name = "meilitool"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -4391,7 +4391,7 @@ dependencies = [
- 
- [[package]]
- name = "milli"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "arroy",
-  "bbqueue",
-@@ -5019,7 +5019,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "permissive-json-pointer"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "big_s",
-  "serde_json",
-@@ -6071,7 +6071,7 @@ dependencies = [
- 
- [[package]]
- name = "routes"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-web",
-  "routes-macros",
-@@ -6083,7 +6083,7 @@ dependencies = [
- 
- [[package]]
- name = "routes-macros"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -8639,7 +8639,7 @@ dependencies = [
- 
- [[package]]
- name = "xtask"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "build-info",
+@@ -1766,7 +1766,7 @@ impl SearchByIndex {
+         .into_iter()
+         .map(|(_, hit)| hit)
+         .collect();
+-        let estimated_total_hits = candidates.len() as usize;
++        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
+         let facets = facet_patterns_by_index
+             .map(|facets_by_index| {
+                 compute_facet_distribution_stats(
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/meilisearch/tests/search/pagination.rs` (modified, +31/-0)
 ```diff
-@@ -27,7 +27,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "1.57.0"
-+version = "1.58.0"
- authors = [
-     "Quentin de Quelen <quentin@dequelen.me>",
-     "Clément Renault <clement@meilisearch.com>",
+@@ -195,3 +195,34 @@ async fn test_issue_5274() {
+     }
+     "###);
+ }
++
++/// testing: https://github.com/meilisearch/meilisearch/issues/6482
++#[actix_rt::test]
++async fn max_total_hits_caps_estimated_and_total_hits() {
++    let server = Server::new_shared();
++    let index = server.unique_index();
++
++    let documents = json!([
++        { "id": 1, "title": "Document 1" },
++        { "id": 2, "title": "Document 2" },
++        { "id": 3, "title": "Document 3" }
++    ]);
++    let (task, _code) = index.add_documents(documents, None).await;
++    server.wait_task(task.uid()).await.succeeded();
++
++    let (task, _code) = index.update_settings_pagination(json!({ "maxTotalHits": 2 })).await;
++    server.wait_task(task.uid()).await.succeeded();
++
++    // Offset/limit pagination: `estimatedTotalHits` must not exceed `maxTotalHits`.
++    let (response, code) = index.search_post(json!({ "offset": 0, "limit": 1 })).await;
++    snapshot!(code, @"200 OK");
++    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
++    snapshot!(response["estimatedTotalHits"], @"2");
++
++    // Page-based pagination: `totalHits` and `totalPages` must respect `maxTotalHits`.
++    let (response, code) = index.search_post(json!({ "page": 1, "hitsPerPage": 1 })).await;
++    snapshot!(code, @"200 OK");
++    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
++    snapshot!(response["totalHits"], @"2");
++    snapshot!(response["totalPages"], @"2");
++}
 ```
 
 ---
 
-### Incident Patch 2: `739b2719` (2026-11-23)
-**Commit Message**: Update version for the next release (v1.58.0) in Cargo.toml
+### Incident Patch 2: `119861ef` (2026-07-06)
+**Commit Message**: fix(search): respect pagination.maxTotalHits in total hits metadata
 
-**File**: `Cargo.lock` (modified, +19/-19)
+Single-index searches now run through the federated search path, which
+computed `estimatedTotalHits` (and, for page-based pagination, `totalHits`
+and `totalPages`) straight from the candidate count without applying the
+`pagination.maxTotalHits` cap. The setting was still applied to the
+returned `hits`, so the metadata could advertise more results than were
+actually reachable.
+
+Cap the estimated total by `maxTotalHits`, matching the non-federated
+path and the documented behavior that both totals are computed only until
+they reach `pagination.maxTotalHits`.
+
+Fixes #6482
+
+**File**: `crates/meilisearch/src/search/federated/perform.rs` (modified, +1/-1)
 ```diff
-@@ -779,7 +779,7 @@ dependencies = [
- 
- [[package]]
- name = "build-info"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "time",
-@@ -1958,7 +1958,7 @@ dependencies = [
- 
- [[package]]
- name = "dump"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "big_s",
-  "flate2",
-@@ -2216,7 +2216,7 @@ dependencies = [
- 
- [[package]]
- name = "file-store"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "tempfile",
-  "thiserror 2.0.20",
-@@ -2236,7 +2236,7 @@ dependencies = [
- 
- [[package]]
- name = "filter-parser"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "insta",
-  "itertools 0.14.0",
-@@ -2265,7 +2265,7 @@ dependencies = [
- 
- [[package]]
- name = "flatten-serde-json"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -2449,7 +2449,7 @@ dependencies = [
- 
- [[package]]
- name = "fuzzers"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "arbitrary",
-  "bumpalo",
-@@ -3189,7 +3189,7 @@ dependencies = [
- 
- [[package]]
- name = "http-client"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "cidr",
-  "hyper-util",
-@@ -3509,7 +3509,7 @@ dependencies = [
- 
- [[package]]
- name = "index-scheduler"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "backoff",
-@@ -3758,7 +3758,7 @@ dependencies = [
- 
- [[package]]
- name = "json-depth-checker"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "criterion",
-  "serde_json",
-@@ -4196,7 +4196,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
- 
- [[package]]
- name = "meili-snap"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "insta",
-  "md5",
-@@ -4206,7 +4206,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-cors",
-  "actix-http",
-@@ -4299,7 +4299,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-auth"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "base64 0.22.1",
-  "enum-iterator",
-@@ -4318,7 +4318,7 @@ dependencies = [
- 
- [[package]]
- name = "meilisearch-types"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-web",
-  "anyhow",
-@@ -4357,7 +4357,7 @@ dependencies = [
- 
- [[package]]
- name = "meilitool"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -4391,7 +4391,7 @@ dependencies = [
- 
- [[package]]
- name = "milli"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "arroy",
-  "bbqueue",
-@@ -5019,7 +5019,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "permissive-json-pointer"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "big_s",
-  "serde_json",
-@@ -6071,7 +6071,7 @@ dependencies = [
- 
- [[package]]
- name = "routes"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "actix-web",
-  "routes-macros",
-@@ -6083,7 +6083,7 @@ dependencies = [
- 
- [[package]]
- name = "routes-macros"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -8639,7 +8639,7 @@ dependencies = [
- 
- [[package]]
- name = "xtask"
--version = "1.57.0"
-+version = "1.58.0"
- dependencies = [
-  "anyhow",
-  "build-info",
+@@ -1766,7 +1766,7 @@ impl SearchByIndex {
+         .into_iter()
+         .map(|(_, hit)| hit)
+         .collect();
+-        let estimated_total_hits = candidates.len() as usize;
++        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
+         let facets = facet_patterns_by_index
+             .map(|facets_by_index| {
+                 compute_facet_distribution_stats(
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/meilisearch/tests/search/pagination.rs` (modified, +31/-0)
 ```diff
-@@ -27,7 +27,7 @@ members = [
- ]
+@@ -195,3 +195,34 @@ async fn test_issue_5274() {
+     }
+     "###);
+ }
++
++/// testing: https://github.com/meilisearch/meilisearch/issues/6482
++#[actix_rt::test]
++async fn max_total_hits_caps_estimated_and_total_hits() {
++    let server = Server::new_shared();
++    let index = server.unique_index();
++
++    let documents = json!([
++        { "id": 1, "title": "Document 1" },
++        { "id": 2, "title": "Document 2" },
++        { "id": 3, "title": "Document 3" }
++    ]);
++    let (task, _code) = index.add_documents(documents, None).await;
++    server.wait_task(task.uid()).await.succeeded();
++
++    let (task, _code) = index.update_settings_pagination(json!({ "maxTotalHits": 2 })).await;
++    server.wait_task(task.uid()).await.succeeded();
++
++    // Offset/limit pagination: `estimatedTotalHits` must not exceed `maxTotalHits`.
++    let (response, code) = index.search_post(json!({ "offset": 0, "limit": 1 })).await;
++    snapshot!(code, @"200 OK");
++    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
++    snapshot!(response["estimatedTotalHits"], @"2");
++
++    // Page-based pagination: `totalHits` and `totalPages` must respect `maxTotalHits`.
++    let (response, code) = index.search_post(json!({ "page": 1, "hitsPerPage": 1 })).await;
++    snapshot!(code, @"200 OK");
++    snapshot!(response["hits"].as_array().unwrap().len(), @"1");
++    snapshot!(response["totalHits"], @"2");
++    snapshot!(response["totalPages"], @"2");
++}
+```
+
+---
+
+### Incident Patch 3: `475b3218` (2026-11-24)
+**Commit Message**: Merge pull request #6733 from meilisearch/fix-latest-and-major-tags
+
+Fix CIs: Only move the latest, vX and vX.Y tags for the highest stable version
+
+**File**: `.github/scripts/is-latest-release.sh` (modified, +25/-46)
+```diff
+@@ -1,48 +1,27 @@
+-#!/bin/sh
+-
+-# Used in our CIs to publish the latest Docker image.
+-
+-# Checks if the current tag ($GITHUB_REF) corresponds to the latest release tag on GitHub
+-# Returns "true" or "false" (as a string).
+-
+-GITHUB_API='https://api.github.com/repos/meilisearch/meilisearch/releases'
+-PNAME='meilisearch'
+-
+-# FUNCTIONS
+-
+-# Returns the version of the latest stable version of Meilisearch by setting the $latest variable.
+-get_latest() {
+-    # temp_file is needed because the grep would start before the download is over
+-    temp_file=$(mktemp -q /tmp/$PNAME.XXXXXXXXX)
+-    latest_release="$GITHUB_API/latest"
+-
+-    if [ $? -ne 0 ]; then
+-        echo "$0: Can't create temp file."
+-        exit 1
+-    fi
+-
+-    if [ -z "$GITHUB_PAT" ]; then
+-        curl -s "$latest_release" > "$temp_file" || return 1
+-    else
+-        curl -H "Authorization: token $GITHUB_PAT" -s "$latest_release" > "$temp_file" || return 1
+-    fi
+-
+-    latest="$(cat "$temp_file" | grep '"tag_name":' | cut -d ':' -f2 | tr -d '"' | tr -d ',' | tr -d ' ')"
+-
+-    rm -f "$temp_file"
+-    return 0
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Used in our CIs to know if a stable release should move the `latest`, `vX` and `vX.Y` tags (Docker and git).
++# Relies only on the semver order of the git tags, so it doesn't depend on when the CIs run.
++#
++# Usage: is-latest-release.sh vX.Y.Z
++# Outputs, in the `$GITHUB_OUTPUT` format:
++# - latest=true|false: the tag is the highest stable version
++# - latest_major=true|false: the tag is the highest stable version of its major
++# - latest_minor=true|false: the tag is the highest stable version of its minor
++
++current_tag=$1
++major=${current_tag%%.*}
++minor=${current_tag%.*}
++
++# Listing the remote tags works whatever the checkout configuration (shallow clone, no tags fetched...)
++stable_tags=$(git ls-remote --tags --refs origin | cut -f 2 | sed 's|^refs/tags/||' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V)
++
++# Outputs true if the current tag is the highest stable tag starting with the given prefix
++is_highest() {
++    [[ $current_tag == "$(grep "^$1" <<< "$stable_tags" | tail -n 1)" ]] && echo true || echo false
+ }
  
- [workspace.package]
--version = "1.57.0"
-+version = "1.58.0"
- authors = [
-     "Quentin de Quelen <quentin@dequelen.me>",
-     "Clément Renault <clement@meilisearch.com>",
+-# MAIN
+-current_tag="$(echo $GITHUB_REF | tr -d 'refs/tags/')"
+-get_latest
+-
+-if [ "$current_tag" != "$latest" ]; then
+-    # The current release tag is not the latest
+-    echo "false"
+-else
+-    # The current release tag is the latest
+-    echo "true"
+-fi
+-
+-exit 0
++echo "latest=$(is_highest v)"
++echo "latest_major=$(is_highest "$major\.")"
++echo "latest_minor=$(is_highest "$minor\.")"
+```
+
+**File**: `.github/workflows/latest-git-tag.yml` (modified, +23/-0)
+```diff
+@@ -18,9 +18,32 @@ jobs:
+   update-latest-tag:
+     runs-on: ubuntu-latest
+     needs: check-version
++    # Run one release at a time: otherwise, a run could compute the latest flags
++    # before a higher version is tagged, and push the `latest` tag after that higher version's run
++    concurrency:
++      group: latest-git-tag
++      cancel-in-progress: false
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++      - name: Check if the release is the latest one
++        id: is-latest
++        if: github.event_name == 'release'
++        env:
++          GH_TOKEN: ${{ secrets.MEILI_BOT_GH_PAT }}
++          GH_REF_NAME: ${{ github.ref_name }}
++        run: |
++          flags=$(bash .github/scripts/is-latest-release.sh "$GH_REF_NAME")
++          echo "$flags" >> $GITHUB_OUTPUT
++
++          github_latest=$(gh release view --json tagName --jq .tagName)
++          if grep -qx 'latest=true' <<< "$flags"; then
++            [[ $github_latest == "$GH_REF_NAME" ]] || echo "::warning::$GH_REF_NAME is the highest stable version but is not set as the latest GitHub release ($github_latest is)"
++          elif [[ $github_latest == "$GH_REF_NAME" ]]; then
++            echo "::warning::$GH_REF_NAME is set as the latest GitHub release but is not the highest stable version"
++          fi
+       - uses: rickstaa/action-create-tag@a1c7777fcb2fee4f19b0f283ba888afa11678b72 # v1
++        # A manual run always moves the tag, to fix it if needed
++        if: github.event_name == 'workflow_dispatch' || steps.is-latest.outputs.latest == 'true'
+         with:
+           tag: "latest"
+           message: "Latest stable release of Meilisearch"
+```
+
+**File**: `.github/workflows/publish-docker-images.yml` (modified, +15/-11)
+```diff
+@@ -59,14 +59,11 @@ jobs:
+         with:
+           images: ${{ matrix.registry }}
+           # Prevent `latest` to be updated for each new tag pushed.
+-          # We need latest and `vX.Y` tags to only be pushed for the stable Meilisearch releases.
++          # Images are pushed by digest here: the `latest`, `vX` and `vX.Y` tags are only created in the merge job.
+           flavor: latest=false
+           tags: |
+             type=ref,event=tag
+             type=raw,value=nightly,enable=${{ github.event_name != 'push' }}
+-            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
+-            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
+-            type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
+ 
+       - name: Build and push by digest
+         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+@@ -109,6 +106,12 @@ jobs:
+     needs:
+       - build
+ 
++    # Run one release at a time: otherwise, a run could compute the latest flags
++    # before a higher version is tagged, and push the `latest` and `vX` tags after that higher version's run
++    concurrency:
++      group: ${{ github.event_name == 'push' && format('docker-manifest-{0}', matrix.edition) || format('docker-manifest-{0}-{1}', matrix.edition, github.run_id) }}
++      cancel-in-progress: false
++
+     permissions:
+       id-token: write # This is needed to use Cosign in keyless mode
+ 
+@@ -118,25 +121,26 @@ jobs:
+       # If we are running a cron or manual job ('schedule' or 'workflow_dispatch' event), it means we are publishing the `nightly` tag, so not considered stable.
+       # If we have pushed a tag, and the tag has the v<nmumber>.<number>.<number> format, it means we are publishing an official release, so considered stable.
+       # In this situation, we need to set `output.stable` to create/update the following tags (additionally to the `vX.Y.Z` Docker tag):
+-      # - a `vX.Y` (without patch version) Docker tag
+-      # - a `latest` Docker tag
++      # - a `vX.Y` (without patch version) Docker tag, only if it is the highest stable version of its minor
++      # - a `vX` (without minor and patch versions) Docker tag, only if it is the highest stable version of its major
++      # - a `latest` Docker tag, only if it is the highest stable version
+       # For any other tag pushed, this is not considered stable.
+       - name: Define if stable and latest release
+         id: check-tag-format
+         env:
+-          # To avoid request limit with the .github/scripts/is-latest-release.sh script
+-          GITHUB_PATH: ${{ secrets.MEILI_BOT_GH_PAT }}
+           GH_REF_NAME: ${{ github.ref_name }}
+           GH_EVENT_NAME: ${{ github.event_name }}
+         run: |
+           escaped_tag=$(printf "%q" "$GH_REF_NAME")
+           echo "latest=false" >> $GITHUB_OUTPUT
++          echo "latest_major=false" >> $GITHUB_OUTPUT
++          echo "latest_minor=false" >> $GITHUB_OUTPUT
+ 
+           if [[ "$GH_EVENT_NAME" != 'push' ]]; then
+             echo "stable=false" >> $GITHUB_OUTPUT
+           elif [[ $escaped_tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+             echo "stable=true" >> $GITHUB_OUTPUT
+-            echo "latest=$(sh .github/scripts/is-latest-release.sh)" >> $GITHUB_OUTPUT
++            bash .github/scripts/is-latest-release.sh "$GH_REF_NAME" >> $GITHUB_OUTPUT
+           else
+             echo "stable=false" >> $GITHUB_OUTPUT
+           fi
+@@ -184,8 +188,8 @@ jobs:
+           tags: |
+             type=ref,event=tag
+             type=raw,value=nightly,enable=${{ github.event_name != 'push' }}
+-            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
+-            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' }}
++            type=semver,pattern=v{{major}}.{{minor}},enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest_minor == 'true' }}
++            type=semver,pattern=v{{major}},enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest_major == 'true' }}
+             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
+ 
+       - name: Create manifest list and push
+```
+
+**File**: `documentation/release.md` (modified, +3/-4)
+```diff
+@@ -64,11 +64,10 @@ Why? GitHub Merge Queue does not work with branch patterns yet, so we have to ad
+ - Ensure each line makes sense for external people reading the changelogs. Add more details of usage if needed.
+ - Thank the external contributors at the end of the changelogs.
+ 
+-⚠️ <ins>If doing a patch release that should NOT be the `latest` release</s>:
++⚠️ <ins>If doing a patch release that should NOT be the `latest` release</ins>:
+ 
+-- Do NOT check `Set as the latest release` when creating the GitHub release. If you did, quickly interrupt all CIs and delete the GitHub release!
+-- Once the release is created, you don't have to care about Homebrew, APT and Docker CIs: they will not consider this new release as the latest; the CIs are already adapted for this situation.
+-- However, the [CI updating the `latest` git tag](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) is not working for this situation currently and will attach the `latest` git tag to the just-created release, which is something we don't want! If you don't succeed in stopping the CI on time, don't worry, you just have to re-run the [old CI](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) corresponding to the real latest release, and the `latest` git tag will be attached back to the right commit.
++- Do NOT check `Set as the latest release` when creating the GitHub release, so that GitHub displays the right latest release. If you did, just edit the release to uncheck it: no CI relies on this checkbox.
++- The Docker `latest`, `vX` and `vX.Y` tags and the `latest` git tag are only moved if the release is the highest stable version (or the highest stable version of its major for `vX`, of its minor for `vX.Y`), based on the semver order of the git tags. The [CI updating the `latest` git tag](https://github.com/meilisearch/meilisearch/actions/workflows/latest-git-tag.yml) displays a warning if the checkbox is not consistent with the git tags.
+ 
+ 6. Bring the new commits back from `release-vX.Y.Z+1` to `main` by merging a PR originating `release-vX.Y.Z+1` and pointing to `main`.
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2472,67 +2430,31 @@ Update version for the next release (v1.58.0) in Cargo.toml
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in perform.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/meilisearch/src/search/federated/perform.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36dabf36`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9dbecfa0`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch/src/search/federated/perform.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
-version = "1.58.0"
+        let estimated_total_hits = usize::min(candidates.len() as usize, max_total_hits);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
-version = "1.57.0"
+        let estimated_total_hits = candidates.len() as usize;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36dabf36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9dbecfa0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

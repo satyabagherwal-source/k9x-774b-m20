@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T19:00:40.561Z",
+  "last_updated": "2026-11-24T19:10:00.069Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
-      "verified_at": "2026-11-23T23:48:52.628Z",
+      "content_hash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
+      "verified_at": "2026-11-24T19:09:54.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:48:52.628Z"
+      "last_updated": "2026-11-24T19:09:54.835Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
-      "verified_at": "2026-11-23T23:31:35.943Z",
+      "content_hash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
+      "verified_at": "2026-11-24T19:09:57.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:31:35.943Z"
+      "last_updated": "2026-11-24T19:09:57.460Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
-      "verified_at": "2026-11-23T22:43:01.413Z",
+      "content_hash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
+      "verified_at": "2026-11-24T19:10:00.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:43:01.413Z"
+      "last_updated": "2026-11-24T19:10:00.068Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "4a50a28058378a979daba47a519d21ec912c9fcb403e3103e7a95ce2cc12ae53",
-      "verified_at": "2026-11-20T20:02:21.664Z",
+      "content_hash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
+      "verified_at": "2026-11-24T19:09:50.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:02:21.664Z"
+      "last_updated": "2026-11-24T19:09:50.087Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",

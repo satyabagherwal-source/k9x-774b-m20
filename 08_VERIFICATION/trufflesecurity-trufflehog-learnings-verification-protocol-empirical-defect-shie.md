@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T20:02:33.261Z",
+  "timestamp": "2026-11-24T19:10:47.179Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trufflesecurity-trufflehog-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trufflesecurity-trufflehog-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T20:02:33.261Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:10:47.179Z`  
 > **Learning ID**: `LEARN-EVO-trufflesecurity-trufflehog-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `4ef51f69`  
+> **Source Version**: `2921dcc5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T20:02:27.861Z  
+> **Timestamp**: 2026-11-24T19:09:55.991Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:02:27.857Z  
+> **Harvest Timestamp**: 2026-11-24T19:09:55.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29551 stars
+- **Stars / Engagement**: 29619 stars
 
 ---
 
@@ -1165,329 +1165,551 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ef51f69` (2026-11-20)
-**Commit Message**: Make PrivateKey passphrase cracking respect its context timeout (#5558)
+### Incident Patch 1: `2921dcc5` (2026-11-24)
+**Commit Message**: Stop detector integration tests from panicking (#5599)
 
-Passphrase-protected keys reach Crack, which walks a built-in list of
-249 common passphrases. A wrong guess costs a full KDF run whose cost
-is set by the key's author, so one hardened key could pin a detector
-goroutine at full CPU long past the engine's per-match timeout, which
-logs but never stops the goroutine.
+cmp.Diff panicked on unexported Result fields and MustGetField panicked on
+missing secrets, so whole packages stopped early. Ignore unexported fields,
+fail the test instead of panicking, fix seven tests that did not build, and
+only check that timeout cases return an error.
 
-Crack now takes the caller's context and stops between attempts once it
-is done, wrapped with the attempt count; the in-flight attempt still
-completes because ssh.ParseRawPrivateKeyWithPassphrase takes no context.
-For OpenSSH keys, the bcrypt round count is read from the plaintext
-header and keys above 256 rounds are refused before any attempt
-(ErrKDFTooExpensive) - the header is parsed with the same ssh.Unmarshal
-calls x/crypto's own parse uses, so the count the detector checks is the
-count the KDF will run at. Callers pass their contexts through. Keys
-that can no longer be cracked are still reported, as unverified findings
-with the reason in the verification error.
-
-[authored by OpenCode]
-
-**File**: `pkg/analyzer/analyzers/privatekey/privatekey.go` (modified, +1/-1)
+**File**: `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ func AnalyzePermissions(ctx context.Context, cfg *config.Config, token string) (
- 	parsedKey, err = ssh.ParseRawPrivateKey([]byte(token))
- 	if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
- 		// key is password protected
--		parsedKey, _, err = privatekey.Crack([]byte(token))
-+		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
- 		if err != nil {
- 			return nil, err
- 		}
+@@ -31,7 +31,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 		wantErr bool
+ 	}{
+ 		{
+-			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
++			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
+ 			name:    "valid Airtable OAuth Token",
+ 			want:    string(expectedOutput),
+ 			wantErr: false,
 ```
 
-**File**: `pkg/detectors/privatekey/cracker.go` (modified, +28/-2)
+**File**: `pkg/analyzer/analyzers/airtable/airtablepat/airtable_test.go` (modified, +1/-1)
 ```diff
-@@ -2,9 +2,11 @@ package privatekey
- 
- import (
- 	"bytes"
-+	"context"
- 	"crypto/x509"
- 	_ "embed"
- 	"errors"
-+	"fmt"
- 
- 	"golang.org/x/crypto/ssh"
- )
-@@ -19,10 +21,34 @@ func init() {
- 
- var (
- 	ErrUncrackable = errors.New("unable to crack encryption")
-+	// ErrKDFTooExpensive is returned without attempting any passphrase when a
-+	// key's KDF is more expensive than the crack budget allows.
-+	ErrKDFTooExpensive = errors.New("key KDF is too expensive to crack")
- )
- 
--func Crack(in []byte) (any, string, error) {
--	for _, passphrase := range passphrases {
-+// maxCrackRounds caps the bcrypt KDF round count this detector will attempt
-+// to crack. The round count is chosen by whoever created the key and the KDF
-+// cost is linear in rounds; OpenSSH's default is 16. 256 is 16x that default:
-+// a single wrong guess on a key at the cap costs on the order of a second of
-+// CPU, so a wordlist crack is hopeless within any bounded budget. x/crypto
-+// refuses round counts above 2048 on its own; this lower cap keeps
-+// hardened-but-legal keys from making each attempt that expensive. Division
-+// of labor: the cap bounds what one attempt can cost, and the context check
-+// below bounds the total, where the caller sets a deadline at all.
-+const maxCrackRounds = 256
-+
-+func Crack(ctx context.Context, in []byte) (any, string, error) {
-+	if rounds, ok := opensshBcryptRounds(in); ok && rounds > maxCrackRounds {
-+		return nil, "", fmt.Errorf("%w: %d rounds exceeds cap of %d", ErrKDFTooExpensive, rounds, maxCrackRounds)
-+	}
-+	for i, passphrase := range passphrases {
-+		// A wrong passphrase costs a full KDF run whose cost is set by the
-+		// key's author, so stop between attempts once the caller's context is
-+		// done. The in-flight attempt cannot be interrupted:
-+		// ssh.ParseRawPrivateKeyWithPassphrase takes no context.
-+		if err := ctx.Err(); err != nil {
-+			return nil, "", fmt.Errorf("stopped cracking after %d of %d passphrase attempts: %w", i, len(passphrases), err)
-+		}
- 		parsed, err := ssh.ParseRawPrivateKeyWithPassphrase(in, passphrase)
- 		if err != nil {
- 			if errors.Is(err, x509.IncorrectPasswordError) {
+@@ -31,7 +31,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 		wantErr bool
+ 	}{
+ 		{
+-			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
++			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
+ 			name:    "valid Airtable Personal Access Token",
+ 			want:    string(expectedOutput),
+ 			wantErr: false,
 ```
 
-**File**: `pkg/detectors/privatekey/cracker_test.go` (modified, +201/-2)
+**File**: `pkg/analyzer/analyzers/anthropic/anthropic_test.go` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,13 @@
- package privatekey
- 
- import (
-+	"bytes"
-+	"context"
-+	"crypto/ed25519"
-+	"crypto/rand"
- 	_ "embed"
-+	"encoding/pem"
-+	"errors"
- 	"testing"
- 
- 	"golang.org/x/crypto/ssh"
-@@ -51,6 +57,51 @@ muIjvl6G7Hoj1hObM2t/ZheN1EShS11z868hhS6Mx7GvIdtkXuvdiBYMiBLOshJQxB8Mzx
- iug9W+Di3upLf0UMC1TqADGphsIHRU7RbmHQ8Rwp7dogswmDfpRSapPt9p0D+6Ad5VBzi3
- f3BPXj76UBLMEJCrZR1P28vnAA7AyNHaLvMPlWDMG5v3V/UV+ugyFcoBAOyjiQgYST8F3e
- Hx7UPVlTK8dyvk1Z+Yw0nrfNClI=
-+-----END OPENSSH PRIVATE KEY-----`))
-+
-+	// testDefaultKDFKey and testExpensiveKDFKey are ed25519 keys protected
-+	// with the same passphrase as testEncryptedKeyCorrectPassword at bcrypt
-+	// round counts of 16 (OpenSSH's default) and 300, generated with
-+	// ssh-keygen -a.
-+	testDefaultKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDGWhRIOR
-+LWaktgbL8r3S5jAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIHqefEc52RY6n1ej
-+6vEPvbPvprG0m5OT5BAFtdFLdyJQAAAAwFsqIS4QNeZJOQTxTDpQBXYvb3bI+PXmTHlaak
-+BXlCR0Qxk/mmAbL4GheuqnqHxJCGGDU9n5+aaK9ZEgJv+fpv5ahanIm/wgRjn8q9mZSk2r
-+QhGklYrkJV6zkXYVBH7VdP3rHSlCjuziQeKDhxiCTlfeyUfb5O5Tx12TBAo6ADTk76L7+0
-+Y+NPIDr2X5m+fWBMI4XFuQPmmSEm28gV5IERrMUc9zGnS7fJ4xHbtySJoF3wWUlEBrTGDb
-+HCRHIpLSoA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+	testExpensiveKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDiegbnWk
-+wjBR6lL750YpD8AAABLAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIFPdyzxAY2IvJCsy
-+RSK0vvQAM+Ow+zdR+U0tf5jJWpdsAAAAwBrWAmdHm4xKSeMsj+rXp+LWgXMpYj9ZYWNJnC
-+VGMvU81m8gj78dNmjB8U+J3Ns6jmKXNicnwGHHZ9BVCimlnsiGgpp44ZhxSAYqNJV+CoUY
-+FphHKrN68miEiSWFRuZsKB2Xjz3B3a+ApdCrgK9/+0k1finNMzOEpTdmSvkQTP/fLeiqoC
-+m/aSusJwO1NAZDcuyty6pMCKygw6ENqGZf1uyMf+KQwJq3JXwgbRAprb3tBrIEAEEkD4mA
-+ppGpPzMyWA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+
-+	// testKeyAtCap and testKeyPastCap are ed25519 keys with the same
-+	// passphrase at bcrypt round counts of exactly 256 (maxCrackRounds) and
-+	// 257 (one past it), generated with ssh-keygen -a.
-+	testKeyAtCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDLe9Hn5/
-+Qgs+VcI7Z2oHt0AAABAAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIJ14+tRTYMsqi2CF
-+AEETEztjC3N8MwGDhDtcJ9ER4f6pAAAAwPwxz4us6d80EoZeKaAGdqhdK5g1yOLuTFiemC
-+ECwotCzi2W+lk7m9tHgyvbKUyg+dldDP5dlnwberSmmy+OMrJkVVw2PeX5yr6lCcuHZXHq
-+Eqoo7oSlsmlaBpIC/I12JkGQxg6Pv13iIhIyPigUWA3myzAoAc+0Wtluta/qAK+nf5B6ar
-+f57dBJ3uVeU8E3U/UDiJhwVdJnCslkGGWgM65ECvcFZu65DNhoVnFWtsBe2Uom48hG46Cf
-+3NkF0FXQpA==
-+-----END OPENSSH PRIVATE KEY-----`))
-+	testKeyPastCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
-+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABANsc+iFh
-+yaFTnsMn8tAEn4AAABAQAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAINIGnk11f1Mup1Bh
-+oMiwh/wisUHuDWOygxhq0PSz+HTSAAAAwOcoRpUbj4YGrNVTvE6Ve5913vgQkAZ8pCBHgk
-+AMjTSVXykiRgK2/7t8k7gPmb1F7QUaiLS0W5X49QeuwYQVihmCSKlupZTWmqozipWlkXSG
-+ACFqnWvE0jURRZd76qBwrtFfyZb24V6LVws/nz0RARXYG+tn8KW3xsjqhvpfLY5KUwLN1j
-+uWqgiel/xeC/UZZiPt9egS6AS9Orn2yaGP882HzMXAsWPIUcslgYxEEjE1FRCaf8YtvCw+
-+rZea5gQDRQ==
- -----END OPENSSH PRIVATE KEY-----`))
- )
- 
-@@ -70,7 +121,7 @@ func Test_crack(t *testing.T) {
+@@ -23,7 +23,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 		t.Fatalf("could not get test secrets from GCP: %s", err)
  	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
--			_, passphrase, err := Crack(tt.in)
-+			_, passphrase, err := Crack(context.Background(), tt.in)
- 			if (err != nil) != tt.wantErr {
- 				t.Errorf("crack() error = %v, wantErr %v", err, tt.wantErr)
- 				return
-@@ -83,6 +134,154 @@ func Test_crack(t *testing.T) {
+ 
+-	secret := testSecrets.MustGetField("ANTHROPIC")
++	secret := testSecrets.MustGetField(t, "ANTHROPIC")
+ 
+ 	tests := []struct {
+ 		name    string
+```
+
+**File**: `pkg/analyzer/analyzers/asana/asana_test.go` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 	}{
+ 		{
+ 			name:    "valid Asana OAUTH Token",
+-			key:     testSecrets.MustGetField("ASANAOAUTH_TOKEN"),
++			key:     testSecrets.MustGetField(t, "ASANAOAUTH_TOKEN"),
+ 			want:    string(expectedOutput),
+ 			wantErr: false,
+ 		},
+```
+
+**File**: `pkg/analyzer/analyzers/bitbucket/bitbucket_test.go` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 	}{
+ 		{
+ 			name:    "valid Bitbucket key",
+-			key:     testSecrets.MustGetField("BITBUCKET_ANALYZE_TOKEN"),
++			key:     testSecrets.MustGetField(t, "BITBUCKET_ANALYZE_TOKEN"),
+ 			want:    string(expectedOutput),
+ 			wantErr: false,
+ 		},
+```
+
+**File**: `pkg/analyzer/analyzers/databricks/databricks_test.go` (modified, +2/-2)
+```diff
+@@ -24,8 +24,8 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 		t.Fatalf("could not get test secrets from GCP: %s", err)
  	}
+ 
+-	token := testSecrets.MustGetField("DATABRICKS_TOKEN")
+-	domain := testSecrets.MustGetField("DATABRICKS_DOMAIN")
++	token := testSecrets.MustGetField(t, "DATABRICKS_TOKEN")
++	domain := testSecrets.MustGetField(t, "DATABRICKS_DOMAIN")
+ 
+ 	tests := []struct {
+ 		name    string
+```
+
+**File**: `pkg/analyzer/analyzers/datadog/datadog_test.go` (modified, +3/-3)
+```diff
+@@ -32,8 +32,8 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 	}
+ 
+ 	// Get the required credentials
+-	apiKey = testSecrets.MustGetField("DATADOG_API_KEY")
+-	appKey = testSecrets.MustGetField("DATADOG_APP_KEY")
++	apiKey = testSecrets.MustGetField(t, "DATADOG_API_KEY")
++	appKey = testSecrets.MustGetField(t, "DATADOG_APP_KEY")
+ 
+ 	// Fail if credentials are not available
+ 	if apiKey == "" || appKey == "" {
+@@ -168,7 +168,7 @@ func TestAnalyzer_Analyze_ApiKeyOnly(t *testing.T) {
+ 	}
+ 
+ 	// Get the required credentials
+-	apiKey = testSecrets.MustGetField("DATADOG_API_KEY")
++	apiKey = testSecrets.MustGetField(t, "DATADOG_API_KEY")
+ 
+ 	// Fail if credentials are not available
+ 	if apiKey == "" {
+```
+
+**File**: `pkg/analyzer/analyzers/digitalocean/digitalocean_test.go` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
+ 	}{
+ 		{
+ 			name:    "valid digitalocean key",
+-			key:     testSecrets.MustGetField("DIGITALOCEAN_PERSONAL_ACCESS_TOKEN"),
++			key:     testSecrets.MustGetField(t, "DIGITALOCEAN_PERSONAL_ACCESS_TOKEN"),
+ 			want:    string(expectedOutput),
+ 			wantErr: false,
+ 		},
+```
+
+---
+
+### Incident Patch 2: `83af27f0` (2026-11-24)
+**Commit Message**: Clean up GitHub Experimental source logging for per-source debug (#5556)
+
+* Clean up GitHub Experimental source logging for per-source debug
+
+Remove the stored logger and give each line its proper level: init at
+V(1), the guessing plan and repo scan at V(2), clone, batches and fetch
+at V(3), retries and rate limit waits at V(4), and each GraphQL request
+at V(5). Add the repo field to every call. Cache write failures are now
+logged as errors, they were V(2).
+
+Object discovery retried a failed batch forever, even after cancel or
+with a bad token. It now stops when the context is done and after 10
+failed checks in a row, and the rate limit wait can be cancelled. Found
+commits stay cached for the next run. Add the first tests for the
+package.
+
+* Add README for the GitHub Experimental source
+
+* Don't count secondary rate limits as object discovery failures
+
+**File**: `pkg/sources/github_experimental/README.md` (added, +154/-0)
+```diff
+@@ -0,0 +1,154 @@
++# GitHub Experimental Source
++
++## Overview
++
++The GitHub Experimental source runs experimental GitHub scans. It is an alpha release, so its behavior and flags may change. Today it has one sub-module, object discovery, which finds commits that GitHub still serves for a repository but that a normal clone does not get, and scans them for secrets, credentials, and sensitive data along with the rest of the repository.
++
++## GitHub Experimental Fundamentals
++
++### What does this source scan?
++
++This source scans one GitHub repository: every commit a normal clone gets, plus hidden commits found by object discovery. A hidden commit is one that still exists on GitHub, for example from a deleted fork or a force push, but is not reachable from any branch or tag of the repository.
++
++GitHub lets any commit in a repository's fork network be fetched by its hash, and a short hash is enough to look it up. Object discovery asks GitHub about every possible short hash to find the ones that exist.
++
++### Key Terminology
++
++| Term | Description |
++|------|-------------|
++| **Hidden commit** | A commit GitHub still serves for the repository that is not in a normal clone |
++| **Short SHA** | The first few characters of a commit hash. GitHub can look up a commit by its short SHA |
++| **Collision** | Two commits sharing the same short SHA, so one short SHA can't find both |
++| **Collision threshold** | How many collisions the scan accepts. A lower value means longer short SHAs, more requests, and fewer missed commits |
++| **Fork network** | A repository and all its forks. Commits pushed to any fork can be fetched from the others |
++
++## Features
++
++- **Hidden Commit Discovery**: Finds commits that GitHub serves but a normal clone misses
++- **Resumable**: Results are cached on disk, so a stopped run picks up where it left off
++- **Adaptive Batch Size**: GitHub lookups are sent in batches that shrink after an error and grow after a success
++- **Full Repository Scan**: Hidden commits are scanned together with the normal history of the repository
++
++## Configuration
++
++This source can only be run from the CLI. `pkg/config/config.go` has no case for it, so a YAML `--config` file cannot be used. Git must be installed.
++
++### Authentication
++
++A GitHub token is required, even for public repositories. Every lookup is a GitHub GraphQL API request, and those always need a token.
++
++**CLI Usage:**
++```bash
++trufflehog github-experimental --repo https://github.com/my-org/my-repo.git --object-discovery --token ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
++```
++
++The token can also be set with the `GITHUB_TOKEN` environment variable instead of `--token`.
++
++### Options
++
++| Flag | Description |
++|------|-------------|
++| `--repo` | Required. The repository to scan, as a full URL like `https://github.com/my-org/my-repo.git`, or as `my-org/my-repo` |
++| `--object-discovery` | Runs the object discovery sub-module. At least one sub-module must be turned on, and today this is the only one |
++| `--collision-threshold` | How many short SHA collisions to accept. Default `1`. A higher value means shorter short SHAs and a faster run, but hidden commits can be missed |
++| `--delete-cached-data` | Deletes the cached results after the scan |
++
++Only repositories on github.com are supported. GitHub Enterprise Server, GitHub Enterprise Cloud with data residency, and gists are not.
++
++## How Scanning Works
++
++### Scanning Process
++
++1. **Repository Metadata**: Fetches the repository and its fork count from the GitHub API
++2. **Clone**: Clones the repository into a temporary folder and lists the objects it already has
++3. **Plan**: Estimates how many commits exist across the fork network, and picks the shortest short SHA length, from 4 to 6 characters, that keeps the expected number of collisions under the collision threshold
++4. **Resume**: Reads the results of earlier runs from `~/.trufflehog/<owner>/<repo>/`, and leaves out short SHAs already known
++5. **Lookup**: Asks GitHub about every remaining short SHA in batches. Found commits are written to `valid_hidden.txt` and the rest to `invalid.txt` in the cache folder after every batch
++6. **Fetch**: Fetches every hidden commit into the clone and checks each one out as a branch named `_<commit hash>`, so the scan picks it up
++7. **Scan**: Scans the whole clone the same way the git source does
++8. **Cleanup**: Deletes the temporary clone. With `--delete-cached-data`, also deletes the cache folder
++
++### Retries and Rate Limits
++
++- A failed batch is retried right away with a smaller batch size.
++- When GitHub reports its secondary rate limit, the scan waits 60 seconds before retrying.
++- After 10 failed batches in a row, the scan stops with an error. Secondary rate limit waits do not count toward this. This happens with a bad token or when the primary rate limit is used up. Results found so far stay in the cache folder, so running the scan again continues from there.
++
++### What Gets Scanned
++
++- 
+```
+
+**File**: `pkg/sources/github_experimental/github_experimental.go` (modified, +6/-4)
+```diff
+@@ -4,7 +4,6 @@ import (
+ 	"fmt"
+ 	"strings"
+ 
+-	"github.com/go-logr/logr"
+ 	"google.golang.org/protobuf/proto"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+@@ -33,7 +32,6 @@ type Source struct {
+ 	useCustomContentWriter bool
+ 	git                    *git.Git
+ 	scanOptions            *git.ScanOptions
+-	log                    logr.Logger
+ 	conn                   *sourcespb.GitHubExperimental
+ 	connector              githubsource.Connector
+ 
+@@ -73,8 +71,6 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
+ 		return err
+ 	}
+ 
+-	s.log = aCtx.Logger()
+-
+ 	s.name = name
+ 	s.sourceID = sourceID
+ 	s.jobID = jobID
+@@ -148,6 +144,12 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
+ 	}
+ 	s.git = git.NewGit(cfg)
+ 
++	// The repo is not logged here, since the configured URL can hold credentials.
++	aCtx.Logger().V(1).Info("GitHub Experimental source initialized",
++		"object_discovery", s.conn.ObjectDiscovery,
++		"collision_threshold", s.conn.CollisionThreshold,
++		"delete_cached_data", s.conn.DeleteCachedData,
++	)
+ 	return nil
  }
  
-+// Test_crack_stops_when_context_done asserts that a done context stops the
-+// passphrase list instead of running it to completion: a wrong passphrase
-+// costs a full KDF run, so the list walk must check between attempts.
-+func Test_crack_stops_when_context_done(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+
-+	_, _, err := Crack(ctx, testEncryptedKey)
-+	if !errors.Is(err, context.Canceled) {
-+		t.Errorf("expected context.Canceled, got %v", err)
-+	}
-+	if errors.Is(err, ErrUncrackable) {
-+		t.Error("expected the done context to stop the passphrase list, not run it to completion")
-+	}
-+}
-+
-+// Test_crack_skips_kdf_above_cap asserts that a key whose KDF is harder than
-+// the crack budget is refused without attempting any passphrase. The key is
-+// legal for x/crypto, whose own ceiling is 2048 rounds, so an error here comes
-+// from the detector's cap rather than the library.
-+func Test_crack_skips_kdf_above_cap(t *testing.T) {
-+	_, _, err := Crack(context.Background(), testExpensiveKDFKey)
-+	if !errors.Is(err, ErrKDFTooExpensive) {
-+		t.Errorf("expected ErrKDFTooExpensive, got %v", err)
-+	}
-+}
-+
-+// Test_crack_malformed_kdf_options_fail_closed crafts a key whose bcrypt
-+// options blob is salt || rounds || trailing bytes. ssh.Unmarshal rejects
-+// trailing bytes, so x/crypto could not decrypt the key at any round count;
-+// the fail-closed read returns the maximum round co
 ```
 
-**File**: `pkg/detectors/privatekey/openssh.go` (added, +83/-0)
+**File**: `pkg/sources/github_experimental/github_experimental_test.go` (added, +153/-0)
 ```diff
-@@ -0,0 +1,83 @@
-+package privatekey
+@@ -0,0 +1,153 @@
++package github_experimental
 +
 +import (
-+	"encoding/pem"
-+	"math"
++	stdcontext "context"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync/atomic"
++	"testing"
++	"time"
 +
-+	"golang.org/x/crypto/ssh"
++	"github.com/google/go-github/v67/github"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/zap/zaptest/observer"
++	"google.golang.org/protobuf/types/known/anypb"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
 +)
 +
-+// privateKeyAuthMagic starts the decoded body of every key in the OpenSSH
-+// private key format (see PROTOCOL.key in the OpenSSH source distribution).
-+const privateKeyAuthMagic = "openssh-key-v1\x00"
++const testToken = "ghexperimentaldebuglogtesttoken"
 +
-+// openSSHEncryptedPrivateKey and kdfOpts mirror the wire structs x/crypto
-+// parses the same bytes with in ssh/keys.go, so the round count read here is
-+// the round count the KDF will actually run at. Keep them in sync with
-+// x/crypto's private structs: if the parses ever diverge, the count read
-+// here silently stops matching the KDF's cost and keys are over- or
-+// under-refused. x/crypto exports no way to read the KDF options, so the
-+// header is read in the detector.
-+type openSSHEncryptedPrivateKey struct {
-+	CipherName   string
-+	KdfName      string
-+	KdfOpts      string
-+	NumKeys      uint32
-+	PubKey       []byte
-+	PrivKeyBlock []byte
-+	// Rest swallows trailing bytes the way x/crypto's copy of this struct
-+	// does. Without the tag, a key with bytes after PrivKeyBlock would fail
-+	// to parse here, read as ok=false, and skip the cap check that
-+	// x/crypto would still apply.
-+	Rest []byte `ssh:"rest"`
++// testClient returns a GitHub client that sends every request to server, with the
++// test token as the bearer token, like the source's authenticated client.
++func testClient(t *testing.T, server *httptest.Server) *github.Client {
++	t.Helper()
++	target, err := url.Parse(server.URL)
++	require.NoError(t, err)
++	return github.NewClient(&http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
++		req = req.Clone(req.Context())
++		req.URL.Scheme = target.Scheme
++		req.URL.Host = target.Host
++		req.Header.Set("Authorization", "Bearer "+testToken)
++		return http.DefaultTransport.RoundTrip(req)
++	})})
 +}
 +
-+// kdfOpts deliberately has no ssh:"rest" field: that is what makes
-+// ssh.Unmarshal reject options blobs carrying trailing bytes, which is the
-+// fail-closed path below. Adding one for forward compatibility would
-+// silently disarm it.
-+type kdfOpts struct {
-+	Salt   string
-+	Rounds uint32
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
++
++func TestSource_DebugLogging(t *testing.T) {
++	const hiddenOID = "abcd000000000000000000000000000000000000"
++
++	conn, err := anypb.New(&sourcespb.GitHubExperimental{
++		Repository:      "owner/repo",
++		Credential:      &sourcespb.GitHubExperimental_Token{Token: testToken},
++		ObjectDiscovery: true,
++	})
++	require.NoError(t, err)
++
++	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
++		t.Helper()
++		var requests atomic.Int32
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.Header().Set("Content-Type", "application/json")
++			// The first request fails, so the retry line is logged.
++			if requests.Add(1) == 1 {
++				_, _ = fmt.Fprint(w, `{"errors":[{"message":"Something went wrong. Try again"}]}`)
++				return
++			}
++			_, _ = fmt.Fprintf(w, `{"data":{"repository":{"commitabcd":{"oid":"%s"},"commitef01":null}}}`, hiddenOID)
++		}))
++		defer server.Close()
++
++		ctx, logs := logtest.SourceContext(debug)
++		s := new(Source)
++		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
++		if debug {
++			logtest.CheckInitLine(t, logs.All())
++		}
++
++		dir := t.TempDir()
++		require.NoError(t, processCommits(ctx, testClient(t, server), []string{"abcd", "ef01"}, "owner", "repo", dir))
++
++		valid, err := readCommitsFromDisk(validHiddenCommit, dir)
++		require.NoError(t, err)
++		assert.Equal(t, []string{hiddenOID}, valid)
++		invalid, err := readCommitsFromDisk(invalidCommit, dir)
++		require.NoError(t, err)
++		assert.Equal(t, []string{"ef01"}, invalid)
++		return logs.All()
++	}
++
++	t.Run("debug on", func(t *testing.T) {
++		logtest.CheckSourceLines(t, runSource(t, true), testToken)
++	})
++
++	t.Run("debug off", func(t *testing.T) {
++		logtest.CheckNoDebugLines(t, runSource(t, false))
++	})
 +}
 +
-+// opensshBcryptRounds reads the bcrypt round count from an OpenSSH key's
-+// header. The decoded key stores the cipher name, KDF name, and KDF options
-+// before the encrypted section, so the round count is readable without the
-+// passphrase; Crack uses it to refuse keys whose KDF exceeds maxCrackRounds
-+// before spending any passphrase attempt.
-+//
-+// ok=false means the key is not an OpenSSH bcrypt key, and it should be
-+// cracked exactly as before. ok=true means the round count is binding,
-+// including fail-closed: a bcrypt key whose options blob does not parse
-+// returns the maximum round count rather than ok=false, because the key is
-+// a bcrypt key and should be refused, not silently cracked. ssh.Unmarshal
-+// rejects such a blob as well, so the key could not have been decrypted at
-+// any round count.
-+func opensshBcryptRounds(pemBytes []byte) (rounds uint32, ok bool) {
-+	block, _ := pem.Decode(pemBytes)
-+	if block == nil || block.Type != "OPENSSH PRIVATE KEY" ||
-+		len(block.Bytes) < len(privateKeyAuthMagic) ||
-+		string(block.Bytes[:len(privateKeyAuthMagic)]) != privateKeyAuthMagic {
-+		return 0, false
-+	}
++func TestProcessCommits_StopsOnCancel(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		t.Error("no request should be sent after cancel")
++	}))
++	defer server.Close()
 +
-+	var w openSSHEncryptedPrivateKey
-+	if err := ssh.Unmarshal(block.Bytes[len(privateKeyAuthMagic):], &w); err != nil {
-+		return 0, false
-+	}
-+	if w.KdfName != "bcrypt" {
-+		return 0, false
-+	}
-+
-+	ok = true
-+
-+	var opts kdfOpts
-+	if err := ssh.Unmarshal([]byte(w.KdfOpts), &opts); err != nil {
-+		rounds = math.MaxUint32
-+	} else {
-+		rounds = opts.Rounds
-+	}
-+
-+	return rounds, ok
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	err := processCommits(ctx, testClient(t, server), []string{"abcd"}, "owner", "repo", t.TempDir())
++	assert.ErrorIs(t, err, stdcontext.Canceled)
 +}
++
++func TestProcessCommits_StopsAfterFailures(t *testing.T) {
++	var requests atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		requests.Add(1)
++		w.WriteHeader(http.StatusUnauthorized)
++		_, _ = fmt.Fprint(w, `{"message":"Bad credentials"}`)
++	}))
++	defer server.Close()
++
++	dir := t.TempDir()
++	err := processCommits(context.Background(), testClient(t, server), []string{"abcd"}, "owner", "repo", dir)
++	require.Error(t, err)
++	assert.True(t, strings.Contains(err.Error(), "Bad credentials"), err.Error())
++	assert.Equal(t, int32(maxConsecutiveFailures), requests.Load())
++	_, statErr := os.Stat(filepath.Join(dir, validHiddenCommit+".txt"))
++	assert.True(t, os.IsNotExist(statErr))
++}
++
++// Secondary rate limits don't count toward maxConsecutiveFailures, since the scan
++// waits for them to reset.
++func TestProcessCommits_SecondaryRateLimitIsNotAFailure(t *testing.T) {
++	orig := secondaryRateLimitWait
++	secondaryRateLimitWait = time.Millisecond
++	t.Cleanup(func() { secondaryRateLimitWait = orig })
++
++	var requests atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		if requests.Add(1) <= maxConsecutiveFailures+2 {
+
 ```
 
-**File**: `pkg/detectors/privatekey/privatekey.go` (modified, +8/-6)
+**File**: `pkg/sources/github_experimental/object_discovery.go` (modified, +82/-25)
 ```diff
-@@ -79,13 +79,15 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
- 		parsedKey, err := ssh.ParseRawPrivateKey([]byte(token))
- 		if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
- 			s1.ExtraData["encrypted"] = "true"
--			parsedKey, passphrase, err = Crack([]byte(token))
-+			parsedKey, passphrase, err = Crack(ctx, []byte(token))
- 			if err != nil {
--				// The key is encrypted and the passphrase could not be
--				// recovered from the wordlist. It still represents a real
--				// exposure (offline-crackable, weak/legacy KDFs, passphrase
--				// often reused or committed nearby), so surface it as an
--				// unverified finding instead of dropping it silently.
-+				// The key is encrypted but could not be cracked: the
-+				// passphrase is not in the wordlist, the key's KDF exceeded
-+				// the crack budget, or the scan context ended first. It still
-+				// represents a real exposure (offline-crackable, weak/legacy
-+				// KDFs, passphrase often reused or committed nearby), so
-+				// surface it as an unverified finding instead of dropping it
-+				// silently.
- 				s1.SetVerificationError(err, token)
- 				results = append(results, s1)
- 				continue
+@@ -21,7 +21,8 @@ import (
+ 
+ // Assumption: sleeping for 60 seconds is enough to reset the secondary rate limit
+ // see https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api#secondary-rate-limits
+-const secondaryRateLimitSleep = 60
++// It is a var so tests can shorten it.
++var secondaryRateLimitWait = 60 * time.Second
+ 
+ // Assumption: on average, a fork contributes 0.1% additional commits
+ const forkCommitMultiplier = 0.001
+@@ -46,6 +47,12 @@ const maxCharLen = 6
+ const maxChunkSize = 900
+ const initialChunkSize = 350
+ 
++// Number of failed commit checks in a row after which object discovery gives up.
++// A bad token or the primary rate limit fails every request, and retrying it forever
++// would never end the scan. Secondary rate limits are not counted, since the scan
++// waits for them to reset.
++const maxConsecutiveFailures = 10
++
+ // Max number of commits to fetch from the repository in one command
+ // ex: git fetch origin <commit1> <commit2> ... <commit1000>
+ const gitFetchMax = 1000
+@@ -293,9 +300,11 @@ func removeBySHA(existingCommits, newCommits []string, charLen int) []string {
+ 	return filteredCommits
+ }
+ 
+-func processCommits(ctx context.Context, apiClient *github.Client, needsProcessing []string, owner, repo, path string) {
+-	repoCtx := context.WithValue(ctx, "repo", repo)
+-
++// processCommits checks every hash in needsProcessing against GitHub and writes the
++// results to disk under path. It returns an error when ctx is done, or after
++// maxConsecutiveFailures failed checks in a row. Results found before that stay on
++// disk, so the next run picks up where this one stopped.
++func processCommits(ctx context.Context, apiClient *github.Client, needsProcessing []string, owner, repo, path string) error {
+ 	startingSize := float64(len(needsProcessing))
+ 	queryChunkSize := newBackoff(initialChunkSize, 10, 10, 1)
+ 
+@@ -306,40 +315,69 @@ func processCommits(ctx context.Context, apiClient *github.Client, needsProcessi
+ 		progressbar.OptionEnableColorCodes(true),
+ 	)
+ 
++	failures := 0
+ 	for len(needsProcessing) > 0 {
++		if err := ctx.Err(); err != nil {
++			return err
++		}
+ 		if len(needsProcessing) < queryChunkSize.getValue() {
+ 			queryChunkSize.value = float64(len(needsProcessing))
+ 		}
+ 		chunkSize := queryChunkSize.getValue()
+ 		chunk := needsProcessing[:chunkSize]
+ 		needsProcessing = needsProcessing[chunkSize:]
+ 
+-		commitData, err := checkHashes(repoCtx, apiClient, owner, repo, chunk)
++		commitData, err := checkHashes(ctx, apiClient, owner, repo, chunk)
+ 		if err != nil {
+-			repoCtx.Logger().V(2).Info("Temporary error occurred in guessing commits", "error", err)
++			if ctxErr := ctx.Err(); ctxErr != nil {
++				return ctxErr
++			}
++			rateLimited := strings.Contains(err.Error(), "You have exceeded a secondary rate limit")
++			if !rateLimited {
++				failures++
++				if failures >= maxConsecutiveFailures {
++					return fmt.Errorf("giving up after %d failed commit checks in a row: %w", failures, err)
++				}
++			}
+ 			// Prepend the failed chunk to the FRONT of the queue for immediate retry
+ 			// This ensures we retry the same hashes instead of moving to the next batch
+ 			needsProcessing = append(chunk, needsProcessing...)
+ 			queryChunkSize.errorOccurred()
+-			if strings.Contains(err.Error(), "You have exceeded a secondary rate limit") {
+-				repoCtx.Logger().V(2).Info("Reached secondary GitHub Rate Limit. Sleeping for 60 seconds.")
+-				time.Sleep(secondaryRateLimitSleep * time.Second)
++			// Logged as a field, since V(4).Error would ignore the level.
++			ctx.Logger().V(4).Info("Commit check failed, retrying",
++				"batch_size", chunkSize,
++				"next_batch_size", queryChunkSize.getValue(),
++				"failures", failures,
++				"error", err.Error(),
++			)
++			if rateLimited {
++				ctx.Logger().V(4).Info("Hit secondary rate limit, waiting", "wait", secondaryRateLimitWait)
++				select {
++				case <-ctx.Done():
++					return ctx.Err()
++				case <-time.After(secondaryRateLimitWait):
++				}
+ 			}
+ 			continue
+ 		}
++		failures = 0
+ 
+ 		percentCompleted := (1 - (float64(len(needsProcessing)) / startingSize)) * 100
+-
+-		repoCtx.Logger().V(2).Info("Progress", "percent_completed", percentCompleted, "needs_processing", len(needsProcessing))
++		ctx.Logger().V(3).Info("Checked commit batch",
++			"batch_size", chunkSize,
++			"found", len(commitData[validHiddenCommit]),
++			"remaining", len(needsProcessing),
++			"percent_completed", percentCompleted,
++		)
+ 
+ 		queryChunkSize.successOccurred()
+ 		err = writeCommitsToDisk(commitData[validHiddenCommit], validHiddenCommit, path)
+ 		if err != nil {
+-			repoCtx.Logger().V(2).Info("Failed to write valid hidden commits to disk", "error", err)
++			ctx.Logger().Error(err, "Failed to write valid hidden commits to disk")
+ 		}
+ 		err = writeCommitsToDisk(commitData[invalidCommit], invalidCommit, path)
+ 		if err != nil {
+-			repoCtx.Logger().V(2).Info("Failed to write invalid commits to disk", "error", err)
++			ctx.Logger().Error(err, "Failed
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5599** (2026-11-24): Stop detector integration tests from panicking (@kashifkhan0771)
+- **PR #5593** (2026-11-23): Update github-actions (@renovate[bot])
 - **PR #5582** (2026-11-19): only treat HubSpot MISSING_SCOPES 403s as live tokens (@jordanTunstill)
 - **PR #5581** (2026-11-19): Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (@jordanTunstill)
 - **PR #5566** (2026-11-16): Add upsert_error to AWSSecretsManager source metadata (@Ahmer-Zuberi)
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
-- **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
-- **PR #5558** (2026-11-20): Make PrivateKey passphrase cracking respect its context timeout (@martinlocklear)
 
 ---
 
@@ -1507,31 +1729,31 @@ with the reason in the verification error.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make PrivateKey passphrase cracking respect its context timeout
+## X. Stop detector integration tests from panicking
 
 **RULE**:
-When implementing operations in `pkg/analyzer/analyzers/privatekey/privatekey.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ef51f69`: Make PrivateKey passphrase cracking respect its context timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2921dcc5`: Stop detector integration tests from panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/analyzer/analyzers/privatekey/privatekey.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
+			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		parsedKey, _, err = privatekey.Crack([]byte(token))
+			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ef51f69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2921dcc5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

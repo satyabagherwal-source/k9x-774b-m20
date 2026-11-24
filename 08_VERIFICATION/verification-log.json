@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-GPH0",
-    "timestamp": "2026-11-23T03:27:47.700Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-GUJ9",
-    "timestamp": "2026-11-23T03:27:54.261Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-5GII",
-    "timestamp": "2026-11-23T03:47:02.490Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-5HIH",
-    "timestamp": "2026-11-23T03:47:03.785Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-5HS9",
     "timestamp": "2026-11-23T03:47:04.137Z",
     "repository": "databendlabs/databend",
@@ -7490,6 +7430,66 @@
     "repository": "vcaesar/riot",
     "learningId": "learn-github-vcaesar-riot",
     "contentHash": "36fc1d2e7ef43405cd58ebe4e1ca31a5c1aa8b73f5c6a6be602edf8eac6639ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-K12L",
+    "timestamp": "2026-11-24T19:09:50.061Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-K4QB",
+    "timestamp": "2026-11-24T19:09:54.803Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-K6RB",
+    "timestamp": "2026-11-24T19:09:57.431Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-K8RT",
+    "timestamp": "2026-11-24T19:10:00.041Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "6100f770212e564b782e7e51823a8f684d032f4af1dcb795c6c1fb50457dc80a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

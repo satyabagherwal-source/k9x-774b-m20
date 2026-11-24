@@ -12817,3 +12817,8 @@ Every entry in this ledger must capture:
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `34151bf8` | Multi-dimensional audit evidence | 2026-11-24T19:00:31.670Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `12d12a40` | Multi-dimensional audit evidence | 2026-11-24T19:00:39.214Z |
 | `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `6493e166` | Multi-dimensional audit evidence | 2026-11-24T19:00:40.543Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `a35e6f4e` | Multi-dimensional audit evidence | 2026-11-24T19:09:50.066Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `9ecae93f` | Multi-dimensional audit evidence | 2026-11-24T19:09:54.809Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2921dcc5` | Multi-dimensional audit evidence | 2026-11-24T19:09:57.436Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9dbecfa0` | Multi-dimensional audit evidence | 2026-11-24T19:10:00.046Z |
+| `learn-dom-c-af8b1b7f` | `project://beclab-olares` | `9ecae93f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md` | 2026-11-24T19:10:44.611Z |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:00:40.549Z",
-  "total_cycles_completed": 12147,
-  "total_learnings_persisted": 12147,
-  "total_rules_promoted": 11205,
+  "last_updated": "2026-11-24T19:10:00.053Z",
+  "total_cycles_completed": 12151,
+  "total_learnings_persisted": 12151,
+  "total_rules_promoted": 11209,
   "history": [
-    {
-      "timestamp": "2026-11-24T02:31:13.169Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T02:53:32.436Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:14:22.824Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:14:28.198Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T03:22:36.283Z",
       "repository": "a2ui-project/a2ui",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T19:00:40.549Z",
       "repository": "vcaesar/riot",
       "learningId": "learn-github-vcaesar-riot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:09:50.073Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:09:54.816Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:09:57.443Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:10:00.053Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

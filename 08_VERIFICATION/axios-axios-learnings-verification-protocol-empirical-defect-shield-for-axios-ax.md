@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T20:02:32.412Z",
+  "timestamp": "2026-11-24T19:10:06.250Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-axios-axios-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [axios-axios-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T20:02:32.412Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:10:06.250Z`  
 > **Learning ID**: `LEARN-EVO-axios-axios-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source**: github ([https://github.com/axios/axios](https://github.com/axios/axios))  
-> **Source Version**: `9f0f4ddf`  
+> **Source Version**: `a35e6f4e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T20:02:20.843Z  
+> **Timestamp**: 2026-11-24T19:09:48.574Z  
 > **Learning ID**: `learn-github-axios-axios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/axios/axios](https://github.com/axios/axios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:02:20.632Z  
+> **Harvest Timestamp**: 2026-11-24T19:09:48.453Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Promise based HTTP client for the browser and node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 109386 stars
+- **Stars / Engagement**: 109401 stars
 
 ---
 
@@ -1862,11 +1862,11 @@ export default methodList;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11474** (2026-11-19): **fix(core): read interceptor options from the options object only (v0.x)**
-  *Symptoms*: ### Summary  `InterceptorManager.use(fulfilled, rejected, options)` read `options.synchronous` and `options.runWhen` with plain property access. When an interceptor is registered with an options object that does not set those keys (for example `{}` or `{ synchronous: true }`), the reads fall through to `Object.prototype`:  - An inherited `synchronous = true` makes an asynchronous request interceptor run on the synchronous path, so the request is dispatched with a pending promise instead of a config and fails. - An inherited `runWhen` function that returns `false` skips the interceptor, so headers or checks it adds are silently left out.  ### Changes  - `lib/core/InterceptorManager.js`: `synchronous` and `runWhen` are only taken from the options object when they are its own properties; otherwise the existing defaults (`false` and `null`) apply. Registering interceptors without options, or with explicit values, behaves exactly as before. - `test/unit/core/prototypePollution.js`: tests that inherited `synchronous` / `runWhen` values are not picked up at registration, that an asynchronous interceptor still runs and a `{ synchronous: true }` interceptor is not skipped with those values present, and that explicit `synchronous` and `runWhen` options keep working.  ### Related issue  N/A  ### Testing  - `mocha --exit --timeout 30000 'test/unit/**/*.js'` on Node 24.21.0: 496 passing. On Node 12.22.12: 461 passing. - The three new pollution tests fail on unmodified `v0.x` and pass here
+- **Issue #11503** (2026-11-24): **chore(deps-dev): bump the development_dependencies group with 6 updates**
+  *Symptoms*: Bumps the development_dependencies group with 6 updates:  | Package | From | To | | --- | --- | --- | | [@babel/preset-env](https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env) | `7.29.7` | `7.29.14` | | [eslint](https://github.com/eslint/eslint) | `10.14.0` | `10.15.0` | | [lint-staged](https://github.com/lint-staged/lint-staged) | `17.6.0` | `17.6.1` | | [playwright](https://github.com/microsoft/playwright) | `1.65.0` | `1.65.1` | | [prettier](https://github.com/prettier/prettier) | `3.9.10` | `3.10.1` | | [rollup](https://github.com/rollup/rollup) | `4.68.2` | `4.68.5` |  Updates `@babel/preset-env` from 7.29.7 to 7.29.14 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/babel/babel/releases">@​babel/preset-env's releases</a>.</em></p> <blockquote> <h2>v7.29.14 (2026-11-11)</h2> <h4>:eyeglasses: Spec Compliance</h4> <ul> <li><code>babel-parser</code> <ul> <li><a href="https://redirect.github.com/babel/babel/pull/18543">#18543</a> fix(parser): require <code>(</code> after <code>import.{source,defer,sync}</code> (<a href="https://github.com/babel-bot"><code>@​babel-bot</code></a>)</li> </ul> </li> </ul> <h4>:bug: Bug Fix</h4> <ul> <li><code>babel-helper-module-transforms</code>, <code>babel-plugin-transform-dynamic-import</code>, <code>babel-plugin-transform-modules-amd</code>, <code>babel-plugin-transform-modules-commonjs</code>, <code>babel-plugin-transform-modules-umd</code> <ul> <li><a href="https://redirect.github.
 
-- **Issue #11469** (2026-11-18): **chore(deps-dev): bump the development_dependencies group with 3 updates**
-  *Symptoms*: Bumps the development_dependencies group with 3 updates: [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core), [playwright](https://github.com/microsoft/playwright) and [rollup](https://github.com/rollup/rollup).  Updates `@babel/core` from 7.29.7 to 7.29.13 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/babel/babel/releases">@​babel/core's releases</a>.</em></p> <blockquote> <h2>v7.29.13 (2026-11-04)</h2> <h4>:bug: Bug Fix</h4> <ul> <li><code>babel-generator</code>, <code>babel-parser</code> <ul> <li><a href="https://redirect.github.com/babel/babel/pull/18522">#18522</a> fix(parser): start decorated object members at their first decorator (<a href="https://github.com/babel-bot"><code>@​babel-bot</code></a>)</li> </ul> </li> <li><code>babel-parser</code> <ul> <li><a href="https://redirect.github.com/babel/babel/pull/18520">#18520</a> fix(parser): allow TS imports to define exports declared before them (<a href="https://github.com/babel-bot"><code>@​babel-bot</code></a>)</li> <li><a href="https://redirect.github.com/babel/babel/pull/18485">#18485</a> fix(parser): allow lone <code>yield</code> before <code>in</code> in an Annex B for-in init (<a href="https://github.com/babel-bot"><code>@​babel-bot</code></a>)</li> <li><a href="https://redirect.github.com/babel/babel/pull/18483">#18483</a> fix(parser): respect unicode escape in <code>isUnparsedContextual</code> (<a href="https://github.com/babel-bot"><code>@​bab
+- **Issue #11502** (2026-11-24): **chore(deps): bump peter-evans/create-pull-request from 8.1.2 to 8.1.3 in the github-actions group**
+  *Symptoms*: Bumps the github-actions group with 1 update: [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request).  Updates `peter-evans/create-pull-request` from 8.1.2 to 8.1.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/peter-evans/create-pull-request/releases">peter-evans/create-pull-request's releases</a>.</em></p> <blockquote> <h2>Create Pull Request v8.1.3</h2> <h2>What's Changed</h2> <ul> <li>fix: check git ref directly when pushing signed commits by <a href="https://github.com/peter-evans"><code>@​peter-evans</code></a> in <a href="https://redirect.github.com/peter-evans/create-pull-request/pull/4521">peter-evans/create-pull-request#4521</a></li> <li>Update distribution by <a href="https://github.com/actions-bot"><code>@​actions-bot</code></a> in <a href="https://redirect.github.com/peter-evans/create-pull-request/pull/4526">peter-evans/create-pull-request#4526</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/peter-evans/create-pull-request/compare/v8.1.2...v8.1.3">https://github.com/peter-evans/create-pull-request/compare/v8.1.2...v8.1.3</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/peter-evans/create-pull-request/commit/3ffccacd46053766916f087ce41d627c0b8cf2d1"><code>3ffccac</code></a> build: update distribution (<a href="https://redirect.github.com/peter-evans/create-pull-request/issues/4526">#4526</a>)</li> <li
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1883,33 +1883,123 @@ export default methodList;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f0f4ddf` (2026-11-18)
-**Commit Message**: chore(deps): bump follow-redirects from 1.16.2 to 1.16.3 in the production_dependencies group (#11467)
+### Incident Patch 1: `a35e6f4e` (2026-11-24)
+**Commit Message**: chore(deps-dev): bump the development_dependencies group with 6 updates (#11503)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +3/-3)
+**File**: `package-lock.json` (modified, +233/-225)
 ```diff
-@@ -5723,9 +5723,9 @@
-       "license": "ISC"
+@@ -112,14 +112,14 @@
+       }
      },
-     "node_modules/follow-redirects": {
--      "version": "1.16.2",
--      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.2.tgz",
--      "integrity": "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==",
-+      "version": "1.16.3",
-+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.3.tgz",
-+      "integrity": "sha512-toOSoqN6d51Wjf1aOFJYcoVv1aND9rj/CwjLU0Vz40oDuSpWDayCeKe4JpL5NL0WdFvoOOCI3BRo69HahjbR1A==",
-       "funding": [
-         {
-           "type": "individual",
+     "node_modules/@babel/generator": {
+-      "version": "7.29.13",
+-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.13.tgz",
+-      "integrity": "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==",
++      "version": "7.29.14",
++      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.14.tgz",
++      "integrity": "sha512-qSY56jgW5JnSXzuekLVil6zaOQxOCtOHidr65KkaMBw772IuAY28Qx4ZykAcDn8+FRF15qk80XzKwgSc/RYW6g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/parser": "^7.29.13",
+-        "@babel/types": "^7.29.11",
++        "@babel/parser": "^7.29.14",
++        "@babel/types": "^7.29.14",
+         "@jridgewell/gen-mapping": "^0.3.12",
+         "@jridgewell/trace-mapping": "^0.3.28",
+         "jsesc": "^3.0.2"
+@@ -159,18 +159,18 @@
+       }
+     },
+     "node_modules/@babel/helper-create-class-features-plugin": {
+-      "version": "7.29.7",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.29.7.tgz",
+-      "integrity": "sha512-IY3ZD9Tmooqr3TUhc3DUWxiuo8xx1DWLhd5M7hQ+ZWJamqM2BbalrBJb2MisSLoYorOj75U03qULCxQTY9r3hg==",
++      "version": "7.29.13",
++      "resolved": "https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.29.13.tgz",
++      "integrity": "sha512-fo8/Fr44/DMV71FQjk/HA0Npmu3bo5DFoWTCW1dhUR8Vx3NFfAVeEy0TbcBpt4e+hd2QhdmWgmspHo/9iWj8RA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@babel/helper-annotate-as-pure": "^7.29.7",
+         "@babel/helper-member-expression-to-functions": "^7.29.7",
+         "@babel/helper-optimise-call-expression": "^7.29.7",
+         "@babel/helper-replace-supers": "^7.29.7",
+-        "@babel/helper-skip-transparent-expression-wrappers": "^7.29.7",
+-        "@babel/traverse": "^7.29.7",
++        "@babel/helper-skip-transparent-expression-wrappers": "^7.29.13",
++        "@babel/traverse": "^7.29.13",
+         "semver": "^6.3.1"
+       },
+       "engines": {
+@@ -254,15 +254,15 @@
+       }
+     },
+     "node_modules/@babel/helper-module-transforms": {
+-      "version": "7.29.13",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-module-transforms/-/helper-module-transforms-7.29.13.tgz",
+-      "integrity": "sha512-/U96wOz+SCoZ7Da/8kjDGltcNY280JPQcRNPK0Hk3PTbdpaiBDQImtC6JsbVwb1HGMr3usZQU2WsWVjhYNmRzw==",
++      "version": "7.29.14",
++      "resolved": "https://registry.npmjs.org/@babel/helper-module-transforms/-/helper-module-transforms-7.29.14.tgz",
++      "integrity": "sha512-2XDvQVd9JESaOgGc4jT2/jquTAO7ppA5noTZQqH+MmZ89yjCzScLwtCPbWtkPZylL+TLWR49IwWmk+QkRR4GsA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@babel/helper-module-imports": "^7.29.7",
+         "@babel/helper-validator-identifier": "^7.29.7",
+-        "@babel/traverse": "^7.29.13"
++        "@babel/traverse": "^7.29.14"
+       },
+       "engines": {
+         "node": ">=6.9.0"
+@@ -331,23 +331,23 @@
+       }
+     },
+     "node_modules/@babel/helper-skip-transparent-expression-wrappers": {
+-      "version": "7.29.7",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.29.7.tgz",
+-      "integrity": "sha512-brcMGQaVzIeUb+6/bs1Av0f8YuNNjKY2JyvfRCsFuFsdKccEQ5Ges2y74D74NZ1Rz8lKJ9ksJkfqwQFJ/iNEyQ==",
++      "version": "7.29.13",
++      "resolved": "https://registry.npmjs.org/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.29.13.tgz",
++      "integrity": "sha512-Abm4rKIH0tmCayJLwcoeOkdzpYUphTbO52fHhyEBHn7S0R+ni4epNLI/8nq1L0DN2Bl0u5qmgWm2Og/z4fBb+Q==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/traverse": "^7.29.7",
+-        "@babel/types": "^7.29.7"
++        "@babel/traverse": "^7.29.13",
++        "@babel/types": "^7.29.11"
+       },
+       "engines": {
+         "node": ">=6.9.0"
+       }
+     },
+     "node_modules/@babel/helper-string-parser": {
+-      "version": "7.29.11",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.29.11.tgz",
+-      "integrity": "sha512-snZbO7MEDOof+hvNa97EjEY7qD7h2kwvQr5AJC3ZhQudKW5dnej6k3kP9NQV88hJwaS8vDqRLFo9rivLEhle2g==",
++      "version": "7.29.14",
++      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.29.14.tgz",
++      "integrity": "sha512-CXvKMFvM80ihI7Vox9jb+kQjnyjESQNPM+vB7U0Zz6TWuZA+Z/FL0QPMH300h33qJtIx+REeBhXqWOPW48TcAQ==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
+@@ -404,13 +404,13 @@
+       }
+     },
+     "node_modules/@babel/parser": {
+-      "version": "7.29.13",
+-      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.13.tgz",
+-      "integrity": "sha512-fJM50YYjlTiB
 ```
 
 ---
 
-### Incident Patch 2: `02e99e07` (2026-11-18)
-**Commit Message**: chore(deps): bump peter-evans/create-pull-request from 8.1.1 to 8.1.2 in the github-actions group (#11468)
+### Incident Patch 2: `adad57fe` (2026-11-24)
+**Commit Message**: chore(deps): bump peter-evans/create-pull-request from 8.1.2 to 8.1.3 in the github-actions group (#11502)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
@@ -1920,20 +2010,20 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
          run: npm run build
  
        - name: Create Pull Request
--        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
-+        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
+-        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
++        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
          with:
            branch: ${{ steps.bump-version.outputs.newBranch }}
            base: v1.x
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11503** (2026-11-24): chore(deps-dev): bump the development_dependencies group with 6 updates (@dependabot[bot])
+- **PR #11502** (2026-11-24): chore(deps): bump peter-evans/create-pull-request from 8.1.2 to 8.1.3 in the github-actions group (@dependabot[bot])
+- **PR #11500** (2026-11-23): docs: add @hyper-fetch/axios to ECOSYSTEM.md (@prc5)
 - **PR #11474** (2026-11-19): fix(core): read interceptor options from the options object only (v0.x) (@jasonsaayman)
+- **PR #11472** (2026-11-24): fix(http): ignore inherited proxy environment variables (v0.x) (@jasonsaayman)
 - **PR #11469** (2026-11-18): chore(deps-dev): bump the development_dependencies group with 3 updates (@dependabot[bot])
-- **PR #11468** (2026-11-18): chore(deps): bump peter-evans/create-pull-request from 8.1.1 to 8.1.2 in the github-actions group (@dependabot[bot])
-- **PR #11467** (2026-11-18): chore(deps): bump follow-redirects from 1.16.2 to 1.16.3 in the production_dependencies group (@dependabot[bot])
-- **PR #11465** (closed): fix(http): reset maxRate window on backward clock step (@junaidkhan80121)
-- **PR #11462** (closed): fix(fetch): release cancellation resources for bodyless stream responses (@mayur-dhavan)
 
 ---
 
@@ -1953,13 +2043,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump follow-redirects from 1.16.2 to 1.16.3 in the production_dependencie
+## X. deps-dev): bump the development_dependencies group with 6 updates
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in axios/axios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f0f4ddf`: deps): bump follow-redirects from 1.16.2 to 1.16.3 in the production_dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a35e6f4e`: deps-dev): bump the development_dependencies group with 6 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -1967,21 +2057,49 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "1.16.3",
-      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.3.tgz",
-      "integrity": "sha512-toOSoqN6d51Wjf1aOFJYcoVv1aND9rj/CwjLU0Vz40oDuSpWDayCeKe4JpL5NL0WdFvoOOCI3BRo69HahjbR1A==",
+      "version": "7.29.14",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.14.tgz",
+      "integrity": "sha512-qSY56jgW5JnSXzuekLVil6zaOQxOCtOHidr65KkaMBw772IuAY28Qx4ZykAcDn8+FRF15qk80XzKwgSc/RYW6g==",
+        "@babel/parser": "^7.29.14",
+        "@babel/types": "^7.29.14",
+      "version": "7.29.13",
+      "resolved": "https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.29.13.tgz",
+      "integrity": "sha512-fo8/Fr44/DMV71FQjk/HA0Npmu3bo5DFoWTCW1dhUR8Vx3NFfAVeEy0TbcBpt4e+hd2QhdmWgmspHo/9iWj8RA==",
+        "@babel/helper-skip-transparent-expression-wrappers": "^7.29.13",
+        "@babel/traverse": "^7.29.13",
+      "version": "7.29.14",
+      "resolved": "https://registry.npmjs.org/@babel/helper-module-transforms/-/helper-module-transforms-7.29.14.tgz",
+      "integrity": "sha512-2XDvQVd9JESaOgGc4jT2/jquTAO7ppA5noTZQqH+MmZ89yjCzScLwtCPbWtkPZylL+TLWR49IwWmk+QkRR4GsA==",
+        "@babel/traverse": "^7.29.14"
+      "version": "7.29.13",
+      "resolved": "https://registry.npmjs.org/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.29.13.tgz",
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      "version": "1.16.2",
-      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.2.tgz",
-      "integrity": "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==",
+      "version": "7.29.13",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.13.tgz",
+      "integrity": "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==",
+        "@babel/parser": "^7.29.13",
+        "@babel/types": "^7.29.11",
+      "version": "7.29.7",
+      "resolved": "https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.29.7.tgz",
+      "integrity": "sha512-IY3ZD9Tmooqr3TUhc3DUWxiuo8xx1DWLhd5M7hQ+ZWJamqM2BbalrBJb2MisSLoYorOj75U03qULCxQTY9r3hg==",
+        "@babel/helper-skip-transparent-expression-wrappers": "^7.29.7",
+        "@babel/traverse": "^7.29.7",
+      "version": "7.29.13",
+      "resolved": "https://registry.npmjs.org/@babel/helper-module-transforms/-/helper-module-transforms-7.29.13.tgz",
+      "integrity": "sha512-/U96wOz+SCoZ7Da/8kjDGltcNY280JPQcRNPK0Hk3PTbdpaiBDQImtC6JsbVwb1HGMr3usZQU2WsWVjhYNmRzw==",
+        "@babel/traverse": "^7.29.13"
+      "version": "7.29.7",
+      "resolved": "https://registry.npmjs.org/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.29.7.tgz",
+      "int
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f0f4ddf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a35e6f4e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

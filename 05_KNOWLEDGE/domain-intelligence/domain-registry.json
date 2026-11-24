@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:00:48.037Z",
-  "total_records": 2565,
+  "last_updated": "2026-11-24T19:10:47.616Z",
+  "total_records": 2566,
   "domains": {
     "A": {
       "total": 22,
@@ -62,11 +62,12 @@
       ]
     },
     "C": {
-      "total": 3,
+      "total": 4,
       "record_ids": [
         "DOM-C-A3EC3CE8",
         "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
-        "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants"
+        "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
+        "DOM-C-AF8B1B7F"
       ]
     },
     "D": {
@@ -9325,8 +9326,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "2edc65768b450f34b52609b887b23a57bbe406de7e8cfba0b7403a93995b49b4",
-      "created_at": "2026-11-23T22:43:01.929Z"
+      "content_hash": "a65a7c218bc1fe3ff2b6bfd7ec87f56bb7d88f52f00dfff9c391a067ec3f5f94",
+      "created_at": "2026-11-24T19:10:00.630Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -13279,8 +13280,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "04d6d491f0f161236c970d67e3eb736263c7c057b3e14cf253f958c6ed42b4f5",
-      "created_at": "2026-11-23T23:31:36.347Z"
+      "content_hash": "08be166612cdeb350f11d79f4d564c21bd467961d93189bf84f0ac0404c86979",
+      "created_at": "2026-11-24T19:09:58.017Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -14949,8 +14950,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "fa3556f8bc8d4c4d2d5d63980265548700b9826525d4ab109cd34bbfbc46172f",
-      "created_at": "2026-11-23T23:48:52.999Z"
+      "content_hash": "09949902c660ba3d6f862dc14171716f43da4572ff3951c1b4f3ca1063090e81",
+      "created_at": "2026-11-24T19:09:55.441Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -15009,8 +15010,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "f27d5858d4b133c06ca90ee3945c685b8305864af9adcfb17a754004370837a3",
-      "created_at": "2026-11-23T23:48:57.926Z"
+      "content_hash": "adeb6c21063118384c0afa806f97422740105dc517a13fbf728e75558ee7c3b1",
+      "created_at": "2026-11-24T19:10:45.389Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -23023,8 +23024,8 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "f22f9fe07e5ea4cf2471a19049d73f2c05e6f3a560618daf15d81bb33c91ae5a",
-      "created_at": "2026-11-20T20:02:33.468Z"
+      "content_hash": "3329cf0c5bf0aae9ed56847cb6649dffa83d46daf2acdfab647f852310be285d",
+      "created_at": "2026-11-24T19:10:47.616Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
@@ -25279,8 +25280,8 @@
       "title": "Technical Construction Intelligence: axios/axios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-technical-construction-intelligence-axios-axios-core-invariants.md",
       "repository": "axios/axios",
-      "content_hash": "c1847fe98b068fc6a829b95bcb67f315138e9c13b02833a2cbca61790d6de6c3",
-      "created_at": "2026-11-20T20:02:21.969Z"
+      "content_hash": "71a606de1f051f4e75a81da712d309d5617d54bbaa97ab3a3fd392d33bf387ef",
+      "created_at": "2026-11-24T19:09:50.641Z"
     },
     "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
@@ -25288,8 +25289,8 @@
       "title": "Technical Construction Intelligence: axios-axios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-learnings-technical-construction-intelligence-axios-axios-learnings-.md",
       "repository": "axios-axios-learnings",
-      "content_hash": "d1637f27394c9e21c1b0e18874d122cbea14affc021a73d1df725b296e558eb0",
-      "created_at": "2026-11-20T20:02:32.637Z"
+      "content_hash": "2490759acbb278740b4a10075edc6990adab1c483798b5e3ec4f2b9bfe39d7ea",
+      "created_at": "2026-11-24T19:10:06.661Z"
     },
     "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
@@ -43078,6 +43079,48 @@
       "repository": "kgateway-dev-kgateway-learnings",
       "content_hash": "da26f3647156f2d409bcd15e5a341c7f300535d2973df7bac6d1c22aa84d1539",
       "created_at": "2026-11-24T18:43:41.866Z"
+    },
+    "DOM-C-AF8B1B7F": {
+      "record_id": "DOM-C-AF8B1B7F",
+      "domain_letter": "C",
+      "domain_id": "market_business",
+      "domain_name": "Market & Business Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone h",
+      "content": "When implementing operations in `cli/cmd/ctl/market/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "e8a021ad2e8f336aa0cfdd2aac9291cc8a2e4eacc38c9e07a7a7f1811069dcf3",
+      "summary": "Prevents defects observed in production commit `a30449a4`: cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone he -> When implementing operations in `cli/cmd/ctl/market/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions,",
+      "provenance": {
+        "source_uri": "project://beclab-olares/beclab-olares-learnings.md",
+        "source_version": "9ecae93f",
+        "observed_at": "2026-11-24T19:09:53.343Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (beclab-olares)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of beclab-olares"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.7,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T19:10:44.558Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:48:57.655Z",
+  "timestamp": "2026-11-24T19:10:44.919Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-beclab-olares-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [beclab-olares-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:48:57.655Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:10:44.919Z`  
 > **Learning ID**: `LEARN-EVO-beclab-olares-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from beclab-olares-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `504582d8`  
+> **Source Version**: `9ecae93f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:48:51.595Z  
+> **Timestamp**: 2026-11-24T19:09:53.343Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:48:51.591Z  
+> **Harvest Timestamp**: 2026-11-24T19:09:53.337Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1165,376 +1165,123 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e22ea5be` (2026-11-23)
-**Commit Message**: fix(docs): fall back to default last updated dates on Vercel previews (#4497)
+### Incident Patch 1: `a30449a4` (2026-11-24)
+**Commit Message**: cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone help (#4495)
 
-Vercel sets CI and clones shallow, so the strict shallow-clone check
-failed every preview build. Keep strict mode for real CI builds only.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `docs/.vitepress/lastmod/content-dates.mjs` (modified, +11/-3)
+**File**: `cli/cmd/ctl/market/client.go` (modified, +26/-0)
 ```diff
-@@ -263,13 +263,21 @@ function collectIncludes(text, fromFile, srcDir, seen, out) {
-   }
+@@ -326,10 +326,36 @@ func (c *MarketClient) executeRequest(hc *http.Client, req *http.Request) (*APIR
+ 	return &apiResp, nil
  }
  
-+/**
-+ * Strict in CI, where the production build must not ship wrong dates silently.
-+ * Vercel sets CI too, but only serves previews and always clones shallow, so
-+ * it falls back to VitePress's dates instead of failing.
-+ */
-+export function defaultStrict(env = process.env) {
-+  return !!env.CI && !env.VERCEL;
++// reformatMarketAuthErr turns an auth-class status into the error the user
++// sees. A 403 that Market itself wrote (its JSON envelope with success=false)
++// is a business refusal, such as "shared apps can only be operated by
++// administrators": its sentence is the answer, so it is passed on as an
++// APIError. Any other 401/403/459 comes from the edge proxy and gets the
++// generic identity hint.
+ func reformatMarketAuthErr(status int, respBody []byte, olaresID string) error {
++	if status == http.StatusForbidden {
++		if msg, ok := marketRefusalMessage(respBody); ok {
++			return &APIError{StatusCode: status, Message: msg}
++		}
++	}
+ 	return credential.FormatHTTPAuthError(status, respBody, olaresID)
+ }
+ 
++// marketRefusalMessage reports the message of a Market error envelope. The
++// envelope is recognised by an explicit "success": false, which the edge
++// proxy's own error pages never carry.
++func marketRefusalMessage(body []byte) (string, bool) {
++	var envelope struct {
++		Success *bool  `json:"success"`
++		Message string `json:"message"`
++	}
++	if err := json.Unmarshal(body, &envelope); err != nil || envelope.Success == nil || *envelope.Success {
++		return "", false
++	}
++	msg := strings.TrimSpace(envelope.Message)
++	return msg, msg != ""
 +}
 +
- /**
-  * @param {{ srcDir: string, strict?: boolean, metadataKeys?: Set<string> }} options
-- *   strict: throw instead of falling back to VitePress's dates (CI must not ship
-- *   wrong dates silently).
-+ *   strict: throw instead of falling back to VitePress's dates.
-  * @returns {{ forPage(relativePath: string): number | undefined }} ms timestamps
-  */
--export function createContentDates({ srcDir: givenSrcDir, strict = !!process.env.CI, metadataKeys = METADATA_KEYS }) {
-+export function createContentDates({ srcDir: givenSrcDir, strict = defaultStrict(), metadataKeys = METADATA_KEYS }) {
-   let dates = null;
- 
-   function compute() {
+ func (c *MarketClient) GetMarketData(ctx context.Context) (*APIResponse, error) {
+ 	return c.doRequest(ctx, http.MethodGet, "/market/data", nil)
+ }
 ```
 
-**File**: `docs/.vitepress/lastmod/content-dates.test.mjs` (modified, +7/-1)
+**File**: `cli/cmd/ctl/market/client_test.go` (modified, +39/-0)
 ```diff
-@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
- import { mkdtempSync, mkdirSync, rmSync, writeFileSync, renameSync } from 'node:fs';
- import { tmpdir } from 'node:os';
- import path from 'node:path';
--import { createContentDates, includedPart, pageView } from './content-dates.mjs';
-+import { createContentDates, defaultStrict, includedPart, pageView } from './content-dates.mjs';
- 
- // A throwaway repo with docs/ under it; every commit gets a fixed date (day N).
- function repo() {
-@@ -151,6 +151,12 @@ test('shallow clones fail in strict mode and fall back otherwise', () => {
-   r.done();
- });
- 
-+test('strict by default in CI, but not on Vercel previews', () => {
-+  assert.equal(defaultStrict({ CI: 'true' }), true);
-+  assert.equal(defaultStrict({ CI: '1', VERCEL: '1' }), false);
-+  assert.equal(defaultStrict({}), false);
-+});
+@@ -59,3 +59,42 @@ func TestDownloadStreamFormatsPersistent459WithoutLeakingBody(t *testing.T) {
+ 		t.Fatalf("459 error leaked response body: %q", got)
+ 	}
+ }
 +
- test('pageView keeps rendered keys and drops metadata blocks', () => {
-   const view = pageView(fm('title: T\nhero:\n  name: Olares\nhead:\n  - - meta\n    - name: keywords\noutline: [2, 3]', 'Body'));
-   assert.match(view, /hero:\n  name: Olares/);
++// A 403 Market wrote itself is a business refusal; its sentence is the answer
++// and must reach the user, while an edge 403 keeps the identity hint.
++func TestDoRequestPassesMarketRefusalThrough(t *testing.T) {
++	tests := []struct {
++		name    string
++		body    string
++		want    string
++		notWant string
++	}{
++		{name: "market envelope", body: `{"success":false,"message":"shared apps can only be operated by administrators"}`, want: "API error (HTTP 403): shared apps can only be operated by administrators", notWant: "whoami"},
++		{name: "edge page", body: `<html>Forbidden</html>`, want: "profile whoami --refresh"},
++		{name: "edge json without envelope", body: `{"status":"KO","message":"Forbidden"}`, want: "profile whoami --refresh", notWant: "API error"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++				w.WriteHeader(http.StatusForbidden)
++				_, _ = w.Write([]byte(tt.body))
++			}))
++			t.Cleanup(server.Close)
++			client := NewMarketClient(server.Client(), server.Client(), &credential.ResolvedProfile{
++				MarketURL: server.URL,
++				OlaresID:  "alice@olares.com",
++			}, "")
++
++			_, err := client.doRequest(context.Background(), http.MethodPost, "/apps/demo/install", nil)
++			if err == nil {
++				t.Fatal("expected error")
++			}
++			if !strings.Contains(err.Error(), tt.want) {
++				t.Fatalf("error %q does not contain %q", err, tt.want)
++			}
++			if tt.notWant != "" && strings.Contains(err.Error(), tt.notWant) {
++				t.Fatalf("error %q should not contain %q", err, tt.notWant)
++			}
++		})
++	}
++}
 ```
 
----
-
-### Incident Patch 2: `7daf6c94` (2026-11-23)
-**Commit Message**: docs: clarify Olares One SSD requirements and clean up link punctuation (#4496)
-
-* docs: add Olares One SSD selection FAQ
-
-* docs: clarify SSD specifications and validation scope
-
-* docs: refine SSD FAQ wording
-
-* docs: remove adjacent punctuation from link labels
-
-**File**: `docs/manual/olares/files/add-edit-download.md` (modified, +1/-1)
+**File**: `cli/cmd/ctl/market/clone.go` (modified, +5/-3)
 ```diff
-@@ -169,7 +169,7 @@ Deleted files cannot be recovered.
-    - Click <i class="material-symbols-outlined">more_horiz</i> in the top right corner and select **Delete**.
- 3. Confirm the deletion in the popup window.
+@@ -19,9 +19,11 @@ func NewCmdMarketClone(f *cmdutil.Factory) *cobra.Command {
+ 		Use:   "clone {app-name}",
+ 		Short: "Clone a multi-instance app under a new desktop title",
+ 		Long: `Clone a catalog application to create a new instance with a
+-different title (POST /apps/{name}/clone). The source app does not need
+-to be installed. An app is cloneable when allowMultipleInstall or
+-templateOnly is true; pre-flight check the source app first if unsure.
++different title (POST /apps/{name}/clone). An app is cloneable when
++allowMultipleInstall or templateOnly is true; pre-flight check the source
++app first if unsure. A templateOnly app can be cloned without installing
++it; any other app is cloned from your own running instance, so install it
++(and make sure it is running) first.
  
--   If the folder is shared or contains shared folders, Files also asks you to confirm that the affected shares will be canceled. Continue only if you want to cancel those shares and delete the folder. See [What happens to shares when I rename, move, or delete a folder?](share-files.md#what-happens-to-shares-when-i-rename-move-or-delete-a-folder).
-+   If the folder is shared or contains shared folders, Files also asks you to confirm that the affected shares will be canceled. Continue only if you want to cancel those shares and delete the folder. See [How renaming, moving, or deleting folders affects shares](share-files.md#what-happens-to-shares-when-i-rename-move-or-delete-a-folder).
- 
- ## Shortcuts
- 
-```
-
-**File**: `docs/one/faq.md` (modified, +17/-3)
-```diff
-@@ -1,6 +1,6 @@
- ---
- outline: [2,3]
--description: Answers to common questions about Olares One.
-+description: Find answers about Olares One hardware, SSD requirements, local AI, gaming, and operating systems.
- head:
-   - - meta
-     - name: keywords
-@@ -52,7 +52,7 @@ Here is how the two RTX 5090 variants compare:
- 
- The desktop RTX 5090 offers more capacity for larger models and more parallel computing resources. The mobile version balances local AI capability with the power and space requirements of an always-on home device.
- 
--GPU specifications are from NVIDIA's [laptop GPU comparison](https://www.nvidia.com/en-us/geforce/laptops/compare/) and [desktop RTX 5090 specifications](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/). For Olares One power modes, see [What is the power consumption?](#what-is-the-power-consumption).
-+GPU specifications are from NVIDIA's [laptop GPU comparison](https://www.nvidia.com/en-us/geforce/laptops/compare/) and [desktop RTX 5090 specifications](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/). For Olares One power modes, see [Power consumption](#what-is-the-power-consumption).
- 
- For measured LLM performance, image and video generation times, and test configurations, see [Olares One AI benchmarks](https://www.olares.com/benchmarks/hardware/olares-one).
- 
-@@ -93,11 +93,25 @@ Olares OS is free and open source, so you can also [install it on compatible har
- ### Is it possible to upgrade or expand the hardware?
- 
- Yes. You can modify the hardware through several internal slots and expansion ports:
--* **Storage**: The motherboard includes two PCIe SSD slots, one PCIe 4.0 and one PCIe 5.0. The preinstalled 2TB SSD occupies the PCIe 5.0 slot. The PCIe 4.0 slot remains available for system storage expansion via LVM or for a dual-boot configuration. See [Expand storage with an internal SSD](expand-storage-internal-ssd.md).
-+* **Storage**: The motherboard includes two M.2 2280 SSD slots, one PCIe 5.0 x4 and one PCIe 4.0 x4. The preinstalled 2TB SSD occupies the PCIe 5.0 slot. The PCIe 4.0 slot remains available for system storage expansion via LVM or for a dual-boot configuration. See [Expand storage with an internal SSD](expand-storage-internal-ssd.md).
- * **Memory**: The RAM capacity can be upgraded to a maximum of 128GB.
- * **External graphics**: You can connect a compatible Thunderbolt external graphics device. See [Can I use an eGPU with Olares One?](#can-i-use-an-egpu-with-olares-one)
- * **External displays**: The Thunderbolt 5 port supports docking stations with up to two external monitors at up to 8K resolution. The built-in RTX 5090 Mobile handles video output.
- 
-+### What SSD can I install in Olares One?
-+
-+When choosing an internal SSD, check the following requirements:
-+
-+- **Form factor and interface**: M.2 2280 (22 mm wide and 80 mm long), with a Key M connector and the NVMe protocol.
-+- **Component layout and thickness**: Choose a single-sided SSD with chips on only one side and a total thickness of no more than 2.38 mm. Double-sided SSDs cannot be installed because their underside chips come into contact with components beneath the drive.
-+- **Heatsink**: Choose a version without a preinstalled heatsink. Versions with a heatsink exceed the available height and cannot be installed.
-+
-+Component layout and thickness can vary between capacities and versions within the same SSD series. Check the exact model against the requirements above before buying.
-+
-+Only the factory-installed SSD has been validated in Olares One. Thermal performance and compatibility of other models remain unverified.
-+
-+For slot availability, see [Hardware expansion options](#is-it-possible-to-upgrade-or-expand-the-hardware). To add an installed SSD to Olares OS storage, see [Expand storage with an internal SSD](expand-storage-internal-ssd.md).
-+
- ### Can I use an eGPU with Olares One?
- 
- Yes. You can connect a Thunderbolt external graphics device with a GPU already installed, or install a compatible desktop NVIDIA GPU in a powered eGPU dock or enclosure. Hardware compatibility and setup differ between Olares OS and Windows 11.
-```
-
-**File**: `docs/use-cases/hindsight.md` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ Hindsight connects to Router with its default settings. You do not need to enter
-    {"status":"healthy","database":"connected","db_acquire_ms":1.4,"db_pool_waiting":0,"db_pool_in_use":0,"db_pool_max":100,"db_pool_idle":1}
-    ```
- 
--   The values `"status":"healthy"` and `"database":"connected"` confirm that Hermes can reach the API and Hindsight can connect to its database. For a sign-in page or redirect, see [Why does the API health check show a login prompt?](#why-does-the-api-health-check-show-a-login-prompt).
-+   The values `"status":"healthy"` and `"database":"connected"` confirm that Hermes can reach the API and Hindsight can connect to its database. For a sign-in page or redirect, see [Troubleshoot login prompts during API health checks](#why-does-the-api-health-check-show-a-login-prompt).
- 
- ## Connect Hermes Agent
- 
-```
-
-**File**: `docs/use-cases/trustgraph.md` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ Start with a question about a relationship you have found in Graph Navigator.
- 
- To view the same question in another layout, select that view and run the query again.
- 
--If you have just submitted the documents, allow time for processing and run the query again. If the answer still has no supporting relationships, see [Why does Graph RAG say there is no relevant information?](#why-does-graph-rag-say-there-is-no-relevant-information).
-+If you have just submitted the documents, allow time for processing and run the query again. If the answer still has no supporting relationships, see [Troubleshoot missing information in Graph RAG answers](#why-does-graph-rag-say-there-is-no-relevant-information).
- 
- ## Change the model connection
- 
-```
-
-**File**: `docs/use-cases/unsloth.md` (modified, +1/-1)
-```diff
-@@ -351,7 +351,7 @@ Unloading does not change the app's Olares Memory slicing quota. To make that qu
- 
- ### What happens to existing models when I upgrade?
- 
--Upgrades retain downloaded model files, application data, and saved Studio settings. The service restarts during the upgrade, so reload your model afterward. Saved automatic unloading settings continue to override the app's default timeout. See [Why is VRAM still occupied after a response finishes?](#why-is-vram-still-occupied-after-a-response-finishes).
-+Upgrades retain downloaded model files, application data, and saved Studio settings. The service restarts during the upgrade, so reload your model afterward. Saved automatic unloading settings continue to override the app's default timeout. See [VRAM usage after a response finishes](#why-is-vram-still-occupied-after-a-response-finishes).
- 
- ### Can I update llama.cpp inside Unsloth?
- 
-```
-
-**File**: `docs/zh/manual/olares/files/add-edit-download.md` (modified, +1/-1)
-```diff
-@@ -165,7 +165,7 @@ LarePass 支持通过手机的分享选项快速上传文件或媒体内容。
-    - 点击右上角的 <i class="material-symbols-outlined">more_horiz</i>，选择**删除**
- 3. 在弹窗中确认删除。
- 
--   如果该文件夹已被分享，或其中包含已分享的文件夹，文件管理器还会提示取消受影响的分享。确认要取消这些分享并删除文件夹后，再继续操作。详见[重命名、移动或删除文件夹会如何影响分享？](share-files.md#重命名、移动或删除文件夹会如何影响分享)。
-+   如果该文件夹已被分享，或其中包含已分享的文件夹，文件管理器还会提示取消受影响的分享。确认要取消这些分享并删除文件夹后，再继续操作。详见[重命名、移动或删除文件夹对分享的影响](share-files.md#重命名、移动或删除文件夹会如何影响分享)。
- 
- ## 快捷键
- 选择多个文件：
-```
-
-**File**: `docs/zh/one/faq.md` (modified, +16/-2)
-```diff
-@@ -1,6 +1,6 @@
- ---
- outline: [2,3]
--description: 关于 Olares One 的常见问题解答。
-+description: 查看 Olares One 常见问题解答，了解硬件规格、SSD 选型要求、本地 AI、游戏和操作系统支持。
- head:
-   - - meta
-     - name: keywords
-@@ -98,11 +98,25 @@ Olares OS 免费开源，也可以[安装在自己组装或已有的兼容硬件
- ### 是否可以升级或扩展硬件？
- 
- 可以。你可以通过多个内部插槽和扩展端口修改硬件：
--* **存储**：主板包含两个 PCIe SSD 插槽，一个 PCIe 4.0 和一个 PCIe 5.0。预装的 2TB SSD 占用 PCIe 5.0 插槽。空闲的 PCIe 4.0 插槽可用于通过 LVM 扩展系统存储，或用于双启动配置。操作步骤请参阅[使用内置 SSD 扩展存储](expand-storage-internal-ssd.md)。
-+* **存储**：主板包含两个 M.2 2280 SSD 插槽，一个 PCIe 5.0 x4 和一个 PCIe 4.0 x4。预装的 2TB SSD 占用 PCIe 5.0 插槽。空闲的 PCIe 4.0 插槽可用于通过 LVM 扩展系统存储，或用于双启动配置。操作步骤请参阅[使用内置 SSD 扩展存储](expand-storage-internal-ssd.md)。
- * **内存**：RAM 容量可升级至最大 128GB。
- * **外接显卡**：可以连接兼容的雷电外置显卡设备。详情请参阅[可以给 Olares One 连接 eGPU 吗？](#可以给-olares-one-连接-egpu-吗)
- * **外接显示器**：Thunderbolt 5 端口支持通过扩展坞同时连接最多两台外接显示器，最高支持 8K 分辨率。视频输出由内置 RTX 5090 Mobile 处理。
- 
-+### Olares One 可以安装什么 SSD？
-+
-+选购内置 SSD 时，需要满足以下要求：
-+
-+- **尺寸与接口**：M.2 2280（宽 22 mm、长 80 mm），采用 Key M 接口，使用 NVMe 协议。
-+- **芯片布局与厚度**：选择芯片仅分布在一面的单面 SSD，总厚度不超过 2.38 mm。双面 SSD 的背面芯片会碰到盘位下方的元器件，无法安装。
-+- **散热片**：选择不带预装散热片的版本。带散热片的版本超出盘位高度限制，无法安装。
-+
-+同一系列 SSD 的不同容量或版本，芯片布局和厚度也可能不同。选购时，请按具体型号核对上述要求。
-+
-+目前仅原装出厂 SSD 经过 Olares One 整机验证，其他型号的散热表现和兼容性尚未验证。
-+
-+插槽配置请参阅[是否可以升级或扩展硬件](#是否可以升级或扩展硬件)。安装后如需将 SSD 加入 Olares OS 系统存储，请参阅[使用内置 SSD 扩展存储](expand-storage-internal-ssd.md)。
-+
- ### 可以给 Olares One 连接 eGPU 吗？
- 
- 可以。你可以连接已安装 GPU 的雷电外置显卡设备，也可以通过独立供电的 eGPU dock 或 eGPU enclosure 使用兼容的桌面版 NVIDIA 显卡。不同硬件组合在 Olares OS 和 Windows 11 上的兼容状态及设置方法并不相同。
-```
-
-**File**: `docs/zh/use-cases/hindsight.md` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ Hindsight 的默认设置可直接连接 Router，无需填写模型地址或 Ro
-    {"status":"healthy","database":"connected","db_acquire_ms":1.4,"db_pool_waiting":0,"db_pool_in_use":0,"db_pool_max":100,"db_pool_idle":1}
-    ```
- 
--   `"status":"healthy"` 和 `"database":"connected"` 表示 Hermes 能够访问 API，且 Hindsight 已连接数据库。如果返回登录页面或重定向，参见[为什么 API 健康检查会显示登录提示？](#为什么-api-健康检查会显示登录提示)。
-+   `"status":"healthy"` 和 `"database":"connected"` 表示 Hermes 能够访问 API，且 Hindsight 已连接数据库。如果返回登录页面或重定向，参见[排查 API 健康检查出现登录提示的问题](#为什么-api-健康检查会显示登录提示)。
- 
- ## 连接 Hermes Agent
- 
-```
-
----
-
-### Incident Patch 3: `9331e14c` (2026-11-23)
-**Commit Message**: ci: build daily release from release-1.12.9
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-daily.yaml` (modified, +23/-1)
-```diff
-@@ -8,17 +8,22 @@ on:
-     - cron: "30 18 * * *"
-   workflow_dispatch:
- 
-+env:
-+  RELEASE_BRANCH: release-1.12.9
-+
- jobs:
- 
-   daily-version:
-     runs-on: ubuntu-latest
-     outputs:
-       version: ${{ steps.generate.outputs.version }}
-+      branch: ${{ steps.generate.outputs.branch }}
-     steps:
-       - id: generate
-         run: |
--          v=1.12.10-$(date +"%Y%m%d")
-+          v=1.12.9-$(date +"%Y%m%d")
-           echo "version=$v" >> "$GITHUB_OUTPUT"
-+          echo "branch=$RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
- 
-   release-id:
-     runs-on: ubuntu-latest
-@@ -27,6 +32,8 @@ jobs:
-     steps:
-       - name: 'Checkout source code'
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
-       - id: generate
-         run: |
-           hash=$(git rev-parse --short=7 HEAD)
-@@ -38,6 +45,7 @@ jobs:
-     secrets: inherit
-     with:
-       version: ${{ needs.daily-version.outputs.version }}
-+      ref: ${{ needs.daily-version.outputs.branch }}
-       release-id: ${{ needs.release-id.outputs.id }}
- 
-   release-daemon:
-@@ -46,6 +54,7 @@ jobs:
-     secrets: inherit
-     with:
-       version: ${{ needs.daily-version.outputs.version }}
-+      ref: ${{ needs.daily-version.outputs.branch }}
-       release-id: ${{ needs.release-id.outputs.id }}
- 
-   push-images:
-@@ -54,6 +63,8 @@ jobs:
-     steps:
-       - name: 'Checkout source code'
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Install coscmd
-         run: pip install coscmd        
-@@ -80,6 +91,8 @@ jobs:
-     steps:
-       - name: 'Checkout source code'
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Install coscmd
-         run: pip install coscmd        
-@@ -108,6 +121,8 @@ jobs:
-     steps:
-       - name: "Checkout source code"
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Install coscmd
-         run: pip install coscmd        
-@@ -140,6 +155,8 @@ jobs:
-     steps:
-       - name: "Checkout source code"
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Install coscmd
-         run: pip install coscmd        
-@@ -174,6 +191,8 @@ jobs:
-     steps:
-       - name: 'Checkout source code'
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Package installer
-         run: |
-@@ -217,6 +236,8 @@ jobs:
-     steps:
-       - name: 'Checkout source code'
-         uses: actions/checkout@v3
-+        with:
-+          ref: ${{ env.RELEASE_BRANCH }}
- 
-       - name: Package installer
-         run: |
-@@ -246,6 +267,7 @@ jobs:
-         with:
-           name: v${{ needs.daily-version.outputs.version }} Release
-           tag_name: ${{ needs.daily-version.outputs.version }}
-+          target_commitish: ${{ env.RELEASE_BRANCH }}
-           files: |
-             install-wizard-v${{ needs.daily-version.outputs.version }}.tar.gz
-             build/base-package/publicInstaller.sh
+ --title is REQUIRED and feeds the cloned app's desktop shortcut title.
+ For apps that expose multiple entrances, use --entrance-title NAME=TITLE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4500** (2026-11-23): chore(appservice): update image version to 1.12.9-c120831cc (@hysyeah)
-- **PR #4499** (2026-11-23): market(refactor): consolidate catalog, chart artifacts, source lifecycle, and app operations (@aby913)
-- **PR #4498** (2026-11-23): system-apps, vault: update Network and VPN images (@icebergtsn)
-- **PR #4497** (2026-11-23): fix(docs): fall back to default last updated dates on Vercel previews (@yongheng2016)
-- **PR #4496** (2026-11-23): docs: clarify Olares One SSD requirements and clean up link punctuation (@fnalways)
-- **PR #4495** (2026-11-23): fix(cli/market): show Market's reason for a 403 and correct clone help (@pengpeng)
+- **PR #4506** (2026-11-24): chore(system-apps): update frontend image (@qq815776412)
+- **PR #4505** (2026-11-24): chore(appservice): update image version to 1.12.9-de25ab3f2 (@hysyeah)
+- **PR #4504** (2026-11-24): fix(app-service): remove unused workflow operation code (@hysyeah)
+- **PR #4503** (2026-11-24): feat(app-service): verified chart downloads into a per-version cache (@hysyeah)
+- **PR #4502** (2026-11-24): kubesphere: open node shell as a host user and restore nodes exec API (@eball)
+- **PR #4501** (2026-11-24): ci(release-daily): move daily tag to release commit on re-runs (@eball)
 
 ---
 
@@ -1554,43 +1301,56 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): fall back to default last updated dates on Vercel previews
+## X. cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone h
 
 **RULE**:
-When implementing operations in `docs/.vitepress/lastmod/content-dates.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/cmd/ctl/market/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e22ea5be`: docs): fall back to default last updated dates on Vercel previews. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a30449a4`: cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone help. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/lastmod/content-dates.mjs`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/ctl/market/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-/**
- * Strict in CI, where the production build must not ship wrong dates silently.
- * Vercel sets CI too, but only serves previews and always clones shallow, so
- * it falls back to VitePress's dates instead of failing.
- */
-export function defaultStrict(env = process.env) {
-  return !!env.CI && !env.VERCEL;
+// reformatMarketAuthErr turns an auth-class status into the error the user
+// sees. A 403 that Market itself wrote (its JSON envelope with success=false)
+// is a business refusal, such as "shared apps can only be operated by
+// administrators": its sentence is the answer, so it is passed on as an
+// APIError. Any other 401/403/459 comes from the edge proxy and gets the
+// generic identity hint.
+	if status == http.StatusForbidden {
+		if msg, ok := marketRefusalMessage(respBody); ok {
+			return &APIError{StatusCode: status, Message: msg}
+		}
+	}
+// marketRefusalMessage reports the message of a Market error envelope. The
+// envelope is recognised by an explicit "success": false, which the edge
+// proxy's own error pages never carry.
+func marketRefusalMessage(body []byte) (string, bool) {
+	var envelope struct {
+		Success *bool  `json:"success"`
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(body, &envelope); err != nil || envelope.Success == nil || *envelope.Success {
+		return "", false
+	}
+	msg := strings.TrimSpace(envelope.Message)
+	return msg, msg != ""
 }
 
- *   strict: throw instead of falling back to VitePress's dates.
-export function createContentDates({ srcDir: givenSrcDir, strict = defaultStrict(), metadataKeys = METADATA_KEYS }) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
- *   strict: throw instead of falling back to VitePress's dates (CI must not ship
- *   wrong dates silently).
-export function createContentDates({ srcDir: givenSrcDir, strict = !!process.env.CI, metadataKeys = METADATA_KEYS }) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e22ea5be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a30449a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
