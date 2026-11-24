@@ -12536,3 +12536,6 @@
 | `CYCLE-20261124-WW89` | `2026-11-24T00:40:05.673Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | Yes (`5f965187...`) |
 | `CYCLE-20261124-X4EC` | `2026-11-24T00:40:16.260Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10156` | Yes (`1dffe4bb...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:40:50.554Z` | `wcandillon-react-native-skia` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-AB1B4707` [Domain H] | Yes (`2ffd344b...`) |
+| `CYCLE-20261124-8AB6` | `2026-11-24T00:48:57.138Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`c9880e91...`) |
+| `CYCLE-20261124-8CT5` | `2026-11-24T00:49:00.377Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10157` | Yes (`64201ea4...`) |
+| `CYCLE-20261124-8IUC` | `2026-11-24T00:49:08.196Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10158` | Yes (`6410c9a3...`) |

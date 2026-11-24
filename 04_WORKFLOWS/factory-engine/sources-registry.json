@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T00:40:19.525Z",
-    "lastVerified": "2026-11-24T00:40:19.525Z",
+    "lastChecked": "2026-11-24T00:49:11.450Z",
+    "lastVerified": "2026-11-24T00:49:11.451Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -273,9 +273,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T00:07:23.233Z",
+    "lastChecked": "2026-11-24T00:49:08.733Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T00:07:23.233Z"
+    "lastVerified": "2026-11-24T00:49:08.733Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -352,8 +352,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T20:22:00.397Z",
-    "lastVerified": "2026-11-23T20:22:00.397Z",
+    "lastChecked": "2026-11-24T00:49:03.774Z",
+    "lastVerified": "2026-11-24T00:49:03.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1071,9 +1071,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-22T22:58:14.300Z",
+    "lastChecked": "2026-11-24T00:49:06.224Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-22T22:58:14.300Z"
+    "lastVerified": "2026-11-24T00:49:06.224Z"
   },
   "burntsushi-ripgrep": {
     "name": "BurntSushi/ripgrep",
@@ -3357,22 +3357,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kuma",
+    "name": "kumahq/kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T23:49:18.675Z",
-    "lastVerified": "2026-11-22T23:49:18.675Z",
+    "lastChecked": "2026-11-24T00:49:07.140Z",
+    "lastVerified": "2026-11-24T00:49:07.140Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
+    "contentHash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9de645f5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
@@ -8758,14 +8757,14 @@
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T17:12:15.023Z",
-    "lastVerified": "2026-11-22T17:12:15.023Z",
+    "lastChecked": "2026-11-24T00:48:59.327Z",
+    "lastVerified": "2026-11-24T00:48:59.327Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
-    "contentHash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
+    "contentHash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9013,12 +9012,12 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T19:23:14.325Z",
-    "lastVerified": "2026-11-19T19:23:14.325Z",
+    "lastChecked": "2026-11-24T00:48:56.456Z",
+    "lastVerified": "2026-11-24T00:48:56.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
+    "contentHash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11895,9 +11894,9 @@
   "callstack-react-native-builder-bob": {
     "name": "react-native-builder-bob",
     "officialUrl": "https://github.com/callstack/react-native-builder-bob",
-    "lastChecked": "2026-11-21T01:43:41.975Z",
+    "lastChecked": "2026-11-24T00:48:58.759Z",
     "revisionIdentifier": "a73fd95b",
-    "lastVerified": "2026-11-21T01:43:41.975Z"
+    "lastVerified": "2026-11-24T00:48:58.759Z"
   },
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",

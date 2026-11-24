@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T00:40:51.731Z",
+  "last_updated": "2026-11-24T00:49:14.115Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24302,
+  "total_items": 24309,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229328,8 +229328,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "9de645f5",
-      "content_hash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
+      "source_version": "a38cd168",
+      "content_hash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -229352,6 +229352,11 @@
           "number": 9647,
           "title": "scope global snapshot to stream",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10158,
+          "title": "bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229359,7 +229364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:30:58.570Z",
+      "verified_at": "2026-11-24T00:49:07.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229399,10 +229404,10 @@
       "relative_path": "08_VERIFICATION/kumahq-kuma-verification-protocol-empirical-defect-shield-for-kumahq-kuma.md",
       "title": "Verification Protocol: Empirical Defect Shield for kumahq/kuma",
       "repository": "kumahq/kuma",
-      "source_version": "9de645f5",
-      "content_hash": "6690d37902f86586a4c783fd345eb0ccb22c127e8363b5c8edc382f1ba113d72",
+      "source_version": "a38cd168",
+      "content_hash": "2edbbfe819d10a06c2cef5e6691b8ffccad11129d22e8052d885806ff4650f48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:30:59.225Z"
+      "persisted_at": "2026-11-24T00:49:08.796Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
@@ -236042,8 +236047,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "062cc44c",
-      "content_hash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
+      "source_version": "c8588a1e",
+      "content_hash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -236071,6 +236076,11 @@
           "number": 9960,
           "title": "Fast checked_sub path in constexpr_sub_overflow_clamped",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10157,
+          "title": "Look for fbcode_builder in tool/ first, ahead of the export move",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236078,7 +236088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:12:16.136Z",
+      "verified_at": "2026-11-24T00:49:00.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236120,10 +236130,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-architecture-intelligence-meta-folly-core-invariants.md",
       "title": "Architecture Intelligence: meta/folly Core Invariants",
       "repository": "meta/folly",
-      "source_version": "25bb18ff",
-      "content_hash": "c0ed67533204e8b9c8f9dc4a9609d5136c4f391c6b307d719276d1f04feac4df",
+      "source_version": "c8588a1e",
+      "content_hash": "1dfedae90a77892cd161992d1a9d3f33209ec4a183c19340acab99c6852af3e3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T18:14:39.791Z"
+      "persisted_at": "2026-11-24T00:49:00.793Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly",
@@ -236132,10 +236142,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "062cc44c",
-      "content_hash": "f2091f7c1ce45e69c937ec6b33657f8188d726abcdeb34837e2bea1b4a9a99cc",
+      "source_version": "c8588a1e",
+      "content_hash": "dab6a399aa0c50d3c7ec50b611d2f198e209b27b32c0eeef485fe3b6d114dcf9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:12:17.136Z"
+      "persisted_at": "2026-11-24T00:49:01.002Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -236341,9 +236351,9 @@
       "title": "Architecture Intelligence: facebook-folly-learnings Core Invariants",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "74d8a23ac86a6e78c70e2f8cf0affb6a8b2aae00f0bb414c1319bdba0fb3c471",
+      "content_hash": "52ad555b92ab5d2c2e7199b9834fa618123f0ce761ec7b8ba8ddd534128b5ab0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T18:14:55.150Z"
+      "persisted_at": "2026-11-24T00:49:12.167Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings",
@@ -236353,9 +236363,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "f279f602a7937038795f295e7cec8b50caa293e7ae9b4594468445d30d3a9ca3",
+      "content_hash": "98d690962b7d8f0701b5dea2fbb3d7dcba08ddd17bb3c4ea887dc9e714efb382",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:14:12.595Z"
+      "persisted_at": "2026-11-24T00:49:12.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -245565,7 +245575,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
+      "content_hash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -245574,7 +245584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:23:14.824Z",
+      "verified_at": "2026-11-24T00:48:56.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245591,9 +245601,9 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "repository": "tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "3984b97ae63c55e4b73261a6ab9bfdab0bb084b2699c3dff07acc52b39f49a7f",
+      "content_hash": "f440e862b09dca14aef44db8dadd0484c4b5fcfdb28a3c57d072deca65cd06d7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T19:23:15.275Z"
+      "persisted_at": "2026-11-24T00:48:57.365Z"
     },
     "rule-8585": {
       "learning_id": "rule-8585",
@@ -245629,9 +245639,9 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "8313ec6200cf2e640a12d3255ea6b0de348542bb1025b99ea5b936d20d30cd71",
+      "content_hash": "75efac70d3896b7e5f135c26aeddf76baecf3907477f8e604deaaece94d67a59",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T19:23:28.124Z"
+      "persisted_at": "2026-11-24T00:49:12.714Z"
     },
     "learn-github-clementtsang-bottom": {
       "learning_id": "learn-github-clementtsang-bottom",
@@ -267332,9 +267342,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kumahq-kuma-learnings",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c9c7f62a2222459d7f59dc14fed9fcaf251369287b1369f7dc76c99643d1254",
+      "content_hash": "e4feee330b2e5cca4cf9002d13ba4314e15299de8f45d5c906dd566a57577de2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:31:02.580Z"
+      "persisted_at": "2026-11-24T00:49:14.115Z"
     },
     "learn-github-scrapinghub-dateparser": {
       "learning_id": "learn-github-scrapinghub-dateparser",
@@ -331398,6 +331408,94 @@
       "content_hash": "c4303c66950c9f2f6ee0bf8ab504f91997a88a8536603b747b7a8572edfff10a",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T00:40:20.329Z"
+    },
+    "rule-10157": {
+      "learning_id": "rule-10157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10157,
+      "title": "Look for fbcode_builder in tool/ first, ahead of the export move",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "c8588a1e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T00:49:00.172Z"
+    },
+    "candidate_directive-look-for-fbcode_builder-in-tool-first-ahead-of-the-export-move": {
+      "item_id": "candidate_directive-look-for-fbcode_builder-in-tool-first-ahead-of-the-export-move",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8LRN-look-for-fbcode_builder-in-tool-first-ahead-of-the-export-move.md",
+      "title": "Look for fbcode_builder in tool/ first, ahead of the export move",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c3f69c2472181d7a861737c0f890e2f1baf9b6cb47f77af504022aa0c693907",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:49:11.990Z"
+    },
+    "rule-10158": {
+      "learning_id": "rule-10158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10158,
+      "title": "bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "a38cd168",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T00:49:07.983Z"
+    },
+    "candidate_directive-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to": {
+      "item_id": "candidate_directive-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8J0W-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to.md",
+      "title": "bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to",
+      "repository": "kumahq/kuma",
+      "source_version": "a38cd168",
+      "content_hash": "94918e0c5152459ce7945be3b7e84d73146ef4a58842eb3e6dbf3091c1b9fd0f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:49:08.433Z"
+    },
+    "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-architecture-intelligence-kumahq-kuma-core-invariants.md",
+      "title": "Architecture Intelligence: kumahq/kuma Core Invariants",
+      "repository": "kumahq/kuma",
+      "source_version": "a38cd168",
+      "content_hash": "3119bb1780d53f8ebfabb8f3f75706cd132a45596f588f4fdef1671747153504",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:49:08.608Z"
+    },
+    "candidate_directive-deps-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to": {
+      "item_id": "candidate_directive-deps-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8N4R-deps-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to.md",
+      "title": "deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b467b501d08e56bd13b97e3c81f4a2b7ee6a9b13f4a59356d85c372c8e45747e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:49:13.756Z"
+    },
+    "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-learnings-architecture-intelligence-kumahq-kuma-learnings-core-invar.md",
+      "title": "Architecture Intelligence: kumahq-kuma-learnings Core Invariants",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb34c2491d79994b36be44d36d685da8caa9ba12156d2b2a424b3565ba543aae",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:49:13.935Z"
     }
   },
   "ai-builder-brain": {

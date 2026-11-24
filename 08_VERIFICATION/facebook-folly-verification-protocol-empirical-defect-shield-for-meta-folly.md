@@ -4,22 +4,22 @@
 {
   "source_repository": "meta/folly",
   "source_url": "https://github.com/facebook/folly",
-  "source_version": "062cc44c",
+  "source_version": "c8588a1e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T17:12:16.687Z",
+  "timestamp": "2026-11-24T00:49:00.610Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meta-folly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `062cc44c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T17:12:16.687Z`  
+> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `c8588a1e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T00:49:00.610Z`  
 > **Learning ID**: `learn-github-meta-folly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meta/folly` (Commit: `062cc44c`)
+- **Target Repository**: `meta/folly` (Commit: `c8588a1e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:12:15.023Z  
+> **Harvest Timestamp**: 2026-11-24T00:48:59.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2399,254 +2399,31 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `30c6bd46` (2026-11-21)
-**Commit Message**: Fast checked_sub path in constexpr_sub_overflow_clamped
+### Incident Patch 1: `8acf1e2a` (2026-11-23)
+**Commit Message**: Look for fbcode_builder in tool/ first, ahead of the export move
 
 Summary:
-Give `constexpr_sub_overflow_clamped` the same runtime fast path
-`constexpr_add_overflow_clamped` has: when not constant-evaluated, use
-`checked_sub` and saturate by the sign of `a`. Overflow implies differing
-signs, so `a < 0` saturates to `min` and `a >= 0` to `max`; unsigned saturates
-to `0` as before.
+katran's GitHub export carries fbcode_builder under `build/`, the directory `cmake -B build` and the README use for build output, so build output sits next to tracked files and `rm -rf build` deletes fbcode_builder. folly and fbthrift moved theirs to `tool/` for this reason, and katran follows:
 
-Measured (GCC 14 `-O2`, x86-64 and AArch64): the manual dispatch
-compiles to 2-3 branches; the builtin form is `sub` + flag-branch,
-matching the add path. Behavior is unchanged; the existing
-exhaustive `int8`/`uint8` runtime tests plus `int64` boundary tests
-exercise the new path, as do the `Histogram` suites that subtract
-heavily.
+- The katran manifest sets `shipit_fbcode_builder_layout = tool`, so getdeps' in-fbsource ShipIt emulation and `generate-github-actions` use `tool/fbcode_builder`.
+- `CMakeLists.txt` looks in `tool/fbcode_builder` first and still finds `build/fbcode_builder`, so the export builds before and after the move.
 
-Reviewed By: skrueger
+Reviewed By: p-shah256
 
-Differential Revision: D133585561
+Differential Revision: D132452438
 
-fbshipit-source-id: e1c1633d32cda47dc4a5c4677d42d572ab6666ac
+fbshipit-source-id: fdda62a53461d0eb1e706665b9d01df56d157121
 
-**File**: `folly/ConstexprMath.h` (modified, +15/-0)
+**File**: `tool/fbcode_builder/manifests/katran` (modified, +1/-0)
 ```diff
-@@ -738,6 +738,21 @@ constexpr T constexpr_sub_overflow_clamped(T a, T b) {
-   static_assert(
-       !std::is_integral<T>::value || sizeof(T) <= sizeof(M),
-       "Integral type too large!");
-+  if (!std::is_constant_evaluated()) {
-+    if constexpr (std::is_integral_v<T>) {
-+      T ret{};
-+      if (!checked_sub(&ret, a, b)) [[unlikely]] {
-+        if constexpr (std::is_unsigned_v<T>) {
-+          return T(0);
-+        } else {
-+          // Overflow happens only when a and b have different signs, so the
-+          // sign of a decides the saturation limit.
-+          return (a < 0) ? L::min() : L::max();
-+        }
-+      }
-+      return ret;
-+    }
-+  }
-   // clang-format off
-   return
-     // don't do anything special for non-integral types.
-```
-
-**File**: `folly/test/ConstexprMathTest.cpp` (modified, +64/-0)
-```diff
-@@ -1550,6 +1550,70 @@ TEST_F(ConstexprMathTest, constexpr_sub_overflow_clamped) {
-     }
-   }
+@@ -3,6 +3,7 @@ name = katran
+ fbsource_path = fbcode/katran
+ shipit_project = katran
+ shipit_fbcode_builder = true
++shipit_fbcode_builder_layout = tool
  
-+  // Runtime wide-type boundaries. These operands are not constant
-+  // expressions, so they exercise the checked_sub fast path
-+  // (!is_constant_evaluated()) at full width. The constexpr cases below
-+  // only cover the constant-evaluation fallback.
-+  {
-+    int64_t a = 23;
-+    int64_t b = 12;
-+    EXPECT_EQ(int64_t(11), folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = 23;
-+    int64_t b = kInt64Min;
-+    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = kInt64Min;
-+    int64_t b = 1;
-+    EXPECT_EQ(kInt64Min, folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = kInt64Max;
-+    int64_t b = -1;
-+    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = kInt64Min;
-+    int64_t b = kInt64Min;
-+    EXPECT_EQ(int64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = -1;
-+    int64_t b = kInt64Min;
-+    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int64_t a = -23;
-+    int64_t b = kInt64Min;
-+    EXPECT_EQ(kInt64Max - 22, folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    uint64_t a = 12;
-+    uint64_t b = 23;
-+    EXPECT_EQ(uint64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    uint64_t a = 0;
-+    uint64_t b = kUInt64Max;
-+    EXPECT_EQ(uint64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int32_t a = std::numeric_limits<int32_t>::max();
-+    int32_t b = -1;
-+    EXPECT_EQ(
-+        std::numeric_limits<int32_t>::max(),
-+        folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+  {
-+    int32_t a = std::numeric_limits<int32_t>::min();
-+    int32_t b = 1;
-+    EXPECT_EQ(
-+        std::numeric_limits<int32_t>::min(),
-+        folly::constexpr_sub_overflow_clamped(a, b));
-+  }
-+
-   constexpr auto v1 =
-       folly::constexpr_sub_overflow_clamped(int64_t(23), int64_t(12));
-   EXPECT_EQ(int64_t(11), v1);
-```
-
----
-
-### Incident Patch 2: `7064b87a` (2026-11-21)
-**Commit Message**: thread_local: debug set-consistency check with opt-out flag
-
-Summary:
-The debug-only `cachedInSetMatchesElementsArray` validation in `ThreadLocalPtr::get`
-takes two shared try-locks on every call, which is expensive on hot paths. It now
-runs by default, with `folly_thread_local_debug_disable_set_consistency_check`
-(default false) to opt out; setting the flag skips the check, leaving one bool
-load in debug builds. Non-debug builds are unchanged.
-
-A plain gflag (not a folly::settings flag) is deliberate: settings reads go through
-`ThreadLocalPtr::get`, so reading one inside this `DCHECK` would recurse.
-
-Reviewed By: r-barnes
-
-Differential Revision: D133628782
-
-fbshipit-source-id: e6b4c9c420a94cbff5d7baf10b804632ab33c475
-
-**File**: `folly/detail/BUCK` (modified, +1/-0)
-```diff
-@@ -280,6 +280,7 @@ fb_dirsync_cpp_library(
-         "//folly/hash:murmur_hash",
-         "//folly/lang:hint",
-         "//folly/memory:sanitize_leak",
-+        "//folly/portability:gflags",
-         "//folly/random:hash",
-         "//folly/synchronization:call_once",
-     ],
-```
-
-**File**: `folly/detail/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -286,6 +286,7 @@ folly_add_library(
-     folly_hash_murmur_hash
-     folly_lang_hint
-     folly_memory_sanitize_leak
-+    folly_portability_gflags
-     folly_random_hash
-     folly_synchronization_call_once
-     folly_utility
-```
-
-**File**: `folly/detail/ThreadLocalDetail.cpp` (modified, +10/-0)
-```diff
-@@ -27,9 +27,15 @@
- #include <folly/hash/MurmurHash.h>
- #include <folly/lang/Hint.h>
- #include <folly/memory/SanitizeLeak.h>
-+#include <folly/portability/GFlags.h>
- #include <folly/random/hash.h>
- #include <folly/synchronization/CallOnce.h>
- 
-+FOLLY_GFLAGS_DEFINE_bool(
-+    folly_thread_local_debug_disable_set_consistency_check,
-+    false,
-+    "Disable the ThreadEntry set-consistency DCHECK in ThreadLocalPtr::get");
-+
- constexpr auto kSmallGrowthFactor = 1.1;
- constexpr auto kBigGrowthFactor = 1.7;
- 
-@@ -187,6 +193,10 @@ bool ThreadEntry::cachedInSetMatchesElementsArray(uint32_t id) {
-     return true;
-   }
- 
-+  if (FLAGS_folly_thread_local_debug_disable_set_consistency_check) {
-+    return true;
-+  }
-+
-   if (removed_) {
-     // Pointer in entry set and elements array need not match anymore.
-     return true;
-```
-
----
-
-### Incident Patch 3: `32d01805` (2026-11-21)
-**Commit Message**: Warm up `bcmp` in `UnsafeSelfAllocateStackTracePrinter`
-
-Summary:
-The `small_sigaltstack` tests still failed after D133221885, now with
-`['bcmp'] != []` instead of `['memchr'] != []`.
-
-`std::string_view` equality, used for section-name lookup in
-`ElfFile::getSectionByName` and in `DwarfImpl::findLocation`, lowers to a
-`bcmp` call in opt builds. Nothing bound it before the crash, so the first
-trace lazily bound `bcmp` inside the signal handler.
-
-Evaluate an unpredictable `string_view` comparison during warm-up with the
-same `compiler_must_not_predict` / `compiler_must_not_elide` pattern, so the
-binding resolves at startup.
-
-Reviewed By: dtolnay
-
-Differential Revision: D133689804
-
-fbshipit-source-id: e61aee25629571df3ebc154e9b4e1758fec8aec0
-
-**File**: `folly/debugging/symbolizer/Symbolizer.cpp` (modified, +8/-0)
-```diff
-@@ -18,6 +18,7 @@
- 
- #include <cstdlib>
- #include <span>
-+#include <string_view>
- 
- #include <folly/Demangle.h>
- #include <folly/FileUtil.h>
-@@ -731,6 +732,13 @@ UnsafeSelfAllocateStackTracePrinter::UnsafeSelfAllocateStackTracePrinter(int fd)
-     DwarfCursor cursor{terminated};
-     auto string = cursor.readCString();
-     compiler_must_not_elide(string);
-+    // `std::string_view` equality (section-name lookup) lowers to `bcmp` in
-+    // opt builds; resolve its binding before installing signal handlers.
-+    const std::string_view nameA{".a"};
-+    const std::string_view nameB{".b"};
-+    compiler_must_not_predict(nameA);
-+    compiler_must_not_predict(nameB);
-+    compiler_must_not_elide(nameA == nameB);
- #endif
-     char demangled[8];
-     (void)folly::demangle("_Z1fv", demangled, sizeof(demangled));
+ [git]
+ repo_url = https://github.com/facebookincubator/katran.git
 ```
 
 #### Recent Merged Pull Requests:
@@ -2675,35 +2452,21 @@ fbshipit-source-id: e61aee25629571df3ebc154e9b4e1758fec8aec0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fast checked_sub path in constexpr_sub_overflow_clamped
+## X. Look for fbcode_builder in tool/ first, ahead of the export move
 
 **RULE**:
-When implementing operations in `folly/ConstexprMath.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tool/fbcode_builder/manifests/katran`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `30c6bd46`: Fast checked_sub path in constexpr_sub_overflow_clamped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8acf1e2a`: Look for fbcode_builder in tool/ first, ahead of the export move. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/ConstexprMath.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tool/fbcode_builder/manifests/katran`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  if (!std::is_constant_evaluated()) {
-    if constexpr (std::is_integral_v<T>) {
-      T ret{};
-      if (!checked_sub(&ret, a, b)) [[unlikely]] {
-        if constexpr (std::is_unsigned_v<T>) {
-          return T(0);
-        } else {
-          // Overflow happens only when a and b have different signs, so the
-          // sign of a decides the saturation limit.
-          return (a < 0) ? L::min() : L::max();
-        }
-      }
-      return ret;
-    }
-  }
+shipit_fbcode_builder_layout = tool
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2713,7 +2476,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `30c6bd46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8acf1e2a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

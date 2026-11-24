@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
-    "lastHarvestedAt": "2026-11-19T19:23:15.065Z",
+    "contentHash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
+    "lastHarvestedAt": "2026-11-24T00:48:57.143Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "9de645f5",
+    "sourceVersion": "a38cd168",
     "license": "Apache-2.0",
-    "contentHash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
-    "lastHarvestedAt": "2026-11-20T22:30:58.759Z",
+    "contentHash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
+    "lastHarvestedAt": "2026-11-24T00:49:08.201Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "062cc44c",
+    "sourceVersion": "c8588a1e",
     "license": "Apache-2.0",
-    "contentHash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
-    "lastHarvestedAt": "2026-11-22T17:12:16.392Z",
+    "contentHash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
+    "lastHarvestedAt": "2026-11-24T00:49:00.381Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T00:40:16.270Z",
-  "total_cycles_completed": 11919,
-  "total_learnings_persisted": 11919,
-  "total_rules_promoted": 11002,
+  "last_updated": "2026-11-24T00:49:08.206Z",
+  "total_cycles_completed": 11922,
+  "total_learnings_persisted": 11922,
+  "total_rules_promoted": 11004,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:12:38.612Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:12:46.142Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:12:54.067Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:12:56.098Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T00:40:16.270Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:48:57.149Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:49:00.387Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:49:08.206Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

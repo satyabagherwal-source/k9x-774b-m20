@@ -12569,3 +12569,6 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `ca29be61` | Multi-dimensional audit evidence | 2026-11-24T00:40:05.678Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `24d967b5` | Multi-dimensional audit evidence | 2026-11-24T00:40:16.265Z |
 | `learn-dom-h-ab1b4707` | `project://wcandillon-react-native-skia` | `ca29be61` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-24T00:40:50.554Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-24T00:48:57.143Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `c8588a1e` | Multi-dimensional audit evidence | 2026-11-24T00:49:00.381Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a38cd168` | Multi-dimensional audit evidence | 2026-11-24T00:49:08.201Z |

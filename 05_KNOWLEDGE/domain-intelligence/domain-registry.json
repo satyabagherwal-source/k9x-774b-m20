@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:40:51.523Z",
-  "total_records": 2473,
+  "last_updated": "2026-11-24T00:49:13.935Z",
+  "total_records": 2475,
   "domains": {
     "A": {
       "total": 20,
@@ -1132,7 +1132,7 @@
       ]
     },
     "G": {
-      "total": 432,
+      "total": 434,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1565,7 +1565,9 @@
         "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants",
         "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants"
+        "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants",
+        "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants",
+        "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants"
       ]
     },
     "H": {
@@ -17547,8 +17549,8 @@
       "title": "Architecture Intelligence: meta/folly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-architecture-intelligence-meta-folly-core-invariants.md",
       "repository": "meta/folly",
-      "content_hash": "c0ed67533204e8b9c8f9dc4a9609d5136c4f391c6b307d719276d1f04feac4df",
-      "created_at": "2026-11-14T18:14:39.791Z"
+      "content_hash": "1dfedae90a77892cd161992d1a9d3f33209ec4a183c19340acab99c6852af3e3",
+      "created_at": "2026-11-24T00:49:00.793Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants",
@@ -17574,8 +17576,8 @@
       "title": "Architecture Intelligence: facebook-folly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-learnings-architecture-intelligence-facebook-folly-learnings-core.md",
       "repository": "facebook-folly-learnings",
-      "content_hash": "74d8a23ac86a6e78c70e2f8cf0affb6a8b2aae00f0bb414c1319bdba0fb3c471",
-      "created_at": "2026-11-14T18:14:55.150Z"
+      "content_hash": "52ad555b92ab5d2c2e7199b9834fa618123f0ce761ec7b8ba8ddd534128b5ab0",
+      "created_at": "2026-11-24T00:49:12.167Z"
     },
     "DOM-D-5DB2A72D": {
       "record_id": "DOM-D-5DB2A72D",
@@ -20569,8 +20571,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-research-knowledge-intelligence-tencent-hy-memory-3.md",
       "repository": "tencent/Hy-Memory-30B-A3B",
-      "content_hash": "3984b97ae63c55e4b73261a6ab9bfdab0bb084b2699c3dff07acc52b39f49a7f",
-      "created_at": "2026-11-19T19:23:15.275Z"
+      "content_hash": "f440e862b09dca14aef44db8dadd0484c4b5fcfdb28a3c57d072deca65cd06d7",
+      "created_at": "2026-11-24T00:48:57.365Z"
     },
     "DOM-H-8C16206C": {
       "record_id": "DOM-H-8C16206C",
@@ -20626,8 +20628,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-learnings-research-knowledge-intelligence-hf-tencen.md",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
-      "content_hash": "8313ec6200cf2e640a12d3255ea6b0de348542bb1025b99ea5b936d20d30cd71",
-      "created_at": "2026-11-19T19:23:28.124Z"
+      "content_hash": "75efac70d3896b7e5f135c26aeddf76baecf3907477f8e604deaaece94d67a59",
+      "created_at": "2026-11-24T00:49:12.714Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
@@ -41496,6 +41498,24 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T00:40:50.516Z"
+    },
+    "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kumahq/kuma Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-architecture-intelligence-kumahq-kuma-core-invariants.md",
+      "repository": "kumahq/kuma",
+      "content_hash": "3119bb1780d53f8ebfabb8f3f75706cd132a45596f588f4fdef1671747153504",
+      "created_at": "2026-11-24T00:49:08.608Z"
+    },
+    "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kumahq-kuma-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-learnings-architecture-intelligence-kumahq-kuma-learnings-core-invar.md",
+      "repository": "kumahq-kuma-learnings",
+      "content_hash": "fb34c2491d79994b36be44d36d685da8caa9ba12156d2b2a424b3565ba543aae",
+      "created_at": "2026-11-24T00:49:13.935Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T18:14:54.947Z",
+  "timestamp": "2026-11-24T00:49:11.868Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-facebook-folly-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [facebook-folly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T18:14:54.947Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T00:49:11.868Z`  
 > **Learning ID**: `LEARN-EVO-facebook-folly-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from facebook-folly-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `25bb18ff`  
+> **Source Version**: `c8588a1e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T18:14:38.522Z  
+> **Timestamp**: 2026-11-24T00:48:59.332Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T18:14:38.516Z  
+> **Harvest Timestamp**: 2026-11-24T00:48:59.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30559 stars
+- **Stars / Engagement**: 30567 stars
 
 ---
 
@@ -88,11 +88,14 @@ The following architectural invariants have been empirically discovered and reco
 #include <array> // @manual
 #include <filesystem>
 #include <fstream>
+#include <limits>
+#include <stdexcept>
 #include <string>
 
 #include <fmt/format.h>
 
 #include <folly/lang/Align.h>
+#include <folly/lang/Exception.h>
 #include <folly/portability/Sched.h>
 #include <folly/portability/Windows.h>
 #include <folly/system/arch/x86.h>
@@ -193,25 +196,36 @@ size_t bm_llc_size() {
 }
 
 void bm_llc_evict(size_t value) {
-  constexpr auto step =
-      folly::hardware_constructive_interference_size / sizeof(size_t);
-
   constexpr auto words_per_line =
-      folly::hardware_constructive_interference_size / step;
+      folly::hardware_constructive_interference_size / sizeof(size_t);
+  static_assert(words_per_line > 0);
 
-  static auto const llc_size = bm_llc_size();
-
-  auto const llc_lines =
-      llc_size / folly::hardware_constructive_interference_size;
-
-  static std::unique_ptr<size_t volatile[]> const vec{
-      new size_t[llc_lines * words_per_line]};
-
-  // do N passes over the region, each time touching one word per line
-  for (size_t j = 0; j < step; ++j) {
-    for (size_t i = 0; i < llc_lines; i += step) {
-      vec[i * words_per_line + j] = value;
+  static auto const word_count = [] {
+    auto const llc_size = bm_llc_size();
+    if (llc_size == 0) {
+      throw_exception<std::runtime_error>("Unable to determine LLC size");
     }
+    auto const max_llc_bytes =
+        align_floor(std::numeric_limits<size_t>::max() / 2, sizeof(size_t));
+    if (llc_size > max_llc_bytes) {
+      throw_exception<std::length_error>("LLC eviction region is too large");
+    }
+    auto const llc_words =
+        align_ceil(llc_size, sizeof(size_t)) / sizeof(size_t);
+    return 2 * llc_words;
+  }();
+  static std::unique_ptr<size_t volatile[]> const region{
+      new size_t[word_count]};
+  detail::bm_llc_evict_touch({region.get(), word_count}, words_per_line, value);
+}
+
+void detail::bm_llc_evict_touch(
+    std::span<size_t volatile> region, size_t words_per_line, size_t value) {
+  for (size_t i = 0; i < region.size(); i += words_per_line) {
+    region[i] = value;
+  }
+  if (!region.empty()) {
+    region.back() = value;
   }
 }
 
@@ -238,6 +252,8 @@ void bm_llc_evict(size_t value) {
  */
 
 #pragma once
+
+#include <span>
 
 #include <folly/Portability.h>
 #include <folly/lang/Hint.h>
@@ -269,7 +285,14 @@ FOLLY_ALWAYS_INLINE void makeUnpredictable(T& datum) {
 
 namespace detail {
 size_t bm_llc_size_fallback();
-}
+
+/// bm_llc_evict_touch
+///
+/// Writes the first word of each stride and the last word of the region.
+/// words_per_line must be positive.
+void bm_llc_evict_touch(
+    std::span<size_t volatile> region, size_t words_per_line, size_t value);
+} // namespace detail
 
 /// bm_llc_size
 ///
@@ -278,8 +301,9 @@ size_t bm_llc_size();
 
 /// bm_llc_evict
 ///
-/// Write to a large block of memory and evict whatever cache lines might
-/// currently be resident in any levels of cache.
+/// Applies cache pressure with a region twice the detected LLC size.
+/// Eviction is best effort, not a guarantee that subsequent accesses reach
+/// DRAM.
 void bm_llc_evict(size_t value);
 
 } // namespace folly
@@ -2392,747 +2416,40 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90d245a1` (2026-11-13)
-**Commit Message**: Fix JSON Patch lifetime, add, index, and test semantics
+### Incident Patch 1: `8acf1e2a` (2026-11-23)
+**Commit Message**: Look for fbcode_builder in tool/ first, ahead of the export move
 
 Summary:
-Why: Configuration-supplied JSON patches can crash or corrupt a document when `add`, `move`, or `copy` touches the root, aliases containers, or names a missing parent. Pointer resolution also accepted whitespace-padded array indices, and `test` could equate a large `int64` with the nearest `double`.
+katran's GitHub export carries fbcode_builder under `build/`, the directory `cmake -B build` and the README use for build output, so build output sits next to tracked files and `rm -rf build` deletes fbcode_builder. folly and fbthrift moved theirs to `tool/` for this reason, and katran follows:
 
-What: `copy` snapshots its source and `move` takes its source out before mutating; `move` then removes, resolves the destination, and adds, restoring the source if that add fails. Same-location moves are no-ops. `do_add` uses the full pointer for root, final-token, and numeric-append cases; irrelevant `from` members are ignored. Array indices must be canonical decimal digits. `test` compares recursively, treating an `int64` and a `double` as equal only when `tryTo<int64_t>` converts exactly. A new `json_pointer::is_strict_prefix_of` backs the `move` overlap check, and the `is_prefix_of` comment now says equal pointers count.
+- The katran manifest sets `shipit_fbcode_builder_layout = tool`, so getdeps' in-fbsource ShipIt emulation and `generate-github-actions` use `tool/fbcode_builder`.
+- `CMakeLists.txt` looks in `tool/fbcode_builder` first and still finds `build/fbcode_builder`, so the export builds before and after the move.
 
-Non-obvious: Resolving the destination after removal is required for same-array moves. Exact numeric comparison is local to JSON Patch `test`, not a change to `dynamic::operator==`.
+Reviewed By: p-shah256
 
-Reviewed By: yf
+Differential Revision: D132452438
 
-**File**: `folly/json/dynamic.cpp` (modified, +10/-0)
+fbshipit-source-id: fdda62a53461d0eb1e706665b9d01df56d157121
+
+**File**: `tool/fbcode_builder/manifests/katran` (modified, +1/-0)
 ```diff
-@@ -473,6 +473,16 @@ dynamic::try_get_ptr(json_pointer const& jsonPtr) const& {
-         curr = nullptr;
-         continue;
-       }
-+      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
-+      // surrounding whitespace, so reject non-digit tokens before using it.
-+      bool is_canonical_index = !it->empty();
-+      for (char const c : *it) {
-+        is_canonical_index &= (c >= '0' && c <= '9');
-+      }
-+      if (!is_canonical_index) {
-+        return makeUnexpected(
-+            error{err_code::index_not_numeric, it.index, prev});
-+      }
-       auto const idx = tryTo<size_t>(*it);
-       if (!idx.hasValue()) {
-         return makeUnexpected(
-```
-
-**File**: `folly/json/json_patch.cpp` (modified, +103/-26)
-```diff
-@@ -18,6 +18,7 @@
+@@ -3,6 +3,7 @@ name = katran
+ fbsource_path = fbcode/katran
+ shipit_project = katran
+ shipit_fbcode_builder = true
++shipit_fbcode_builder_layout = tool
  
- #include <glog/logging.h>
- 
-+#include <folly/Conv.h>
- #include <folly/container/Enumerate.h>
- 
- namespace folly {
-@@ -64,7 +65,10 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
- 
-     // extract 'from' attribute
-     {
--      auto const* from_ptr = elem.get_ptr(kFromTag);
-+      auto const* from_ptr =
-+          (op_str == kOperationMove || op_str == kOperationCopy)
-+          ? elem.get_ptr(kFromTag)
-+          : nullptr;
-       if (from_ptr) {
-         if (!from_ptr->isString()) {
-           return makeUnexpected(parse_error{err_code::invalid_shape, &elem});
-@@ -131,8 +135,7 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
-       if (!op.from) {
-         return makeUnexpected(parse_error{err_code::missing_from_attr, &elem});
-       }
--      // is from a proper prefix to path?
--      if (op.from->is_prefix_of(op.path)) {
-+      if (op.from->is_strict_prefix_of(op.path)) {
-         return makeUnexpected(
-             parse_error{err_code::overlapping_pointers, &elem});
-       }
-@@ -159,6 +162,50 @@ std::vector<json_patch::patch_operation> const& json_patch::ops() const {
- 
- namespace {
- 
-+bool numbers_equal(dynamic const& lhs, dynamic const& rhs) {
-+  if (lhs.type() == rhs.type()) {
-+    return lhs == rhs;
-+  }
-+  auto const& int_value = lhs.isInt() ? lhs : rhs;
-+  auto const& double_value = lhs.isInt() ? rhs : lhs;
-+  auto const exact = tryTo<int64_t>(double_value.getDouble());
-+  return exact.hasValue() && *exact == int_value.getInt();
-+}
-+
-+bool json_values_equal(dynamic const& lhs, dynamic const& rhs) {
-+  if (lhs.isNumber() && rhs.isNumber()) {
-+    return numbers_equal(lhs, rhs);
-+  }
-+  if (lhs.type() != rhs.type()) {
-+    return false;
-+  }
-+  if (lhs.isArray()) {
-+    if (lhs.size() != rhs.size()) {
-+      return false;
-+    }
-+    for (size_t i = 0; i < lhs.size(); ++i) {
-+      if (!json_values_equal(lhs[i], rhs[i])) {
-+        return false;
-+      }
-+    }
-+    return true;
-+  }
-+  if (lhs.isObject()) {
-+    if (lhs.size() != rhs.size()) {
-+      return false;
-+    }
-+    for (auto const& item : lhs.items()) {
-+      auto const it = rhs.find(item.first);
-+      if (it == rhs.items().end() ||
-+          !json_values_equal(item.second, it->second)) {
-+        return false;
-+      }
-+    }
-+    return true;
-+  }
-+  return lhs == rhs;
-+}
-+
- // clang-format off
- Expected<Unit, json_patch::patch_application_error_code>
- // clang-format on
-@@ -188,43 +235,65 @@ do_remove(dynamic::resolved_json_pointer<dynamic>& ptr) {
-   return makeUnexpected(error_code::other);
- }
- 
-+// Moves from `value` only when the add succeeds.
- // clang-format off
- Expected<Unit, json_patch::patch_application_error_code>
- // clang-format on
- do_add(
-     dynamic::resolved_json_pointer<dynamic>& ptr,
--    const dynamic& value,
--    const std::string& last_token) {
-+    dynamic&& value,
-+    json_pointer const& path) {
-   using app_err_code = json_patch::patch_application_error_code;
-   using res_err_code = dynamic::json_pointer_resolution_error_code;
- 
-+  auto const& tokens = path.tokens();
-+  auto const failed_at_last_token = !tokens.empty() && !ptr.hasValue() &&
-+      ptr.error().index == tokens.size() - 1;
-+
-   // element found: see if parent is object or array
-   if (ptr.hasValue()) {
-     // root element, or key in object - replace (per RFC)
-     if (ptr->parent == nullptr || ptr->parent->isObject()) {
--      *ptr->value = value;
--    }
--    // valid index in array: insert at index and shift right
--    if (ptr->parent && ptr->parent->isArray()) {
--      ptr->parent->insert(ptr->parent->begin() + ptr->parent_index, value);
-+      *ptr->value = std::move(value);
-+    } else if (ptr->parent->isArray()) {
-+      // valid index in array: insert at index and shift right
-+      ptr->parent->insert(
-+          ptr->parent->begin() + ptr->parent_index, std::move(value));
-     }
-   } else {
-     // see if we can add value, based on pointer resolution state
-     switch (ptr.error().error_code) {
--      // key not found. can only happen in object - add new key-value
-+      // key not found: only the final token may name a new object member
-       case res_err_code::key_not_found: {
-+        if (!failed_at_last_token) {
-+          return makeUnexpected(app_err_code::other);
-+        }
-         DCHECK(ptr.error().context->isObject());
--        ptr.error().context->insert(last_token, value);
-+        ptr.error().context->insert(tokens.back(), std::move(value));
-         break;
-       }
-       // special '-' index in array - do append operation
-       case res_err_code::append_requested: {
-+        if (!failed_at_last_token) {
-+          return makeUnexpected(app_err_code::other);
-+        }
-         DCHECK(ptr.error().context->isArray());
--        ptr.error().context->push_back(value);
-+        ptr.error().context->push_back(std::move(value));
-         break;
-       }
-+      // a numeric index equal to the array size is also an append
-+      case res_err_code::index_out_
-```
-
-**File**: `folly/json/json_pointer.cpp` (modified, +5/-0)
-```diff
-@@ -83,6 +83,11 @@ bool json_pointer::is_prefix_of(json_pointer const& other) const noexcept {
-   return std::equal(tokens_.cbegin(), tokens_.cend(), other_begin, other_end);
- }
- 
-+bool json_pointer::is_strict_prefix_of(
-+    json_pointer const& other) const noexcept {
-+  return tokens_.size() < other.tokens_.size() && is_prefix_of(other);
-+}
-+
- std::vector<std::string> const& json_pointer::tokens() const {
-   return tokens_;
- }
-```
-
-**File**: `folly/json/json_pointer.h` (modified, +7/-1)
-```diff
-@@ -56,10 +56,16 @@ class json_pointer {
-   static json_pointer parse(std::string_view str);
- 
-   /*
--   * Return true if this pointer is proper to prefix to another pointer
-+   * Return true if this pointer is a prefix of another pointer. Equal
-+   * pointers are prefixes of each other.
-    */
-   bool is_prefix_of(json_pointer const& other) const noexcept;
- 
-+  /*
-+   * Return true if this pointer is a prefix of another, longer pointer.
-+   */
-+  bool is_strict_prefix_of(json_pointer const& other) const noexcept;
-+
-   /*
-    * Get access to the parsed tokens for applications that want to traverse
-    * the pointer.
-```
-
-**File**: `folly/json/test/DynamicTest.cpp` (modified, +9/-0)
-```diff
-@@ -1624,6 +1624,15 @@ TEST(Dynamic, JSONPointer) {
-         target.get_ptr(json_pointer::parse("/foo/01")), std::invalid_argument);
-   }
- 
-+  {
-+    auto err = target.try_get_ptr(json_pointer::parse("/foo/ 1")).error();
-+    EXPECT_EQ(err_code::index_not_numeric, err.error_code);
-+    EXPECT_EQ(1, err.index);
-+    EXPECT_EQ(target.get_ptr(json_pointer::parse("/foo")), err.context);
-+    EXPECT_THROW(
-+        target.get_ptr(json_pointer::parse("/foo/ 1")), std::invalid_argument);
-+  }
-+
-   // non-existent keys/indexes
-   {
-     auto err = ary.try_get_ptr(json_pointer::parse("/3")).error();
-```
-
-**File**: `folly/json/test/json_patch_test.cpp` (modified, +286/-8)
-```diff
-@@ -14,6 +14,10 @@
-  * limitations under the License.
-  */
- 
-+#include <cstdint>
-+#include <limits>
-+#include <string_view>
-+
- #include <folly/json/json.h>
- #include <folly/json_patch.h>
- #include <folly/json_pointer.h>
-@@ -23,6 +27,7 @@
- using folly::dynamic;
- using folly::json_patch;
- using folly::json_pointer;
-+using namespace std::string_view_literals;
- 
- using err_code = folly::json_patch::parse_error_code;
- using op_code = folly::json_patch::patch_operation_code;
-@@ -136,14 +141,6 @@ TEST_F(JsonPatchTest, InvalidPatches) {
-           .error()
-           .error_code);
- 
--  EXPECT_EQ(
--      err_code::overlapping_pointers,
--      json_patch::try_parse(
--          folly::parseJson(
--              R"([{"op": "move", "from" : "/a/b/c", "path" : "/a/b/c"}])"))
--          .error()
--          .error_code);
--
-   EXPECT_EQ(
-       err_code::overlapping_pointers,
-       json_patch::try_parse(
-@@ -359,3 +356,284 @@ TEST_F(JsonPatchTest, FailedOpIndex) {
-       res.error().error_code);
-   EXPECT_EQ(1, res.error().index);
- }
-+
-+TEST_F(JsonPatchTest, AddCopyAndMoveAtDocumentRoot) {
-+  {
-+    constexpr auto patchText =
-+        R"([{"op":"add","path":"","value":{"new":1}}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"({"old":true})");
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"({"new":1})"), doc);
-+  }
-+  {
-+    constexpr auto patchText = R"([{"op":"copy","from":"/a","path":""}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"({"a":{"x":1}})");
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
-+  }
-+  {
-+    constexpr auto patchText = R"([{"op":"move","from":"/a","path":""}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"({"a":{"x":1},"b":2})");
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
-+  }
-+}
-+
-+TEST_F(JsonPatchTest, MoveAppendFromNestedArrayElement) {
-+  constexpr auto patchText = R"([{"op":"move","from":"/0/x","path":"/-"}])"sv;
-+  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+
-+  dynamic doc = dynamic::array(dynamic::object("x", 1));
-+  doc.push_back(99);
-+
-+  ASSERT_TRUE(patch.apply(doc).hasValue());
-+  EXPECT_EQ(folly::parseJson(R"([{},99,1])"), doc);
-+}
-+
-+TEST_F(JsonPatchTest, MoveArrayElementUsesPostRemovalDestinationIndex) {
-+  {
-+    constexpr auto patchText = R"([{"op":"move","from":"/1","path":"/0"}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"(["bar","baz"])");
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"(["baz","bar"])"), doc);
-+  }
-+  {
-+    constexpr auto patchText = R"([{"op":"move","from":"/0","path":"/2"}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"([1,2,3])");
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"([2,3,1])"), doc);
-+  }
-+}
-+
-+TEST_F(JsonPatchTest, CopyDescendantToAncestorUsesSnapshot) {
-+  constexpr folly::StringPiece value =
-+      "01234567890123456789012345678901234567890123456789";
-+  constexpr auto patchText = R"([{"op":"copy","from":"/a/b","path":"/a"}])"sv;
-+  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+  dynamic doc = dynamic::object("a", dynamic::object("b", value));
-+
-+  ASSERT_TRUE(patch.apply(doc).hasValue());
-+  const dynamic expected = dynamic::object("a", value);
-+  EXPECT_EQ(expected, doc);
-+}
-+
-+TEST_F(JsonPatchTest, CopyArrayElementToSameArrayAppend) {
-+  constexpr auto patchText = R"([
-+    {"op":"add","path":"/arr","value":["x"]},
-+    {"op":"copy","from":"/arr/0","path":"/arr/-"}
-+  ])"sv;
-+  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+  dynamic doc = dynamic::object();
-+
-+  ASSERT_TRUE(patch.apply(doc).hasValue());
-+  EXPECT_EQ(folly::parseJson(R"({"arr":["x","x"]})"), doc);
-+}
-+
-+TEST_F(JsonPatchTest, MoveToSameLocationIsNoOp) {
-+  constexpr auto patchText = R"([{"op":"move","from":"/a/b","path":"/a/b"}])"sv;
-+  auto parsed = json_patch::try_parse(folly::parseJson(patchText));
-+  ASSERT_TRUE(parsed.hasValue());
-+
-+  dynamic doc = folly::parseJson(R"({"a":{"b":[1,2]}})");
-+  ASSERT_TRUE(parsed->apply(doc).hasValue());
-+  EXPECT_EQ(folly::parseJson(R"({"a":{"b":[1,2]}})"), doc);
-+}
-+
-+TEST_F(JsonPatchTest, AddAtNumericArrayEnd) {
-+  {
-+    constexpr auto patchText = R"([{"op":"add","path":"/a/2","value":3}])"sv;
-+    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
-+    dynamic doc = folly::parseJson(R"({"a":[1,2]})");
-+
-+    ASSERT_TRUE(patch.apply(doc).hasValue());
-+    EXPECT_EQ(folly::parseJson(R"({"a":[1,2,3]})"), doc);
-+  }
-+  {
-+    constexpr auto patchText = R"([{
-```
-
-**File**: `folly/json/test/json_pointer_test.cpp` (modified, +19/-0)
-```diff
-@@ -75,8 +75,27 @@ TEST_F(JsonPointerTest, BoundedBytes) {
- TEST_F(JsonPointerTest, IsPrefixTo) {
-   EXPECT_TRUE(
-       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b/c")));
-+  EXPECT_TRUE(
-+      json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b")));
-   EXPECT_FALSE(
-       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/d/e")));
-   EXPECT_FALSE(
-       json_pointer::parse("/a/b/c").is_prefix_of(json_pointer::parse("/a/b")));
- }
-+
-+TEST_F(JsonPointerTest, IsStrictPrefixOf) {
-+  EXPECT_TRUE(
-+      json_pointer::parse("/a/b").is_strict_prefix_of(
-+          json_pointer::parse("/a/b/c")));
-+  EXPECT_TRUE(
-+      json_pointer::parse("").is_strict_prefix_of(json_pointer::parse("/a")));
-+  EXPECT_FALSE(
-+      json_pointer::parse("/a/b").is_strict_prefix_of(
-+          json_pointer::parse("/a/b")));
-+  EXPECT_FALSE(
-+      json_pointer::parse("/a/b").is_strict_prefix_of(
-+          json_pointer::parse("/a/d/e")));
-+  EXPECT_FALSE(
-+      json_pointer::parse("/a/b/c").is_strict_prefix_of(
-+          json_pointer::parse("/a/b")));
-+}
-```
-
----
-
-### Incident Patch 2: `94502935` (2026-11-14)
-**Commit Message**: Remove the last required compiled Boost library
-
-Summary:
-Boost.Context is the last compiled Boost library a folly build requires: Boost.Regex and Boost.ProgramOptions are optional, and only fibers need Boost.Context. Fibers use just two small assembly routines from it, `make_fcontext` and `jump_fcontext`, yet every folly user has to build and install Boost's compiled libraries, a large dependency that most of them don't otherwise need, to get them. This vendors the routines as `folly/external/boost-fcontext`, so fibers no longer depend on Boost.Context, and a CMake build of folly on x86_64 and arm64 outside Windows no longer requires any compiled Boost library. That is a prerequisite for building folly without Boost, which will make it much easier to build, package and depend on.
-
-Vendoring also pins the saved-register layout that fibers rely on. `BoostContextCompatibility.h` stitches fiber stacks for frame-pointer stack walkers by reading the frame pointer and return address that `jump_fcontext` saves at fixed offsets, but that layout is private to Boost.Context and changes between releases: Boost 1.89 adds a stack guard slot to the x86_64 SysV ELF layout, which moves both regist
-
-**File**: `cmake/folly-config.h.cmake` (modified, +1/-0)
-```diff
-@@ -65,6 +65,7 @@
- #cmakedefine01 FOLLY_HAVE_DWARF
- #cmakedefine01 FOLLY_HAVE_ELF
- #cmakedefine FOLLY_HAVE_SWAPCONTEXT 1
-+#cmakedefine FOLLY_FIBERS_USE_BOOST_CONTEXT 1
- #cmakedefine FOLLY_HAVE_BACKTRACE 1
- #cmakedefine FOLLY_USE_SYMBOLIZER 1
- #define FOLLY_DEMANGLE_MAX_SYMBOL_SIZE 1024
-```
-
-**File**: `cmake/folly-deps.cmake` (modified, +18/-1)
-```diff
-@@ -56,7 +56,24 @@ set(Boost_USE_STATIC_LIBS "${FOLLY_BOOST_LINK_STATIC}")
- # Note: We find these components so the CMake targets exist, but we don't
- # link them globally. Targets that need specific Boost libraries should
- # add them to their EXTERNAL_DEPS (e.g., Boost::regex, Boost::context).
--set(FOLLY_BOOST_COMPONENTS context)
-+set(FOLLY_BOOST_COMPONENTS "")
-+
-+# Fibers switch contexts with the assembly in folly/external/boost-fcontext
-+# on x86_64 and arm64 outside Windows, and with Boost.Context elsewhere.
-+set(FOLLY_FIBERS_USE_BOOST_CONTEXT OFF)
-+set(folly_fcontext_archs ${CMAKE_SYSTEM_PROCESSOR})
-+if (APPLE AND CMAKE_OSX_ARCHITECTURES)
-+  set(folly_fcontext_archs ${CMAKE_OSX_ARCHITECTURES})
-+endif ()
-+foreach (arch IN LISTS folly_fcontext_archs)
-+  if (NOT arch MATCHES "^(x86_64|aarch64|arm64)$")
-+    set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
-+  endif ()
-+endforeach ()
-+if (WIN32 OR NOT folly_fcontext_archs OR FOLLY_FIBERS_USE_BOOST_CONTEXT)
-+  set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
-+  list(APPEND FOLLY_BOOST_COMPONENTS context)
-+endif ()
- 
- # CMake 4 dropped FindBoost, so this config-only probe warns without QUIET.
- # folly/cli's ProgramOptions is built only if Boost.ProgramOptions is found,
-```
-
-**File**: `folly/external/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- # @generated by folly/facebook/generate_cmake.py
- 
-+add_subdirectory(boost-fcontext)
- add_subdirectory(farmhash)
- add_subdirectory(fast-crc32)
- add_subdirectory(nvidia)
-```
-
-**File**: `folly/external/boost-fcontext/BUCK` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
-+
-+oncall("fbcode_entropy_wardens_folly")
-+
-+MACHO_SRCS = select({
-+    "DEFAULT": [],
-+    "ovr_config//cpu:arm64": [
-+        "jump_arm64_aapcs_macho_gas.S",
-+        "make_arm64_aapcs_macho_gas.S",
-+    ],
-+    "ovr_config//cpu:x86_64": [
-+        "jump_x86_64_sysv_macho_gas.S",
-+        "make_x86_64_sysv_macho_gas.S",
-+    ],
-+})
-+
-+ELF_ARM64_SRCS = [
-+    "jump_arm64_aapcs_elf_gas.S",
-+    "make_arm64_aapcs_elf_gas.S",
-+]
-+
-+ELF_SRCS = {
-+    "ovr_config//cpu:arm32": [
-+        "jump_arm_aapcs_elf_gas.S",
-+        "make_arm_aapcs_elf_gas.S",
-+    ],
-+    "ovr_config//cpu:arm64": ELF_ARM64_SRCS,
-+    "ovr_config//cpu:x86_32": [
-+        "jump_i386_sysv_elf_gas.S",
-+        "make_i386_sysv_elf_gas.S",
-+    ],
-+    "ovr_config//cpu:x86_64": [
-+        "jump_x86_64_sysv_elf_gas.S",
-+        "make_x86_64_sysv_elf_gas.S",
-+    ],
-+}
-+
-+fb_dirsync_cpp_library(
-+    name = "fcontext",
-+    srcs = select({
-+        "DEFAULT": select(dict(ELF_SRCS, DEFAULT = [])),
-+        # Android configurations without a CPU constraint compile for arm64.
-+        "ovr_config//os:android": select(dict(ELF_SRCS, DEFAULT = ELF_ARM64_SRCS)),
-+        "ovr_config//os:appletvos": MACHO_SRCS,
-+        "ovr_config//os:iphoneos": MACHO_SRCS,
-+        "ovr_config//os:macos": MACHO_SRCS,
-+        "ovr_config//os:windows": select({
-+            "DEFAULT": [],
-+            "ovr_config//cpu:arm64": [
-+                "jump_arm64_aapcs_pe_armasm.asm",
-+                "make_arm64_aapcs_pe_armasm.asm",
-+            ],
-+            "ovr_config//cpu:x86_32": [
-+                "jump_i386_ms_pe_masm.asm",
-+                "make_i386_ms_pe_masm.asm",
-+            ],
-+            "ovr_config//cpu:x86_64": [
-+                "jump_x86_64_ms_pe_masm.asm",
-+                "make_x86_64_ms_pe_masm.asm",
-+            ],
-+        }),
-+    }),
-+    headers = ["fcontext.h"],
-+    compiler_flags = select({
-+        "DEFAULT": ["-Wno-unused-command-line-argument"],
-+        "ovr_config//os:windows": [],
-+        "ovr_config//os:windows-x86_32": ["/DBOOST_CONTEXT_EXPORT="],
-+        "ovr_config//os:windows-x86_64": ["/DBOOST_CONTEXT_EXPORT="],
-+    }),
-+)
-```
-
-**File**: `folly/external/boost-fcontext/CMakeLists.txt` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+# Copyright (c) Meta Platforms, Inc. and affiliates.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+# NOTE: This file is manually maintained, not auto-generated.
-+# Update this file when the corresponding BUCK file changes.
-+
-+if (FOLLY_FIBERS_USE_BOOST_CONTEXT)
-+  folly_add_library(
-+    NAME fcontext
-+    HEADERS fcontext.h
-+    EXTERNAL_DEPS Boost::context
-+  )
-+  return ()
-+endif ()
-+
-+# On Apple platforms the wrappers pick the variant for each architecture in
-+# CMAKE_OSX_ARCHITECTURES, which may differ from CMAKE_SYSTEM_PROCESSOR.
-+if (APPLE)
-+  set(abi macho_gas.S)
-+elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-+  set(abi x86_64_sysv_elf_gas.S)
-+else ()
-+  set(abi arm64_aapcs_elf_gas.S)
-+endif ()
-+
-+folly_add_library(
-+  NAME fcontext
-+  SRCS make_${abi} jump_${abi}
-+  HEADERS fcontext.h
-+)
-```
-
-**File**: `folly/external/boost-fcontext/LICENSE_1_0.txt` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+Boost Software License - Version 1.0 - August 17th, 2003
-+
-+Permission is hereby granted, free of charge, to any person or organization
-+obtaining a copy of the software and accompanying documentation covered by
-+this license (the "Software") to use, reproduce, display, distribute,
-+execute, and transmit the Software, and to prepare derivative works of the
-+Software, and to permit third-parties to whom the Software is furnished to
-+do so, all subject to the following:
-+
-+The copyright notices in the Software and this entire statement, including
-+the above license grant, this restriction and the following disclaimer,
-+must be included in all copies of the Software, in whole or in part, and
-+all derivative works of the Software, unless such copies or derivative
-+works are solely in the form of machine-executable object code generated by
-+a source language processor.
-+
-+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
-+SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
-+FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
-+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+DEALINGS IN THE SOFTWARE.
-```
-
-**File**: `folly/external/boost-fcontext/README.md` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+# boost-fcontext
-+
-+The `make_fcontext` and `jump_fcontext` assembly from
-+[Boost.Context](https://github.com/boostorg/context) 1.77.0, and a header
-+declaring them, adapted from `boost/context/detail/fcontext.hpp`.
-+
-+The assembly matches Boost.Context 1.77.0 with two exceptions: the Windows arm64
-+(armasm) files are backported from Boost.Context 1.80.0, which added them, and
-+the arm64 ELF files add BTI landing pads (a `bti c` and the GNU BTI property
-+note), functionally equivalent to those Boost.Context 1.90.0 later added.
-+Otherwise, the only change to the assembly is that the functions are renamed to
-+`folly_make_fcontext` and `folly_jump_fcontext`, so that they do not clash with
-+Boost.Context in a program that links both. `update.sh` regenerates the
-+assembly from a Boost source tree. `make_macho_gas.S` and `jump_macho_gas.S`
-+include the Mach-O variant for the target architecture, so that CMake builds
-+for any combination of arm64 and x86_64 in `CMAKE_OSX_ARCHITECTURES`, including
-+universal binaries, and uses Boost.Context for other architectures.
-+
-+Distributed under the Boost Software License, Version 1.0 (see
-+`LICENSE_1_0.txt`).
-```
-
-**File**: `folly/external/boost-fcontext/fcontext.h` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+//          Copyright Oliver Kowalke 2009.
-+// Distributed under the Boost Software License, Version 1.0.
-+//    (See accompanying file LICENSE_1_0.txt or copy at
-+//          http://www.boost.org/LICENSE_1_0.txt)
-+
-+#pragma once
-+
-+#include <cstddef>
-+
-+#if defined(_MSC_VER) && defined(_M_IX86)
-+#define FOLLY_FCONTEXT_CALLDECL __cdecl
-+#else
-+#define FOLLY_FCONTEXT_CALLDECL
-+#endif
-+
-+namespace folly::detail::fcontext {
-+
-+using fcontext_t = void*;
-+
-+struct transfer_t {
-+  fcontext_t fctx;
-+  void* data;
-+};
-+
-+extern "C" transfer_t FOLLY_FCONTEXT_CALLDECL
-+folly_jump_fcontext(fcontext_t to, void* vp);
-+extern "C" fcontext_t FOLLY_FCONTEXT_CALLDECL
-+folly_make_fcontext(void* sp, std::size_t size, void (*fn)(transfer_t));
-+
-+} // namespace folly::detail::fcontext
-```
-
----
-
-### Incident Patch 3: `7014db84` (2026-11-13)
-**Commit Message**: Give IoUring RescheduleTimeout extra timeout tolerance
-
-Summary:
-`RescheduleTimeout` asserts 15/20/50ms timers fire within the 5ms default
-tolerance. The `IoUring` backend delivers timer callbacks up to a loop
-iteration later than other backends, so on loaded hosts it lands just over
-the line under stress (overshoots of 6-11ms observed; continuous is green).
-Allow 15ms for `IoUring` providers only; other backends keep the tight
-default. Same approach as D128818075 for `ScheduledFnAt`.
-
-___
-
-landed-with-radar-review
-
-Differential Revision: D131700400
-
-fbshipit-source-id: bf638f8806fd53a2acbb7282eb2332671b03c854
-
-**File**: `folly/io/async/test/EventBaseTestLib.h` (modified, +14/-4)
-```diff
-@@ -1247,10 +1247,20 @@ TYPED_TEST_P(EventBaseTest, RescheduleTimeout) {
-   eb.loop();
-   TimePoint end;
- 
--  T_CHECK_TIMEOUT(start, t1.timestamp, std::chrono::milliseconds(15));
--  T_CHECK_TIMEOUT(start, t2.timestamp, std::chrono::milliseconds(20));
--  T_CHECK_TIMEOUT(start, t3.timestamp, std::chrono::milliseconds(50));
--  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50));
-+  // The IoUring backend can deliver timer callbacks up to a loop iteration
-+  // later than other backends, so on loaded hosts it can exceed the tight
-+  // default tolerance (overruns of 6-11ms observed under stress). Allow it
-+  // extra room without weakening the check for other backends.
-+  auto timeoutTolerance = TypeParam::isIoUringBackend()
-+      ? std::chrono::milliseconds(15)
-+      : std::chrono::milliseconds(5);
-+  T_CHECK_TIMEOUT(
-+      start, t1.timestamp, std::chrono::milliseconds(15), timeoutTolerance);
-+  T_CHECK_TIMEOUT(
-+      start, t2.timestamp, std::chrono::milliseconds(20), timeoutTolerance);
-+  T_CHECK_TIMEOUT(
-+      start, t3.timestamp, std::chrono::milliseconds(50), timeoutTolerance);
-+  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50), timeoutTolerance);
- }
- 
- /**
+ [git]
+ repo_url = https://github.com/facebookincubator/katran.git
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2741** (closed): Split the chunk header into F14ChunkHeader; the empty chunk is a real header object (#2741) (@DenisYaroshevskiy)
-- **PR #2740** (2026-11-09): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2739** (2026-11-06): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2737** (closed): Move fbcode_builder to tool/ and stop exporting .buckconfig.d (@vitaut)
-- **PR #2735** (2026-11-04): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2731** (closed): Work around GCC < 13 TBAA miscompile in InlineFunctionRef (@Nicoshev)
+- **PR #2757** (closed): Fix Subprocess.cpp build with clang and glibc >= 2.40 fortify (@adiroy28852)
+- **PR #2756** (2026-11-18): Re-sync with internal repository (@meta-codesync[bot])
+- **PR #2755** (closed): Fix dead fmt format-syntax link in logging docs (@farisbasha)
+- **PR #2747** (closed): Reject multi-character labels in `IPAddressV6::fromInverseArpaName` (@0z5a)
+- **PR #2746** (closed): Reject `\x` without hex digits in `cUnescape` (@0z5a)
+- **PR #2742** (closed): Handle signed overflow in checked_div and checked_mod (@ZainnQureshii)
 
 ---
 
@@ -3152,30 +2469,21 @@ fbshipit-source-id: bf638f8806fd53a2acbb7282eb2332671b03c854
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. JSON Patch lifetime, add, index, and test semantics
+## X. Look for fbcode_builder in tool/ first, ahead of the export move
 
 **RULE**:
-When implementing operations in `folly/json/dynamic.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tool/fbcode_builder/manifests/katran`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90d245a1`: JSON Patch lifetime, add, index, and test semantics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8acf1e2a`: Look for fbcode_builder in tool/ first, ahead of the export move. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/json/dynamic.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tool/fbcode_builder/manifests/katran`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
-      // surrounding whitespace, so reject non-digit tokens before using it.
-      bool is_canonical_index = !it->empty();
-      for (char const c : *it) {
-        is_canonical_index &= (c >= '0' && c <= '9');
-      }
-      if (!is_canonical_index) {
-        return makeUnexpected(
-            error{err_code::index_not_numeric, it.index, prev});
-      }
+shipit_fbcode_builder_layout = tool
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3185,7 +2493,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90d245a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8acf1e2a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

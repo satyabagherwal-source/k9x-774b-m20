@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T00:40:50.988Z",
+  "updated_at": "2026-11-24T00:49:13.542Z",
   "stats": {
-    "total_discovered": 8154,
-    "approved_pending_harvest": 7722,
+    "total_discovered": 8165,
+    "approved_pending_harvest": 7733,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7703,
+      "COMMUNITY_AND_EXPERT": 7714,
       "OFFICIAL_DOCUMENTATION": 265,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -176387,6 +176387,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
         "fileName": "wcandillon-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-51C254154C6D": {
+      "id": "SRC-51C254154C6D",
+      "url": "https://github.com/facebookincubator/katran.git",
+      "title": "https://github.com/facebookincubator/katran.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:11.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-857A1CD8E09E": {
+      "id": "SRC-857A1CD8E09E",
+      "url": "https://redirect.github.com/oapi-codegen/oapi-codegen",
+      "title": "https://redirect.github.com/oapi-codegen/oapi-codegen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.040Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-BDD106AEE532": {
+      "id": "SRC-BDD106AEE532",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-89C48369D3EE": {
+      "id": "SRC-89C48369D3EE",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-D5CFBDFCE2BB": {
+      "id": "SRC-D5CFBDFCE2BB",
+      "url": "https://redirect.github.com/oapi-codegen/oapi-codegen/releases/tag/v2.9.0",
+      "title": "https://redirect.github.com/oapi-codegen/oapi-codegen/releases/tag/v2.9.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-2DA9A1D48EF3": {
+      "id": "SRC-2DA9A1D48EF3",
+      "url": "https://redirect.github.com/oapi-codegen/oapi-codegen/compare/v2.8.2...v2.9.0",
+      "title": "https://redirect.github.com/oapi-codegen/oapi-codegen/compare/v2.8.2...v2.9.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-9804EE0710A9": {
+      "id": "SRC-9804EE0710A9",
+      "url": "https://redirect.github.com/Redocly/redocly-cli",
+      "title": "https://redirect.github.com/Redocly/redocly-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-F01308F86FCD": {
+      "id": "SRC-F01308F86FCD",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.77.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.77.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-918199F07F01": {
+      "id": "SRC-918199F07F01",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.71.2/2.77.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.71.2/2.77.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.420Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-D8DF5A146970": {
+      "id": "SRC-D8DF5A146970",
+      "url": "https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.77.0",
+      "title": "https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.77.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-223A681F0ACC": {
+      "id": "SRC-223A681F0ACC",
+      "url": "https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.76.0...@redocly/cli@2.77.0",
+      "title": "https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.76.0...@redocly/cli@2.77.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:49:13.542Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
       }
     }
   }

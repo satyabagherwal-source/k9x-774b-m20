@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-0FAQ",
-    "timestamp": "2026-11-22T04:51:26.450Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-12O7",
-    "timestamp": "2026-11-22T04:51:56.743Z",
-    "repository": "Viggle/Viggle-Remake",
-    "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-H6HB",
-    "timestamp": "2026-11-22T05:04:28.175Z",
-    "repository": "audio-cpp/audio.cpp-gguf",
-    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-    "contentHash": "ea4b785610ed95d818ef82800be44dedc263ac6ded6f10e9b5e2708f2abb104b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-H78M",
     "timestamp": "2026-11-22T05:04:29.158Z",
     "repository": "Dicklesworthstone/destructive_command_guard",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-8AB6",
+    "timestamp": "2026-11-24T00:48:57.138Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-8CT5",
+    "timestamp": "2026-11-24T00:49:00.377Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-8IUC",
+    "timestamp": "2026-11-24T00:49:08.196Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
