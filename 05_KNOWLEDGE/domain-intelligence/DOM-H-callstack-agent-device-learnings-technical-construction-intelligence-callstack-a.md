@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T05:20:02.189Z",
+  "timestamp": "2026-11-24T19:45:02.168Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-callstack-agent-device-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-agent-device-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T05:20:02.189Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:45:02.168Z`  
 > **Learning ID**: `LEARN-EVO-callstack-agent-device-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from callstack-agent-device-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `d6767e09`  
+> **Source Version**: `b2d4ec05`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:19:56.334Z  
+> **Timestamp**: 2026-11-24T19:44:48.996Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:19:56.329Z  
+> **Harvest Timestamp**: 2026-11-24T19:44:48.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5476 stars
+- **Stars / Engagement**: 5503 stars
 
 ---
 
@@ -482,7 +482,7 @@ type DivergenceActionLabelInput = {
  */
 export function formatDivergenceActionLabel(action: DivergenceActionLabelInput): string {
   if (!TYPED_TEXT_COMMANDS.has(action.command)) {
-    const values = (action.positionals ?? []).map((value) => formatScriptArg(value));
+    const values = action.positionals.map((value) => formatScriptArg(value));
     return [action.command, ...values].join(' ');
   }
   const targetTokens = divergenceTypingTargetTokens(action);
@@ -492,7 +492,7 @@ export function formatDivergenceActionLabel(action: DivergenceActionLabelInput):
 
 /**
  * The identifying (non-text) positional tokens of a typing action:
- * `@ref`, a two-token point (`x y`), or
+ * `@ref`, a two-token point (`x y`), or a singl
 ```
 
 ### Core Architecture Module: `packages/apple-runner/src/runner-lifecycle.ts`
@@ -505,6 +505,7 @@ import {
   discloseUnclassifiedDispatch,
   isRequestCanceledError,
   type DispatchDisclosure,
+  type ReasonTable,
 } from '@agent-device/kernel/errors';
 import type { DeviceInfo } from '@agent-device/kernel/device';
 import type { ReadinessPhase } from '@agent-device/contracts/wait';
@@ -558,6 +559,14 @@ import {
   runnerRecycleLedgerKey,
   tryBeginRunnerRecycle,
 } from './runner-recycle-ledger.ts';
+
+const RUNNER_PREPARE_REASONS = {
+  // `prepare ios-runner` ran out of its deadline before the named `details.phase` began.
+  deadlineExpired: { reason: 'prepare_deadline_expired' },
+  // The cached runner failed its health check, and the rebuilt runner failed it too;
+  // `details.rebuiltFailureMessage` says how.
+  rebuiltRunnerUnhealthy: { reason: 'prepare_rebuilt_runner_unhealthy' },
+} as const satisfies ReasonTable<'prepare'>;
 
 export type PrepareIosRunnerOptions = AppleRunnerPrepareOptions;
 export type PrepareIosRunnerResult = AppleRunnerPrepareResult;
@@ -781,16 +790,7 @@ async function recoverBadCachedRunnerArtifact(params: {
       },
     });
     return recordPrepareResult(device, recovered);
-  } catch (error) {
-    await invalidateRunnerSessionBestEffort(rebuiltSession, 'prepare_rebuilt_runner_health_failed');
-    const wrapped = wrapPrepareHealthFailure(error, rebuiltSession, reason);
-    emitPrepareDiagnostic(device, {
-      cache: rebuiltSession.xctestrunArtifact?.cache,
-      artifact: rebuiltSession.xctestrunArtifact?.artifact,
-      buildMs: rebuiltSession.xctestrunArtifact?.buildMs,
-      connectMs,
-      healthCheckMs: 0,
-      xctestrunPath: r
+  } catch (err
 ```
 
 ### Core Architecture Module: `packages/capture-kit/src/capture-admission/session-state-slice.ts`
@@ -1771,11 +1771,14 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4901** (2026-11-21): **Android smoke: plain close fails with 'com.android.settings process remained running after close' since #4881**
-  *Symptoms*: ## Purpose  Since #4881 (merged 2026-11-21, `0525c45`), a plain `close` closes the session app and fails when the app does not exit. The Android emulator smoke replay `test/integration/replays/android/emulator/01-settings.ad` now fails intermittently at that step, and the failure is not retried:  ``` ⨯ 01-settings.ad   failed at: Android app com.android.settings process remained running after close ```  Seen three times in about 10 minutes on unrelated PR branches: runs 44913451859 and 44913878501 (#4897, an iOS-only change) and 44913308426 (`refactor/0.22-limrun-provider-plugin`). Main passed once at `721adbc`. Any PR can fail this lane.  ## Required behavior  - Find why the Settings process is still present after the close fence (for example a system restart of `com.android.settings`, a fence that checks too early, or a pid read that catches a new process). - Fix it at the owner of the Android app-close fence, using typed evidence (process identity, not just "a process with that name exists"). Do not add retries or longer sleeps as the fix, and do not revert #4881's behavior. - A device-free regression for the identified cause, and the smoke replay green across several CI runs. 
+- **Issue #5023** (2026-11-24): **iOS Duo: press/scroll/longpress fail with APP_SCREEN_WINDOW_UNRESOLVED on a deep AX tree**
+  *Symptoms*: > Written by an AI agent on behalf of @Elehiggle.  ### Problem  On the iPhone Duo simulator, gestures fail without dispatching when the AX tree is deep enough that XCTest rejects the app root. On the test app's heavy feed, `press 'id="heavy-post-0-like"' --json` returns (trimmed):  ```json {   "code": "COMMAND_FAILED",   "message": "Neither the target app nor the system surface resolved a window, so no display could be named.",   "hint": "The capture follows the display that owns a window, so this is a runtime that is answering no window for any process; runner.log names the window frame and the query answer it refused.",   "details": { "runnerErrorCode": "APP_SCREEN_WINDOW_UNRESOLVED", "dispatched": "no" } } ```  `get text` still reads the screen. In the runner log, XCTest rejects the app's tree right before the lit-panel walk reports an empty window list:  ``` AGENT_DEVICE_RUNNER_COMMAND_ACCEPTED command=tap AGENT_DEVICE_RUNNER_AX_SNAPSHOT_ISSUE_SUPPRESSED count=4 description=Failed to resolve query: Error kAXErrorIllegalArgument getting snapshot for element <AXUIElementRef …> {pid=<app>} {uid=[ID:1 hash:0x0]} AGENT_DEVICE_RUNNER_LIT_PANEL_WINDOW lit=1(466x678) windows=0 outcome=no resolved application window frame=(inf,inf 0x0) AGENT_DEVICE_RUNNER_COMMAND_COMPLETED command=tap  ok=0 ```  Before the feed opened, the same walk found `windows=2` on the Settings screen.  From reading main (not traced at runtime): `RunnerCopyWindowList` returns nil when the query throws or retu
 
-- **Issue #4862** (2026-11-21): **0.22: route web and Vega plugin process spawns and diagnostics through the plugin host**
-  *Symptoms*: Found in the review of #4857 (https://github.com/callstack/agent-device/pull/4857#issuecomment-7049407779). #4857 fixes it for HarmonyOS only; the same fault is in the two platform plugins already merged into `0.22` (#4792 web, #4828 Vega).  ## Problem  A managed platform plugin bundles its own copy of `@agent-device/host-kit` (`deps.alwaysBundle` matches `/^@agent-device\//`). A runtime import of `@agent-device/host-kit/command` or `@agent-device/host-kit/diagnostics` inside the plugin therefore uses a second `AsyncLocalStorage` scope that the daemon's `withCommandHost(...)` never enters. In the packed plugin:  - spawned tools inherit `process.env`, not the captured `host.env` (cwd and environment of the daemon host); - exec traces and timers go to the plugin's own diagnostics store, so `--debug` logs lose them.  Workspace tests resolve the plugin from `src`, where host-kit is one instance, so they do not see it.  Runtime import sites reported by #4857:  - `packages/platform-web/src`: `agent-browser-install.ts`, `agent-browser-lifecycle.ts`, `agent-browser-process-record.ts`, `agent-browser-provider.ts`, `agent-browser-tool.ts`, `interactor.ts` - `packages/platform-vega/src`: `app-lifecycle.ts`, `input-actions.ts`, `inventory.ts`, `tool-provider.ts`, `vega-executable.ts` - `packages/provider-limrun/src` has one such import on #4846; check whether a provider plugin has the same fault.  ## Required behavior  Every process a managed platform plugin spawns and every diagnostic i
+- **Issue #5002** (2026-11-24): **iOS alert get fails when no alert is up, while Android reports none**
+  *Symptoms*: ## Purpose Agents use `alert get` as a "is anything up?" check. On Android (and the tree driver) a screen with no alert returns success with `No alert visible`. On an iOS simulator it fails with `COMMAND_FAILED: alert not found` and the generic hint "Read the diagnostics log for the failing step", so a scripted check exits non-zero and agents chase a failure that isn't one.  ## Current behavior - iOS: `RunnerTests+CommandExecution.swift` returns `alertNotFound`, and `packages/platform-apple/src/alert.ts` (`readAppleAlert`) passes it through as a failure. - Android and tree driver: `packages/capture-kit/src/alert-tree-driver.ts` returns `status: none`. - `website/docs/docs/commands.md` documents the split.  ## Required behavior (proposal) `alert get` with no alert succeeds on iOS with the same `status: none` shape as Android. `alert accept|dismiss` with no alert keep failing.  If maintainers prefer to keep the iOS error, attach the alert-not-found hint instead of "Read the diagnostics log".  ## Completion `alert get` on an iOS simulator with no alert exits 0 with `status: none`, matching Android, and the docs drop the platform note. 
+  **Post-Mortem & Fix Analysis**:
+  > The Apple read path now returns `status: none` for a quiet screen, with accept and dismiss still refusing when there is no alert. The change is in #5039 and `v0.21.43-nightly.20261124.245`. Could you confirm the original `alert get --json` case on that build? 
+  > Confirmed on `0.21.43-nightly.20261124.245`, iPhone 17 Pro simulator (iOS 27.2), Settings in front, no alert up:  ```text $ agent-device alert get --json {"success": true, "data": {"kind": "alertStatus", "platform": "ios", "action": "get", "alert": null, "status": "none", "message": "No alert visible"}} rc=0  $ agent-device alert accept --json {"success": false, "error": {"code": "COMMAND_FAILED", "message": "alert not found", ... "runnerErrorCode": "ALERT_NOT_FOUND", "dispatched": "no"}} rc=1  $ agent-device alert dismiss Error (COMMAND_FAILED): alert not found. Not dispatched. ... rc=1 ```  `commands.md` now says `status: none` on every platform. That covers the completion points, so I'm closing this. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1792,1099 +1795,835 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64d7fc75` (2026-11-20)
-**Commit Message**: fix(remote): write record stop output only to request-named destinations (#4724)
+### Incident Patch 1: `4dffcd31` (2026-11-24)
+**Commit Message**: fix(harmonyos): clamp the open foreground probe's hdc read to the request deadline (#5055)
 
-* fix(capture): bind remote capture output authority to a client-minted grant ID per start attempt (#4518)
+* fix(harmonyos): clamp the open foreground probe's hdc read to the request deadline
 
-Corrected record slice of the reviewed defensive candidate (shared object
-1685076dd5cb8c02c2151664991ad48fedc085c3, preserved untouched on
-t3/defensive-capture-grants).
+The pre-dispatch already-foreground probe ran one `aa dump -l` read on a
+fixed 15s timeout, so a hung read could hold the dispatch past a request
+deadline the post-open foreground poll (#4293) would have respected. The
+probe now receives the request's deadline beside the signal, clamps its
+read to the remaining budget (Math.min against the 15s default), skips
+the device entirely when a spent deadline leaves no room for one read,
+and still claims nothing when the deadline or a cancel cuts the read —
+the advisory outcome machinery is unchanged and no reason set grows.
 
-A remote response no longer establishes a local write destination on a finishing
-capture action. The client mints one distinct grant ID per record start attempt and
-persists the caller-named destination under the existing remote-connections state
-owner BEFORE the request is dispatched — keyed by the immutable ID, never a
-latest-slot overwrite and never created from the response. The daemon admits the
-optional meta.captureGrantId on public record starts only (record-only scope; trace
-and perf keep their existing paths), binds it to the accepted capture in the producer
-lifecycle envelope metadata, and the matching stop echoes it from that capture's
-durable record; the internal fencing token never leaves the envelope.
+Follow-up to the optional question the #4860 review left open.
 
-A persisted start destination is authorized EXCLUSIVELY by the producer-echoed grant
-ID matched against the persis
+* test: retrigger the android emulator smoke lane (no code change)
 
-**File**: `docs/agents/security.md` (modified, +1/-1)
+* docs(evidence): record the JDY-AL50 live runs for the open probe deadline clamp
+
+Scenario a: the already-foreground open answers with the alreadyForeground
+warning at 0.7 s with no added probe latency. Scenario b: an hdc wrapper that
+sleeps on the probe read cannot hold the dispatch past the admitted request
+budg
+
+**File**: `docs/evidence/ad-5055-lega/one-line.ad` (added, +1/-0)
 ```diff
-@@ -2,7 +2,7 @@
- 
- The CLI client trusts its caller to choose local destinations.
- The client trusts a remote daemon for data and validated identifiers.
--Script publication takes no path from the daemon. Capture delivery still can (#4518).
-+Scripts and remote record stop reject daemon paths (#4518). Trace and perf take them.
- The daemon admits its state directory. Nobody trusts the network or other local users.
- Out of scope: same uid, hostile root, ACLs, mounts, untrusted filesystems.
- 
+@@ -0,0 +1 @@
++open com.sankuai.dianping --platform harmonyos
 ```
 
-**File**: `packages/command-surface/src/schema/command-overrides.ts` (modified, +1/-1)
+**File**: `docs/evidence/ad-5055-lega/replay-lega.json` (added, +54/-0)
 ```diff
-@@ -160,7 +160,7 @@ const SCHEMA_ONLY_CLI_COMMAND_SCHEMAS = {
-     text: {
-       summary: 'Expose a local daemon through an HTTP tunnel',
-       description:
--        'Expose the local daemon HTTP contract through a tunnel-friendly reverse proxy.\n\nRun this on the host that has access to simulators/devices, expose the printed local proxy URL through a tunnel, then point another machine at the tunnel URL with connect proxy.\n\nThe proxy starts or reuses a local HTTP daemon, accepts /health, /rpc, /upload and resumable /upload/* routes, and /artifacts plus /artifacts/*, and also accepts the same routes under /agent-device/*. Health is unauthenticated for reachability probes. Other routes require the generated bearer token printed at startup, or the explicit --daemon-auth-token value when provided. The proxy rewrites authorized client requests to the upstream daemon token instead of exposing the local daemon token.\n\nFor a TLS-terminated tunnel, set --public-origin to the public HTTP(S) origin, for example --public-origin https://public.example:8443. Forwarded and X-Forwarded-* headers do not select upload ticket origins. For an ephemeral tunnel, obtain its public name first, then configure and restart the proxy. Without a fixed origin, Node uses the actual socket scheme and validated Host.\n\nUse the /agent-device base path when connecting through cloudflared, ngrok, or another shared origin. Treat the bearer token as a secret; anyone with it can control the proxied daemon. This direct proxy flow does not use agent-device auth.\n\nRemote captures write generated artifacts on the daemon. Screenshot, recording, performance, and trace paths select downloads on the client; they never select host files. Direct RPC callers download returned artifact IDs through /artifacts/<id>. Remote requests ignore client cwd and refuse host tooling paths and --launch-console. A fresh open --save-script=<path> arms recording; after each recorded action the client refreshes that caller file, and close writes the final script there. Remote session save-script, close/replay --save-script, and --save-script in batch steps remain refused.\n\nExamples:\n  cloudflared tunnel --url http://127.0.0.1:4310\n  agent-device proxy --port 4310 --public-origin https://example.trycloudflare.com\n  agent-device connect proxy --daemon-base-url https://example.trycloudflare.com/agent-device --daemon-auth-token <token>',
-+        'Expose the local daemon HTTP contract through a tunnel-friendly reverse proxy.\n\nRun this on the host that has access to simulators/devices, expose the printed local proxy URL through a tunnel, then point another machine at the tunnel URL with connect proxy.\n\nThe proxy starts or reuses a local HTTP daemon, accepts /health, /rpc, /upload and resumable /upload/* routes, and /artifacts plus /artifacts/*, and also accepts the same routes under /agent-device/*. Health is unauthenticated for reachability probes. Other routes require the generated bearer token printed at startup, or the explicit --daemon-auth-token value when provided. The proxy rewrites authorized client requests to the upstream daemon token instead of exposing the local daemon token.\n\nFor a TLS-terminated tunnel, set --public-origin to the public HTTP(S) origin, for example --public-origin https://public.example:8443. Forwarded and X-Forwarded-* headers do not select upload ticket origins. For an ephemeral tunnel, obtain its public name first, then configure and restart the proxy. Without a fixed origin, Node uses the actual socket scheme and validated Host.\n\nUse the /agent-device base path when connecting through cloudflared, ngrok, or another shared origin. Treat the bearer token as a secret; anyone with it can control the proxied daemon. This direct proxy flow does not use agent-device auth.\n\nRemote captures write generated artifacts on the daemon. Screenshot, performance, and trace paths select downloads on the client; they never select host files. A remote recording downloads to the path named by the record stop request, or otherwise to the working directory with a warning. Direct RPC callers download returned artifact IDs through /artifacts/<id>. Remote requests ignore client cwd and refuse host tooling paths and --launch-console. A fresh open --save-script=<path> arms recording; after each recorded action the client refreshes that caller file, and close writes the final script there. Remote session save-script, close/replay --save-script, and --save-script in batch steps remain refused.\n\nExamples:\n  cloudflared tunnel --url http://127.0.0.1:4310\n  agent-device proxy --port 4310 --public-origin https://example.trycloudflare.com\n  agent-device connect proxy --daemon-base-url https://example.trycloudflare.com/agent-device --daemon-auth-token <token>',
-     },
-     listUsageOverride: 'proxy',
-     allowedFlags: ['proxyHost', 'proxyPort', 'publicOrigin', 'daemonAuthToken', 'stateDir'],
-```
-
-**File**: `packages/remote/src/__tests__/daemon-artifacts-capture.test.ts` (modified, +0/-7)
-```diff
-@@ -98,13 +98,6 @@ test.for<MaterializationCase>([
-     fileName: '../../x',
-     expected: 'cwd/x',
-   },
--  {
--    name: 'a record stop accepts the echo of its start destination',
--    command: 'record',
--    localPath: 'client/clip.mp4',
--    fileName: 'clip.mp4',
--    expected: 'client/clip.mp4',
--  },
-   {
-     name: 'a close does not authorize an unrelated response artifact destination',
-     command: 'close',
-```
-
-**File**: `packages/remote/src/__tests__/daemon-artifacts-record-download.test.ts` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+import fs from 'node:fs';
-+import http from 'node:http';
-+import path from 'node:path';
-+import type { DaemonArtifact } from '@agent-device/kernel/contracts';
-+import { expect, test, type TestContext } from 'vitest';
-+import {
-+  closeLoopbackServer,
-+  createTestHostEnvironment,
-+  listenOnLoopback,
-+  mkdtempForTestSync,
-+  skipWhenLoopbackUnavailable,
-+} from '@agent-device/test-kit';
-+import { materializeRemoteArtifacts } from '../daemon-artifacts.ts';
-+
-+async function withRecordingServer(
-+  t: TestContext,
-+  run: (cwd: string, stop: ReturnType<typeof recordStop>) => Promise<void>,
-+): Promise<void> {
-+  if (await skipWhenLoopbackUnavailable(t, 'remote recording download')) return;
-+  const root = mkdtempForTestSync('agent-device-record-download-');
-+  const cwd = path.join(root, 'cwd');
-+  fs.mkdirSync(cwd);
-+  // Each artifact's bytes are its own id, served as binary so the body is never read as HTML.
-+  const server = http.createServer((req, res) => {
-+    res.writeHead(200, { 'content-type': 'application/octet-stream' });
-+    res.end(path.basename(req.url ?? ''));
-+  });
-+  try {
-+    const port = await listenOnLoopback(server);
-+    await run(cwd, recordStop(`http://127.0.0.1:${port}`, cwd, path.join(root, 'state')));
-+  } finally {
-+    await closeLoopbackServer(server);
+@@ -0,0 +1,54 @@
++{
++  "success": false,
++  "error": {
++    "code": "REPLAY_DIVERGENCE",
++    "message": "Daemon request deadline exceeded",
++    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
++    "diagnosticId": "mwu8qema-6d287442",
++    "logPath": "<state-dir>/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson",
++    "diagnosticsRecord": {
++      "session": "cwd:1dd430edfb664982:default",
++      "requestId": "97d848997a368c7f"
++    },
++    "details": {
++      "reason": "daemon_request_timeout",
++      "replayPath": "one-line.ad",
++      "step": 1,
++      "action": "open",
++      "positionals": ["<arg>"],
++      "artifactPaths": [],
++      "divergence": {
++        "version": 1,
++        "kind": "action-failure",
++        "step": {
++          "index": 1,
++          "source": {
++            "path": "one-line.ad",
++            "line": 1
++          }
++        },
++        "action": "open \"com.sankuai.dianping\"",
++        "cause": {
++          "code": "COMMAND_FAILED",
++          "message": "request canceled",
++          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) \u2014 no retry is needed unless the cancellation was unintended."
++        },
++        "screen": {
++          "state": "unavailable",
++          "reason": "no-session",
++          "hint": "The session closed before a post-failure screen could be captured."
++        },
++        "suggestions": [],
++        "suggestionCount": 0,
++        "resume": {
++          "allowed": true,
++          "from": 1,
++          "planDigest": "2777bba07a19f1bcec3952098a94d9748a792d6b4d6b986703a7295929933ccc"
++        },
++        "repairHint": "manual"
++      },
++      "causeReason": "request_canceled",
++      "timeoutMs": 3000
++    }
 +  }
 +}
-+
-+function recordStop(baseUrl: string, cwd: string, stateDir: string) {
-+  return async (artifacts: DaemonArtifact[], requested?: string, chunks?: unknown) => {
-+    const response = await materializeRemoteArtifacts(
-+      { baseUrl, token: 'secret' },
-+      {
-+        token: 'secret',
-+        command: 'record',
-+        session: 'capture',
-+        positionals: requested ? ['stop', requested] : ['stop'],
-+        meta: { cwd },
-+      },
-+      { ok: true, data: { artifacts, chunks, outPath: '/daemon/other.mp4' } },
-+      createTestHostEnvironment(),
-+      stateDir,
-+    );
-+    if (!response.ok) throw new Error(response.error.message);
-+    return response.data;
-+  };
-+}
-+
-+const video = {
-+  artifactId: 'video',
-+  field: 'outPath',
-+  artifactType: 'screen-recording',
-+  path: '/daemon/clip.mp4',
-+  fileName: 'clip.mp4',
-+} satisfies DaemonArtifact;
-+
-+test('record stop ignores the daemon localPath and warns about the cwd download', async (t) => {
-+  await withRecordingServer(t, async (cwd, stop) => {
-+    const hostile = path.resolve(cwd, '../hostile.mp4');
-+    const data = await stop([{ ...video, localPath: hostile }]);
-+    const fallback = path.join(cwd, 'clip.mp4');
-+    expect(fs.existsSync(hostile)).toBe(false);
-+    expect(fs.readFileSync(fallback, 'utf8')).toBe('video');
-+    expect(data).toMatchObject({
-+      outPath: fallback,
-+      recordingDestinationWarnings: [
-+        { reason: 'recording_destination_not_requested', field: 'outPath', path: fallback },
-+      ],
-+      warnings: [expect.stringContaining(fallback)],
-+    });
-+  });
-+});
-+
-+test('record stop uses the destination named in the current request', async (t) => {
-+  await withRecordingServer(t, async (cwd, stop) => {
-+    const hostile = path.resolve(cwd, '../hostile.mp4');
-+    const data = await stop([{ ...video, localPath: hostile }], '../requested.mp4');
-+    const requested = path.resolve(cwd, '../requested.mp4');
-+    expect(fs.existsSync(hostile)).toBe(false);
-+    expect(fs.readFileSync(requested, 'utf8')).toBe('video');
-+    expect(data?.outPath).toBe(requested);
-+    expect(data?.recordingDestinationWarnings).toBeUndefined();
-+  });
-+});
-+
-+test('record stop replaces a destination symlink without writing through it', async (t) => {
-+  await withRecordingServer(t, async (cwd, stop) => {
-+    const destination = path.join(cwd, 'clip.mp4');
-+    const target = path.resolve(cwd, '../target');
-+    fs.writeFileSync(target, 'original');
-+    fs.symlinkSync(target, destination);
-+    await stop([video]);
-+    expect(fs.readFileSync(target, 'utf8')).toBe('original');
-+    expect(fs.lstatSync(destination).isFile()).toBe(true);
-+    expect(fs.readFileSync(destination, 'utf8')).toBe('video');
-+    expect(fs.readdirSync(cwd)).toEqual(['clip.mp4']);
-+  });
-+});
-+
-+test.for([
-+  'C:foo.mp4',
-+  'clip.mp4:stream',
-+  '..',
-+  'CON.mp4',
-+  'nested/clip.mp4',
-+  String.raw`x\clip.mp4`,
-+  'x\n.mp4',
-+])('record stop generates a name in cwd for %j', async (fileName, t) => {
-+  await withRecordingServer(t, async (cwd, stop) => {
-+    const data = await stop([{ ...video, fileName }]);
-+    const names = fs.readdirSync(cwd);
-+    expect(names).toHaveLength(1);
-+    expect(names).not.toContain(fileName);
-+    expect(names).not.toContain(path.posix.basename(fileName));
-+    expect(names).not.toContain(path.win32.basename(fileName));
-+    const destination = path.join(cwd, names[0]!);
-+    expect(data?.outPath).toBe(destination);
-+    expect(fs.readFileSync(destination, 'utf8')).toBe('video');
-+    expect(data?.recordingDestinationWarnings).toEqual([
-+      { reason: 'recording_destination_not_requested', field: 'outPath', pat
 ```
 
-**File**: `packages/remote/src/artifact-download.ts` (modified, +29/-0)
+**File**: `docs/evidence/ad-5055-lega/request-97d84899.ndjson` (added, +10/-0)
 ```diff
-@@ -32,13 +32,24 @@ export type RemoteArtifactDownload = RemoteArtifactRequest & {
-   destinationPath: string;
-   /** Whether `destinationPath` is a caller-owned root rather than one file to create. */
-   isDirectory?: boolean;
-+  stagedFile?: boolean;
+@@ -0,0 +1,10 @@
++{"ts":"2026-11-24T05:14:59.075Z","level":"info","phase":"request_start","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:1dd430edfb664982:default","command":"replay","requestLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson","runnerLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/runner.log"}}
++{"ts":"2026-11-24T05:14:59.685Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":609,"data":{"platform":"harmonyos","cacheHit":false}}
++{"ts":"2026-11-24T05:14:59.703Z","level":"info","phase":"request_start","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"publicSession":"cwd:1dd430edfb664982:default","effectiveSession":"cwd:1dd430edfb664982:default","command":"open","requestLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson","runnerLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/runner.log"}}
++{"ts":"2026-11-24T05:14:59.835Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":131,"data":{"platform":"harmonyos","cacheHit":false}}
++{"ts":"2026-11-24T05:14:59.836Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":0,"data":{"platform":"harmonyos","cacheHit":true}}
++{"ts":"2026-11-24T05:14:59.837Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":0,"data":{"platform":"harmonyos","cacheHit":true}}
++{"ts":"2026-11-24T05:15:02.461Z","level":"warn","phase":"device_claim_open_effects_unconfirmed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"deviceKey":"local:harmonyos:none:77TYD26826028730","outcome":"abandoned"}}
++{"ts":"2026-11-24T05:15:02.461Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"error":"request canceled"}}
++{"ts":"2026-11-24T05:15:02.462Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
++{"ts":"2026-11-24T05:15:02.464Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
+```
+
+**File**: `docs/evidence/ad-5055-partb.ad` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++# 5055 part-b replay: open an already-foreground target under a 3s request deadline
++context platform=harmonyos
++open com.sankuai.dianping
++close
+```
+
+**File**: `docs/evidence/ad-5055-partb/571738ebf4f3424a.ndjson` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{"ts":"2026-11-24T03:59:01.629Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"replay","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
++{"ts":"2026-11-24T03:59:01.629Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"publicSession":"cwd:e93f14f237f7fd4f:harmonyos","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"open","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
++{"ts":"2026-11-24T03:59:05.054Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"error":"request canceled"}}
++{"ts":"2026-11-24T03:59:05.057Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
++{"ts":"2026-11-24T03:59:05.061Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
+```
+
+**File**: `docs/evidence/ad-5055-partb/619fa17961d1bd2f.ndjson` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{"ts":"2026-11-24T03:56:52.198Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"replay","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/619fa17961d1bd2f.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
++{"ts":"2026-11-24T03:56:52.199Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"publicSession":"cwd:e93f14f237f7fd4f:harmonyos","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"open","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/619fa17961d1bd2f.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
++{"ts":"2026-11-24T03:56:55.587Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"error":"request canceled"}}
++{"ts":"2026-11-24T03:56:55.589Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
++{"ts":"2026-11-24T03:56:55.593Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
+```
+
+**File**: `docs/evidence/ad-5055-partb/one-line.ad` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++open com.sankuai.dianping --platform harmonyos
+```
+
+**File**: `docs/evidence/ad-5055-partb/replay-oneline.json` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++{
++  "success": false,
++  "error": {
++    "code": "REPLAY_DIVERGENCE",
++    "message": "Daemon request deadline exceeded",
++    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
++    "diagnosticId": "mwu60q2l-f83095c6",
++    "logPath": "<state-dir>/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson",
++    "diagnosticsRecord": {
++      "session": "cwd:e93f14f237f7fd4f:harmonyos",
++      "requestId": "571738ebf4f3424a"
++    },
++    "details": {
++      "reason": "daemon_request_timeout",
++      "replayPath": "one-line.ad",
++      "step": 1,
++      "action": "open",
++      "positionals": ["<arg>"],
++      "artifactPaths": [],
++      "divergence": {
++        "version": 1,
++        "kind": "action-failure",
++        "step": {
++          "index": 1,
++          "source": {
++            "path": "one-line.ad",
++            "line": 1
++          }
++        },
++        "action": "open \"com.sankuai.dianping\"",
++        "cause": {
++          "code": "COMMAND_FAILED",
++          "message": "request canceled",
++          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) — no retry is needed unless the cancellation was unintended."
++        },
++        "screen": {
++          "state": "unavailable",
++          "reason": "request-canceled",
++          "hint": "Post-failure snapshot skipped after request cancellation; the original replay failure is unaffected."
++        },
++        "suggestions": [],
++        "suggestionCount": 0,
++        "resume": {
++          "allowed": true,
++          "from": 1,
++          "planDigest": "2777bba07a19f1bcec3952098a94d9748a792d6b4d6b986703a7295929933ccc",
++          "alternateFrom": 2
++        },
++        "repairHint": "manual"
++      },
++      "causeReason": "request_canceled",
++      "timeoutMs": 3000
++    }
++  }
++}
+```
+
+---
+
+### Incident Patch 2: `a7440cc4` (2026-11-23)
+**Commit Message**: ci(linux): install cached desktop packages without an apt index refresh (#5021)
+
+* ci(linux): install cached desktop packages without an apt index refresh
+
+The Smoke job failed when a slow Ubuntu mirror could not finish
+`apt-get update` within 3x30s, although the restored archive cache
+already held every package the step needs. Install the cached .debs
+directly, and refresh the index only when they do not cover the
+package set. The cache key is unique per run attempt so a refreshed
+set replaces a stale one.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci(linux): stage cached debs in the apt archive before the cached install
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci(linux): leave dpkg headroom inside the install step budget
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci(linux): resolve cached packages against the lists that selected them
+
+Cache the authenticated package lists with the archives apt selected for
+the package set, keep both outside the system directories, and install
+only when the offline plan needs no download. A failed cached install
+recovers dpkg state and falls back to a clean archive directory. Every
+install runs with --no-downl
+
+**File**: `.github/workflows/linux.yml` (modified, +126/-41)
+```diff
+@@ -58,37 +58,51 @@ jobs:
+         run: node --experimental-strip-types scripts/device-lane-impact.ts replay-linux linux-command-evidence
+ 
+       # Unbounded, this step could not fail — it could only stall. On 2026-08-19 a slow mirror
+-      # held apt past the job's 30-minute budget on four main-branch runs and several unrelated
+-      # PRs, which reported as a red check on branches that never ran a line of project code.
+-      # On 2026-10-22 it recurred: the step took 20-60s normally, but 10 of 73 runs hit the
+-      # 6-minute backstop. The Azure mirror appears to be a pull-through cache. A package nobody
+-      # else requested recently (poppler-data, fonts-urw-base35, pulled in by gnome-calculator)
+-      # is fetched from a slow upstream on first request, and the download crawls or stalls. The
+-      # retry that warmed the mirror then succeeded in seconds, which is why re-runs were green.
+-      # Three bounds fix that: the downloaded .debs are cached so most runs never ask the mirror
+-      # for them, a download that does stall is dropped and retried under a per-attempt deadline
+-      # (apt resumes with the files already fetched), and `timeout-minutes` stays as the
+-      # backstop. dpkg itself never runs under a deadline.
+-      - name: Restore Linux desktop package archives
+-        id: apt-archives
++      # held apt past the job's 30-minute budget. On 2026-10-22 a pull-through mirror crawled on
++      # packages nobody else had requested recently (poppler-data, fonts-urw-base35, pulled in by
++      # gnome-calculator). In November 2026 the index refresh itself became the failure: a slow
++      # archive.ubuntu.com mirror could not serve the ~41 MB of indexes within the deadline.
++      #
++      # The cache holds the Ubuntu package lists of the last refresh and the archives that apt
++      # selected for PACKAGES from them. A run verifies the signatures, list digests and archive
++      # hashes, resolves PACKAGES against those lists and installs only when the plan needs no
++      # download, so it never asks a mirror for anything. A miss, a failed check, a plan that
++      # needs a download (a changed package list or runner image) or a failed install discards
++      # the restored set, refreshes into empty job-private directories and saves a new entry.
++      # The key is unique per run attempt, so restore-keys load the newest entry and a refreshed
++      # set replaces a stale one.
++      #
++      # Every install runs with --no-download, so the network is reached only inside a bounded
++      # phase. Worst case: cached install lock wait 60s, refresh 2 x (60s + 5s kill grace),
++      # download 2 x (75s + 5s), final install lock wait 60s. That is 410s of the 540s step,
++      # which leaves 130s for dpkg (2-5s per run in CI), the checks and the cache copy. dpkg
++      # itself never runs under a deadline.
++      - name: Restore Linux desktop packages
+         if: steps.impact.outputs.run != 'false'
+         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.2.3
+         with:
+-          path: ~/apt-archives
+-          key: apt-archives-${{ runner.os }}-${{ hashFiles('.github/workflows/linux.yml') }}
+-          restore-keys: apt-archives-${{ runner.os }}-
++          path: ~/apt-cache
++          key: apt-cache-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
++          restore-keys: apt-cache-${{ runner.os }}-
+ 
+       - name: Install Linux desktop dependencies
++        id: apt-install
+         if: steps.impact.outputs.run != 'false'
+-        timeout-minutes: 6
++        timeout-minutes: 9
+         run: |
+           set -euo pipefail
++          CACHE="$HOME/apt-cache"
++          KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
+           APT_OPTS=(
+             -o Acquire::Retries=2
+             -o Acquire::http::Timeout=15
+             -o Acquire::https::Timeout=15
+             # The runner's own unattended-upgrades timer holds the dpkg lock; wait, don't hang.
+             -o DPkg::Lock::Timeout=60
++            # Job-private lists and archives: the runner's periodic index update cannot change the
++            # plan between download and install, and a fallback never reuses a restored archive.
++            -o "Dir::State::Lists=$CACHE/lists/"
++            -o "Dir::Cache::Archives=$CACHE/archives/"
+           )
+           PACKAGES=(
+             xvfb
+@@ -102,40 +116,111 @@ jobs:
+             gnome-calculator
+             wmctrl
+           )
+-          # Retry a network phase under a per-attempt deadline.
++          stamp() { printf 'APT %s (UTC): %s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"; }
++          all_installed() {
++            local missing
++            missing="$(dpkg-query -W -f='${db:Status-Status} ${Package}\n' "${PACKAGES[@]}" 2>&1 | grep -v '^installed ' || true)"
++            [ -z "$missing" ] || { printf 'Not installed:\n%s\n' "$missing"; return 1; }
++          }
++          # apt trusts a list by the presence of InRelease and an archiv
+```
+
+---
+
+### Incident Patch 3: `b3acd235` (2026-11-23)
+**Commit Message**: fix(refs): name the settled diff in the plain-ref refusal and issue its replacement refs (#5037)
+
+After `fill @e3 … --settle; press @e4` with @e4 taken from the earlier full
+snapshot, the plain-ref refusal offered nothing: the agent could not tell
+that a settled diff replaced the frame and paid a full `snapshot -i` every
+time (#4571, the most common agent-blocking error in the dogfood data).
+
+The frame value now records which publication minted it. `RefFrameOrigin`
+(`complete` | `settle-diff` | `partial`) is set at issuance through the same
+factories; every partial publication flows through one choke point
+(`markSessionPartialRefsIssued`), and only the settle path
+(`issueSettleRefs`) passes `settle-diff`, so find, audit, replay divergence,
+and ambiguity issuances keep their refusal shape unchanged. Origin is
+diagnostic only: no admission decision and no ref lifetime changes — whether
+refs a diff left unchanged stay valid stays open for maintainers on #4571.
+
+When the refusing frame is settle-diff and the refused plain ref is not one
+of its issued refs, the refusal:
+
+- names the settled diff as the replacement in the message (and says when
+  the diff issued no refs),
+- carries `deta
+
+**File**: `docs/adr/0014-session-ref-frame-lifetime.md` (modified, +12/-0)
+```diff
+@@ -231,6 +231,18 @@ hint: Capture a fresh interactive snapshot or use a stable selector.
+ The daemon cannot truthfully report `mintedGeneration` for a plain ref.
+ When the actual failure is lifetime expiration, error messages must not claim that a found ref was missing or lacked bounds.
+ 
++#### 2026-11-24 amendment: a settled-diff frame names itself in the plain-ref refusal
++
++Issue #4571 measured the plain-ref refusal as the most common agent-blocking error after `--settle`: a bare ref from the earlier full snapshot is refused, the refusal offers nothing, and the agent pays a full `snapshot -i`.
++The frame now records which publication minted it: a bounded `origin` (`complete`, `settle-diff`, or `partial`) set at issuance through the same factories.
++The settle issuance path passes `settle-diff`; every other partial publication keeps `partial`.
++Origin is diagnostic only: it changes no admission decision and no ref lifetime — whether refs a diff left unchanged stay valid remains an open contract question for maintainers.
++
++When a settled diff replaced the frame and the refused plain ref is not one of its issued refs, the refusal names the settled diff as the replacement and carries `details.replacedBy: "settle-diff"` plus `details.replacementRefs`, each issued ref pinned to the frame epoch in the ready-to-copy `@eN~s<epoch>` form.
++The hint offers the same refs and keeps the fresh-snapshot escape.
++When the diff issued no refs, the refusal still names the diff and keeps the recapture guidance.
++The exact-emitted-ref suggestion (`details.suggestedRef`) keeps precedence when the refused body is itself in scope.
++
+ ### Expiration occurs at the side-effect seam
+ 
+ Expiration occurs after these and all other pre-action guards pass:
+```
+
+**File**: `packages/daemon/src/core/__tests__/ref-frame.test.ts` (modified, +20/-0)
+```diff
+@@ -8,6 +8,7 @@ import {
+   expireRefFrame,
+   refFrame,
+   refFrameEpoch,
++  refFrameOrigin,
+   refFrameScope,
+   refFrameState,
+   type RefFrameAdmission,
+@@ -136,6 +137,25 @@ test('activateCompleteRefFrame re-authorizes a complete frame after expiry', ()
+   });
+ });
+ 
++test('frame origin records which publication minted it and survives expiry', () => {
++  // No issuance yet: no origin.
++  assert.equal(refFrameOrigin(session()), undefined);
++
++  // A complete publication, the partial default, and the settle-diff partial.
++  const complete = session({ snapshotGeneration: 42 });
++  activateCompleteRefFrame(complete);
++  assert.equal(refFrameOrigin(complete), 'complete');
++  assert.equal(refFrameOrigin(partialSession(42, new Set(['e1']))), 'partial');
++  const settled = session({ snapshotGeneration: 42 });
++  activatePartialRefFrame(settled, new Set(['e1']), 'settle-diff');
++  assert.equal(refFrameOrigin(settled), 'settle-diff');
++
++  // Expiry replaces the frame whole; the origin rides along.
++  expireRefFrame(settled);
++  assert.equal(refFrameState(settled), 'expired');
++  assert.equal(refFrameOrigin(settled), 'settle-diff');
++});
++
+ test('expireRefFrame clears scoped-snapshot lineage at the seam (ADR 0014)', () => {
+   const scopeTree = {
+     nodes: [],
+```
+
+**File**: `packages/daemon/src/core/ref-frame-slot.ts` (modified, +15/-0)
+```diff
+@@ -21,11 +21,20 @@ export type RefFrameScope = 'all' | ReadonlySet<string>;
+ /** Lifecycle state of the current frame. */
+ export type RefFrameState = 'active' | 'expired';
+ 
++/**
++ * Which publication minted the frame. Diagnostic only — it feeds refusal text and
++ * details (#4571) and never an admission decision. `partial` covers every non-settle
++ * partial publication (`find`, `audit`, replay divergence, ambiguity candidates), which
++ * all refuse a plain ref with the same recapture guidance.
++ */
++export type RefFrameOrigin = 'complete' | 'settle-diff' | 'partial';
++
+ type RefFrameFields = Readonly<{
+   state: RefFrameState;
+   scope: RefFrameScope;
+   tree: SnapshotState | undefined;
+   generation: number | undefined;
++  origin: RefFrameOrigin | undefined;
+ }>;
+ 
+ /**
+@@ -57,6 +66,10 @@ class SessionRefFrame {
+     return this.#fields.generation;
+   }
+ 
++  get origin(): RefFrameOrigin | undefined {
++    return this.#fields.origin;
++  }
++
+   /** Idempotent by identity: an expired frame is returned as is, so repeated expiry compares `===`. */
+   static expire(frame: SessionRefFrame): SessionRefFrame {
+     if (frame.#fields.state === 'expired') return frame;
+@@ -77,13 +90,15 @@ export const PRISTINE_REF_FRAME: RefFrame = new SessionRefFrame({
+   scope: 'all',
+   tree: undefined,
+   generation: undefined,
++  origin: undefined,
+ });
+ 
+ /** The frame an issuance mints. Retention and epoch semantics are the caller's; see `ref-frame.ts`. */
+ export function issuedRefFrame(fields: {
+   scope: RefFrameScope;
+   tree: SnapshotState | undefined;
+   generation: number | undefined;
++  origin: RefFrameOrigin;
+ }): RefFrame {
+   return new SessionRefFrame({ state: 'active', ...fields });
+ }
+```
+
+**File**: `packages/daemon/src/core/ref-frame.ts` (modified, +24/-4)
+```diff
+@@ -5,6 +5,7 @@ import {
+   issuedRefFrame,
+   PRISTINE_REF_FRAME,
+   type RefFrame,
++  type RefFrameOrigin,
+   type RefFrameScope,
+   type RefFrameState,
+ } from './ref-frame-slot.ts';
+@@ -153,7 +154,7 @@ export function readSessionRuntimeRevision(session: SessionState): number {
+  * {@link activateRefFrame}.
+  */
+ export function activateCompleteRefFrame(session: SessionState): void {
+-  activateRefFrame(session, 'all');
++  activateRefFrame(session, 'all', 'complete');
+ }
+ 
+ /**
+@@ -165,8 +166,12 @@ export function activateCompleteRefFrame(session: SessionState): void {
+  * empty result must not (see `markSessionPartialRefsIssued`) — but the transition itself
+  * belongs here, with the complete form, because the two differ only in scope.
+  */
+-export function activatePartialRefFrame(session: SessionState, scope: ReadonlySet<string>): void {
+-  activateRefFrame(session, scope);
++export function activatePartialRefFrame(
++  session: SessionState,
++  scope: ReadonlySet<string>,
++  origin: RefFrameOrigin = 'partial',
++): void {
++  activateRefFrame(session, scope, origin);
+ }
+ 
+ /**
+@@ -179,18 +184,31 @@ export function activatePartialRefFrame(session: SessionState, scope: ReadonlySe
+  * `session.snapshot` without disturbing this tree, so a ref keeps resolving against the
+  * namespace that authorized it.
+  */
+-function activateRefFrame(session: SessionState, scope: RefFrameScope): void {
++function activateRefFrame(
++  session: SessionState,
++  scope: RefFrameScope,
++  origin: RefFrameOrigin,
++): void {
+   session.refFrame = issuedRefFrame({
+     scope,
+     tree: session.snapshot,
+     generation: session.snapshotGeneration,
++    origin,
+   });
+ }
+ 
+ export function refFrameState(session: SessionState): RefFrameState {
+   return refFrame(session).state;
+ }
+ 
++/**
++ * Which publication minted the frame (`ref-frame-slot.ts`). Diagnostic only: refusal text
++ * and details read it (#4571); admission never does. Undefined before any issuance.
++ */
++export function refFrameOrigin(session: SessionState): RefFrameOrigin | undefined {
++  return refFrame(session).origin;
++}
++
+ export function refFrameScope(session: SessionState): RefFrameScope {
+   return refFrame(session).scope;
+ }
+@@ -199,6 +217,7 @@ export type RefMutationFrame = {
+   admission: RefFrameAdmission;
+   scope: RefFrameScope;
+   currentGeneration: number | undefined;
++  origin: RefFrameOrigin | undefined;
  };
  
- /** An artifact held in memory, stopped once it crosses `maxBytes`, whatever `Content-Length` announced. */
- export type RemoteArtifactFetch = RemoteArtifactRequest & { maxBytes: number };
- 
- function buildDownloadDestination(params: RemoteArtifactDownload) {
-   const { destinationPath } = params;
-+  if (params.stagedFile) {
-+    return {
-+      prepare: async () => {
-+        await fs.promises.mkdir(path.dirname(destinationPath), { recursive: true });
-+      },
-+      cleanupOnError: async () => {},
-+      materialize: (res: http.IncomingMessage, signal: AbortSignal) =>
-+        materializeStagedFile(res, destinationPath, signal),
-+    };
-+  }
-   if (params.isDirectory) {
-     return {
-       prepare: async () => {
-@@ -63,6 +74,24 @@ function buildDownloadDestination(params: RemoteArtifactDownload) {
+ export function readRefMutationFrame(params: {
+@@ -215,6 +234,7 @@ export function readRefMutationFrame(params: {
+     }),
+     scope: refFrameScope(params.session),
+     currentGeneration: refFrameEpoch(params.session),
++    origin: refFrameOrigin(params.session),
    };
  }
  
-+async function materializeStagedFile(
-+  res: http.IncomingMessage,
-+  destinationPath: string,
-+  signal: AbortSignal,
-+): Promise<string> {
-+  const parent = await fs.promises.realpath(path.dirname(destinationPath));
-+  const staging = await fs.promises.mkdtemp(path.join(parent, '.agent-device-download-'));
-+  const staged = path.join(staging, 'artifact');
-+  try {
-+    await pipeline(res, fs.createWriteStream(staged, { flags: 'wx', mode: 0o600 }), { signal });
-+    signal.throwIfAborted();
-+    await fs.promises.rename(staged, path.join(parent, path.basename(destinationPath)));
-+    return destinationPath;
-+  } finally {
-+    await fs.promises.rm(staging, { recursive: true, force: true });
-+  }
-+}
-+
- /** Fetches one artifact into memory. Nothing reaches the disk, so a failure leaves nothing behind. */
- export async function fetchRemoteArtifactFromUrl(params: RemoteArtifactFetch): Promise<Buffer> {
-   return await requestRemoteArtifact(params, {
 ```
 
-**File**: `packages/remote/src/daemon-artifacts.ts` (modified, +82/-15)
+**File**: `packages/daemon/src/execution/__tests__/session-snapshot.test.ts` (modified, +4/-0)
 ```diff
-@@ -535,6 +535,7 @@ async function downloadResponseArtifacts(
-   if (artifacts.length === 0) return data === response.data ? response : { ok: true, data };
-   const nextData: Record<string, unknown> = { ...(data ?? {}) };
-   const nextArtifacts: DaemonArtifact[] = [];
-+  const recording = isRecordStop(req) ? recordingDelivery() : undefined;
-   for (const artifact of artifacts) {
-     if (isSessionScriptArtifact(artifact)) {
-       await scripts?.publish(artifact, nextData, nextArtifacts);
-@@ -545,18 +546,20 @@ async function downloadResponseArtifacts(
-       continue;
+@@ -19,6 +19,7 @@ import {
+   expireRefFrame,
+   refFrame,
+   refFrameEpoch,
++  refFrameOrigin,
+   refFrameScope,
+   refFrameState,
+ } from '../../core/ref-frame.ts';
+@@ -257,6 +258,9 @@ for (const retire of [false, true]) {
+     } else {
+       expect(generation).toBe(session.snapshotGeneration);
+       expect(refFrameScope(session)).toEqual(new Set(['e1']));
++      // #4571: the settle-diff origin is what lets a later plain-ref refusal name
++      // this diff as the replacement instead of a generic recapture.
++      expect(refFrameOrigin(session)).toBe('settle-diff');
      }
-     if (typeof artifact.field !== 'string' || isClientOwnedResponseField(artifact.field)) continue;
--    const downloadPath = resolveMaterializedArtifactPath(artifact, req, host);
-+    const destination = resolveMaterializedArtifactPath(artifact, req, host);
-     const materializedPath = await downloadRemoteArtifact({
-       ...endpoint,
-       artifactId: artifact.artifactId,
--      destinationPath: downloadPath,
-+      destinationPath: destination.path,
-       requestScope: req.meta,
-       // #2246: `test-artifacts` is the one directory-shaped artifact type today — known from the
-       // response, before any bytes arrive, so cleanup-on-error can be decided up front instead of
-       // racing the response headers (a directory destination must never be `rm`'d wholesale; see
-       // `downloadRemoteArtifact`).
--      isDirectory: artifact.artifactType === 'test-artifacts',
-+      isDirectory: recording === undefined && artifact.artifactType === 'test-artifacts',
-+      stagedFile: recording !== undefined,
-     });
-+    recording?.add(artifact.field, materializedPath, destination.fallback);
-     // Directory artifacts download into a caller-owned root, then atomically publish their one
-     // top-level entry beneath it. Use the path the download actually published rather than the
-     // root hint sent over the wire; otherwise `artifactsDir` loses its suite invocation segment.
-@@ -567,9 +570,56 @@ async function downloadResponseArtifacts(
-     });
-   }
-   nextData.artifacts = nextArtifacts;
-+  recording?.report(nextData);
-   return { ok: true, data: nextData };
+   });
+ }
+```
+
+**File**: `packages/daemon/src/execution/interaction/internal/__tests__/interaction-ref-policy.test.ts` (modified, +85/-0)
+```diff
+@@ -39,7 +39,92 @@ test('a plain ref outside the emitted partial scope keeps the recapture hint', (
+ 
+   expect(response?.ok).toBe(false);
+   if (response && !response.ok) {
++    expect(response.error.message).toBe(
++      'Ref @e19 needs a complete snapshot — the current frame only authorizes its emitted refs',
++    );
+     expect(response.error.details?.suggestedRef).toBeUndefined();
++    expect(response.error.details?.replacedBy).toBeUndefined();
++    expect(response.error.details?.replacementRefs).toBeUndefined();
++    expect(response.error.details?.hint).toBe(
++      'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.',
++    );
++  }
++});
++
++// #4571: `fill @e3 … --settle; press @e4` with @e4 from the earlier full snapshot — the
++// settle diff replaced the frame, so the refusal names it and hands back what it issued
++// instead of leaving the caller a full `snapshot -i` round trip.
++test('a settled-diff frame names the diff as the replacement and lists its issued refs pinned', () => {
++  const session = makeStaleRefSession('settle-frame-replacement');
++  session.snapshotGeneration = 531_735;
++  activatePartialRefFrame(session, new Set(['e34', 'e7']), 'settle-diff');
++
++  const response = refMutationAdmissionResponse({
++    ref: '@e4',
++    mintedGeneration: undefined,
++    staleRefsWarning: undefined,
++    frame: readRefMutationFrame({ session, ref: '@e4', mintedGeneration: undefined }),
++  });
++
++  expect(response?.ok).toBe(false);
++  if (response && !response.ok) {
++    expect(response.error.message).toBe(
++      'Ref @e4 needs a complete snapshot — a settled diff replaced the ref frame and only authorizes its issued refs',
++    );
++    expect(response.error.details).toMatchObject({
++      reason: 'plain_ref_requires_complete_frame',
++      currentGeneration: 531_735,
++      replacedBy: 'settle-diff',
++      replacementRefs: ['@e34~s531735', '@e7~s531735'],
++      hint: 'Retry with one of the refs the settled diff issued: @e34~s531735, @e7~s531735 — or capture a fresh interactive snapshot (snapshot -i).',
++    });
++  }
++});
++
++test('a settled-diff frame keeps the exact-emitted suggestion when the refused body is one it issued', () => {
++  const session = makeStaleRefSession('settle-frame-emitted');
++  session.snapshotGeneration = 531_735;
++  activatePartialRefFrame(session, new Set(['e34']), 'settle-diff');
++
++  const response = refMutationAdmissionResponse({
++    ref: '@e34',
++    mintedGeneration: undefined,
++    staleRefsWarning: undefined,
++    frame: readRefMutationFrame({ session, ref: '@e34', mintedGeneration: undefined }),
++  });
++
++  expect(response?.ok).toBe(false);
++  if (response && !response.ok) {
++    expect(response.error.details).toMatchObject({
++      suggestedRef: '@e34~s531735',
++      hint: 'Retry with the exact emitted ref @e34~s531735.',
++    });
++    expect(response.error.details?.replacementRefs).toBeUndefined();
++  }
++});
++
++test('a settled-diff frame that issued no refs keeps the recapture guidance', () => {
++  const session = makeStaleRefSession('settle-frame-empty');
++  session.snapshotGeneration = 531_735;
++  activatePartialRefFrame(session, new Set(), 'settle-diff');
++
++  const response = refMutationAdmissionResponse({
++    ref: '@e19',
++    mintedGeneration: undefined,
++    staleRefsWarning: undefined,
++    frame: readRefMutationFrame({ session, ref: '@e19', mintedGeneration: undefined }),
++  });
++
++  expect(response?.ok).toBe(false);
++  if (response && !response.ok) {
++    expect(response.error.message).toBe(
++      'Ref @e19 needs a complete snapshot — a settled diff replaced the ref frame and issued no refs',
++    );
++    expect(response.error.details).toMatchObject({
++      reason: 'plain_ref_requires_complete_frame',
++      replacedBy: 'settle-diff',
++    });
++    expect(response.error.details?.replacementRefs).toBeUndefined();
+     expect(response.error.details?.hint).toBe(
+       'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.',
+     );
+```
+
+**File**: `packages/daemon/src/execution/interaction/internal/interaction-ref-policy.ts` (modified, +77/-13)
+```diff
+@@ -37,30 +37,94 @@ export function assertRefMutationAdmitted(params: {
+     currentGeneration !== undefined
+       ? `@${refBody}~s${currentGeneration}`
+       : undefined;
+-  throw new AppError('COMMAND_FAILED', rejectionMessage(admission.reason, params.ref), {
+-    reason: admission.reason,
+-    ref: params.ref,
+-    currentGeneration,
+-    scope: scope === 'all' ? 'all' : Array.from(scope),
+-    ...(params.mintedGeneration !== undefined ? { mintedGeneration: params.mintedGeneration } : {}),
+-    ...(suggestedRef ? { suggestedRef } : {}),
+-    hint: suggestedRef
+-      ? `Retry with the exact emitted ref ${suggestedRef}.`
+-      : (params.staleRefsWarning ?? REJECTION_HINT),
+-  });
++  const replacement = settledDiffReplacement(params.frame, suggestedRef);
++  throw new AppError(
++    'COMMAND_FAILED',
++    rejectionMessage(admission.reason, params.ref, replacement),
++    {
++      reason: admission.reason,
++      ref: params.ref,
++      currentGeneration,
++      scope: scope === 'all' ? 'all' : Array.from(scope),
++      ...(params.mintedGeneration !== undefined
++        ? { mintedGeneration: params.mintedGeneration }
++        : {}),
++      ...(suggestedRef ? { suggestedRef } : {}),
++      ...(replacement ? { replacedBy: 'settle-diff' } : {}),
++      ...(replacement?.replacementRefs ? { replacementRefs: replacement.replacementRefs } : {}),
++      hint: suggestedRef
++        ? `Retry with the exact emitted ref ${suggestedRef}.`
++        : (replacement?.hint ?? params.staleRefsWarning ?? REJECTION_HINT),
++    },
++  );
  }
  
-+const RECORDING_DESTINATION_REASONS = {
-+  notRequested: 'recording_destination_not_requested',
-+} as const;
-+
-+type RecordingDestinationWarning = {
-+  reason: typeof RECORDING_DESTINATION_REASONS.notRequested;
-+  field: string;
-+  path: string;
+ const REJECTION_HINT =
+   'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.';
+ 
+-function rejectionMessage(reason: RefFrameRejectReason, ref: string): string {
++/**
++ * The settled-diff replacement of a plain-ref refusal (#4571): the refusal names the diff
++ * that replaced the frame and hands back the refs that diff issued, each pinned to the
++ * epoch the caller faces (#4853 paste-ready standard). The frame already authorized
++ * exactly these bodies at this epoch, so printing them issues nothing new — a pasted ref
++ * is admitted without another capture. Undefined for every other refusal shape.
++ */
++type SettledDiffReplacement = {
++  /** `details.replacementRefs`; absent when the diff issued none or the exact-emitted suggestion won. */
++  replacementRefs: string[] | undefined;
++  /** The replacement hint; absent when the refusal keeps the recapture guidance. */
++  hint: string | undefined;
 +};
 +
-+function recordingDelivery() {
-+  const destinationWarnings: RecordingDestinationWarning[] = [];
-+  const recordingPaths: string[] = [];
++function settledDiffReplacement(
++  frame: RefMutationFrame,
++  suggestedRef: string | undefined,
++): SettledDiffReplacement | undefined {
++  if (
++    frame.admission.admitted ||
++    frame.admission.reason !== 'plain_ref_requires_complete_frame' ||
++    frame.origin !== 'settle-diff'
++  ) {
++    return undefined;
++  }
++  const replacementRefs =
++    suggestedRef === undefined &&
++    frame.scope !== 'all' &&
++    frame.scope.size > 0 &&
++    frame.currentGeneration !== undefined
++      ? Array.from(frame.scope, (body) => `@${body}~s${frame.currentGeneration}`)
++      : undefined;
 +  return {
-+    add(field: string, written: string, fallback: boolean): void {
-+      if (fallback) {
-+        destinationWarnings.push({
-+          reason: RECORDING_DESTINATION_REASONS.notRequested,
-+          field,
-+          path: written,
-+        });
-+      }
-+      if (field === 'outPath' || field === 'chunkPath') recordingPaths.push(written);
-+    },
-+    report(data: Record<string, unknown>): void {
-+      if (destinationWarnings.length > 0) {
-+        data.recordingDestinationWarnings = destinationWarnings;
-+        data.warnings = [
-+          ...(Array.isArray(data.warnings) ? data.warnings : []),
-+          ...destinationWarnings.map(
-+            ({ path: written }) =>
-+              `Saved remote recording file to ${written} in the current directory because this request named no destination.`,
-+          ),
-+        ];
-+      }
-+      // The daemon lists the first video and subsequent chunk artifacts in chunk order.
-+      if (Array.isArray(data.chunks) && recordingPaths.length === data.chunks.length) {
-+        data.chunks = data.chunks.map((chunk, index) => ({
-+          ...chunk,
-+          path: recordingPaths[index],
-+        }));
-+      }
-+    },
++    replacementRefs,
++    hint: replacementRefs ? settleReplacementHint(replacementRefs) : undefined,
 +  };
 +}
 +
- function hasDownloadableArtifactId(
-   artifact: DaemonArtifact | undefined,
- ): artifact is DaemonArtifact & { artifactId: string } {
-@@ -604,15 +654,12 @@ function withoutScriptFieldOwner(
- }
- 
- /**
-- * Whether this request finishes a capture whose destination this client named in an EARLIER
-- * request (`record start`, a perf or trace start with an output path). The daemon echoes that
-- * destination, and the paths it derives from it, as `localPath`, because this process kept no
-- * record of it. The finishing actions mirror the daemon's own (`request-finalization.ts`).
-+ * Whether this request finishes a trace or perf capture whose destination the daemon echoes
-+ * from an earlier request. The finishing actions mirror `request-finalization.ts`.
-  */
- function finishesEarlierClientCapture(req: DaemonWireRequest): boolean {
-   const [first, second, third] = (req.positionals ?? []).map((value) => value.toLowerCase());
-   switch (req.command) {
--    case 'record':
-     case 'trace':
-       return first === 'stop';
-     case 'perf':
-@@ -622,27 +669,46 @@ function finishesEarlierClientCapture(req: DaemonWireRequest): boolean {
-   }
- }
- 
-+function isRecordStop(req: DaemonWireRequest): boolean {
-+  return req.comm
-```
-
-**File**: `test/integration/provider-scenarios/remote-daemon-client.test.ts` (modified, +19/-4)
-```diff
-@@ -47,6 +47,7 @@ type RemoteClient = ReturnType<typeof createAgentDeviceClient>;
- type RemotePaths = {
-   screenshotPath: string;
-   recordingPath: string;
-+  cwd: string;
-   localApkPath: string;
-   localInstallSourcePath: string;
- };
-@@ -547,10 +548,18 @@ async function assertRecordingArtifactRoundTrip(
-   assert.equal(start.recording, 'started');
-   assert.equal(fs.existsSync(paths.recordingPath), false);
- 
-+  // #4518: a remote stop never writes to the daemon's localPath echo. It lands in the client cwd
-+  // under the daemon's file name and reports that fallback.
-   const stop = await client.recording.record({ action: 'stop' });
-   assert.equal(stop.recording, 'stopped');
--  assert.equal(stop.outPath, paths.recordingPath);
--  assert.deepEqual(fs.readFileSync(paths.recordingPath), RECORDING_BYTES);
-+  const landed = path.join(paths.cwd, 'remote-recording.mp4');
-+  assert.equal(stop.outPath, landed);
-+  assert.deepEqual(fs.readFileSync(landed), RECORDING_BYTES);
-+  assert.equal(fs.existsSync(paths.recordingPath), false);
-+  assert.deepEqual(
-+    (stop as { recordingDestinationWarnings?: unknown }).recordingDestinationWarnings,
-+    [{ reason: 'recording_destination_not_requested', field: 'outPath', path: landed }],
-+  );
- 
-   const recordStartRpc = rpcRequests.at(-2);
-   assert.equal(recordStartRpc?.params?.command, 'record');
-@@ -631,14 +640,19 @@ test('Provider-backed integration remote daemon client materializes artifacts an
-     return;
-   }
- 
--  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-device-remote-client-'));
-+  const stateDir = fs.realpathSync(
-+    fs.mkdtempSync(path.join(os.tmpdir(), 'agent-device-remote-client-')),
-+  );
-+  const cwd = path.join(stateDir, 'cwd');
-+  fs.mkdirSync(cwd);
-   const screenshotPath = path.join(stateDir, 'remote-shot.png');
--  const recordingPath = path.join(stateDir, 'remote-recording.mp4');
-+  const recordingPath = path.join(stateDir, 'clips', 'remote-recording.mp4');
-   const localApkPath = path.join(stateDir, 'demo.apk');
-   const localInstallSourcePath = path.join(stateDir, 'source.apk');
-   fs.writeFileSync(localApkPath, 'fake-apk');
-   fs.writeFileSync(localInstallSourcePath, 'fake-source-apk');
-   const paths = {
-+    cwd,
-     screenshotPath,
-     recordingPath,
-     localApkPath,
-@@ -656,6 +670,7 @@ test('Provider-backed integration remote daemon client materializes artifacts an
-       daemonBaseUrl: `http://127.0.0.1:${port}`,
-       daemonAuthToken: 'remote-token',
-       stateDir,
-+      cwd,
-     });
- 
-     await assertScreenshotRoundTrip(client, paths, rpcRequests);
-```
-
-**File**: `test/wire-compat/ledger.json` (modified, +15/-10)
-```diff
-@@ -147,15 +147,15 @@
-     "packages/daemon/src/server/upload-http.ts#resolveUploadHttpRoute": "sha256:d744044d036a46221c3b8220179cc30e1e66b8619a4e5cd3f7dd5f8582817aba",
-     "packages/daemon/src/server/upload-http.ts#sendJson": "sha256:c2317b4b14a10731684c9160038005965856150f05f8923765a3fa833d2ecae9",
-     "packages/daemon/src/server/upload-http.ts#sendUploadedArtifactResponse": "sha256:8a8873eb6437a32f7045c87a7b16226a48ff7fc4d61c5de459809e2558758768",
--    "packages/remote/src/artifact-download.ts#RemoteArtifactDownload": "sha256:6230fb1efacc0bdb7223ce4d66bc2dc754fdaca475268fe75ada0facd4e734ac",
-+    "packages/remote/src/artifact-download.ts#RemoteArtifactDownload": "sha256:d3eeaf9a072123004d868a0261067456793a7121836d6f6b354fcd65aa0826bd",
-     "packages/remote/src/artifact-download.ts#downloadRemoteArtifactFromUrl": "sha256:4772ec65900be31f0ac6fb889967a9f35a4a565f6bb87e72458e3ab6e54cc941",
-     "packages/remote/src/daemon-artifacts.ts#DaemonArtifactEndpoint": "sha256:45226717ac52c0af2a62f74e91549582d95f4a4abc49be87989e026291a88c82",
--    "packages/remote/src/daemon-artifacts.ts#DownloadRemoteArtifactParams": "sha256:ba6d2f6ac51e05ccc5e0c940b355d62374e018b1ae6f6f744becf6e1760cbb63",
-+    "packages/remote/src/daemon-artifacts.ts#DownloadRemoteArtifactParams": "sha256:bb02635a5576176a12b70c25a74a2443e0ae7344b0050dd07b153da9cbfe5ae6",
-     "packages/remote/src/daemon-artifacts.ts#buildDaemonArtifactUrl": "sha256:06dcde057809b507f70f7bb5cdef9bde6515be84b67e45865cf19e70b8636208",
-     "packages/remote/src/daemon-artifacts.ts#downloadRemoteArtifact": "sha256:3f3b6c01601c54ab2c76c8cb0946de623da4d24ba32254c75ae8a3993f66adcf",
-     "packages/remote/src/daemon-artifacts.ts#isRemoteDaemon": "sha256:0f6a714c5f60ce4e8548d811b516d8b6241eca9f7e5414733732da395b8a00e7",
-     "packages/remote/src/daemon-artifacts.ts#materializeRemoteArtifacts": "sha256:6d9aba219e6fafbdbcef76d30ed99fbb4f61dcc525242a0a76c3dc1bdacd24e2",
--    "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath": "sha256:660320cd62dfaeb4da80b86d6c072a5bcdbce3399723d43208a22d70b6e4a243",
-+    "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath": "sha256:f8edfda6b7f3172392f7649ee68edd87ac1f489da57c0c0e5cb57347803bb184",
-     "packages/remote/src/remote-request-diagnostics.ts#RemoteDaemonErrorPayload": "sha256:8fbcbcdf4bae7b66a08e465a72593794f36364759f18f1a814cd39dfdb76f309",
-     "packages/remote/src/remote-request-diagnostics.ts#RemoteDiagnosticsEndpoint": "sha256:c1d5fe2fe90c425502cf8b7c87d6606374d6af65b4e9faf942a416f683930bdc",
-     "packages/remote/src/remote-request-diagnostics.ts#buildRemoteRequestDiagnosticsUrl": "sha256:30a1a9bf0df24d3564a616699916a3bb4360c2b4d21c4ad0562fb0c1e738d0a9",
-@@ -212,7 +212,7 @@
-     "packages/daemon-contracts/src/daemon-resolution.ts#DAEMON_CAPABILITIES": "sha256:3478986d0e7b0e55e965c087a7b1dfd3cc018abdb372dba256cf90d27e63ed0b",
-     "packages/daemon-contracts/src/daemon-resolution.ts#DaemonCapability": "sha256:2a5acf280a72e3d54c5ad7b52aece3ced37a30e4e721ef106a98e3bbd18ddbc3",
-     "packages/daemon-contracts/src/daemon-resolution.ts#readDaemonCapabilities": "sha256:e410d36be74d307f7e5d8ddae63af5aae77f8eef77951ce9eeb7724f2fefae88",
--    "packages/remote/src/daemon-artifacts.ts#downloadResponseArtifacts": "sha256:bc620e6f98821fdfe7e65eb63404eb175ffd583730cb877fa5a5f9f4e80c9fe0",
-+    "packages/remote/src/daemon-artifacts.ts#downloadResponseArtifacts": "sha256:aa3ea996bdd1329d88570ba87c03026946dd33f34172c0eccd5a6ac3d38e9884",
-     "packages/remote/src/session-script-destination.ts#SessionScriptDelivery": "sha256:741fafbb8e2b43e2e967b2f4206f1d60017a636f63e3cde68b6258fd4efefa18",
-     "packages/remote/src/script-version-publisher.ts#publishScriptVersion": "sha256:b37b9391d20f535ca9c0858f92ed37943297c7acbf1fb10f8cad5cd5b53423eb",
-     "packages/remote/src/script-version-publisher.ts#PublishOutcome": "sha256:a4ae6fc3298d3c560719591372edddbfa83ce749f4cf3f3e2ed1d8369313bd2d",
-@@ -499,8 +499,8 @@
-     },
-     {
-       "declaration": "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath",
--      "digest": "sha256:660320cd62dfaeb4da80b86d6c072a5bcdbce3399723d43208a22d70b6e4a243",
--      "rationale": "The client, not the response, chooses the local download path: a destination it registered in this request wins, a response localPath is accepted only on a record or trace stop or a perf stop or report, and any other artifact lands in cwd under the basename of its fileName. A released daemon echoes localPath equal to the registered destination for screenshot and test, and echoes an earlier destination only on those stop and report actions, so its artifacts land where they did before. The wire shape is unchanged."
-+      "digest": "sha256:f8edfda6b7f3172392f7649ee68edd87ac1f489da57c0c0e5cb57347803bb184",
-+      "rationale": "#4518 client-side only. Remote record stop uses a destination from the current request. Without one, it uses one plain file name or a generated name in cwd. Trac
-```
-
----
-
-### Incident Patch 2: `4075dd11` (2026-11-21)
-**Commit Message**: fix(host-kit): pin ps lstart reads to the C locale so daemon stop finds a live daemon (#4682)
-
-* fix(host-kit): pin ps lstart reads to the C locale
-
-ps -o lstart prints weekday and month names in the caller's locale, so a
-daemon and a client under different LC_TIME compared one start time as
-different lifetimes and daemon stop orphaned a live daemon on macOS.
-Run the ps identity reads with LC_ALL=C and treat a C-form start time
-against a localized one as unknown instead of reassigned.
-
-Fixes #4656
-
-* fix(host-kit): pin only lstart-bearing ps reads and keep legacy timestamps unverified
-
-Addresses the blocking review on #4682:
-
-- The LC_ALL=C pin now applies only to ps reads whose output carries
-  lstart (HOST_PROCESS_IDENTITY_PS_ARGS sync/async and
-  readProcessField('lstart=')). The pid=,command= batch read and
-  readProcessField('command='/'state=') keep the caller's locale, so
-  command text reads with one encoding from every host-kit caller,
-  matching the unpinned listHostProcesses scan. BSD/macOS ps escapes
-  non-ASCII argv bytes under LC_ALL=C (/tmp/é-ü -> /tmp/M-CM-)-M-CM-<),
-  which broke managed-process ownership for non-ASCII paths.
-- The pin is a final override on top of
-
-**File**: `packages/daemon-client/src/__tests__/daemon-client-lifecycle.test.ts` (modified, +5/-4)
-```diff
-@@ -13,6 +13,7 @@ import {
-   mkdtempForTestSync,
-   startHttpDaemonFixture,
-   skipWhenLoopbackUnavailable,
-+  staleBirthTokenLike,
- } from '@agent-device/test-kit';
- import {
-   planRegisteredDaemonLaunches,
-@@ -382,10 +383,10 @@ test('daemon acquisition reclaims a proven reused owner before publication', asy
-   const paths = resolveDaemonPaths(stateDir);
-   const daemon = await startHttpDaemonFixture({ via: 'fresh-daemon' });
-   vi.stubEnv('AGENT_DEVICE_STATE_DIR', stateDir);
--  const staleStartTime =
--    process.platform === 'linux'
--      ? 'linux:00000000-0000-0000-0000-000000000000:0'
--      : 'stale-start-time';
-+  // A proven reuse needs a stale value in the same provenanced format as the live read of this
-+  // pid; a raw legacy rendering would be unknown, not proof.
-+  const liveStartTime = readProcessStartTime(process.pid);
-+  const staleStartTime = staleBirthTokenLike(liveStartTime);
-   const stale = tryAcquireProcessLock({
-     lockDirPath: paths.lockPath,
-     owner: { pid: process.pid, startTime: staleStartTime, acquiredAtMs: Date.now() },
-```
-
-**File**: `packages/daemon-contracts/src/daemon-process-takeover.test.ts` (modified, +74/-5)
-```diff
-@@ -5,7 +5,12 @@ import fs from 'node:fs';
- import os from 'node:os';
- import path from 'node:path';
- import { afterEach, test } from 'vitest';
--import { isProcessAlive, readProcessStartTime } from '@agent-device/host-kit/process';
-+import {
-+  isProcessAlive,
-+  readProcessCommand,
-+  readProcessStartTime,
-+} from '@agent-device/host-kit/process';
-+import { staleBirthTokenLike } from '@agent-device/test-kit';
- import { isAgentDeviceDaemonProcess, stopDaemonProcess } from './daemon-process.ts';
- 
- const TAKEOVER_TIMEOUTS = { termTimeoutMs: 5_000, killTimeoutMs: 2_000 };
-@@ -35,13 +40,13 @@ afterEach(async () => {
-   }
- });
- 
--/** A daemon entry from a branch-named checkout, whose path has no project-name marker. */
--function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: string } {
-+/** A daemon entry from a checkout under `prefix`, whose path has no project-name marker. */
-+function spawnFakeDaemon(prefix: string): { pid: number; entryPath: string } {
-   // Vitest redirects `os.tmpdir()` under a worktree-named run directory. Use
-   // the host temp root so this path itself cannot accidentally contain the
-   // project name and mask the worktree identity regression.
-   const tempRoot = process.platform === 'win32' ? os.tmpdir() : '/tmp';
--  const root = fs.realpathSync.native(fs.mkdtempSync(path.join(tempRoot, 'repair-evidence-')));
-+  const root = fs.realpathSync.native(fs.mkdtempSync(path.join(tempRoot, prefix)));
-   spawnedRoots.push(root);
-   const entryPath = path.join(root, 'dist', 'src', 'internal', 'daemon.js');
-   fs.mkdirSync(path.dirname(entryPath), { recursive: true });
-@@ -56,6 +61,11 @@ function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: str
-   return { pid, entryPath };
- }
- 
-+/** A daemon entry from a branch-named checkout, whose path has no project-name marker. */
-+function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: string } {
-+  return spawnFakeDaemon('repair-evidence-');
++/** The replacement route for a settled-diff frame: the diff's issued refs, ready to paste. */
++function settleReplacementHint(replacementRefs: string[]): string {
++  const list = replacementRefs.join(', ');
++  return replacementRefs.length === 1
++    ? `Retry with the ref the settled diff issued: ${list} — or capture a fresh interactive snapshot (snapshot -i).`
++    : `Retry with one of the refs the settled diff issued: ${list} — or capture a fresh interactive snapshot (snapshot -i).`;
 +}
 +
- // #1545: a reachable daemon with a code-signature mismatch is replaced. If a
- // branch-named worktree is rejected as "not ours", replacement leaves the old
- // daemon alive and the next request reaches a fresh empty session store.
-@@ -96,7 +106,9 @@ test('does not stop a branch-named daemon when the pid belongs to a different pr
- 
-   const actualStartTime = readProcessStartTime(pid);
-   assert.ok(actualStartTime, 'expected the spawned daemon to report a start time');
--  const staleStartTime = `${actualStartTime}-previous-lifetime`;
-+  // A proven reuse needs a stale value in the same verified format as the live read; a legacy
-+  // token would be unverified rather than proof.
-+  const staleStartTime = staleBirthTokenLike(actualStartTime);
-   assert.equal(isAgentDeviceDaemonProcess(pid, staleStartTime), false);
- 
-   const result = await stopDaemonProcess(
-@@ -110,3 +122,60 @@ test('does not stop a branch-named daemon when the pid belongs to a different pr
-   });
-   assert.equal(isProcessAlive(pid), true);
- });
-+
-+// #4656: a record written before the provenance pin holds a raw `lstart` rendering — fr_FR prints
-+// `mar. 17 nov. 19:42:27 2026`, locales that omit HH:mm:ss print no clock, and an earlier pinned
-+// build stored the raw C form. All are unqualified, so at the daemon stop boundary they yield
-+// unverified identity — never `already-exited`, and never a signal — so a live daemon is not
-+// retired while it still runs.
-+test.skipIf(process.platform !== 'darwin')(
-+  'a legacy raw record yields unverified identity at daemon stop, not an exited daemon',
-+  async () => {
-+    const { pid } = spawnFakeDaemonFromBranchNamedCheckout();
-+    const startTime = readProcessStartTime(pid);
-+    assert.ok(startTime, 'expected the spawned daemon to report a start time');
-+    assert.ok(startTime.startsWith('posix:'), `expected a posix birth token, got ${startTime}`);
-+
-+    for (const legacy of [
-+      'mar. 17 nov. 19:42:27 2026',
-+      '17 nov. 2026',
-+      'Tue Nov 17 19:42:27 2026',
-+    ]) {
-+      const result = await stopDaemonProcess(
-+        { pid, startTime: legacy },
-+        { mode: 'graceful', termTimeoutMs: 200, killTimeoutMs: 100 },
-+      );
-+      assert.equal(result.status, 'retained', `legacy record ${legacy} must not retire the daemon`);
-+      if (result.status === 'retained') {
-+        assert.equal(result.reason, 'identity-unverified');
++function rejectionMessage(
++  reason: RefFrameRejectReason,
++  ref: string,
++  replacement: SettledDiffReplacement | undefined,
++): string {
+   switch (reason) {
+     case 'ref_frame_expired':
+       return `Ref ${ref} belongs to an expired ref frame — a device action since the snapshot invalidated it`;
+     case 'ref_generation_mismatch':
+       return `Ref ${ref} was minted from a superseded snapshot generation`;
+     case 'plain_ref_requires_complete_frame':
+-      return `Ref ${ref} needs a complete snapshot — the current frame only authorizes its emitted refs`;
++      if (!replacement) {
++        return `Ref ${ref} needs a complete snapshot — the current frame only authorizes its emitted refs`;
 +      }
-+      assert.equal(
-+        isProcessAlive(pid),
-+        true,
-+        'no signal may reach a daemon the legacy record cannot verify',
-+      );
-+    }
-+  },
-+);
-+
-+test.skipIf(process.platform === 'win32')(
-+  'the stop route reads a non-ASCII daemon argv as UTF-8, not as C-locale escapes',
-+  async () => {
-+    const { pid, entryPath } = spawnFakeDaemon('utf8-é-ü-');
-+    assert.ok(entryPath.includes('é-ü'));
-+
-+    const command = readProcessCommand(pid);
-+    assert.ok(command?.includes('é-ü'), `expected the UTF-8 argv, got ${JSON.stringify(command)}`);
-+    const startTime =
-```
-
-**File**: `packages/daemon-contracts/src/daemon-registration-status.test.ts` (modified, +3/-1)
-```diff
-@@ -119,7 +119,9 @@ test('a record whose process is gone or was replaced is not a running daemon', (
-     processStartTime:
-       process.platform === 'linux'
-         ? 'linux:00000000-0000-0000-0000-000000000000:0'
--        : 'Thu Jan  1 00:00:00 1970',
-+        : process.platform === 'win32'
-+          ? '000000000000000000000'
-+          : 'posix:1000',
-     plugins: [ACTIVE],
-   });
-   expect(readDaemonStatus(resolveDaemonPaths(stateDir)).state).toBe('stopped');
-```
-
-**File**: `packages/daemon-contracts/src/daemon-registration.test.ts` (modified, +52/-5)
-```diff
-@@ -7,7 +7,12 @@ import {
-   readRegisteredDaemonIdentity,
-   readRegisteredDaemonOwnership,
- } from './daemon-registration.ts';
--import { mkdtempForTestSync, publishDaemonRegistration } from '@agent-device/test-kit';
-+import {
-+  LIFETIME_TOKEN,
-+  LEGACY_RAW_START_TIME,
-+  mkdtempForTestSync,
-+  publishDaemonRegistration,
-+} from '@agent-device/test-kit';
- 
- const roots: string[] = [];
- 
-@@ -55,14 +60,56 @@ test('a different published pid proves the owner no longer serves its state dir'
-   assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4141, startTime: 'owner-start' }), true);
- });
- 
--test('a published start time proves supersession only when both sides are readable', () => {
-+test('a published start time proves supersession only when both sides are provenanced', () => {
-   const stateDir = useStateDir();
--  publishDaemonRegistration(stateDir, { pid: 4242, startTime: 'successor-start' });
--  assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'owner-start' }), true);
-+  // Two `posix:` tokens with different values are the same provenanced format, so the difference
-+  // proves the pid changed hands.
-+  publishDaemonRegistration(stateDir, { pid: 4242, startTime: 'posix:1763493001000' });
-+  assert.equal(
-+    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'posix:1763493000000' }),
-+    true,
-+  );
-+  // Raw historical renderings — a localized one, and even the C form — are unqualified, so they
-+  // are unverified, never a proved supersession.
-+  assert.equal(
-+    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'mar. 17 nov. 19:42:28 2026' }),
-+    false,
-+  );
-+  assert.equal(
-+    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'Tue Nov 17 19:42:27 2026' }),
-+    false,
-+  );
-   // An unreadable start time on either side leaves the identity unproven.
-   assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: null }), false);
-   publishDaemonRegistration(stateDir, { pid: 4242, startTime: null });
--  assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'owner-start' }), false);
-+  assert.equal(
-+    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'posix:1763493000000' }),
-+    false,
-+  );
-+});
-+
-+test('a record from an older release (a raw ps start time) is never treated as replaced', () => {
-+  const stateDir = useStateDir();
-+  publishDaemonRegistration(stateDir, { pid: 4242, startTime: LEGACY_RAW_START_TIME });
-+
-+  const identity = readRegisteredDaemonIdentity(infoPathOf(stateDir));
-+  assert.equal(identity?.startTime, LEGACY_RAW_START_TIME);
-+  // Raw record vs canonical live read: unknown, so not superseded — unresolved, not reassignment.
-+  assert.equal(
-+    isSupersededDaemonOwner({
-+      stateDir,
-+      pid: 4242,
-+      startTime: LIFETIME_TOKEN,
-+    }),
-+    false,
-+  );
-+  assert.equal(
-+    readRegisteredDaemonOwnership(infoPathOf(stateDir), {
-+      pid: 4242,
-+      startTime: LIFETIME_TOKEN,
-+    }).state,
-+    'unproven',
-+  );
- });
- 
- test('the published owner itself is never superseded, and absence is not proof', () => {
-```
-
-**File**: `packages/daemon-contracts/src/device-claim-settlement.test.ts` (modified, +6/-3)
-```diff
-@@ -246,7 +246,7 @@ test('a renewal through a migrated record’s own token writes back the shape th
-       workspace: '/worktrees/legacy',
-       stateDir: root,
-       ownerPid: process.pid,
--      ownerStartTime: 'test-process-start-time',
-+      ownerStartTime: 'Tue Nov 17 19:42:27 2026',
-       ownerToken: 'legacy-token',
-       createdAtMs: 1,
-       updatedAtMs: 1,
-@@ -258,7 +258,7 @@ test('a renewal through a migrated record’s own token writes back the shape th
-       deviceKey: canonicalLocalDeviceKey(device),
-       ownerToken: 'legacy-token',
-       ownerPid: process.pid,
--      ownerStartTime: 'test-process-start-time',
-+      ownerStartTime: 'Tue Nov 17 19:42:27 2026',
-     },
-     process.env,
-   );
-@@ -380,7 +380,10 @@ test('PID reuse is uncertain ownership and never authorizes reconciliation', asy
-     stateDir: root,
-   });
-   const stored = JSON.parse(fs.readFileSync(claimPath(root), 'utf8')) as Record<string, unknown>;
--  fs.writeFileSync(claimPath(root), JSON.stringify({ ...stored, ownerStartTime: 'other-start' }));
-+  fs.writeFileSync(
-+    claimPath(root),
-+    JSON.stringify({ ...stored, ownerStartTime: 'posix:1763493001000' }),
-+  );
-   const reconcile = vi.fn(async () => ({ status: 'reconciled' as const }));
- 
-   const result = await acquireDeviceClaim({
-```
-
-**File**: `packages/daemon/src/resources/device/__tests__/device-claims.test.ts` (modified, +6/-2)
-```diff
-@@ -681,8 +681,12 @@ test('release names the exact refusal for uncertain owners and misnamed claim fi
-   });
-   assert.equal(acquired.status, 'acquired');
-   const stored = JSON.parse(fs.readFileSync(claimPath(root), 'utf8')) as Record<string, unknown>;
--  // Same PID, different recorded start time: PID reuse, uncertain ownership.
--  fs.writeFileSync(claimPath(root), JSON.stringify({ ...stored, ownerStartTime: 'other-start' }));
-+  // Same PID, different recorded start time in the same provenanced format: PID reuse,
-+  // uncertain ownership. A raw legacy rendering would be unverified, not reuse.
-+  fs.writeFileSync(
-+    claimPath(root),
-+    JSON.stringify({ ...stored, ownerStartTime: 'posix:1763493001000' }),
-+  );
-   // A dead-owner claim stored under a name that is not the hash of its own
-   // device key: the claim lock protects a different path, so release refuses.
-   fs.writeFileSync(
-```
-
-**File**: `packages/daemon/src/server/http/daemon-metadata-loss.test.ts` (modified, +19/-9)
-```diff
-@@ -11,7 +11,8 @@ import {
- 
- const OWN_PID = process.pid;
- const FOREIGN_PID = 999_999_999;
--const OWN = { pid: OWN_PID, startTime: 'own-start' } as const;
-+// A provenanced POSIX birth token: the verified format, so a different token proves a recycle.
-+const OWN = { pid: OWN_PID, startTime: 'posix:1763493000000' } as const;
- 
- function scratch(): { stateDir: string; infoPath: string } {
-   const stateDir = mkdtempForTestSync('agent-device-daemon-metadata-loss-');
-@@ -25,7 +26,7 @@ function publish(stateDir: string, pid: number, startTime: string | null): void
- describe('readDaemonMetadataLoss', () => {
-   test('a registration naming this daemon is not a loss', () => {
-     const { stateDir, infoPath } = scratch();
--    publish(stateDir, OWN_PID, 'own-start');
-+    publish(stateDir, OWN_PID, OWN.startTime);
- 
-     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
-   });
-@@ -42,7 +43,7 @@ describe('readDaemonMetadataLoss', () => {
- 
-   test('a record recycling this pid under a different start time is a loss', () => {
-     const { stateDir, infoPath } = scratch();
--    publish(stateDir, OWN_PID, 'recycled-start');
-+    publish(stateDir, OWN_PID, 'posix:1763493001000');
- 
-     assert.deepEqual(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), {
-       state: 'replaced',
-@@ -52,7 +53,7 @@ describe('readDaemonMetadataLoss', () => {
- 
-   test('a registration deleted while the state dir stands is an absent loss', () => {
-     const { stateDir, infoPath } = scratch();
--    publish(stateDir, OWN_PID, 'own-start');
-+    publish(stateDir, OWN_PID, OWN.startTime);
-     fs.rmSync(infoPath);
- 
-     assert.deepEqual(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), {
-@@ -63,7 +64,7 @@ describe('readDaemonMetadataLoss', () => {
-   test('a state dir that was pruned away entirely is not a loss this daemon should report', () => {
-     // Reporting one would write a `daemon.log` back into the directory the operator just removed.
-     const { stateDir, infoPath } = scratch();
--    publish(stateDir, OWN_PID, 'own-start');
-+    publish(stateDir, OWN_PID, OWN.startTime);
-     fs.rmSync(stateDir, { recursive: true, force: true });
- 
-     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
-@@ -74,7 +75,7 @@ describe('readDaemonMetadataLoss', () => {
-     () => {
-       // A root-owned CI host reads mode 000 anyway, so the case only binds as a non-root process.
-       const { stateDir, infoPath } = scratch();
--      publish(stateDir, OWN_PID, 'own-start');
-+      publish(stateDir, OWN_PID, OWN.startTime);
-       fs.chmodSync(infoPath, 0o000);
-       try {
-         assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
-@@ -94,6 +95,15 @@ describe('readDaemonMetadataLoss', () => {
-     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
-   });
- 
-+  test('a legacy raw record under this pid is unverified, not a reported loss', () => {
-+    // A record written before the provenance pin holds a raw `lstart` rendering, which cannot
-+    // prove a different lifetime, so the daemon does not announce a takeover on it.
-+    const { stateDir, infoPath } = scratch();
-+    publish(stateDir, OWN_PID, 'Tue Nov 17 19:42:27 2026');
-+
-+    assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
-+  });
-+
-   test('a corrupt record is not evidence that the registration was taken', () => {
-     const { stateDir, infoPath } = scratch();
-     fs.writeFileSync(infoPath, '{not json');
-@@ -123,7 +133,7 @@ describe('watchDaemonMetadataLoss', () => {
-     vi.useFakeTimers();
-     try {
-       const { stateDir, infoPath } = scratch();
--      publish(stateDir, OWN_PID, 'own-start');
-+      publish(stateDir, OWN_PID, OWN.startTime);
-       const watch = startWatch(stateDir, infoPath);
-       try {
-         watch.advance();
-@@ -145,7 +155,7 @@ describe('watchDaemonMetadataLoss', () => {
-     vi.useFakeTimers();
-     try {
-       const { stateDir, infoPath } = scratch();
--      publish(stateDir, OWN_PID, 'own-start');
-+      publish(stateDir, OWN_PID, OWN.startTime);
-       const watch = startWatch(stateDir, infoPath);
- 
-       fs.rmSync(stateDir, { recursive: true, force: true });
-@@ -167,7 +177,7 @@ describe('watchDaemonMetadataLoss', () => {
-     vi.useFakeTimers();
-     try {
-       const { stateDir, infoPath } = scratch();
--      publish(stateDir, OWN_PID, 'own-start');
-+      publish(stateDir, OWN_PID, OWN.startTime);
-       const watch = startWatch(stateDir, infoPath);
-       watch.cancel();
-       watch.cancel();
-```
-
-**File**: `packages/host-kit/src/internal/exec.test.ts` (modified, +25/-0)
-```diff
-@@ -319,6 +319,31 @@ test('a request command env reaches spawned commands; outside it they inherit th
-   assert.equal(hostOnly.stdout, '/daemon/Developer');
- });
- 
-+const PRINT_TZ_AND_LOCALE = [
-+  '-e',
-+  'process.stdout.write(`${process.env.TZ ?? ""}|${process.env.LC_ALL ?? ""}`)',
-+];
-+
-+test('envOverrides are the final word over the bound host environment, keeping TZ under a locale pin', async () => {
-+  // Overrides merge over the effective child env instead of replacing it, so an `LC_ALL=C` pin
-+  // alone still lets `TZ` through; the lstart probe itself pins `TZ=UTC` on top (host-process).
-+  const host = hostWith({ TZ: 'Pacific/Kiritimati' });
-+  const [pinned, requestEnvOverridden] = await Promise.all([
-+    withCommandHost({ host, requestEnv: undefined }, async () =>
-+      runCmd(process.execPath, PRINT_TZ_AND_LOCALE, { envOverrides: { LC_ALL: 'C' } }),
-+    ),
-+    withCommandHost({ host, requestEnv: { LC_ALL: 'fr_FR.UTF-8' } }, async () =>
-+      runCmd(process.execPath, PRINT_TZ_AND_LOCALE, { envOverrides: { LC_ALL: 'C' } }),
-+    ),
-+  ]);
-+  assert.equal(pinned.stdout, 'Pacific/Kiritimati|C');
-+  assert.equal(
-+    requestEnvOverridden.stdout,
-+    'Pacific/Kiritimati|C',
-+    'the override is the final word, ahead of the request env too',
-+  );
-+});
-+
- test.runIf(process.platform !== 'win32')(
-   'xcrun tool-not-found failures name the developer dir and how to change it',
-   async () => {
-```
-
----
-
-### Incident Patch 3: `b233d672` (2026-11-21)
-**Commit Message**: fix(daemon-client): bound the judge-again loop on a clock, not on a wait count (#4899)
-
-`ENSURE_ATTEMPTS` divided the teardown grace by the judge-again delay, so a contended
-`ensureDaemon` always ran 300 judgements. A wait count understates what the call can
-spend: the work inside a judgement is not waited for, so a state directory another
-process keeps replacing held the call for 300 judgements plus what each judgement cost.
-The budget is now one teardown grace of elapsed time on the monotonic clock the
-package's other budgets use, each wait clamped to what is left; one grace of waits
-backstops the deadline, which a clock that stops cannot pass.
-
-`daemon-client-ensure-explicit-lifecycle.test.ts` mocked `sleep` and still ran those 300
-iterations of real work, which is what pushed it past the test timeout on a busy host. It
-now moves the budget clock, as the startup-budget and drain suites move theirs, so the
-grace passes in five judgements. Production timing is unchanged, and the waits are still
-asked for at the production cadence, so the budget assertion pins it.
-
-**File**: `packages/daemon-client/src/__tests__/daemon-client-ensure-explicit-lifecycle.test.ts` (modified, +46/-17)
-```diff
-@@ -39,9 +39,9 @@ vi.mock('@agent-device/host-kit/retry', async (importOriginal) => ({
-   sleep: vi.fn(async () => {}),
- }));
- // Reading the registration judges its lock owner, and one judgement runs one process-table snapshot.
--// The contention budget is 300 judgements of a registration that does not change under the client,
--// so its inspection is read once from the real host and replayed for the rest of the loop. The seam
--// answers only that one lock path, and `afterEach` clears it.
-+// A contention budget judges a registration these cases keep alive and unchanged, so its inspection is
-+// read once from the real host and replayed for the rest of the loop. The seam answers only that one
-+// lock path, and `afterEach` clears it.
- let recordedRegistrationLock:
-   | { readonly lockPath: string; readonly inspection: ProcessLockInspection }
-   | undefined;
-@@ -69,6 +69,10 @@ const spawn = vi.mocked(runCmdDetachedMonitored);
- const actualRetry = await vi.importActual<typeof import('@agent-device/host-kit/retry')>(
-   '@agent-device/host-kit/retry',
- );
-+// `JUDGE_AGAIN_DELAY_MS` in `daemon-client-ensure.ts`.
-+const JUDGE_AGAIN_DELAY_MS = 250;
-+// Held before any test replaces `performance.now`, so a moved clock still starts from real elapsed time.
-+const realNow = performance.now.bind(performance);
- 
- afterEach(async () => {
-   vi.restoreAllMocks();
-@@ -83,8 +87,8 @@ afterEach(async () => {
- /**
-  * Leaves the lock inspection of this registration at what the host really says right now. A daemon
-  * that keeps changing under `ensureDaemon` is judged once per attempt and one judgement runs one
-- * process-table snapshot, so a full budget is 300 snapshots of a registration these cases keep
-- * alive and unchanged. The first snapshot is the host's own answer, taken here.
-+ * process-table snapshot, so the whole budget is snapshots of a registration these cases keep alive
-+ * and unchanged. The first snapshot is the host's own answer, taken here.
-  */
- function registrationLockStaysAsRecorded(
-   paths: ReturnType<typeof stateDirAndPaths>['paths'],
-@@ -98,20 +102,43 @@ function registrationLockStaysAsRecorded(
- }
- 
- /**
-- * The attempt budget, through the waits it asks for: the judge-again waits must just cover the
-- * teardown grace, so one fewer wait falls short of it. Halving the loop halves this total.
-+ * The budget clock, moved by this file: every wait advances it by `stepMs` while the loop keeps asking
-+ * for its own delay, so the teardown grace passes in a few judgements instead of the hundreds it costs
-+ * at the real cadence. The loop reads `performance.now()`, the clock this package budgets on, and it is
-+ * a per-test spy rather than `Date.now`: lock-guard ages are judged off real file mtimes and `Date.now`
-+ * in the same window.
-  */
--function assertJudgedAgainForTheFullBudget(): void {
-+function judgeAgainBudgetOnMovedClock(stepMs: number): { waitedMs(): number } {
-+  const startedAtMs = realNow();
-+  let waitedMs = 0;
-+  vi.spyOn(performance, 'now').mockImplementation(() => startedAtMs + waitedMs);
-+  vi.mocked(sleep).mockImplementation(async () => {
-+    waitedMs += stepMs;
-+  });
-+  return { waitedMs: () => waitedMs };
-+}
-+
-+/**
-+ * The budget, through the clock it counts: every wait is asked for at the production cadence, and the
-+ * loop stopped once that cadence had covered the teardown grace on the clock it reads — one fewer wait
-+ * falls short of it. Halving the grace or the cadence stops the loop earlier and fails this.
-+ */
-+function assertJudgedAgainForTheFullBudget(clock: { waitedMs(): number }, stepMs: number): void {
-   const waits = vi.mocked(sleep).mock.calls.map(([ms]) => Number(ms));
-   assert.ok(waits.length > 0, 'a contended ensure judged again at least once');
--  const delays = [...new Set(waits)];
--  assert.equal(delays.length, 1, `every attempt judged again with one delay, saw ${delays}`);
--  const [delay] = delays;
--  assert.ok(delay !== undefined && delay > 0, `a judge-again wait must be positive, saw ${delay}`);
--  const totalMs = waits.reduce((total, ms) => total + ms, 0);
-+  assert.deepEqual(
-+    [...new Set(waits)],
-+    [JUDGE_AGAIN_DELAY_MS],
-+    'every attempt judged again after one production wait, whatever the clock says since',
-+  );
-+  const { waitedMs } = clock;
-+  assert.ok(
-+    waitedMs() >= DAEMON_TEARDOWN_GRACE_MS && waitedMs() - stepMs < DAEMON_TEARDOWN_GRACE_MS,
-+    `${waits.length} judge-again waits must just cover the ${DAEMON_TEARDOWN_GRACE_MS}ms teardown grace (${waitedMs()}ms)`,
-+  );
-   assert.ok(
--    totalMs >= DAEMON_TEARDOWN_GRACE_MS && totalMs - delay < DAEMON_TEARDOWN_GRACE_MS,
--    `${waits.length} judge-again waits of ${delay}ms must just cover the ${DAEMON_TEARDOWN_GRACE_MS}ms teardown grace (${totalMs}ms)`,
-+    waits.length < Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS),
-+    `the clock, not the wait ceiling, ended the loop: ${waits.length} waits`,
-   );
- }
- 
-@@ -608,14 +635,15 @@ test('ensureDaemon reports contentio
-```
-
-**File**: `packages/daemon-client/src/daemon-client-ensure.ts` (modified, +19/-14)
-```diff
-@@ -36,10 +36,6 @@ import {
- // a daemon this call quiesced can still be leaving. A judgement that went stale is made again after
- // a short wait, for as long as a drain can take.
- const JUDGE_AGAIN_DELAY_MS = 250;
--// The budget is counted in waits, not on a clock: each attempt that judges again waits once, so the
--// waits alone add up to the teardown grace. The work inside an attempt is not counted, so a state
--// directory that another process keeps replacing can hold this call for longer.
--const ENSURE_ATTEMPTS = Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS);
- const DRAIN_POLL_MS = 250;
- 
- type EnsureStep =
-@@ -61,18 +57,27 @@ export async function ensureDaemon(
-   host: HostEnvironment = captureHostEnvironment(process),
- ): Promise<DaemonConnection> {
-   const settings = resolveLocalDaemonSettings(options, host);
--  for (let attempt = 1; attempt <= ENSURE_ATTEMPTS; attempt += 1) {
-+  // The budget is one teardown grace of elapsed time: a state directory another process keeps
-+  // replacing holds this call for the grace, not for a grace of judgements plus what each judgement
-+  // cost. `maxWaits` backstops the deadline, which cannot end the loop on a clock that stops. The
-+  // deadline is monotonic, like the transport and lifecycle budgets: a wall-clock step would shorten
-+  // the grace, and `sleep` itself counts waiting monotonically.
-+  const deadlineAtMs = performance.now() + DAEMON_TEARDOWN_GRACE_MS;
-+  const maxWaits = Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS);
-+  for (let waits = 0; ; waits += 1) {
-     const step = await ensureOnce(settings, options.onStart);
--    if (step.kind === 'judge-again') {
--      await sleep(JUDGE_AGAIN_DELAY_MS);
--      continue;
-+    if (step.kind === 'connected') {
-+      await assertDaemonPolicyMatches(step.daemon.info, settings.paths.baseDir, host);
-+      return {
-+        stateDir: settings.paths.baseDir,
-+        daemon: daemonIdentityOf(step.daemon.info),
-+        started: step.started,
-+      };
-     }
--    await assertDaemonPolicyMatches(step.daemon.info, settings.paths.baseDir, host);
--    return {
--      stateDir: settings.paths.baseDir,
--      daemon: daemonIdentityOf(step.daemon.info),
--      started: step.started,
--    };
-+    if (waits >= maxWaits) break;
-+    const remainingMs = deadlineAtMs - performance.now();
-+    if (remainingMs <= 0) break;
-+    await sleep(Math.min(JUDGE_AGAIN_DELAY_MS, remainingMs));
++      return replacement.replacementRefs
++        ? `Ref ${ref} needs a complete snapshot — a settled diff replaced the ref frame and only authorizes its issued refs`
++        : `Ref ${ref} needs a complete snapshot — a settled diff replaced the ref frame and issued no refs`;
+     case 'ref_not_issued':
+       return `Ref ${ref} was not issued by the current ref frame`;
    }
-   throw new AppError('COMMAND_FAILED', 'The daemon kept changing while it was being ensured.', {
-     reason: 'daemon-lifecycle-contended',
+```
+
+**File**: `packages/daemon/src/execution/session-snapshot.ts` (modified, +14/-3)
+```diff
+@@ -10,6 +10,7 @@ import {
+   refFrameState,
+   REF_FRAME_REASONS,
+ } from '../core/ref-frame.ts';
++import type { RefFrameOrigin } from '../core/ref-frame-slot.ts';
+ import type { SessionRef, SessionState } from '../core/session-state.ts';
+ import type { SessionStore } from '../core/session-store.ts';
+ 
+@@ -98,8 +99,16 @@ function normalizeRefBody(ref: string): string {
+  * epoch — a plain ref then requires a complete frame, and a pinned ref outside
+  * the set is rejected. An empty partial result does not supersede existing
+  * authority (it leaves the frame untouched), so a useful prior frame survives.
++ *
++ * `origin` records which publication issued the frame (ADR 0014 amendment): the
++ * settle path passes `settle-diff` so a later plain-ref refusal can name the
++ * diff as the replacement; every other partial publication keeps `partial`.
+  */
+-export function markSessionPartialRefsIssued(session: SessionState, refs: Iterable<string>): void {
++export function markSessionPartialRefsIssued(
++  session: SessionState,
++  refs: Iterable<string>,
++  origin: RefFrameOrigin = 'partial',
++): void {
+   const scope = new Set<string>();
+   for (const ref of refs) {
+     const body = normalizeRefBody(ref);
+@@ -115,7 +124,7 @@ export function markSessionPartialRefsIssued(session: SessionState, refs: Iterab
+   // depend on ancestors, siblings and viewport outside the emitted subset, so the whole
+   // tree is kept while the issuance set bounds authority) and the frozen epoch that keeps
+   // a later read-only capture from invalidating a correct pin from this frame.
+-  activatePartialRefFrame(session, scope);
++  activatePartialRefFrame(session, scope, origin);
+ }
+ 
+ /**
+@@ -140,7 +149,9 @@ export function issueSettleRefs(
+   if (!ref || !settle?.diff) return undefined;
+   const session = sessionStore.resolveCurrent(ref);
+   if (!session) return undefined;
+-  markSessionPartialRefsIssued(session, collectSettleIssuedRefBodies(settle));
++  // The settle-diff origin is what lets a later plain-ref refusal (#4571) name this
++  // diff as the replacement instead of pointing at a generic recapture.
++  markSessionPartialRefsIssued(session, collectSettleIssuedRefBodies(settle), 'settle-diff');
+   return session.snapshotGeneration;
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4926** (2026-11-21): fix(harmonyos): label snapshot nodes with their visible text (@thymikee)
-- **PR #4924** (2026-11-21): refactor(reasons): declare the R3 platform-apple reasons in ReasonTable rows (@thymikee)
-- **PR #4918** (2026-11-21): chore(release): publish the managed platform plugins (@thymikee)
-- **PR #4915** (2026-11-21): docs(commands): regenerate the close --shutdown help row (@thymikee)
-- **PR #4904** (2026-11-21): refactor(reasons): declare published reasons in ReasonTable rows beside their classifiers (@thymikee)
-- **PR #4902** (2026-11-21): fix(android): end close once the pre-close processes are gone (@thymikee)
+- **PR #5079** (2026-11-24): fix(apple): press Home through simulator HID on a foldable simulator (@kacperkapusciak)
+- **PR #5077** (2026-11-24): test(daemon-client): publish startup phase fixtures atomically (@thymikee)
+- **PR #5076** (2026-11-24): fix(device): select the only booted iPhone or iPad before ranking iPhones above iPads (@sjkim-expo)
+- **PR #5075** (2026-11-24): fix(settings): accept union-valued permission targets without mode (@thymikee)
+- **PR #5073** (closed): fix(test): repair provider restart test imports on 0.22 (@thymikee)
+- **PR #5072** (2026-11-24): refactor(daemon): bind find actions to the admitted session lifetime (@thymikee)
 
 ---
 
@@ -2904,31 +2643,64 @@ asked for at the production cadence, so the budget assertion pins it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remote): write record stop output only to request-named destinations
+## X. harmonyos): clamp the open foreground probe's hdc read to the request deadline
 
 **RULE**:
-When implementing operations in `docs/agents/security.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/evidence/ad-5055-lega/replay-lega.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64d7fc75`: remote): write record stop output only to request-named destinations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4dffcd31`: harmonyos): clamp the open foreground probe's hdc read to the request deadline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/agents/security.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/evidence/ad-5055-lega/replay-lega.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Scripts and remote record stop reject daemon paths (#4518). Trace and perf take them.
+{
+  "success": false,
+  "error": {
+    "code": "REPLAY_DIVERGENCE",
+    "message": "Daemon request deadline exceeded",
+    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
+    "diagnosticId": "mwu8qema-6d287442",
+    "logPath": "<state-dir>/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson",
+    "diagnosticsRecord": {
+      "session": "cwd:1dd430edfb664982:default",
+      "requestId": "97d848997a368c7f"
+    },
+    "details": {
+      "reason": "daemon_request_timeout",
+      "replayPath": "one-line.ad",
+      "step": 1,
+      "action": "open",
+      "positionals": ["<arg>"],
+      "artifactPaths": [],
+      "divergence": {
+        "version": 1,
+        "kind": "action-failure",
+        "step": {
+          "index": 1,
+          "source": {
+            "path": "one-line.ad",
+            "line": 1
+          }
+        },
+        "action": "open \"com.sankuai.dianping\"",
+        "cause": {
+          "code": "COMMAND_FAILED",
+          "message": "request canceled",
+          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) \u2014 no retry is needed unless the cancellation was
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-Script publication takes no path from the daemon. Capture delivery still can (#4518).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64d7fc75` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4dffcd31` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

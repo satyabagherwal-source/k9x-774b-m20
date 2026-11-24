@@ -12793,3 +12793,6 @@
 | `CYCLE-20261124-W8XW` | `2026-11-24T19:19:20.132Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10345` | Yes (`ae281061...`) |
 | `CYCLE-20261124-HOO9` | `2026-11-24T19:36:00.297Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10346` | Yes (`9ea7fcba...`) |
 | `CYCLE-20261124-HZ3K` | `2026-11-24T19:36:13.808Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10347` | Yes (`54a3e8e3...`) |
+| `CYCLE-20261124-T1LC` | `2026-11-24T19:44:50.256Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10348` | Yes (`467091c4...`) |
+| `CYCLE-20261124-T2HN` | `2026-11-24T19:44:51.419Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10349` | Yes (`eddcf05e...`) |
+| `CYCLE-20261124-T6RR` | `2026-11-24T19:44:56.967Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10350` | Yes (`01c0a9fe...`) |

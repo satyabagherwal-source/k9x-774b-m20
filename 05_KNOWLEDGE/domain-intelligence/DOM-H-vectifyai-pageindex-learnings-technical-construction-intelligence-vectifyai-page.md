@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T11:51:25.304Z",
+  "timestamp": "2026-11-24T19:45:03.406Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vectifyai-pageindex-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vectifyai-pageindex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T11:51:25.304Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:45:03.406Z`  
 > **Learning ID**: `LEARN-EVO-vectifyai-pageindex-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from vectifyai-pageindex-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `ab19dc0e`  
+> **Source Version**: `d6b4a0a3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T11:50:40.434Z  
+> **Timestamp**: 2026-11-24T19:44:55.754Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:50:40.428Z  
+> **Harvest Timestamp**: 2026-11-24T19:44:55.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40483 stars
+- **Stars / Engagement**: 40771 stars
 
 ---
 
@@ -1411,15 +1411,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #691** (2026-11-19): **fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged**
-  *Symptoms*: `PageExtractClient.extract(file)` is charged its extraction alone, once the job completes: a job that fails or is cancelled is not charged, and leaves the file it uploaded as a failed document, with its name and file but no pages (VectifyAI/pageindex-compute#914). The same file uploaded again is then a new document. The docstrings now say so.  Such a job also keeps its document processing until it ends. A second `extract()` of the same file meanwhile gets a 409 naming that document and waits for it; if the first job then does not complete, the document fails, and `extract()` now uploads the file again, once, instead of raising.  **Merge once VectifyAI/pageindex-compute#914 is on Prod**: the code works with either server, but the docstrings describe the new pricing.  ## Changes  - `extract(file)`: after a 409 for a stored file, a document that fails or is gone while it is waited for makes the file be uploaded once more. - The retry when the collection found earlier is gone moved into `_store`, so both uploads have it. - Docstrings of `extract()` (`document`, `pages`), `cancel_extract()`, `delete_extract()` and `CloudAPI.submit_document(extract=)`. Only a document the upload made fails; a file stored already keeps its document.  ## Verification  - New tests: the waited-for document fails, or is deleted, and the file is uploaded again; a second failure raises. - Full suite: 1274 passed. `test_summary_effort_ladder_is_what_litellm_would_send` and `test_litellm_model_settings_list
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","mergeGateEnabled":false,"pullRequestNumber":691,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T07:05:03.739471Z">2026-11-19T07:05:03.739471Z</relative-time> | `1b2718b` | New commits | | 
+- **Issue #697** (2026-11-24): **feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning**
+  *Symptoms*: ## Summary  `PageSearchClient` and `PageExtractClient` expose their `PageIndexClient` as `client.documents`. Docs now read `client.documents.page_image(doc_id, 5)` and `client.documents.create_collection(...)` instead of `client.pageindex...`, whose name said nothing about what it is for. `documents` is also what the old `pageindex-search` / `pageindex-extract` SDKs called this namespace.  `client.pageindex` keeps working: it returns the same object and raises a `DeprecationWarning` saying it will be removed in a future release.  ## Test plan  - [x] `pytest tests/test_client.py -k "own_older_key or cloud_only"`: key resolution reads `.documents`, and `.pageindex` warns and returns the same object as `.documents`, for both clients (8 passed)
 
-- **Issue #690** (2026-11-19): **feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own**
-  *Symptoms*: `PageExtractClient.extract("a.pdf", schema)` now makes one upload that carries the extraction's configuration, and the server starts the job with it (VectifyAI/pageindex-compute#912). The upload is not charged on its own: the job is the only charge, and at least the file's upload price ($0.10 per 1,000 pages).  When the upload starts no job, `extract()` does what it did before: it waits for the document and starts the job itself. That happens for a file stored already whose pages are still being read (the server answers 409 with the stored `doc_id`), and on a server without extraction on upload, so this can be released before or after the server change.  ## Changes  - `CloudAPI.submit_document(extract=)` sends the configuration with the upload. A 409 that names a `doc_id` is returned as `{"doc_id": ..., "duplicate": True}`. - `extract(file)`: one upload; with `extract_job_id` in the answer it reads that job, otherwise it waits for the document and calls `POST /extract`. - Docstrings of `extract()` and `cancel_extract()`: no separate upload charge; a job started by an upload is charged the upload price if it fails or is cancelled after reading the file. `pages`: the extraction is charged for those pages alone, but a file still costs at least its upload price, for all its pages.  ## Verification  - `tests/test_client.py` covers the one-upload path, both fallbacks (409 with a `doc_id`, and an answer without `extract_job_id`), and a 409 without a `doc_id`. - Full suite: 390 passe
+- **Issue #696** (2026-11-21): **docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do**
+  *Symptoms*: The citations notebook still taught block citations, which the docs no longer describe. It now runs the [citations cookbook](https://pageindex.ai/docs/cookbook/citations) step by step, so the Colab link on that page opens the same code.  ## Changes  - **Ask.** `chat(..., citations="cite_with_boxes")` in one call, in place of `citations=True` with a streamed Responses call. - **Resolve.** `resolve_citations()` in place of `get_citations()`, as the [Chat page](https://pageindex.ai/docs/sdk/chat#citations) teaches. - **Highlight.** `highlight_region(..., scale=1)` draws the citation's `box`, in fractions of the page, in place of a block's `bbox`. - **Model.** `gpt-6.2-sol`, as on the page. - **Cost section removed.** The page has none, and its prices were for gpt-5.6.  The website page changes with it: VectifyAI/homepage#186.  ## Verification  - Ran the whole notebook with pageindex 0.7.4 from PyPI in a clean Python 3.12 environment and a real OpenAI key. The answer cites page 51 with a box, `resolve_citations()` returns its `doc_id`, page and box, and the highlight frames the Revenue row of the income statement. - The pip cell was skipped, since that environment already had the packages, so it has no output. - The five code cells match the five code blocks on the website page character for character. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"175cf42992a6d719c3d93480accd6c42cd40f106","mergeGateEnabled":false,"pullRequestNumber":690,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-18T13:25:40.666558Z">2026-11-18T13:25:40.666558Z</relative-time> | `175cf42` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","mergeGateEnabled":false,"pullRequestNumber":696,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T09:07:54.958463Z">2026-11-21T09:07:54.958463Z</relative-time> | `5051436` | PR opened | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,187 +1434,284 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab19dc0e` (2026-11-19)
-**Commit Message**: fix: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged (#691)
+### Incident Patch 1: `d6b4a0a3` (2026-11-24)
+**Commit Message**: feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning (#697)
 
-A job that fails or is cancelled is not charged and leaves the file it uploaded as a failed document, with its name and file but no pages. extract() waiting on a stored document that fails or is gone uploads the file again, once.
+* feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning
 
-**File**: `pageindex/cloud_api.py` (modified, +4/-2)
+* fix: the deprecated .pageindex can still be assigned and deleted, so mock.patch.object and monkeypatch on it keep working
+
+As a getter-only property, .pageindex raised AttributeError ("no setter" / "no deleter") on assignment, del, mock.patch.object and monkeypatch.setattr, all of which worked while it was a plain attribute. One shared _pageindex_alias() now builds the property for both clients: reading, assigning and deleting each warn and go through .documents. The test patches .pageindex with mock.patch.object and checks the warning points at the caller's line.
+
+**File**: `pageindex/client.py` (modified, +22/-0)
 ```diff
-@@ -73,8 +73,10 @@ def submit_document(
-             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
-             extract (dict, optional): With ``index=False``, an extract job's
-                 configuration, as ``create_extract()`` takes it: the job
--                starts on the document, and the upload is not charged on its
--                own.
-+                starts on the document, and only its extraction is charged,
-+                once it completes. A job that does not complete leaves the
-+                document this upload made failed, with its name and file but
-+                no pages, until you delete it.
- 
-         Returns:
-             dict: {'doc_id': ...} — plus 'name', the stored document name
+@@ -3423,3 +3423,25 @@ def _cloud_client(api_key: Optional[str], client: Optional[PageIndexClient],
+         f"{name} is cloud-only — the client given is in local mode. Pass one "
+         "created with an api_key.")
+     return client
++
++
++def _pageindex_alias(name: str) -> property:
++    """``.pageindex``, the deprecated name of a cloud-only client's ``.documents``."""
++    def warn() -> None:
++        warnings.warn(f"{name}.pageindex is now .documents; .pageindex will be "
++                      "removed in a future release.", DeprecationWarning,
++                      stacklevel=3)
++
++    def get(self) -> PageIndexClient:
++        warn()
++        return self.documents
++
++    def set_(self, client: PageIndexClient) -> None:
++        warn()
++        self.documents = client
++
++    def delete(self) -> None:
++        warn()
++        del self.documents
++
++    return property(get, set_, delete)
 ```
 
-**File**: `pageindex/page_extract.py` (modified, +47/-28)
+**File**: `pageindex/page_extract.py` (modified, +17/-15)
 ```diff
-@@ -58,21 +58,24 @@ def extract(
+@@ -3,7 +3,7 @@
+ import time
+ from typing import Any, Optional, Union
  
-         Args:
-             document (str): A PDF's path: the file is uploaded to
--                ``collection`` with the job, with no outline index built, and
--                the job is the only charge: the extraction, but not less than
--                the file's upload price ($0.10 per 1,000 pages), which is
--                also what the job costs if it fails or is cancelled after
--                reading the file. Uploading the same file again uses the
--                stored document. Or the ``doc_id`` of an uploaded document:
-+                ``collection`` with the job, with no outline index built.
-+                Only the extraction is charged, once the job completes, and
-+                the file is kept as a document from then on; a job that fails
-+                or is cancelled is not charged, and leaves a file it uploaded
-+                as a failed document, with its name and file but no pages,
-+                until you delete it. Uploading the same file again uses the
-+                stored document, unless it failed: then the file is uploaded
-+                as a new document, usually under a suffixed name such as
-+                ``name_1.pdf``. Or
-+                the ``doc_id`` of an uploaded document:
-                 one still processing is waited for first, and with
-                 ``wait=False`` raises PageIndexAPIError (HTTP 409).
-             schema (dict | type): A JSON Schema whose top is an object or an
-                 array, or a Pydantic model class.
-             tier (str): "standard" (default) or "pro".
-             pages (str | int | tuple, optional): Extract from these pages
-                 only: "3-9", (3, 9) or 3. The extraction is charged for them
--                alone, but a file still costs at least its upload price, for
--                all its pages.
-+                alone.
-             cite_sources (bool): Give the page each list item is on, under
-                 'extract_metadata'.
-             system_prompt (str, optional): Your own instructions for the
-@@ -119,20 +122,26 @@ def extract(
-         document = os.fspath(document)
-         deadline = time.monotonic() + timeout
-         if os.path.exists(document):
--            try:
-+            for last in (False, True):
-                 stored = self._store(document, collection, configuration)
--            except PageIndexAPIError as exc:
--                # The collection found earlier is gone: find or make it again.
--                if exc.status_code != 404 or not self._collections.pop(collection, None):
--                    raise
--                stored = self._store(document, collection, configuration)
--            if "extract_job_id" in stored:
--                job = api.get_extract(stored["extract_job_id"])
--                return self._done(job, deadline, timeout) if wait else job
--            # No job started: the file is stored already and not ready, or
--            # the server is older than extraction on upload.
-+                if "extract_job_id" in stored:
-+                    job = api.get_extract(stored["extract_job_id"])
-+                    return self._done(job, deadline, timeout) if wait else job
-+                # No job started: the file is stored already and not ready, or
-+                # the server is older than extraction on upload.
-+                try:
-+                    self.pageindex._wait_until_ready(
-+                        stored["doc_id"], deadline - time.monotonic())
-+                    break
-+                except PageIndexAPIError as exc:
-+                    # The job it was stored with did not complete, and failed
-+                    # it, or it was deleted: the file is uploaded again.
-+                    if last or not (
-+                            exc.status_code == 404
-+                            or self.pageindex.get_document(
-+                                stored["doc_id"]).get("status") == "failed"):
-+                        raise
+-from .client import PageIndexClient, _cloud_client
++from .client import PageIndexClient, _cloud_client, _pageindex_alias
+ from .errors import PageIndexAPIError
+ 
+ COLLECTION = "Page Extract"
+@@ -20,7 +20,7 @@ class PageExtractClient:
+     A PDF given by its path is uploaded to the "Page Extract" collection,
+     with no outline index built. The documents are the ones
+     ``PageIndexClient`` and ``PageSearchClient`` see with the same key;
+-    ``client.pageindex`` is that ``PageIndexClient``, for listing and
++    ``client.documents`` is that ``PageIndexClient``, for listing and
+     deleting them.
+ 
+     Args:
+@@ -33,10 +33,12 @@ class PageExtractClient:
+ 
+     def __init__(self, api_key: Optional[str] = None, *,
+                  client: Optional[PageIndexClient] = None):
+-        self.pageindex = _cloud_client(api_key, client, "PageExtractClient",
++        self.documents = _cloud_client(api_key, client, "PageExtractClient",
+                                        "PAGEINDEX_EXTRACT_API_KEY")
+         self._collections: dict[str, str] = {}
+ 
++    pageindex = _pageindex_alias("PageExtractClient")
++
+     def extract(
+         self,
+         document: Union[str, os.PathLike],
+@@ -102,7 +104,7 @@ def extract(
+             as ``{"/rows/0": {"page": 3}}``) and 'usage' ({'pages',
+             'credits'}); failed, 'error_message'.
+         """
+-        api = self.pageindex._api
++        api = self.documents._api
+         if isinstance(schema, dict):
+             data_schema = schema
+         elif hasattr(schema, "model_json_schema"):
+@@ -130,15 +132,15 @@ def extract(
+                 # No job started: the file is stored already and not ready, or
+                 # the server is older than extraction on upload.
+                 try:
+-                    self.pageindex._wait_until_ready(
++                    self.documents._wait_until_ready(
+                         stored["doc_id"], deadline - time.monotonic())
+                     break
+                 except PageIndexAPIError as exc:
+                     # The job it was stored with did not complete, and failed
+                     # it, or it was deleted: the file is uploaded again.
+                     if last or not (
+                             exc.status_code == 404
+-                            or self.pageindex.get_document(
++                            or self.documents.get_document(
+                                 stored["doc_id"]).get("status") == "failed"):
+                         raise
              document = stored["doc_id"]
+@@ -149,14 +151,14 @@ def extract(
+         except PageIndexAPIError as exc:
+             if not wait or exc.status_code != 409:
+                 raise
 -            self.pageindex._wait_until_ready(document, deadline - time.monotonic())
-         elif document.lower().endswith(".pdf"):
-             raise FileNotFoundError(document)
-         try:
-@@ -146,9 +155,18 @@ def extract(
++            self.documents._wait_until_ready(document, deadline - time.monotonic())
+             job = api.create_extract(configuration, doc_id=document)
+         return self._done(job, deadline, timeout) if wait else job
  
      def _store(self, file_path: str, collection: Optional[str],
                 configuration: dict) -> dict:
--        return self.pageindex._upload(
--            file_path, False, collection_id=self._collection(collection),
--            index=False, extract=configuration)
-+        def upload():
-+            return self.pageindex._upload(
-+                file_path, False, collection_id=self._collection(collection),
-+                index=False, extract=configuration)
-+
-+        try:
-+            return upload()
-+        except PageIndexAPIError as exc:
-+            # The collection found earlier is gone: find or make it again.
-+            if exc.status_code != 404 or not self._collections.pop(collection, None):
-+     
+         def upload():
+-            return self.pageindex._upload(
++            return self.documents._upload(
+                 file_path, False, collection_id=self._collection(collection),
+                 index=False, extract=configuration)
+ 
+@@ -171,7 +173,7 @@ def upload():
+     def _collection(self, collection: Optional[str]) -> Optional[str]:
+         if collection is None or collection in self._collections:
+             return self._collections.get(collection)
+-        api = self.pageindex._api
++        api = self.documents._api
+ 
+         name = collection.strip().casefold()
+ 
+@@ -198,7 +200,7 @@ def stored():
+ 
+     def _done(self, job: dict, deadline: float, timeout: float) -> dict:
+         import requests
+-        api = self.pageindex._api
++        api = self.documents._api
+         while job["status"] in ("pending", "running"):
+             if time.monotonic() > deadline:
+                 raise PageIndexAPIError(
+@@ -230,15 +232,15 @@ def wait_extract(self, job_id: str, timeout: float = 3600.0) -> dict[str, Any]:
+         running).
+         """
+         return self._done(
+-            self.pageindex._api.get_extract(job_id),
++            self.documents._api.get_extract(job_id),
+             time.monotonic() + timeout, timeout)
+ 
+     def get_extract(self, job_id: str) -> dict[str, Any]:
+         """
+         Get an extract job, with its result once it is completed: the dict
+         ``extract()`` returns.
+         """
+-        return self.pageindex._api.get_extract(job_id=job_id)
++        return self.documents._api.get_extract(job_id=job_id)
+ 
+     def list_extracts(self, limit: int = 20,
+                       after: Optional[str] = None) -> dict[str, Any]:
+@@ -254,7 +256,7 @@ def list_extracts(self, limit: int = 20,
+             dict: {'jobs': [...], 'next'}; 'next' is the id t
 ```
 
-**File**: `tests/test_client.py` (modified, +47/-0)
+**File**: `pageindex/page_search.py` (modified, +8/-6)
 ```diff
-@@ -2401,6 +2401,53 @@ def to(method, path, kw):
-     assert calls[-1]["data"]["doc_id"] == "pi-1"
+@@ -2,7 +2,7 @@
+ import time
+ from typing import Any, Optional, Union
+ 
+-from .client import PageIndexClient, _cloud_client
++from .client import PageIndexClient, _cloud_client, _pageindex_alias
+ from .errors import PageIndexAPIError
  
  
-+@pytest.mark.parametrize("stored, reads", [
-+    ({"id": "pi-1", "status": "failed"}, 2),  # its job did not complete
-+    ((404, {"detail": "Document not found."}), 1),  # deleted meanwhile
-+])
-+def test_extract_uploads_again_when_the_document_it_waited_for_fails(
-+        extracting, sample_pdf, monkeypatch, stored, reads):
-+    client, calls, answers = extracting
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    # stored by another job, still processing
-+    uploads = iter([
-+        (409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}),
-+        {"doc_id": "pi-2", "name": "sample.pdf", "extract_job_id": "ext_1"}])
-+    def to(method, path, kw):
-+        if path == "/collections/":
-+            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
-+        if path == "/doc/":
-+            return next(uploads)
-+        if path == "/doc/pi-1/metadata/":
-+            return stored
-+        return {"id": "ext_1", "status": "pending"}
-+    answers.to = to
+@@ -16,7 +16,7 @@ class PageSearchClient:
+ 
+     ``upload()`` stores a document's pages and builds no outline index. The
+     documents are the ones ``PageIndexClient`` and ``PageExtractClient`` see
+-    with the same key; ``client.pageindex`` is that ``PageIndexClient``, for
++    with the same key; ``client.documents`` is that ``PageIndexClient``, for
+     listing and deleting them, collections and metadata.
+ 
+     Args:
+@@ -29,9 +29,11 @@ class PageSearchClient:
+ 
+     def __init__(self, api_key: Optional[str] = None, *,
+                  client: Optional[PageIndexClient] = None):
+-        self.pageindex = _cloud_client(api_key, client, "PageSearchClient",
++        self.documents = _cloud_client(api_key, client, "PageSearchClient",
+                                        "PAGEINDEX_SEARCH_API_KEY")
+ 
++    pageindex = _pageindex_alias("PageSearchClient")
 +
-+    assert client.extract(sample_pdf, {"type": "object"}, wait=False) == {
-+        "id": "ext_1", "status": "pending"}
-+    assert [(c["method"], c["path"]) for c in calls] == [
-+        ("GET", "/collections/"), ("POST", "/doc/"),
-+        *[("GET", "/doc/pi-1/metadata/")] * reads,
-+        ("POST", "/doc/"), ("GET", "/extract/ext_1/")]
-+
-+
-+def test_extract_raises_when_the_document_it_waited_for_fails_again(
-+        extracting, sample_pdf, monkeypatch):
-+    client, calls, answers = extracting
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    def to(method, path, kw):
-+        if path == "/collections/":
-+            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
-+        if path == "/doc/":
-+            return 409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}
-+        return {"id": "pi-1", "status": "failed"}
-+    answers.to = to
-+
-+    with pytest.raises(PageIndexAPIError, match="failed"):
-+        client.extract(sample_pdf, {"type": "object"})
-+    assert [c["path"] for c in calls].count("/doc/") == 2  # one upload again
-+
-+
- def test_extract_raises_a_conflict_that_names_no_document(extracting, sample_pdf):
-     client, calls, answers = extracting
-     answers.to = lambda method, path, kw: (
+     def upload(
+         self,
+         file_path: str,
+@@ -61,7 +63,7 @@ def upload(
+         Returns:
+             dict: {'doc_id': ..., 'name': ...}.
+         """
+-        return self.pageindex._upload(
++        return self.documents._upload(
+             file_path, wait, timeout, metadata=metadata,
+             collection_id=collection, index=False)
+ 
+@@ -141,7 +143,7 @@ def search(
+             'billable_documents', 'pages', 'billable_pages', 'questions',
+             'credits', 'balance'}: what the search cost and what is left.
+         """
+-        api = self.pageindex._api
++        api = self.documents._api
+         questions = [questions] if isinstance(questions, str) else list(questions)
+         across = recursive or any(value is not None for value in (
+             documents, collection, folder, filter, max_documents, document_top_k))
+@@ -287,7 +289,7 @@ def search_documents(
+             not judged. 'usage' is {'documents', 'questions',
+             'billable_documents', 'credits', 'balance'}.
+         """
+-        return self.pageindex._api.search_documents(
++        return self.documents._api.search_documents(
+             [questions] if isinstance(questions, str) else list(questions),
+             document_ids=document_ids, collection_id=collection,
+             folder_id=folder, recursive=recursive, metadata_filter=filter,
+```
+
+**File**: `tests/test_client.py` (modified, +17/-8)
+```diff
+@@ -11,6 +11,7 @@
+ import sys
+ import types
+ from pathlib import Path
++from unittest import mock
+ 
+ import httpx
+ import pytest
+@@ -243,14 +244,14 @@ def test_a_product_s_client_reads_its_own_older_key_before_the_other_s(monkeypat
+     # A person's two keys may belong to two accounts.
+     monkeypatch.delenv("PAGEINDEX_API_KEY", raising=False)
+     monkeypatch.setenv("PAGEINDEX_SEARCH_API_KEY", "pis_live_x")
+-    assert PageExtractClient().pageindex.api_key == "pis_live_x"  # the only one set
++    assert PageExtractClient().documents.api_key == "pis_live_x"  # the only one set
+     monkeypatch.setenv("PAGEINDEX_EXTRACT_API_KEY", "pie_live_x")
+-    assert PageSearchClient().pageindex.api_key == "pis_live_x"
+-    assert PageExtractClient().pageindex.api_key == "pie_live_x"
++    assert PageSearchClient().documents.api_key == "pis_live_x"
++    assert PageExtractClient().documents.api_key == "pie_live_x"
+     monkeypatch.setenv("PAGEINDEX_API_KEY", "pi-env")
+-    assert PageSearchClient().pageindex.api_key == "pi-env"
+-    assert PageExtractClient().pageindex.api_key == "pi-env"
+-    assert PageExtractClient("pi-given").pageindex.api_key == "pi-given"
++    assert PageSearchClient().documents.api_key == "pi-env"
++    assert PageExtractClient().documents.api_key == "pi-env"
++    assert PageExtractClient("pi-given").documents.api_key == "pi-given"
+ 
+ 
+ def test_mode_words_normalize_like_the_label(monkeypatch):
+@@ -2074,8 +2075,16 @@ def test_page_search_and_extract_clients_are_cloud_only(cls, local_client, monke
+         cls("secret", client=PageIndexClient(api_key="secret"))
+ 
+     monkeypatch.setenv("PAGEINDEX_API_KEY", "from-env")
+-    assert cls().pageindex._api.api_key == "from-env"
+-    assert cls("given").pageindex._api.api_key == "given"
++    assert cls().documents._api.api_key == "from-env"
++    client = cls("given")
++    assert client.documents._api.api_key == "given"
++    documents, other = client.documents, PageIndexClient(api_key="other")
++    with pytest.warns(DeprecationWarning, match=r"\.documents") as record:
++        assert client.pageindex is documents
++        with mock.patch.object(client, "pageindex", other):
++            assert client.documents is other
++    assert client.documents is documents
++    assert record[0].filename == __file__
+     monkeypatch.setenv("PAGEINDEX_API_KEY", "")
+     with pytest.raises(PageIndexAPIError, match="API key"):
+         cls()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
-- **PR #690** (2026-11-19): feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own (@rejojer)
-- **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
-- **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
-- **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
-- **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
+- **PR #697** (2026-11-24): feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning (@rejojer)
+- **PR #696** (2026-11-21): docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do (@rejojer)
+- **PR #695** (2026-11-21): docs(readme): lead with the November launches and OCR-free Cloud, sho… (@zmtomorrow)
+- **PR #694** (2026-11-20): docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (@rejojer)
+- **PR #693** (2026-11-20): docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (@rejojer)
+- **PR #692** (2026-11-19): feat: PageIndexClient.collection_context() gives the collection targeting text for an agent you run yourself (@rejojer)
 
 ---
 
@@ -1636,35 +1731,52 @@ A job that fails or is cancelled is not charged and leaves the file it uploaded 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extract(file) uploads the file again when the stored document it waited for fail
+## X. PageSearchClient and PageExtractClient give their PageIndexClient as .documents,
 
 **RULE**:
-When implementing operations in `pageindex/cloud_api.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab19dc0e`: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d6b4a0a3`: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/cloud_api.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                starts on the document, and only its extraction is charged,
-                once it completes. A job that does not complete leaves the
-                document this upload made failed, with its name and file but
-                no pages, until you delete it.
+
+
+def _pageindex_alias(name: str) -> property:
+    """``.pageindex``, the deprecated name of a cloud-only client's ``.documents``."""
+    def warn() -> None:
+        warnings.warn(f"{name}.pageindex is now .documents; .pageindex will be "
+                      "removed in a future release.", DeprecationWarning,
+                      stacklevel=3)
+
+    def get(self) -> PageIndexClient:
+        warn()
+        return self.documents
+
+    def set_(self, client: PageIndexClient) -> None:
+        warn()
+        self.documents = client
+
+    def delete(self) -> None:
+        warn()
+        del self.documents
+
+    return property(get, set_, delete)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                starts on the document, and the upload is not charged on its
-                own.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab19dc0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d6b4a0a3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

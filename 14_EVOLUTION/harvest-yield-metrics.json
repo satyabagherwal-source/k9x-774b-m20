@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:36:13.818Z",
-  "total_cycles_completed": 12155,
-  "total_learnings_persisted": 12155,
-  "total_rules_promoted": 11213,
+  "last_updated": "2026-11-24T19:44:56.977Z",
+  "total_cycles_completed": 12158,
+  "total_learnings_persisted": 12158,
+  "total_rules_promoted": 11216,
   "history": [
-    {
-      "timestamp": "2026-11-24T03:41:38.180Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:41:45.042Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:41:50.762Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T03:49:53.506Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T19:36:13.818Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:44:50.270Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:44:51.430Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:44:56.977Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

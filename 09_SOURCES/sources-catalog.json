@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "d6767e09",
+    "sourceVersion": "b2d4ec05",
     "license": "MIT",
-    "contentHash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
-    "lastHarvestedAt": "2026-11-22T05:19:57.118Z",
+    "contentHash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
+    "lastHarvestedAt": "2026-11-24T19:44:50.261Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "add6b17c",
+    "sourceVersion": "d6b4a0a3",
     "license": "MIT",
-    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
-    "lastHarvestedAt": "2026-11-21T21:49:08.214Z",
+    "contentHash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
+    "lastHarvestedAt": "2026-11-24T19:44:56.971Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "b60c6125",
+    "sourceVersion": "0373445e",
     "license": "Apache-2.0",
-    "contentHash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
-    "lastHarvestedAt": "2026-11-20T20:49:36.072Z",
+    "contentHash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
+    "lastHarvestedAt": "2026-11-24T19:44:51.423Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T19:36:13.829Z",
+  "last_updated": "2026-11-24T19:44:56.989Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
-      "verified_at": "2026-11-22T05:19:57.124Z",
+      "content_hash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
+      "verified_at": "2026-11-24T19:44:50.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:19:57.124Z"
+      "last_updated": "2026-11-24T19:44:50.286Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
-      "verified_at": "2026-11-21T21:49:08.223Z",
+      "content_hash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
+      "verified_at": "2026-11-24T19:44:56.988Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:49:08.223Z"
+      "last_updated": "2026-11-24T19:44:56.988Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
-      "verified_at": "2026-11-20T20:49:36.080Z",
+      "content_hash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
+      "verified_at": "2026-11-24T19:44:51.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:49:36.080Z"
+      "last_updated": "2026-11-24T19:44:51.441Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",

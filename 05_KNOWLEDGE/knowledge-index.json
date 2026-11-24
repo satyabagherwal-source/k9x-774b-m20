@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:36:19.993Z",
+  "last_updated": "2026-11-24T19:45:03.924Z",
   "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24880,
+  "total_items": 24886,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -235445,8 +235445,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "d6767e09",
-      "content_hash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
+      "source_version": "b2d4ec05",
+      "content_hash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -235469,6 +235469,11 @@
           "number": 9897,
           "title": "write record stop output only to request-named destinations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10348,
+          "title": "clamp the open foreground probe's hdc read to the request deadline",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235476,7 +235481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T05:19:56.964Z",
+      "verified_at": "2026-11-24T19:44:49.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235518,10 +235523,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "repository": "callstack/agent-device",
-      "source_version": "d6767e09",
-      "content_hash": "17cf4462e1809d3c00717dde097291a3894c806c40c457b5ad455328abf159bd",
+      "source_version": "b2d4ec05",
+      "content_hash": "1a0ed37669330a9a0148d2eec56d6f80764faff3ab404fb1d1fbab0578bdcedd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:19:57.471Z"
+      "persisted_at": "2026-11-24T19:44:50.794Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona",
@@ -235530,10 +235535,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/callstack-agent-device-agent-contract-callstack-agent-device-autonomous-speciali.md",
       "title": "Agent Contract: callstack/agent-device Autonomous Specialist Persona",
       "repository": "callstack/agent-device",
-      "source_version": "d6767e09",
-      "content_hash": "a89f41c54a6378644b01b1c129537da23381722cec55f6b1af7f9c2bd65ed704",
+      "source_version": "b2d4ec05",
+      "content_hash": "9c73bbebc0dd500c0148202a1bde2f184ef96719070b20c61e3053e52c8fac27",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:19:57.624Z"
+      "persisted_at": "2026-11-24T19:44:51.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device",
@@ -235542,10 +235547,10 @@
       "relative_path": "08_VERIFICATION/callstack-agent-device-verification-protocol-empirical-defect-shield-for-callsta.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/agent-device",
       "repository": "callstack/agent-device",
-      "source_version": "d6767e09",
-      "content_hash": "16262e1daa32f710fa6ce1165d279089326d1f799177b17d39553183ca1639eb",
+      "source_version": "b2d4ec05",
+      "content_hash": "2175d39374a1993e58b3c7894628ee4303098cde659878be61eae64e6acdec85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:19:57.764Z"
+      "persisted_at": "2026-11-24T19:44:51.225Z"
     },
     "learn-github-apache-pinot": {
       "learning_id": "learn-github-apache-pinot",
@@ -235726,9 +235731,9 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1417dd9b23bca4aa81b73c9f8bf6c92d33b6c9950ca22a404e5e3ab07ed0c59",
+      "content_hash": "922d8dc014d2301bea22511b622d485077c9d74e405e1478100d5e28b2f61f93",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:20:02.401Z"
+      "persisted_at": "2026-11-24T19:45:02.488Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona",
@@ -235738,9 +235743,9 @@
       "title": "Agent Contract: callstack-agent-device-learnings Autonomous Specialist Persona",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "0463ddf259325a15f20dea0975e42e78bbcb1762c27d7d5a479ddc4005346e35",
+      "content_hash": "4afac59ec67965d7ae4f5b735459d5a272fbd127af5a9cc692eb0172f3a294f9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:20:02.533Z"
+      "persisted_at": "2026-11-24T19:45:02.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin",
@@ -235750,9 +235755,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-agent-device-learnings",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2605b1f01fb893b44d97e61a59075fcf69b4593d60af4b7dc86f9f5814411b4",
+      "content_hash": "72f7c718149f824ba012efb8edba4c62842da4b81a6219bca20691ab091c479b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:20:02.644Z"
+      "persisted_at": "2026-11-24T19:45:02.943Z"
     },
     "learn-huggingface-canberkkkkkk-ema-lightning": {
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
@@ -243953,8 +243958,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "add6b17c",
-      "content_hash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
+      "source_version": "d6b4a0a3",
+      "content_hash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -243987,6 +243992,11 @@
           "number": 9851,
           "title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10350,
+          "title": "PageSearchClient and PageExtractClient give their PageIndexClient as .documents,",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243994,7 +244004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:49:07.978Z",
+      "verified_at": "2026-11-24T19:44:56.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244036,10 +244046,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "ab19dc0e",
-      "content_hash": "1db3c8f042d38e0527b4f55c3f77ac9525cf3d301c30f013968a8f0a97ea3177",
+      "source_version": "d6b4a0a3",
+      "content_hash": "e40bdbf7e2eb1b1c3a12f07f70f759b5d4066689d54270629f9d680db320e72a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T11:50:42.274Z"
+      "persisted_at": "2026-11-24T19:44:57.466Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex",
@@ -244048,10 +244058,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "add6b17c",
-      "content_hash": "310f74099f751c3bd78493d8dbe444cc438756bf2befab920fa087aeefeb9fbc",
+      "source_version": "d6b4a0a3",
+      "content_hash": "595585c6645a3bf8abe5055e76a147925aeb9bb17dbebd357d1d0f02cdd26ffe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:49:08.811Z"
+      "persisted_at": "2026-11-24T19:44:57.659Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -259918,9 +259928,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vectifyai-pageindex-learnings",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c24e7494ff6b0e4c37f6a69752d48cd253fcf487baf60e7a97cae2db23edf7d",
+      "content_hash": "701c2afa790370247826555ebae7dc01a8107ba692400ef4f9b330114b9526b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:49:13.168Z"
+      "persisted_at": "2026-11-24T19:45:03.924Z"
     },
     "rule-8746": {
       "learning_id": "rule-8746",
@@ -265727,10 +265737,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
       "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
       "repository": "aio-libs/aiohttp",
-      "source_version": "b60c6125",
-      "content_hash": "b2bb55e0e68633b8865f681035286f2500759baa54797b409509855cc0cc70b8",
+      "source_version": "0373445e",
+      "content_hash": "9b618d79d9d643b5aa0b3a9cb9ebf42123889b998cc65b2f2048a247aff08419",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:49:36.426Z"
+      "persisted_at": "2026-11-24T19:44:51.920Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp",
@@ -265739,10 +265749,10 @@
       "relative_path": "08_VERIFICATION/aio-libs-aiohttp-verification-protocol-empirical-defect-shield-for-aio-libs-aioh.md",
       "title": "Verification Protocol: Empirical Defect Shield for aio-libs/aiohttp",
       "repository": "aio-libs/aiohttp",
-      "source_version": "b60c6125",
-      "content_hash": "c26fbaf71402bacbca7e2df04cc1463bb6d5870e6426139c78696114fa22f822",
+      "source_version": "0373445e",
+      "content_hash": "63c6b9e71e6ee222ec270651ccbfa0ef1610195e6de474c22ff746caf244b105",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:49:36.574Z"
+      "persisted_at": "2026-11-24T19:44:52.124Z"
     },
     "learn-github-wzh4869-appports": {
       "learning_id": "learn-github-wzh4869-appports",
@@ -265995,9 +266005,9 @@
       "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
       "repository": "aio-libs-aiohttp-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1782bc12c783981d2ac18cad10c321b62c37ca307fdc7201a8d9f6b3264db07",
+      "content_hash": "20d048e95dbed61047b988912079077cdcca74d57ac4f20040668481f92b1666",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:49:50.450Z"
+      "persisted_at": "2026-11-24T19:45:01.646Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings",
@@ -266007,9 +266017,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aio-libs-aiohttp-learnings",
       "repository": "aio-libs-aiohttp-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b8f83905a65e5cf20eb9ef60830b5b96b7b6baafd189deef42b4acbd420ce5a",
+      "content_hash": "deeaf645b6ee5c6d45971c1d66be95c30182be17dcb9fab5cb782c7c2198574a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:49:50.600Z"
+      "persisted_at": "2026-11-24T19:45:01.840Z"
     },
     "candidate_directive-docs-2-3-0-build-68-ci": {
       "item_id": "candidate_directive-docs-2-3-0-build-68-ci",
@@ -298726,9 +298736,9 @@
       "title": "Technical Construction Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a41cef910a94a77f7697a7d59f22673cb030b82447ca9fa7cba523de4003cf9",
+      "content_hash": "a14feae952113a13002cae0425d06afce64f2574cba5ae94ff5ebb3740878138",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T11:51:25.700Z"
+      "persisted_at": "2026-11-24T19:45:03.722Z"
     },
     "rule-9375": {
       "learning_id": "rule-9375",
@@ -339863,6 +339873,82 @@
       "content_hash": "7e7d4552805e9c35108b4ce0d67fad00b31c466c9ff6b0c9e0b9a96564665513",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T19:36:17.672Z"
+    },
+    "rule-10348": {
+      "learning_id": "rule-10348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10348,
+      "title": "clamp the open foreground probe's hdc read to the request deadline",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "b2d4ec05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:44:49.978Z"
+    },
+    "candidate_directive-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline": {
+      "item_id": "candidate_directive-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T1UK-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline.md",
+      "title": "clamp the open foreground probe's hdc read to the request deadline",
+      "repository": "callstack/agent-device",
+      "source_version": "b2d4ec05",
+      "content_hash": "02db626074c99d33a107b3ab7b535ff4fbf275d1ff5cb8eec36f1c3849280dc9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T19:44:50.594Z"
+    },
+    "candidate_directive-as_bytes-producing-different-results-to-write": {
+      "item_id": "candidate_directive-as_bytes-producing-different-results-to-write",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TA6Y-as_bytes-producing-different-results-to-write.md",
+      "title": ".as_bytes() producing different results to write()",
+      "repository": "aio-libs-aiohttp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3a0ace6b896cfaa52122970d1799db4c7e7fb0010ed3dcd1d6d8ae4460a37a9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:45:01.408Z"
+    },
+    "rule-10350": {
+      "learning_id": "rule-10350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10350,
+      "title": "PageSearchClient and PageExtractClient give their PageIndexClient as .documents,",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "d6b4a0a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:44:56.705Z"
+    },
+    "candidate_directive-pagesearchclient-and-pageextractclient-give-their-pageindexclient-as-documents": {
+      "item_id": "candidate_directive-pagesearchclient-and-pageextractclient-give-their-pageindexclient-as-documents",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TBU1-pagesearchclient-and-pageextractclient-give-their-pageindexclient-as-documents.md",
+      "title": "PageSearchClient and PageExtractClient give their PageIndexClient as .documents,",
+      "repository": "vectifyai-pageindex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b7eb245d58bc62ed683b2d7bd3a8b84087b7ab0c3e99f0e962b6f661d9103805",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:45:03.535Z"
+    },
+    "candidate_directive-harmonyos-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline": {
+      "item_id": "candidate_directive-harmonyos-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TAVQ-harmonyos-clamp-the-open-foreground-probe-s-hdc-read-to-the-request-deadline.md",
+      "title": "harmonyos): clamp the open foreground probe's hdc read to the request deadline",
+      "repository": "callstack-agent-device-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e7bf50f5632588aacd9d5c4587702efee5a8363f58885d01d0557a22965447f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T19:45:02.300Z"
     }
   },
   "ai-builder-brain": {

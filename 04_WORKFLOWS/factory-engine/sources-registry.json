@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-24T15:44:30.753Z",
+    "lastChecked": "2026-11-24T19:44:47.301Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-24T15:44:30.753Z"
+    "lastVerified": "2026-11-24T19:44:47.301Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T19:36:17.080Z",
-    "lastVerified": "2026-11-24T19:36:17.080Z",
+    "lastChecked": "2026-11-24T19:45:00.380Z",
+    "lastVerified": "2026-11-24T19:45:00.380Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T19:09:57.310Z",
-    "lastVerified": "2026-11-24T19:09:57.310Z",
+    "lastChecked": "2026-11-24T19:44:52.259Z",
+    "lastVerified": "2026-11-24T19:44:52.259Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -563,22 +563,21 @@
     "revisionIdentifier": "d0c52cdf"
   },
   "vectifyai-pageindex": {
-    "name": "PageIndex",
+    "name": "VectifyAI/PageIndex",
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T23:31:34.032Z",
-    "lastVerified": "2026-11-23T23:31:34.032Z",
+    "lastChecked": "2026-11-24T19:44:55.748Z",
+    "lastVerified": "2026-11-24T19:44:55.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
+    "contentHash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "add6b17c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "surrealdb-surrealdb": {
     "name": "surrealdb",
@@ -3319,9 +3318,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-24T00:40:02.354Z",
+    "lastChecked": "2026-11-24T19:44:44.769Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-24T00:40:02.354Z"
+    "lastVerified": "2026-11-24T19:44:44.769Z"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -5932,14 +5931,14 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T05:19:56.329Z",
-    "lastVerified": "2026-11-22T05:19:56.329Z",
+    "lastChecked": "2026-11-24T19:44:48.803Z",
+    "lastVerified": "2026-11-24T19:44:48.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
+    "contentHash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6606,9 +6605,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-23T17:53:55.685Z",
+    "lastChecked": "2026-11-24T19:44:37.099Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-23T17:53:55.685Z"
+    "lastVerified": "2026-11-24T19:44:37.099Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -11216,14 +11215,14 @@
     "officialUrl": "https://github.com/aio-libs/aiohttp",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T20:49:34.915Z",
-    "lastVerified": "2026-11-20T20:49:34.915Z",
+    "lastChecked": "2026-11-24T19:44:46.119Z",
+    "lastVerified": "2026-11-24T19:44:46.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
+    "contentHash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

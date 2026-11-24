@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:36:19.814Z",
+  "last_updated": "2026-11-24T19:45:03.722Z",
   "total_records": 2568,
   "domains": {
     "A": {
@@ -17354,8 +17354,8 @@
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "repository": "callstack/agent-device",
-      "content_hash": "17cf4462e1809d3c00717dde097291a3894c806c40c457b5ad455328abf159bd",
-      "created_at": "2026-11-22T05:19:57.471Z"
+      "content_hash": "1a0ed37669330a9a0148d2eec56d6f80764faff3ab404fb1d1fbab0578bdcedd",
+      "created_at": "2026-11-24T19:44:50.794Z"
     },
     "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
@@ -17432,8 +17432,8 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-learnings-technical-construction-intelligence-callstack-a.md",
       "repository": "callstack-agent-device-learnings",
-      "content_hash": "a1417dd9b23bca4aa81b73c9f8bf6c92d33b6c9950ca22a404e5e3ab07ed0c59",
-      "created_at": "2026-11-22T05:20:02.401Z"
+      "content_hash": "922d8dc014d2301bea22511b622d485077c9d74e405e1478100d5e28b2f61f93",
+      "created_at": "2026-11-24T19:45:02.488Z"
     },
     "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
@@ -19758,8 +19758,8 @@
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "1db3c8f042d38e0527b4f55c3f77ac9525cf3d301c30f013968a8f0a97ea3177",
-      "created_at": "2026-11-19T11:50:42.274Z"
+      "content_hash": "e40bdbf7e2eb1b1c3a12f07f70f759b5d4066689d54270629f9d680db320e72a",
+      "created_at": "2026-11-24T19:44:57.466Z"
     },
     "DOM-D-1DE3F011": {
       "record_id": "DOM-D-1DE3F011",
@@ -25417,8 +25417,8 @@
       "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
       "repository": "aio-libs/aiohttp",
-      "content_hash": "b2bb55e0e68633b8865f681035286f2500759baa54797b409509855cc0cc70b8",
-      "created_at": "2026-11-20T20:49:36.426Z"
+      "content_hash": "9b618d79d9d643b5aa0b3a9cb9ebf42123889b998cc65b2f2048a247aff08419",
+      "created_at": "2026-11-24T19:44:51.920Z"
     },
     "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
@@ -25444,8 +25444,8 @@
       "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-learnings-technical-construction-intelligence-aio-libs-aiohttp-.md",
       "repository": "aio-libs-aiohttp-learnings",
-      "content_hash": "c1782bc12c783981d2ac18cad10c321b62c37ca307fdc7201a8d9f6b3264db07",
-      "created_at": "2026-11-20T20:49:50.450Z"
+      "content_hash": "20d048e95dbed61047b988912079077cdcca74d57ac4f20040668481f92b1666",
+      "created_at": "2026-11-24T19:45:01.646Z"
     },
     "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
@@ -33785,8 +33785,8 @@
       "title": "Technical Construction Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-learnings-technical-construction-intelligence-vectifyai-page.md",
       "repository": "vectifyai-pageindex-learnings",
-      "content_hash": "2a41cef910a94a77f7697a7d59f22673cb030b82447ca9fa7cba523de4003cf9",
-      "created_at": "2026-11-19T11:51:25.700Z"
+      "content_hash": "a14feae952113a13002cae0425d06afce64f2574cba5ae94ff5ebb3740878138",
+      "created_at": "2026-11-24T19:45:03.722Z"
     },
     "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants",

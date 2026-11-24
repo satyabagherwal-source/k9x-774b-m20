@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `b60c6125`  
+> **Source Version**: `0373445e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T20:49:35.095Z  
+> **Timestamp**: 2026-11-24T19:44:50.173Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:49:34.915Z  
+> **Harvest Timestamp**: 2026-11-24T19:44:46.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16618 stars
+- **Stars / Engagement**: 16620 stars
 
 ---
 
@@ -1842,131 +1842,385 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b60c6125` (2026-11-20)
-**Commit Message**: Bump virtualenv from 21.15.6 to 21.15.7 (#14421)
+### Incident Patch 1: `0373445e` (2026-11-24)
+**Commit Message**: Fix .as_bytes() producing different results to write() (#14363)
 
-Bumps [virtualenv](https://github.com/pypa/virtualenv) from 21.15.6 to 21.15.7.
-- [Release notes](https://github.com/pypa/virtualenv/releases)
-- [Changelog](https://github.com/pypa/virtualenv/blob/main/docs/changelog.rst)
-- [Commits](https://github.com/pypa/virtualenv/compare/21.15.6...21.15.7)
-
----
-updated-dependencies:
-- dependency-name: virtualenv
-  dependency-version: 21.15.7
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/constraints.txt` (modified, +1/-1)
+**File**: `CHANGES/13495.bugfix.1.rst` (added, +4/-0)
 ```diff
-@@ -311,7 +311,7 @@ uvloop==0.23.0 ; platform_system != "Windows"
-     #   -r requirements/lint.in
- valkey==6.2.0
-     # via -r requirements/lint.in
--virtualenv==21.15.6
-+virtualenv==21.15.7
-     # via pre-commit
- wheel==0.48.0
-     # via pip-tools
+@@ -0,0 +1,4 @@
++Fixed :class:`~aiohttp.MultipartWriter` ``as_bytes()`` ignoring per-part content
++and transfer encodings; it now serializes through the same code path as
++``write()``, so the result is byte-identical to the wire format
++-- by :user:`Dreamsorcerer`.
 ```
 
-**File**: `requirements/dev.txt` (modified, +1/-1)
+**File**: `CHANGES/13495.bugfix.rst` (added, +1/-0)
 ```diff
-@@ -301,7 +301,7 @@ uvloop==0.23.0 ; platform_system != "Windows" and implementation_name == "cpytho
-     #   -r requirements/lint.in
- valkey==6.2.0
-     # via -r requirements/lint.in
--virtualenv==21.15.6
-+virtualenv==21.15.7
-     # via pre-commit
- wheel==0.48.0
-     # via pip-tools
+@@ -0,0 +1 @@
++Fixed CRLF corruption on quoted-printable encoding -- by :user:`2sumtech` and :user:`Dreamsorcerer`.
 ```
 
-**File**: `requirements/lint.txt` (modified, +1/-1)
+**File**: `CHANGES/14363.deprecation.1.rst` (added, +1/-0)
 ```diff
-@@ -149,7 +149,7 @@ uvloop==0.23.0 ; platform_system != "Windows"
-     # via -r requirements/lint.in
- valkey==6.2.0
-     # via -r requirements/lint.in
--virtualenv==21.15.6
-+virtualenv==21.15.7
-     # via pre-commit
- yarl==1.25.1
-     # via aiohttp
+@@ -0,0 +1 @@
++Deprecated the ``encoding`` and ``errors`` parameters of ``MultipartWriter.as_bytes()`` -- by :user:`Dreamsorcerer`.
 ```
 
----
-
-### Incident Patch 2: `7c9788ca` (2026-11-20)
-**Commit Message**: Bump filelock from 4.2.10 to 4.2.11 (#14420)
-
-Bumps [filelock](https://github.com/tox-dev/filelock) from 4.2.10 to 4.2.11.
-- [Release notes](https://github.com/tox-dev/filelock/releases)
-- [Changelog](https://github.com/tox-dev/filelock/blob/main/docs/changelog.rst)
-- [Commits](https://github.com/tox-dev/filelock/compare/4.2.10...4.2.11)
-
----
-updated-dependencies:
-- dependency-name: filelock
-  dependency-version: 4.2.11
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/constraints.txt` (modified, +1/-1)
+**File**: `CHANGES/14363.deprecation.rst` (added, +2/-0)
 ```diff
-@@ -76,7 +76,7 @@ docutils==0.21.2
-     #   sphinx
- execnet==2.1.2
-     # via pytest-xdist
--filelock==4.2.10
-+filelock==4.2.11
-     # via
-     #   python-discovery
-     #   virtualenv
+@@ -0,0 +1,2 @@
++Deprecated ``MultipartWriter.decode()``; use ``MultipartWriter.as_bytes`` and decode the result instead
++-- by :user:`Dreamsorcerer`.
 ```
 
-**File**: `requirements/dev.txt` (modified, +1/-1)
+**File**: `aiohttp/multipart.py` (modified, +174/-38)
 ```diff
-@@ -74,7 +74,7 @@ docutils==0.21.2
-     #   sphinx
- execnet==2.1.2
-     # via pytest-xdist
--filelock==4.2.10
-+filelock==4.2.11
-     # via
-     #   python-discovery
-     #   virtualenv
+@@ -7,7 +7,14 @@
+ import uuid
+ import warnings
+ from collections import deque
+-from collections.abc import AsyncIterator, Iterator, Mapping, Sequence
++from collections.abc import (
++    AsyncIterator,
++    Awaitable,
++    Callable,
++    Iterator,
++    Mapping,
++    Sequence,
++)
+ from types import TracebackType
+ from typing import TYPE_CHECKING, Any, Self, cast
+ from urllib.parse import parse_qsl, unquote, urlencode
+@@ -61,12 +68,68 @@
+     b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+ )
+ _NON_BASE64_BYTES = bytes(b for b in range(256) if b not in _BASE64_CHARS)
++_QP_BLOCK_SIZE = 4096
++_QP_SOFT_BREAK = b"=\r\n"
+ 
+ 
+ if TYPE_CHECKING:
+     from .client_reqrep import ClientResponse
+ 
+ 
++def _encode_qp_block(block: bytes | bytearray) -> bytes:
++    r"""Encode a newline-free block of bytes as quoted-printable.
++
++    binascii.b2a_qp does the wrapping, but its raw output is not safe to
++    glue soft breaks onto: it picks LF-only soft breaks when the input
++    contains no ``\r\n``, and its last line can be the full 76 characters,
++    so a soft break appended after it would make a 77-character line.
++    Normalize soft breaks to CRLF (a literal ``=`` is always encoded as
++    ``=3D``, so ``=\n`` can only be a soft break) and split the last line
++    once if it exceeds 75 characters, without splitting an ``=XX`` escape.
++    """
++    quoted = binascii.b2a_qp(block).replace(b"=\n", b"=\r\n")
++    last_len = len(quoted) - quoted.rfind(b"\n") - 1
++    if last_len > 75:
++        cut = len(quoted) - last_len + 75
++        if quoted[cut - 1] == 0x3D:  # =X|X: escape starts on this line
++            cut -= 1
++        elif quoted[cut - 2] == 0x3D:  # =|XX
++            cut -= 2
++        quoted = quoted[:cut] + _QP_SOFT_BREAK + quoted[cut:]
++    return quoted
++
++
++def _encode_quoted_printable_line(line: bytes | bytearray) -> bytes:
++    r"""Encode one line (any ``\n`` is its final byte) as quoted-printable.
++
++    Lines longer than _QP_BLOCK_SIZE raw bytes are encoded one
++    _QP_BLOCK_SIZE block at a time, with a soft line break inserted
++    between blocks (binascii.a2b_qp decodes a soft break to nothing).
++    A block never ends with ``\r``: the cut moves back one byte so a
++    ``\r\n`` pair is never split across blocks. Cut positions depend only
++    on the bytes before the final ``\n``, matching the cuts the streaming
++    writer makes before that ``\n`` has arrived, so the encoding stays a
++    pure function of the line bytes regardless of chunking.
++    """
++    newline = b""
++    if line.endswith(b"\n"):
++        line, newline = line[:-1], b"\n"
++    parts: list[bytes] = []
++    pos = 0
++    while len(line) - pos > _QP_BLOCK_SIZE:
++        block_end = pos + _QP_BLOCK_SIZE
++        if line[block_end - 1] == 0x0D:  # \r: don't split a \r\n pair
++            block_end -= 1
++        parts.append(_encode_qp_block(line[pos:block_end]))
++        parts.append(_QP_SOFT_BREAK)
++        pos = block_end
++    rest = line[pos:]
++    if newline and rest.endswith(b"\r"):
++        rest, newline = rest[:-1], b"\r\n"
++    parts.append(_encode_qp_block(rest) + newline)
++    return b"".join(parts)
++
++
+ class BadContentDispositionHeader(RuntimeWarning):
+     pass
+ 
+@@ -1140,9 +1203,17 @@ def size(self) -> int | None:
+     def decode(self, encoding: str = "utf-8", errors: str = "strict") -> str:
+         """Return string representation of the multipart data.
+ 
+-        WARNING: This method may do blocking I/O if parts contain file payloads.
+-        It should not be called in the event loop. Use as_bytes().decode() instead.
++        .. deprecated:: 3.15
++            Use ``(await writer.as_bytes()).decode()`` instead; this method may
++            do blocking I/O if parts contain file payloads and should
++            not be called in the event loop.
+         """
++        warnings.warn(
++            "MultipartWriter.decode() is deprecated and will be removed "
++            "in a future release, use (await writer.as_bytes()).decode() instead",
++            DeprecationWarning,
++            stacklevel=2,
++        )
+         return "".join(
+             "--"
+             + self.boundary
+@@ -1152,61 +1223,82 @@ def decode(self, encoding: str = "utf-8", errors: str = "strict") -> str:
+             for part, _e, _te in self._parts
+         )
+ 
+-    async def as_bytes(self, encoding: str = "utf-8", errors: str = "strict") -> bytes:
+-        """Return bytes representation of the multipart data.
++    async def as_bytes(
++        self, encoding: str | None = None, errors: str | None = None
++    ) -> bytes:
++        """Return the multipart data exactly as write() would serialize it.
+ 
+-        This method is async-safe and calls as_bytes on underlying payloads.
+-        """
+-        parts: list[bytes] = []
++        ``encoding`` and ``errors`` are ignored and deprecated: the result
++        is the raw serialized body, where each part is encoded according
++        to its own headers.
+ 
+-        # Process each part
+-        for p
 ```
 
-**File**: `requirements/lint.txt` (modified, +1/-1)
+**File**: `aiohttp/web_response.py` (modified, +5/-1)
 ```diff
-@@ -34,7 +34,7 @@ cryptography==50.0.2
-     # via trustme
- distlib==0.4.4
-     # via virtualenv
--filelock==4.2.10
-+filelock==4.2.11
-     # via
-     #   python-discovery
-     #   virtualenv
+@@ -650,7 +650,11 @@ def text(self) -> str | None:
+         # Note: When _body is a Payload (e.g. FilePayload), this may do blocking I/O
+         # This is generally safe as most common payloads (BytesPayload, StringPayload)
+         # don't do blocking I/O, but be careful with file-based payloads
+-        return self._body.decode(self.charset or "utf-8")
++        with warnings.catch_warnings():
++            warnings.filterwarnings(
++                "ignore", "MultipartWriter.decode", DeprecationWarning
++            )
++            return self._body.decode(self.charset or "utf-8")
+ 
+     @text.setter
+     def text(self, text: str) -> None:
+```
+
+**File**: `docs/multipart_reference.rst` (modified, +30/-0)
+```diff
+@@ -250,3 +250,33 @@ Multipart reference
+       .. versionadded:: 3.4
+ 
+          Support ``close_boundary`` argument.
++
++   .. method:: as_bytes(encoding=None, errors=None)
++      :async:
++
++      Return the multipart body as :class:`bytes`.
++
++      Part bodies are encoded according to their own ``Content-Encoding``
++      and ``Content-Transfer-Encoding`` headers, so the result is
++      byte-identical to the body that :meth:`write` sends on the wire.
++
++      The *encoding* and *errors* arguments are deprecated and ignored.
++
++      Payloads that can be replayed (seekable files, cached async
++      iterables) are left reusable, so the request body can still be
++      sent afterwards.
++
++      :raises TypeError: if a part cannot be buffered in memory
++                         (e.g. a part wrapping a :class:`BodyPartReader`).
++
++      .. versionadded:: 3.12.1
++
++      .. deprecated:: 3.15
++
++         The *encoding* and *errors* parameters; they have no effect.
++
++      .. versionchanged:: 3.15
++
++         Part ``Content-Encoding``/``Content-Transfer-Encoding`` are now
++         applied; previously the parts' raw bodies were returned, which
++         did not match what :meth:`write` sent.
+```
+
+**File**: `tests/test_multipart.py` (modified, +293/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import asyncio
+ import base64
++import binascii
+ import gzip
+ import io
+ import json
+@@ -25,10 +26,13 @@
+ )
+ from aiohttp.helpers import DEFAULT_CHUNK_SIZE, HeadersDictProxy, parse_mimetype
+ from aiohttp.multipart import (
++    _QP_BLOCK_SIZE,
+     BodyPartReader,
+     BodyPartReaderPayload,
++    MultipartPayloadWriter,
+     MultipartReader,
+     MultipartResponseWrapper,
++    _encode_quoted_printable_line,
+ )
+ from aiohttp.streams import StreamReader
+ from aiohttp.web_exceptions import HTTPRequestEntityTooLarge
+@@ -1853,6 +1857,295 @@ async def test_multipart_writer_reusability_with_io_payloads(
+     assert bytes1 == bytes3
+ 
+ 
++async def test_as_bytes_async_iterable_part_remains_reusable(
++    buf: bytearray,
++    stream: AbstractStreamWriter,
++    writer: aiohttp.MultipartWriter,
++) -> None:
++    """as_bytes() must not irreversibly drain parts backed by async iterables."""
++
++    async def gen() -> AsyncIterator[bytes]:
++        yield b"chunk one "
++        yield b"chunk two"
++
++    writer.append(gen(), {CONTENT_TYPE: "application/octet-stream"})
++
++    bytes1 = await writer.as_bytes()
++    bytes2 = await writer.as_bytes()
++    assert bytes1 == bytes2
++    assert b"chunk one chunk two" in bytes1
++
++    await writer.write(stream)
++    assert bytes(buf) == bytes1
++
++
++async def test_as_bytes_form_data_matches_write(
++    buf: bytearray, stream: AbstractStreamWriter
++) -> None:
++    with aiohttp.MultipartWriter("form-data", boundary=":") as writer:
++        writer.append("value")
++    await writer.write(stream)
++
++    assert await writer.as_bytes() == bytes(buf)
++
++
++async def test_writer_decode_deprecated(writer: aiohttp.MultipartWriter) -> None:
++    writer.append("foo bar")
++
++    with pytest.warns(DeprecationWarning, match="as_bytes"):
++        assert "foo bar" in writer.decode()
++
++
++async def test_writer_as_bytes_encoding_params_deprecated(
++    writer: aiohttp.MultipartWriter,
++) -> None:
++    writer.append("foo bar")
++
++    with pytest.warns(DeprecationWarning, match="encoding and errors"):
++        with_params = await writer.as_bytes("utf-8")
++    assert with_params == await writer.as_bytes()
++
++
++@pytest.mark.usefixtures("parametrize_zlib_backend")
++@pytest.mark.parametrize("encoding", ("gzip", "deflate"))
++async def test_writer_as_bytes_applies_content_encoding(
++    buf: bytearray,
++    stream: AbstractStreamWriter,
++    writer: aiohttp.MultipartWriter,
++    encoding: str,
++) -> None:
++    """as_bytes() must apply part Content-Encoding just like write() does."""
++    writer.append("Time to Relax!", {CONTENT_ENCODING: encoding})
++    await writer.write(stream)
++    result = await writer.as_bytes()
++
++    assert result == bytes(buf)
++
++    _, message = result.split(b"\r\n\r\n", 1)
++    wbits = 16 + ZLibBackend.MAX_WBITS if encoding == "gzip" else -ZLibBackend.MAX_WBITS
++    decompressor = ZLibBackend.decompressobj(wbits=wbits)
++    data = decompressor.decompress(message.split(b"\r\n")[0])
++    data += decompressor.flush()
++    assert b"Time to Relax!" == data
++
++
++async def test_writer_as_bytes_applies_content_transfer_encoding_qp(
++    buf: bytearray, stream: AbstractStreamWriter, writer: aiohttp.MultipartWriter
++) -> None:
++    """as_bytes() must apply quoted-printable encoding just like write() does."""
++    writer.append("Привет, мир!", {CONTENT_TRANSFER_ENCODING: "quoted-printable"})
++    await writer.write(stream)
++    result = await writer.as_bytes()
++
++    assert result == bytes(buf)
++    _, message = result.split(b"\r\n\r\n", 1)
++    assert (
++        b"=D0=9F=D1=80=D0=B8=D0=B2=D0=B5=D1=82,"
++        b" =D0=BC=D0=B8=D1=80!" == message.split(b"\r\n")[0]
++    )
++
++
++@pytest.mark.parametrize(
++    "chunks",
++    (
++        pytest.param((b"line one\r", b"\nline two\r\n"), id="crlf-split"),
++        pytest.param((b"x" * 100, b"y" * 100 + b"\r\n"), id="long-line-split"),
++        pytest.param((b"hello ", b"world\r\n"), id="space-at-chunk-end"),
++        pytest.param((b"tab\t", b"stop\r\n"), id="tab-at-chunk-end"),
++    ),
++)
++async def test_writer_qp_wire_matches_as_bytes_across_chunk_splits(
++    buf: bytearray,
++    stream: AbstractStreamWriter,
++    writer: aiohttp.MultipartWriter,
++    chunks: list[bytes],
++) -> None:
++    """Quoted-printable output must not depend on payload chunk boundaries.
++
++    Any chunking sensitivity makes the wire bytes diverge from as_bytes()
++    (which digest auth hashes for qop=auth-int) and can corrupt line
++    endings split across chunks.
++    """
++
++    async def gen() -> AsyncIterator[bytes]:
++        for chunk in chunks:
++            yield chunk
++
++    writer.append(gen(), {CONTENT_TRANSFER_ENCODING: "quoted-printable"})
++    result = await writer.as_bytes()
++    await writer.write(stream)
++
++    assert result == bytes(buf)
++    _, wire_body = bytes(buf).split(b"\r\n\r\n", 1)
++    qp_body = wire_body.rsplit(b"\r\n--:--\r\n", 1)[0]
++    assert binascii.a2b_qp(qp_body) == b"".join(chunks)
++
++
++@pytest.mark.parametrize(
++    "chunks",
++    (
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14422** (2026-11-20): Bump virtualenv from 21.15.6 to 21.15.7 (@dependabot[bot])
-- **PR #14421** (2026-11-20): Bump virtualenv from 21.15.6 to 21.15.7 (@dependabot[bot])
-- **PR #14420** (2026-11-20): Bump filelock from 4.2.10 to 4.2.11 (@dependabot[bot])
-- **PR #14417** (2026-11-19): Bump pip-tools from 7.6.2 to 7.7.0 (@dependabot[bot])
-- **PR #14413** (2026-11-19): Bump MatteoGabriele/agentscan-action from 2.7.0 to 2.8.0 (@dependabot[bot])
-- **PR #14411** (closed): [bot] Run the Autobahn fuzzing client in batches to stop OOM kills (@Dreamsorcerer)
+- **PR #14462** (2026-11-24): Bump coverage from 7.17.3 to 7.17.4 (@dependabot[bot])
+- **PR #14459** (2026-11-24): Bump virtualenv from 21.15.9 to 21.15.11 (@dependabot[bot])
+- **PR #14458** (2026-11-24): Bump platformdirs from 4.14.5 to 4.14.8 (@dependabot[bot])
+- **PR #14456** (2026-11-24): Bump CodSpeedHQ/action from 5.6.3 to 5.8.0 (@dependabot[bot])
+- **PR #14454** (2026-11-24): Bump CodSpeedHQ/action from 5.6.3 to 5.8.0 (@dependabot[bot])
+- **PR #14449** (2026-11-23): Bump python-discovery from 1.9.5 to 1.9.6 (@dependabot[bot])
 
 ---
 
@@ -1986,28 +2240,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump virtualenv from 21.15.6 to 21.15.7
+## X. .as_bytes() producing different results to write()
 
 **RULE**:
-When implementing operations in `requirements/constraints.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGES/13495.bugfix.1.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b60c6125`: Bump virtualenv from 21.15.6 to 21.15.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0373445e`: .as_bytes() producing different results to write(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/constraints.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGES/13495.bugfix.1.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-virtualenv==21.15.7
+Fixed :class:`~aiohttp.MultipartWriter` ``as_bytes()`` ignoring per-part content
+and transfer encodings; it now serializes through the same code path as
+``write()``, so the result is byte-identical to the wire format
+-- by :user:`Dreamsorcerer`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-virtualenv==21.15.6
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b60c6125` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0373445e` are properly handled with clean fallback behavior.

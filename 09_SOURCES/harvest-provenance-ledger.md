@@ -12826,3 +12826,6 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8bcc919d` | Multi-dimensional audit evidence | 2026-11-24T19:19:20.136Z |
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `e98c27d7` | Multi-dimensional audit evidence | 2026-11-24T19:36:00.301Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `e5152348` | Multi-dimensional audit evidence | 2026-11-24T19:36:13.812Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `b2d4ec05` | Multi-dimensional audit evidence | 2026-11-24T19:44:50.261Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `0373445e` | Multi-dimensional audit evidence | 2026-11-24T19:44:51.423Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `d6b4a0a3` | Multi-dimensional audit evidence | 2026-11-24T19:44:56.971Z |
