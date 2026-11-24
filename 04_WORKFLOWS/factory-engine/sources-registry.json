@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T10:13:22.016Z",
-    "lastVerified": "2026-11-24T10:13:22.016Z",
+    "lastChecked": "2026-11-24T10:26:50.873Z",
+    "lastVerified": "2026-11-24T10:26:50.873Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T09:28:53.259Z",
+    "lastChecked": "2026-11-24T10:26:50.865Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T09:28:53.259Z"
+    "lastVerified": "2026-11-24T10:26:50.865Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2198,8 +2198,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T04:28:51.856Z",
-    "lastVerified": "2026-11-24T04:28:51.856Z",
+    "lastChecked": "2026-11-24T10:26:45.881Z",
+    "lastVerified": "2026-11-24T10:26:45.881Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2255,9 +2255,9 @@
   "danilowoz-react-content-loader": {
     "name": "react-content-loader",
     "officialUrl": "https://github.com/danilowoz/react-content-loader",
-    "lastChecked": "2026-11-21T17:15:24.526Z",
+    "lastChecked": "2026-11-24T10:26:40.839Z",
     "revisionIdentifier": "c8a6b6c6",
-    "lastVerified": "2026-11-21T17:15:24.526Z"
+    "lastVerified": "2026-11-24T10:26:40.839Z"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh",
@@ -3329,8 +3329,8 @@
     "officialUrl": "https://github.com/o2sh/onefetch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T03:46:46.591Z",
-    "lastVerified": "2026-11-23T03:46:46.591Z",
+    "lastChecked": "2026-11-24T10:26:35.884Z",
+    "lastVerified": "2026-11-24T10:26:35.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-o2sh-onefetch",
@@ -4461,8 +4461,8 @@
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T14:55:28.393Z",
-    "lastVerified": "2026-11-23T14:55:28.393Z",
+    "lastChecked": "2026-11-24T10:26:48.395Z",
+    "lastVerified": "2026-11-24T10:26:48.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
@@ -6392,9 +6392,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-23T15:45:47.424Z",
+    "lastChecked": "2026-11-24T10:26:43.332Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-23T15:45:47.424Z"
+    "lastVerified": "2026-11-24T10:26:43.332Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -9983,12 +9983,12 @@
     "lastVerified": "2026-11-23T06:45:41.753Z"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
-    "name": "CrawlCove/robots-txt-tester",
+    "name": "crawlcove-robots-txt-tester",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T05:51:31.569Z",
-    "lastVerified": "2026-11-20T05:51:31.569Z",
+    "lastChecked": "2026-11-24T10:26:38.402Z",
+    "lastVerified": "2026-11-24T10:26:38.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crawlcove-robots-txt-tester",
@@ -9997,7 +9997,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cf5ba27f"
   },
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",

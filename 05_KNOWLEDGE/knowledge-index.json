@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T10:13:25.751Z",
+  "last_updated": "2026-11-24T10:26:53.617Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "748b586e9659dc5009c21ad89e7868c2744ecb3d297076e9873bb77571cb8a69",
+      "content_hash": "6cc534c6e1b690a0b6fdf7f2a900771099ce76a0bb117f1896417fcbaecbd127",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T10:13:25.569Z"
+      "persisted_at": "2026-11-24T10:26:53.456Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "15996324c615a56faf32cb5c3893c9484d0f8fceba32f9b46b7818fc41d05666",
+      "content_hash": "0c5071936b02e0c3721501cf9b908ab3b7d296e37d413905fa7a083b102fe7ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:13:25.751Z"
+      "persisted_at": "2026-11-24T10:26:53.617Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d7013fa5fcd7904d76fe59004ce51509bb1a38c7041865ec38a7fc09b31b1ef",
+      "content_hash": "96532c72ad74c950751fcb40ce046a714b1de70827ab133414f10f9172f8ea17",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:13:24.065Z"
+      "persisted_at": "2026-11-24T10:26:52.349Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f42e228ee42ed6e9fe7a74362d47a5458b0e75db48b5ce72d83783094528e70",
+      "content_hash": "369c04d6570cf4d01f5a924f1a548459bf0e41d4424b67eaa1113018f1c0e1c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:13:24.291Z"
+      "persisted_at": "2026-11-24T10:26:52.530Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e451f4dab210040bd7ab14e76989b6e1e0ac852b3c2bddd7122ba05b4d96b859",
+      "content_hash": "f240431117cfdd3cf594f294bc41eee35aa365c46b94d64a3521d56f4730c620",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T10:13:22.855Z"
+      "persisted_at": "2026-11-24T10:26:51.458Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "412df47cfcbd1b9b02767cd858faf87e6731c0fd6c91161dabed725cb8862386",
+      "content_hash": "76ee6c91ce36de8c054ad06b70ed85aed2e4edbb97e311dcc08c43c09566eb93",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:13:23.077Z"
+      "persisted_at": "2026-11-24T10:26:51.629Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -256060,9 +256060,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "920c03284da418cd8af73753a37196ae300c4c9fc9efdb19dd670cf551f1f1c6",
+      "content_hash": "e6d358646155772116dcfb31d2955af77a0b032dc2b29b91e59951275a33d25c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T10:13:25.335Z"
+      "persisted_at": "2026-11-24T10:26:53.281Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -319908,13 +319908,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E52V-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VH20-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "caafdbb97e3454c9ceca4d8fdaa251b483e866c68b3e5581399143446dfffb6d",
+      "content_hash": "cb5fc4230de8f8378914be2c85d8ee14ac5a685e50fbbdd10855481912903557",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:13:22.622Z"
+      "persisted_at": "2026-11-24T10:26:51.291Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -329927,13 +329927,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E703-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VIGI-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "443161cb1f5a718fa95ca758a16042518c65e7bbcf59d4d4fd1041956fdd2041",
+      "content_hash": "5253ca5d64a902282069fe7e2b8fdb890a9342d4098389e7519b4ef5c66d87bf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T10:13:25.113Z"
+      "persisted_at": "2026-11-24T10:26:53.109Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -334887,13 +334887,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E60P-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHQQ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "61769d9a83e5298d9793863aa709d60e8061864e97edc62a487ac872c7bc4a38",
+      "content_hash": "71cc78568b506611126d0f4fc5ae83b64f8c3077718c5fad0126b5def11e819c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:13:23.839Z"
+      "persisted_at": "2026-11-24T10:26:52.181Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
