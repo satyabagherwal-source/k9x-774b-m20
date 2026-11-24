@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T19:19:19.270Z",
-    "lastVerified": "2026-11-24T19:19:19.270Z",
+    "lastChecked": "2026-11-24T19:55:31.213Z",
+    "lastVerified": "2026-11-24T19:55:31.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T19:45:00.380Z",
-    "lastVerified": "2026-11-24T19:45:00.380Z",
+    "lastChecked": "2026-11-24T19:55:31.221Z",
+    "lastVerified": "2026-11-24T19:55:31.221Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -160,9 +160,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-24T15:53:37.511Z",
+    "lastChecked": "2026-11-24T19:55:26.194Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-24T15:53:37.511Z"
+    "lastVerified": "2026-11-24T19:55:26.194Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -582,9 +582,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-11-23T23:39:55.706Z",
+    "lastChecked": "2026-11-24T19:55:28.719Z",
     "revisionIdentifier": "1b73f91b",
-    "lastVerified": "2026-11-23T23:39:55.706Z"
+    "lastVerified": "2026-11-24T19:55:28.719Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -3382,12 +3382,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kumahq/kuma",
+    "name": "kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T00:49:07.140Z",
-    "lastVerified": "2026-11-24T00:49:07.140Z",
+    "lastChecked": "2026-11-24T19:55:23.716Z",
+    "lastVerified": "2026-11-24T19:55:23.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
@@ -3396,7 +3396,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a38cd168"
   },
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
@@ -6005,9 +6006,9 @@
   "xinthink-react-native-material-kit": {
     "name": "react-native-material-kit",
     "officialUrl": "https://github.com/xinthink/react-native-material-kit",
-    "lastChecked": "2026-11-22T05:28:02.500Z",
+    "lastChecked": "2026-11-24T19:55:21.307Z",
     "revisionIdentifier": "3a1c7a7e",
-    "lastVerified": "2026-11-22T05:28:02.500Z"
+    "lastVerified": "2026-11-24T19:55:21.307Z"
   },
   "checkmarx-kics": {
     "name": "kics",
@@ -11239,12 +11240,12 @@
     "officialUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-20T20:57:40.064Z",
-    "lastVerified": "2026-11-20T20:57:40.064Z",
+    "lastChecked": "2026-11-24T19:55:18.825Z",
+    "lastVerified": "2026-11-24T19:55:18.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
-    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+    "contentHash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -15033,6 +15034,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
     "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-orcarouter-inkling-2-mini-abliterated-gguf": {
+    "name": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "officialUrl": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-24T19:55:16.175Z",
+    "lastVerified": "2026-11-24T19:55:16.175Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
+    "contentHash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

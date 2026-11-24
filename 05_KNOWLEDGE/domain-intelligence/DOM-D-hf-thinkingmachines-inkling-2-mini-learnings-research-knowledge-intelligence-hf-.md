@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T20:58:24.210Z",
+  "timestamp": "2026-11-24T19:56:00.054Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-thinkingmachines-inkling-2-mini-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-thinkingmachines-inkling-2-mini-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T20:58:24.210Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:56:00.054Z`  
 > **Learning ID**: `LEARN-EVO-hf-thinkingmachines-inkling-2-mini-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-thinkingm`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T20:57:40.300Z  
+> **Timestamp**: 2026-11-24T19:55:18.829Z  
 > **Learning ID**: `learn-huggingface-thinkingmachines-inkling-2-mini`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:57:40.064Z  
+> **Harvest Timestamp**: 2026-11-24T19:55:18.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 136 downloads | 95 likes
+- **Stars / Engagement**: 69042 downloads | 5736 likes
 
 ---
 

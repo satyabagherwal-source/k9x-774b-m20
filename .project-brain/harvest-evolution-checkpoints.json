@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:45:04.081Z",
+  "last_updated": "2026-11-24T19:56:01.349Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T19:36:19.238Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T19:27:49.657Z",
+      "processed_at": "2026-11-24T19:56:00.397Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3623,8 +3623,8 @@
       "staged_for_review": 1
     },
     "hf-thinkingmachines-inkling-2-mini-learnings.md": {
-      "processed_at": "2026-11-20T20:58:24.077Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T19:55:59.928Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "rdflib-rdflib-learnings.md": {
@@ -3851,9 +3851,14 @@
       "processed_at": "2026-11-24T18:35:06.338Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md": {
+      "processed_at": "2026-11-24T19:55:59.406Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3906,
-  "total_canonical_promoted": 516,
-  "total_staged_for_review": 2972
+  "total_dossiers_evaluated": 3909,
+  "total_canonical_promoted": 517,
+  "total_staged_for_review": 2973
 }

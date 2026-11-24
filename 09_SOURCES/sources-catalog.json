@@ -13105,8 +13105,8 @@
     "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
     "sourceVersion": "hf-thinkingmachines-inkling-2-mini",
     "license": "Open-Source",
-    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
-    "lastHarvestedAt": "2026-11-20T20:57:40.770Z",
+    "contentHash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
+    "lastHarvestedAt": "2026-11-24T19:55:19.338Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini"
   },
   "hf-unsloth-inkling-2-mini-gguf": {
@@ -13388,5 +13388,15 @@
     "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
     "lastHarvestedAt": "2026-11-24T18:34:15.015Z",
     "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf"
+  },
+  "hf-orcarouter-inkling-2-mini-abliterated-gguf": {
+    "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "sourceVersion": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
+    "license": "Open-Source",
+    "contentHash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
+    "lastHarvestedAt": "2026-11-24T19:55:16.820Z",
+    "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf"
   }
 }

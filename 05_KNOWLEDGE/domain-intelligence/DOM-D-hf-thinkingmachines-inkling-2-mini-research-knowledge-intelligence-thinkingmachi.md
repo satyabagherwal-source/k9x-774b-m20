@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
   "source_version": "hf-thinkingmachines-inkling-2-mini",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T20:57:40.958Z",
+  "timestamp": "2026-11-24T19:55:19.565Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-thinkingmachines-inkling-2-mini",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini) (Revision: `hf-thinkin`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T20:57:40.958Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:55:19.565Z`  
 > **Learning ID**: `learn-huggingface-thinkingmachines-inkling-2-mini`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:57:40.064Z  
+> **Harvest Timestamp**: 2026-11-24T19:55:18.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 136 downloads | 95 likes
+- **Stars / Engagement**: 69042 downloads | 5736 likes
 
 ---
 

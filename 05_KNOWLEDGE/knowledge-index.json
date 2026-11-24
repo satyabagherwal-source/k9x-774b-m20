@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:45:03.924Z",
-  "total_verified_learnings": 9100,
+  "last_updated": "2026-11-24T19:56:01.182Z",
+  "total_verified_learnings": 9101,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24886,
+  "total_items": 24889,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "215c78f93a992d6dd87af32408be0f053fb62fcbe14f8ae78f21f23c1a4a0855",
+      "content_hash": "1a0d2bb38510ce21b4286fe9b4b9a07a9083814b9c9ac425aa5394452bb0a0af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:27:50.161Z"
+      "persisted_at": "2026-11-24T19:56:00.980Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "99007b04e1a4f46ccfc9550568a065c6388c5e93bbc28d7ee1d8ebb6d700309d",
+      "content_hash": "47034ddc99cba08b6f398dfb5c5503f6ae0c83223667a3d13acb7c570ffafcc0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:27:50.340Z"
+      "persisted_at": "2026-11-24T19:56:01.182Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -310508,7 +310508,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
       "source_version": "hf-thinkingmachines-inkling-2-mini",
-      "content_hash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+      "content_hash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
       "promoted_rules": [],
@@ -310517,7 +310517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:57:40.549Z",
+      "verified_at": "2026-11-24T19:55:19.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310534,9 +310534,9 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Mini Core Invariants",
       "repository": "thinkingmachines/Inkling-2-Mini",
       "source_version": "hf-thinkingmachines-inkling-2-mini",
-      "content_hash": "1aa097805823815e94239c9c30bb345c2da5a58e18aea4037bbe786f844097d9",
+      "content_hash": "b7d02ff9a827c8b84d252ab539ae422d4546a778f6f4ca012d25fa3a7d110d3f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T20:57:40.958Z"
+      "persisted_at": "2026-11-24T19:55:19.565Z"
     },
     "rule-9639": {
       "learning_id": "rule-9639",
@@ -310584,9 +310584,9 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-mini-learnings Core Invariants",
       "repository": "hf-thinkingmachines-inkling-2-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e2611d8e8180f489a33d1d47c2543c10f20c2b7bf179fde564135d02a658f04",
+      "content_hash": "8dd016a2bd2a4d88784cc7cba2acdf19be82efede9f1ab0df9fd11eeb1665194",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T20:58:24.311Z"
+      "persisted_at": "2026-11-24T19:56:00.166Z"
     },
     "candidate_directive-trafficpolicy-prefer-the-parent-on-conflicts-under-deepmergepreferparent": {
       "item_id": "candidate_directive-trafficpolicy-prefer-the-parent-on-conflicts-under-deepmergepreferparent",
@@ -338666,13 +338666,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-76CB-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7EYO-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "01223adc932c521690c94a221a6106479f9cfa228416b81eb882911c984bf4d6",
+      "content_hash": "725445d19bb06f2e2bc2f3365afff391f1c5846278380d87a930cd701dd1c490",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:27:49.983Z"
+      "persisted_at": "2026-11-24T19:56:00.777Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -339949,6 +339949,57 @@
       "content_hash": "9e7bf50f5632588aacd9d5c4587702efee5a8363f58885d01d0557a22965447f",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T19:45:02.300Z"
+    },
+    "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf": {
+      "learning_id": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "slug": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "source_version": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
+      "content_hash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T19:55:16.572Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-research-knowledge-intelligence-or.md",
+      "title": "Research & Knowledge Intelligence: orcarouter/Inkling-2-Mini-abliterated-GGUF Core Invariants",
+      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "source_version": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
+      "content_hash": "362f5c5a601811f511112104f05ac0b75c65ce171b230e3f22e9514e345c6338",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T19:55:17.048Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings-research-knowledge-intel.md",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings Core Invariants",
+      "repository": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T19:55:59.702Z"
     }
   },
   "ai-builder-brain": {

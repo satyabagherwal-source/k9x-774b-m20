@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:44:56.977Z",
-  "total_cycles_completed": 12158,
-  "total_learnings_persisted": 12158,
+  "last_updated": "2026-11-24T19:55:19.344Z",
+  "total_cycles_completed": 12160,
+  "total_learnings_persisted": 12160,
   "total_rules_promoted": 11216,
   "history": [
-    {
-      "timestamp": "2026-11-24T03:49:53.506Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:49:58.862Z",
-      "repository": "sceneview/sceneview",
-      "learningId": "learn-github-sceneview-sceneview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T03:50:04.739Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1389,20 @@
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:55:16.826Z",
+      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:55:19.344Z",
+      "repository": "thinkingmachines/Inkling-2-Mini",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

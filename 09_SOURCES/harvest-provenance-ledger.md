@@ -12829,3 +12829,6 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `b2d4ec05` | Multi-dimensional audit evidence | 2026-11-24T19:44:50.261Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `0373445e` | Multi-dimensional audit evidence | 2026-11-24T19:44:51.423Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `d6b4a0a3` | Multi-dimensional audit evidence | 2026-11-24T19:44:56.971Z |
+| `learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf` | `https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-24T19:55:16.820Z |
+| `learn-huggingface-thinkingmachines-inkling-2-mini` | `https://huggingface.co/thinkingmachines/Inkling-2-Mini` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-24T19:55:19.338Z |
+| `learn-dom-d-3b305647` | `project://hf-orcarouter-inkling-2-mini-abliterated-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md` | 2026-11-24T19:55:59.406Z |

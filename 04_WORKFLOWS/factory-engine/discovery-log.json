@@ -22201,5 +22201,17 @@
     "downloads": 130629,
     "qualityScore": 3200,
     "discoveredAt": "2026-11-24T18:31:58.413Z"
+  },
+  {
+    "name": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "fullName": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "url": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: orcarouter/Inkling-2-Mini-abliterated-GGUF (142 likes, 5446 downloads)",
+    "likes": 142,
+    "downloads": 5446,
+    "qualityScore": 3420,
+    "discoveredAt": "2026-11-24T19:53:02.243Z"
   }
 ]

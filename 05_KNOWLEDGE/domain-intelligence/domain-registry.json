@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:45:03.722Z",
-  "total_records": 2568,
+  "last_updated": "2026-11-24T19:56:00.980Z",
+  "total_records": 2571,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 970,
+      "total": 973,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1042,7 +1042,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants",
         "DOM-D-EBA58F46",
-        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-",
+        "DOM-D-3B305647",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le"
       ]
     },
     "E": {
@@ -9301,8 +9304,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "215c78f93a992d6dd87af32408be0f053fb62fcbe14f8ae78f21f23c1a4a0855",
-      "created_at": "2026-11-24T19:27:50.161Z"
+      "content_hash": "1a0d2bb38510ce21b4286fe9b4b9a07a9083814b9c9ac425aa5394452bb0a0af",
+      "created_at": "2026-11-24T19:56:00.980Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -36949,8 +36952,8 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Mini Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-research-knowledge-intelligence-thinkingmachi.md",
       "repository": "thinkingmachines/Inkling-2-Mini",
-      "content_hash": "1aa097805823815e94239c9c30bb345c2da5a58e18aea4037bbe786f844097d9",
-      "created_at": "2026-11-20T20:57:40.958Z"
+      "content_hash": "b7d02ff9a827c8b84d252ab539ae422d4546a778f6f4ca012d25fa3a7d110d3f",
+      "created_at": "2026-11-24T19:55:19.565Z"
     },
     "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
@@ -37009,8 +37012,8 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-mini-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-thinkingmachines-inkling-2-mini-learnings",
-      "content_hash": "8e2611d8e8180f489a33d1d47c2543c10f20c2b7bf179fde564135d02a658f04",
-      "created_at": "2026-11-20T20:58:24.311Z"
+      "content_hash": "8dd016a2bd2a4d88784cc7cba2acdf19be82efede9f1ab0df9fd11eeb1665194",
+      "created_at": "2026-11-24T19:56:00.166Z"
     },
     "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",
@@ -43141,6 +43144,66 @@
       "repository": "ataraxy-labs-sem-learnings",
       "content_hash": "7e7d4552805e9c35108b4ce0d67fad00b31c466c9ff6b0c9e0b9a96564665513",
       "created_at": "2026-11-24T19:36:17.672Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/Inkling-2-Mini-abliterated-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-research-knowledge-intelligence-or.md",
+      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "content_hash": "362f5c5a601811f511112104f05ac0b75c65ce171b230e3f22e9514e345c6338",
+      "created_at": "2026-11-24T19:55:17.048Z"
+    },
+    "DOM-D-3B305647": {
+      "record_id": "DOM-D-3B305647",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF](https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF))  \n> **Source Versio",
+      "content_hash": "da7ce18458f52097501488b0bba49487a57ec40e94ef3599eb8b14bf09ce7098",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  \n> **Source**: huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  \n> **Source**: huggingf",
+      "provenance": {
+        "source_uri": "project://hf-orcarouter-inkling-2-mini-abliterated-gguf/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T19:55:31.343Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-orcarouter-inkling-2-mini-abliterated-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-orcarouter-inkling-2-mini-abliterated-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T19:55:59.371Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings-research-knowledge-intel.md",
+      "repository": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings",
+      "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
+      "created_at": "2026-11-24T19:55:59.702Z"
     }
   }
 }

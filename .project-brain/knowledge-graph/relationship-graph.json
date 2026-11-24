@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T19:10:44.607Z",
+  "updated_at": "2026-11-24T19:55:59.403Z",
   "statistics": {
-    "total_nodes": 515,
+    "total_nodes": 516,
     "total_edges": 215,
     "domain_distribution": {
-      "D": 310,
+      "D": 311,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -11499,6 +11499,28 @@
       ],
       "created_at": "2026-11-24T19:10:44.607Z",
       "updated_at": "2026-11-24T19:10:44.607Z"
+    },
+    "DOM-D-3B305647": {
+      "id": "DOM-D-3B305647",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  \n> **Source**: huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  \n> **Source**: huggingf",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-orcarouter-inkling-2-mini-abliterated-gguf/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T19:55:31.343Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-orcarouter-inkling-2-mini-abliterated-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T19:55:59.403Z",
+      "updated_at": "2026-11-24T19:55:59.403Z"
     }
   },
   "edges": [

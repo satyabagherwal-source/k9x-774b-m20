@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T19:36:18.441Z",
+  "updated_at": "2026-11-24T19:55:59.436Z",
   "stats": {
-    "total_discovered": 8873,
-    "approved_pending_harvest": 8398,
+    "total_discovered": 8874,
+    "approved_pending_harvest": 8399,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8393,
+      "COMMUNITY_AND_EXPERT": 8394,
       "OFFICIAL_DOCUMENTATION": 270,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -191908,6 +191908,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
         "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-173A6E686FB5": {
+      "id": "SRC-173A6E686FB5",
+      "url": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "title": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T19:55:59.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
+        "fileName": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md"
       }
     }
   }
