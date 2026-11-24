@@ -4,22 +4,22 @@
 {
   "source_repository": "rdfjs/N3.js",
   "source_url": "https://github.com/rdfjs/N3.js",
-  "source_version": "f921e119",
+  "source_version": "6b42d44a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T00:56:01.101Z",
+  "timestamp": "2026-11-24T20:12:48.230Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rdfjs-n3-js",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rdfjs/N3.js](https://github.com/rdfjs/N3.js) (Revision: `f921e119`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T00:56:01.101Z`  
+> **Provenance**: Harvested from [rdfjs/N3.js](https://github.com/rdfjs/N3.js) (Revision: `6b42d44a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T20:12:48.230Z`  
 > **Learning ID**: `learn-github-rdfjs-n3-js`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rdfjs/N3.js` (Commit: `f921e119`)
+- **Target Repository**: `rdfjs/N3.js` (Commit: `6b42d44a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:56:00.036Z  
+> **Harvest Timestamp**: 2026-11-24T20:12:47.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -992,159 +992,169 @@ console.timeEnd(TEST);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f921e119` (2026-11-16)
-**Commit Message**: chore(deps-dev): Bump the minor group with 3 updates (#878)
+### Incident Patch 1: `6b42d44a` (2026-11-23)
+**Commit Message**: chore(deps-dev): Bump the minor group with 3 updates (#879)
 
-Bumps the minor group with 3 updates: [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core), [@babel/register](https://github.com/babel/babel/tree/HEAD/packages/babel-register) and [eslint-plugin-import-x](https://github.com/un-ts/eslint-plugin-import-x).
+Bumps the minor group with 3 updates: [eslint](https://github.com/eslint/eslint), [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest) and [playwright](https://github.com/microsoft/playwright).
 
 
-Updates `@babel/core` from 8.1.0 to 8.1.2
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v8.1.2/packages/babel-core)
+Updates `eslint` from 10.14.0 to 10.15.0
+- [Release notes](https://github.com/eslint/eslint/releases)
+- [Commits](https://github.com/eslint/eslint/compare/v10.14.0...v10.15.0)
 
-Updates `@babel/register` from 8.0.6 to 8.1.2
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v8.1.2/packages/babel-register)
+Updates `eslint-plugin-jest` from 29.17.0 to 29.17.1
+- [Release notes](https://github.com/jest-community/eslint-plugin-jest/releases)
+- [Changelog](https://github.com/jest-community/eslint-plugin-jest/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/jest-community/eslint-plugin-jest/compare/v29.17.0...v29.17.1)
 
-Updates `eslint-plugin-import-x` from 4.17.1 to 4.18.1
-- [Release notes](https://github.com/un-ts/eslint-plugin-import-x/releases)
-- [Changelog](https://github.com/un-ts/eslint-plugin-import-x/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/un-ts/eslint-plugin-import-x/compare/v4.17.1...v4.18.1)
+Updates `playwright` from 1.65.0 to 1.65.1
+- [Release notes](https://github.com/microsoft/playwright/releases)
+- [Commits](https://github.com/microsoft/playwright/compare/v1.65.0...v1.65.1)
 
 ---
 updated-dependencies:
-- dependency-name:
+- dependency-name: eslint
+  dependency-version: 10.15.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+  dependency-group: minor
+- dependency-name: eslint-plugin-jest
+  depe
 
-**File**: `package-lock.json` (modified, +120/-100)
+**File**: `package-lock.json` (modified, +94/-38)
 ```diff
-@@ -138,20 +138,20 @@
+@@ -2211,20 +2211,37 @@
        }
      },
-     "node_modules/@babel/core": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
--      "integrity": "sha512-3jqm7xh3kJCmIeOK8sk6/EvOWdSzvOqvjt0tJEDOHHmzWjcQSvIh2/tq1I9RA741tl0QZdMzPJWCulWE+Dy5ww==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
-+      "integrity": "sha512-xqDajHAAOjklW5UtWzFd9vSmlQ16+emgGi0HsyDQFGRQWZ/GjuwCoYGC3PnHxspmOR+HJBzDIOkMxNq/VvC98w==",
+     "node_modules/@eslint/config-array": {
+-      "version": "0.23.5",
+-      "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.5.tgz",
+-      "integrity": "sha512-Y3kKLvC1dvTOT+oGlqNQ1XLqK6D1HU2YXPc52NmAlJZbMMWDzGYXMiPRJ8TYD39muD/OTjlZmNJ4ib7dvSrMBA==",
++      "version": "0.23.6",
++      "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.6.tgz",
++      "integrity": "sha512-WrTH7nioI9QPY4NZGnsywmecswJdgeq4BCM76qok9VgjTO29ZgUzUvcuJLVPYVQM4uDbaPBU0M33R9DIxI8X3w==",
        "dev": true,
-       "license": "MIT",
+       "license": "Apache-2.0",
        "dependencies": {
-         "@babel/code-frame": "^8.0.6",
--        "@babel/generator": "^8.1.0",
-+        "@babel/generator": "^8.1.2",
-         "@babel/helper-compilation-targets": "^8.0.7",
--        "@babel/helpers": "^8.1.0",
--        "@babel/parser": "^8.1.0",
--        "@babel/template": "^8.0.0",
--        "@babel/traverse": "^8.1.0",
--        "@babel/types": "^8.1.0",
-+        "@babel/helpers": "^8.1.2",
-+        "@babel/parser": "^8.1.2",
-+        "@babel/template": "^8.1.2",
-+        "@babel/traverse": "^8.1.2",
-+        "@babel/types": "^8.1.2",
-         "@types/gensync": "^1.0.5",
-         "convert-source-map": "^2.0.0",
-         "empathic": "^2.0.1",
-@@ -183,14 +183,14 @@
-       }
-     },
-     "node_modules/@babel/generator": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
--      "integrity": "sha512-7fiBJ61wDV3AHbg7n/EfLBv3RU+lsdRP8QNJnydkKWA7e48FnnvKQWbVHsJQCBE7JHTj4xlzZL9fvQYsBUip2A==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
-+      "integrity": "sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@babel/parser": "^8.1.0",
--        "@babel/types": "^8.1.0",
-+        "@babel/parser": "^8.1.2",
-+        "@babel/types": "^8.1.2",
-         "@jridgewell/gen-mapping": "0.4.0-beta.0",
-         "@jridgewell/trace-mapping": "^0.3.31",
-         "@types/jsesc": "^2.5.0",
-@@ -445,9 +445,9 @@
-       }
-     },
-     "node_modules/@babel/helper-string-parser": {
--      "version": "8.0.8",
--      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
--      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
-+      "integrity": "sha512-TRz5Z0MgfIfWqwEIq/pCpUpEXQxUt2Ig2ZbxG3SdmhSbHMAFFYGOix0kI4JLV371/TA+qWnQ4xWHPWjojkyRFA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -490,27 +490,27 @@
-       }
-     },
-     "node_modules/@babel/helpers": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
--      "integrity": "sha512-949bjw10dhaRdtQeCpfVShFA4jIcto97BkqmWnRjpzyQuHVZ7EDriaoCn/4D8h1NqSKlmI20xPU0vHf3jQbQRg==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
-+      "integrity": "sha512-BmtiG8H9OUWSTFOgl9jtPYmfDi6uc21Pf4GUxkgGoZnzMIzpDnhkl5gsGJW6wb1jmKCyU565F8IYe5mwOTctfw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@babel/template": "^8.0.0",
--        "@babel/types": "^8.1.0"
-+        "@babel/template": "^8.1.2",
-+        "@babel/types": "^8.1.2"
+         "@eslint/object-schema": "^3.0.5",
+         "debug": "^4.3.1",
+-        "minimatch": "^10.2.4"
++        "minimatch": "^11.0.5"
        },
        "engines": {
-         "node": "^22.18.0 || >=24.11.0"
+         "node": "^20.19.0 || ^22.13.0 || >=24"
        }
      },
-     "node_modules/@babel/parser": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.0.tgz",
--      "integrity": "sha512-fpqZYAC+Tthr19JbEKxXhCGutvfm/+roMe+ULrgUKI+GVyzkQiTMTSheORcWIAzW8T3Oo3W5UavWSvAWmsp7fA==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.2.tgz",
-+      "integrity": "sha512-ZDKU7vaX0VORd2BhaO+3FKr/30TKjbUy3SMZcydiPngnAb+MesgUoh5SJcE5EwEyBj14M5J6fK56GuBqvYmOpw==",
++    "node_modules/@eslint/config-array/node_modules/minimatch": {
++      "version": "11.0.9",
++      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.9.tgz",
++      "integrity": "sha512-KCFkfyjqerNlSstjlhIGNXIKZGA/6O4V4RlhZ+Dsr621SPPw0mzlypE9D9ZOoPiVefHID+j7/XuMMlqfD/F60Q==",
++      "dev": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "@isaacs/nonrecursive-glob-match": "^1.1.0",
++        "brace-expansion": "^5.0.12"
++      },
++      "engines": {
++        "node": "20 || >=22"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
+     "node_modules/@eslint/config-helpers": {
+       "version": "0.7.0",
+       "resolved": "https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.7.0.tgz",
+@@ -5824,9 +5841,9 @@
+       }
+     },
+     "node_modules/eslint": {
+-      "version": "10.14.0",
+-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
+-      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
++      "version": "10.15.0",
++      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.15.0.tgz",
++      "integrity": "sha512-+5Wg4p+ze3sG1WErYgUO/3H1IQIfFBymVUA0Fo/XTeBOLS6UQIUekpSJ8sdRkn7O7wjh84b55w/roqavH2aScg==",
        "dev": true,
        "license": "MIT",
+       "workspaces": [
+@@ -5835,7 +5852,7 @@
        "dependencies": {
--        "@babel/types": "^8.1.0"
-+        "@babel/types": "^8.1.2"
+         "@eslint-community/eslint-utils": "^4.8.0",
+         "@eslint-community/regexpp": "^4.12.2",
+-        "@eslint/config-array": "^0.23.5",
++        "@eslint/config-array": "^0.23.6",
+         "@eslint/config-helpers": "^0.7.0",
+         "@eslint/core": "^1.2.1",
+         "@eslint/plugin-kit": "^0.7.3",
+@@ -5860,7 +5877,7 @@
+         "imurmurhash": "^0.1.4",
+         "is-glob": "^4.0.0",
+         "json-stable-stringify-without-jsonify": "^1.0.1",
+-        "minimatch": "^10.2.6",
++        "minimatch": "^11.0.5",
+         "natural-compare": "^1.4.0",
+         "optionator": "^0.9.3"
        },
-       "bin": {
-         "parser": "bin/babel-parser.js"
-@@ -1580,9 +1580,9 @@
-       }
+@@ -5954,9 +5971,9 @@
+       "license": "MIT"
      },
-     "node_modules/@babel/register": {
--      "version": "8.0.6",
--      "resolved": "https://registry.npmjs.org/@babel/register/-/register-8.0.6.tgz",
--      "integrity": "sha512-Ix77Wl3Xpv/YXCRUa7s/FC0pWqsA+fego+HjmC0ziJioGKrBdS2Jpz2GruJMkUKYiJ33m+W8NXfce+3PQRzmSQ==",
-+      "version": "8.1.2",
-+      "resolved": "https://registry.npmjs.org/@babel/register/-/register-8.1.2.tgz",
-+      "integrity": "sha512-ZzLJg0RjvqcKHsnaFRVa7FDENGRXINoHtC9vT0XG8FpuOW+Jb/L/sMLXKiIzjN8wD4gL6ui6hUWuDderLyJH6Q==",
+     "node_modules/eslint-plugin-jest": {
+-      "version": "29.17.0",
+-      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-29.17.0.tgz",
+-      "integrity": "sha512-6jtpU6MhYKbagkES02TupWAUUooJpZtKg94Ax0b8HhUorv3InSTBU8RRtlSBe0LocOcShXOpyec3PHzPDkJCSg==",
++      "version": "29.17.1",
++      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-29.17.1.tgz",
++      "integrity": "sha512-Ec5MnIgjAGAHwXQ0sMeEqXGzEe1jtBe6r52Iw7AquulmI92ldRWQNITBFvnCwPxz6s+89zTViQr49gSH/aGiXA==",
        "dev": true,
        "license": "MIT",
        "dependencies": {
-@@ -1600,47 +1600,47 @@
+@@ -6028,6 +6045,23 @@
+         "node": ">=10.13.0"
        }
      },
-     "n
++    "node_modules/eslint/node_modules/minimatch": {
++      "version": "11.0.9",
++      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.9.tgz",
++      "integrity": "sha512-KCFkfyjqerNlSstjlhIGNXIKZGA/6O4V4RlhZ+Dsr621SPPw0mzlypE9D9ZOoPiVefHID+j7/XuMMlqfD/F60Q==",
++      "dev": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "@isaacs/nonrecursive-glob-match": "^1.1.0",
++        "brace-expansion": "^5.0.12"
++      },
++      "engines": {
++        "node": "20 || >=22"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
+     "node_modules/espree": {
+       "version": "11.2.0",
+       "resolved": "https://registry.npmjs.org/espree/-/espree-11.2.0.tgz",
+@@ -9243,13 +9277,13 @@
+       }
+     },
+     "node_modules/playwright": {
+-      "version": "1.65.0",
+-      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.65.0.tgz",
+-      "integrity": "sha512-F3AMWcR44qMBt4kq+6Kb6mX7bjGXshktKFOPULd7reED6ZJWevjbNRqysP7q+AATE9kdPEZBibex1BYsvpVoeA==",
++      "version": "1.65.1",
++      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.65.1.tgz",
++      "integrity": "sha512-vJ1FuoOrNwOKHUIVEvSt3jT1L+wjjDpwhwIstKtfvTh8XIG4FG4bIFuvNdMxi81LGfAhUgUZleVFaOLY4RIUUw==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "depend
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #879** (2026-11-23): chore(deps-dev): Bump the minor group with 3 updates (@dependabot[bot])
 - **PR #878** (2026-11-16): chore(deps-dev): Bump the minor group with 3 updates (@dependabot[bot])
 - **PR #877** (2026-11-09): chore(deps-dev): Bump the minor group with 5 updates (@dependabot[bot])
 - **PR #876** (2026-11-02): chore(deps-dev): Bump @babel/core from 8.0.7 to 8.0.10 in the minor group (@dependabot[bot])
 - **PR #874** (2026-11-09): chore(ci): refetch upstream spec suites (@github-actions[bot])
 - **PR #873** (2026-10-26): chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (@dependabot[bot])
-- **PR #872** (2026-10-19): chore(deps-dev): Bump the minor group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1170,7 +1180,7 @@ updated-dependencies:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f921e119`: deps-dev): Bump the minor group with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b42d44a`: deps-dev): Bump the minor group with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -1178,55 +1188,57 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "8.1.2",
-      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
-      "integrity": "sha512-xqDajHAAOjklW5UtWzFd9vSmlQ16+emgGi0HsyDQFGRQWZ/GjuwCoYGC3PnHxspmOR+HJBzDIOkMxNq/VvC98w==",
-        "@babel/generator": "^8.1.2",
-        "@babel/helpers": "^8.1.2",
-        "@babel/parser": "^8.1.2",
-        "@babel/template": "^8.1.2",
-        "@babel/traverse": "^8.1.2",
-        "@babel/types": "^8.1.2",
-      "version": "8.1.2",
-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
-      "integrity": "sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==",
-        "@babel/parser": "^8.1.2",
-        "@babel/types": "^8.1.2",
-      "version": "8.1.2",
-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
-      "integrity": "sha512-TRz5Z0MgfIfWqwEIq/pCpUpEXQxUt2Ig2ZbxG3SdmhSbHMAFFYGOix0kI4JLV371/TA+qWnQ4xWHPWjojkyRFA==",
-      "version": "8.1.2",
-      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
-      "integrity": "sha512-BmtiG8H9OUWSTFOgl9jtPYmfDi6uc21Pf4GUxkgGoZnzMIzpDnhkl5gsGJW6wb1jmKCyU565F
+      "version": "0.23.6",
+      "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.6.tgz",
+      "integrity": "sha512-WrTH7nioI9QPY4NZGnsywmecswJdgeq4BCM76qok9VgjTO29ZgUzUvcuJLVPYVQM4uDbaPBU0M33R9DIxI8X3w==",
+        "minimatch": "^11.0.5"
+    "node_modules/@eslint/config-array/node_modules/minimatch": {
+      "version": "11.0.9",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.9.tgz",
+      "integrity": "sha512-KCFkfyjqerNlSstjlhIGNXIKZGA/6O4V4RlhZ+Dsr621SPPw0mzlypE9D9ZOoPiVefHID+j7/XuMMlqfD/F60Q==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "dependencies": {
+        "@isaacs/nonrecursive-glob-match": "^1.1.0",
+        "brace-expansion": "^5.0.12"
+      },
+      "engines": {
+        "node": "20 || >=22"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+      "version": "10.15.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.15.0.tgz",
+      "integrity": "sha512-+5Wg4p+ze3sG1WErYgUO/3H1IQIfFBymVUA0Fo/XTeBOLS6UQIUekpSJ8sdRkn7O7wjh84b55w/roqavH2aScg==",
+        "@eslint/config-array": "^0.23.6",
+        "minimatch": "^11.0.5",
+      "version": "29.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      "version": "8.1.0",
-      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
-      "integrity": "sha512-3jqm7xh3kJCmIeOK8sk6/EvOWdSzvOqvjt0tJEDOHHmzWjcQSvIh2/tq1I9RA741tl0QZdMzPJWCulWE+Dy5ww==",
-        "@babel/generator": "^8.1.0",
-        "@babel/helpers": "^8.1.0",
-        "@babel/parser": "^8.1.0",
-        "@babel/template": "^8.0.0",
-        "@babel/traverse": "^8.1.0",
-        "@babel/types": "^8.1.0",
-      "version": "8.1.0",
-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
-      "integrity": "sha512-7fiBJ61wDV3AHbg7n/EfLBv3RU+lsdRP8QNJnydkKWA7e48FnnvKQWbVHsJQCBE7JHTj4xlzZL9fvQYsBUip2A==",
-        "@babel/parser": "^8.1.0",
-        "@babel/types": "^8.1.0",
-      "version": "8.0.8",
-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
-      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
-      "version": "8.1.0",
-      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
-      "integrity": "sha512-949bjw10dhaRdtQeCpfVShFA4jIcto97BkqmWnRjpzyQuHVZ7EDriaoCn/4D8h1NqSKlmI20x
+      "version": "0.23.5",
+      "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.5.tgz",
+      "integrity": "sha512-Y3kKLvC1dvTOT+oGlqNQ1XLqK6D1HU2YXPc52NmAlJZbMMWDzGYXMiPRJ8TYD39muD/OTjlZmNJ4ib7dvSrMBA==",
+        "minimatch": "^10.2.4"
+      "version": "10.14.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
+      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
+        "@eslint/config-array": "^0.23.5",
+        "minimatch": "^10.2.6",
+      "version": "29.17.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-29.17.0.tgz",
+      "integrity": "sha512-6jtpU6MhYKbagkES02TupWAUUooJpZtKg94Ax0b8HhUorv3InSTBU8RRtlSBe0LocOcShXOpyec3PHzPDkJCSg==",
+      "version": "1.65.0",
+      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.65.0.tgz",
+      "integrity": "sha512-F3AMWcR44qMBt4kq+6Kb6mX7bjGXshktKFOPULd7reED6ZJWevjbNRqysP7q+AATE9kdPEZBibex1BYsvpVoeA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f921e119` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b42d44a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

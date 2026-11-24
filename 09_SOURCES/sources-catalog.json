@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "21298eb3",
+    "sourceVersion": "18603d50",
     "license": "Apache-2.0",
-    "contentHash": "fb381402bc39ccb58dda46e3e2bd1b0901a48adcbbf45bfdfbe71b0d3d263cad",
-    "lastHarvestedAt": "2026-11-24T01:07:20.672Z",
+    "contentHash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
+    "lastHarvestedAt": "2026-11-24T20:12:53.804Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -9713,10 +9713,10 @@
     "repository": "rdfjs/N3.js",
     "platform": "github",
     "sourceUrl": "https://github.com/rdfjs/N3.js",
-    "sourceVersion": "f921e119",
+    "sourceVersion": "6b42d44a",
     "license": "NOASSERTION",
-    "contentHash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
-    "lastHarvestedAt": "2026-11-17T00:56:00.933Z",
+    "contentHash": "56ffbc37093c0023ca772ce7b58b6d944f10818a5b8df665f4bfdc43e6e6aaed",
+    "lastHarvestedAt": "2026-11-24T20:12:47.985Z",
     "learningId": "learn-github-rdfjs-n3-js"
   },
   "iziz-libphonenumber-ios": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T20:04:23.136Z",
-  "total_cycles_completed": 12162,
-  "total_learnings_persisted": 12162,
-  "total_rules_promoted": 11218,
+  "last_updated": "2026-11-24T20:12:53.809Z",
+  "total_cycles_completed": 12164,
+  "total_learnings_persisted": 12164,
+  "total_rules_promoted": 11220,
   "history": [
-    {
-      "timestamp": "2026-11-24T03:58:37.183Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:58:41.257Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T04:20:17.695Z",
       "repository": "BurntSushi/ripgrep",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T20:04:23.136Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:12:47.990Z",
+      "repository": "rdfjs/N3.js",
+      "learningId": "learn-github-rdfjs-n3-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:12:53.809Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

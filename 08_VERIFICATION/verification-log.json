@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-ZP14",
-    "timestamp": "2026-11-23T05:06:32.440Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZUTR",
-    "timestamp": "2026-11-23T05:06:39.951Z",
-    "repository": "EhPanda-Team/EhPanda",
-    "learningId": "learn-github-ehpanda-team-ehpanda",
-    "contentHash": "5784b2dc4a88d2a55f77fb77015b3f705a42822f74d0c14476f99b0718e63823",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-ZWCW",
     "timestamp": "2026-11-23T05:06:41.936Z",
     "repository": "Agent-Field/agentfield",
@@ -7490,6 +7460,36 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-T04S",
+    "timestamp": "2026-11-24T20:12:47.980Z",
+    "repository": "rdfjs/N3.js",
+    "learningId": "learn-github-rdfjs-n3-js",
+    "contentHash": "56ffbc37093c0023ca772ce7b58b6d944f10818a5b8df665f4bfdc43e6e6aaed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-T4MG",
+    "timestamp": "2026-11-24T20:12:53.800Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

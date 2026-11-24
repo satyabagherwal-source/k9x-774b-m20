@@ -12801,3 +12801,5 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T19:55:59.406Z` | `hf-orcarouter-inkling-2-mini-abliterated-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B305647` [Domain D] | Yes (`da7ce184...`) |
 | `CYCLE-20261124-HZ9C` | `2026-11-24T20:04:13.632Z` | `dembrandt/dembrandt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10351` | Yes (`e7330532...`) |
 | `CYCLE-20261124-I6L1` | `2026-11-24T20:04:23.125Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10352` | Yes (`d73e0589...`) |
+| `CYCLE-20261124-T04S` | `2026-11-24T20:12:47.980Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8827` | Yes (`56ffbc37...`) |
+| `CYCLE-20261124-T4MG` | `2026-11-24T20:12:53.800Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10353` | Yes (`6f0108fc...`) |

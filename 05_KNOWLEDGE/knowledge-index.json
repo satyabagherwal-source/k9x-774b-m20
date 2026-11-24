@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T20:04:30.339Z",
+  "last_updated": "2026-11-24T20:13:00.968Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24898,
+  "total_items": 24901,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219276,13 +219276,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-75O4-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-T9VW-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "21ace67771c0759c423fd28addbf2b028cd4b7e5ad9ae1bb7ddbb36f46f5a884",
+      "content_hash": "18aea5ff89a45197987cebb0ab2a09f6c343a8342696c5acc80527aaf812877d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:27:49.111Z"
+      "persisted_at": "2026-11-24T20:13:00.623Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219292,9 +219292,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f385e1f4bc68a9ba5ee13e7d36fcbb5cd265f7ed1ee5e93d4761e981dfcd2a88",
+      "content_hash": "df8bd2f30bb75e61d7f14c516bcb5d6b44b2ffb294e56377985e8eff57c7847b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:27:49.301Z"
+      "persisted_at": "2026-11-24T20:13:00.794Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219304,9 +219304,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "024becbd1b42678247d721c5a9ff236feb7de43ab61b8e363dc21cb56125cc89",
+      "content_hash": "f0170f250eea4679c02d02842c404f010ca073c841a17a5658ecdf87fc7f7223",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:27:49.484Z"
+      "persisted_at": "2026-11-24T20:13:00.968Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230219,8 +230219,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "21298eb3",
-      "content_hash": "fb381402bc39ccb58dda46e3e2bd1b0901a48adcbbf45bfdfbe71b0d3d263cad",
+      "source_version": "18603d50",
+      "content_hash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -230253,6 +230253,11 @@
           "number": 10164,
           "title": "Reach the internal API through its IP in remote builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10353,
+          "title": "!: require 'image' when 'autocreate' is enabled",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230260,7 +230265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:07:20.376Z",
+      "verified_at": "2026-11-24T20:12:53.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230302,10 +230307,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "repository": "okteto/okteto",
-      "source_version": "112af098",
-      "content_hash": "20df255fedeb99003f99ab237c71caa0bd704e3fc723787460ecf8abc142e9ce",
+      "source_version": "18603d50",
+      "content_hash": "a29cb6a90f1269150abfe67ba1f59f008a1d58ed1583ffb90b7334fa4e4c75ce",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T22:49:28.973Z"
+      "persisted_at": "2026-11-24T20:12:54.212Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto",
@@ -230314,10 +230319,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "21298eb3",
-      "content_hash": "8cde4bf4c26538a3fac1b63aaddd4d90aaabebee16f0ee251a57516b9226d2d7",
+      "source_version": "18603d50",
+      "content_hash": "aa19036023908a6dec55577d928cdb9dd146934ac77bb764f1746cc0667e8143",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:21.552Z"
+      "persisted_at": "2026-11-24T20:12:54.382Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -230809,9 +230814,9 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "24df4e43e352ca96be55e3c347cb2b47bae1c45e645c7c8db65d415642e93ab6",
+      "content_hash": "93102b6b2d644abe5b2238ef522f5b91957af2c66ee3343d7cfba4d889c7c284",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T01:07:32.575Z"
+      "persisted_at": "2026-11-24T20:13:00.011Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings",
@@ -230821,9 +230826,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "789f76076d4a9774a98bdf0e3dafa1c9ccc19e86b02a3cc8783db28e7e8e5fe8",
+      "content_hash": "a1dee3cc32f1c26507e505e069f2d273ea7d59a97c45e1526946efa13a0a0fe8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:32.797Z"
+      "persisted_at": "2026-11-24T20:13:00.194Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -266683,15 +266688,15 @@
       "slug": "rdfjs-n3.js",
       "platform": "github",
       "source_url": "https://github.com/rdfjs/N3.js",
-      "source_version": "f921e119",
-      "content_hash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
+      "source_version": "6b42d44a",
+      "content_hash": "56ffbc37093c0023ca772ce7b58b6d944f10818a5b8df665f4bfdc43e6e6aaed",
       "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "promoted_rules": [
         {
           "number": 8827,
           "title": "Bump the minor group with 3 updates",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -266699,7 +266704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:56:00.770Z",
+      "verified_at": "2026-11-24T20:12:47.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266714,25 +266719,25 @@
       "rule_number": 8827,
       "title": "Bump the minor group with 3 updates",
       "source_url": "https://github.com/rdfjs/N3.js",
-      "source_version": "f921e119",
+      "source_version": "6b42d44a",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T00:56:00.771Z"
+      "verified_at": "2026-11-24T20:12:47.744Z"
     },
     "candidate_directive-bump-the-minor-group-with-3-updates": {
       "item_id": "candidate_directive-bump-the-minor-group-with-3-updates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EERW-bump-the-minor-group-with-3-updates.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-T0BP-bump-the-minor-group-with-3-updates.md",
       "title": "Bump the minor group with 3 updates",
       "repository": "rdfjs/N3.js",
-      "source_version": "f921e119",
-      "content_hash": "fb57d97a50e26bda41a7af928ac7da5b42bb31222647b93ed3775a10ad5fc7e8",
+      "source_version": "6b42d44a",
+      "content_hash": "5697ef2b7da54a7e0d53c19b1d574a1948c0bd4501a065867ab152b48cf8c75e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:01.101Z"
+      "persisted_at": "2026-11-24T20:12:48.230Z"
     },
     "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
@@ -266741,10 +266746,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rdfjs-n3-js-quality-verification-intelligence-rdfjs-n3-js-core-invariants.md",
       "title": "Quality & Verification Intelligence: rdfjs/N3.js Core Invariants",
       "repository": "rdfjs/N3.js",
-      "source_version": "f921e119",
-      "content_hash": "915b3d0762d7152b756d5bb21551ee5349d9895adfc28400376be9a889162274",
+      "source_version": "6b42d44a",
+      "content_hash": "c840f1f65a1ddb9933e94f8abf0b6993aebe8691e849c7fc12f22909113d834f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:01.219Z"
+      "persisted_at": "2026-11-24T20:12:48.407Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js",
@@ -266753,10 +266758,10 @@
       "relative_path": "08_VERIFICATION/rdfjs-n3-js-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js.md",
       "title": "Verification Protocol: Empirical Defect Shield for rdfjs/N3.js",
       "repository": "rdfjs/N3.js",
-      "source_version": "f921e119",
-      "content_hash": "995d1463ad0030895483c2db5f8ec0057bf3c1433feda9dd2d3f58a5cbd39187",
+      "source_version": "6b42d44a",
+      "content_hash": "f64431448e5aeb0a1b20e1eb969a72fe7942f8ebf0e959bf888d404e1f39f2d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:01.341Z"
+      "persisted_at": "2026-11-24T20:12:48.581Z"
     },
     "learn-github-permify-permify": {
       "learning_id": "learn-github-permify-permify",
@@ -266857,13 +266862,13 @@
       "item_id": "candidate_directive-deps-dev-bump-the-minor-group-with-3-updates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-F7WV-deps-dev-bump-the-minor-group-with-3-updates.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-T8GP-deps-dev-bump-the-minor-group-with-3-updates.md",
       "title": "deps-dev): Bump the minor group with 3 updates",
       "repository": "rdfjs-n3.js-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd89565ddf1a4601bb849ffcd68c8dd5a11639aa255f9eef94fb1dcf8900be69",
+      "content_hash": "92f7f03daf10badd4c50a8f5ee596e808014a36477aa60e97b0cd7c0c93c58ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:38.863Z"
+      "persisted_at": "2026-11-24T20:12:58.778Z"
     },
     "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants",
@@ -266873,9 +266878,9 @@
       "title": "Quality & Verification Intelligence: rdfjs-n3.js-learnings Core Invariants",
       "repository": "rdfjs-n3.js-learnings",
       "source_version": "HEAD",
-      "content_hash": "25aef3f9c622d14a1a1ec8220ed7e040f4d479f454661c30a9d9fb7e11d5169f",
+      "content_hash": "be3ad267d9375f6d9e8def98f4f674a69b4523c16ad510078b92c418c3ceb73c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:38.983Z"
+      "persisted_at": "2026-11-24T20:12:58.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js-learnings",
@@ -266885,9 +266890,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rdfjs-n3.js-learnings",
       "repository": "rdfjs-n3.js-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ecf7d232babc713aee42a286b1e58e9f4793d7feebe93e245ee71544868618d",
+      "content_hash": "937c0dbbe421b6c5f6eee40dab93258e2bcaebe0399f5440468c2869bb9e1c02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:56:39.116Z"
+      "persisted_at": "2026-11-24T20:12:59.124Z"
     },
     "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants",
@@ -340138,6 +340143,44 @@
       "content_hash": "9217e4d4d45f50721b6d8584d3414fb7104934fb34419c594d8a29a836f7ea28",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T20:04:28.345Z"
+    },
+    "rule-10353": {
+      "learning_id": "rule-10353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10353,
+      "title": "!: require 'image' when 'autocreate' is enabled",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "18603d50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:12:53.593Z"
+    },
+    "candidate_directive-require-image-when-autocreate-is-enabled": {
+      "item_id": "candidate_directive-require-image-when-autocreate-is-enabled",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T4T6-require-image-when-autocreate-is-enabled.md",
+      "title": "!: require 'image' when 'autocreate' is enabled",
+      "repository": "okteto/okteto",
+      "source_version": "18603d50",
+      "content_hash": "fb8d7875624c8f9e39e0483a0e5a94f4b6ca2629d7bbf939f4bd114a1896578c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T20:12:54.043Z"
+    },
+    "candidate_directive-up-require-image-when-autocreate-is-enabled": {
+      "item_id": "candidate_directive-up-require-image-when-autocreate-is-enabled",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T9A6-up-require-image-when-autocreate-is-enabled.md",
+      "title": "up)!: require 'image' when 'autocreate' is enabled",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b430b71d1534df0cdde2daa4636b373533a9f5361027a818805293258ec04ee",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T20:12:59.838Z"
     }
   },
   "ai-builder-brain": {

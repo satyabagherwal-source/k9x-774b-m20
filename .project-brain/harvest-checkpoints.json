@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T20:04:23.147Z",
+  "last_updated": "2026-11-24T20:12:53.821Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "fb381402bc39ccb58dda46e3e2bd1b0901a48adcbbf45bfdfbe71b0d3d263cad",
-      "verified_at": "2026-11-24T01:07:20.683Z",
+      "content_hash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
+      "verified_at": "2026-11-24T20:12:53.820Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:07:20.683Z"
+      "last_updated": "2026-11-24T20:12:53.820Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -14616,14 +14616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdfjs-n3-js",
-      "content_hash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
-      "verified_at": "2026-11-17T00:56:00.941Z",
+      "content_hash": "56ffbc37093c0023ca772ce7b58b6d944f10818a5b8df665f4bfdc43e6e6aaed",
+      "verified_at": "2026-11-24T20:12:48.001Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:56:00.941Z"
+      "last_updated": "2026-11-24T20:12:48.001Z"
     },
     "iziz/libPhoneNumber-iOS": {
       "repository": "iziz/libPhoneNumber-iOS",
