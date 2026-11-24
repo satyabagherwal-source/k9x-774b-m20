@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `340dc085`  
+> **Source Version**: `c31d4550`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:06:24.059Z  
+> **Timestamp**: 2026-11-24T00:57:27.044Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:06:24.055Z  
+> **Harvest Timestamp**: 2026-11-24T00:57:27.039Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25569 stars
+- **Stars / Engagement**: 25571 stars
 
 ---
 
@@ -830,17 +830,501 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `340dc085` (2026-11-22)
-**Commit Message**: Skip absent page slots when verifying snapshots (#6659)
+### Incident Patch 1: `d0413bd2` (2026-11-23)
+**Commit Message**: Load database before enforcing memory budget (#6658)
 
 # Description of Changes
 
-Skip `ZERO_HASH_DENOTING_ABSENT_PAGE` when the snapshot fetcher
-enumerates pages.
+Allow databases to finish loading when their resident memory footprint
+exceeds the configured limit. Suspend the hard limit throughout snapshot
+restoration, replay, index rebuilding, and remaining startup work, then
+restore enforcement and attempt eviction.
 
-Snapshot metadata uses this sentinel for a freed page slot. Treating it
-as an object causes verification to fail on the previous snapshot's
-object lookup and prevents archival from advancing.
+Eviction errors are logged without preventing startup. Databases that
+remain over budget reject new ordinary allocations.
+
+Unify existing allocation exemptions under the same accounting path with
+scoped suspension.
+
+# API and ABI breaking changes
+
+None.
+
+# Rollback safety impact
+
+n/a
+
+# Expected complexity level and risk
+
+3
+
+Changes shared budget enforcement and the recovery lifecycle
+
+# Testing
+
+Included in
+https://github.com/clockworklabs/SpacetimeDBPrivate/pull/4330.
+
+Co-authored-by: Alessandro Asoni <[REDACTED_EMAIL]>
+
+**File**: `crates/datastore/src/locking_tx_datastore/datastore.rs` (modified, +24/-2)
+```diff
+@@ -83,6 +83,23 @@ impl MemoryUsage for Locking {
+ }
+ 
+ impl Locking {
++    /// Ignore the resident memory limit while reconstructing committed data.
++    ///
++    /// The caller must keep exclusive access while the synchronous operation
++    /// runs, then trim storage before serving new transactions.
++    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
++        // Release the state lock before recovery acquires it for writing.
++        let storage = self.committed_state.read().storage.clone();
++        storage.with_resident_hard_limit_suspended(operation)
++    }
++
++    /// Trim the resident and local caches to their low watermarks, as far as possible.
++    /// Required-in-memory data may keep usage above the limit without an error.
++    #[cfg(feature = "durability")]
++    pub fn trim(&self) -> Result<()> {
++        Ok(self.committed_state.read().trim()?)
++    }
++
+     #[cfg(feature = "metrics")]
+     pub fn update_data_size_metrics(&self) {
+         let state = self.committed_state.read();
+@@ -184,6 +201,10 @@ impl Locking {
+     ///   after replaying the suffix of the commitlog.
+     #[cfg(feature = "durability")]
+     pub fn restore_from_snapshot(snapshot: ReconstructedSnapshot, config: TieredStorageConfig) -> Result<Self> {
++        // Full database recovery defers eviction until replay, rebuilding, and
++        // system-table migration have all completed. Preserve immediate trimming
++        // for direct snapshot API callers.
++        let trim_after_restore = !config.resident_budget.is_hard_limit_suspended();
+         let ReconstructedSnapshot {
+             database_identity,
+             tx_offset,
+@@ -243,8 +264,9 @@ impl Locking {
+         // The next TX offset after restoring from a snapshot is one greater than the snapshotted offset.
+         committed_state.next_tx_offset = tx_offset + 1;
+ 
+-        // Free memory + disk storage to budget.
+-        committed_state.trim()?;
++        if trim_after_restore {
++            committed_state.trim()?;
++        }
+ 
+         Ok(datastore)
+     }
+```
+
+**File**: `crates/engine/src/relational_db.rs` (modified, +38/-1)
+```diff
+@@ -287,6 +287,30 @@ impl RelationalDB {
+         history: impl durability::History<TxData = Txdata>,
+         persistence: Persistence,
+         metrics_recorder_queue: Option<MetricsRecorderQueue>,
++    ) -> Result<(Self, ConnectedClients), DBError> {
++        // Persisted transactions must be recoverable even if the memory limit
++        // was lowered below the size of required-in-memory data. Keep startup
++        // migrations and reads in the same scope so they cannot block recovery.
++        let budget = persistence.table_storage.resident_budget.clone();
++        let (db, connected_clients) = budget.with_hard_limit_suspended(|| {
++            Self::open_recovering(
++                database_identity,
++                owner_identity,
++                history,
++                persistence,
++                metrics_recorder_queue,
++            )
++        })?;
++        db.trim_after_recovery();
++        Ok((db, connected_clients))
++    }
++
++    fn open_recovering(
++        database_identity: Identity,
++        owner_identity: Identity,
++        history: impl durability::History<TxData = Txdata>,
++        persistence: Persistence,
++        metrics_recorder_queue: Option<MetricsRecorderQueue>,
+     ) -> Result<(Self, ConnectedClients), DBError> {
+         log::trace!("[{database_identity}] DATABASE: OPEN");
+ 
+@@ -369,6 +393,17 @@ impl RelationalDB {
+         Ok((db, connected_clients))
+     }
+ 
++    fn trim_after_recovery(&self) {
++        // Recovery is complete and the allocation limit is enforced again.
++        // Failed eviction must leave the reconstructed database available.
++        if let Err(error) = self.inner.trim() {
++            log::warn!(
++                "[{}] cache eviction after recovery failed: {error:#}",
++                self.database_identity
++            );
++        }
++    }
++
+     /// Shut down the database, without dropping it.
+     ///
+     /// If the database is in-memory only, this does nothing.
+@@ -760,7 +795,9 @@ impl RelationalDB {
+     where
+         T: durability::History<TxData = Txdata>,
+     {
+-        apply_history(&self.inner, self.database_identity, history)?;
++        self.inner
++            .with_resident_hard_limit_suspended(|| apply_history(&self.inner, self.database_identity, history))?;
++        self.trim_after_recovery();
+         Ok(self)
+     }
+ 
+```
+
+**File**: `crates/table/src/tiered/budget.rs` (modified, +76/-21)
+```diff
+@@ -1,7 +1,8 @@
+ use spacetimedb_memory_usage::MemoryUsage;
+ 
+ use super::metrics::{CacheTier, Metrics};
+-use std::sync::{Arc, Mutex};
++use parking_lot::Mutex;
++use std::sync::Arc;
+ 
+ #[derive(Debug, thiserror::Error, PartialEq)]
+ #[error("memory limit exceeded")]
+@@ -31,7 +32,10 @@ impl ByteBudget {
+ 
+     pub fn new(config: ByteBudgetConfig) -> Result<Self, ConfigError> {
+         config.validate_then(|config| Self {
+-            state: Arc::new(Mutex::new(ByteBudgetState { accounted_bytes: 0 })),
++            state: Arc::new(Mutex::new(ByteBudgetState {
++                accounted_bytes: 0,
++                hard_limit_suspensions: 0,
++            })),
+             config,
+             metrics: Default::default(),
+         })
+@@ -51,41 +55,86 @@ impl ByteBudget {
+ 
+     pub fn usage(&self) -> ByteBudgetUsage {
+         ByteBudgetUsage {
+-            accounted_bytes: self.state.lock().unwrap().accounted_bytes,
++            accounted_bytes: self.state.lock().accounted_bytes,
+         }
+     }
+ 
+     pub fn acquire(&self, bytes: u64) -> Result<BudgetPermit, BudgetExceeded> {
+-        let mut state = self.state.lock().unwrap();
++        self.acquire_with_exemption(bytes, false)
++    }
++
++    /// Charge an allocation, applying the same exemption policy to system
++    /// allocations and recovery. Accounting overflow is always rejected.
++    pub(super) fn acquire_with_exemption(
++        &self,
++        bytes: u64,
++        allocation_exempt: bool,
++    ) -> Result<BudgetPermit, BudgetExceeded> {
++        let mut state = self.state.lock();
+         if let Some(accounted_bytes) = state.accounted_bytes.checked_add(bytes)
+-            && accounted_bytes <= self.config.hard_limit_bytes
++            && (allocation_exempt
++                || state.hard_limit_suspensions > 0
++                || accounted_bytes <= self.config.hard_limit_bytes)
+         {
+             state.accounted_bytes = accounted_bytes;
+             Ok(BudgetPermit {
+                 state: self.state.clone(),
+                 bytes,
+             })
+         } else {
+-            self.metrics.budget_rejected(self.config.tier);
+-            Err(BudgetExceeded {
++            let error = BudgetExceeded {
+                 requested_bytes: bytes,
+                 accounted_bytes: state.accounted_bytes,
+                 hard_limit_bytes: self.config.hard_limit_bytes,
+-            })
++            };
++            // Metrics callbacks may inspect this budget or unwind. Neither
++            // should happen while the accounting lock is held.
++            drop(state);
++            self.metrics.budget_rejected(self.config.tier);
++            Err(error)
+         }
+     }
+ 
+-    pub(super) fn force_acquire(&self, bytes: u64) -> BudgetPermit {
+-        let mut state = self.state.lock().unwrap();
+-        state.accounted_bytes = state
+-            .accounted_bytes
+-            .checked_add(bytes)
+-            .expect("accounted bytes overflow");
+-        BudgetPermit {
++    /// Run a synchronous recovery operation with the hard limit suspended.
++    ///
++    /// Acquisitions still count toward usage, including those from budget clones.
++    /// The suspension ends before this call returns or unwinds. The caller must
++    /// exclude ordinary database access for the duration of the operation.
++    pub fn with_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
++        let _suspension = self.suspend_hard_limit();
++        operation()
++    }
++
++    fn suspend_hard_limit(&self) -> HardLimitSuspension {
++        let mut state = self.state.lock();
++        state.hard_limit_suspensions = state
++            .hard_limit_suspensions
++            .checked_add(1)
++            .expect("hard limit suspensions overflow");
++        HardLimitSuspension {
+             state: self.state.clone(),
+-            bytes,
+         }
+     }
++
++    pub fn is_hard_limit_suspended(&self) -> bool {
++        self.state.lock().hard_limit_suspensions > 0
++    }
++}
++
++/// Keeps the shared budget's hard limit suspended until dropped.
++#[derive(Debug)]
++struct HardLimitSuspension {
++    state: Arc<Mutex<ByteBudgetState>>,
++}
++
++impl Drop for HardLimitSuspension {
++    fn drop(&mut self) {
++        let mut state = self.state.lock();
++        state.hard_limit_suspensions = state
++            .hard_limit_suspensions
++            .checked_sub(1)
++            .expect("hard limit suspensions underflow");
++    }
+ }
+ 
+ impl TryFrom<ByteBudgetConfig> for ByteBudget {
+@@ -133,6 +182,7 @@ impl ByteBudgetConfig {
+ #[derive(Debug)]
+ pub struct ByteBudgetState {
+     accounted_bytes: u64,
++    hard_limit_suspensions: u32,
+ }
+ 
+ impl ByteBudgetUsage {
+@@ -149,7 +199,7 @@ pub struct BudgetPermit {
+ 
+ impl Drop for BudgetPermit {
+     fn drop(&mut self) {
+-        let mut state = self.state.lock().unwrap();
++        let mut state = self.state.lock();
+         state.accounted_bytes = state
+             .accounted_bytes
+             .checked_sub(self.bytes)
+@@ -242,6 +292,11 @@ mod tests {
+ 
+          
+```
+
+**File**: `crates/table/src/tiered/mem.rs` (modified, +4/-9)
+```diff
+@@ -186,20 +186,15 @@ impl ResidentObjects {
+     }
+ 
+     fn acquire(&self, bytes: u64, memory_limit_exempt: bool) -> Result<BudgetPermit, BudgetExceeded> {
+-        if memory_limit_exempt {
+-            // Exempt allocations still count toward the database's resident usage.
+-            Ok(self.budget.force_acquire(bytes))
+-        } else {
+-            self.budget.acquire(bytes)
+-        }
++        self.budget.acquire_with_exemption(bytes, memory_limit_exempt)
+     }
+ 
+     pub(super) fn acquire_resident_page(&self, memory_limit_exempt: bool) -> Result<BudgetPermit, BudgetExceeded> {
+         self.acquire(PAGE_SIZE as u64, memory_limit_exempt)
+     }
+ 
+     pub(super) fn restored_page_permit(&self) -> BudgetPermit {
+-        self.budget.force_acquire(PAGE_SIZE as u64)
++        self.acquire(PAGE_SIZE as u64, true).expect("accounted bytes overflow")
+     }
+ 
+     pub fn new(budget: ByteBudget) -> Self {
+@@ -349,7 +344,7 @@ impl ResidentObjects {
+     }
+ 
+     pub(super) fn register_page_unchecked(&self, pool: PagePool, page: Box<Page>) -> Arc<PageFrame> {
+-        let permit = self.budget.force_acquire(PAGE_SIZE as u64);
++        let permit = self.restored_page_permit();
+         let reservation = self.reserve_page_with_permit(permit, PooledPage::new(page, pool));
+         self.redeem_page(reservation)
+     }
+@@ -364,7 +359,7 @@ impl ResidentObjects {
+     }
+ 
+     pub(super) fn register_blob_unchecked(&self, blob: Box<[u8]>) -> Arc<BlobFrame> {
+-        let permit = self.budget.force_acquire(blob.len() as u64);
++        let permit = self.acquire(blob.len() as u64, true).expect("accounted bytes overflow");
+         let reservation = self.reserve_blob_with_permit(permit, blob);
+         self.redeem_blob(reservation)
+     }
+```
+
+**File**: `crates/table/src/tiered/mod.rs` (modified, +5/-0)
+```diff
+@@ -157,6 +157,11 @@ impl TieredDatabaseStorage {
+         self.cache.metrics()
+     }
+ 
++    /// Run synchronous recovery with the resident memory limit suspended.
++    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
++        self.cache.budget().with_hard_limit_suspended(operation)
++    }
++
+     pub fn pages(&self) -> &Arc<PageManager> {
+         &self.pages
+     }
+```
+
+---
+
+### Incident Patch 2: `3885ee42` (2026-11-23)
+**Commit Message**: Allow pre-release suffixes and patch downgrades in metadata.toml version check (#6666)
+
+# Description of Changes
+
+The `metadata.toml` compatibility check used
+`semver::Comparator::matches` with `^MAJOR.MINOR`. That crate rejects
+any pre-release version unless the comparator names the same
+`major.minor.patch`, so running a build with a suffix (e.g.
+`2.17.0-rc.1`) against an older database failed unless the versions were
+exactly equal.
+
+Replace it with a direct comparison: same major, and the running minor
+must be >= the on-disk minor. Patch versions and minor/patch pre-release
+suffixes are ignored (e.g. `3.1.0` -> `3.1.0-rc1` is allowed).
+
+Pre-releases of a major version (`X.0.0-*`) are treated as distinct:
+they only run against exactly the same version (e.g. `3.0.0` ->
+`3.0.0-rc1` and `3.0.0-rc1` -> `3.0.0-rc2` are rejected).
+
+Existing tests are kept or updated accordingly, and cases for patch
+downgrades and pre-releases are added.
+
+# API and ABI breaking changes
+
+None.
+
+# Expected complexity level and risk
+
+1
+
+# Rollback safety impact
+n/a
+
+# Testing
+
+- [ ] `cargo test -p spacetimedb-core --lib check_metadata` (not yet
+run; I aborted the compile)
+
+🤖 Generated with [Claude Code](ht
+
+**File**: `crates/core/src/config.rs` (modified, +39/-11)
+```diff
+@@ -83,16 +83,22 @@ impl MetadataFile {
+             return Ok(());
+         }
+ 
+-        let cmp = semver::Comparator {
+-            op: semver::Op::Caret,
+-            major: previous.version.major,
+-            minor: Some(previous.version.minor),
+-            patch: None,
+-            // We deal with pre-releases separately above.
+-            pre: semver::Prerelease::new("").unwrap(),
+-        };
++        // Pre-releases of a major version (e.g. 3.0.0-rc1) are distinct from everything else:
++        // they may only run against exactly the same version (handled above).
++        if !current.version.pre.is_empty() && current.version.minor == 0 && current.version.patch == 0 {
++            anyhow::bail!(
++                "metadata.toml indicates that this database is from {:?}, which is not compatible with the running major pre-release {:?}.",
++                previous.version,
++                current.version,
++            );
++        }
+ 
+-        if cmp.matches(&current.version) {
++        // Compatible if the major version matches and the running minor is not older.
++        // Patch versions and (non-major) pre-release suffixes are ignored, so patch
++        // downgrades and running minor/patch pre-releases are allowed.
++        // (`semver::Comparator::matches` can't be used here: it rejects every
++        // pre-release unless the comparator names the same major.minor.patch.)
++        if previous.version.major == current.version.major && previous.version.minor <= current.version.minor {
+             return Ok(());
+         }
+ 
+@@ -561,18 +567,40 @@ mod tests {
+             .check_compatibility_and_update(mkmeta(2, 0, 0), Path::new("metadata.toml"))
+             .unwrap();
+ 
++        // Pre-release suffixes and patch downgrades are fine within a major.minor.
++        mkmeta(2, 16, 2)
++            .check_compatibility_and_update(mkmeta_pre(2, 16, 0, "rc1"), Path::new("metadata.toml"))
++            .unwrap();
++        mkmeta(2, 1, 0)
++            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
++            .unwrap();
++        mkmeta(2, 0, 0)
++            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
++            .unwrap();
++
+         // Now check some failures..
+ 
++        // Major pre-releases are distinct: only the identical version is allowed.
+         mkmeta_pre(2, 0, 0, "rc1")
+             .check_compatibility_and_update(mkmeta_pre(2, 0, 0, "rc2"), Path::new("metadata.toml"))
+             .unwrap_err();
+ 
+         mkmeta_pre(2, 0, 0, "rc2")
+             .check_compatibility_and_update(mkmeta_pre(2, 0, 0, "rc1"), Path::new("metadata.toml"))
+             .unwrap_err();
++        mkmeta(3, 0, 0)
++            .check_compatibility_and_update(mkmeta_pre(3, 0, 0, "rc1"), Path::new("metadata.toml"))
++            .unwrap_err();
++        mkmeta_pre(3, 0, 0, "rc1")
++            .check_compatibility_and_update(mkmeta_pre(3, 0, 0, "rc2"), Path::new("metadata.toml"))
++            .unwrap_err();
+ 
+-        mkmeta(2, 0, 0)
+-            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
++        mkmeta_pre(2, 1, 0, "rc1")
++            .check_compatibility_and_update(mkmeta_pre(2, 0, 5, "rc1"), Path::new("metadata.toml"))
++            .unwrap_err();
++
++        mkmeta(3, 0, 0)
++            .check_compatibility_and_update(mkmeta_pre(2, 9, 0, "rc1"), Path::new("metadata.toml"))
+             .unwrap_err();
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `efcc1e22` (2026-11-23)
+**Commit Message**: Fix Stripe, PostHog and Auth types on SDK 2.12 (#6681)
+
+# Description of Changes
+
+- Stripe, PostHog and Auth no longer emit `IdentityBuilder<Identity>` or
+`IdentityColumnBuilder<M, Identity>` in their types. SDK 2.12 doesn't
+take those type arguments, so apps on 2.12 with `skipLibCheck: false`
+got errors from our `.d.ts`. Same fix as S3 got in #6542
+- Auth and PostHog are bumped to 0.1.1 so the fix can be published.
+Stripe isn't on npm yet
 
 # API and ABI breaking changes
 
@@ -856,90 +1340,221 @@ n/a
 
 # Testing
 
-- Added a regression test that verifies a snapshot containing an absent
-slot and a real page when a previous snapshot exists.
-  - reproduces `ENOENT` before the fix. Passes with the fix.
+- [x] Typecheck of a fresh project with the built packages on SDK 2.12.0
+and 2.16.1 with `skipLibCheck: false`: no errors from `@spacetimedb/*`
 
----------
-
-Signed-off-by: joshua-spacetime <[REDACTED_EMAIL]>
-Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
-
-**File**: `crates/snapshot/src/remote.rs` (modified, +33/-3)
+**File**: `modules/spacetime-auth-ts/package.json` (modified, +1/-1)
 ```diff
-@@ -30,7 +30,7 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
- use tokio_util::io::{InspectReader, InspectWriter, StreamReader};
- use zstd_framed::AsyncZstdReader;
+@@ -1,7 +1,7 @@
+ {
+   "name": "@spacetimedb/auth",
+   "description": "Password, OAuth, session, JWT, and profile primitives for SpacetimeDB TypeScript modules.",
+-  "version": "0.1.0",
++  "version": "0.1.1",
+   "license": "Apache-2.0",
+   "type": "module",
+   "main": "./src/index.ts",
+```
+
+**File**: `modules/spacetime-auth-ts/src/procedures.ts` (modified, +4/-1)
+```diff
+@@ -2,6 +2,7 @@ import {
+   Range,
+   SenderError,
+   t,
++  type IdentityBuilder,
+   type Infer,
+   type InferTypeOfParams,
+ } from 'spacetimedb/server';
+@@ -80,7 +81,9 @@ export function setAuthConfig(
+   else ctx.db.authConfig.insert(row);
+ }
  
--use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-+use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
+-export const adminParams = { identity: t.identity() };
++export const adminParams: { identity: IdentityBuilder } = {
++  identity: t.identity(),
++};
  
- pub type Result<T> = std::result::Result<T, SnapshotError>;
+ export function addAuthAdmin(
+   ctx: AuthReducerCtx,
+```
+
+**File**: `modules/spacetime-auth-ts/src/tables.ts` (modified, +17/-3)
+```diff
+@@ -1,4 +1,10 @@
+-import { table, t } from 'spacetimedb/server';
++import {
++  table,
++  t,
++  type IdentityColumnBuilder,
++  type StringColumnBuilder,
++  type TimestampBuilder,
++} from 'spacetimedb/server';
  
-@@ -370,7 +370,8 @@ impl<P: BlobProvider> SnapshotFetcher<P> {
-             .snapshot
-             .tables
-             .iter()
--            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
-+            .flat_map(|entry| table_present_pages(&entry.pages))
-+            .map(|hash| self.fetch_page(hash))
-             .collect::<Box<[_]>>();
-         stream::iter(tasks)
-             .map(Ok)
-@@ -827,7 +828,10 @@ impl AsyncWrite for AsyncBufWriter<'_> {
- #[cfg(test)]
- mod tests {
-     use super::{default_page_pool, BlobProvider, BufPool, SnapshotFetcher};
--    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
-+    use crate::{
-+        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
-+        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
-+    };
-     use pretty_assertions::assert_matches;
-     use spacetimedb_lib::Identity;
-     use spacetimedb_paths::{server::SnapshotsPath, FromPathUnchecked};
-@@ -909,6 +913,32 @@ mod tests {
-         );
-     }
+ export const authUserRow = {
+   userId: t.string().primaryKey(),
+@@ -72,7 +78,12 @@ export const authConfigRow = {
  
-+    #[tokio::test]
-+    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
-+        let temp = tempdir()?;
-+        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
-+        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
-+
-+        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
-+        let sparse = Snapshot {
-+            tx_offset,
-+            tables: vec![TableEntry {
-+                table_id: 0.into(),
-+                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
-+            }],
-+            ..DUMMY_SNAPSHOT
-+        };
-+
-+        for snapshot in [DUMMY_SNAPSHOT, sparse] {
-+            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
-+            dir.create()?;
-+            repo.write_snapshot_file(&dir, snapshot)?;
-+        }
-+
-+        repo.verify_snapshot(tx_offset).await?;
-+        Ok(())
-+    }
-+
-     #[tokio::test]
-     async fn verifies_hash_of_uncompressed_page() {
-         let tmp = tempdir().unwrap();
+ // Maps an STDB Identity to the session it presented to link_connection.
+ // Deleting a session deletes its bindings.
+-export const authConnectionBindingRow = {
++export const authConnectionBindingRow: {
++  stdbIdentity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
++  userId: StringColumnBuilder<{ indexType: 'btree' }>;
++  sessionId: StringColumnBuilder<{ indexType: 'btree' }>;
++  linkedAt: TimestampBuilder;
++} = {
+   stdbIdentity: t.identity().primaryKey(),
+   userId: t.string().index(),
+   sessionId: t.string().index(),
+@@ -81,7 +92,10 @@ export const authConnectionBindingRow = {
+ 
+ // Operator allowlist. install seeds the publishing identity; privileged calls
+ // (set_auth_config, revoke_session, admin changes) must come from an admin.
+-export const authAdminIdentityRow = {
++export const authAdminIdentityRow: {
++  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
++  addedAt: TimestampBuilder;
++} = {
+   identity: t.identity().primaryKey(),
+   addedAt: t.timestamp(),
+ };
+```
+
+**File**: `modules/spacetime-posthog-ts/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "@spacetimedb/posthog",
+   "description": "PostHog capture, durable outbox, delivery logs, and feature flags for SpacetimeDB TypeScript modules.",
+-  "version": "0.1.0",
++  "version": "0.1.1",
+   "license": "Apache-2.0",
+   "type": "module",
+   "main": "./src/index.ts",
+```
+
+**File**: `modules/spacetime-posthog-ts/src/submodule/auth.ts` (modified, +7/-3)
+```diff
+@@ -1,4 +1,4 @@
+-import type { ProcedureExport } from 'spacetimedb/server';
++import type { IdentityBuilder, ProcedureExport } from 'spacetimedb/server';
+ import {
+   spacetimedb,
+   t,
+@@ -26,7 +26,9 @@ export function requireAdmin(ctx: WriteCtx, sender: Sender): void {
+ 
+ const unitResult: ReturnType<typeof t.unit> = t.unit();
+ 
+-const addAdminIdentityArgs = { identity: t.identity() };
++const addAdminIdentityArgs: { identity: IdentityBuilder } = {
++  identity: t.identity(),
++};
+ export const addAdminIdentity: ProcedureExport<
+   typeof spacetimedb.schemaType,
+   typeof addAdminIdentityArgs,
+@@ -48,7 +50,9 @@ export const addAdminIdentity: ProcedureExport<
+   }
+ );
+ 
+-const removeAdminIdentityArgs = { identity: t.identity() };
++const removeAdminIdentityArgs: { identity: IdentityBuilder } = {
++  identity: t.identity(),
++};
+ export const removeAdminIdentity: ProcedureExport<
+   typeof spacetimedb.schemaType,
+   typeof removeAdminIdentityArgs,
+```
+
+**File**: `modules/spacetime-posthog-ts/src/submodule/schema.ts` (modified, +6/-1)
+```diff
+@@ -8,6 +8,8 @@ import {
+   type TransactionCtx,
+   type ViewCtx,
+   type SumBuilder,
++  type IdentityColumnBuilder,
++  type TimestampBuilder,
+ } from 'spacetimedb/server';
+ import { install } from './install.js';
+ 
+@@ -63,7 +65,10 @@ const posthogAdminIdentityOptions = {
+   name: 'posthog_admin_identity',
+   public: false,
+ };
+-const posthogAdminIdentityColumns = {
++const posthogAdminIdentityColumns: {
++  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
++  addedAt: TimestampBuilder;
++} = {
+   identity: t.identity().primaryKey(),
+   addedAt: t.timestamp(),
+ };
+```
+
+**File**: `modules/spacetime-stripe-ts/src/submodule/auth.ts` (modified, +7/-3)
+```diff
+@@ -1,4 +1,4 @@
+-import type { ProcedureExport } from 'spacetimedb/server';
++import type { IdentityBuilder, ProcedureExport } from 'spacetimedb/server';
+ import {
+   spacetimedb,
+   t,
+@@ -32,7 +32,9 @@ export function requireAdmin(ctx: WriteCtx, sender: Sender): void {
+ 
+ const unitResult: ReturnType<typeof t.unit> = t.unit();
+ 
+-const addAdminIdentityArgs = { identity: t.identity() };
++const addAdminIdentityArgs: { identity: IdentityBuilder } = {
++  identity: t.identity(),
++};
+ export const addAdminIdentity: ProcedureExport<
+   typeof spacetimedb.schemaType,
+   typeof addAdminIdentityArgs,
+@@ -55,7 +57,9 @@ export const addAdminIdentity: ProcedureExport<
+   }
+ );
+ 
+-const removeAdminIdentityArgs = { identity: t.identity() };
++const removeAdminIdentityArgs: { identity: IdentityBuilder } = {
++  identity: t.identity(),
++};
+ export const removeAdminIdentity: ProcedureExport<
+   typeof spacetimedb.schemaType,
+   typeof removeAdminIdentityArgs,
+```
+
+**File**: `modules/spacetime-stripe-ts/src/submodule/schema.ts` (modified, +6/-1)
+```diff
+@@ -8,6 +8,8 @@ import {
+   type ReducerCtx,
+   type TransactionCtx,
+   type SumBuilder,
++  type IdentityColumnBuilder,
++  type TimestampBuilder,
+ } from 'spacetimedb/server';
+ import * as v from 'valibot';
+ import { install } from './install.js';
+@@ -299,7 +301,10 @@ export const stripeConfigTable: ReturnType<
+ > = table(stripeConfigOptions, stripeConfigRow);
+ 
+ // Allowlist of identities permitted to call privileged procedures.
+-export const stripeAdminIdentityRow = {
++export const stripeAdminIdentityRow: {
++  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
++  addedAt: TimestampBuilder;
++} = {
+   identity: t.identity().primaryKey(),
+   addedAt: t.timestamp(),
+ };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
+- **PR #6672** (2026-11-23): Bump versions to 2.16.3 (@rekhoff)
+- **PR #6666** (2026-11-23): Allow pre-release suffixes and patch downgrades in metadata.toml version check (@bfops)
+- **PR #6663** (2026-11-23): Smoketests: resolve C# ClientSDK version from the local package source (@bfops)
 - **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
-- **PR #6657** (2026-11-21): Tweak PR-writing guidance for agents (@bfops)
-- **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
-- **PR #6653** (closed): Ignore memory limit for replay if eviction fails (@aasoni)
-- **PR #6650** (2026-11-20): Update doc comment about http request timeout (@aasoni)
-- **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
+- **PR #6658** (2026-11-23): Load database before enforcing memory budget (@joshua-spacetime)
 
 ---
 
@@ -959,57 +1574,52 @@ Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip absent page slots when verifying snapshots
+## X. Load database before enforcing memory budget
 
 **RULE**:
-When implementing operations in `crates/snapshot/src/remote.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/datastore/src/locking_tx_datastore/datastore.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `340dc085`: Skip absent page slots when verifying snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0413bd2`: Load database before enforcing memory budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/snapshot/src/remote.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/datastore/src/locking_tx_datastore/datastore.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-            .flat_map(|entry| table_present_pages(&entry.pages))
-            .map(|hash| self.fetch_page(hash))
-    use crate::{
-        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
-        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
-    };
-    #[tokio::test]
-    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
-        let temp = tempdir()?;
-        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
-        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
+    /// Ignore the resident memory limit while reconstructing committed data.
+    ///
+    /// The caller must keep exclusive access while the synchronous operation
+    /// runs, then trim storage before serving new transactions.
+    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
+        // Release the state lock before recovery acquires it for writing.
+        let storage = self.committed_state.read().storage.clone();
+        storage.with_resident_hard_limit_suspended(operation)
+    }
 
-        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
-        let sparse = Snapshot {
-            tx_offset,
-            tables: vec![TableEntry {
-                table_id: 0.into(),
-                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
-            }],
-            ..DUMMY_SNAPSHOT
-        };
+    /// Trim the resident and local caches to their low watermarks, as far as possible.
+    /// Required-in-memory data may keep usage above the limit without an error.
+    #[cfg(feature = "durability")]
+    pub fn trim(&self) -> Result<()> {
+        Ok(self.committed_state.read().trim()?)
+    }
 
-        for snapshot in [DUMMY_SNAPSHOT, sparse] {
-            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
-            dir.create()?;
-            repo.write_snapshot_file(&dir, snapshot)?;
-    
+        // Full database recovery defers eviction until replay, rebuilding, and
+        // system-table migration have all completed. Preserve immediate trimming
+        // for direct snapshot API callers.
+        let trim_after_restore = !config.resident_budget.is_hard_limit_suspended();
+        if trim_after_restore {
+            committed_state.trim()?;
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
-    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
+        // Free memory + disk storage to budget.
+        committed_state.trim()?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `340dc085` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0413bd2` are properly handled with clean fallback behavior.

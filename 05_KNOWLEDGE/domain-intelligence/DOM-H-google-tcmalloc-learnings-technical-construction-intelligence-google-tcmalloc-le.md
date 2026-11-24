@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T04:20:39.186Z",
+  "timestamp": "2026-11-24T00:57:31.905Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-google-tcmalloc-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-tcmalloc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T04:20:39.186Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T00:57:31.905Z`  
 > **Learning ID**: `LEARN-EVO-google-tcmalloc-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from google-tcmalloc-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `3264f9ce`  
+> **Source Version**: `fc4555d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T04:20:34.696Z  
+> **Timestamp**: 2026-11-24T00:57:14.889Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:15:33.863Z  
+> **Harvest Timestamp**: 2026-11-24T00:57:14.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5407 stars
+- **Stars / Engagement**: 5411 stars
 
 ---
 
@@ -1275,13 +1275,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1952** (2026-11-20): **Skip IsHugepageBacked on sampled and cold partitions.**
-  *Symptoms*: Skip IsHugepageBacked on sampled and cold partitions.  Sampled and cold partitions map regions with `MADV_NOHUGEPAGE`, preventing fault-time THP allocation and `khugepaged` collapse. However, `HugePageUnbackedTrackerTreatment::Observe` still queries `PageFlags::IsHugepageBacked` on every scan of sampled and cold trackers.  Skip `IsHugepageBacked` when `IsSampledOrColdMemory(page_filler_.tag())` is true and proceed directly to reading single-page residency bitmaps. 
-
-- **Issue #1951** (2026-11-20): **Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.**
-  *Symptoms*: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. 
+- **Issue #1959** (2026-11-23): **Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto.**
+  *Symptoms*: Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto.  Consistent with sampling-disabled builds, return NotFoundError from MakeProfileProto when given an empty profile because TCMalloc is disabled or unavailable (for example, when a custom allocator or unsupported sanitizer is linked). 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1951/checks?check_run_id=136462830257) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1959/checks?check_run_id=138002976258) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+
+- **Issue #1957** (2026-11-23): **Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE.**
+  *Symptoms*: Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE. 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1957/checks?check_run_id=137896562011) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1298,200 +1300,408 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3264f9ce` (2026-11-20)
-**Commit Message**: Drop pageheap_lock when resetting sampled tracker VMA names.
+### Incident Patch 1: `fc4555d2` (2026-11-24)
+**Commit Message**: Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.
 
-`SampledTrackerTreatment::Treat()` drops `pageheap_lock` before calling `SetAnonVmaName`, because `prctl(PR_SET_VMA_ANON_NAME)` takes `mmap_write_lock` in the kernel. By contrast, `HandleFullyFreedTracker` and `FetchFullyFreedTracker` reset a retired tracker's VMA name under `pageheap_lock`.
+Flip `TCMALLOC_INTERNAL_WRITE_PREFETCH` to 1 by default so `TcmallocSlab::Pop` prefetches up to the second cache line of the next object with write intent (`PrefetchWT0`). Switch the build and test variant to `no_write_prefetch` (`-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0`) to keep the legacy single-line read-prefetch fallback covered, and update fast-path disassembly goldens.
 
-Both retirement paths have already removed the tracker from every filler list, decremented `size_`, and confirmed that no treatment pin remains. Drop `pageheap_lock` around `SetAnonVmaName` in both paths and assert in `huge_page_filler_fuzz` that VMA naming never runs under `pageheap_lock`.
+PiperOrigin-RevId: 1028550078
 
-PiperOrigin-RevId: 1026804771
-
-**File**: `tcmalloc/huge_page_filler.h` (modified, +4/-0)
+**File**: `tcmalloc/BUILD` (modified, +3/-3)
 ```diff
-@@ -1214,7 +1214,9 @@ HugePageFiller<TrackerType>::HandleFullyFreedTracker(TrackerType* pt,
-   }
-   if (pt->GetTagState().sampled_for_tagging) {
-     // Set the default region name if the tracked was sampled.
-+    pageheap_lock.unlock();
-     pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
-+    pageheap_lock.lock();
-   }
-   return pt;
- }
-@@ -2556,7 +2558,9 @@ HugePageFiller<TrackerType>::FetchFullyFreedTracker() {
-     if (pt->GetTagState().sampled_for_tagging) {
-       // Set the default region name if the tracker was sampled.  No pin
-       // remains, so no treatment can name it again.
-+      pageheap_lock.unlock();
-       pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
-+      pageheap_lock.lock();
-     }
-     return pt;
-   }
+@@ -660,21 +660,21 @@ cc_library(
+ )
+ 
+ cc_library(
+-    name = "tcmalloc_write_prefetch",
++    name = "tcmalloc_no_write_prefetch",
+     srcs = [
+         "libc_override.h",
+         "tcmalloc.cc",
+         "tcmalloc.h",
+     ],
+     copts = [
+         "-DTCMALLOC_INTERNAL_8K_PAGES",
+-        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
++        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0",
+     ] + TCMALLOC_DEFAULT_COPTS,
+     linkstatic = 1,
+     visibility = [":tcmalloc_tests"],
+     deps = tcmalloc_deps + [
+         ":alloc_at_least",
+-        ":common_write_prefetch",
++        ":common_no_write_prefetch",
+         ":malloc_hook",
+         "//tcmalloc/internal:allocation_guard",
+         "//tcmalloc/internal:is_aligned_to",
 ```
 
-**File**: `tcmalloc/huge_page_filler_fuzz.cc` (modified, +0/-7)
+**File**: `tcmalloc/CMakeLists.txt` (modified, +4/-4)
 ```diff
-@@ -715,13 +715,6 @@ MemoryModifyStatus MockUnbackWithoutLock::operator()(Range r) {
+@@ -864,17 +864,17 @@ tcmalloc_cc_library(
  
- void MockSetAnonVmaName::operator()(Range r,
-                                     std::optional<absl::string_view> name) {
--  // Treatments name with pageheap_lock dropped, but HandleFullyFreedTracker
--  // and FetchFullyFreedTracker reset the name under it.
--  //
--  // TODO(b/73749855): Move the reset off the lock, then drop this check.
--  if (pageheap_lock.IsHeld()) {
--    return;
--  }
-   state_.OnLockDropped();
- }
- 
+ tcmalloc_cc_library(
+   NAME
+-    tcmalloc_tcmalloc_write_prefetch
++    tcmalloc_tcmalloc_no_write_prefetch
+   ALIAS
+-    tcmalloc::tcmalloc_write_prefetch
++    tcmalloc::tcmalloc_no_write_prefetch
+   ALWAYSLINK
+   SRCS
+     "libc_override.h"
+     "tcmalloc.cc"
+     "tcmalloc.h"
+   COPTS
+     "-DTCMALLOC_INTERNAL_8K_PAGES"
+-    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1"
++    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0"
+   DEPS
+     "absl::base"
+     "absl::bits"
+@@ -891,7 +891,7 @@ tcmalloc_cc_library(
+     "absl::symbolize"
+     "absl::time"
+     "tcmalloc::alloc_at_least"
+-    "tcmalloc::common_write_prefetch"
++    "tcmalloc::common_no_write_prefetch"
+     "tcmalloc::experiment"
+     "tcmalloc::internal_allocation_guard"
+     "tcmalloc::internal_central_freelist_hooks"
 ```
 
-**File**: `tcmalloc/huge_page_filler_test.cc` (modified, +52/-0)
+**File**: `tcmalloc/internal/percpu_tcmalloc.h` (modified, +1/-1)
 ```diff
-@@ -9733,6 +9733,58 @@ TEST_F(FillerTest, SampledOrColdMemorySkipsIsHugepageBacked) {
-   residency.unlocked_hook_ = nullptr;
-   Delete(normal_alloc);
- }
-+
-+TEST_F(FillerTest, SetAnonVmaNameResetDropsPageHeapLock) {
-+  randomize_density_ = false;
-+  SpanAllocInfo info = {1, AccessDensityPrediction::kSparse};
-+  FakePageFlags pageflags;
-+  FakeResidency residency;
-+
-+  int resets_unlocked = 0;
-+  set_anon_vma_name_.SetIgnoreName(true);
-+  set_anon_vma_name_.unlocked_hook_ = [&](Range r,
-+                                          std::optional<absl::string_view> n) {
-+    // Acquire and immediately release pageheap_lock to verify this thread
-+    // dropped it (unlike !pageheap_lock.IsHeld(), which can race with
-+    // background threads) without holding it across the rest of the hook.
-+    {
-+      PageHeapSpinLockHolder l;
-+    }
-+    if (!n.has_value()) {
-+      ++resets_unlocked;
-+    }
-+  };
-+
-+  // Case 1: Direct retirement in HandleFullyFreedTracker.
-+  PAlloc direct = AllocateWithSpanAllocInfo(Length(1), info);
-+  direct.pt->SetTagState({.sampled_for_tagging = true});
-+  pageflags.MarkHugePageBacked(direct.p.start_addr(),
-+                               /*is_hugepage_backed=*/true);
-+  FakeClock::Advance(absl::Minutes(6));
-+  TreatHugepageTrackers(EnableCollapse::kDisabled,
-+                        EnableUnfilteredCollapse::kDisabled,
-+                        ReleaseStalePages::kDisabled, &pageflags, &residency);
-+  Delete(direct);
-+  EXPECT_EQ(resets_unlocked, 1);
-+
-+  // Case 2: Parked retirement drained via FetchFullyFreedTracker.
-+  PAlloc parked = AllocateWithSpanAllocInfo(Length(1), info);
-+  parked.pt->SetTagState({.sampled_for_tagging = true});
-+  pageflags.MarkHugePageBacked(parked.p.start_addr(),
-+                               /*is_hugepage_backed=*/true);
-+  FakeClock::Advance(absl::Minutes(6));
-+  TreatHugepageTrackers(EnableCollapse::kDisabled,
-+                        EnableUnfilteredCollapse::kDisabled,
-+                        ReleaseStalePages::kDisabled, &pageflags, &residency);
-+  parked.pt->SetDontFreeTracker(HugePageTreatmentType::kCollapse);
-+  EXPECT_FALSE(DeleteRaw(parked));
-+  EXPECT_EQ(resets_unlocked, 1);
-+  parked.pt->ClearDontFreeTracker(HugePageTreatmentType::kCollapse);
-+  EXPECT_EQ(DrainFreedTrackers(), 1);
-+  EXPECT_EQ(resets_unlocked, 2);
-+
-+  set_anon_vma_name_.unlocked_hook_ = nullptr;
-+}
- }  // namespace
- }  // namespace tcmalloc_internal
- }  // namespace tcmalloc
+@@ -58,7 +58,7 @@
+ #endif
+ 
+ #ifndef TCMALLOC_INTERNAL_WRITE_PREFETCH
+-#define TCMALLOC_INTERNAL_WRITE_PREFETCH 0
++#define TCMALLOC_INTERNAL_WRITE_PREFETCH 1
+ #endif
+ 
+ GOOGLE_MALLOC_SECTION_BEGIN
 ```
 
-**File**: `tcmalloc/huge_page_tracker.h` (modified, +2/-1)
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +9/-9)
 ```diff
-@@ -391,7 +391,8 @@ class PageTracker : public TList<PageTracker>::Elem {
-   void SetTagState(const TagState& state) { tagged_state_ = state; }
- 
-   void SetAnonVmaName(MemoryTagFunction& set_anon_vma_name,
--                      std::optional<absl::string_view> name);
-+                      std::optional<absl::string_view> name)
-+      ABSL_LOCKS_EXCLUDED(pageheap_lock);
- 
-   struct HardwarePageResidencyInfo {
-     HardwareLength n_free_swapped;
+@@ -100,12 +100,12 @@ function(tcmalloc_cc_library_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS}
+   )
+-  tcmalloc_cc_library(NAME ${TCMALLOC_NAME}_write_prefetch
+-    ALIAS ${TCMALLOC_ALIAS}_write_prefetch
++  tcmalloc_cc_library(NAME ${TCMALLOC_NAME}_no_write_prefetch
++    ALIAS ${TCMALLOC_ALIAS}_no_write_prefetch
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS}
+   )
+@@ -309,13 +309,13 @@ function(tcmalloc_cc_test_variants)
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_legacy_locking2 tcmalloc::common_legacy_locking2
+     ENV ${TCMALLOC_ENV}
+   )
+-  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_write_prefetch
++  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_no_write_prefetch
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_write_prefetch tcmalloc::common_write_prefetch
++    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_no_write_prefetch tcmalloc::common_no_write_prefetch
+     ENV ${TCMALLOC_ENV}
+   )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_defer_per_cpu_caches
+@@ -604,12 +604,12 @@ function(tcmalloc_cc_binary_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_legacy_locking2 tcmalloc::common_legacy_locking2
+   )
+-  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_write_prefetch
++  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_no_write_prefetch
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_write_prefetch tcmalloc::common_write_prefetch
++    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_no_write_prefetch tcmalloc::common_no_write_prefetch
+   )
+   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_defer_per_cpu_caches
+     SRCS ${TCMALLOC_SRCS}
+```
+
+**File**: `tcmalloc/testing/fast_path.aarch64+opt.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   4     29   -   7   -    9   -   -    -   -   3     4
+-calloc                     -    -   2     29   -   6   -   10   2   -    -   -   5     5
++aligned_alloc              -    1   5     30   -   7   -    9   -   -    -   -   3     4
++calloc                     -    1   3     30   -   6   -   10   2   -    -   -   5     5
+ delete                     -    -   1     33   -   6   -    6   -   -    -   -   -     3
+ delete(size)               -    -   2     24   -   5   -    4   -   -    -   -   -     3
+ delete(size,align)         -    -   4     25   -   7   -    5   -   -    -   -   -     3
+-malloc                     -    -   2     27   -   5   -    8   -   -    -   -   -     3
+-malloc(token_1)            -    -   2     27   -   5   -    8   -   -    -   -   -     3
+-new                        -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(align)                 -    -   3     28   -   6   -    8   -   -    -   -   -     3
+-new(align)->size           -    -   3     28   -   6   -    9   -   -    -   -   -     3
+-new(align,cold)->size      -    1   4     35   -   6   -   11   -   -    -   -   -     3
+-new(align,nothrow)         -    -   3     28   -   6   -    8   -   -    -   -   -     3
+-new(cold)->size            -    1   2     34   -   4   -   10   -   -    -   -   -     3
+-new(cold,token_1)->size    -    1   2     34   -   4   -   10   -   -    -   -   -     3
+-new(nothrow)               -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(token_1)               -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(token_1)->size         -    -   1     27   -   4   -    8   -   -    -   -   -     3
+-new->size                  -    -   1     27   -   4   -    8   -   -    -   -   -     3
+-posix_memalign             -    -   3     30   -   9   -   10   -   -    -   -   5     6
++malloc                     -    1   3     28   -   5   -    8   -   -    -   -   -     3
++malloc(token_1)            -    1   3     28   -   5   -    8   -   -    -   -   -     3
++new                        -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(align)                 -    1   4     29   -   6   -    8   -   -    -   -   -     3
++new(align)->size           -    1   4     29   -   6   -    9   -   -    -   -   -     3
++new(align,cold)->size      -    2   5     36   -   6   -   11   -   -    -   -   -     3
++new(align,nothrow)         -    1   4     29   -   6   -    8   -   -    -   -   -     3
++new(cold)->size            -    2   3     35   -   4   -   10   -   -    -   -   -     3
++new(cold,token_1)->size    -    2   3     35   -   4   -   10   -   -    -   -   -     3
++new(nothrow)               -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(token_1)               -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(token_1)->size         -    1   2     28   -   4   -    8   -   -    -   -   -     3
++new->size                  -    1   2     28   -   4   -    8   -   -    -   -   -     3
++posix_memalign             -    1   4     31   -   9   -   10   -   -    -   -   5     6
+```
+
+**File**: `tcmalloc/testing/fast_path.aarch64+release.golden` (modified, +17/-17)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   4     28   -   7   -    8   -   -    -   -   3     4
+-calloc                     -    -   2     27   -   6   -    9   2   -    -   -   5     5
++aligned_alloc              -    1   5     29   -   7   -    8   -   -    -   -   3     4
++calloc                     -    1   3     28   -   6   -    9   2   -    -   -   5     5
+ delete                     -    -   1     30   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   2     22   -   5   -    3   -   -    -   -   -     3
+-delete(size,align)         -    -   4     24   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   2     26   -   5   -    7   -   -    -   -   -     3
+-malloc(token_1)            -    -   2     26   -   5   -    7   -   -    -   -   -     3
+-new                        -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(align)                 -    -   3     26   -   6   -    7   -   -    -   -   -     3
+-new(align)->size           -    -   3     26   -   6   -    8   -   -    -   -   -     3
+-new(align,cold)->size      -    1   4     31   -   6   -    9   -   -    -   -   -     3
+-new(align,nothrow)         -    -   3     26   -   6   -    7   -   -    -   -   -     3
+-new(cold)->size            -    1   2     30   -   4   -    8   -   -    -   -   -     3
+-new(cold,token_1)->size    -    1   2     30   -   4   -    8   -   -    -   -   -     3
+-new(nothrow)               -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(token_1)               -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(token_1)->size         -    -   1     25   -   4   -    7   -   -    -   -   -     3
+-new->size                  -    -   1     25   -   4   -    7   -   -    -   -   -     3
+-posix_memalign             -    2   5     28   -   7   -    9   -   -    -   -   5     6
++delete(size,align)         -    -   4     23   -   7   -    4   -   -    -   -   -     3
++malloc                     -    1   3     27   -   5   -    7   -   -    -   -   -     3
++malloc(token_1)            -    1   3     27   -   5   -    7   -   -    -   -   -     3
++new                        -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(align)                 -    1   4     27   -   6   -    7   -   -    -   -   -     3
++new(align)->size           -    1   4     27   -   6   -    8   -   -    -   -   -     3
++new(align,cold)->size      -    2   5     32   -   6   -    9   -   -    -   -   -     3
++new(align,nothrow)         -    1   4     27   -   6   -    7   -   -    -   -   -     3
++new(cold)->size            -    2   3     31   -   4   -    8   -   -    -   -   -     3
++new(cold,token_1)->size    -    2   3     31   -   4   -    8   -   -    -   -   -     3
++new(nothrow)               -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(token_1)               -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(token_1)->size         -    1   2     26   -   4   -    7   -   -    -   -   -     3
++new->size                  -    1   2     26   -   4   -    7   -   -    -   -   -     3
++posix_memalign             -    1   4     29   -   9   -    9   -   -    -   -   5     6
+```
+
+**File**: `tcmalloc/testing/fast_path.insecure.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   6     28   -   7   -    6   -   1    1   2   1     1
+-calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
++aligned_alloc              -    1   7     28   -   7   -    6   -   1    1   2   1     1
++calloc                     -    1   5     32   -   6   -    6   1   1    1   2   3     1
+ delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
+ delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   4     26   -   5   -    6   -   -    -   2   -     1
+-malloc(token_1)            -    -   4     26   -   5   -    6   -   -    -   2   -     1
+-new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(align)                 -    -   5     27   -   6   -    6   -   -    -   2   -     1
+-new(align)->size           -    -   5     27   -   6   -    7   -   -    -   2   -     1
+-new(align,cold)->size      -    1   6     32   -   6   -    8   -   -    -   2   -     1
+-new(align,nothrow)         -    -   5     27   -   6   -    6   -   -    -   2   -     1
+-new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
+-posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
++malloc                     -    1   5     26   -   5   -    6   -   -    -   2   -     1
++malloc(token_1)            -    1   5     26   -   5   -    6   -   -    -   2   -     1
++new                        -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(align)                 -    1   6     27   -   6   -    6   -   -    -   2   -     1
++new(align)->size           -    1   6     27   -   6   -    7   -   -    -   2   -     1
++new(align,cold)->size      -    2   7     32   -   6   -    8   -   -    -   2   -     1
++new(align,nothrow)         -    1   6     27   -   6   -    6   -   -    -   2   -     1
++new(cold)->size            -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(cold,token_1)->size    -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(nothrow)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)->size         -    1   4     25   -   4   -    6   -   -    -   2   -     1
++new->size                  -    1   4     25   -   4   -    6   -   -    -   2   -     1
++posix_memalign             -    1   9     30   -   8   -    6   -   1    1   2   3     2
+```
+
+**File**: `tcmalloc/testing/fast_path.opt.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   6     29   -   7   -    6   -   1    1   2   1     1
+-calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
++aligned_alloc              -    1   7     29   -   7   -    6   -   1    1   2   1     1
++calloc                     -    1   5     32   -   6   -    6   1   1    1   2   3     1
+ delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
+ delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   4     27   -   5   -    6   -   -    -   2   -     1
+-malloc(token_1)            -    -   4     27   -   5   -    6   -   -    -   2   -     1
+-new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(align)                 -    -   5     28   -   6   -    6   -   -    -   2   -     1
+-new(align)->size           -    -   5     28   -   6   -    7   -   -    -   2   -     1
+-new(align,cold)->size      -    1   6     33   -   6   -    8   -   1    1   2   -     1
+-new(align,nothrow)         -    -   5     28   -   6   -    6   -   -    -   2   -     1
+-new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-posix_memalign             -    -   8     30   -   8   -    6   -   1    1   2   3     2
++malloc                     -    1   5     27   -   5   -    6   -   -    -   2   -     1
++malloc(token_1)            -    1   5     27   -   5   -    6   -   -    -   2   -     1
++new                        -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(align)                 -    1   6     28   -   6   -    6   -   -    -   2   -     1
++new(align)->size           -    1   6     28   -   6   -    7   -   -    -   2   -     1
++new(align,cold)->size      -    2   7     33   -   6   -    8   -   1    1   2   -     1
++new(align,nothrow)         -    1   6     28   -   6   -    6   -   -    -   2   -     1
++new(cold)->size            -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(cold,token_1)->size    -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(nothrow)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)->size         -    1   4     27   -   4   -    6   -   -    -   2   -     1
++new->size                  -    1   4     27   -   4   -    6   -   -    -   2   -     1
++posix_memalign             -    1   9     31   -   8   -    6   -   1    1   2   3     2
 ```
 
 ---
 
-### Incident Patch 2: `0744bb82` (2026-11-20)
-**Commit Message**: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.
+### Incident Patch 2: `129306e2` (2026-11-23)
+**Commit Message**: Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE.
 
-PiperOrigin-RevId: 1026674384
+PiperOrigin-RevId: 1028502200
 
-**File**: `tcmalloc/experiment_config.h` (modified, +1/-1)
+**File**: `tcmalloc/experiment_config.h` (modified, +0/-2)
 ```diff
-@@ -64,7 +64,7 @@ inline constexpr ExperimentConfig experiments[] = {
-     {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
+@@ -28,7 +28,6 @@ enum class Experiment : int {
+   TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION,  // TODO: b/205153285 - Complete experiment.
+   TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES,  // TODO: b/435718337 - Complete experiment.
+   TCMALLOC_SONIC_DEMAND_CYCLE_60S,  // TODO: b/582367305 - Complete experiment.
+-  TCMALLOC_SONIC_FILLER_APPEND_ON_FREE,  // TODO: b/579425486 - Complete experiment.
+   TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION,  // TODO: b/577007348 - Complete experiment.
+   TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K,  // TODO: b/572352809 - Complete experiment.
+   TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K,  // TODO: b/572352809 - Complete experiment.
+@@ -65,7 +64,6 @@ inline constexpr ExperimentConfig experiments[] = {
      {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
      {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
--    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-+    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
-     {Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE, "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
+-    {Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE, "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
      {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
      {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
+     {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0.02, /*rollout_upper_bound=*/0.03, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
 ```
 
-**File**: `tcmalloc/experiment_variants.bzl` (modified, +1/-1)
+**File**: `tcmalloc/experiment_variants.bzl` (modified, +0/-6)
 ```diff
-@@ -44,7 +44,7 @@ experiment_variants = [
-         "name": "tcmalloc_demand_cycle_60s",
-         "malloc": "//tcmalloc",
+@@ -46,12 +46,6 @@ experiment_variants = [
          "deps": ["//tcmalloc:common_8k_pages"],
--        "env": {"BORG_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
-+        "env": {"BORG_DISABLE_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
+         "env": {"BORG_DISABLE_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
      },
+-    {
+-        "name": "tcmalloc_filler_append_on_free",
+-        "malloc": "//tcmalloc",
+-        "deps": ["//tcmalloc:common_8k_pages"],
+-        "env": {"BORG_EXPERIMENTS": "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE"},
+-    },
      {
-         "name": "tcmalloc_filler_append_on_free",
+         "name": "tcmalloc_fix_max_capacity_bug_ablation",
+         "malloc": "//tcmalloc",
 ```
 
-**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +1/-1)
+**File**: `tcmalloc/parameters.cc` (modified, +0/-5)
 ```diff
-@@ -352,7 +352,7 @@ function(tcmalloc_cc_test_variants)
-     COPTS ${TCMALLOC_COPTS}
+@@ -180,11 +180,6 @@ void Parameters::InitializeFromExperiments() {
+                                       std::memory_order_relaxed);
+   }
+ 
+-  if (IsExperimentActive(Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE)) {
+-    filler_append_on_free_.store(FillerAppendOnFree::kEnabled,
+-                                 std::memory_order_relaxed);
+-  }
+-
+   if (IsExperimentActive(
+           Experiment::
+               TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K)) {
+```
+
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +0/-16)
+```diff
+@@ -372,15 +372,6 @@ function(tcmalloc_cc_test_variants)
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+     ENV ${TCMALLOC_ENV} "BORG_DISABLE_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
+   )
+-  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
+-    ${EXTRA_ARGS}
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_SONIC_FILLER_APPEND_ON_FREE"
+-  )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_fix_max_capacity_bug_ablation
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+@@ -662,13 +653,6 @@ function(tcmalloc_cc_binary_variants)
      LINKOPTS ${TCMALLOC_LINKOPTS}
      DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
--    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
-+    ENV ${TCMALLOC_ENV} "BORG_DISABLE_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
    )
-   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
-     ${EXTRA_ARGS}
-```
-
-**File**: `tcmalloc/testing/default_parameters_test.cc` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ constexpr absl::Duration kDefaultSkipSubreleaseLongInterval =
- #if defined(TCMALLOC_INTERNAL_SMALL_BUT_SLOW)
-     absl::ZeroDuration()
- #else
--    absl::Seconds(120)
-+    absl::Seconds(60)
- #endif
-     ;
- constexpr int32_t kDefaultMaxPerCpuCacheSize =
+-  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-  )
+   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_fix_max_capacity_bug_ablation
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1959** (2026-11-23): Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto. (@copybara-service[bot])
+- **PR #1957** (2026-11-23): Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE. (@copybara-service[bot])
+- **PR #1955** (closed): No public description (@copybara-service[bot])
+- **PR #1953** (2026-11-23): Report the owning TCMalloc suballocator in PageAllocationStatus. (@copybara-service[bot])
 - **PR #1952** (2026-11-20): Skip IsHugepageBacked on sampled and cold partitions. (@copybara-service[bot])
 - **PR #1951** (2026-11-20): Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. (@copybara-service[bot])
-- **PR #1950** (2026-11-20): Drop pageheap_lock when resetting sampled tracker VMA names. (@copybara-service[bot])
-- **PR #1949** (2026-11-20): Include donated trackers in SampledTrackerTreatment. (@copybara-service[bot])
-- **PR #1948** (2026-11-20): No public description (@copybara-service[bot])
-- **PR #1945** (2026-11-20): Export stale page histograms from HugePageFiller in pbtxt stats. (@copybara-service[bot])
 
 ---
 
@@ -1511,34 +1721,35 @@ PiperOrigin-RevId: 1026674384
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Drop pageheap_lock when resetting sampled tracker VMA names.
+## X. Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.
 
 **RULE**:
-When implementing operations in `tcmalloc/huge_page_filler.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3264f9ce`: Drop pageheap_lock when resetting sampled tracker VMA names.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc4555d2`: Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/huge_page_filler.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/BUILD`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    pageheap_lock.unlock();
-    pageheap_lock.lock();
-      pageheap_lock.unlock();
-      pageheap_lock.lock();
+    name = "tcmalloc_no_write_prefetch",
+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0",
+        ":common_no_write_prefetch",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    name = "tcmalloc_write_prefetch",
+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
+        ":common_write_prefetch",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3264f9ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc4555d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

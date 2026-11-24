@@ -4,24 +4,24 @@
 {
   "source_repository": "software-mansion/react-native-screens",
   "source_url": "https://github.com/software-mansion/react-native-screens",
-  "source_version": "f3306074",
+  "source_version": "0bb871d5",
   "license": "MIT",
-  "timestamp": "2026-11-17T03:57:54.181Z",
+  "timestamp": "2026-11-24T00:57:20.552Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-software-mansion-react-native-screens",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens) (Revision: `f3306074`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T03:57:54.181Z`  
+> **Provenance**: Harvested from [software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens) (Revision: `0bb871d5`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T00:57:20.552Z`  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 88%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from software-mansion/react-native-screens:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:57:53.061Z  
+> **Harvest Timestamp**: 2026-11-24T00:57:19.206Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3753 stars
+- **Stars / Engagement**: 3757 stars
 
 ---
 
@@ -379,11 +379,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5217** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample**
-  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
+- **Issue #5312** (2026-11-23): **[iOS, Fabric] Is the main-queue hop in RNSScreenStackView mountingTransactionDidMount still needed?**
+  *Symptoms*: ### Description  On Fabric, `-[RNSScreenStackView mountingTransactionDidMount:withSurfaceTelemetry:]` (`ios/legacy/RNSScreenStack.mm`, `main`) defers `maybeAddToParentAndUpdateContainer` with `dispatch_async(dispatch_get_main_queue(), …)`. The comment says the children do not have their layout yet. That holds for Paper's `didUpdateReactSubviews`, where the comment comes from. On Fabric, this callback runs after the whole mount transaction, layout updates included. The hop arrived with #2249, which moved the update here from `mountChildComponentView`.  Is the hop still needed on Fabric, for example to keep UIKit transitions out of the mount transaction? Or can the container be updated synchronously?  ### Measurements  With the hop replaced by a direct call:  - The container update ran 0.1 ms after `mountingTransactionDidMount` instead of about 1 ms after. Estimated saving: about 1 ms per stack change on an idle main thread. - The presented screen did not reach the window sooner: median about 44 ms after touch-up with and without the hop, n=40 each. `presentViewController:animated:NO` attaches the view in UIKit's next update cycle (`_UIAfterCACommitBlock`) either way.  Tested with the synchronous call: a `transparentModal` with `animation: 'none'` and `gestureEnabled: false`, presented and dismissed 40 times from a native stack. No crashes, and every present and dismiss completed.  Not tested: - animated push or modal - headers - form sheets - nested stacks - `preventNativeDism
 
-- **Issue #5216** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample**
-  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
+- **Issue #5301** (2026-11-23): **refactor(v5): remove unused sheet background effect aliases**
+  *Symptoms*: ## Description  Removes the `FormSheet` and `PageSheet` aliases that no prop or field uses.  Closes https://github.com/software-mansion/react-native-screens-labs/issues/2094  ## Changes  - `FormSheetBackgroundEffectColor`, `FormSheetBackgroundEffectBlur`,   `FormSheetBackgroundEffectBlurStyle` and the same three `PageSheet*` types   are removed. `backgroundEffect` goes through `FormSheetBackgroundEffect` /   `PageSheetBackgroundEffect`, whose members are the shared   `SheetBackgroundEffectColor` and `SheetBackgroundEffectBlur`, so these   aliases were unused. - The `test-form-sheet-background-effect-ios` test imports   `SheetBackgroundEffectBlurStyle` instead of the removed   `FormSheetBackgroundEffectBlurStyle`. - The `backgroundEffect` props of `FormSheet` and `PageSheet` no longer have a   `@see` to their own type, as   [RFC-1947](https://github.com/software-mansion/react-native-screens-labs/pull/1947)   asks: the page already links to the prop's type.  ## Test plan  No runtime changes. `yarn check-types`, `yarn lint-js` and `yarn format-js` pass.  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [x] For API changes, updated relevant public types. - [ ] Ensured that CI passes 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5301?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <de
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -400,560 +402,149 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54c55f6c` (2026-11-16)
-**Commit Message**: fix(iOS): follow the gesture in interactive fade and fade_from_bottom pops (#5146)
+### Incident Patch 1: `0d0ebe7e` (2026-11-23)
+**Commit Message**: fix(iOS, Stack v4): keep navigation bar after cancelled back-button pop (#5162)
 
 ## Description
 
-On iOS, with `animationMatchesGesture: true`, the swipe-back pop for
-`animation: 'fade'` and `animation: 'fade_from_bottom'` does not follow
-the finger. The screen's progress jumps back and forth during the drag.
-A swipe released early, which should cancel, can still finish the pop.
-With `fade_from_bottom` the screen is gone about 0.25 s into the drag,
-and the header stays half-transitioned until the finger lifts.
+Fixes the navigation bar of a screen that prevents its native dismissal
+(`preventNativeDismiss`, e.g. React Navigation's `usePreventRemove`)
+breaking after the user taps its native back button and the dismissal is
+cancelled, when the screen below has `headerShown: false`. On iOS 18 it
+also keeps that screen's back button from staying faded after such a
+cancelled pop (see [Back button fade on iOS
+18](#back-button-fade-on-ios-18)).
 
-The cause is in `RNSScreenStackAnimator`. The pop branches of
-`animateFadeWithTransitionContext:` and
-`animateFadeFromBottomWithTransitionContext:` call `startAnimation` even
-when the transition is interactive. The animator then runs on its own
-clock, while `RNSPercentDrivenInteractiveTransition` keeps setting
-`fractionComplete` from the gesture and finalizes with `pauseAnimation`
-/ `setReversed` / `continueAnimation…`, which expects a paused animator.
-`fade_from_bottom` also fades with a second animator that the gesture
-never drives.
+Reproduced on an iOS 26.5 simulator (iPhone 17 Pro) with `Test5158`:
 
-The other custom pop animations (`simple_push`, `slide_from_left`,
-`slide_from_bottom`) already skip `startAnimation` for interactive pops
+- **Liquid Glass stripped** in 13 of 13 attempts with unmodified timing,
+and in 4 of 4 more with the cancel delayed by 0.4 s. The bar stays
+visible but flat and opaque, and the back button and `headerRight` items
+lose their glass platters until the screen is left.
+- **Bar gone for good** (`navigationBarHidden == YES` on the guarded
+screen) in 6 of 6 attempts, but only with an artificial pause at the
+point where the reporter's LLDB breakpoint stops (see [Error
+mechanism](#error-mechanism)). I could not trigger it without that
+pause, so the "1 in 10 under heavy load" from the issue is explaine
 
-
-**File**: `ios/legacy/RNSScreenStackAnimator.mm` (modified, +68/-30)
+**File**: `apps/src/tests/issue-tests/Test5158.tsx` (added, +134/-0)
 ```diff
-@@ -315,17 +315,29 @@ - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitionin
-     [animator startAnimation];
-   } else if (_operation == UINavigationControllerOperationPop) {
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
--    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
--                                                               curve:UIViewAnimationCurveEaseInOut
--                                                          animations:^{
--                                                            fromViewController.view.alpha = 0.0;
--                                                          }];
--    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-+
-+    void (^animationBlock)(void) = ^{
-+      fromViewController.view.alpha = 0.0;
-+    };
-+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-       fromViewController.view.alpha = 1.0;
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
--    }];
--    _inFlightAnimator = animator;
--    [animator startAnimation];
-+    };
-+
-+    if (!transitionContext.isInteractive) {
-+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-+                                                                 curve:UIViewAnimationCurveEaseInOut
-+                                                            animations:animationBlock];
-+      [animator addCompletion:completionBlock];
-+      _inFlightAnimator = animator;
-+      [animator startAnimation];
-+    } else {
-+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-+                                                                 curve:UIViewAnimationCurveLinear
-+                                                            animations:animationBlock];
-+      [animator addCompletion:completionBlock];
-+      _inFlightAnimator = animator;
-+    }
-   }
- }
- 
-@@ -428,33 +440,59 @@ - (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTr
-     toViewController.view.transform = CGAffineTransformIdentity;
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
- 
--    // Android Nougat exit animation
--    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
--    auto slideAnimator = [[UIViewPropertyAnimator alloc]
--        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
--                   curve:UIViewAnimationCurveEaseIn
--              animations:^{
--                toViewController.view.transform = CGAffineTransformIdentity;
--                fromViewController.view.transform = topBottomTransform;
--              }];
--    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-+    void (^slideAnimationBlock)(void) = ^{
-+      toViewController.view.transform = CGAffineTransformIdentity;
-+      fromViewController.view.transform = topBottomTransform;
-+    };
-+    void (^fadeAnimationBlock)(void) = ^{
-+      fromViewController.view.alpha = 0.0;
-+    };
-+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-       fromViewController.view.transform = CGAffineTransformIdentity;
-       toViewController.view.transform = CGAffineTransformIdentity;
-       fromViewController.view.alpha = 1.0;
-       toViewController.view.alpha = 1.0;
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
--    }];
--
--    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
--        initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
--                   curve:UIViewAnimationCurveLinear
--              animations:^{
--                fromViewController.view.alpha = 0.0;
--              }];
-+    };
- 
--    _inFlightAnimator = slideAnimator;
--    [slideAnimator startAnimation];
--    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
-+    // Android Nougat exit animation
-+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-+    if (!transitionContext.isInteractive) {
-+      auto slideAnimator = [[UIViewPropertyAnimator alloc]
-+          initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
-+                     curve:UIViewAnimationCurveEaseIn
-+                animations:slideAnimationBlock];
-+      [slideAnimator addCompletion:completionBlock];
-+
-+      auto fadeAnimator = [[UIViewPropertyAnimator alloc]
-+          initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
-+                     curve:UIViewAnimationCurveLinear
-
-```
-
----
-
-### Incident Patch 2: `f3306074` (2026-11-16)
-**Commit Message**: fix(Android, Tabs): remove TabsScreen natively when it's removed from JS (#5074)
-
-## Description
-
-This is #4812 by @ArnaudDerosin, rebased onto `main`. The tabs moved to
-`react/containers` in #4946, so that branch no longer applies. I
-cherry-picked its commit, keeping the authorship, and resolved the one
-conflict in `TabsHost.kt`. The change itself is unchanged.
-
-On Android, a `TabsScreen` removed from JS is never removed natively.
-Before Fabric removes a child, `SurfaceMountingManager.removeViewAt`
-looks it up through `viewGroupManager.getChildAt(parent, index)`. When
-the tag isn't there, it logs `view already removed from parent!` and
-returns without calling the view manager's `removeViewAt`. The only real
-Android child of `TabsHost` is `TabsContainer`, since the screens live
-in `renderedScreens` and in the container's model, and
-`TabsHostViewManager` didn't override `getChildCount`/`getChildAt`. So
-every tab removal was skipped, the removed tabs stayed in the bar, and
-once the model held more than six the next menu rebuild threw:
-
-```
-java.lang.IllegalArgumentException: Maximum number of items supported by CustomBottomNavigationView is 6. Limit can be checked with CustomBottomNa
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHost.kt` (modified, +5/-0)
-```diff
-@@ -102,6 +102,11 @@ class TabsHost(
-             "[RNScreens] Nullish fragment manager - can't run container operations"
-         }
- 
-+    internal val reactSubviewCount: Int
-+        get() = renderedScreens.size
-+
-+    internal fun getReactSubviewAt(index: Int): TabsScreen? = renderedScreens.getOrNull(index)
-+
-     internal fun mountReactSubviewAt(
-         tabsScreen: TabsScreen,
-         index: Int,
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHostViewManager.kt` (modified, +10/-0)
-```diff
-@@ -54,6 +54,16 @@ class TabsHostViewManager :
-         parent.unmountReactSubviewAt(index)
-     }
- 
-+    // TabsScreens are not real Android children of TabsHost (they live in its
-+    // container). Fabric's removeViewAt verifies the child via getChildAt before
-+    // removing; without these overrides it never finds the tab and skips removal.
-+    override fun getChildCount(parent: TabsHost): Int = parent.reactSubviewCount
-+
-+    override fun getChildAt(
-+        parent: TabsHost,
-+        index: Int,
-+    ): View? = parent.getReactSubviewAt(index)
-+
-     override fun removeAllViews(parent: TabsHost) {
-         parent.unmountAllReactSubviews()
-     }
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/index.ts` (modified, +3/-0)
-```diff
-@@ -34,6 +34,7 @@ import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visi
- import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
- import TestTabsScreenOrientation from './test-tabs-screen-orientation';
- import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
-+import TestTabsDynamicTabCount from './test-tabs-dynamic-tab-count';
- // Scenario entry-point components — each scenario's default export re-exported
- // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
- export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
-@@ -68,6 +69,7 @@ export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom
- export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
- export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
- export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
-+export { default as TestTabsDynamicTabCount } from './test-tabs-dynamic-tab-count';
- 
- const scenarios = {
-   TestTabsSimpleNav,
-@@ -102,6 +104,7 @@ const scenarios = {
-   TestTabsBottomAccessorySize,
-   TestTabsScreenOrientation,
-   TestTabsTabBarExperimentalUserInterfaceStyle,
-+  TestTabsDynamicTabCount,
- };
- 
- const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/index.tsx` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,134 @@
 +import React from 'react';
-+import { Button, Text, View } from 'react-native';
-+import { Tabs } from 'react-native-screens';
-+import { scenarioDescription } from './scenario-description';
-+import { createScenario } from '@apps/tests/shared/helpers';
-+import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/containers/tabs';
-+
-+const EXTRA_TAB_KEYS = ['Tab2', 'Tab3', 'Tab4'];
-+
-+function TestTabsDynamicTabCount() {
-+  const [showExtraTabs, setShowExtraTabs] = React.useState(true);
-+  const [toggleCount, setToggleCount] = React.useState(0);
-+
-+  const toggle = () => {
-+    setShowExtraTabs(value => !value);
-+    setToggleCount(count => count + 1);
-+  };
-+
-+  return (
-+    <Tabs.Host
-+      navStateRequest={{ selectedScreenKey: 'Tab1', baseProvenance: 0 }}>
-+      <Tabs.Screen {...DEFAULT_TAB_ROUTE_OPTIONS} screenKey="Tab1" title="Tab1">
-+        <View
-+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-+          <Text>Extra tabs: {showExtraTabs ? 'rendered' : 'removed'}</Text>
-+          <Text>Toggles: {toggleCount}</Text>
-+          <Button
-+            title={showExtraTabs ? 'Remove extra tabs' : 'Add extra tabs'}
-+            onPress={toggle}
-+            testID="dynamic-tab-count-toggle"
-+          />
-+        </View>
-+      </Tabs.Screen>
-+      {showExtraTabs &&
-+        EXTRA_TAB_KEYS.map(key => (
-+          <Tabs.Screen
-+            {...DEFAULT_TAB_ROUTE_OPTIONS}
-+            key={key}
-+            screenKey={key}
-+            title={key}>
-+            <View
-+              style={{
-+                flex: 1,
-+                alignItems: 'center',
-+                justifyContent: 'center',
-+              }}>
-+              <Text>{key}</Text>
-+            </View>
-+          </Tabs.Screen>
-+        ))}
-+    </Tabs.Host>
-+  );
-+}
-+
-+export default createScenario(TestTabsDynamicTabCount, scenarioDescription);
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario-description.ts` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
-+
-+export const scenarioDescription: ScenarioDescription = {
-+  name: 'Dynamic Tab Count',
-+  key: 'test-tabs-dynamic-tab-count',
-+  details:
-+    'Test removing and re-adding TabsScreens at runtime (conditional rendering).',
-+  platforms: ['ios', 'android'],
-+  e2eCoverage: 'tbd',
-+  smokeTest: false,
-+};
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario.md` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+# Test Scenario: Dynamic Tab Count
-+
-+## Details
-+
-+**Description:** Verify that tabs rendered conditionally can be removed from and
-+added back to `Tabs.Host` at runtime. Pass means the tab bar always shows exactly
-+the rendered tabs and the app does not crash.
-+
-+**OS test creation version:** iOS: 27.2, Android: API Level 36.
-+
-+## E2E test
-+
-+TBD: to be automated once adding tabs at runtime is fully supported on Android.
-+
-+## Prerequisites
-+
-+- iOS device or simulator
-+- Android emulator
-+
-+## Note
-+
-+- **Known issue:** Android: a tab added back at runtime shows an empty content
-+  area when selected. Adding tabs at runtime is not fully supported yet.
-+
-+## Steps
-+
-+### Baseline
-+
-+1. Launch the app and navigate to the **Dynamic Tab Count** screen.
-+
-+   - [ ] The tab bar shows "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1" is
-+         selected.
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 0".
-+
-+2. Select the "Tab2" tab.
-+
-+   - [ ] The screen shows the text "Tab2".
-+
-+---
-+
-+### Remove and add back
-+
-+1. Select the "Tab1" tab, then tap "Remove extra tabs".
-+
-+   - [ ] The tab bar shows only "Tab1".
-+   - [ ] The screen shows "Extra tabs: removed" and "Toggles: 1".
-+
-+2. Tap "Add extra tabs".
-+
-+   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1"
-+         is selected.
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 2".
-+
-+3. Tap "Remove extra tabs", then "Add extra tabs", 5 times in a row.
-+
-+   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4".
-+   - [ ] The screen shows "Toggles: 12".
-+
-+4. Select the "Tab2" tab.
-+
-+   - [ ] "Tab2" is selected in the tab bar.
-+   - [ ] iOS: the screen shows the text "Tab2".
-+   - [ ] Android: the content area is empty (see Note).
-+
-+5. Select the "Tab1" tab.
-+
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 12".
-```
-
----
-
-### Incident Patch 3: `65a7c6dc` (2026-11-16)
-**Commit Message**: fix(Android, Stack v4): dispatch the appear event after a pause mid push (#5171)
-
-## Description
-
-On Android, if the app goes to the background while a pushed screen is
-still animating in, the screen never gets `onAppear`, so
-react-navigation never emits `transitionEnd`. The enter animation ends
-after the fragment is paused, `dispatchViewAnimationEvent` takes the
-disappear branch, and the canDispatch gate drops that event because the
-screen never appeared. This PR keeps the appear for the top screen and
-sends it from `onResume`. The pending-flag approach follows the analysis
-Nezz posted in the issue. A pause before the enter animation starts lost
-the will-appear in the same way. The top screen now gets it right away,
-so `transitionStart` still reaches JS.
-
-Closes #4941.
-
-## Test plan
-
-Added `Test4941` (`apps/src/tests/issue-tests/Test4941.tsx`), based on
-the repro from the issue.
-
-1. Run `Test4941` in FabricExample on Android.
-2. Tap "Push details" and press Home while Details slides in. "Push
-details in 1s" gives time to reach the Home button. Details shows "Home
-pressed during the push: yes" when the press landed during the
-animation. A run counts only with "yes".
-3. Reopen the a
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenFragment.kt` (modified, +15/-0)
-```diff
-@@ -62,6 +62,10 @@ open class ScreenFragment :
-     // in nested fragments. See more explanation in dispatchViewAnimationEvent
-     private var isTransitioning = false
- 
-+    // The enter animation can end while the fragment is paused, e.g. when the app goes to the
-+    // background in the middle of a push. In such case we dispatch the appear event on resume.
-+    private var shouldDispatchAppearOnResume = false
-+
-     constructor() {
-         throw IllegalStateException(
-             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
-@@ -79,6 +83,10 @@ open class ScreenFragment :
-             shouldUpdateOnResume = false
-             ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
-         }
-+        if (shouldDispatchAppearOnResume) {
-+            shouldDispatchAppearOnResume = false
-+            dispatchOnAppear()
-+        }
-     }
- 
-     override fun onCreateView(
-@@ -309,6 +317,12 @@ open class ScreenFragment :
-                 UiThreadUtil.runOnUiThread {
-                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
-                 }
-+            } else if (screen.container?.topScreen === screen) {
-+                if (animationEnd) {
-+                    shouldDispatchAppearOnResume = true
-+                } else {
-+                    UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
-+                }
-             } else {
-                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
-             }
-@@ -317,6 +331,7 @@ open class ScreenFragment :
- 
-     override fun onDestroy() {
-         super.onDestroy()
-+        shouldDispatchAppearOnResume = false
-         val container = screen.container
-         if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
-             // we only send dismissed even when the screen has been removed from its container
-```
-
-**File**: `apps/src/tests/issue-tests/Test4941.tsx` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+import React, { useEffect, useRef, useState } from 'react';
-+import { AppState, StyleSheet, Text, View } from 'react-native';
-+import { NavigationContainer } from '@react-navigation/native';
++import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
++import {
++  NavigationContainer,
++  usePreventRemove,
++} from '@react-navigation/native';
 +import {
 +  createNativeStackNavigator,
-+  type NativeStackScreenProps,
++  type NativeStackNavigationProp,
 +} from '@react-navigation/native-stack';
-+import { Button } from '@apps/shared';
++import { Colors } from '@apps/shared/styling';
 +
-+// Android: tap "Push details" and press Home while Details slides in, then
-+// reopen the app. "Push details in 1s" starts the push 1 s after the tap:
-+// press Home only after Details starts to slide in. JS timers stop in the
-+// background, so an earlier Home press delays the push until the app is
-+// reopened. The run counts only if Details shows "Home pressed during the
-+// push: yes". Details should then show "transitionStart: received (1)" and
-+// "transitionEnd: received (1)".
++// Reproduces https://github.com/software-mansion/react-native-screens/issues/5158
 +//
-+// A Home press before the first animation frame is too fast by hand. Send the
-+// tap on "Push details" and Home in one command:
-+//   adb shell "input tap <x> <y>; sleep 0.03; input keyevent KEYCODE_HOME"
-+// Without the fix, such a run can show "transitionStart: waiting".
++// Home has `headerShown: false`. Guarded prevents its removal with
++// `usePreventRemove`. Tap Guarded's native back button, then "Stay" in the
++// alert. Expected: Guarded's navigation bar (back button, title, "Save") is
++// still there, with its Liquid Glass platters intact (iOS 26+).
++// Bug: the bar items lose their glass. The issue also reports the whole bar
++// gone; that variant needs the cancel delayed (e.g. an LLDB breakpoint on
++// `-[UIPercentDrivenInteractiveTransition cancelInteractiveTransition]`) and
++// does not reproduce with this screen alone.
 +
-+type ParamList = {
++type StackParamList = {
 +  Home: undefined;
-+  Details: undefined;
++  Guarded: undefined;
 +};
 +
-+const Stack = createNativeStackNavigator<ParamList>();
++const Stack = createNativeStackNavigator<StackParamList>();
 +
-+function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
-+  return (
-+    <View style={styles.container}>
-+      <Button
-+        title="Push details"
-+        onPress={() => navigation.navigate('Details')}
-+      />
-+      <Button
-+        title="Push details in 1s"
-+        onPress={() => setTimeout(() => navigation.navigate('Details'), 1000)}
-+      />
-+    </View>
-+  );
-+}
-+
-+function DetailsScreen({
++function Home({
 +  navigation,
-+}: NativeStackScreenProps<ParamList, 'Details'>) {
-+  const [transitionStartCount, setTransitionStartCount] = useState(0);
-+  const [transitionEndCount, setTransitionEndCount] = useState(0);
-+  const [backgroundedDuringPush, setBackgroundedDuringPush] = useState(false);
-+  const transitionEndedRef = useRef(false);
++}: {
++  navigation: NativeStackNavigationProp<StackParamList, 'Home'>;
++}) {
++  const [headerShown, setHeaderShown] = React.useState(false);
 +
-+  useEffect(
-+    () =>
-+      navigation.addListener('transitionStart', event => {
-+        if (!event.data.closing) {
-+          console.log('[Test4941] Details transitionStart (closing: false)');
-+          setTransitionStartCount(count => count + 1);
-+        }
-+      }),
-+    [navigation],
-+  );
-+
-+  useEffect(
-+    () =>
-+      navigation.addListener('transitionEnd', event => {
-+        if (!event.data.closing) {
-+          console.log('[Test4941] Details transitionEnd (closing: false)');
-+          transitionEndedRef.current = true;
-+          setTransitionEndCount(count => count + 1);
-+        }
-+      }),
-+    [navigation],
-+  );
-+
-+  useEffect(() => {
-+    const subscription = AppState.addEventListener('change', state => {
-+      if (state === 'background' && !transitionEndedRef.current) {
-+        setBackgroundedDuringPush(true);
-+      }
-+    });
-+    return () => subscription.remove();
-+  }, []);
++  React.useLayoutEffect(() => {
++    navigation.setOptions({ headerShown });
++  }, [navigation, headerShown]);
 +
 +  return (
 +    <View style={styles.container}>
-+      <Text style={styles.text}>
-+        transitionStart:{' '}
-+        {transitionStartCount > 0
-+          ? `received (${transitionStartCount})`
-+          : 'waiting'}
-+      </Text>
-+      <Text style={styles.text}>
-+        transitionEnd:{' '}
-+        {transitionEndCount > 0
-+          ? `received (${transitionEndCount})`
-+          : 'waiting'}
-+      </Text>
-+      <Text style={styles.text}>
-+        Home pressed during the push: {backgroundedDuringPush ? 'yes' : 'no'}
-+      </Text>
++      <Text>Home</Text>
++      <View style={styles.row}>
++        <Text>Home header shown</Text>
++        <Switch
++          value={headerShown}
++          onValueChange={setHeaderShown}
++          testID="home-header-switch"
++        />
++      </View>
++      <Button
++        title="Open guarded screen"
++        onPress={() => navigation.navigate('Guarded')}
++        testID="home-open-guarded"
++      />
 +    </View>
 +  );
 +}
 +
-+export default function Test4941() {
++function Guarded({
++  navigation,
++}: {
++  navigation: NativeStackNavigationProp<StackParamList, 'Guarded'>;
++}) {
++  const [preventRemove, setPreventRemove] = React.useState(true);
++
++  usePreventRemove(preventRemove, ({ data }) => {
++    Alert.alert('Unsaved changes', 'Leave this screen?', [
++      { text: 'Stay', style: 'cancel' },
++      {
++        text: 'Leave',
++        style: 'destructive',
++        onPress: () => navigation.dispatch(data.action),
++      },
++    ]);
++  });
++
++  return (
++    <View style={styles.container}>
++      <Text>Guarded</Text>
++      <View style={styles.row}>
++        <Text>Prevent remove</Text>
++        <Switch
++          value={preventRemove}
++          onValueChange={setPreventRemove}
++          testID="guarded-prevent-switch"
++        />
++      </View>
++    </View>
++  );
++}
++
++function SaveButton() {
++  return <Button title="Save" onPress={() => {}} testID="guarded-save" />;
++}
++
++export default function Test5158() {
 +  return (
 +    <NavigationContainer>
 +      <Stack.Navigator>
-+        <Stack.Screen name="Home" component={HomeScreen} />
-+        <Stack.Screen name="Details" component={DetailsScreen} />
++        <Stack.Screen
++          name="Home"
++          component={Home}
++          options={{ title: 'Home', headerShown: false }}
++        />
++        <Stack.Screen
++          name="Guarded"
++          component={Guarded}
++          options={{
++            title: 'Guarded',
++            headerRight: SaveButton,
++          }}
++        />
 +      </Stack.Navigator>
 +    </NavigationContainer>
 +  );
@@ -965,32 +556,141 @@ animation. A run counts only with "yes".
 +    alignItems: 'center',
 +    justifyContent: 'center',
 +    gap: 16,
++    backgroundColor: Colors.White,
 +  },
-+  text: {
-+    fontSize: 20,
++  row: {
++    flexDirection: 'row',
++    alignItems: 'center',
++    gap: 12,
 +  },
 +});
 ```
 
 **File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
 ```diff
-@@ -228,6 +228,7 @@ export { default as Test4811 } from './Test4811';
- export { default as Test4857 } from './Test4857';
- export { default as Test4863 } from './Test4863';
- export { default as Test4872 } from './Test4872';
-+export { default as Test4941 } from './Test4941';
- export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
- export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
- export { default as Test5092 } from './Test5092';
+@@ -235,6 +235,7 @@ export { default as Test5092 } from './Test5092';
+ export { default as Test5112 } from './Test5112';
+ export { default as Test5127 } from './Test5127';
+ export { default as Test5143 } from './Test5143';
++export { default as Test5158 } from './Test5158';
+ export { default as TestScreenAnimation } from './TestScreenAnimation';
+ // The following test was meant to demo the "go back" gesture using Reanimated
+ // but the associated PR in react-navigation is currently put on hold
+```
+
+**File**: `ios/legacy/RNSScreenStack.mm` (modified, +28/-0)
+```diff
+@@ -268,6 +268,10 @@ @implementation RNSScreenStackView {
+   BOOL _invalidated;
+   BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
+   RNSPercentDrivenInteractiveTransition *_interactionController;
++  // Destination of a native pop that we cancel because a popped screen prevents its native dismissal.
++  // Set in `navigationController:interactionControllerForAnimationController:` and cleared when the scheduled cancel
++  // is sent. The cancelled transition itself may still be running after that.
++  __weak UIViewController *_destinationOfCancelledPop;
+   __weak RNSScreenStackManager *_manager;
+   BOOL _updateScheduled;
+ }
+@@ -345,6 +349,16 @@ - (void)navigationController:(UINavigationController *)navigationController
+     // so we don't trigger the method
+     return;
+   }
++  if (viewController == _destinationOfCancelledPop) {
++    // This pop is about to be cancelled (see `navigationController:interactionControllerForAnimationController:`),
++    // so its destination is never shown. Applying the destination's header config here would hide the navigation bar
++    // (if that screen has no header) inside a transition that is then cancelled.
++    // UIKit implementation details (observed on iOS 18.6 and 26.5, not documented behaviour): UIKit does not fully
++    // undo that hide. The bar can stay hidden, depending on whether this method is called for the screen that stays
++    // before or after UIKit rolls the hide back, and on iOS 26 that screen's bar loses its Liquid Glass.
++    // See https://github.com/software-mansion/react-native-screens/issues/5158
++    return;
++  }
+   auto *screenView = static_cast<RNSScreenView *>(viewController.view);
+   [RNSScreenStackHeaderConfig willShowViewController:viewController
+                                             animated:animated
+@@ -1127,9 +1141,23 @@ - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
+     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
+     if (shouldCancelDismiss) {
+       _interactionController = [RNSPercentDrivenInteractiveTransition new];
++      _destinationOfCancelledPop =
++          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
++      if (@available(iOS 26.0, *)) {
++        // Not affected.
++      } else if (@available(iOS 18.0, *)) {
++        // A back-button tap leaves the button's un-highlight (its label and chevron fading back from alpha 0.2) waiting
++        // for the next layout pass. On iOS 18, UIKit runs that pass inside the navigation bar transition of this pop
++        // and records the fade as part of the interactive transition, so cancelling the pop sets the alpha back to 0.2
++        // for good. Lay the bar out now, before that transition starts. UIKit implementation details, observed on
++        // iOS 18.6; iOS 17.5 and 26.5 are not affected.
++        // See https://github.com/software-mansion/react-native-screens/pull/5162
++        [_controller.navigationBar layoutIfNeeded];
++      }
+       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+         [self->_interactionController cancelInteractiveTransition];
+         self->_interactionController = nil;
++        self->_destinationOfCancelledPop = nil;
+         int fromIndex = (int)[self->_reactSubviews indexOfObject:fromView];
+         int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
+         int indexDiff = fromIndex - toIndex;
+```
+
+---
+
+### Incident Patch 2: `0d00d0df` (2026-11-23)
+**Commit Message**: fix(Android, Stack v5): accept a repeated screenKey (#5269)
+
+## Description
+
+We are testing React Native's pull model on Android
+(`enableMountingCoordinatorPullModelAndroid`). It requires
+`enableAccumulatedUpdatesInRawPropsAndroid`, and with that flag on,
+Stack v5 crashes as soon as its first screen mounts:
+
+```
+java.lang.IllegalArgumentException: [RNScreens] StackScreen can't change its screenKey.
+```
+
+With accumulated props, Fabric sends a view's initial props again when
+the view is inserted, after they were already set when it was created.
+`StackScreen.screenKey` accepted only one set, so the second set of the
+same key threw. The crash comes from
+`enableAccumulatedUpdatesInRawPropsAndroid` alone, with or without the
+pull model. Props 2.0 (`enablePropsUpdateReconciliationAndroid`) doesn't
+avoid it. RN's `enablePreallocatedPropsDiffOnInsertAndroid` does, but
+it's an optional optimization and shouldn't be required for correctness.
+
+## Changes
+
+- `StackScreen.screenKey` accepts the same key again and still rejects a
+different one.
+- The error for a different key names the screen's tag and both keys.
+
+## Test plan
+
+Enable `enableAccumulatedUpdatesInRawPropsAndroid` in `FabricExample`
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/stack/screen/StackScreen.kt` (modified, +2/-2)
+```diff
+@@ -71,8 +71,8 @@ internal class StackScreen(
+     var screenKey: String? = null
+         set(value) {
+             require(
+-                field == null,
+-            ) { "[RNScreens] StackScreen can't change its screenKey." }
++                field == null || field == value,
++            ) { "[RNScreens] StackScreen [$id] can't change its screenKey from $field to $value." }
+             field = value
+         }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5217** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample (@dependabot[bot])
-- **PR #5216** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample (@dependabot[bot])
-- **PR #5213** (2026-11-16): refactor(iOS, Split): a Split column owns its navigation controller (@t0maboro)
-- **PR #5210** (closed): chore: Replace issue labeling workflows with CodeRabbit triage comments (@kmichalikk)
-- **PR #5206** (2026-11-15): chore(deps): bump fast-xml-parser from 5.11.1 to 5.12.0 in /TVOSExample (@dependabot[bot])
-- **PR #5205** (2026-11-15): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /FabricExample (@dependabot[bot])
+- **PR #5301** (2026-11-23): refactor(v5): remove unused sheet background effect aliases (@Loloekk)
+- **PR #5295** (2026-11-20): docs(v5): unify @defaultValue tags (@Loloekk)
+- **PR #5293** (2026-11-20): test(iOS, Split): move the Split and Stack scenarios to the integration tests (@t0maboro)
+- **PR #5290** (2026-11-20): fix(iOS, Split): a column shown after the Split collapses has the size of the collapsed Split (@t0maboro)
+- **PR #5288** (2026-11-20): refactor(v5): declare union values once (@Loloekk)
+- **PR #5287** (2026-11-20): refactor(v5): use family aliases for common types (@Loloekk)
 
 ---
 
@@ -1010,72 +710,64 @@ animation. A run counts only with "yes".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS): follow the gesture in interactive fade and fade_from_bottom pops
+## X. iOS, Stack v4): keep navigation bar after cancelled back-button pop
 
 **RULE**:
-When implementing operations in `ios/legacy/RNSScreenStackAnimator.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/src/tests/issue-tests/Test5158.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54c55f6c`: iOS): follow the gesture in interactive fade and fade_from_bottom pops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d0ebe7e`: iOS, Stack v4): keep navigation bar after cancelled back-button pop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/legacy/RNSScreenStackAnimator.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/tests/issue-tests/Test5158.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+import React from 'react';
+import { Alert, Button, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  NavigationContainer,
+  usePreventRemove,
+} from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
+import { Colors } from '@apps/shared/styling';
 
-    void (^animationBlock)(void) = ^{
-      fromViewController.view.alpha = 0.0;
-    };
-    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-    };
+// Reproduces https://github.com/software-mansion/react-native-screens/issues/5158
+//
+// Home has `headerShown: false`. Guarded prevents its removal with
+// `usePreventRemove`. Tap Guarded's native back button, then "Stay" in the
+// alert. Expected: Guarded's navigation bar (back button, title, "Save") is
+// still there, with its Liquid Glass platters intact (iOS 26+).
+// Bug: the bar items lose their glass. The issue also reports the whole bar
+// gone; that variant needs the cancel delayed (e.g. an LLDB breakpoint on
+// `-[UIPercentDrivenInteractiveTransition cancelInteractiveTransition]`) and
+// does not reproduce with this screen alone.
 
-    if (!transitionContext.isInteractive) {
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveEaseInOut
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-      [animator startAnimation];
-    } else {
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveLinear
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-    }
-    void (^slideAnimationBlock)(void) = ^{
-      toViewController.view.transform = CGAffineTransformIdentity;
-      fromViewController.v
+type StackParamList = {
+  Home: undefined;
+  Guarded: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function Home({
+  navigation,
+}: {
+  navigation: NativeStackNavigat
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                               curve:UIViewAnimationCurveEaseInOut
-                                                          animations:^{
-                                                            fromViewController.view.alpha = 0.0;
-                                                          }];
-    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-    }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
-    // Android Nougat exit animation
-    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    auto slideAnimator = [[UIViewPropertyAnimator alloc]
-        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
-                   curve:UIViewAnimationCurveEaseIn
-              animations:^{
-                toViewController.view.transform = CGAffineTransformIdentity;
-                fromViewController.view.transform = topBottomTransform;
-              }];
-    [slideAnimator addCompletion:^(UIViewAnimatingPosition fina
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54c55f6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d0ebe7e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

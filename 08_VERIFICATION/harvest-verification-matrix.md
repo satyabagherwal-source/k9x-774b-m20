@@ -12539,3 +12539,8 @@
 | `CYCLE-20261124-8AB6` | `2026-11-24T00:48:57.138Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`c9880e91...`) |
 | `CYCLE-20261124-8CT5` | `2026-11-24T00:49:00.377Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10157` | Yes (`64201ea4...`) |
 | `CYCLE-20261124-8IUC` | `2026-11-24T00:49:08.196Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10158` | Yes (`6410c9a3...`) |
+| `CYCLE-20261124-IZ8Y` | `2026-11-24T00:57:16.018Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10159` | Yes (`309ffba8...`) |
+| `CYCLE-20261124-J2KF` | `2026-11-24T00:57:20.319Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10160` | Yes (`5445b930...`) |
+| `CYCLE-20261124-J4WE` | `2026-11-24T00:57:23.342Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10161` | Yes (`84b4441d...`) |
+| `CYCLE-20261124-J8N7` | `2026-11-24T00:57:28.195Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10162` | Yes (`190e9656...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:58:04.505Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0B02F7F4` [Domain F] | Yes (`40ed087e...`) |

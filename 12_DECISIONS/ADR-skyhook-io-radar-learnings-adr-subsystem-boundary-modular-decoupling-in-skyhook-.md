@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:42:05.904Z",
+  "timestamp": "2026-11-24T00:58:04.779Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:42:05.904Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T00:58:04.779Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of skyhook-io-radar-learnings, modular boundaries, perfor
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `778697dd`  
+> **Source Version**: `f49b558c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:41:36.064Z  
+> **Timestamp**: 2026-11-24T00:57:22.189Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of skyhook-io-radar-learnings, modular boundaries, perfor
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:39:43.758Z  
+> **Harvest Timestamp**: 2026-11-24T00:57:22.183Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of skyhook-io-radar-learnings, modular boundaries, perfor
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4174 stars
+- **Stars / Engagement**: 4216 stars
 
 ---
 
@@ -1164,9 +1164,11 @@ package k8s
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/x509"
 	"errors"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -1178,9 +1180,10 @@ import (
 type ConnectionState string
 
 const (
-	StateConnected    ConnectionState = "connected"
-	StateDisconnected ConnectionState = "disconnected"
-	StateConnecting   ConnectionState = "connecting"
+	switchStoppedErrorType                 = "switch-stopped"
+	StateConnected         ConnectionState = "connected"
+	StateDisconnected      ConnectionState = "disconnected"
+	StateConnecting        ConnectionState = "connecting"
 )
 
 // ConnectionStatus holds detailed information about the cluster connection
@@ -1196,6 +1199,79 @@ type ConnectionStatus struct {
 	// so the UI can say how long the cluster has been down. Set by
 	// SetConnectionStatus; callers leave it empty.
 	DisconnectedAt string `json:"disconnectedAt,omitempty"`
+
+	// ConnectionID names the admitted connection Radar is serving: one
+	// admission of one cluster, unique for this process and across restarts.
+	// Empty while nothing is serving. Set by the publisher; callers leave it empty.
+	ConnectionID string `json:"connectionId,omitempty"`
+}
+
+var (
+	bootNonce = rand.Text()[:10]
+
+	// Guarded by connectionStatusMu.
+	serving              *Connection
+	connectionAdmissions uint64
+	admissionsClosed     bool
+)
+
+// ServingConnectionID returns the admitted connection Radar is serving, or ""
+// while nothing is serving (a switch, rescope or rebuild is between its point
+// of no return and its admission).
+func ServingConnectionID() string {
+	connectionStatusMu.RLock()
+	defer connectionStatusMu.RUnlock()
+	return servingIDLocked()
+}
+
+func servingIDLocked() string {
+	if serving == nil {
+		return ""
+	}
+	return serving.id
+}
+
+// admissionCandidate returns the installed connection, installing an empty
+// one if none exists yet. A connection admitted again after a retirement with
+// no rebuild in between is the same build, so it keeps its clients and caches
+// and only gets a new ID. Lock-free: connectionStatusMu is held, and installs
+// take clientMu.
+func admissionCandidate() *Connection {
+	for {
+		if c := installedConn.Load(); c != nil {
+			return c
+		}
+		installedConn.CompareAndSwap(nil, &Connection{})
+	}
+}
+
+// RetireServingConnection is the point of no return: called before any
+// destructive teardown, it clears the serving ID so no request can be admitted
+// against a half-retired connection. A connected status becomes connecting.
+func RetireServingConnection() {
+	connectionStatusMu.Lock()
+	if serving == nil {
+		connectionStatusMu.Unlock()
+		return
+	}
+	serving = nil
+	status := connectionStatus
+	if status.State == StateConnected {
+		status.State = StateConnecting
+	}
+	status.ConnectionID = ""
+	connectionStatus = status
+	connectionStatusMu.Unlock()
+	notifyConnectionChange(status)
+}
+
+// CloseConnectionAdmissions retires the serving connection for good: after it,
+// no publication can admit a new one. Shutdown calls it before tearing down.
+func CloseConnectionAdmissions() {
+	connectionStatusMu.Lock()
+	admissionsClosed = true
+	connectionStatusMu.Unlock()
+	RetireServingConnection()
 }
 
 // outageStart carries DisconnectedAt from one status to the next: it starts
@@ -1234,35 +1310,56 @@ func GetConnectionStatus() ConnectionStatus {
 
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
+	SetConnectionStatusIfCurrent(context.Background(), status)
+}
+
+// SetConnectionStatusIfCurrent keeps a late bootstrap or liveness probe from
+// overwriting a status published after its operation was cancelled.
+func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionStatus) bool {
 	connectionStatusMu.Lock()
+	if operation.Err() != nil {
+		connectionStatusMu.Unlock()
+		return false
+	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
+	if status.State == StateConnected && serving == nil {
+		if admissionsClosed {
+			connectionStatusMu.Unlock()
+			return false
+		}
+		connectionAdmissions++
+		serving = admissionCandidate()
+		serving.id = bootNonce + "-" + strconv.FormatUint(connectionAdmissions, 10)
+	}
+	status.ConnectionID = servingIDLocked()
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
-		return
+		return true
 	}
 	connectionStatus = status
-	connectionStatusMu.Unlock()
 
 	// Publish-side recovery ownership: every route into an auth-shaped
 	// disconnect (bootstrap with expired credentials, failed retry, failed
 	// context switch) must leave a reconnect loop running — the browser no
 	// longer auto-retries auth failures. Owed survives later non-auth
 	// republications (a hung-plugin retry classifies "timeout") and is only
-	// settled by a successful connect.
-	switch status.State {
-	case StateConnected:
+	// settled by a successful connect or an explicit switch stop.
+	switch {
+	case status.State == StateConnected || status.ErrorType == switchStoppedErrorType:
 		runtimeAuthRecoveryOwed.Store(false)
+	case status.State == StateDisconnected && isAuthClassification(status.ErrorType):
+		runtimeAuthRecoveryOwed.Store(true)
+	}
+	connectionStatusMu.Unlock()
+	if status.State == StateConnected {
 		resetInconclusiveStreak()
-	case StateDisconnected:
-		if isAuthClassification(status.ErrorType) {
-			runtimeAuthRecoveryOwed.Store(true)
-		}
-		if runtimeAuthRecoveryOwed.Load() {
-			startRuntimeAuthRecovery()
-		}
+	}
+	if status.State == StateDisconnected && runtimeAuthRecoveryOwed.Load() {
+		startRuntimeAuthRecovery()
 	}
 
 	notifyConnectionChange(status)
+	return true
 }
 
 func notifyConnectionChange(status ConnectionStatus) {
@@ -1286,16 +1383,21 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		// the teardown AND disarm the pipeline (candidate intake requires
 		// StateConnected), leaving informers hammering the dead credential
 		// for the whole outage.
-		clientMu.RLock()
-		generation := activeClientGeneration
-		clientMu.RUnlock()
+		generation := Current().ClientGeneration()
 		reportRuntimeAuthFailure(generation, errors.New(message))
 		return false
 	}
 	if !isClusterUnreachableMessage(message) {
 		return false
 	}
-	current := GetConnectionStatus()
+	var current ConnectionStatus
+	var operation context.Context
+	if !CaptureClusterReads(func() {
+		operation = OperationContext()
+		current = GetConnectionStatus()
+	}) || current.ErrorType == switchStoppedErrorType {
+		return false
+	}
 	if current.State == StateDisconnected && current.Error == message {
 		return true
 	}
@@ -1310,8 +1412,7 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		Error:       message,
 		ErrorType:   ClassifyError(errors.New(message)),
 	}
-	SetConnectionStatus(status)
-	return true
+	return SetConnectionStatusIfCurrent(operation, status)
 }
 
 func clusterReachableNow(timeout time.Duration) bool {
@@ -1359,130 +1460,7 @@ func isHelmKubernetesOperationError(lower string) bool {
 		"failed to get values for revision",
 		"failed to get release revision",
 		"failed to inspect release storage namespaces",
-		"failed to inspect existing release",
-		"failed to preview values change",
-		"failed to apply values",
-		"rollback failed",
-		"uninstall failed",
-		"upgrade failed",
-		"install failed",
-	}
-	for _, prefix := range kubernetesOperationPrefixes {
-		if strings.HasPrefix(lower, prefix) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTransportConnectivityError(lower string) bool {
-	return isTransportNetworkMessage(lower) || isTransportTimeoutMessage(lower)
-}
-
-func isTransportNetworkMessage(lower string) bool {
-	transportMarkers := []string{
-		"connection refused",
-		"no such host",
-		"dial tcp",
-		"dial udp",
-		"no route to host",
-		"connection reset by peer",
-		"network is unreachable",
-	}
-	for _, marker := range transportMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTransportTimeoutMessage(lower string) bool {
-	timeoutMarkers := []string{
-		"i/o timeout",
-		"context deadline exceeded",
-		"tls handshake timeout",
-		"timed out",
-		"timeout",
-	}
-	for _, marker := range timeoutMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthErrorMessage matches client-side credential acquisition failures (exec
-// plugins, SSO sessions) — no request reached the API server, and
-// re-authenticating locally is the fix.
-func isAuthErrorMessage(lower string) bool {
-	authMarkers := []string{
-		"token has expired",
-		"expired token",
-		"sso session",
-		"sso token",
-		"ssoproviderinvalidtoken",
-		"aws sso login",
-		"getting credentials",
-		"credentials expired",
-		"credential plugin",
-		"exec credential",
-		"exec plugin",
-		"gke-gcloud-auth-plugin",
-		// client-go's in-tree oidc auth provider returns refresh failures RAW
-		// from RoundTrip (no "getting credentials:" wrapper) — Keycloak/Dex/
-		// IBM IKS kubeconfigs die here. "invalid_grant" is the RFC 6749 code
-		// every IdP emits for an expired/revoked refresh token.
-		"failed to refresh token",
-		"invalid_grant",
-		"cannot refresh without refresh-token",
-		// The exec plugin's TLS client-certificate path (e.g. tsh) fails
-		// without the "getting credentials:" wrapper; this phrasing is
-		// produced only by client-go's exec plugin runner.
-		"exec: executable ",
-		"failed to read token file",
-		"read empty token from file",
-	}
-	for _, marker := range authMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
-// server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-plugin stderr that quotes a server error (e.g. "UnauthorizedException")
-// still classifies as client-side auth.
-func isAuthRejectedMessage(lower string) bool {
-	if strings.Contains(lower, "proxy authentication required") {
-		return false
-	}
-	rejectedMarkers := []string{
-		"unauthorized",
-		"authentication required",
-		"the server has asked for the client to provide credentials",
-	}
-	for _, marker := range rejectedMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isRBACErrorMessage(lower string) bool {
-	return strings.Contains(lower, " is forbidden") ||
-		strings.Contains(lower, "forbidden:") ||
-		strings.Contains(lower, "cannot list resource") ||
-		strings.Contains(lower, "cannot get resource")
-}
-
-func isConfigErrorMessage(lower string) bool {
-	configMarkers := []string{
-		"no context con
+		"failed to inspect existing r
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2474,607 +2452,1400 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7903f85` (2026-11-20)
-**Commit Message**: fix(traffic): no Forwarded verdict for Beyla flows, and keep the end of long node titles (#2759)
+### Incident Patch 1: `6eefe059` (2026-11-23)
+**Commit Message**: Keep the PolicyReport index on the connection it was built for (#2860)
 
-## Description
+Next step of moving each cluster connection's state into one object,
+following #2858 (CRD cache, on main). No wire change.
 
-Two small display fixes for the traffic map.
+**Problem.** The Kyverno PolicyReport index (which resources a policy
+recorded an outcome for), its warmup decision and status, its informer
+handlers and its debounce timer were package globals. A warmup
+generation kept a previous cluster's warmup from stamping its outcome
+onto the next one, and the index had to be reset before the dynamic
+cache's informers were torn down because it holds references into them.
+`/api/capabilities` also read PolicyReport and Karpenter status from the
+installed connection while the rest of the response came from the
+request's connection, so a switch mid-request could return cluster A's
+permissions next to cluster B's Karpenter and PolicyReport status.
 
-- **Beyla flows no longer read `Forwarded`.** Beyla observes traffic and
-makes no datapath decision, but its flows defaulted to `Verdict:
-"forwarded"` in three places in `internal/traffic/beyla.go`. Those
-defaults are gone, and `error` is still set from the error rate. The
-flow list shows a muted "—" for a flow with no verdict.
-- Go aggregation already skips an empty verdict, so `verdictCounts`
-holds only `error`.
-- `verdictChoices` offers only "Error" for Beyla, or no chip when there
-are no errors.
-- Edge filtering and colouring read `verdictCounts`, so they are
-unchanged.
-- Hubble keeps its verdicts. Istio and Caretta still default to
-`forwarded`; I left them out of this change.
-- **Node titles keep their end.** Workloads of one release share a long
-prefix, so a trailing ellipsis made them all read `<release>…`. The node
-title now uses the existing `MiddleEllipsis` from k8s-ui, with the full
-name as `title`. The component is shared with the other sources, which
-helps them too.
+**Change.**
+- The index, warmup gate, status, informer handlers and debounce state
+live with the connection's dynamic cache. Warmup and debounced rebuilds
+publish only into their own connection and publish nothing once it is
+closed. Closing the cache retires the index and cancels a pending
+rebuild before stoppi
 
-The Source and Destination columns of the flo
-
-**File**: `internal/traffic/beyla.go` (modified, +0/-3)
+**File**: `internal/k8s/cache.go` (modified, +5/-1)
 ```diff
-@@ -1118,7 +1118,6 @@ func (s *BeylaSource) queryUnorientable(ctx context.Context, opts FlowOptions, s
- 			Source:      Endpoint{Name: conv.key.srcWorkload, Namespace: conv.key.srcNs, Kind: mapBeylaKind(att.srcType), Workload: conv.key.srcWorkload},
- 			Destination: Endpoint{Name: conv.key.dstWorkload, Namespace: conv.key.dstNs, Kind: mapBeylaKind(att.dstType), Workload: conv.key.dstWorkload},
- 			Protocol:    mapBeylaTransport(conv.transport),
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			BytesSent:   h.forward,
- 			BytesRecv:   h.backward,
-@@ -1314,7 +1313,6 @@ func (s *BeylaSource) parseL4Flows(result *prom.QueryResult, w rateWindow) (map[
- 			Destination: Endpoint{Name: dstName, Namespace: dstNs, Kind: mapBeylaKind(dstType), Workload: dstName, Port: port},
- 			Protocol:    mapBeylaTransport(labels["transport"]),
- 			Port:        port,
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			BytesSent:   int64(val * w.seconds),
- 			// Deliberately not set here. Beyla exports rates, not connection counts,
-@@ -1379,7 +1377,6 @@ func (s *BeylaSource) parseL7Flows(result *prom.QueryResult) []Flow {
- 			HTTPMethod:  labels["http_request_method"],
- 			HTTPPath:    labels["http_route"],
- 			HTTPStatus:  parseIntLabel(labels["http_response_status_code"]),
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			// val is a per-second request rate over a 5m window, not a
- 			// connection count; Connections here is only a non-zero weight for
+@@ -634,7 +634,11 @@ func (c *Connection) ResourceCache() *ResourceCache {
+ 
+ // CustomResourcesPending reports the typed-only window after the API discovery wait expires.
+ func (c *ResourceCache) CustomResourcesPending() bool {
+-	return c != nil && c.apiDiscoveryPending.Load() && GetDynamicResourceCache() == nil
++	return c.customResourcesPending(GetDynamicResourceCache())
++}
++
++func (c *ResourceCache) customResourcesPending(dynamicCache *DynamicResourceCache) bool {
++	return c != nil && c.apiDiscoveryPending.Load() && dynamicCache == nil
+ }
+ 
+ // KindReadiness re-exports the k8score readiness vocabulary for handler use.
 ```
 
-**File**: `internal/traffic/beyla_test.go` (modified, +4/-1)
+**File**: `internal/k8s/capabilities.go` (modified, +5/-5)
 ```diff
-@@ -194,7 +194,8 @@ func TestBeylaSource_GetFlows_OwnerLevel(t *testing.T) {
- 	assertEq(t, "dest kind", f.Destination.Kind, "Workload")
- 	assertEq(t, "port", fmt.Sprintf("%d", f.Port), "8080")
- 	assertEq(t, "protocol", f.Protocol, "tcp")
--	assertEq(t, "verdict", f.Verdict, "forwarded")
-+	// Beyla observes traffic, not a datapath decision: no error, no verdict.
-+	assertEq(t, "verdict", f.Verdict, "")
- 	// No HTTP data on this edge, so there is no rate to report. Beyla exports no
- 	// connection count at all, and a placeholder here would drive edge thickness
- 	// and the node totals from a number nothing measured.
-@@ -641,6 +642,7 @@ func TestBeylaSource_ParseL7Flows_OwnerFallback(t *testing.T) {
+@@ -398,7 +398,7 @@ type nsCapEntry struct {
+ // Results are cached for 60 seconds normally, or 5 seconds when API errors
+ // caused fail-closed results (to allow rapid retry without long UI disruption).
+ func CheckCapabilities(ctx context.Context) (*Capabilities, error) {
+-	conn := boundOrCurrent(ctx)
++	conn := BoundOrCurrent(ctx)
+ 	state := conn.permissions()
+ 	state.capabilitiesMu.RLock()
+ 	if state.cachedCapabilities != nil && time.Now().Before(state.capabilitiesExpiry) {
+@@ -560,7 +560,7 @@ func CheckNamespaceCapabilities(ctx context.Context, namespace string) (*Namespa
+ 		return nil, nil
+ 	}
+ 
+-	conn := boundOrCurrent(ctx)
++	conn := BoundOrCurrent(ctx)
+ 	state := conn.permissions()
+ 	// Check namespace cache
+ 	state.nsCapMu.RLock()
+@@ -671,7 +671,7 @@ func userNamespaceCapabilitiesCacheKey(username string, groups []string, namespa
+ // Concurrent callers for one identity share a single check; while the
+ // re-check after a failed one runs, callers get the last complete result.
+ func CheckCapabilitiesForUser(ctx context.Context, username string, groups []string) (*Capabilities, error) {
+-	conn := boundOrCurrent(ctx)
++	conn := BoundOrCurrent(ctx)
+ 	state := conn.permissions()
+ 	identityKey := pkgauth.IdentityCacheKey(username, groups)
+ 	var lastGood *Capabilities
+@@ -808,7 +808,7 @@ func CheckNamespaceCapabilitiesForUser(ctx context.Context, username string, gro
+ 		return nil, nil
+ 	}
+ 
+-	conn := boundOrCurrent(ctx)
++	conn := BoundOrCurrent(ctx)
+ 	state := conn.permissions()
+ 	cacheKey := userNamespaceCapabilitiesCacheKey(username, groups, namespace)
+ 	if entry, ok := state.userNamespaceCapabilitiesCache.Load(cacheKey); ok {
+@@ -1145,7 +1145,7 @@ func resolveProbeGVRs(p resourceProbe) []schema.GroupVersionResource {
+ // SelfSubjectAccessReview is one indirection too many — it can disagree with
+ // reality on clusters using webhook authorizers (e.g. GKE IAM).
+ func CheckResourcePermissions(ctx context.Context) (*PermissionCheckResult, bool) {
+-	return boundOrCurrent(ctx).CheckResourcePermissions(ctx)
++	return BoundOrCurrent(ctx).CheckResourcePermissions(ctx)
+ }
+ 
+ func (c *Connection) CheckResourcePermissions(ctx context.Context) (*PermissionCheckResult, bool) {
+```
+
+**File**: `internal/k8s/client.go` (modified, +1/-1)
+```diff
+@@ -1508,7 +1508,7 @@ func (s NamespaceListSource) Complete() bool {
+ // GetAccessibleNamespacesWithSource is GetAccessibleNamespaces plus the reason
+ // the list is or isn't complete.
+ func GetAccessibleNamespacesWithSource(ctx context.Context) ([]string, NamespaceListSource) {
+-	c := boundOrCurrent(ctx)
++	c := BoundOrCurrent(ctx)
+ 	return c.accessibleNamespaces(ctx, c.namespaceListInputs())
+ }
+ 
+```
+
+**File**: `internal/k8s/connection.go` (modified, +3/-1)
+```diff
+@@ -41,7 +41,9 @@ func Current() *Connection {
+ 	return installedConn.Load()
+ }
+ 
+-func boundOrCurrent(ctx context.Context) *Connection {
++// BoundOrCurrent returns the request's connection, falling back to the installed
++// connection for callers that have not bound one.
++func BoundOrCurrent(ctx context.Context) *Connection {
+ 	if c := ConnectionFrom(ctx); c != nil {
+ 		return c
+ 	}
+```
+
+**File**: `internal/k8s/crd_warmup_gate_test.go` (modified, +0/-1)
+```diff
+@@ -226,7 +226,6 @@ func TestServingCacheCompletesCRDWarmupAfterOperationCancel(t *testing.T) {
+ 	}
+ 	t.Cleanup(conn.closeDynamicResourceCache)
+ 	t.Cleanup(ResetMetricsHistory)
+-	t.Cleanup(ResetPolicyReportIndex)
+ 	if err := InitAllSubsystems(t.Context(), func(string) {}); err != nil {
+ 		t.Fatal(err)
+ 	}
+```
+
+**File**: `internal/k8s/dynamic_cache.go` (modified, +3/-0)
+```diff
+@@ -24,6 +24,7 @@ type DynamicResourceCache struct {
+ }
+ 
+ type connectionDynamicCache struct {
++	reports  connectionPolicyReports
+ 	mu       sync.Mutex
+ 	once     sync.Once
+ 	lifetime context.Context
+@@ -215,6 +216,8 @@ func (conn *Connection) closeDynamicResourceCache() {
+ 	s := conn.dynamicCacheState()
+ 	s.mu.Lock()
+ 	defer s.mu.Unlock()
++	// Report rebuilds read the informer stores. Retire their index first.
++	s.reports.close()
+ 	s.cancel()
+ 	s.pending = nil
+ 	if dc := s.promoted.Swap(nil); dc != nil {
+```
+
+**File**: `internal/k8s/no_cluster_globals_test.go` (modified, +6/-2)
+```diff
+@@ -26,6 +26,8 @@ func TestNoClusterGlobals(t *testing.T) {
+ 		"*github.com/skyhook-io/radar/pkg/k8score.MetricsHistoryStore", "github.com/skyhook-io/radar/pkg/k8score.MetricsHistoryStore",
+ 		"*ResourceCache", "connectionCache", "*connectionCache", "recreateStash", "*recreateStash", "recreateEntry", "*recreateEntry", "map[string]recreateEntry",
+ 		"*github.com/skyhook-io/radar/pkg/timeline.TombstoneCache", "github.com/skyhook-io/radar/pkg/timeline.TombstoneCache",
++		"connectionPolicyReports", "*connectionPolicyReports", "policyReportSnapshot", "*policyReportSnapshot", "PolicyReportStatus", "*PolicyReportStatus", "KyvernoStatus", "*KyvernoStatus",
++		"github.com/skyhook-io/radar/pkg/policyreports.Index", "*github.com/skyhook-io/radar/pkg/policyreports.Index",
+ 		"*PermissionCheckResult", "*Capabilities", "userCapEntry", "*userCapEntry", "userNSCapEntry", "*userNSCapEntry",
+ 	}
+ 	pkg, err := build.ImportDir(".", 0)
+@@ -93,7 +95,9 @@ func TestNoClusterGlobals(t *testing.T) {
+ 		cacheType := isMap || typeName == "sync.Map" || typeName == "golang.org/x/sync/singleflight.Group"
+ 		lowerName := strings.ToLower(name)
+ 		cacheName := strings.Contains(lowerName, "capabilit") || strings.Contains(lowerName, "perm")
+-		if strings.Contains(lowerName, "cachegeneration") || strings.Contains(lowerName, "cacheonce") || slices.Contains(denied, typeName) || wrapped || (cacheName && cacheType) {
++		policyState := strings.Contains(lowerName, "kyverno") || strings.Contains(lowerName, "policyreport") || strings.Contains(lowerName, "warmup")
++		policyCounter := policyState && (strings.HasSuffix(lowerName, "gen") || strings.HasSuffix(lowerName, "generation"))
++		if policyCounter || strings.Contains(lowerName, "cachegeneration") || strings.Contains(lowerName, "cacheonce") || slices.Contains(denied, typeName) || wrapped || (cacheName && cacheType) {
+ 			t.Errorf("%s: %s has type %s: cluster state belongs on *Connection", fset.Position(v.Pos()), name, typeName)
+ 		}
+ 	}
+@@ -147,7 +151,7 @@ func checkConnectionMethodGetters(t *testing.T, fset *token.FileSet, files []*as
+ 	}
+ 
+ 	var pending []types.Object
+-	for _, name := range []string{"Current", "installedConn", "boundOrCurrent"} {
++	for _, name := range []string{"Current", "installedConn", "BoundOrCurrent"} {
+ 		obj := scope.Lookup(name)
+ 		if obj == nil {
+ 			t.Fatalf("unknown installed-connection source %s", name)
+```
+
+**File**: `internal/k8s/policy_reports.go` (modified, +137/-300)
+```diff
+@@ -78,31 +78,6 @@ type PolicyReportStatus struct {
+ 	LiveUpdates bool `json:"liveUpdates"`
+ }
+ 
+-// kyvernoWarmupDecision records
+-// the outcome of its single decision pass: empty (warmup hasn't run yet)
+-// vs not-installed vs deferred vs ready. Read by GetKyvernoStatus so
+-// callers can disambiguate a nil GetPolicyReportIndex() return. Writes
+-// check the captured generation under policyReportMu so a
+-// pre-Reset warmup goroutine that's still running can't stamp its
+-// outcome onto the new cluster's atomic.
+-var kyvernoWarmupDecision atomic.Value // holds KyvernoStatus, "" before first decision
+-
+-// kyvernoWarmupGen serializes "is this warmup still the current one"
+-// against context-switch Resets. Each Warmup invocation captures the
+-// generation before scheduling its work; Reset bumps the counter before
+-// clearing state. Stale warmup completions (e.g. an in-flight Old-cluster
+-// warmup that hasn't yet stored ready when Reset fires for the new
+-// cluster) see a mismatch and skip their writes, so the new cluster never
+-// inherits the old cluster's index or decision.
+-var kyvernoWarmupGen atomic.Int64
+-
+-// kyvernoWarmupReason carries the structured PolicyReportStatus alongside the
+-// bare decision enum. Same generation discipline as kyvernoWarmupDecision:
+-// writes go through setStatus, which checks the generation under the mutex so
+-// a pre-Reset warmup can't stamp the previous cluster's reason onto the new
+-// one.
+-var kyvernoWarmupReason atomic.Value // holds PolicyReportStatus
+-
+ // Report families. Kept here (not in supportedCRDFallbacks) because warmup
+ // is conditional — we only register informers for these CRDs when Kyverno is
+ // present in discovery.
+@@ -149,149 +124,77 @@ var reportGroups = []reportGroup{
+ 	},
+ }
+ 
+-// policyReportIndex is the singleton index instance, populated when
+-// Kyverno is detected and kept up to date by PolicyReport informer
+-// events. Nil when Kyverno is absent — callers must nil-check.
+-var (
+-	policyReportIndex atomic.Pointer[policyreports.Index]
+-	// policyReportInit is a *sync.Once (pointer), not a value, because
+-	// ResetPolicyReportIndex replaces it on context switch. Overwriting a
+-	// value-type sync.Once whose mutex is currently held by a concurrent
+-	// Do() crashes with "unlock of unlocked mutex". Every other sync.Once
+-	// in internal/k8s/ uses this same pointer pattern for the same reason.
+-	policyReportInit         = new(sync.Once)
+-	policyReportWatched      []schema.GroupVersionResource // guarded by policyReportMu
+-	policyReportMu           sync.Mutex                    // guards policyReportWatched + warmup/reset publication
+-	policyReportRebuildMu    sync.Mutex
+-	policyReportRebuilding   bool        // guarded by policyReportRebuildMu
+-	policyReportRebuildAgain bool        // guarded by policyReportRebuildMu
+-	policyReportPending      atomic.Bool // true when a rebuild is already queued
+-
+-	// debounceDelay is how long after an informer event we wait before
+-	// rebuilding the index. PolicyReport updates often arrive in bursts
+-	// (Kyverno re-evaluates all matched resources on a single Policy
+-	// change), so coalescing them avoids redundant rebuilds.
+-	rebuildDebounce = 500 * time.Millisecond
+-)
+-
+-// GetPolicyReportIndex returns the singleton PolicyReport index, or nil
+-// when no findings are available for any reason.
+-//
+-// "Nil" collapses several distinct conditions today — discovery not
+-// available, Kyverno not installed, dynamic cache not initialized, no
+-// PolicyReport CRDs registered, RBAC denied on the count probe, or the
+-// report probe was denied or failed. Callers that need to distinguish
+-// these — e.g. to emit the correct `resourcecontext.OmittedReason`
+-// (not_installed vs rbac_denied vs cache_cold) — cannot do so today.
+-//
+-// TODO(T10): when the diagnostic `policySummary.kyverno` consumer
+-// arrives, introduce a sibling accessor that returns an enum status
+-// alongside the index so consumers can populate `omitted` faithfully.
+-// The reason isn't tracked yet because there's no consumer to need it;
+-// adding it speculatively is YAGNI surface.
+-//
+-// Returned indexes are safe for concurrent reads. Rebuilds publish a new
+-// index snapshot atomically, so a caller that already loaded an index sees a
+-// stable snapshot for the rest of its synchronous computation.
+-func GetPolicyReportIndex() *policyreports.Index {
+-	return policyReportIndex.Load()
++type policyReportSnapshot struct {
++	index  *policyreports.Index
++	status PolicyReportStatus
+ }
+ 
+-type policyReportWarmup struct {
+-	once       *sync.Once
+-	generation int64
++type connectionPolicyReports struct {
++	once         sync.Once
++	mu           sync.Mutex
++	closed       bool
++	published    atomic.Pointer[policyReportSnapshot]
++	watched      []schema.GroupVersionResource
++	timer        *time.Timer
++	rebuilding   bool
++	rebuildAgain bool
+ }
+ 
+-func capturePolicyReportWarmup() policyReportWarmup {
+-	// Snapshot BOTH the *sync.Once and the warmup genera
+```
+
+---
+
+### Incident Patch 2: `eadf443c` (2026-11-23)
+**Commit Message**: Keep the typed resource cache on the connection it was built for (#2852)
+
+Third step of moving each cluster connection's state into one object
+(#2850 and #2851 are on main). No behaviour or wire change.
+
+**Problem.** The typed informer cache was a set of globals with its own
+lifecycle machinery: the promoted cache and a mid-sync handle, an init
+`sync.Once`, the initial-sync-complete flag, the tombstone cache and the
+recreate stash, plus a cache generation that every publish, clear and
+promote compared, so a construction for the previous cluster that
+finished late couldn't republish over the new one. Late discovery
+re-read the global cache pointer to decide whether its cache was still
+the current one.
+
+**Change.**
+- That lifecycle sits on the `Connection`. A construction takes its
+connection once and publishes into it; closing the connection's cache
+stops both handles, and a construction that finishes after the close
+stops its own core instead of publishing.
+- A new connection (switch, or a rebuild on the same clients) starts
+with an empty, open lifecycle, so late informer callbacks from a retired
+cache can't feed the new cluster's tombstones or recreate stash. A
+closed lifecycle st
+
+**File**: `docs/connection-lifecycle.md` (modified, +2/-0)
+```diff
+@@ -110,6 +110,8 @@ Run these on major changes to connection, switching or binding code. **Live** sc
+ | L8 | ID from a previous Radar process | 409 | ✓ | |
+ | L9 | Same context name repointed to another cluster, then Retry | New ID; old ID 409; new ID writes to the new cluster | ✓ | |
+ | L10 | Stop during warm-up | Nothing serving; writes 503 | ✓ | |
++| C1 | Work started on one connection (API discovery, a permission probe, a typed-cache build) finishes after a switch or rescope | Kept on its own connection, never served for the new one; `/api/capabilities` leaves `resources` unset rather than report it | | `TestLateDiscoveryStaysOnItsConnection`, `TestResetAllSubsystemsIsolatesInFlightPermissionProbe`, `TestNamespaceRescopeRetiresInFlightProbe`, `TestResetResourceCache_InvalidatesInFlightConstruction`, `TestCapabilitiesOmitsProbeResultAfterConnectionReplaced` |
++| A1 | Credentials stop working while serving, then work again | 503 while demoted; serving again under a new ID; a write admitted before the demotion is refused | | `TestRuntimeAuthRecoveryReconnectsWhenCredentialsReturn`, `TestReadmissionKeepsTheSameConnection`, `TestAdmissionKeepsTheIDItWasCapturedUnder` |
+ | U1 | Browser: a tab with SSE and status frozen restarts from a stale drawer after another tab switched | Refused, message says nothing changed, no write on either cluster; the tab resets to the new cluster on its next status poll; the switching tab's restart writes the new cluster only | `connection-lifecycle-ui-check.mjs` | |
+ | I1 | In-cluster Radar | No ID published, a named connection ignored | | `TestInClusterRadarBindsNoConnections` |
+ | B1 | Statuses naming IDs, then one with none (mid-switch); another API base | Sends the latest ID; keeps it through the gap; each base its own | | `connectionBinding.test.tsx` |
+```
+
+**File**: `internal/k8s/cache.go` (modified, +138/-147)
+```diff
+@@ -65,14 +65,10 @@ var logTiming = LogTiming
+ // InitialSyncComplete reports whether the current cache has finished its
+ // initial sync, after which an add is an object Radar had not seen before.
+ func InitialSyncComplete() bool {
+-	return initialSyncComplete.Load()
++	conn := Current()
++	return conn != nil && conn.cacheState().initialSyncComplete.Load()
+ }
+ 
+-// initialSyncComplete is set to true after the initial cache sync completes.
+-// During initial sync, "add" events are skipped since they represent existing
+-// resources, not new creations. Only adds after sync are recorded.
+-var initialSyncComplete atomic.Bool
+-
+ // deferredResources lists informer keys that are NOT required for the initial
+ // dashboard render. These sync in the background after the critical informers
+ // complete, so the UI can render immediately with core resources.
+@@ -141,7 +137,7 @@ type ResourceCache struct {
+ 	// secretWriteTimes preserves verified Secret data-owner write times that
+ 	// the shared informer transform intentionally strips before caching.
+ 	secretWriteTimes *secretDataManagerWriteIndex
+-	// generation is the cacheGeneration this cache was built under.
++	// generation scopes external memos to this construction, including same-client rebuilds.
+ 	generation uint64
+ }
+ 
+@@ -353,49 +349,48 @@ func (index *secretDataManagerWriteIndex) load(namespace, name string) (secretDa
+ 	return write, ok
+ }
+ 
+-var (
+-	// resourceCache is the promoted singleton. Reads are lock-free (handlers
+-	// on hot paths call GetResourceCache constantly, and progressive startup
+-	// admits them while promotion is still in flight); writes stay under
+-	// cacheMu so promotion, retirement of the mid-sync handle, and the
+-	// completion flag move as one lifecycle step.
+-	resourceCache atomic.Pointer[ResourceCache]
+-	cacheOnce     = new(sync.Once)
+-	cacheMu       sync.Mutex
+-	// syncingCache is the mid-Phase-1 handle published by OnInformersStarted:
+-	// structurally complete but not synced — every read through it MUST gate on
+-	// KindReadinessFor. Cleared on promotion (resourceCache assigned), on init
+-	// failure, and on reset. Guarded by cacheMu.
+-	syncingCache *ResourceCache
+-	// cacheGeneration invalidates in-flight cache constructions: a context
+-	// switch bumps it (via ResetResourceCache), and any publish/promote/clear
+-	// from an older generation becomes a no-op — without this, an old
+-	// cluster's construction finishing late could republish that cluster's
+-	// cache over the new one. Guarded by cacheMu.
+-	cacheGeneration uint64
+-)
++type connectionCache struct {
++	// Hot-path reads of the promoted handle are lock-free. The lock keeps
++	// promotion, retirement of the syncing handle and completion one step.
++	mu                  sync.Mutex
++	once                sync.Once
++	closed              bool
++	promoted            atomic.Pointer[ResourceCache]
++	syncing             *ResourceCache
++	initialSyncComplete atomic.Bool
++
++	// Late events can arrive after the subject has left the live informer.
++	tombstones *timeline.TombstoneCache
++	recreates  recreateStash
++}
++
++func newConnectionCache() *connectionCache {
++	return &connectionCache{tombstones: timeline.NewTombstoneCache(15*time.Minute, 4000)}
++}
+ 
+-// tombstones retains recently-seen resource enrichment (owner/labels/createdAt)
+-// for a short window after objects leave the informer cache, so delete-time and
+-// late K8s events (the "Killing" class, processed after the involved object is
+-// already gone from cache) carry owner/labels/createdAt as fact instead of
+-// shipping anonymous. Fed from informer add/update/delete callbacks (an
+-// already-seen relist add returns before recording, so it skips the feed);
+-// consulted after the live cache during event enrichment. Bounded + TTL'd so
+-// it cannot grow without limit; misses are silent (null enrichment).
+-var tombstones = timeline.NewTombstoneCache(15*time.Minute, 4000)
++func (c *Connection) cacheState() *connectionCache {
++	if state := c.cache.Load(); state != nil {
++		return state
++	}
++	c.cache.CompareAndSwap(nil, newConnectionCache())
++	return c.cache.Load()
++}
+ 
+ // InitResourceCache initializes the resource cache with timeline-wired callbacks.
+ func InitResourceCache(ctx context.Context) error {
+-	var initErr error
+-	once, gen := claimCacheInit()
+-	// A cancelled startup that first runs after a switch must not spend the
+-	// replacement generation's Once.
++	return Current().initResourceCache(ctx)
++}
++
++func (conn *Connection) initResourceCache(ctx context.Context) error {
+ 	if err := ctx.Err(); err != nil {
+ 		return err
+ 	}
+-	once.Do(func() {
+-		conn := Current()
++	if conn == nil {
++		return fmt.Errorf("cannot create resource cache: k8s client not initialized")
++	}
++	state := conn.cacheState()
++	var initErr error
++	state.once.Do(func() {
+ 		client, informerClient := conn.Client(), conn.InformerClient()
+ 		if client == nil {
+ 			initErr = fmt.Errorf("cannot create resource cache: k8s client not initialized")
+@@ -475,7 +470,7
+```
+
+**File**: `internal/k8s/cache_generation_test.go` (modified, +92/-4)
+```diff
+@@ -2,16 +2,20 @@ package k8s
+ 
+ import (
+ 	"context"
++	"sync"
+ 	"testing"
++	"time"
+ 
++	"github.com/skyhook-io/radar/pkg/k8score"
++	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/client-go/kubernetes"
+ 	"k8s.io/client-go/rest"
+ )
+ 
+ // Topology memos key on Generation(), so a cache built by InitResourceCache
+ // after a reset must report a different generation than the one it replaces.
+-// Every list probe against the unreachable server fails, so no informers
+-// start and the cache is built and promoted without a cluster.
++// With no dynamic client the probe enables no informers, so both builds
++// reach promotion without an API server.
+ func TestInitResourceCache_ReplacementHasNewGeneration(t *testing.T) {
+ 	defer ResetTestState()
+ 
+@@ -23,12 +27,12 @@ func TestInitResourceCache_ReplacementHasNewGeneration(t *testing.T) {
+ 	installedConn.Store(installedConnectionLocked(nil, &sharedKubernetesClients{clientset: client}))
+ 	clientMu.Unlock()
+ 	defer func() {
++		ResetResourceCache()
+ 		clientMu.Lock()
+ 		installedConn.Store(nil)
+ 		clientMu.Unlock()
+ 	}()
+ 
+-	ResetResourceCache()
+ 	if err := InitResourceCache(context.Background()); err != nil {
+ 		t.Fatalf("first init: %v", err)
+ 	}
+@@ -37,7 +41,7 @@ func TestInitResourceCache_ReplacementHasNewGeneration(t *testing.T) {
+ 		t.Fatal("no cache after first init")
+ 	}
+ 
+-	ResetResourceCache()
++	ResetAllSubsystems()
+ 	if err := InitResourceCache(context.Background()); err != nil {
+ 		t.Fatalf("second init: %v", err)
+ 	}
+@@ -46,7 +50,91 @@ func TestInitResourceCache_ReplacementHasNewGeneration(t *testing.T) {
+ 		t.Fatal("no cache after second init")
+ 	}
+ 
++	if Current().Client() != client || first == second {
++		t.Fatal("rescope must keep the clients and serve a new construction")
++	}
++	select {
++	case <-first.Done():
++	default:
++		t.Fatal("previous construction is still running")
++	}
+ 	if first.Generation() == second.Generation() {
+ 		t.Errorf("replacement cache kept generation %d", second.Generation())
+ 	}
+ }
++
++func TestInitResourceCacheProbeFinishesAfterClose(t *testing.T) {
++	withFreshTestConnection(t)
++	started, release := make(chan struct{}), make(chan struct{})
++	unblock := sync.OnceFunc(func() { close(release) })
++	defer unblock()
++	signal := sync.OnceFunc(func() { close(started) })
++	client := kubernetes.NewForConfigOrDie(&rest.Config{Host: "http://127.0.0.1:1"})
++	dyn := fakeDyn(t, func(schema.GroupVersionResource, string) bool {
++		signal()
++		<-release
++		return false
++	})
++	restoreTestConnection(&Connection{clients: &sharedKubernetesClients{clientset: client, dynamic: dyn}})
++	old := Current()
++	done := make(chan error, 1)
++	go func() { done <- InitResourceCache(t.Context()) }()
++	select {
++	case <-started:
++	case <-time.After(3 * time.Second):
++		t.Fatal("construction never reached the permission probe")
++	}
++	ResetAllSubsystems()
++	unblock()
++	select {
++	case err := <-done:
++		if err == nil {
++			t.Fatal("closed construction reported success")
++		}
++	case <-time.After(3 * time.Second):
++		t.Fatal("closed construction did not finish")
++	}
++	promoted, syncing := SnapshotCaches()
++	if Current() == old || promoted != nil || syncing != nil || InitialSyncComplete() || old.ResourceCache() != nil {
++		t.Fatal("late construction published after the connection was replaced")
++	}
++}
++
++func TestResetStopsInFlightInformerSync(t *testing.T) {
++	withFreshTestConnection(t)
++	t.Setenv("RADAR_DEBUG_SYNC_DELAY", "pods=1h")
++	client := kubernetes.NewForConfigOrDie(&rest.Config{Host: "http://127.0.0.1:1"})
++	SetTestClient(client)
++	t.Cleanup(SetTestPermissionResult(&PermissionCheckResult{
++		Perms:  &ResourcePermissions{Pods: true},
++		Scopes: map[string]k8score.ResourceScope{"pods": {Enabled: true}},
++	}))
++	ctx, cancel := context.WithCancel(t.Context())
++	defer cancel()
++	done := make(chan error, 1)
++	go func() { done <- InitResourceCache(ctx) }()
++	var syncing *ResourceCache
++	for deadline := time.Now().Add(3 * time.Second); syncing == nil; {
++		syncing = GetSyncingResourceCache()
++		if time.Now().After(deadline) {
++			t.Fatal("informer did not enter its initial sync")
++		}
++		if syncing == nil {
++			time.Sleep(time.Millisecond)
++		}
++	}
++	ResetAllSubsystems()
++	select {
++	case <-syncing.Done():
++	default:
++		t.Fatal("closing the connection left the syncing informer running")
++	}
++	select {
++	case err := <-done:
++		if err == nil || GetResourceCache() != nil || GetSyncingResourceCache() != nil {
++			t.Fatalf("closed sync returned %v, promoted %p, syncing %p", err, GetResourceCache(), GetSyncingResourceCache())
++		}
++	case <-time.After(3 * time.Second):
++		t.Fatal("closing the connection did not release the constructor")
++	}
++}
+```
+
+**File**: `internal/k8s/cache_progressive_test.go` (modified, +61/-102)
+```diff
+@@ -1,152 +1,111 @@
+ package k8s
+ 
+ import (
+-	"sync"
+ 	"testing"
+ 	"time"
+-)
+-
+-// snapshotCacheGlobals isolates a test from (and restores) the package-level
+-// cache singleton state the generation guards operate on.
+-func snapshotCacheGlobals(t *testing.T) {
+-	t.Helper()
+-	cacheMu.Lock()
+-	prevRC, prevSC, prevGen := resourceCache.Load(), syncingCache, cacheGeneration
+-	resourceCache.Store(nil)
+-	syncingCache = nil
+-	cacheMu.Unlock()
+-	t.Cleanup(func() {
+-		cacheMu.Lock()
+-		resourceCache.Store(prevRC)
+-		syncingCache, cacheGeneration = prevSC, prevGen
+-		cacheMu.Unlock()
+-	})
+-}
+-
+-func currentGen() uint64 {
+-	cacheMu.Lock()
+-	defer cacheMu.Unlock()
+-	return cacheGeneration
+-}
+ 
+-func bumpGen() {
+-	cacheMu.Lock()
+-	cacheGeneration++
+-	cacheMu.Unlock()
+-}
++	"github.com/skyhook-io/radar/pkg/k8score"
++	"k8s.io/client-go/kubernetes/fake"
++)
+ 
+-func TestPublishSyncingCache_GenerationGuard(t *testing.T) {
+-	snapshotCacheGlobals(t)
++func TestPublishSyncingCache_ClosedConnection(t *testing.T) {
++	withFreshTestConnection(t)
++	conn := Current()
+ 	w := &ResourceCache{}
+-
+-	gen := currentGen()
+-	publishSyncingCache(w, gen)
++	state := conn.cacheState()
++	state.publishSyncing(w)
+ 	if GetSyncingResourceCache() != w {
+-		t.Fatal("publish with current generation did not install the handle")
++		t.Fatal("publish on the open connection did not install the handle")
+ 	}
+ 
+-	// A context switch bumps the generation; a stale construction's publish
+-	// must be a no-op — otherwise the old cluster's cache resurfaces.
+-	bumpGen()
+-	cacheMu.Lock()
+-	syncingCache = nil
+-	cacheMu.Unlock()
+-	publishSyncingCache(w, gen)
++	ResetResourceCache()
++	ResetResourceDiscovery()
++	state.publishSyncing(w)
+ 	if GetSyncingResourceCache() != nil {
+-		t.Fatal("stale-generation publish installed an old cluster's handle")
++		t.Fatal("stale publish installed an old cluster's handle")
+ 	}
+ }
+ 
+-func TestPromoteCache_GenerationGuard(t *testing.T) {
+-	snapshotCacheGlobals(t)
++func TestPromoteCache_ClosedConnection(t *testing.T) {
++	withFreshTestConnection(t)
++	conn := Current()
+ 	w := &ResourceCache{}
+-
+-	gen := currentGen()
+-	publishSyncingCache(w, gen)
+-	if !promoteCache(w, gen, true) {
+-		t.Fatal("promotion with current generation failed")
++	state := conn.cacheState()
++	state.publishSyncing(w)
++	if !state.promote(w, true) {
++		t.Fatal("promotion on the open connection failed")
+ 	}
+ 	if GetResourceCache() != w {
+-		t.Fatal("promotion did not install the singleton")
++		t.Fatal("promotion did not install the cache")
+ 	}
+ 	if GetSyncingResourceCache() != nil {
+ 		t.Fatal("promotion did not retire the mid-sync handle")
+ 	}
+ 
+-	// Stale promotion after a switch must refuse (caller stops the core).
+-	cacheMu.Lock()
+-	resourceCache.Store(nil)
+-	cacheMu.Unlock()
+-	bumpGen()
+-	if promoteCache(w, gen, true) {
+-		t.Fatal("stale-generation promotion succeeded")
++	ResetResourceCache()
++	ResetResourceDiscovery()
++	core, err := k8score.NewResourceCache(k8score.CacheConfig{Client: fake.NewClientset()})
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer core.Stop()
++	if state.promote(&ResourceCache{ResourceCache: core}, true) {
++		t.Fatal("stale promotion succeeded")
++	}
++	select {
++	case <-core.Done():
++	default:
++		t.Fatal("stale promotion left its core running")
+ 	}
+ 	if GetResourceCache() != nil {
+-		t.Fatal("stale promotion installed the singleton")
++		t.Fatal("stale promotion installed the cache")
+ 	}
+ }
+ 
+-func TestClearSyncingCacheForGen_OnlyOwnGeneration(t *testing.T) {
+-	snapshotCacheGlobals(t)
+-	old := &ResourceCache{}
+-	oldGen := currentGen()
+-
+-	// A newer construction published its handle; the old generation's
+-	// failure cleanup must not clear it.
+-	bumpGen()
++func TestClearSyncingCache_OnlyOwnConnection(t *testing.T) {
++	withFreshTestConnection(t)
++	old := Current()
++	ResetResourceCache()
++	ResetResourceDiscovery()
+ 	fresh := &ResourceCache{}
+-	publishSyncingCache(fresh, currentGen())
+-
+-	clearSyncingCacheForGen(oldGen)
++	Current().cacheState().publishSyncing(fresh)
++	old.cacheState().clearSyncing()
+ 	if GetSyncingResourceCache() != fresh {
+-		t.Fatal("stale-generation clear removed the newer construction's handle")
++		t.Fatal("stale clear removed the newer construction's handle")
+ 	}
+-	_ = old
+ }
+ 
+ func TestResetResourceCache_InvalidatesInFlightConstruction(t *testing.T) {
+-	snapshotCacheGlobals(t)
++	withFreshTestConnection(t)
++	conn := Current()
+ 	w := &ResourceCache{}
+-	gen := currentGen()
+-	publishSyncingCache(w, gen)
+-
++	state := conn.cacheState()
++	state.publishSyncing(w)
+ 	ResetResourceCache()
+-
+ 	if GetSyncingResourceCache() != nil {
+ 		t.Fatal("reset left the mid-sync handle published")
+ 	}
+-	if promoteCache(w, gen, true) {
+-		t.Fatal("reset did not invalidate the in-flight construction's generation")
++	if state.promote(w, true) {
++		t.Fatal("reset did not invalidate the in-flight construction")
+ 	}
+ }
+ 
+-func TestClaimCacheInit_ResetInsideDoKeepsOldGeneration(t *testing.T) {
+-	snapshotCacheGlobals(t)
+-	cacheMu.Lock()
+-	prevOnce := cacheOnce
+-	cache
+```
+
+**File**: `internal/k8s/cluster_detection.go` (modified, +4/-3)
+```diff
+@@ -157,7 +157,8 @@ func (cache *ResourceCache) LastClusterInfo() (ClusterInfo, time.Time) {
+ 
+ // GetClusterInfo returns detected cluster information
+ func GetClusterInfo(ctx context.Context) (*ClusterInfo, error) {
+-	initialCache := GetResourceCache()
++	conn := Current()
++	initialCache := conn.ResourceCache()
+ 	platform, _ := GetClusterPlatform(ctx)
+ 
+ 	info := &ClusterInfo{
+@@ -201,9 +202,9 @@ func GetClusterInfo(ctx context.Context) (*ClusterInfo, error) {
+ 	// The version is cached and the counts come from informers, so a read
+ 	// during an outage succeeds on stale data: it must not move the
+ 	// observation (and its time) forward.
+-	if cache != nil && cache == initialCache && ctx.Err() == nil && info.KubernetesVersion != "" &&
++	if initialCache != nil && conn.cacheIsCurrent() && ctx.Err() == nil && info.KubernetesVersion != "" &&
+ 		GetConnectionStatus().State != StateDisconnected {
+-		cache.lastClusterInfo.Store(&clusterInfoObservation{info: *info, at: time.Now()})
++		initialCache.lastClusterInfo.Store(&clusterInfoObservation{info: *info, at: time.Now()})
+ 	}
+ 	return info, nil
+ }
+```
+
+**File**: `internal/k8s/cluster_detection_test.go` (modified, +1/-2)
+```diff
+@@ -116,8 +116,7 @@ func TestGetClusterPlatformFromMixedCachedNodes(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	t.Cleanup(core.Stop)
+-	previous := resourceCache.Swap(&ResourceCache{ResourceCache: core})
+-	t.Cleanup(func() { resourceCache.Store(previous) })
++	t.Cleanup(SwapResourceCacheForTest(&ResourceCache{ResourceCache: core}))
+ 	for range 32 {
+ 		if got, err := GetClusterPlatform(context.Background()); err != nil || got != "eks" {
+ 			t.Fatalf("GetClusterPlatform() = %q, %v; want eks", got, err)
+```
+
+**File**: `internal/k8s/connection.go` (modified, +6/-6)
+```diff
+@@ -10,18 +10,18 @@ import (
+ 	"k8s.io/client-go/rest"
+ )
+ 
+-// Connection is one cluster connection: the clients, config and API discovery
+-// built for it, and the context they were built for. A switch installs a new
+-// one and never changes an installed one, so a request that takes a Connection
+-// once uses one cluster's clients and resource mapping throughout, even if a
+-// switch lands mid-request. A rebuild on the same clients (rescope, recovery)
++// Connection owns the clients, config, discovery, permissions and typed
++// informer cache for one cluster context. A switch installs a new connection,
++// so a request that captures one keeps the same clients and resource mapping
++// even if a switch lands mid-request. A rebuild on the same clients (rescope, recovery)
+ // also starts from a new one, so state built for the old admission stays there.
+ type Connection struct {
+ 	config                                   *rest.Config
+ 	clients                                  *sharedKubernetesClients
+ 	contextName, contextBinding, clusterName string
+ 	contextNamespace                         string
+ 	perms                                    atomic.Pointer[permissionState]
++	cache                                    atomic.Pointer[connectionCache]
+ 	discovery                                atomic.Pointer[ResourceDiscovery]
+ 	// id is the ID of the connection's latest admission, written under
+ 	// connectionStatusMu. Each admission gets a new one, so an ID from before
+@@ -48,7 +48,7 @@ func installedConnectionLocked(config *rest.Config, clients *sharedKubernetesCli
+ }
+ 
+ // fresh returns a new, unadmitted connection on the same clients, with no
+-// discovery or permission results yet.
++// discovery, permissions or informer cache yet.
+ func (c *Connection) fresh() *Connection {
+ 	if c == nil {
+ 		return &Connection{}
+```
+
+**File**: `internal/k8s/connection_identity_test.go` (modified, +22/-0)
+```diff
+@@ -4,6 +4,8 @@ import (
+ 	"context"
+ 	"strings"
+ 	"testing"
++
++	"k8s.io/client-go/kubernetes/fake"
+ )
+ 
+ func publishedStatus() ConnectionStatus { return GetConnectionStatus() }
+@@ -137,6 +139,26 @@ func TestReadmissionKeepsTheConnectionsPermissionResult(t *testing.T) {
+ 	}
+ }
+ 
++// The typed cache is part of what a re-admitted connection keeps: it is still
++// running, and a copy without it would serve nothing and leak its informers.
++func TestReadmissionKeepsTheConnectionsTypedCache(t *testing.T) {
++	t.Cleanup(SnapshotTestConnection())
++	clearTestConnectionIdentity()
++	if err := InitTestResourceCache(fake.NewClientset()); err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(ResetResourceCache)
++	built := GetResourceCache()
++
++	SetConnectionStatus(ConnectionStatus{State: StateConnected, Context: "a"})
++	RetireServingConnection()
++	SetConnectionStatus(ConnectionStatus{State: StateConnected, Context: "a"})
++
++	if got := GetResourceCache(); got == nil || got != built {
++		t.Fatalf("re-admission served cache %p, want the one built for the connection (%p)", got, built)
++	}
++}
++
+ // A write admitted under one ID stays bound to it: if the same build is
+ // retired and admitted again before the request binds, binding must not pick up
+ // the new ID.
+```
+
+---
+
+### Incident Patch 3: `b31032cc` (2026-11-23)
+**Commit Message**: Keep informer timeline writes on the store their cache was built with (#2859)
+
+After a cluster switch, the previous cluster's informers keep delivering
+events for a while as they wind down. Their timeline writes could land
+in the new cluster's history, or under a context name that now points at
+another cluster. This keeps each informer's writes on the timeline store
+its cache was built with, and stops a closed cache's callbacks from
+recording anything. Part of moving each cluster connection's state into
+one object, after #2858 (CRD cache). No wire change.
+
+**Problem.** The typed and dynamic caches' informer callbacks capture
+their connection's cache and cluster stamp when the cache is built, but
+resolved the timeline store each time they wrote. A switch closes the
+old cache and resets the timeline, but a callback from the old cache
+could still record:
+- into the replacement in-memory timeline after the reset, so the new
+cluster's history showed an old resource;
+- under a context name that was repointed to another cluster in the
+meantime, so the row looked like the new cluster's;
+- as a store-failed drop in the process-wide diagnostics, which named
+the retired resource and counted a
+
+**File**: `internal/k8s/cache.go` (modified, +104/-65)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
++	"io/fs"
+ 	"log"
+ 	"os"
+ 	"reflect"
+@@ -349,12 +350,42 @@ func (index *secretDataManagerWriteIndex) load(namespace, name string) (secretDa
+ 	return write, ok
+ }
+ 
++type cacheLifecycle struct {
++	mu     sync.RWMutex
++	once   sync.Once
++	closed bool
++}
++
++// whileOpen runs an informer callback only while its cache is open, so a
++// callback that fires after a switch closed the cache records nothing. A
++// callback already running when the cache closes finishes; close doesn't wait
++// for it, so slow timeline storage can't hold up a switch. Observers can call
++// back into the cache, so fn runs outside mu.
++func (s *cacheLifecycle) whileOpen(fn func()) {
++	s.mu.RLock()
++	closed := s.closed
++	s.mu.RUnlock()
++	if !closed {
++		fn()
++	}
++}
++
++func (s *cacheLifecycle) computeDiff(kind string, oldObj, newObj any) *DiffInfo {
++	var diff *DiffInfo
++	s.whileOpen(func() { diff = ComputeDiff(kind, oldObj, newObj) })
++	return diff
++}
++
++func (s *cacheLifecycle) closeCallbacks() {
++	s.mu.Lock()
++	s.closed = true
++	s.mu.Unlock()
++}
++
+ type connectionCache struct {
+ 	// Hot-path reads of the promoted handle are lock-free. The lock keeps
+ 	// promotion, retirement of the syncing handle and completion one step.
+-	mu                  sync.Mutex
+-	once                sync.Once
+-	closed              bool
++	cacheLifecycle
+ 	promoted            atomic.Pointer[ResourceCache]
+ 	syncing             *ResourceCache
+ 	initialSyncComplete atomic.Bool
+@@ -428,14 +459,6 @@ func (conn *Connection) initResourceCache(ctx context.Context) error {
+ 			scopes = map[string]k8score.ResourceScope{}
+ 		}
+ 
+-		// Captured ONCE at wiring time and closed over by the callbacks below.
+-		// Informer shutdown on context switch is asynchronous (up to 5s, then
+-		// abandoned), so a late callback reading ActiveClusterContext() at
+-		// delivery time would stamp the OLD cluster's event with the NEW
+-		// cluster's name — permanently, under SQLite storage. Closing over the
+-		// wiring-time value keeps late events truthfully attributed to the
+-		// cluster they came from.
+-		recordClusterContext := TimelineClusterContext(conn.ContextName())
+ 		secretWriteTimes := newSecretDataManagerWriteIndex()
+ 		cronJobScheduleObservations := newCronJobScheduleObservationTracker()
+ 
+@@ -449,52 +472,13 @@ func (conn *Connection) initResourceCache(ctx context.Context) error {
+ 			PatienceWindow:          firstPaintPatience,
+ 			MinimalSet:              minimalFirstPaintSet,
+ 			SyncTimeout:             FirstPaintBackstop,
+-			SyncProgress:            emitSyncProgress,
+ 			DeferredSyncTimeout:     3 * time.Minute,
+ 			ListPageSize:            ListPageSize,
+ 
+-			OnReceived: func(kind string) {
+-				timeline.IncrementReceived(kind)
+-			},
+-
+-			OnTransform: func(obj any) {
+-				secretWriteTimes.capture(obj)
+-			},
+-
+-			OnObservedChange: observedChangeHandler(client, secretWriteTimes.observeChange, cronJobScheduleObservations.observeChange),
+-
+-			OnChange: func(change k8score.ResourceChange, obj, oldObj any) {
+-				if DebugEvents && change.Operation == "add" &&
+-					(change.Kind == "Pod" || change.Kind == "Deployment" || change.Kind == "Service") {
+-					log.Printf("[DEBUG] enqueueChange: %s add %s/%s", change.Kind, change.Namespace, change.Name)
+-				}
+-
+-				// Record to timeline store
+-				state.recordToTimelineStore(recordClusterContext, change.Kind, change.Namespace, change.Name, change.UID, change.Operation, oldObj, obj, change.Diff, true)
+-			},
+-
+-			OnEventChange: func(obj any, op string) {
+-				// Event deletes are not recorded to timeline — events represent
+-				// things that happened and should remain in history.
+-				if op == "delete" {
+-					return
+-				}
+-				state.recordK8sEventToTimeline(recordClusterContext, obj)
+-			},
+-
+-			OnDrop: func(kind, ns, name, reason, op string) {
+-				timeline.RecordDrop(kind, ns, name, reason, op, recordClusterContext)
+-				if DebugEvents {
+-					log.Printf("[DEBUG] Change dropped: %s/%s/%s reason=%s op=%s", kind, ns, name, reason, op)
+-				}
+-			},
+-
+-			ComputeDiff: func(kind string, oldObj, newObj any) *k8score.DiffInfo {
+-				return ComputeDiff(kind, oldObj, newObj)
+-			},
+-
++			OnTransform:     secretWriteTimes.capture,
+ 			IsNoisyResource: isNoisyResource,
+ 		}
++		conn.configureTypedCallbacks(&cfg, observedChangeHandler(client, secretWriteTimes.observeChange, cronJobScheduleObservations.observeChange))
+ 
+ 		wrapped := &ResourceCache{
+ 			permissionResult:            clonePermissionCheckResult(permResult),
+@@ -548,6 +532,45 @@ func (conn *Connection) initResourceCache(ctx context.Context) error {
+ 	return initErr
+ }
+ 
++func (conn *Connection) configureTypedCallbacks(cfg *k8score.CacheConfig, observe func(ResourceChange, any, any)) {
++	state := conn.cacheState()
++	cluster := TimelineClusterContext(conn.ContextName())
++	binding := timeline.CaptureStore()
++	cfg.ComputeDiff = state.computeDiff
++	cfg.SyncProgress = func(synced, total int, minimalReady bool) {
++		sta
+```
+
+**File**: `internal/k8s/cache_callbacks_test.go` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++package k8s
++
++import (
++	"testing"
++	"time"
++
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++
++	"github.com/skyhook-io/radar/internal/timeline"
++	"github.com/skyhook-io/radar/pkg/k8score"
++)
++
++func TestInformerCallbacksAfterCacheClose(t *testing.T) {
++	t.Cleanup(SnapshotTestConnection())
++	conn := &Connection{contextName: "shared-name"}
++	restoreTestConnection(conn)
++	clearTestConnectionIdentity()
++	initMemoryTimeline(t)
++	timeline.ResetMetricsForContextSwitch()
++	t.Cleanup(timeline.ResetMetricsForContextSwitch)
++
++	var typed k8score.CacheConfig
++	observed := 0
++	conn.configureTypedCallbacks(&typed, func(ResourceChange, any, any) { observed++ })
++	var dynamic k8score.DynamicCacheConfig
++	conn.configureDynamicCallbacks(&dynamic)
++
++	pod := tombstoneTestPod("web", time.Now())
++	event := k8sEventPod("web", "Killing")
++	typedDelete := ResourceChange{Kind: "Pod", Namespace: "shop", Name: "web", UID: string(pod.UID), Operation: "delete"}
++	fireTyped := func() {
++		typed.OnReceived("Pod")
++		typed.OnObservedChange(typedDelete, pod, nil)
++		typed.OnChange(typedDelete, pod, nil)
++		typed.OnEventChange(event, "add")
++		typed.OnDrop("Pod", "shop", "web", timeline.DropReasonChannelFull, "delete")
++		typed.SyncProgress(1, 2, false)
++	}
++	widget := &unstructured.Unstructured{}
++	widget.SetAPIVersion("example.org/v1")
++	widget.SetKind("Widget")
++	widget.SetNamespace("shop")
++	widget.SetName("widget")
++	dynamicDelete := ResourceChange{Kind: "Widget", Namespace: "shop", Name: "widget", Operation: "delete"}
++	fireDynamic := func() {
++		dynamic.OnReceived("Widget")
++		dynamic.OnChange(dynamicDelete, widget, nil)
++		dynamic.OnDrop("Widget", "shop", "widget", timeline.DropReasonChannelFull, "delete")
++		if dynamic.OnRecorded != nil {
++			dynamic.OnRecorded("Widget")
++		}
++	}
++
++	SetConnectionStatus(ConnectionStatus{State: StateConnected})
++	firstID := ServingConnectionID()
++	RetireServingConnection()
++	SetConnectionStatus(ConnectionStatus{State: StateConnected})
++	if firstID == "" || ServingConnectionID() == firstID || Current() != conn {
++		t.Fatal("expected the same cache build under a new admission")
++	}
++	SetConnectionStatus(ConnectionStatus{State: StateConnecting})
++	fireTyped()
++	fireDynamic()
++	events, err := timeline.QueryEvents(t.Context(), timeline.QueryOptions{IncludeManaged: true, IncludeK8sEvents: true})
++	if err != nil || len(events) != 3 {
++		t.Fatalf("open caches recorded %d rows, want a Pod, its Kubernetes Event and a Widget: %v", len(events), err)
++	}
++	for _, event := range events {
++		if event.ClusterContext != conn.ContextName() {
++			t.Fatalf("row has cluster context %q, want %q", event.ClusterContext, conn.ContextName())
++		}
++	}
++	counts := timeline.GetMetrics().GetSnapshot().Counters
++	if counts.Received["Pod"] != 1 || counts.Received["Widget"] != 1 || counts.Recorded["Pod"] != 1 || counts.Recorded["Widget"] != 1 || counts.Dropped[timeline.DropReasonChannelFull] != 2 {
++		t.Fatalf("unexpected open-cache counters: %+v", counts)
++	}
++	if observed != 1 || GetConnectionStatus().ProgressMsg == "" {
++		t.Fatal("open typed cache did not publish its observation and sync progress")
++	}
++
++	// The dynamic cache closes first in a switch. Its callbacks must stop
++	// even while the typed cache that owns the enrichment data is open.
++	conn.closeDynamicResourceCache()
++	fireDynamic()
++	if got := timeline.GetMetrics().GetSnapshot().Counters; got.Received["Widget"] != 1 || got.Recorded["Widget"] != 1 || got.Dropped[timeline.DropReasonChannelFull] != 2 {
++		t.Fatalf("closed dynamic cache changed counters: %+v", got)
++	}
++
++	RetireServingConnection()
++	conn.closeResourceCache()
++	ResetResourceDiscovery()
++	if Current() == conn || Current().ContextName() != conn.ContextName() {
++		t.Fatal("expected a replacement connection with the same context name")
++	}
++	initMemoryTimeline(t)
++	timeline.ResetMetricsForContextSwitch()
++	SetConnectionStatus(ConnectionStatus{State: StateConnecting, ProgressMsg: "replacement"})
++	fireTyped()
++	fireDynamic()
++	events, err = timeline.QueryEvents(t.Context(), timeline.QueryOptions{IncludeManaged: true, IncludeK8sEvents: true})
++	if err != nil || len(events) != 0 {
++		t.Fatalf("late callbacks recorded %d rows in replacement store: %v", len(events), err)
++	}
++	metrics := timeline.GetMetrics().GetSnapshot()
++	if len(metrics.Counters.Received)+len(metrics.Counters.Recorded)+len(metrics.Counters.Dropped)+len(metrics.RecentDrops) != 0 {
++		t.Fatalf("late callbacks changed replacement metrics: %+v", metrics)
++	}
++	if observed != 1 || GetConnectionStatus().ProgressMsg != "replacement" {
++		t.Fatal("late typed callback published an observation or overwrote replacement progress")
++	}
++}
++
++type pausedInformerObject struct {
++	metav1.Object
++	admitted chan struct{}
++	resume   chan struct{}
++}
++
++func (o *pausedInformerObject) GetResourceVersion() string {
++	close(o.admitted)
++	<-o.resume
++	return o.Object.GetResourceVersion()
++
+```
+
+**File**: `internal/k8s/dedup_diff_test.go` (modified, +4/-4)
+```diff
+@@ -34,7 +34,7 @@ func TestRecordToTimelineStore_PrecomputedDiffMatchesRecompute(t *testing.T) {
+ 		if err := timeline.InitStore(timeline.StoreConfig{Type: timeline.StoreTypeMemory, MaxSize: 10}); err != nil {
+ 			t.Fatalf("InitStore: %v", err)
+ 		}
+-		state.recordToTimelineStore(ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDep, newDep, precomputed, diffPrecomputed)
++		state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDep, newDep, precomputed, diffPrecomputed)
+ 		events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Deployment"}})
+ 		if err != nil {
+ 			t.Fatalf("Query: %v", err)
+@@ -65,7 +65,7 @@ func TestRecordToTimelineStore_PreservesDNSFieldPath(t *testing.T) {
+ 	oldDep := &appsv1.Deployment{Spec: appsv1.DeploymentSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{DNSPolicy: corev1.DNSClusterFirst}}}}
+ 	newDep := oldDep.DeepCopy()
+ 	newDep.Spec.Template.Spec.DNSPolicy = corev1.DNSNone
+-	state.recordToTimelineStore(ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDep, newDep, nil, false)
++	state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDep, newDep, nil, false)
+ 
+ 	events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Deployment"}})
+ 	if err != nil {
+@@ -127,7 +127,7 @@ func TestRecordToTimelineStore_DeploymentGenerationFallbackRequiresSpecChange(t
  			}
- 			assertEq(t, "dest name", flows[0].Destination.Name, tt.wantName)
- 			assertEq(t, "dest kind", flows[0].Destination.Kind, tt.wantKind)
-+			assertEq(t, "verdict", flows[0].Verdict, "")
- 		})
+ 			t.Cleanup(timeline.ResetStore)
+ 
+-			state.recordToTimelineStore(ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDeployment, newDeployment, nil, false)
++			state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Deployment", "shop", "web", "uid-1", "update", oldDeployment, newDeployment, nil, false)
+ 			events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Deployment"}})
+ 			if err != nil {
+ 				t.Fatalf("Query: %v", err)
+@@ -195,7 +195,7 @@ func TestRecordToTimelineStore_DeletionStartIsNotSpecChange(t *testing.T) {
+ 			}
+ 			t.Cleanup(timeline.ResetStore)
+ 
+-			state.recordToTimelineStore(ActiveClusterContext(), "Pod", "shop", "web-1", "uid-1", "update", oldPod, newPod, nil, false)
++			state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Pod", "shop", "web-1", "uid-1", "update", oldPod, newPod, nil, false)
+ 			events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Pod"}, IncludeManaged: true})
+ 			if err != nil {
+ 				t.Fatalf("Query: %v", err)
+```
+
+**File**: `internal/k8s/detect_netpol_test.go` (modified, +1/-1)
+```diff
+@@ -892,7 +892,7 @@ func TestNetworkPolicyIsolationOnsetSeesPodRelabels(t *testing.T) {
+ 		oldPod := netpolTestPod("pod-1", from, true)
+ 		newPod := oldPod.DeepCopy()
+ 		newPod.Labels = to
+-		state.recordToTimelineStore(ActiveClusterContext(), "Pod", "shop", "pod-1", "uid-1", "update", oldPod, newPod, nil, false)
++		state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Pod", "shop", "pod-1", "uid-1", "update", oldPod, newPod, nil, false)
  	}
- }
-@@ -1263,6 +1265,7 @@ func TestBeylaSource_GetFlows_UnorientableConversationBecomesOneUndirectedEdge(t
- 		t.Error("the edge must declare that its direction is unknown, or the graph will draw an arrow")
- 	}
- 	assertEq(t, "protocol", f.Protocol, "udp")
-+	assertEq(t, "verdict", f.Verdict, "")
- 	// Endpoints are ordered deterministically so the edge does not flip between
- 	// polls; demo/client sorts before kube-system/coredns.
- 	assertEq(t, "source", f.Source.Name, "client")
-```
-
-**File**: `packages/k8s-ui/src/types/core.ts` (modified, +1/-1)
-```diff
-@@ -1684,7 +1684,7 @@ export interface TrafficFlow {
-    *  measures a rate rather than observing individual responses, so it has a
-    *  status code for no single flow. */
-   errorRate?: number
--  verdict: string // forwarded, dropped, error
-+  verdict: string // forwarded, dropped, error; empty when the source reports none
-   /** The network plugin's own account of which policies decided this flow
-    *  (Hubble reports it). Absent when the plugin said nothing. */
-   policyVerdict?: {
-```
-
-**File**: `pkg/traffic/types.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ type Flow struct {
- 	// The graph draws these without an arrowhead: the traffic is real, only its
- 	// direction is not known.
- 	DirectionUnknown bool   `json:"directionUnknown,omitempty"`
--	Verdict          string `json:"verdict"` // forwarded, dropped, error
-+	Verdict          string `json:"verdict"` // forwarded, dropped, error; empty when the source reports none
- 	// PolicyVerdict is the network plugin's own account of which policies
- 	// decided this flow, when it reports one (Hubble does). It is the ground
- 	// truth a static evaluation can only approximate, and it names policy
-```
-
-**File**: `web/src/components/traffic/TrafficFlowList.tsx` (modified, +8/-4)
-```diff
-@@ -224,10 +224,14 @@ export function TrafficFlowList({ flows, responsesCallerOriented }: TrafficFlowL
-                     {flow.latencyNs && flow.latencyNs > 0 ? formatLatency(flow.latencyNs) : '—'}
-                   </span>
+ 	t.Cleanup(timeline.ResetStore)
  
--                  {/* Verdict */}
--                  <span className={clsx('text-right badge badge-sm text-[10px] capitalize', VERDICT_BADGE[flow.verdict] ?? SEVERITY_BADGE.neutral)}>
--                    {flow.verdict}
--                  </span>
-+                  {/* Verdict: sources that only observe traffic (Beyla) report none */}
-+                  {flow.verdict ? (
-+                    <span className={clsx('text-right badge badge-sm text-[10px] capitalize', VERDICT_BADGE[flow.verdict] ?? SEVERITY_BADGE.neutral)}>
-+                      {flow.verdict}
-+                    </span>
-+                  ) : (
-+                    <span className="text-right text-theme-text-tertiary">—</span>
-+                  )}
-                 </button>
- 
-                 {/* Expanded detail */}
 ```
 
-**File**: `web/src/components/traffic/TrafficGraph.test.tsx` (modified, +31/-1)
+**File**: `internal/k8s/dynamic_cache.go` (modified, +32/-37)
 ```diff
-@@ -4,7 +4,7 @@ import { createRoot, type Root } from 'react-dom/client'
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
- import type { Edge, Node } from '@xyflow/react'
- import type { AggregatedFlow } from '../../types'
--import { TrafficGraph } from './TrafficGraph'
-+import { TrafficGraph, TrafficNode } from './TrafficGraph'
- import { endpointPair, groupAddonFlows } from './trafficFilters'
+@@ -100,12 +100,7 @@ func (conn *Connection) initDynamicResourceCache(changeCh chan k8score.ResourceC
+ 			sharedDiscovery = discovery.ResourceDiscovery
+ 		}
  
- const { fitView } = vi.hoisted(() => ({ fitView: vi.fn() }))
-@@ -267,3 +267,33 @@ describe('TrafficGraph edge labels for traffic measured only in bytes', () => {
-     expect(container.querySelector('[data-edge]')!.textContent).toBe('TCP · 2.4 KB/s · UDP · <1 B/s')
-   })
- })
-+
-+describe('TrafficNode title', () => {
-+  // jsdom has no layout or canvas: give the title 100px and every glyph 7px.
-+  beforeEach(() => {
-+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
-+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
-+      { font: '', measureText: (t: string) => ({ width: t.length * 7 }) } as unknown as CanvasRenderingContext2D)
-+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect)
-+  })
-+  afterEach(() => vi.restoreAllMocks())
-+
-+  it('keeps the end of a long name, so names sharing a prefix stay apart', () => {
-+    const titles = ['checkout-platform-release-engine', 'checkout-platform-release-redis'].map(label => {
-+      act(() => root.render(<TrafficNode data={{ label, namespace: 'demo', kind: 'Deployment' }} />))
-+      const title = container.querySelector(`[title="${label}"]`)!
-+      return title.lastElementChild!.textContent!
-+    })
-+    expect(titles[0]).toBe('checko…engine')
-+    expect(titles[1]).toMatch(/redis$/)
-+    expect(titles[0]).not.toBe(titles[1])
-+  })
-+
-+  it('gives screen readers the full name, not the cut one', () => {
-+    const label = 'checkout-platform-release-engine'
-+    act(() => root.render(<TrafficNode data={{ label, namespace: 'demo', kind: 'Deployment' }} />))
-+    const srOnly = container.querySelector('.sr-only')
-+    expect(srOnly?.textContent).toBe(label)
-+    expect(container.querySelector(`[title="${label}"]`)!.closest('[aria-hidden="true"]')).not.toBeNull()
-+  })
-+})
-```
-
-**File**: `web/src/components/traffic/TrafficGraph.tsx` (modified, +11/-6)
-```diff
-@@ -19,7 +19,7 @@ import type { ELK } from 'elkjs/lib/elk.bundled.js'
- import type { AggregatedFlow } from '../../types'
- import { clsx } from 'clsx'
- import { X, ArrowRight, Globe, Server, Activity, Puzzle, Crosshair } from 'lucide-react'
--import { PaneLoader } from '@skyhook-io/k8s-ui'
-+import { MiddleEllipsis, PaneLoader } from '@skyhook-io/k8s-ui'
- import { isClusterAddon, type AddonMode } from './TrafficView'
- import { SEVERITY_BADGE, SEVERITY_DOT, SEVERITY_TEXT } from '@skyhook-io/k8s-ui/utils/badge-colors'
- import { getNamespaceColor } from '../../utils/traffic-colors'
-@@ -208,7 +208,7 @@ const NODE_PORT_HEIGHT = 18 // Height per port row
- const MAX_VISIBLE_PORTS = 4 // Maximum ports to show before "+N more"
- 
- // Custom node component
--function TrafficNode({ data }: { data: TrafficNodeData }) {
-+export function TrafficNode({ data }: { data: TrafficNodeData }) {
-   const isExternal = isExternalKind(data.kind)
-   const isInternet = data.kind === 'Internet'
-   const isAddonInternet = data.kind === 'AddonInternet' // Separate internet for addon traffic
-@@ -269,10 +269,15 @@ function TrafficNode({ data }: { data: TrafficNodeData }) {
-           />
-         )}
-         <div className="flex-1 min-w-0">
--          <div className={clsx(
--            'text-sm font-medium truncate',
--            isAddonInternet ? 'text-purple-300' : isInternet ? 'text-sky-300' : (isAddon || isAddonNode) ? 'text-purple-200' : hasNamespaceColor ? 'text-white' : 'text-theme-text-primary'
--          )}>{data.label}</div>
-+          {/* Middle-cut: workloads of one release share a long prefix and differ only at the end.
-+              MiddleEllipsis exposes only the cut text, so screen readers get the full name instead. */}
-+          <span className="sr-only">{data.label}</span>
-+          <div aria-hidden="true">
-+            <MiddleEllipsis text={data.label} title={data.label} className={clsx(
-+              'text-sm font-medium',
-+              isAddonInternet ? 'text-purple-300' : isInternet ? 'text-sky-300' : (isAddon || isAddonNode) ? 'text-purple-200' : hasNamespaceColor ? 'text-white' : 'text-theme-text-primary'
-+            )} />
-+          </div>
-           {data.namespace ? (
-             <div className={clsx(
-               'text-xs truncate',
-```
-
-**File**: `web/src/components/traffic/trafficFilters.ts` (modified, +4/-4)
-```diff
-@@ -836,10 +836,10 @@ export function connectionRows<T extends AggregatedFlow>(flows: T[]): T[] {
+-		// Wiring-time capture — same rationale as InitResourceCache: a late
+-		// callback after a context switch must stamp its own cluster.
+-		state := conn.cacheState()
+-		recordClusterContext := TimelineClusterContext(conn.ContextName())
+-
+-		core, err := k8score.NewDynamicResourceCache(k8score.DynamicCacheConfig{
++		cfg := k8score.DynamicCacheConfig{
+ 			RequiredWatchKinds:          relationshipWatchKinds(),
+ 			DynamicClient:               client,
+ 			DirectClient:                directClient,
+@@ -119,37 +114,9 @@ func (conn *Connection) initDynamicResourceCache(changeCh chan k8score.ResourceC
+ 			SyncStallAfter:              dynamicSyncStallAfter,
+ 			ObjectReadSyncWait:          dynamicObjectReadSyncWait,
+ 			DebugEvents:                 DebugEvents,
+-			OnReceived: func(kind string) {
+-				timeline.IncrementReceived(kind)
+-			},
+-			OnChange: func(change k8score.ResourceChange, obj, oldObj any) {
+-				u := extractUnstructured(obj)
+-				if u == nil {
+-					return
+-				}
+-				state.recordToTimelineStore(
+-					recordClusterContext,
+-					change.Kind,
+-					change.Namespace,
+-					change.Name,
+-					change.UID,
+-					change.Operation,
+-					oldObj,
+-					obj,
+-					change.Diff,
+-					true,
+-				)
+-			},
+-			OnDrop: func(kind, ns, name, reason, op string) {
+-				timeline.RecordDrop(kind, ns, name, reason, op, recordClusterContext)
+-			},
+-			OnRecorded: func(kind string) {
+-				timeline.IncrementRecorded(kind)
+-			},
+-			ComputeDiff: func(kind string, oldObj, newObj any) *k8score.DiffInfo {
+-				return ComputeDiff(kind, oldObj, newObj)
+-			},
+-		})
++		}
++		conn.configureDynamicCallbacks(&cfg)
++		core, err := k8score.NewDynamicResourceCache(cfg)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -158,6 +125,34 @@ func (conn *Connection) initDynamicResourceCache(changeCh chan k8score.ResourceC
+ 	})
  }
  
- /**
-- * The verdict filter's choices, from the verdicts the flows contain. Caretta,
-- * Beyla and Istio report every flow forwarded unless they saw an error, so when
-- * forwarded is the only verdict present the filter would match everything and
-- * none is offered. Any other verdict, even one without a chip of its own (Hubble
-+ * The verdict filter's choices, from the verdicts the flows contain. Caretta
-+ * and Istio report every flow forwarded unless they saw an error, and Beyla
-+ * reports no verdict unless it saw one, so when forwarded is the only verdict
-+ * present the filter would match everything and none is offered. Any other verdict, even one without a chip of its own (Hubble
-  * also reports redirected, audit and more), makes Forwarded a real choice.
-  */
- export function verdictChoices(seen: Iterable<string>): string[] {
-```
-
----
-
-### Incident Patch 2: `81e74dc3` (2026-11-20)
-**Commit Message**: Show what depends on a Flux Kustomization or HelmRelease, and flag a revision that isn't the last successful apply (#2630)
-
-## Description
-
-Two small gaps on the Flux drawers (#2629).
-
-### What changes
-
-- **`spec.dependsOn` becomes a dependency edge.** `addFluxSourceEdges`
-(`pkg/topology/flux_sources.go`) already turns a Flux object's source
-references into `declaredDependency` edges. It now also adds one per
-`spec.dependsOn` entry on a Kustomization or HelmRelease. The object
-depended on shows the dependent under **Required By** in Related
-Resources; the dependent shows it under **Depends On**.
-- The target is the root's own kind and API group, the only thing Flux
-accepts there. An entry without a namespace means the root's namespace.
-- A missing target adds nothing, the same as source references
-(`addObservedDependencyEdges` only links nodes that exist). A
-self-reference is skipped.
-- **Revision visible by default, with a marker.** The Kustomization
-**Revision** and HelmRelease **Revision Info** sections open by default.
-When the attempted revision differs from the applied one, it gets a `not
-the last successful apply` badge. The revision text wraps next to the
-badge, so a long G
-
-**File**: `docs/gitops.md` (modified, +1/-0)
-```diff
-@@ -360,6 +360,7 @@ Scoping and lifecycle:
- The GitOps tab isn't the only place Argo/Flux ownership matters. Surfaces across Radar know about GitOps and route into the right detail page when they should:
- 
- - **K8s resource drawer** — the header chip reads `relationships.ownership.manager` ([states](ownership.md#what-manages-an-object)): **Managed by** for `agree`, **Listed by** for `listed` and `shared`, **Tracked by** for `claimed` and `disagree` (with a warning for `disagree`), and **via <Kind>** when a controller ancestor answers. `unknown`/`none` show no chip; native Helm keeps its Helm chip. The tooltip says what names each manager; the manager's sync status shows only for `agree`. Several candidates open a menu naming each; only managers Radar found are linked, and an Application's namespace is never guessed. Older Radars without the answer keep the metadata-based chip. For a Flux manager, the tooltip of a **Tracked by** chip says what its inventory shows. A Kustomization whose `status.inventory` doesn't list the object usually means the object was removed from the source while `prune: false`, or the latest apply hasn't finished. For a HelmRelease, the usual causes are a Helm hook, an object kept by `helm.sh/resource-policy: keep`, or an unfinished release. When Radar can't read an inventory at all, the tooltip says so: a Kustomization records one once an apply succeeds, and a HelmRelease from Flux 2.8, whose helm-controller records it at each install or upgrade, so one on older Flux, or not upgraded since then, has none. An inventory with an entry Radar can't parse reads the same way.
-+- **Flux `dependsOn`** — a Kustomization or HelmRelease listed in another one's `spec.dependsOn` shows that one under **Required By**, and the dependent shows it under **Depends On**. Only the same kind counts, as in Flux; an entry without a namespace means the dependent's namespace. The Revision section of both drawers is open by default and marks an attempted revision that differs from the applied one (for a HelmRelease, the deployed chart version, or `status.lastAppliedRevision` when there is no release history) as **not the last successful apply**. Flux records the applied revision only after the apply and its health checks succeed, so the attempted revision's objects may already be in the cluster.
- - **Flux drawers** — the Kustomization and HelmRelease drawers list `status.inventory`, the objects the last apply recorded, when the controller records one, with the count in the section title.
- - **Related Resources in the resource drawer**:
-   - **Owner** and **Children** come from owner references, the links Kubernetes' garbage collector follows. A Deployment's or Rollout's old ReplicaSets (no Pods, not the current revision) sit behind *Show N older ReplicaSets*.
-```
-
-**File**: `docs/integrations.md` (modified, +2/-0)
-```diff
-@@ -828,6 +828,8 @@ observed Flux sources in both directions within Radar's namespace scope.
- Kustomizations use `spec.sourceRef`; HelmReleases use `spec.chart.spec.sourceRef`
- or `spec.chartRef`. Inline releases also link the generated HelmChart named by
- `status.helmChart`; an observed HelmChart links its source in its own namespace.
-+`spec.dependsOn` links a Kustomization or HelmRelease to the objects of the same
-+kind it waits for (an entry without a namespace means its own namespace).
- These are dependencies, not owners: topology draws each source upstream, with
- the edge pointing into the object that reads it. A link does not prove that Flux
- permits the reference or has produced an artifact.
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxHelmReleaseRenderer.tsx` (modified, +4/-2)
-```diff
-@@ -7,6 +7,7 @@ import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition }
- import { TimeValue } from '../../ui/ScheduleValue'
- import { getFluxDeployedRelease, getFluxHandledRequestToken, getFluxReleaseAttemptTime } from '../../../utils/flux-history'
- import { Tooltip } from '../../ui/Tooltip'
-+import { Badge } from '../../ui/Badge'
- 
- export interface FluxValuesReference {
-   kind?: 'ConfigMap' | 'Secret'
-@@ -85,6 +86,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-   const sourceRef = chartRef.sourceRef || {}
- 
-   const lastRelease = getFluxDeployedRelease(data)
-+  const deployedRevision = lastRelease?.chartVersion || status.lastAppliedRevision
- 
-   return (
-     <>
-@@ -338,7 +340,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
- 
-       {/* Revision info */}
-       {(status.helmChart || status.lastAppliedRevision || status.lastAttemptedRevision || handledRequest) && (
--        <Section title="Revision Info" defaultExpanded={false}>
-+        <Section title="Revision Info" defaultExpanded={true}>
-           <PropertyList>
-             {status.helmChart && (
-               <Property label="Helm Chart" value={status.helmChart} />
-@@ -347,7 +349,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-               <Property label="Applied Revision" value={status.lastAppliedRevision} />
-             )}
-             {status.lastAttemptedRevision && (
--              <Property label="Attempted Revision" value={status.lastAttemptedRevision} />
-+              <Property label="Attempted Revision" value={<><span className="break-words">{status.lastAttemptedRevision}</span>{deployedRevision && deployedRevision !== status.lastAttemptedRevision && <> <Badge severity="warning" size="sm">not the last successful apply</Badge></>}</>} />
-             )}
-             <Property label="Last handled manual request" value={handledRequest} />
-           </PropertyList>
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxTiming.test.tsx` (modified, +46/-0)
-```diff
-@@ -99,4 +99,50 @@ describe('Flux drawer and resource timing', () => {
-     const invalidHistory = renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { history: [{ ...helm.status.history[0], lastDeployed: 'invalid' }] } }} />)
-     expect(invalidHistory).not.toContain('Attempt started')
-   })
-+
-+  const text = (html: string) => html.replaceAll('<!-- -->', '')
-+  const ready = [{ type: 'Ready', status: 'True', reason: 'ReconciliationSucceeded' }]
-+
-+  it('opens Revision and flags an attempted revision that is not the last successful apply (Kustomization)', () => {
-+    const html = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, conditions: ready, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:bbb' } }} />))
-+    expect(html).toContain('main@sha1:aaa')
-+    expect(html).toContain('not the last successful apply')
-+    // The badge turns the value into an element, which Property no longer wraps; a long digest must still break.
-+    expect(html).toContain('<span class="break-words">main@sha1:bbb</span>')
-+    const section = html.match(/<button\b[\s\S]*?<\/button>/g)?.find(button => button.includes('>Revision<'))
-+    expect(section).toContain('aria-expanded="true"')
-+  })
-+
-+  it('does not call a revision that failed its health checks unapplied', () => {
-+    // kustomize-controller applies the objects, then records lastAppliedRevision only once health checks pass.
-+    const healthFailed = [{ type: 'Ready', status: 'False', reason: 'HealthCheckFailed' }]
-+    const html = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, conditions: healthFailed, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:bbb' } }} />))
-+    expect(html).not.toContain('not yet applied')
-+    expect(html).toContain('not the last successful apply')
-+  })
-+
-+  it('falls back to the applied revision for a HelmRelease without release history', () => {
-+    const html = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { lastAppliedRevision: '1.2.0', lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(html).toContain('not the last successful apply')
-+    const noChart = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { history: [{ version: 4, status: 'deployed' }], lastAppliedRevision: '1.2.0', lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(noChart).toContain('not the last successful apply')
-+  })
-+
-+  it('flags a HelmRelease whose attempted chart differs from the deployed one', () => {
-+    const html = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { ...helm.status, conditions: ready, lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(html).toContain('not the last successful apply')
-+    expect(html).toContain('<span class="break-words">1.4.0</span>')
-+    const section = html.match(/<button\b[\s\S]*?<\/button>/g)?.find(button => button.includes('Revision Info'))
-+    expect(section).toContain('aria-expanded="true"')
-+  })
-+
-+  it('shows no marker when the revisions match or one is missing', () => {
-+    const ks = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:aaa' } }} />))
-+    const hrMatch = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { ...helm.status, lastAttemptedRevision: '1.2.0' } }} />))
-+    const hrNoHistory = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(ks).not.toContain('not the last successful apply')
-+    expect(hrMatch).not.toContain('not the last successful apply')
-+    expect(hrNoHistory).not.toContain('not the last successful apply')
-+  })
- })
-+
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/KustomizationRenderer.tsx` (modified, +3/-2)
-```diff
-@@ -3,6 +3,7 @@ import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, Reso
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
- import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition } from '../../../types/gitops'
- import { TimeValue } from '../../ui/ScheduleValue'
-+import { Badge } from '../../ui/Badge'
- import { getFluxHandledRequestToken, getFluxLastApply } from '../../../utils/flux-history'
- 
- interface KustomizationRendererProps {
-@@ -166,13 +167,13 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
- 
-       {/* Revision info */}
-       {(status.lastAppliedRevision || status.lastAttemptedRevision || lastApply || handledRequest) && (
--        <Section title="Revision" defaultExpanded={false}>
-+        <Section title="Revision" defaultExpanded={true}>
-           <PropertyList>
-             {status.lastAppliedRevision && (
-               <Property label="Applied" value={status.lastAppliedRevision} />
-             )}
-             {status.lastAttemptedRevision && status.lastAttemptedRevision !== status.lastAppliedRevision && (
--              <Property label="Attempted" value={status.lastAttemptedRevision} />
-+              <Property label="Attempted" value={<><span className="break-words">{status.lastAttemptedRevision}</span>{status.lastAppliedRevision && <> <Badge severity="warning" size="sm">not the last successful apply</Badge></>}</>} />
-             )}
-             {lastApply && (
-               <Property
-```
-
-**File**: `pkg/topology/flux_sources.go` (modified, +30/-0)
-```diff
-@@ -12,6 +12,7 @@ func addFluxSourceEdges(nodes []Node, edges []Edge, roots []*unstructured.Unstru
- 	var refs []declaredDependency
- 	chartTargets := map[string]bool{}
- 	for _, root := range roots {
-+		refs = append(refs, fluxDependsOn(root)...)
- 		for _, ref := range gitops.FluxSourceReferences(root) {
- 			refs = append(refs, declaredDependency{Source: resourceid.NewRef(resourceid.GroupFromAPIVersion(root.GetAPIVersion()), root.GetKind(), root.GetNamespace(), root.GetName()), Target: ref.Ref, Label: ref.Role, Configuration: true})
- 			if ref.Kind == "HelmChart" {
-@@ -53,3 +54,32 @@ func addFluxSourceEdges(nodes []Node, edges []Edge, roots []*unstructured.Unstru
- 	nodes, edges, sourceWarnings := addObservedDependencyEdges(nodes, edges, refs, provider, opts)
- 	return nodes, edges, append(warnings, sourceWarnings...)
- }
-+
-+// fluxDependsOn turns spec.dependsOn into dependencies on objects of the
-+// root's own kind and group, the only targets Flux allows there.
-+func fluxDependsOn(root *unstructured.Unstructured) []declaredDependency {
-+	kind := root.GetKind()
-+	if kind != "Kustomization" && kind != "HelmRelease" {
-+		return nil
-+	}
-+	entries, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
-+	group := resourceid.GroupFromAPIVersion(root.GetAPIVersion())
-+	source := resourceid.NewRef(group, kind, root.GetNamespace(), root.GetName())
-+	var refs []declaredDependency
-+	for _, entry := range entries {
-+		dep, ok := entry.(map[string]any)
-+		if !ok {
-+			continue
++func (conn *Connection) configureDynamicCallbacks(cfg *k8score.DynamicCacheConfig) {
++	lifetime := conn.dynamicCacheState().lifetime
++	history := conn.cacheState()
++	cluster := TimelineClusterContext(conn.ContextName())
++	binding := timeline.CaptureStore()
++	cfg.ComputeDiff = func(kind string, oldObj, newObj any) *DiffInfo {
++		if lifetime.Err() != nil {
++			return nil
 +		}
-+		name, _ := dep["name"].(string)
-+		namespace, _ := dep["namespace"].(string)
-+		if namespace == "" {
-+			namespace = root.GetNamespace()
++		return ComputeDiff(kind, oldObj, newObj)
++	}
++	cfg.OnReceived = func(kind string) {
++		if lifetime.Err() == nil {
++			timeline.IncrementReceived(kind)
 +		}
-+		if namespace == root.GetNamespace() && name == root.GetName() {
-+			continue
++	}
++	cfg.OnChange = func(change ResourceChange, obj, oldObj any) {
++		if lifetime.Err() == nil && extractUnstructured(obj) != nil {
++			history.recordToTimelineStore(binding, cluster, change.Kind, change.Namespace, change.Name, change.UID, change.Operation, oldObj, obj, change.Diff, true)
 +		}
-+		refs = append(refs, declaredDependency{Source: source, Target: resourceid.NewRef(group, kind, namespace, name), Label: "depends on"})
 +	}
-+	return refs
-+}
-```
-
-**File**: `pkg/topology/flux_sources_test.go` (modified, +43/-0)
-```diff
-@@ -88,3 +88,46 @@ func TestFluxSourceGraphFollowsReferencedChart(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestFluxDependsOnBecomesRequiredBy(t *testing.T) {
-+	makeObject := func(group, kind, namespace, name string, dependsOn ...map[string]any) *unstructured.Unstructured {
-+		deps := make([]any, 0, len(dependsOn))
-+		for _, d := range dependsOn {
-+			deps = append(deps, d)
++	cfg.OnDrop = func(kind, ns, name, reason, op string) {
++		if lifetime.Err() == nil {
++			timeline.RecordDrop(kind, ns, name, reason, op, cluster)
 +		}
-+		return &unstructured.Unstructured{Object: map[string]any{"apiVersion": group + "/v1", "kind": kind, "metadata": map[string]any{"namespace": namespace, "name": name}, "spec": map[string]any{"dependsOn": deps}}}
-+	}
-+	const ksGroup, hrGroup = "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io"
-+	base := makeObject(ksGroup, "Kustomization", "team", "base")
-+	overlay := makeObject(ksGroup, "Kustomization", "team", "overlay", map[string]any{"name": "base"})
-+	app := makeObject(hrGroup, "HelmRelease", "team", "app", map[string]any{"name": "base"})
-+	db := makeObject(hrGroup, "HelmRelease", "team", "db-hr", map[string]any{"name": "missing"}, map[string]any{"name": "db-hr"})
-+	gvrs := map[string]schema.GroupVersionResource{
-+		"Kustomization": {Group: ksGroup, Version: "v1", Resource: "kustomizations"},
-+		"HelmRelease":   {Group: hrGroup, Version: "v2", Resource: "helmreleases"},
-+	}
-+	p := &issuerTestProvider{monitorDynamicProvider: monitorDynamicProvider{gvrs: gvrs, resources: map[schema.GroupVersionResource][]*unstructured.Unstructured{
-+		gvrs["Kustomization"]: {base, overlay}, gvrs["HelmRelease"]: {app, db},
-+	}}, listCalls: map[string]int{}}
-+	node := func(kind NodeKind, prefix, name, apiVersion string) Node {
-+		return Node{ID: prefix + "/team/" + name, Kind: kind, Name: name, Data: map[string]any{"namespace": "team", "apiVersion": apiVersion}}
-+	}
-+	nodes := []Node{
-+		node(KindKustomization, "kustomization", "base", base.GetAPIVersion()),
-+		node(KindKustomization, "kustomization", "overlay", overlay.GetAPIVersion()),
-+		node(KindHelmRelease, "helmrelease", "app", app.GetAPIVersion()),
-+		node(KindHelmRelease, "helmrelease", "db-hr", db.GetAPIVersion()),
-+	}
-+	nodes, edges, warnings := addFluxSourceEdges(nodes, nil, []*unstructured.Unstructured{base, overlay, app, db}, p, DefaultBuildOptions())
-+	if len(warnings) != 0 || len(nodes) != 4 {
-+		t.Fatalf("nodes=%d warnings=%v, want 4 nodes and no warnings", len(nodes), warnings)
-+	}
-+	want := Edge{ID: "kustomization/team/overlay-to-kustomization/team/base", Source: "kustomization/team/overlay", Target: "kustomization/team/base", Type: EdgeUses, Label: "depends on"}
-+	if len(edges) != 1 || !reflect.DeepEqual(edges[0], want) {
-+		t.Fatalf("edges = %+v, want only %+v", edges, want)
-+	}
-+	rel := GetRelationships("Kustomization", "team", "base", &Topology{Nodes: nodes, Edges: edges}, nil, p)
-+	if rel == nil || len(rel.Dependents) != 1 || rel.Dependents[0].Name != "overlay" {
-+		t.Fatalf("base dependents = %+v, want overlay", rel)
 +	}
 +}
++
+ func (s *connectionDynamicCache) init(build func() (*DynamicResourceCache, error)) error {
+ 	var initErr error
+ 	s.once.Do(func() {
 ```
 
----
-
-### Incident Patch 3: `7feff693` (2026-11-20)
-**Commit Message**: fix(gitops): keep Flux HelmRelease chart versions whole (#2783)
-
-## Description
-
-The GitOps tree shows a warning chip `attempted <version>` on a Flux
-HelmRelease whose last attempt installed exactly the version it runs,
-whenever that version is longer than 12 characters.
-
-`enrichNodeFromObject`
-([graph.go#L139-L150](https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/pkg/gitops/tree/graph.go#L139-L150))
-cuts `status.lastAttemptedRevision` to 12 characters with
-`truncateRevision`, which is meant for Git revisions, and then sets
-`revision` to the whole chart version from `status.history`. The tree
-adds the chip when the two differ
-([GitOpsTreeGraph.tsx#L719-L722](https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/packages/k8s-ui/src/components/gitops/tree/GitOpsTreeGraph.tsx#L719-L722)),
-so a version with build metadata such as `1.4.2+0f3c9a1b7e` never equals
-its own attempt.
-
-The fix stops cutting a Flux HelmRelease's `lastAppliedRevision` and
-`lastAttemptedRevision`: they are chart versions, not Git revisions, so
-both sides of the comparison now have the same form. A failed first
-install, with nothing installed yet, now n
-
-**File**: `pkg/gitops/tree/flux_source_facts_test.go` (modified, +20/-0)
+**File**: `internal/k8s/history_group_dispatch_test.go` (modified, +1/-1)
 ```diff
-@@ -111,4 +111,24 @@ func TestHelmReleaseRevisionIsTheInstalledChart(t *testing.T) {
- 	if node.Data["revision"] != "6.15.0" || node.Data["attemptedRevision"] != "6.16.0" {
- 		t.Fatalf("failed upgrade: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
- 	}
-+	// A version with build metadata is longer than a short revision; the
-+	// attempt that installed it must still equal it.
-+	obj.Object["status"] = map[string]any{
-+		"lastAttemptedRevision": "1.4.2+0f3c9a1b7e",
-+		"history":               []any{map[string]any{"version": int64(4), "chartVersion": "1.4.2+0f3c9a1b7e", "status": "deployed"}},
-+	}
-+	node = enrichNodeFromObject(Node{Tool: ToolFluxCD}, obj)
-+	if node.Data["revision"] != "1.4.2+0f3c9a1b7e" || node.Data["attemptedRevision"] != "1.4.2+0f3c9a1b7e" {
-+		t.Fatalf("long version: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
-+	}
-+	// A failed first install leaves nothing installed; the attempt still
-+	// names the version it tried, not a prefix of it.
-+	obj.Object["status"] = map[string]any{
-+		"lastAttemptedRevision": "1.4.2+0f3c9a1b7e",
-+		"history":               []any{map[string]any{"version": int64(1), "chartVersion": "1.4.2+0f3c9a1b7e", "status": "failed"}},
-+	}
-+	node = enrichNodeFromObject(Node{Tool: ToolFluxCD}, obj)
-+	if node.Data["revision"] != nil || node.Data["attemptedRevision"] != "1.4.2+0f3c9a1b7e" {
-+		t.Fatalf("failed install: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
-+	}
- }
+@@ -138,7 +138,7 @@ func TestRecordToTimelineStore_CollidingCRDUpdateSurvives(t *testing.T) {
+ 	newJob.SetResourceVersion("2")
+ 
+ 	diff := ComputeDiff("Job", oldJob, newJob)
+-	state.recordToTimelineStore(ActiveClusterContext(), "Job", "gpu-demo", "collision-demo", "volcano-job-uid", "update", oldJob, newJob, diff, true)
++	state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Job", "gpu-demo", "collision-demo", "volcano-job-uid", "update", oldJob, newJob, diff, true)
+ 
+ 	events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{
+ 		Kinds: []string{"Job"}, Namespaces: []string{"gpu-demo"},
 ```
 
-**File**: `pkg/gitops/tree/graph.go` (modified, +10/-2)
+**File**: `internal/k8s/history_kueue_test.go` (modified, +2/-2)
 ```diff
-@@ -133,11 +133,19 @@ func enrichNodeFromObject(node Node, obj *unstructured.Unstructured) Node {
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "operationState", "syncResult", "revision"); ok && rev != "" {
- 		node.Data["lastSyncRevision"] = truncateRevision(rev)
- 	}
-+	// A Flux HelmRelease's revisions are chart versions, not Git revisions.
-+	// Cut to 12 characters, a version with build metadata (1.4.2+0f3c9a1b7e)
-+	// no longer equals the whole version status.history records, and the tree
-+	// flags a healthy release as a failed attempt.
-+	displayRevision := truncateRevision
-+	if obj.GetKind() == "HelmRelease" && gitops.ToolOf(obj) == gitops.ToolFluxCD {
-+		displayRevision = func(rev string) string { return rev }
-+	}
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "lastAppliedRevision"); ok && rev != "" {
--		node.Data["revision"] = truncateRevision(rev)
-+		node.Data["revision"] = displayRevision(rev)
- 	}
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "lastAttemptedRevision"); ok && rev != "" {
--		node.Data["attemptedRevision"] = truncateRevision(rev)
-+		node.Data["attemptedRevision"] = displayRevision(rev)
- 	}
- 	if rev, ok, _ := unstructured.NestedInt64(obj.Object, "status", "lastReleaseRevision"); ok && rev > 0 {
- 		node.Data["revision"] = fmt.Sprintf("rev:%d", rev)
+@@ -476,8 +476,8 @@ func TestRecordToTimelineStore_KueueWorkloadChurnDroppedTransitionKept(t *testin
+ 		withAdmission("busy", 1, map[string]any{"cpu": "default"}, map[string]any{"cpu": "20m"}))
+ 	reserved.SetResourceVersion("3")
+ 
+-	state.recordToTimelineStore(ActiveClusterContext(), "Workload", "ml", pending.GetName(), "wl-uid", "update", pending, churn, nil, false)
+-	state.recordToTimelineStore(ActiveClusterContext(), "Workload", "ml", pending.GetName(), "wl-uid", "update", churn, reserved, nil, false)
++	state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Workload", "ml", pending.GetName(), "wl-uid", "update", pending, churn, nil, false)
++	state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Workload", "ml", pending.GetName(), "wl-uid", "update", churn, reserved, nil, false)
+ 
+ 	events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Workload"}, Namespaces: []string{"ml"}, IncludeManaged: true})
+ 	if err != nil {
+```
+
+**File**: `internal/k8s/history_node_test.go` (modified, +3/-3)
+```diff
+@@ -142,7 +142,7 @@ func TestRecordToTimelineStore_NodeExcludedMetadata(t *testing.T) {
+ 					t.Fatal(err)
+ 				}
+ 				for _, precomputed := range []bool{false, true} {
+-					state.recordToTimelineStore(ActiveClusterContext(), "Node", "", "worker", "node-uid", "update", oldNode, newNode, nil, precomputed)
++					state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Node", "", "worker", "node-uid", "update", oldNode, newNode, nil, precomputed)
+ 				}
+ 				events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Node"}})
+ 				if err != nil || len(events) != 0 {
+@@ -348,7 +348,7 @@ func TestRecordToTimelineStore_NodeConfiguration(t *testing.T) {
+ 				if want == nil {
+ 					t.Fatal("expected configuration diff with no generation")
+ 				}
+-				state.recordToTimelineStore(ActiveClusterContext(), "Node", "", "worker", "node-uid", "update", oldNode, newNode, want, precomputed)
++				state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Node", "", "worker", "node-uid", "update", oldNode, newNode, want, precomputed)
+ 				events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Node"}})
+ 				if err != nil || len(events) != 1 || !reflect.DeepEqual(events[0].Diff, want) {
+ 					t.Fatalf("recorded events = %+v, err=%v, want diff %+v", events, err, want)
+@@ -368,7 +368,7 @@ func TestRecordToTimelineStore_NodeCreationHasNoMetadataDiff(t *testing.T) {
+ 	state.initialSyncComplete.Store(true)
+ 	node := &corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "fresh-node", UID: "fresh-uid", CreationTimestamp: metav1.Now(),
+ 		Labels: map[string]string{"topology.kubernetes.io/zone": "east"}, Annotations: map[string]string{"projectcalico.org/IPv4Address": "10.0.0.1/24"}}}
+-	state.recordToTimelineStore(ActiveClusterContext(), "Node", "", node.Name, string(node.UID), "add", nil, node, nil, false)
++	state.recordToTimelineStore(timeline.CaptureStore(), ActiveClusterContext(), "Node", "", node.Name, string(node.UID), "add", nil, node, nil, false)
+ 	events, err := timeline.GetStore().Query(context.Background(), timeline.QueryOptions{Kinds: []string{"Node"}})
+ 	if err != nil || len(events) != 1 || events[0].EventType != timeline.EventTypeAdd || events[0].Diff != nil {
+ 		t.Fatalf("creation produced metadata changes: %+v, err=%v", events, err)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2822** (2026-11-20): Stop logging the large-cluster notice on every topology build (@nadaverell)
-- **PR #2812** (2026-11-20): Scale Java4Shell scans and support Amazon ECR (@nadaverell)
-- **PR #2811** (2026-11-20): Show MetalLB pools, advertisements, peers and rejected configuration (@officialasishkumar)
-- **PR #2810** (2026-11-19): Surface likely Java workloads in the Java4Shell check (@nadaverell)
-- **PR #2809** (2026-11-19): Draw Karpenter, Crossplane and MachineHealthCheck links on a neighborhood's last hop (@nadaverell)
-- **PR #2808** (2026-11-19): Place an Argo CD Application that Managed By names without a namespace (@nadaverell)
+- **PR #2872** (2026-11-23): Export Topology and Live Traffic graphs as SVG and draw.io (@hisco)
+- **PR #2868** (2026-11-23): Don't let a stuck metrics poll hold up a cluster switch (@nadaverell)
+- **PR #2864** (2026-11-23): Clarify resource timeline scope and compact history limits (@nadaverell)
+- **PR #2863** (2026-11-23): Clarify empty resource timelines and history coverage (@nadaverell)
+- **PR #2862** (2026-11-23): Sort vulnerabilities by exposure: routes from outside the cluster first (@hisco)
+- **PR #2860** (2026-11-23): Keep the PolicyReport index on the connection it was built for (@nadaverell)
 
 ---
 
@@ -3088,6 +3859,41 @@ install, with nothing installed yet, now n
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Keep the PolicyReport index on the connection it was built for
+
+**RULE**:
+When implementing operations in `internal/k8s/cache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6eefe059`: Keep the PolicyReport index on the connection it was built for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/cache.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	return c.customResourcesPending(GetDynamicResourceCache())
+}
+
+func (c *ResourceCache) customResourcesPending(dynamicCache *DynamicResourceCache) bool {
+	return c != nil && c.apiDiscoveryPending.Load() && dynamicCache == nil
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	return c != nil && c.apiDiscoveryPending.Load() && GetDynamicResourceCache() == nil
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6eefe059` are properly handled with clean fallback behavior.
 
 
 ## Consequences

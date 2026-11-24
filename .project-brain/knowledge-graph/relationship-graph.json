@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T00:40:50.551Z",
+  "updated_at": "2026-11-24T00:58:04.503Z",
   "statistics": {
-    "total_nodes": 493,
+    "total_nodes": 494,
     "total_edges": 205,
     "domain_distribution": {
       "D": 300,
@@ -14,7 +14,7 @@
       "K": 29,
       "L": 8,
       "G": 1,
-      "F": 26,
+      "F": 27,
       "B": 4,
       "E": 2,
       "I": 12
@@ -11013,6 +11013,28 @@
       ],
       "created_at": "2026-11-24T00:40:50.551Z",
       "updated_at": "2026-11-24T00:40:50.551Z"
+    },
+    "DOM-F-0B02F7F4": {
+      "id": "DOM-F-0B02F7F4",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Refused, message says nothing changed, no write on either cluster; the tab resets to the new cluster on its next status poll; the switching tab's restart writes the new cluster only: connection-lifecycle-ui-checkmjs",
+      "summary": "`connection-lifecycle-ui-check.mjs` -> `connection-lifecycle-ui-check.mjs`",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "U1",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-24T00:58:04.503Z",
+      "updated_at": "2026-11-24T00:58:04.503Z"
     }
   },
   "edges": [

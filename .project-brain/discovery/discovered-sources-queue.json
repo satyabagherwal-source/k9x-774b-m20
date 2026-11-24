@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T00:49:13.542Z",
+  "updated_at": "2026-11-24T00:57:32.955Z",
   "stats": {
-    "total_discovered": 8165,
-    "approved_pending_harvest": 7733,
+    "total_discovered": 8172,
+    "approved_pending_harvest": 7740,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7714,
+      "COMMUNITY_AND_EXPERT": 7721,
       "OFFICIAL_DOCUMENTATION": 265,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -176629,6 +176629,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
         "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-5114E8CA4388": {
+      "id": "SRC-5114E8CA4388",
+      "url": "https://github.com/google/tcmalloc/pull/1959/checks?check_run_id=138002976258",
+      "title": "https://github.com/google/tcmalloc/pull/1959/checks?check_run_id=138002976258",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:31.730Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-9BE8A22F6116": {
+      "id": "SRC-9BE8A22F6116",
+      "url": "https://github.com/google/tcmalloc/pull/1957/checks?check_run_id=137896562011",
+      "title": "https://github.com/google/tcmalloc/pull/1957/checks?check_run_id=137896562011",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:31.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-F03A6BF3F6CA": {
+      "id": "SRC-F03A6BF3F6CA",
+      "url": "https://github.com/software-mansion/react-native-screens-labs/issues/2094",
+      "title": "https://github.com/software-mansion/react-native-screens-labs/issues/2094",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:32.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-450018A577D7": {
+      "id": "SRC-450018A577D7",
+      "url": "https://github.com/software-mansion/react-native-screens-labs/pull/1947",
+      "title": "https://github.com/software-mansion/react-native-screens-labs/pull/1947",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:32.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-44292CD23B26": {
+      "id": "SRC-44292CD23B26",
+      "url": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5301?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5301?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:32.790Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-78AA8BFD45C5": {
+      "id": "SRC-78AA8BFD45C5",
+      "url": "https://github.com/software-mansion/react-native-screens/issues/5158",
+      "title": "https://github.com/software-mansion/react-native-screens/issues/5158",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:32.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-744B847BC98E": {
+      "id": "SRC-744B847BC98E",
+      "url": "https://github.com/software-mansion/react-native-screens/pull/5162",
+      "title": "https://github.com/software-mansion/react-native-screens/pull/5162",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:57:32.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
       }
     }
   }

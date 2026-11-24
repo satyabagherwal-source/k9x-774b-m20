@@ -4,22 +4,22 @@
 {
   "source_repository": "google/tcmalloc",
   "source_url": "https://github.com/google/tcmalloc",
-  "source_version": "6aebbb38",
+  "source_version": "fc4555d2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T17:22:02.602Z",
+  "timestamp": "2026-11-24T00:57:16.258Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-google-tcmalloc",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `6aebbb38`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T17:22:02.602Z`  
+> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `fc4555d2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T00:57:16.258Z`  
 > **Learning ID**: `learn-github-google-tcmalloc`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `google/tcmalloc` (Commit: `6aebbb38`)
+- **Target Repository**: `google/tcmalloc` (Commit: `fc4555d2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:22:01.267Z  
+> **Harvest Timestamp**: 2026-11-24T00:57:14.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5409 stars
+- **Stars / Engagement**: 5411 stars
 
 ---
 
@@ -1258,13 +1258,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1952** (2026-11-20): **Skip IsHugepageBacked on sampled and cold partitions.**
-  *Symptoms*: Skip IsHugepageBacked on sampled and cold partitions.  Sampled and cold partitions map regions with `MADV_NOHUGEPAGE`, preventing fault-time THP allocation and `khugepaged` collapse. However, `HugePageUnbackedTrackerTreatment::Observe` still queries `PageFlags::IsHugepageBacked` on every scan of sampled and cold trackers.  Skip `IsHugepageBacked` when `IsSampledOrColdMemory(page_filler_.tag())` is true and proceed directly to reading single-page residency bitmaps. 
-
-- **Issue #1951** (2026-11-20): **Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.**
-  *Symptoms*: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. 
+- **Issue #1959** (2026-11-23): **Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto.**
+  *Symptoms*: Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto.  Consistent with sampling-disabled builds, return NotFoundError from MakeProfileProto when given an empty profile because TCMalloc is disabled or unavailable (for example, when a custom allocator or unsupported sanitizer is linked). 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1951/checks?check_run_id=136462830257) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1959/checks?check_run_id=138002976258) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+
+- **Issue #1957** (2026-11-23): **Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE.**
+  *Symptoms*: Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE. 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1957/checks?check_run_id=137896562011) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1281,499 +1283,408 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6aebbb38` (2026-11-21)
-**Commit Message**: Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.
+### Incident Patch 1: `fc4555d2` (2026-11-24)
+**Commit Message**: Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.
 
-`TcmallocSlab::Pop` currently issues a single read-intent prefetch for the first byte of the next object on the per-CPU freelist (`PrefetchNextObject`). Freshly allocated memory is written before it is read—so a shared-state read prefetch still incurs a store-upgrade stall—and allocations spanning multiple cache lines or straddling a cache-line boundary miss on their second cache line.
+Flip `TCMALLOC_INTERNAL_WRITE_PREFETCH` to 1 by default so `TcmallocSlab::Pop` prefetches up to the second cache line of the next object with write intent (`PrefetchWT0`). Switch the build and test variant to `no_write_prefetch` (`-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0`) to keep the legacy single-line read-prefetch fallback covered, and update fast-path disassembly goldens.
 
-Forward the requested allocation size through `CpuCache::AllocateFast`, `AllocateSlow`, and `AllocateSlowNoHooks` to `TcmallocSlab::Pop` and, when compiled with `-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1` (disabled by default for rollout), issue write-intent prefetches (`PrefetchWT0`) at `prefetch_target` and branchlessly (`CMOV`/`CSEL`) at `prefetch_target + std::min<uint32_t>(size, ABSL_CACHELINE_SIZE + 1) - 1`. Single-line objects prefetch the same line (or a straddled second line), larger objects prefetch the second cache line, and test-only `CpuCache::Allocate` passes the size-class size. Add the `write_prefetch` build and test variant to cover the enabled path.
+PiperOrigin-RevId: 1028550078
 
-PiperOrigin-RevId: 1027054307
-
-**File**: `tcmalloc/BUILD` (modified, +27/-0)
+**File**: `tcmalloc/BUILD` (modified, +3/-3)
 ```diff
-@@ -658,6 +658,33 @@ cc_library(
-     alwayslink = 1,
+@@ -660,21 +660,21 @@ cc_library(
  )
  
-+cc_library(
-+    name = "tcmalloc_write_prefetch",
-+    srcs = [
-+        "libc_override.h",
-+        "tcmalloc.cc",
-+        "tcmalloc.h",
-+    ],
-+    copts = [
-+        "-DTCMALLOC_INTERNAL_8K_PAGES",
-+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
-+    ] + TCMALLOC_DEFAULT_COPTS,
-+    linkstatic = 1,
-+    visibility = [":tcmalloc_tests"],
-+    deps = tcmalloc_deps + [
-+        ":alloc_at_least",
-+        ":common_write_prefetch",
-+        ":malloc_hook",
-+        "//tcmalloc/internal:allocation_guard",
-+        "//tcmalloc/internal:is_aligned_to",
-+        "//tcmalloc/internal:overflow",
-+        "//tcmalloc/internal:page_size",
-+        "@com_google_absl//absl/time",
-+        "@com_google_absl//absl/types:span",
-+    ],
-+    alwayslink = 1,
-+)
-+
- # Export some header files to //tcmalloc/testing/...
- package_group(
-     name = "tcmalloc_tests",
+ cc_library(
+-    name = "tcmalloc_write_prefetch",
++    name = "tcmalloc_no_write_prefetch",
+     srcs = [
+         "libc_override.h",
+         "tcmalloc.cc",
+         "tcmalloc.h",
+     ],
+     copts = [
+         "-DTCMALLOC_INTERNAL_8K_PAGES",
+-        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
++        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0",
+     ] + TCMALLOC_DEFAULT_COPTS,
+     linkstatic = 1,
+     visibility = [":tcmalloc_tests"],
+     deps = tcmalloc_deps + [
+         ":alloc_at_least",
+-        ":common_write_prefetch",
++        ":common_no_write_prefetch",
+         ":malloc_hook",
+         "//tcmalloc/internal:allocation_guard",
+         "//tcmalloc/internal:is_aligned_to",
 ```
 
-**File**: `tcmalloc/CMakeLists.txt` (modified, +54/-0)
+**File**: `tcmalloc/CMakeLists.txt` (modified, +4/-4)
 ```diff
-@@ -861,6 +861,60 @@ tcmalloc_cc_library(
-     "tcmalloc::malloc_tracing_extension"
- )
+@@ -864,17 +864,17 @@ tcmalloc_cc_library(
  
-+tcmalloc_cc_library(
-+  NAME
-+    tcmalloc_tcmalloc_write_prefetch
-+  ALIAS
-+    tcmalloc::tcmalloc_write_prefetch
-+  ALWAYSLINK
-+  SRCS
-+    "libc_override.h"
-+    "tcmalloc.cc"
-+    "tcmalloc.h"
-+  COPTS
-+    "-DTCMALLOC_INTERNAL_8K_PAGES"
-+    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1"
-+  DEPS
-+    "absl::base"
-+    "absl::bits"
-+    "absl::config"
-+    "absl::core_headers"
-+    "absl::dynamic_annotations"
-+    "absl::memory"
-+    "absl::span"
-+    "absl::stacktrace"
-+    "absl::status"
-+    "absl::statusor"
-+    "absl::str_format"
-+    "absl::strings"
-+    "absl::symbolize"
-+    "absl::time"
-+    "tcmalloc::alloc_at_least"
-+    "tcmalloc::common_write_prefetch"
-+    "tcmalloc::experiment"
-+    "tcmalloc::internal_allocation_guard"
-+    "tcmalloc::internal_central_freelist_hooks"
-+    "tcmalloc::internal_config"
-+    "tcmalloc::internal_declarations"
-+    "tcmalloc::internal_is_aligned_to"
-+    "tcmalloc::internal_linked_list"
-+    "tcmalloc::internal_logging"
-+    "tcmalloc::internal_memory_tag"
-+    "tcmalloc::internal_optimization"
-+    "tcmalloc::internal_overflow"
-+    "tcmalloc::internal_packed_ptr"
-+    "tcmalloc::internal_page_allocation_status"
-+    "tcmalloc::internal_page_size"
-+    "tcmalloc::internal_percpu"
-+    "tcmalloc::internal_prefetch"
-+    "tcmalloc::internal_range_tracker"
-+    "tcmalloc::internal_sampled_allocation"
-+    "tcmalloc::internal_system_allocator"
-+    "tcmalloc::malloc_extension"
-+    "tcmalloc::malloc_hook"
-+    "tcmalloc::malloc_tracing_extension"
-+)
-+
  tcmalloc_cc_library(
    NAME
-     tcmalloc_mock_central_freelist
+-    tcmalloc_tcmalloc_write_prefetch
++    tcmalloc_tcmalloc_no_write_prefetch
+   ALIAS
+-    tcmalloc::tcmalloc_write_prefetch
++    tcmalloc::tcmalloc_no_write_prefetch
+   ALWAYSLINK
+   SRCS
+     "libc_override.h"
+     "tcmalloc.cc"
+     "tcmalloc.h"
+   COPTS
+     "-DTCMALLOC_INTERNAL_8K_PAGES"
+-    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1"
++    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0"
+   DEPS
+     "absl::base"
+     "absl::bits"
+@@ -891,7 +891,7 @@ tcmalloc_cc_library(
+     "absl::symbolize"
+     "absl::time"
+     "tcmalloc::alloc_at_least"
+-    "tcmalloc::common_write_prefetch"
++    "tcmalloc::common_no_write_prefetch"
+     "tcmalloc::experiment"
+     "tcmalloc::internal_allocation_guard"
+     "tcmalloc::internal_central_freelist_hooks"
 ```
 
-**File**: `tcmalloc/cpu_cache.h` (modified, +16/-11)
+**File**: `tcmalloc/internal/percpu_tcmalloc.h` (modified, +1/-1)
 ```diff
-@@ -225,11 +225,15 @@ class CpuCache {
-   // Separate allocation fast/slow paths.
-   // The fast path succeeds iff the thread has already cached the slab pointer
-   // (done by AllocateSlow) and there is an available object in the slab.
--  [[nodiscard]] void* absl_nullable AllocateFast(size_t size_class);
--  [[nodiscard]] void* absl_nullable AllocateSlow(size_t size_class);
-+  // `size` is the requested allocation size, used only as a prefetch hint.
-+  [[nodiscard]] void* absl_nullable AllocateFast(size_t size_class,
-+                                                 size_t size);
-+  [[nodiscard]] void* absl_nullable AllocateSlow(size_t size_class,
-+                                                 size_t size);
-   // A slightly faster version of AllocateSlow that may be called only
-   // when it's known that no hooks are installed.
--  [[nodiscard]] void* absl_nullable AllocateSlowNoHooks(size_t size_class);
-+  [[nodiscard]] void* absl_nullable AllocateSlowNoHooks(size_t size_class,
-+                                                        size_t size);
- 
-   // Free an object of the given class.
-   void Deallocate(void* absl_nonnull ptr, size_t size_class);
-@@ -813,18 +817,19 @@ class CpuCache {
- 
- template <class Forwarder>
- void* CpuCache<Forwarder>::Allocate(size_t size_class) {
--  void* ret = AllocateFast(size_class);
-+  const size_t size = forwarder_.class_to_size(size_class);
-+  void* ret = AllocateFast(size_class, size);
-   if (ABSL_PREDICT_TRUE(ret != nullptr)) {
-     return ret;
-   }
--  TCMALLOC_MUSTTAIL return AllocateSlow(size_class);
-+  return AllocateSlow(size_class, size);
- }
- 
- template <class Forwarder>
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* CpuCache<Forwarder>::AllocateFast(
--    size_t size_class) {
-+    size_t size_class, size_t size) {
-   TC_ASSERT_GT(size_class, 0);
--  return freelist_.Pop(size_class);
-+  return freelist_.Pop(size_class, size);
- }
- 
- template <class Forwarder>
-@@ -1202,14 +1207,14 @@ inline void CpuCache<Forwarder>::ReleaseToBackingCache(
- }
- 
- template <class Forwarder>
--void* CpuCache<Forwarder>::AllocateSlow(size_t size_class) {
--  void* ret = AllocateSlowNoHooks(size_class);
-+void* CpuCache<Forwarder>::AllocateSlow(size_t size_class, size_t size) {
-+  void* ret = AllocateSlowNoHooks(size_class, size);
-   MaybeForceSlowPath();
-   return ret;
- }
- 
- template <class Forwarder>
--void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class) {
-+void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class, size_t size) {
-   if (ABSL_PREDICT_FALSE(BypassCpuCache(size_class))) {
-     return forwarder_.sharded_transfer_cache().Pop(size_class);
-   }
-@@ -1226,7 +1231,7 @@ void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class) {
- #endif
-       return ptr;
-     }
--    if (void* ret = AllocateFast(size_class);
-+    if (void* ret = AllocateFast(size_class, size);
-         ABSL_PREDICT_FALSE(ret != nullptr)) {
-       return ret;
-     }
-```
-
-**File**: `tcmalloc/internal/BUILD` (modified, +1/-0)
-```diff
-@@ -1119,6 +1119,7 @@ cc_test(
-         ":sysinfo",
-         "//tcmalloc:malloc_extension",
-         "//tcmalloc/testing:testutil",
-+        "@com_google_absl//absl/base:core_headers",
-         "@com_google_absl//absl/container:flat_hash_set",
-         "@com_google_absl//absl/functional:function_ref",
-         "@com_google_absl//absl/log:check",
-```
-
-**File**: `tcmalloc/internal/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -1123,6 +1123,7 @@ tcmalloc_cc_test(
-     "GTest::gtest"
-     "GTest::gmock"
-     "absl::check"
-+    "absl::core_headers"
-     "absl::flat_hash_set"
-     "absl::function_ref"
-     "absl::str_format"
-```
-
-**File**: `tcmalloc/internal/percpu_tcmalloc.h` (modified, +30/-8)
-```diff
-@@ -57,6 +57,10 @@
- #define TCMALLOC_INTERNAL_PERCPU_USE_TLS_WORKAROUND 0
+@@ -58,7 +58,7 @@
  #endif
  
-+#ifndef TCMALLOC_INTERNAL_WRITE_PREFETCH
-+#define TCMALLOC_INTERNAL_WRITE_PREFETCH 0
-+#endif
-+
+ #ifndef TCMALLOC_INTERNAL_WRITE_PREFETCH
+-#define TCMALLOC_INTERNAL_WRITE_PREFETCH 0
++#define TCMALLOC_INTERNAL_WRITE_PREFETCH 1
+ #endif
+ 
  GOOGLE_MALLOC_SECTION_BEGIN
- namespace tcmalloc {
- namespace tcmalloc_internal {
-@@ -197,7 +201,8 @@ class TcmallocSlab {
- 
-   // Remove an item (LIFO) from the current CPU's slab. If the slab is empty,
-   // invokes <underflow_handler> and returns its result.
--  [[nodiscard]] void* Pop(size_t size_class);
-+  // `size` is the requested allocation size, used only as a prefetch hint.
-+  [[nodiscard]] void* Pop(size_t size_class, size_t size);
- 
-   // Add up to <len> items to the current cpu slab from the array located at
-   // <batch>. Returns the number of items that were added (possibly 0). All
-@@ -836,7 +841,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE bool TcmallocSlab<NumClasses>::Push(
- // It is in a distinct, always-lined method to make its cost more transparent
- // when profiling with debug information.
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void PrefetchNextObject(
--    void* prefetch_target) {
-+    void* prefetch_target, [[maybe_unused]] size_t size) {
-   // A note about prefetcht0 in Pop:  While this prefetch may appear costly,
-   // trace analysis shows the target is frequently used (b/70294962). Stalling
-   // on a TLB miss at the prefetch site (which has no deps) and prefetching the
-@@ -846,15 +851,32 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void PrefetchNextObject(
-   // See "Beyond malloc efficiency to fleet efficiency"
-   // (https://research.google/pubs/pub50370/), section 6.4 for additional
-   // details.
--  //
-+#if TCMALLOC_INTERNAL_WRITE_PREFETCH
-+  // Prefetch the first two cache lines of the next object with write intent,
-+  // capped by `size` without branches (compiles to CMOV/CSEL): for objects <= 1
-+  // cache line this stays on the same line (or covers a straddled boundary),
-+  // while larger objects prefetch the second cache line.
-+  // Do the arithmetic in uintptr_t (with left-associative `(p + min) - 1`) to
-+  // avoid C++ pointer-arithmetic UB when `size == 0`; prefetching `p - 1` for
-+  // rare zero-sized allocations is intentional to avoid adding instructions to
-+  // the hot path. Callers pass small sizes (<= kMaxSize), which fit in
-+  // uint32_t without truncation.
-+  const uintptr_t p = reinterpret_cast<uintptr_t>(prefetch_target);
-+  PrefetchWT0(prefetch_target);
-+  PrefetchWT0(reinterpret_cast<const void*>(
-+      p +
-+      std::min<uint32_t>(static_cast<uint32_t>(size), ABSL_CACHELINE_SIZE + 1) -
-+      1));
-+#else
-   // TODO(b/214608320): Evaluate prefetch for write.
-   __builtin_prefetch(prefetch_target, 0, 3);
-+#endif
- }
- 
- #if TCMALLOC_INTERNAL_PERCPU_USE_RSEQ && defined(__x86_64__)
- template <size_t NumClasses>
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
--    size_t size_class) {
-+    size_t size_class, size_t size) {
-   TC_ASSERT_NE(size_class, 0);
-   void* next;
-   void* result;
-@@ -891,7 +913,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
-   // The next pop will be from current-2, but because we prefetch the previous
-   // element we've already just read that, so prefetch current-3.
-   PrefetchSlabMemory(tcmalloc_slabs_addr + (current - 3) * sizeof(void*));
--  PrefetchNextObject(next);
-+  PrefetchNextObject(next, size);
-   return AssumeNotNull(result);
- underflow_path:
-   return nullptr;
-@@ -901,7 +923,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
- #if TCMALLOC_INTERNAL_PERCPU_USE_RSEQ && defined(__aarch64__)
- template <size_t NumClasses>
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
--    size_t size_class) {
-+    size_t size_class, size_t size) {
-   TC_ASSERT_NE(size_class, 0);
-   void* result;
-   void* region_start;
-@@ -949,7 +971,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
-   // The next pop will be from current-2, but because we prefetch the previous
-   // element we've already just read that, so prefetch current-3.
-   PrefetchSlabMemory(current_plus_slabs_addr - 3 * sizeof(void*));
--  PrefetchNextObject(prefetch);
-+  PrefetchNextObject(prefetch, size);
-   return AssumeNotNull(result);
- underflow_path:
-   return nullptr;
-@@ -959,7 +981,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
- #if !TCMALLOC_INTERNAL_PERCPU_USE_RSEQ
- template <size_t NumClasses>
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
--    size_t size_class) {
-+    [[maybe_unused]] size_t size_class, [[maybe_unused]] size_t size) {
-   return nullptr;
- }
- #endif
 ```
 
-**File**: `tcmalloc/internal/percpu_tcmalloc_fuzz.cc` (modified, +19/-5)
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +9/-9)
 ```diff
-@@ -32,6 +32,7 @@
- 
- #include "gtest/gtest.h"
- #include "fuzztest/fuzztest.h"
-+#include "absl/base/optimization.h"
- #include "absl/container/flat_hash_set.h"
- #include "absl/functional/function_ref.h"
- #include "absl/log/check.h"
-@@ -131,9 +132,20 @@ struct State {
- };
- 
- // We select different sizes for different size classes, so that ASan can notice
--// if we confuse objects across size classes.
-+// if we confuse objects across size classes, and span smaller than, equal to,
-+// and larger than a cache line to exercise Pop prefetch offset calculations.
- static size_t FakeSizeForSizeClass(size_t size_class) {
--  return 16 + size_class;
-+  static_assert(kNumClasses == 5);
-+  static constexpr std::array<size_t, kNumClasses> kSizes = {
-+      0,
-+      16,
-+      ABSL_CACHELINE_SIZE,
-+      ABSL_CACHELINE_SIZE + 1,
-+      2 * ABSL_CACHELINE_SIZE,
-+  };
-+  TC_CHECK_GT(size_class, 0);
-+  TC_CHECK_LT(size_class, kSizes.size());
-+  return kSizes[size_class];
- }
- 
- void* State::AllocateObject(size_t size_class) {
-@@ -270,20 +282,22 @@ struct Push {
- 
- struct Pop {
-   unsigned size_class;
-+  size_t size = 0;
- 
-   template <typename Sink>
-   friend void AbslStringify(Sink& sink, const Pop& p) {
--    absl::Format(&sink, "Pop{.size_class=%v}", p.size_class);
-+    absl::Format(&sink, "Pop{.size_class=%v, .size=%v}", p.size_class, p.size);
+@@ -100,12 +100,12 @@ function(tcmalloc_cc_library_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS}
+   )
+-  tcmalloc_cc_library(NAME ${TCMALLOC_NAME}_write_prefetch
+-    ALIAS ${TCMALLOC_ALIAS}_write_prefetch
++  tcmalloc_cc_library(NAME ${TCMALLOC_NAME}_no_write_prefetch
++    ALIAS ${TCMALLOC_ALIAS}_no_write_prefetch
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS}
+   )
+@@ -309,13 +309,13 @@ function(tcmalloc_cc_test_variants)
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_legacy_locking2 tcmalloc::common_legacy_locking2
+     ENV ${TCMALLOC_ENV}
+   )
+-  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_write_prefetch
++  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_no_write_prefetch
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_write_prefetch tcmalloc::common_write_prefetch
++    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_no_write_prefetch tcmalloc::common_no_write_prefetch
+     ENV ${TCMALLOC_ENV}
+   )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_defer_per_cpu_caches
+@@ -604,12 +604,12 @@ function(tcmalloc_cc_binary_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_legacy_locking2 tcmalloc::common_legacy_locking2
+   )
+-  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_write_prefetch
++  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_no_write_prefetch
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=1
++    COPTS ${TCMALLOC_COPTS} -DTCMALLOC_INTERNAL_8K_PAGES -DTCMALLOC_INTERNAL_WRITE_PREFETCH=0
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_write_prefetch tcmalloc::common_write_prefetch
++    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc_no_write_prefetch tcmalloc::common_no_write_prefetch
+   )
+   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_defer_per_cpu_caches
+     SRCS ${TCMALLOC_SRCS}
+```
+
+**File**: `tcmalloc/testing/fast_path.aarch64+opt.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   4     29   -   7   -    9   -   -    -   -   3     4
+-calloc                     -    -   2     29   -   6   -   10   2   -    -   -   5     5
++aligned_alloc              -    1   5     30   -   7   -    9   -   -    -   -   3     4
++calloc                     -    1   3     30   -   6   -   10   2   -    -   -   5     5
+ delete                     -    -   1     33   -   6   -    6   -   -    -   -   -     3
+ delete(size)               -    -   2     24   -   5   -    4   -   -    -   -   -     3
+ delete(size,align)         -    -   4     25   -   7   -    5   -   -    -   -   -     3
+-malloc                     -    -   2     27   -   5   -    8   -   -    -   -   -     3
+-malloc(token_1)            -    -   2     27   -   5   -    8   -   -    -   -   -     3
+-new                        -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(align)                 -    -   3     28   -   6   -    8   -   -    -   -   -     3
+-new(align)->size           -    -   3     28   -   6   -    9   -   -    -   -   -     3
+-new(align,cold)->size      -    1   4     35   -   6   -   11   -   -    -   -   -     3
+-new(align,nothrow)         -    -   3     28   -   6   -    8   -   -    -   -   -     3
+-new(cold)->size            -    1   2     34   -   4   -   10   -   -    -   -   -     3
+-new(cold,token_1)->size    -    1   2     34   -   4   -   10   -   -    -   -   -     3
+-new(nothrow)               -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(token_1)               -    -   1     27   -   4   -    7   -   -    -   -   -     3
+-new(token_1)->size         -    -   1     27   -   4   -    8   -   -    -   -   -     3
+-new->size                  -    -   1     27   -   4   -    8   -   -    -   -   -     3
+-posix_memalign             -    -   3     30   -   9   -   10   -   -    -   -   5     6
++malloc                     -    1   3     28   -   5   -    8   -   -    -   -   -     3
++malloc(token_1)            -    1   3     28   -   5   -    8   -   -    -   -   -     3
++new                        -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(align)                 -    1   4     29   -   6   -    8   -   -    -   -   -     3
++new(align)->size           -    1   4     29   -   6   -    9   -   -    -   -   -     3
++new(align,cold)->size      -    2   5     36   -   6   -   11   -   -    -   -   -     3
++new(align,nothrow)         -    1   4     29   -   6   -    8   -   -    -   -   -     3
++new(cold)->size            -    2   3     35   -   4   -   10   -   -    -   -   -     3
++new(cold,token_1)->size    -    2   3     35   -   4   -   10   -   -    -   -   -     3
++new(nothrow)               -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(token_1)               -    1   2     28   -   4   -    7   -   -    -   -   -     3
++new(token_1)->size         -    1   2     28   -   4   -    8   -   -    -   -   -     3
++new->size                  -    1   2     28   -   4   -    8   -   -    -   -   -     3
++posix_memalign             -    1   4     31   -   9   -   10   -   -    -   -   5     6
+```
+
+**File**: `tcmalloc/testing/fast_path.aarch64+release.golden` (modified, +17/-17)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   4     28   -   7   -    8   -   -    -   -   3     4
+-calloc                     -    -   2     27   -   6   -    9   2   -    -   -   5     5
++aligned_alloc              -    1   5     29   -   7   -    8   -   -    -   -   3     4
++calloc                     -    1   3     28   -   6   -    9   2   -    -   -   5     5
+ delete                     -    -   1     30   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   2     22   -   5   -    3   -   -    -   -   -     3
+-delete(size,align)         -    -   4     24   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   2     26   -   5   -    7   -   -    -   -   -     3
+-malloc(token_1)            -    -   2     26   -   5   -    7   -   -    -   -   -     3
+-new                        -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(align)                 -    -   3     26   -   6   -    7   -   -    -   -   -     3
+-new(align)->size           -    -   3     26   -   6   -    8   -   -    -   -   -     3
+-new(align,cold)->size      -    1   4     31   -   6   -    9   -   -    -   -   -     3
+-new(align,nothrow)         -    -   3     26   -   6   -    7   -   -    -   -   -     3
+-new(cold)->size            -    1   2     30   -   4   -    8   -   -    -   -   -     3
+-new(cold,token_1)->size    -    1   2     30   -   4   -    8   -   -    -   -   -     3
+-new(nothrow)               -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(token_1)               -    -   1     25   -   4   -    6   -   -    -   -   -     3
+-new(token_1)->size         -    -   1     25   -   4   -    7   -   -    -   -   -     3
+-new->size                  -    -   1     25   -   4   -    7   -   -    -   -   -     3
+-posix_memalign             -    2   5     28   -   7   -    9   -   -    -   -   5     6
++delete(size,align)         -    -   4     23   -   7   -    4   -   -    -   -   -     3
++malloc                     -    1   3     27   -   5   -    7   -   -    -   -   -     3
++malloc(token_1)            -    1   3     27   -   5   -    7   -   -    -   -   -     3
++new                        -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(align)                 -    1   4     27   -   6   -    7   -   -    -   -   -     3
++new(align)->size           -    1   4     27   -   6   -    8   -   -    -   -   -     3
++new(align,cold)->size      -    2   5     32   -   6   -    9   -   -    -   -   -     3
++new(align,nothrow)         -    1   4     27   -   6   -    7   -   -    -   -   -     3
++new(cold)->size            -    2   3     31   -   4   -    8   -   -    -   -   -     3
++new(cold,token_1)->size    -    2   3     31   -   4   -    8   -   -    -   -   -     3
++new(nothrow)               -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(token_1)               -    1   2     26   -   4   -    6   -   -    -   -   -     3
++new(token_1)->size         -    1   2     26   -   4   -    7   -   -    -   -   -     3
++new->size                  -    1   2     26   -   4   -    7   -   -    -   -   -     3
++posix_memalign             -    1   4     29   -   9   -    9   -   -    -   -   5     6
+```
+
+**File**: `tcmalloc/testing/fast_path.insecure.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   6     28   -   7   -    6   -   1    1   2   1     1
+-calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
++aligned_alloc              -    1   7     28   -   7   -    6   -   1    1   2   1     1
++calloc                     -    1   5     32   -   6   -    6   1   1    1   2   3     1
+ delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
+ delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   4     26   -   5   -    6   -   -    -   2   -     1
+-malloc(token_1)            -    -   4     26   -   5   -    6   -   -    -   2   -     1
+-new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(align)                 -    -   5     27   -   6   -    6   -   -    -   2   -     1
+-new(align)->size           -    -   5     27   -   6   -    7   -   -    -   2   -     1
+-new(align,cold)->size      -    1   6     32   -   6   -    8   -   -    -   2   -     1
+-new(align,nothrow)         -    -   5     27   -   6   -    6   -   -    -   2   -     1
+-new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
+-posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
++malloc                     -    1   5     26   -   5   -    6   -   -    -   2   -     1
++malloc(token_1)            -    1   5     26   -   5   -    6   -   -    -   2   -     1
++new                        -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(align)                 -    1   6     27   -   6   -    6   -   -    -   2   -     1
++new(align)->size           -    1   6     27   -   6   -    7   -   -    -   2   -     1
++new(align,cold)->size      -    2   7     32   -   6   -    8   -   -    -   2   -     1
++new(align,nothrow)         -    1   6     27   -   6   -    6   -   -    -   2   -     1
++new(cold)->size            -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(cold,token_1)->size    -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(nothrow)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)->size         -    1   4     25   -   4   -    6   -   -    -   2   -     1
++new->size                  -    1   4     25   -   4   -    6   -   -    -   2   -     1
++posix_memalign             -    1   9     30   -   8   -    6   -   1    1   2   3     2
+```
+
+**File**: `tcmalloc/testing/fast_path.opt.golden` (modified, +16/-16)
+```diff
+@@ -1,20 +1,20 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   6     29   -   7   -    6   -   1    1   2   1     1
+-calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
++aligned_alloc              -    1   7     29   -   7   -    6   -   1    1   2   1     1
++calloc                     -    1   5     32   -   6   -    6   1   1    1   2   3     1
+ delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
+ delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
+ delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
+-malloc                     -    -   4     27   -   5   -    6   -   -    -   2   -     1
+-malloc(token_1)            -    -   4     27   -   5   -    6   -   -    -   2   -     1
+-new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(align)                 -    -   5     28   -   6   -    6   -   -    -   2   -     1
+-new(align)->size           -    -   5     28   -   6   -    7   -   -    -   2   -     1
+-new(align,cold)->size      -    1   6     33   -   6   -    8   -   1    1   2   -     1
+-new(align,nothrow)         -    -   5     28   -   6   -    6   -   -    -   2   -     1
+-new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-posix_memalign             -    -   8     30   -   8   -    6   -   1    1   2   3     2
++malloc                     -    1   5     27   -   5   -    6   -   -    -   2   -     1
++malloc(token_1)            -    1   5     27   -   5   -    6   -   -    -   2   -     1
++new                        -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(align)                 -    1   6     28   -   6   -    6   -   -    -   2   -     1
++new(align)->size           -    1   6     28   -   6   -    7   -   -    -   2   -     1
++new(align,cold)->size      -    2   7     33   -   6   -    8   -   1    1   2   -     1
++new(align,nothrow)         -    1   6     28   -   6   -    6   -   -    -   2   -     1
++new(cold)->size            -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(cold,token_1)->size    -    2   5     31   -   4   -    7   -   -    -   2   -     1
++new(nothrow)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)               -    1   4     27   -   4   -    5   -   -    -   2   -     1
++new(token_1)->size         -    1   4     27   -   4   -    6   -   -    -   2   -     1
++new->size                  -    1   4     27   -   4   -    6   -   -    -   2   -     1
++posix_memalign             -    1   9     31   -   8   -    6   -   1    1   2   3     2
+```
+
+---
+
+### Incident Patch 2: `129306e2` (2026-11-23)
+**Commit Message**: Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE.
+
+PiperOrigin-RevId: 1028502200
+
+**File**: `tcmalloc/experiment_config.h` (modified, +0/-2)
+```diff
+@@ -28,7 +28,6 @@ enum class Experiment : int {
+   TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION,  // TODO: b/205153285 - Complete experiment.
+   TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES,  // TODO: b/435718337 - Complete experiment.
+   TCMALLOC_SONIC_DEMAND_CYCLE_60S,  // TODO: b/582367305 - Complete experiment.
+-  TCMALLOC_SONIC_FILLER_APPEND_ON_FREE,  // TODO: b/579425486 - Complete experiment.
+   TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION,  // TODO: b/577007348 - Complete experiment.
+   TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K,  // TODO: b/572352809 - Complete experiment.
+   TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K,  // TODO: b/572352809 - Complete experiment.
+@@ -65,7 +64,6 @@ inline constexpr ExperimentConfig experiments[] = {
+     {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
+     {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
+     {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
+-    {Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE, "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
+     {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K_SPARSE_64K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0.02, /*rollout_upper_bound=*/0.03, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
+```
+
+**File**: `tcmalloc/experiment_variants.bzl` (modified, +0/-6)
+```diff
+@@ -46,12 +46,6 @@ experiment_variants = [
+         "deps": ["//tcmalloc:common_8k_pages"],
+         "env": {"BORG_DISABLE_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
+     },
+-    {
+-        "name": "tcmalloc_filler_append_on_free",
+-        "malloc": "//tcmalloc",
+-        "deps": ["//tcmalloc:common_8k_pages"],
+-        "env": {"BORG_EXPERIMENTS": "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE"},
+-    },
+     {
+         "name": "tcmalloc_fix_max_capacity_bug_ablation",
+         "malloc": "//tcmalloc",
+```
+
+**File**: `tcmalloc/parameters.cc` (modified, +0/-5)
+```diff
+@@ -180,11 +180,6 @@ void Parameters::InitializeFromExperiments() {
+                                       std::memory_order_relaxed);
    }
  
-   void Perform(State& state) const {
-     const size_t sc = 1 + (size_class % (kNumClasses - 1));
--    void* item = state.slab.Pop(sc);
-+    const size_t obj_size = size % (FakeSizeForSizeClass(sc) + 1);
-+    void* item = state.slab.Pop(sc, obj_size);
-     if (item == nullptr) {
-       auto [got_cpu, cached] = state.slab.CacheCpuSlab();
-       if (cached && got_cpu >= 0 && !state.cpu_stopped[got_cpu]) {
-         state.EnsureCpuInitialized(got_cpu);
--        item = state.slab.Pop(sc);
-+        item = state.slab.Pop(sc, obj_size);
-       }
-     }
-     if (item != nullptr) {
+-  if (IsExperimentActive(Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE)) {
+-    filler_append_on_free_.store(FillerAppendOnFree::kEnabled,
+-                                 std::memory_order_relaxed);
+-  }
+-
+   if (IsExperimentActive(
+           Experiment::
+               TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K)) {
 ```
 
-**File**: `tcmalloc/internal/percpu_tcmalloc_test.cc` (modified, +21/-18)
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +0/-16)
 ```diff
-@@ -83,6 +83,8 @@ constexpr size_t kStressCapacity = 4;
- constexpr size_t kMaxStressCapacity = kStressCapacity * 2;
- 
- constexpr size_t kShift = 18;
-+// Allocation size hint passed to Pop.
-+constexpr size_t kObjectSize = sizeof(void*);
- typedef class TcmallocSlab<kStressSlabs> TcmallocSlab;
- 
- void* AllocSlabs(absl::FunctionRef<void*(size_t, std::align_val_t)> alloc,
-@@ -261,13 +263,13 @@ TEST_F(TcmallocSlabTest, Unit) {
-       ASSERT_EQ(slab_.Capacity(cpu, size_class), 0);
- 
-       if (!initialized[cpu]) {
--        ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
-         slab_.InitCpu(cpu, [](size_t size_class) { return kCapacity; });
-         initialized[cpu] = true;
-       }
- 
-       // Test that operations on uncached slab fail.
--      ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
-       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
-       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
-       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
-@@ -289,20 +291,20 @@ TEST_F(TcmallocSlabTest, Unit) {
-                 kCapacity / 2);
-       ASSERT_EQ(slab_.Length(cpu, size_class), 0);
-       ASSERT_EQ(slab_.Capacity(cpu, size_class), kCapacity / 2);
--      ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
-       ASSERT_TRUE(slab_.Push(size_class, &objects[0]));
- 
-       ASSERT_EQ(slab_.Length(cpu, size_class), 1);
-       ASSERT_EQ(slab_.Capacity(cpu, size_class), kCapacity / 2);
--      ASSERT_EQ(slab_.Pop(size_class), &objects[0]);
-+      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[0]);
-       ASSERT_EQ(slab_.Length(cpu, size_class), 0);
-       for (size_t i = 0; i < kCapacity / 2; ++i) {
-         ASSERT_TRUE(slab_.Push(size_class, &objects[i]));
-         ASSERT_EQ(slab_.Length(cpu, size_class), i + 1);
-       }
-       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
-       for (size_t i = kCapacity / 2; i > 0; --i) {
--        ASSERT_EQ(slab_.Pop(size_class), &objects[i - 1]);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[i - 1]);
-         ASSERT_EQ(slab_.Length(cpu, size_class), i - 1);
-       }
- 
-@@ -317,7 +319,7 @@ TEST_F(TcmallocSlabTest, Unit) {
-       }
-       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
-       for (size_t i = kCapacity; i > 0; --i) {
--        ASSERT_EQ(slab_.Pop(size_class), &objects[i - 1]);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[i - 1]);
-         ASSERT_EQ(slab_.Length(cpu, size_class), i - 1);
-       }
- 
-@@ -359,12 +361,12 @@ TEST_F(TcmallocSlabTest, Unit) {
-         ASSERT_EQ(slab_.PushBatch(size_class, batch, i), expect);
-         ASSERT_EQ(slab_.Length(cpu, size_class), expect);
-         for (size_t j = 0; j < expect; ++j) {
--          slabs_result[j] = slab_.Pop(size_class);
-+          slabs_result[j] = slab_.Pop(size_class, kObjectSize);
-         }
-         ASSERT_THAT(
-             std::vector<void*>(&slabs_result[0], &slabs_result[expect]),
-             UnorderedElementsAreArray(&object_ptrs[i - expect], expect));
--        ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
-       }
-       // Push a batch of size i into non-empty slab.
-       for (size_t i = 1; i < kCapacity / 2; ++i) {
-@@ -374,14 +376,14 @@ TEST_F(TcmallocSlabTest, Unit) {
-         ASSERT_EQ(slab_.Length(cpu, size_class), i + expect);
-         // Because slabs are LIFO fill in this array from the end.
-         for (int j = i + expect - 1; j >= 0; --j) {
--          slabs_result[j] = slab_.Pop(size_class);
-+          slabs_result[j] = slab_.Pop(size_class, kObjectSize);
-         }
-         ASSERT_THAT(std::vector<void*>(&slabs_result[0], &slabs_result[i]),
-                     UnorderedElementsAreArray(&object_ptrs[0], i));
-         ASSERT_THAT(
-             std::vector<void*>(&slabs_result[i], &slabs_result[i + expect]),
-             UnorderedElementsAreArray(&object_ptrs[i - expect], expect));
--        ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
-       }
-       for (size_t i = 0; i < kCapacity + 1; ++i) {
-         batch[i] = nullptr;
-@@ -393,7 +395,7 @@ TEST_F(TcmallocSlabTest, Unit) {
-         }
-         ASSERT_EQ(slab_.PopBatch(size_class, batch, i), i);
-         ASSERT_EQ(slab_.Length(cpu, size_class), 0);
--        ASSERT_EQ(slab_.Pop(size_class), nullptr);
-+        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
- 
-         ASSERT_THAT(absl::MakeSpan(&batch[0], i),
-                     UnorderedElementsAreArray(&object_ptrs[0], i));
-@@ -412,10 +414,11 @@ TEST_F(TcmallocSlabTest, Unit) {
-         ASSERT_EQ(slab_.Length(cpu, size_class), i - want);
- 
-         for (size_t j = 0; j < i - want; ++j) {
--          ASSERT_EQ(slab_.Pop(size_class), &objects[i - want - j - 1]);
-+          ASSERT_EQ(slab_.Pop(size_class, kObjectSize),
-+           
+@@ -372,15 +372,6 @@ function(tcmalloc_cc_test_variants)
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+     ENV ${TCMALLOC_ENV} "BORG_DISABLE_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
+   )
+-  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
+-    ${EXTRA_ARGS}
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_SONIC_FILLER_APPEND_ON_FREE"
+-  )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_fix_max_capacity_bug_ablation
+     ${EXTRA_ARGS}
+     SRCS ${TCMALLOC_SRCS}
+@@ -662,13 +653,6 @@ function(tcmalloc_cc_binary_variants)
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+   )
+-  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
+-    SRCS ${TCMALLOC_SRCS}
+-    HDRS ${TCMALLOC_HDRS}
+-    COPTS ${TCMALLOC_COPTS}
+-    LINKOPTS ${TCMALLOC_LINKOPTS}
+-    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-  )
+   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_fix_max_capacity_bug_ablation
+     SRCS ${TCMALLOC_SRCS}
+     HDRS ${TCMALLOC_HDRS}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1959** (2026-11-23): Return NotFoundError instead of InvalidArgumentError when TCMalloc is unavailable in MakeProfileProto. (@copybara-service[bot])
+- **PR #1957** (2026-11-23): Retire TCMALLOC_SONIC_FILLER_APPEND_ON_FREE. (@copybara-service[bot])
+- **PR #1955** (closed): No public description (@copybara-service[bot])
+- **PR #1953** (2026-11-23): Report the owning TCMalloc suballocator in PageAllocationStatus. (@copybara-service[bot])
 - **PR #1952** (2026-11-20): Skip IsHugepageBacked on sampled and cold partitions. (@copybara-service[bot])
 - **PR #1951** (2026-11-20): Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. (@copybara-service[bot])
-- **PR #1950** (2026-11-20): Drop pageheap_lock when resetting sampled tracker VMA names. (@copybara-service[bot])
-- **PR #1949** (2026-11-20): Include donated trackers in SampledTrackerTreatment. (@copybara-service[bot])
-- **PR #1948** (2026-11-20): No public description (@copybara-service[bot])
-- **PR #1945** (2026-11-20): Export stale page histograms from HugePageFiller in pbtxt stats. (@copybara-service[bot])
 
 ---
 
@@ -1793,13 +1704,13 @@ PiperOrigin-RevId: 1027054307
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.
+## X. Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.
 
 **RULE**:
 When implementing operations in `tcmalloc/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6aebbb38`: Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc4555d2`: Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/BUILD`.
@@ -1807,43 +1718,21 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-cc_library(
-    name = "tcmalloc_write_prefetch",
-    srcs = [
-        "libc_override.h",
-        "tcmalloc.cc",
-        "tcmalloc.h",
-    ],
-    copts = [
-        "-DTCMALLOC_INTERNAL_8K_PAGES",
-        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
-    ] + TCMALLOC_DEFAULT_COPTS,
-    linkstatic = 1,
-    visibility = [":tcmalloc_tests"],
-    deps = tcmalloc_deps + [
-        ":alloc_at_least",
-        ":common_write_prefetch",
-        ":malloc_hook",
-        "//tcmalloc/internal:allocation_guard",
-        "//tcmalloc/internal:is_aligned_to",
-        "//tcmalloc/internal:overflow",
-        "//tcmalloc/internal:page_size",
-        "@com_google_absl//absl/time",
-        "@com_google_absl//absl/types:span",
-    ],
-    alwayslink = 1,
-)
-
+    name = "tcmalloc_no_write_prefetch",
+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=0",
+        ":common_no_write_prefetch",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    name = "tcmalloc_write_prefetch",
+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
+        ":common_write_prefetch",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6aebbb38` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc4555d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

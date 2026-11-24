@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "50316b9e",
+    "sourceVersion": "f49b558c",
     "license": "Apache-2.0",
-    "contentHash": "1dc7db1d00e57f448a1520a67c2dc5dbc9885667140aaa825973555a074faa13",
-    "lastHarvestedAt": "2026-11-22T23:57:25.522Z",
+    "contentHash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
+    "lastHarvestedAt": "2026-11-24T00:57:23.347Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "340dc085",
+    "sourceVersion": "c31d4550",
     "license": "NOASSERTION",
-    "contentHash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
-    "lastHarvestedAt": "2026-11-22T23:06:25.102Z",
+    "contentHash": "190e96562c9b74bb23763fe710a3b29ac05924feb93c12ae08e189e45422ed00",
+    "lastHarvestedAt": "2026-11-24T00:57:28.200Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "6aebbb38",
+    "sourceVersion": "fc4555d2",
     "license": "Apache-2.0",
-    "contentHash": "b320cb389986484614083aa9afaf2eaa4fc7f32f666573047e45895adc80cef2",
-    "lastHarvestedAt": "2026-11-22T17:22:02.383Z",
+    "contentHash": "309ffba8d1eb70bb340df232316d64517f8f17ee85662fcb695eb8022c286b1d",
+    "lastHarvestedAt": "2026-11-24T00:57:16.023Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "83408f21",
+    "sourceVersion": "0bb871d5",
     "license": "MIT",
-    "contentHash": "2742b56ab1c7eeaf72d3cef89fc6bcef2a1ec4a557ed8d60cbc94356e9d56d74",
-    "lastHarvestedAt": "2026-11-21T01:51:36.127Z",
+    "contentHash": "5445b9301cb4d4ebe678c018fba9169529101742b1c39c0a571ff824633992c5",
+    "lastHarvestedAt": "2026-11-24T00:57:20.324Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

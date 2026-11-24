@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T00:49:08.206Z",
-  "total_cycles_completed": 11922,
-  "total_learnings_persisted": 11922,
-  "total_rules_promoted": 11004,
+  "last_updated": "2026-11-24T00:57:28.205Z",
+  "total_cycles_completed": 11926,
+  "total_learnings_persisted": 11926,
+  "total_rules_promoted": 11008,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:12:56.098Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:21:00.293Z",
-      "repository": "Fei-Craft/DS-Bot",
-      "learningId": "learn-github-fei-craft-ds-bot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:21:02.420Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:21:09.884Z",
-      "repository": "kamgurgul/cpu-info",
-      "learningId": "learn-github-kamgurgul-cpu-info",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:29:14.810Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T00:49:08.206Z",
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:57:16.028Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:57:20.330Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:57:23.353Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:57:28.205Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

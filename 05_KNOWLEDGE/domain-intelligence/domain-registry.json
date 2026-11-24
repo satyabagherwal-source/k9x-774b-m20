@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:49:13.935Z",
-  "total_records": 2475,
+  "last_updated": "2026-11-24T00:58:05.143Z",
+  "total_records": 2476,
   "domains": {
     "A": {
       "total": 20,
@@ -1024,7 +1024,7 @@
       ]
     },
     "F": {
-      "total": 103,
+      "total": 104,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1128,7 +1128,8 @@
         "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants",
         "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
         "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants",
-        "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+        "DOM-F-0B02F7F4"
       ]
     },
     "G": {
@@ -10252,8 +10253,8 @@
       "title": "Architecture Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-architecture-intelligence-clockworklabs-spacetimedb-co.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "ebd236d3820b291689706432b315446752f1fa6a675e28fac49d4815410de4fe",
-      "created_at": "2026-11-19T14:28:36.080Z"
+      "content_hash": "e06af31496f0063fcc283cfd39caf1051702c4dd1dc4da59bc13b266a17e7265",
+      "created_at": "2026-11-24T00:57:28.633Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants",
@@ -15398,8 +15399,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "acbab22b956736cb99bdcf07951e0fe4a2e35d24b818f58591f9603f8f1d0def",
-      "created_at": "2026-11-22T01:44:02.430Z"
+      "content_hash": "30e62aa5fc0935ddef4ba76e9b59feaf4bce3164da015b602e4951f19d51fe30",
+      "created_at": "2026-11-24T00:57:23.825Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -15509,8 +15510,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "08deccce3023a6625198b9e825b3832cfd5dd8b52971c0062ba9f8c5e271fc26",
-      "created_at": "2026-11-22T01:44:41.504Z"
+      "content_hash": "4c16ccf9c8fe0351ae637553f43f0bc159f016c3a76305aa781a4907d96012c0",
+      "created_at": "2026-11-24T00:58:05.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -17654,8 +17655,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "c93e9c0993d53f99709da37c9739d333959ff0f6b6d2ab6ddfcda6584b0904a6",
-      "created_at": "2026-11-21T04:20:36.031Z"
+      "content_hash": "99ff0bbd377671c63dcaff3624d580153652454e65d0062ba6dceb9c6996e554",
+      "created_at": "2026-11-24T00:57:16.462Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -17672,8 +17673,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "b8d967a3ba6d4400843e3ee9c00367a8e9f4d4ddca48e0a9964df43c4a6fb97a",
-      "created_at": "2026-11-21T04:20:39.453Z"
+      "content_hash": "0a35db3a7f8808fb262928fc46e63703dddd7e497592b86092b808e1929154cc",
+      "created_at": "2026-11-24T00:57:32.233Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",
@@ -26100,8 +26101,8 @@
       "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
       "repository": "software-mansion/react-native-screens",
-      "content_hash": "dfcbcce9deaf08cdb4157a36fac24cdad36920c998c1ff335718034bfd8f8947",
-      "created_at": "2026-11-17T03:57:54.304Z"
+      "content_hash": "8beb16e71707411e491cb03bf65cbcd59ebf181b4da11aa96b38d86fe17405db",
+      "created_at": "2026-11-24T00:57:20.736Z"
     },
     "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
@@ -26127,8 +26128,8 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-learnings-technical-construction-intellige.md",
       "repository": "software-mansion-react-native-screens-learnings",
-      "content_hash": "4d25b41be9750b502f6b0a51becc60651d89e6891bfedb64268040165649a3a1",
-      "created_at": "2026-11-17T03:58:07.560Z"
+      "content_hash": "c223325c7fd4253c00f31f180b2a31f7691abc12d5b24685f9e9fe2e30a825e3",
+      "created_at": "2026-11-24T00:57:33.373Z"
     },
     "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants",
@@ -41516,6 +41517,40 @@
       "repository": "kumahq-kuma-learnings",
       "content_hash": "fb34c2491d79994b36be44d36d685da8caa9ba12156d2b2a424b3565ba543aae",
       "created_at": "2026-11-24T00:49:13.935Z"
+    },
+    "DOM-F-0B02F7F4": {
+      "record_id": "DOM-F-0B02F7F4",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Refused, message says nothing changed, no write on either cluster; the tab resets to the new cluster on its next status poll; the switching tab's restart writes the new cluster only: connection-lifecycle-ui-checkmjs",
+      "content": "`connection-lifecycle-ui-check.mjs`",
+      "content_hash": "40ed087e436155ae68a46873de8cb94b300ceb7ab15bf77ac2e929b5df35abcb",
+      "summary": "`connection-lifecycle-ui-check.mjs` -> `connection-lifecycle-ui-check.mjs`",
+      "provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "U1",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of skyhook-io-radar"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T00:58:04.465Z"
     }
   }
 }

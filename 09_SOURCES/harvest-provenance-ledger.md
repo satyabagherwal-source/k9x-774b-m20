@@ -12572,3 +12572,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-24T00:48:57.143Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `c8588a1e` | Multi-dimensional audit evidence | 2026-11-24T00:49:00.381Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a38cd168` | Multi-dimensional audit evidence | 2026-11-24T00:49:08.201Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `fc4555d2` | Multi-dimensional audit evidence | 2026-11-24T00:57:16.023Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `0bb871d5` | Multi-dimensional audit evidence | 2026-11-24T00:57:20.324Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `f49b558c` | Multi-dimensional audit evidence | 2026-11-24T00:57:23.347Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c31d4550` | Multi-dimensional audit evidence | 2026-11-24T00:57:28.200Z |
+| `learn-dom-f-0b02f7f4` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-24T00:58:04.505Z |
