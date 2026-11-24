@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T21:01:29.795Z",
-  "total_cycles_completed": 12173,
-  "total_learnings_persisted": 12173,
-  "total_rules_promoted": 11227,
+  "last_updated": "2026-11-24T21:15:51.758Z",
+  "total_cycles_completed": 12176,
+  "total_learnings_persisted": 12176,
+  "total_rules_promoted": 11229,
   "history": [
-    {
-      "timestamp": "2026-11-24T04:53:55.608Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T05:14:11.588Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T05:14:11.670Z",
-      "repository": "crawlseo/crawlseo",
-      "learningId": "learn-github-crawlseo-crawlseo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T05:14:15.488Z",
       "repository": "liyupi/yu-ai-agent",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T21:01:29.795Z",
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T21:15:32.715Z",
+      "repository": "unsloth/Inkling-2-Mini-GGUF",
+      "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T21:15:48.205Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T21:15:51.758Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

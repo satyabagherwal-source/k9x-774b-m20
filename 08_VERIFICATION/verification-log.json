@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-LWER",
-    "timestamp": "2026-11-23T05:51:48.051Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-W37W",
-    "timestamp": "2026-11-23T05:59:43.436Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "542d2f8f5fb554f3d0fa832994d37859c1bacf35483b64dc3172db7fb9697d19",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-W4UI",
-    "timestamp": "2026-11-23T05:59:45.546Z",
-    "repository": "fujiapple852/trippy",
-    "learningId": "learn-github-fujiapple852-trippy",
-    "contentHash": "47c4ffc0efaff74df53fb5ebb7c99b38b1bd7ef11a726d4b9998f65799a148d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-EQ3Y",
     "timestamp": "2026-11-23T06:14:12.910Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7445,51 @@
     "repository": "dosco/deeporg",
     "learningId": "learn-github-dosco-deeporg",
     "contentHash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-1P0H",
+    "timestamp": "2026-11-24T21:15:32.705Z",
+    "repository": "unsloth/Inkling-2-Mini-GGUF",
+    "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
+    "contentHash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-20YR",
+    "timestamp": "2026-11-24T21:15:48.195Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-23PG",
+    "timestamp": "2026-11-24T21:15:51.748Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

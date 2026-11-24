@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T21:02:11.155Z",
+  "last_updated": "2026-11-24T21:15:57.954Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T20:53:10.264Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-24T14:24:26.043Z",
+      "processed_at": "2026-11-24T21:15:56.846Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1183,7 +1183,7 @@
       "staged_for_review": 1
     },
     "clockworklabs-spacetimedb-learnings.md": {
-      "processed_at": "2026-11-21T23:06:18.188Z",
+      "processed_at": "2026-11-24T21:15:55.894Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3633,8 +3633,8 @@
       "staged_for_review": 1
     },
     "hf-unsloth-inkling-2-mini-gguf-learnings.md": {
-      "processed_at": "2026-11-20T22:08:02.116Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T21:15:55.336Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "jhspetersson-fselect-learnings.md": {
@@ -3863,7 +3863,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3927,
+  "total_dossiers_evaluated": 3930,
   "total_canonical_promoted": 518,
-  "total_staged_for_review": 2990
+  "total_staged_for_review": 2992
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T21:01:29.807Z",
+  "last_updated": "2026-11-24T21:15:51.770Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
-      "verified_at": "2026-11-24T20:30:04.925Z",
+      "content_hash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
+      "verified_at": "2026-11-24T21:15:51.769Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T20:30:04.925Z"
+      "last_updated": "2026-11-24T21:15:51.769Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "190e96562c9b74bb23763fe710a3b29ac05924feb93c12ae08e189e45422ed00",
-      "verified_at": "2026-11-24T00:57:28.208Z",
+      "content_hash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
+      "verified_at": "2026-11-24T21:15:48.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:57:28.208Z"
+      "last_updated": "2026-11-24T21:15:48.216Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -19761,14 +19761,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-inkling-2-mini-gguf",
-      "content_hash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
-      "verified_at": "2026-11-20T22:07:11.373Z",
+      "content_hash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
+      "verified_at": "2026-11-24T21:15:32.725Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T22:07:11.373Z"
+      "last_updated": "2026-11-24T21:15:32.725Z"
     },
     "dosco/deeporg": {
       "repository": "dosco/deeporg",

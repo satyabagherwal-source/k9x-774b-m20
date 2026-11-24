@@ -12846,3 +12846,6 @@ Every entry in this ledger must capture:
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `c9a68bc3` | Multi-dimensional audit evidence | 2026-11-24T21:01:24.329Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `9d591e72` | Multi-dimensional audit evidence | 2026-11-24T21:01:29.789Z |
 | `learn-dom-d-ba194d6e` | `project://digitalbazaar-pyld` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md` | 2026-11-24T21:02:06.295Z |
+| `learn-huggingface-unsloth-inkling-2-mini-gguf` | `https://huggingface.co/unsloth/Inkling-2-Mini-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-24T21:15:32.709Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `01b14a89` | Multi-dimensional audit evidence | 2026-11-24T21:15:48.199Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f515043` | Multi-dimensional audit evidence | 2026-11-24T21:15:51.752Z |

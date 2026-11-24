@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:24:26.429Z",
+  "timestamp": "2026-11-24T21:15:57.290Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:24:26.429Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T21:15:57.290Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `449e97bb`  
+> **Source Version**: `8f515043`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:24:19.598Z  
+> **Timestamp**: 2026-11-24T21:15:50.547Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:24:19.593Z  
+> **Harvest Timestamp**: 2026-11-24T21:15:50.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1384,7 +1384,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "6150a2bd") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1458,7 +1458,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const input_instances = [];
+  const test_input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1470,7 +1470,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       input_instance_matrix,
     });
 
-    input_instances.push({
+    test_input_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1482,10 +1482,10 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances,
+    input_instances: test_input_instances,
   });
 
-  for (const input_instance of input_instances) {
+  for (const input_instance of test_input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1498,7 +1498,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: input_instances });
+  milestone.test_output_composed({ instances: test_input_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1514,7 +1514,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances: input_instances,
+    test_input_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1606,528 +1606,338 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `449e97bb` (2026-11-24)
-**Commit Message**: Resume NUC 139 Symmetric Difference Reasoning Selections
+### Incident Patch 1: `8f515043` (2026-11-24)
+**Commit Message**: Resume NUC 138 Reactive Secant
 
-Renews the claim on NUC 139, which this continuous /nuc-proposal cycle
-allocated in 6c8cbc67 (Draft NUC 139 Symmetric Difference Reasoning
-Selections, 23-Nov-2026 13:18:00 -05:00) and is still completing: the
-proposer's first phase stopped on a usage limit and resumes now. The
-allocation was 20 h 1 min old at this claim, past the 12-hour renewal
-point. The claim changes no file.
+Refresh this held Draft claim for fresh revision3 after Accepted NUC139 advanced the shared accepted runtime during revision2 preparation. Revision2 stops at its preparation checkpoint, without freezing or evaluation; preserve every source, baseline and log. No outcome recorded.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+Original allocation: abc138d4a03c8631f7639946cf605eff0be3b332
+Previous held claim: 87d99403cf02872fc52ee2c5dd9a11bfed5c0c25
+Current accepted source basis: df1f1406f2481169243859f063498b7baf1e734c
+Category: Utility enhancement; mode: continuous. This is an early held-claim renewal for baseline alignment, not a stale takeover.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 
 
 ---
 
-### Incident Patch 2: `9dac162b` (2026-11-24)
-**Commit Message**: Remove comments from ARC datasets
+### Incident Patch 2: `df1f1406` (2026-11-24)
+**Commit Message**: Rename ARC object tags to kinds
 
-Remove explanatory comments from class declarations, transformation rules, and object implementations across six ARC datasets.
+Rename the geometry property across ARC datasets, snapshots, documentation, and agent guidance. Update the default puzzle to 6150a2bd and clarify test instance naming.
 
-**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +9/-9)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-12)
 ```diff
-@@ -1,10 +1,10 @@
- {
--  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-   "declarations": [
--    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
--    "# It continues downward, below its last row\n$Obj.extension_direction is down",
--    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
--    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
-+    "$Obj.tag is l8384",
-+    "$Obj.extension_direction is down",
-+    "$Obj.height is $Obj.height@first * 3 / 2",
-+    "$Obj.color is 2"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -50,7 +50,7 @@
-             [0, 2, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-+          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-           "input_value": {"color":1,"height":6,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
-         }
-@@ -98,7 +98,7 @@
-             [2, 0, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equals row 0\nobj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-+          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-           "input_value": {"color":1,"height":6,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
-         }
-@@ -146,7 +146,7 @@
-             [2, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-+          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l9100","volume":8,"width":2,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l8384","volume":8,"width":2,"x":0,"y":0}
-         }
-@@ -194,7 +194,7 @@
-             [0, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
-+          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l9100","volume":10,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l8384","volume":10,"width":3,"x":0,"y":0}
-         }
+@@ -79,7 +79,7 @@ output-canvas mode for the whole dataset, inferred only from the training pairs.
+ Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one other
+ dataset, and the "Instruction datasets" and "Analysis" sections of
+ `arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
+-for world-model idioms, properties, rules, and tags. The solver sends every
++for world-model idioms, properties, rules, and kinds. The solver sends every
+ JSON instruction dataset as shared few-shot context. Match their structure,
+ key order, and
+ formatting exactly:
+@@ -129,16 +129,16 @@ formatting exactly:
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
+-  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+-  distinct kind of object the transformation needs. Each class whose
++  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
++  distinct sort of object the transformation needs. Each class whose
+   instances are annotated objects takes the standard entries `x: int, y: int,
+   width: int, height: int, orientation: int, volume: int` first, in that
+-  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+-  initial tag, and its body assigns every parameter to `this`, the tag with
+-  `this.tag is tag` right after `this.volume is volume`. An implementation
+-  passes `tag` only when its object needs a tag other than the default, as
++  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
++  initial kind, and its body assigns every parameter to `this`, the kind with
++  `this.kind is kind` right after `this.volume is volume`. An implementation
++  passes `kind` only when its object needs a kind other than the default, as
+   every implementation in `dataset.27a28665.json` names its block's shape
+-  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
++  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+   keeps its quotes, because accepted Nucleoid takes only a literal as a
+   parameter default. Add only the descriptive properties the transformation
+   needs, such as categorical colors.
+@@ -182,9 +182,11 @@ formatting exactly:
+   populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
+   `find`, and reasoning selections, where they express the rule. Avoid `for`
+   loops, imperative steps, and manual bookkeeping.
+-- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+-  existing dataset uses for the same geometry; otherwise mint one unused
+-  elsewhere.
++- A kind is `l` followed by four digits and names a geometry. It acts as a
++  child class that the rules assign declaratively: an instance never changes
++  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
++  Reuse the kind an existing dataset uses for the same geometry; otherwise
++  mint one unused elsewhere.
+ - Orientation is degrees clockwise from north (N = 0, E = 90, S = 180,
+   W = 270, diagonals 45, 135, 225, and 315). Use 0 for shapes that are
+   symmetric or not rotated.
+@@ -331,7 +333,7 @@ Add one paragraph about the dataset to the "Instruction datasets" section of
+ `arc/README.md`, in the style of the `dataset.28bf18c6.json` paragraph: source
+ puzzle, its single canonical path, that it contains the exact original training
+ pairs in order followed by the test pairs, pair and instance counts,
+-instances, the transformation, properties the rules create, tags, the original
++instances, the transformation, properties the rules create, kinds, the original
+ canvas and object sizes, and orientation.
+ With a candidate executable, also name the NUC whose feature the rules use.
+ 
 ```
 
-**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +18/-18)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +2/-2)
 ```diff
-@@ -1,8 +1,8 @@
- {
--  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
-   "declarations": [
--    "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
--    "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
-+    "if $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
-+    "if $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -54,7 +54,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-2 cell\nobj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-+          "implementation": "obj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj08c8feaa60ea","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":2,"y":3},
-           "output_value": {"height":3,"id":"obj08c8feaa60ea","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":1,"y":2}
-         },
-@@ -82,7 +82,7 @@
-             [0, 0, 0, 0, 0, 0, 7, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-1 cell\nobjfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
-+          "implementation": "objfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
-           "input_value": {"height":1,"id":"objfa5219213773","orientation":0,"tag":"l7544","vertex_color":1,"volume":1,"width":1,"x":6,"y":6},
-           "output_value": {"height":3,"id":"objfa5219213773","marker_color":7,"orientation":0,"tag":"l1707","vertex_color":1,"volume":5,"width":3,"x":5,"y":5}
-         }
-@@ -136,7 +136,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-8 cell\nobja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
-+          "implementation": "obja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
-           "input_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0},
-           "output_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0}
-         },
-@@ -164,7 +164,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-2 cell\nobj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-+          "implementation": "obj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj21a7f426034a","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":6,"y":2},
-           "output_value": {"height":3,"id":"obj21a7f426034a","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":5,"y":1}
-         },
-@@ -192,7
+@@ -86,7 +86,7 @@ solver run.
+ ## References
+ 
+ The workflow and its workers may use every dataset in `arc/src/dataset/` as a
+-reference for structure, world-model idioms, properties, rules, and tags.
++reference for structure, world-model idioms, properties, rules, and kinds.
+ The solver sends every JSON instruction dataset as shared few-shot context,
+ including the running puzzle's own annotated test pairs. That is intended
+ while the datasets are prepared as few-shot examples, under the
+@@ -148,7 +148,7 @@ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
+ that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
+ `if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
+ `$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
+-profile's quoted default, `tag: str = 'lNNNN'`, is a quote that accepted
++profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
+ Nucleoid cannot do without, because it rejects a bare parameter default
+ with `SyntaxError`. Have the
+ handoff list every quote it keeps, with the actual result of its bare
 ```
 
-**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +17/-17)
+**File**: `arc/README.md` (modified, +108/-105)
 ```diff
-@@ -1,7 +1,7 @@
- {
--  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-+    "$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-             [4, 0, 0],
-             [4, 0, 0]
-           ],
--          "implementation": "# Full-height column of color 3\nobj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-+          "implementation": "obj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-           "input_value": {"color":3,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
-           "output_value": {"color":4,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
-         },
-@@ -45,7 +45,7 @@
-             [0, 5, 0],
-             [0, 5, 0]
-           ],
--          "implementation": "# Full-height column of color 1\nobj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
-+          "implementation": "obj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
-           "input_value": {"color":1,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
-           "output_value": {"color":5,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
-         },
-@@ -61,7 +61,7 @@
-             [0, 0, 6],
-             [0, 0, 6]
-           ],
--          "implementation": "# Full-height column of color 2\nobjfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-+          "implementation": "objfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-           "input_value": {"color":2,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
-           "output_value": {"color":6,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0}
-         }
-@@ -91,7 +91,7 @@
-             [6, 0, 0],
-             [6, 0, 0]
-           ],
--          "implementation": "# Full-height column of color 2\nobje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-+          "implementation": "obje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-           "input_value": {"color":2,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
-           "output_value": {"color":6,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
-         },
-@@ -107,7 +107,7 @@
-             [0, 4, 0],
-             [0, 4, 0]
-           ],
--          "implementation": "# Full-height column of color 3\nobjb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-+          "implementation": "objb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-           "input_value": {"color":3,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
-           "output_value": {"color":4,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
-         },
-@@ -123,7 +123,7 @@
-             [0, 0, 9],
-             [0, 0, 9]
-           ],
--          "implementation": "# Full-height column of color 8\nobj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
-+          "implementation": "obj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
-           "input_value": {"color":8,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
-           "out
+@@ -400,12 +400,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
+ rim above, and a vertical line that extends up from its bottom endpoint with
+ a horizontal line that extends left from its right endpoint.
+ Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-`orientation`, and `volume` first, then the optional `tag`, then its
++`orientation`, and `volume` first, then the optional `kind`, then its
+ descriptive properties in their existing order, and every implementation
+ passes the input shape's bounding-box `width` and `height` and its input
+-mask's `volume`, its number of nonzero cells, and leaves out `tag`. A rule
++mask's `volume`, its number of nonzero cells, and leaves out `kind`. A rule
+ that grows a shape computes its new size
+-from its first values in the branch that sets its output tag: a core corner
++from its first values in the branch that sets its output kind: a core corner
+ grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
+ column left when it points west, at orientation 225 or 315, and one row up
+ when it points north, at orientation 45 or 315; a curve point grows from
+@@ -439,16 +439,19 @@ every program it runs, as
+ rules read it from those variables. Native snapshots are captured the same
+ way, with the pair's `input_matrix` size declared first.
+ 
+-Every class takes `tag` right after `volume` as an optional parameter whose
+-default is the dataset's initial tag, such as `tag: str = 'l9100'`, and its
+-constructor stores it with `this.tag is tag`. An implementation passes `tag`
+-only when its object needs a tag other than that default: every
+-implementation of `dataset.27a28665.json` passes the tag of its block's
+-shape, as in `tag='l4262'`, and every other implementation leaves it out, so
++Every class takes `kind` right after `volume` as an optional parameter whose
++default is the dataset's initial kind, such as `kind: str = 'l9100'`, and its
++constructor stores it with `this.kind is kind`. An implementation passes `kind`
++only when its object needs a kind other than that default: every
++implementation of `dataset.27a28665.json` passes the kind of its block's
++shape, as in `kind='l4262'`, and every other implementation leaves it out, so
+ its input state carries the default. The parameter comes before the
+ descriptive parameters, in the order of the constructor's assignments:
+ Nucleoid lets a default occupy any parameter slot, and every implementation
+-names its arguments.
++names its arguments. A kind acts as a child class that the rules assign
++declaratively: Nucleoid never converts an instance to another class, so a
++class-level rule such as `$Obj.kind is l1707` moves the instance to another
++kind instead. The property was called `tag` until 24-Nov-2026.
+ 
+ Every dataset writes its assignments with `is`, the opt-in assignment of
+ [NUC 93](../docs/nuc-0093.md), and its equality tests with `is` and `is not`,
+@@ -459,15 +462,15 @@ and implementations construct
+ each `target is value` builds exactly the syntax tree of `target = value`. When
+ a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+-text, so tags and directions drop their quotes there, as in
+-`$Obj.tag is l3337` and `$Obj.extension_direction is right`, while
+-`this.tag is tag` reads the constructor's `tag` parameter. No dataset
++text, so kinds and directions drop their quotes there, as in
++`$Obj.kind is l3337` and `$Obj.extension_direction is right`, while
++`this.kind is kind` reads the constructor's `kind` parameter. No dataset
+ program defines a name with those spellings, and the solver adds only
+ `canvas_width` and `canvas_height`. Other strings keep their quotes, such as
+ the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
+-arguments such as `tag='l1707'`, which are not assignments, and the default
+-of the `tag` parameter, such as `tag: str = 'l9100'`: accepted Nucleoid takes
+-only a literal as a parameter default and rejects the bare `tag: str = l9100`
++arguments such as `kind='l1707'`, which are not assignments, and the default
++of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
++only a literal as a parameter default and rejects the bare `kind: str = l9100`
+ with `SyntaxError: Expected a scalar literal parameter default`.
+ `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
+ assignments without one since `d945213`, which removed the opt-in syntax
+@@ -508,14 +511,14 @@ derives them as `COMMENT`:
+ 
+ ```nuc
+ # Each object is all the cells of one color, touching or not. Every color except the one with the most cells turns 5
+-class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, kind: str = 'l9100', color: int):
+     this.x is x
+     this.y 
 ```
 
-**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +18/-18)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +19/-0)
 ```diff
-@@ -1,8 +1,8 @@
- {
--  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
-   "declarations": [
--    "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
--    "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
-+    "$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
-+    "$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -30,7 +30,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row whose 3 cells are all color 4\nobj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
-+          "implementation": "obj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
-           "input_value": {"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":5,"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0}
-         },
-@@ -46,7 +46,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 2 and 3, with no head\nobje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
-+          "implementation": "obje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
-           "input_value": {"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"fill_color":0,"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":0,"width":3,"x":0,"y":1}
-         },
-@@ -62,7 +62,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 2 and 3, its head 2 on the left\nobj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
-+          "implementation": "obj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
-           "input_value": {"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":2},
-           "output_value": {"fill_color":0,"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":2}
-         }
-@@ -92,7 +92,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 3 and 7, its head 7 on the left\nobj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
-+          "implementation": "obj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
-           "input_value": {"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":0,"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":0}
-         },
-@@ -108,7 +108,7 @@
-             [5, 5, 5],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row whose 3 cells are all color 6\nobjde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
-+          "implementation": "objde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
-           "input_value": {"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"fill_color":5,"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1}
-         },
-@@ -124,7 +124,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 3 and 7, its head 3 on the left\nobj9
+@@ -363,6 +363,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and its rules move instances to the kind `l8384` with
++`$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 4 input and 4 output snapshots of the 4 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 12 uses of the name, byte for byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +8/-8)
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +20/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
--  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-   "declarations": [
--    "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
-+    "$Obj.y is $Obj.y@first + 1"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-             [1, 1, 1],
-             [0, 0, 0]
-           ],
--          "implementation": "# Color-1 horizontal bar of 3 cells\nobj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
-+          "implementation": "obj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
-           "input_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1}
-         }
-@@ -59,7 +59,7 @@
-             [0, 0, 0],
-             [1, 1, 1]
-           ],
--          "implementation": "# Color-1 horizontal bar of 3 cells\nobjb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
-+          "implementation": "objb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
-           "input_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":2}
-         }
-@@ -89,7 +89,7 @@
-             [0, 1, 0],
-             [1, 1, 0]
-           ],
--          "implementation": "# Color-1 corner with its vertex at the bottom right\nobj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
-+          "implementation": "obj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
-           "input_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
-           "output_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":1}
-         }
-@@ -119,7 +119,7 @@
-             [0, 2, 2],
-             [0, 0, 2]
-           ],
--          "implementation": "# Color-2 corner with its vertex at the top right\nobj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
-+          "implementation": "obj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
-           "input_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":0},
-           "output_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":1}
-         }
-@@ -149,7 +149,7 @@
-             [2, 0, 0],
-             [2, 0, 0]
-           ],
--          "implementation": "# Color-2 vertical bar of 2 cells\nobjb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
-+          "implementation": "objb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
-           "input_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":0},
-           "output_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":1}
-         }
-@@ -179,7 +179,7 @@
-             [0, 0, 0],
-             [0, 1, 0]
-           ],
--          "implementation": "# Single color-1 cell\nobjf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
-+          "implementation": "objf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
-           "input_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":1},
-           "output_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":2}
-         }
+@@ -442,6 +442,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l7544'` and stores it with
++`this.kind is kind`, and its rules move instances to the kinds `l1707` and
++`l2404` with `$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and
++every value is unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 4 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 35 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
 ```
 
-**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +16/-16)
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +20/-0)
 ```diff
-@@ -1,11 +1,11 @@
- {
--  "class_declaration": "# Each object is the whole 5-cell block of one color, in one of four shapes. The output is a single cell whose color codes the shape, whatever the block color\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-   "declarations": [
--    "# Each block becomes l7544, a single point\n$Obj.tag is l7544",
--    "# The output cell is one column wide\n$Obj.width is 1",
--    "# The output cell is one row tall\n$Obj.height is 1",
--    "# Its color codes the input shape, read from its input tag: 1 hollow diamond, 2 diagonal cross, 3 square with a tail, 6 orthogonal cross\n$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
--    "# The output has one cell\n$Obj.volume is $Obj.width * $Obj.height"
-+    "$Obj.tag is l7544",
-+    "$Obj.width is 1",
-+    "$Obj.height is 1",
-+    "$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
-+    "$Obj.volume is $Obj.width * $Obj.height"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--          "implementation": "# Color-5 hollow diamond: the 4 edge cells around an empty center, plus its top-left corner\nobj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
-+          "implementation": "obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
-           "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"tag":"l4262","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -55,7 +55,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# Color-8 diagonal cross: the center and the 4 corners\nobj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-+          "implementation": "obj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-           "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -81,7 +81,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# Color-5 diagonal cross: the center and the 4 corners\nobj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-+          "implementation": "obj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-           "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -107,7 +107,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# Color-1 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobjae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-+          "implementation": "objae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-           "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -133,7 +133,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# Color-8 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-+          "implementation": "obj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-           "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"tag":"
+@@ -330,6 +330,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l6953'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l6953`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `arc/src/dataset/dataset.28bf18c6.json` (modified, +12/-12)
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +20/-0)
 ```diff
-@@ -1,13 +1,13 @@
- {
--  "class_declaration": "# Each object is the one shape in the grid, inside a 3x3 box. The output shows the shape twice side by side, cropped to the two copies\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each shape becomes l4305, a shape repeated side by side\n$Obj.tag is l4305",
--    "# The output holds 2 copies\n$Obj.repeat_count is 2",
--    "# The second copy sits right of the first\n$Obj.repeat_direction is right",
--    "# The two copies together are twice its input width\n$Obj.width is $Obj.width@first * $Obj.repeat_count",
--    "# The cropped output starts at the left edge of the copies\n$Obj.x is 0",
--    "# The cropped output starts at the top edge of the copies\n$Obj.y is 0",
--    "# Both copies count their cells: twice its input cells\n$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
-+    "$Obj.tag is l4305",
-+    "$Obj.repeat_count is 2",
-+    "$Obj.repeat_direction is right",
-+    "$Obj.width is $Obj.width@first * $Obj.repeat_count",
-+    "$Obj.x is 0",
-+    "$Obj.y is 0",
-+    "$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -45,7 +45,7 @@
-             [0, 8, 0, 0, 8, 0],
-             [8, 8, 8, 8, 8, 8]
-           ],
--          "implementation": "# Color-8 shape in a 3x3 box, the only object in the grid\nobj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
-+          "implementation": "obj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
-           "input_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"tag":"l9100","volume":6,"width":3,"x":1,"y":1},
-           "output_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
-         }
-@@ -85,7 +85,7 @@
-             [2, 2, 2, 2, 2, 2],
-             [2, 2, 0, 2, 2, 0]
-           ],
--          "implementation": "# Color-2 shape in a 3x3 box, the only object in the grid\nobje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
-+          "implementation": "obje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
-           "input_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"tag":"l9100","volume":6,"width":3,"x":2,"y":5},
-           "output_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
-         }
-@@ -125,7 +125,7 @@
-             [1, 0, 0, 1, 0, 0],
-             [0, 1, 0, 0, 1, 0]
-           ],
--          "implementation": "# Color-1 shape in a 3x3 box, the only object in the grid\nobjb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
-+          "implementation": "objb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
-           "input_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"tag":"l9100","volume":4,"width":3,"x":4,"y":1},
-           "output_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":8,"width":6,"x":0,"y":0}
-         }
-@@ -165,7 +165,7 @@
-             [3, 3, 3, 3, 3, 3],
-             [3, 0, 0, 3, 0, 0]
-           ],
--          "implementation": "# Color-3 shape in a 3x3 box, the only object in the grid\nobj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
-+          "implementation": "obj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
-           "input_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"tag":"l9100","volume":5,"width":3,"x":1,"y":4},
-           "output_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":10,"width":6,"x":0,"y":0}
-         }
+@@ -346,6 +346,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l3058'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l3058`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +13/-13)
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +19/-0)
 ```diff
-@@ -1,9 +1,9 @@
- {
--  "class_declaration": "# Each object is one color-8 corner: 3 cells of a 2x2 box that meet at its vertex cell. Every corner fills the open cell of its box with color 1, completing the square\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each corner becomes l3337, a corner with its inside marker\n$Obj.tag is l3337",
--    "# The open cell of its box, diagonally opposite its vertex, turns color 1\n$Obj.marker_color is 1",
--    "# The marker adds one cell to its 3 input cells\n$Obj.volume is $Obj.volume@first + 1"
-+    "$Obj.tag is l3337",
-+    "$Obj.marker_color is 1",
-+    "$Obj.volume is $Obj.volume@first + 1"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -53,7 +53,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
-           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
-         },
-@@ -83,7 +83,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
-           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
-         }
-@@ -135,7 +135,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
-           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
-         },
-@@ -165,7 +165,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
-           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
-         },
-@@ -195,7 +195,7 @@
-             [0, 0, 0, 1, 8, 0, 0],
-             [0, 0, 0, 8, 8, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom right and its open cell at the top left\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-+          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
-           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
-         }
-
+@@ -278,6 +278,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l9100`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 6 input and 6 output snapshots of the 6 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 15 uses of the name, byte for byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
 #### Recent Merged Pull Requests:
@@ -2156,45 +1966,55 @@ Remove explanatory comments from class declarations, transformation rules, and o
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove comments from ARC datasets
+## X. Rename ARC object tags to kinds
 
 **RULE**:
-When implementing operations in `arc/src/dataset/dataset.017c7c7b.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dac162b`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df1f1406`: Rename ARC object tags to kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/dataset/dataset.017c7c7b.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-    "$Obj.tag is l8384",
-    "$Obj.extension_direction is down",
-    "$Obj.height is $Obj.height@first * 3 / 2",
-    "$Obj.color is 2"
-          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
+for world-model idioms, properties, rules, and kinds. The solver sends every
+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+  distinct sort of object the transformation needs. Each class whose
+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+  initial kind, and its body assigns every parameter to `this`, the kind with
+  `this.kind is kind` right after `this.volume is volume`. An implementation
+  passes `kind` only when its object needs a kind other than the default, as
+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+- A kind is `l` followed by four digits and names a geometry. It acts as a
+  child class that the rules assign declaratively: an instance never changes
+  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
+  Reuse the kind an existing dataset uses for the same geometry; otherwise
+  mint one unused elsewhere.
+instances, the transformation, properties the rules create, kinds, the original
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
-    "# It continues downward, below its last row\n$Obj.extension_direction is down",
-    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
-    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
-          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equa
+for world-model idioms, properties, rules, and tags. The solver sends every
+  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+  distinct kind of object the transformation needs. Each class whose
+  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+  initial tag, and its body assigns every parameter to `this`, the tag with
+  `this.tag is tag` right after `this.volume is volume`. An implementation
+  passes `tag` only when its object needs a tag other than the default, as
+  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
+- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+  existing dataset uses for the same geometry; otherwise mint one unused
+  elsewhere.
+instances, the transformation, properties the rules create, tags, the original
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dac162b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df1f1406` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

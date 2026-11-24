@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f2483549",
+    "sourceVersion": "8f515043",
     "license": "Apache-2.0",
-    "contentHash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
-    "lastHarvestedAt": "2026-11-24T20:30:04.860Z",
+    "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
+    "lastHarvestedAt": "2026-11-24T21:15:51.752Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "c31d4550",
+    "sourceVersion": "01b14a89",
     "license": "NOASSERTION",
-    "contentHash": "190e96562c9b74bb23763fe710a3b29ac05924feb93c12ae08e189e45422ed00",
-    "lastHarvestedAt": "2026-11-24T00:57:28.200Z",
+    "contentHash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
+    "lastHarvestedAt": "2026-11-24T21:15:48.199Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -13115,8 +13115,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
     "sourceVersion": "hf-unsloth-inkling-2-mini-gguf",
     "license": "Open-Source",
-    "contentHash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
-    "lastHarvestedAt": "2026-11-20T22:07:11.362Z",
+    "contentHash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
+    "lastHarvestedAt": "2026-11-24T21:15:32.709Z",
     "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf"
   },
   "dosco-deeporg": {

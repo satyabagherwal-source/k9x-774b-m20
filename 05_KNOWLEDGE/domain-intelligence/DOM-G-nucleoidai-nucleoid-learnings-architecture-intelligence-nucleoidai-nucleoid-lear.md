@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T18:32:33.287Z",
+  "timestamp": "2026-11-24T21:15:57.290Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T18:32:33.287Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T21:15:57.290Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `6c8cbc67`  
+> **Source Version**: `8f515043`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T18:32:28.038Z  
+> **Timestamp**: 2026-11-24T21:15:50.547Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:32:28.033Z  
+> **Harvest Timestamp**: 2026-11-24T21:15:50.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1387,7 +1387,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "6150a2bd") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1461,7 +1461,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const input_instances = [];
+  const test_input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1473,7 +1473,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       input_instance_matrix,
     });
 
-    input_instances.push({
+    test_input_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1485,10 +1485,10 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances,
+    input_instances: test_input_instances,
   });
 
-  for (const input_instance of input_instances) {
+  for (const input_instance of test_input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1501,7 +1501,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: input_instances });
+  milestone.test_output_composed({ instances: test_input_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1517,7 +1517,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances: input_instances,
+    test_input_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1609,513 +1609,338 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c8cbc67` (2026-11-23)
-**Commit Message**: Draft NUC 139 Symmetric Difference Reasoning Selections
+### Incident Patch 1: `8f515043` (2026-11-24)
+**Commit Message**: Resume NUC 138 Reactive Secant
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw,
-at 13:14:19) for a continuous /nuc-proposal cycle, so the token
-non-regression gate is required.
+Refresh this held Draft claim for fresh revision3 after Accepted NUC139 advanced the shared accepted runtime during revision2 preparation. Revision2 stops at its preparation checkpoint, without freezing or evaluation; preserve every source, baseline and log. No outcome recorded.
 
-Requested change: a reasoning pipeline gains the stage
-SELECTION |> xor(OTHER), the symmetric difference of two selections:
-the steps of SELECTION whose nodes OTHER does not select, in
-SELECTION's order, then the steps of OTHER whose nodes SELECTION does
-not select, in OTHER's order, each keeping the distance it has in its
-own selection, exactly SELECTION |> except(OTHER) |>
-union(OTHER |> except(SELECTION)). It completes NUC 106's intersect
-and except and NUC 120's union, which both left the symmetric
-difference out, keeps a selection for later stages, and follows the
-graph in a declaration. At the accepted revision |> xor(...) raises
-TypeError("xor is not an operation") while the program is parsed, and
-only those programs change; names, properties and keys called xor
-keep their readings. The name follows lodash's xor and the ^ of
-Python and Ruby sets.
+Original allocation: abc138d4a03c8631f7639946cf605eff0be3b332
+Previous held claim: 87d99403cf02872fc52ee2c5dd9a11bfed5c0c25
+Current accepted source basis: df1f1406f2481169243859f063498b7baf1e734c
+Category: Utility enhancement; mode: continuous. This is an early held-claim renewal for baseline alignment, not a stale takeover.
 
-Co-Authored-By: Claude Opus 5.5 <[RED
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -160,6 +160,7 @@ Created: 31-Jul-2026
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
- 
- ### Language compatibility
- 
-@@ -331,6 +332,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
-```
 
-**File**: `docs/nuc-0139.md` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+# NUC 139 -- Symmetric Difference Reasoning Selections
-+
-+```
-+NUC: 139
-+Title: Symmetric Difference Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 23-Nov-2026
-+Requires: 106, 120
-+```
-+
-+## Abstract
-+
-+- A reasoning pipeline gains the stage `SELECTION |> xor(OTHER)`, the
-+  symmetric difference of two selections. It keeps the steps of `SELECTION`
-+  whose nodes `OTHER` does not select, in `SELECTION`'s order, followed by
-+  the steps of `OTHER` whose nodes `SELECTION` does not select, in
-+  `OTHER`'s order. Each step keeps the distance it has in its own
-+  selection, as `union` keeps it, so the stage is exactly
-+  `SELECTION |> except(OTHER) |> union(OTHER |> except(SELECTION))`.
-+- After `price = 10`, `quantity = 3`, `rate = 0.2`,
-+  `subtotal = price * quantity`, `tax = subtotal * rate`,
-+  `shipping = quantity * 2`, `total = subtotal + tax` and
-+  `freight = shipping + rate`,
-+  `total |> why |> xor(freight |> why) |> nodes` gives
-+  `["total", "subtotal", "tax", "price", "freight", "shipping"]`: what one
-+  explanation rests on and the other does not, without the quantity and
-+  the rate that both share.
-+- It completes [NUC 106](nuc-0106.md)'s `intersect` and `except` and
-+  [NUC 120](nuc-0120.md)'s `union`, both of which left the symmetric
-+  difference out. It keeps a selection, so later stages apply to it, and a
-+  declaration that holds it follows the graph.
-+- At the accepted revision `|> xor(...)` raises
-+  `TypeError("xor is not an operation")` while the program is parsed, and
-+  only those programs change. Variables, functions, properties and keys
-+  named `xor` keep their readings.
-+
-+## Motivation
-+
-+- A world model that explains two conclusions often needs what tells them
-+  apart: the facts and rules behind one alarm but not the other, or the
-+  inputs that a price and a cost do not share. That is a contrastive
-+  question, and the symmetric difference of their explanations answers it
-+  in one selection.
-+- Accepted programs spell it as `S |> except(O) |> union(O |> except(S))`,
-+  which writes both selections twice:
-+  `why total |> except(why freight) |> union(why freight |> except(why total)) |> nodes`
-+  takes 22 lexer tokens, against 10 for
-+  `why total |> xor(why freight) |> nodes`. Writing each selection twice
-+  also walks it twice, and a standing declaration keeps the observations of
-+  every walk.
-+- The name follows lodash's `xor`, the symmetric difference of arrays, and
-+  the `^` that Python and Ruby use for the symmetric difference of sets.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
 
 ---
 
-### Incident Patch 2: `fda179e7` (2026-11-23)
-**Commit Message**: NUC 135 Kotlin Negated Membership Operator
+### Incident Patch 2: `df1f1406` (2026-11-24)
+**Commit Message**: Rename ARC object tags to kinds
 
-Accepted under the automatic acceptance rule in a continuous
-/nuc-proposal cycle: every hard criterion passes and every policy
-check passes; the token comparison is skipped, as NUC 1's matrix
-requires for Language compatibility. The cycle drew Language
-compatibility uniformly from the five eligible categories, allocated
-the NUC in d0894711 and renewed its claim in a2f46a48. A fresh
-proposer prepared it in two phases, the caller's Rust improvement pass
-changed only the new suite, and a fresh independent evaluator decided
-Accepted.
+Rename the geometry property across ARC datasets, snapshots, documentation, and agent guidance. Update the default puzzle to 6150a2bd and clarify test instance naming.
 
-A membership test gains Kotlin's negated spelling A !in B, an exact
-alias of NUC 97's A not in B: the parser reads ! immediately followed
-by the keyword in as the same not in node. Only programs that were
-parse errors at the accepted revision change; interpolations, ! in
-with whitespace and every other ! keep their readings.
-
-Hard criteria, evaluated on the frozen candidate at d0894711:
-- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
-  1.99.1, rustdoc and the diff checks pass without warnings;
-- every test passes: 3,933 passed, 0 failed, 25 ignored, against
-  3,908 at the pin; no accepted identi
-
-**File**: `README.md` (modified, +25/-0)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-12)
 ```diff
-@@ -3049,6 +3049,31 @@ item.total
-   labels are unchanged. See the
-   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+@@ -79,7 +79,7 @@ output-canvas mode for the whole dataset, inferred only from the training pairs.
+ Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one other
+ dataset, and the "Instruction datasets" and "Analysis" sections of
+ `arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
+-for world-model idioms, properties, rules, and tags. The solver sends every
++for world-model idioms, properties, rules, and kinds. The solver sends every
+ JSON instruction dataset as shared few-shot context. Match their structure,
+ key order, and
+ formatting exactly:
+@@ -129,16 +129,16 @@ formatting exactly:
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
+-  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+-  distinct kind of object the transformation needs. Each class whose
++  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
++  distinct sort of object the transformation needs. Each class whose
+   instances are annotated objects takes the standard entries `x: int, y: int,
+   width: int, height: int, orientation: int, volume: int` first, in that
+-  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+-  initial tag, and its body assigns every parameter to `this`, the tag with
+-  `this.tag is tag` right after `this.volume is volume`. An implementation
+-  passes `tag` only when its object needs a tag other than the default, as
++  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
++  initial kind, and its body assigns every parameter to `this`, the kind with
++  `this.kind is kind` right after `this.volume is volume`. An implementation
++  passes `kind` only when its object needs a kind other than the default, as
+   every implementation in `dataset.27a28665.json` names its block's shape
+-  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
++  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+   keeps its quotes, because accepted Nucleoid takes only a literal as a
+   parameter default. Add only the descriptive properties the transformation
+   needs, such as categorical colors.
+@@ -182,9 +182,11 @@ formatting exactly:
+   populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
+   `find`, and reasoning selections, where they express the rule. Avoid `for`
+   loops, imperative steps, and manual bookkeeping.
+-- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+-  existing dataset uses for the same geometry; otherwise mint one unused
+-  elsewhere.
++- A kind is `l` followed by four digits and names a geometry. It acts as a
++  child class that the rules assign declaratively: an instance never changes
++  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
++  Reuse the kind an existing dataset uses for the same geometry; otherwise
++  mint one unused elsewhere.
+ - Orientation is degrees clockwise from north (N = 0, E = 90, S = 180,
+   W = 270, diagonals 45, 135, 225, and 315). Use 0 for shapes that are
+   symmetric or not rotated.
+@@ -331,7 +333,7 @@ Add one paragraph about the dataset to the "Instruction datasets" section of
+ `arc/README.md`, in the style of the `dataset.28bf18c6.json` paragraph: source
+ puzzle, its single canonical path, that it contains the exact original training
+ pairs in order followed by the test pairs, pair and instance counts,
+-instances, the transformation, properties the rules create, tags, the original
++instances, the transformation, properties the rules create, kinds, the original
+ canvas and object sizes, and orientation.
+ With a candidate executable, also name the NUC whose feature the rules use.
  
-+## Negated membership with !in
-+
-+**Kotlin's !in keeps an access rule live**
-+
-+```nuc
-+blocked = ["mallory"]
-+class User(name):
-+    this.name = name
-+$User.allowed = $User.name !in blocked
-+alice = User("alice")
-+mallory = User("mallory")
-+assert([alice.allowed, mallory.allowed], [true, false])
-+blocked.push("alice")
-+assert(alice.allowed, false)
-+alice.allowed
-+# return: false
-+```
-+
-+- [NUC 135](docs/nuc-0135.md) adds Kotlin's `item !in collection`, the same
-+  test as `item not in collection`: each user's `allowed` follows the
-+  `blocked` list, as it does with `not in`.
-+- `!` and `in` are written together, as Kotlin writes them; `! in` keeps its
-+  syntax error. Rules render the test as `not in`. See the
-+  [root contract](nucleoid.spec.md#negated-membership-with-in).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +2/-2)
 ```diff
-@@ -867,3 +867,6 @@
- {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
- {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
- {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
-+{"id":"spec-0870","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
-+{"id":"spec-0871","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
-+{"id":"spec-0872","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
+@@ -86,7 +86,7 @@ solver run.
+ ## References
+ 
+ The workflow and its workers may use every dataset in `arc/src/dataset/` as a
+-reference for structure, world-model idioms, properties, rules, and tags.
++reference for structure, world-model idioms, properties, rules, and kinds.
+ The solver sends every JSON instruction dataset as shared few-shot context,
+ including the running puzzle's own annotated test pairs. That is intended
+ while the datasets are prepared as few-shot examples, under the
+@@ -148,7 +148,7 @@ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
+ that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
+ `if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
+ `$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
+-profile's quoted default, `tag: str = 'lNNNN'`, is a quote that accepted
++profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
+ Nucleoid cannot do without, because it rejects a bare parameter default
+ with `SyntaxError`. Have the
+ handoff list every quote it keeps, with the actual result of its bare
 ```
 
-**File**: `dataset/nucleoid.synth.96.jsonl` (added, +12/-0)
+**File**: `arc/README.md` (modified, +108/-105)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-96-0001","description":"Kotlin's !in tests that a list does not hold an item, as not in does","code":"xs = [1, 2, 3]\n[2 !in xs, 4 !in xs]","return":"[false,true]"}
-+{"id":"synth-96-0002","description":"!in tests that a string does not contain a piece of text","code":"word = \"hello\"\n[\"z\" !in word, \"ell\" !in word]","return":"[true,false]"}
-+{"id":"synth-96-0003","description":"!in over a class tests that none of its instances equals the item","code":"class Seat\nfront = Seat()\n[front !in Seat, 3 !in Seat]","return":"[false,true]"}
-+{"id":"synth-96-0004","description":"A declaration written with !in stays live as its list grows","code":"xs = [1, 2]\nmissing = 3 !in xs\nassert(missing, true)\nxs.push(3)\nmissing","return":"false"}
-+{"id":"synth-96-0005","description":"A class-level rule with !in marks every order whose status is not approved","code":"class Order(status):\n    this.status = status\napproved = [\"paid\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\n[first.pending, second.pending]","return":"[false,false]"}
-+{"id":"synth-96-0006","description":"An if condition written with !in guards its block until the name is blocked","code":"blocked = [\"eve\"]\nuser = \"bob\"\naccess = \"denied\"\nif user !in blocked:\n    access = \"granted\"\naccess","return":"\"granted\""}
-+{"id":"synth-96-0007","description":"A lambda written with !in filters out the banned items","code":"items = [1, 2, 3, 4]\nbanned = [2, 4]\nitems.filter(item -> item !in banned)","return":"[1,3]"}
-+{"id":"synth-96-0008","description":"!in binds as tightly as < so arithmetic comes first and == after","code":"xs = [1, 2, 3]\n[1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs]","return":"[true,true,true]"}
-+{"id":"synth-96-0009","description":"!in over a null collection waits for it, as not in does","code":"tags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nuntagged","return":"true"}
-+{"id":"synth-96-0010","description":"!in over an object raises the TypeError of not in and rolls the update back","code":"items = [\"a\"]\nabsent = \"b\" !in items\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\n[failure, items, absent]","return":"[\"TypeError: items is not a collection\",[\"a\"],true]"}
-+{"id":"synth-96-0011","description":"A rule written with !in renders as not in when why explains it","code":"xs = [1, 2, 3]\nr = 4 !in xs\n(why r)[0].rule","return":"\"r = (4 not in xs)\""}
-+{"id":"synth-96-0012","description":"!in works in a comprehension filter and in a quantifier condition","code":"xs = [1, 2, 3, 4]\nbanned = [2]\n[[x for x in xs if x !in banned], all x in xs: x !in [9]]","return":"[[1,3,4],true]"}
+@@ -400,12 +400,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
+ rim above, and a vertical line that extends up from its bottom endpoint with
+ a horizontal line that extends left from its right endpoint.
+ Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-`orientation`, and `volume` first, then the optional `tag`, then its
++`orientation`, and `volume` first, then the optional `kind`, then its
+ descriptive properties in their existing order, and every implementation
+ passes the input shape's bounding-box `width` and `height` and its input
+-mask's `volume`, its number of nonzero cells, and leaves out `tag`. A rule
++mask's `volume`, its number of nonzero cells, and leaves out `kind`. A rule
+ that grows a shape computes its new size
+-from its first values in the branch that sets its output tag: a core corner
++from its first values in the branch that sets its output kind: a core corner
+ grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
+ column left when it points west, at orientation 225 or 315, and one row up
+ when it points north, at orientation 45 or 315; a curve point grows from
+@@ -439,16 +439,19 @@ every program it runs, as
+ rules read it from those variables. Native snapshots are captured the same
+ way, with the pair's `input_matrix` size declared first.
+ 
+-Every class takes `tag` right after `volume` as an optional parameter whose
+-default is the dataset's initial tag, such as `tag: str = 'l9100'`, and its
+-constructor stores it with `this.tag is tag`. An implementation passes `tag`
+-only when its object needs a tag other than that default: every
+-implementation of `dataset.27a28665.json` passes the tag of its block's
+-shape, as in `tag='l4262'`, and every other implementation leaves it out, so
++Every class takes `kind` right after `volume` as an optional parameter whose
++default is the dataset's initial kind, such as `kind: str = 'l9100'`, and its
++constructor stores it with `this.kind is kind`. An implementation passes `kind`
++only when its object needs a kind other than that default: every
++implementation of `dataset.27a28665.json` passes the kind of its block's
++shape, as in `kind='l4262'`, and every other implementation leaves it out, so
+ its input state carries the default. The parameter comes before the
+ descriptive parameters, in the order of the constructor's assignments:
+ Nucleoid lets a default occupy any parameter slot, and every implementation
+-names its arguments.
++names its arguments. A kind acts as a child class that the rules assign
++declaratively: Nucleoid never converts an instance to another class, so a
++class-level rule such as `$Obj.kind is l1707` moves the instance to another
++kind instead. The property was called `tag` until 24-Nov-2026.
+ 
+ Every dataset writes its assignments with `is`, the opt-in assignment of
+ [NUC 93](../docs/nuc-0093.md), and its equality tests with `is` and `is not`,
+@@ -459,15 +462,15 @@ and implementations construct
+ each `target is value` builds exactly the syntax tree of `target = value`. When
+ a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+-text, so tags and directions drop their quotes there, as in
+-`$Obj.tag is l3337` and `$Obj.extension_direction is right`, while
+-`this.tag is tag` reads the constructor's `tag` parameter. No dataset
++text, so kinds and directions drop their quotes there, as in
++`$Obj.kind is l3337` and `$Obj.extension_direction is right`, while
++`this.kind is kind` reads the constructor's `kind` parameter. No dataset
+ program defines a name with those spellings, and the solver adds only
+ `canvas_width` and `canvas_height`. Other strings keep their quotes, such as
+ the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
+-arguments such as `tag='l1707'`, which are not assignments, and the default
+-of the `tag` parameter, such as `tag: str = 'l9100'`: accepted Nucleoid takes
+-only a literal as a parameter default and rejects the bare `tag: str = l9100`
++arguments such as `kind='l1707'`, which are not assignments, and the default
++of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
++only a literal as a parameter default and rejects the bare `kind: str = l9100`
+ with `SyntaxError: Expected a scalar literal parameter default`.
+ `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
+ assignments without one since `d945213`, which removed the opt-in syntax
+@@ -508,14 +511,14 @@ derives them as `COMMENT`:
+ 
+ ```nuc
+ # Each object is all the cells of one color, touching or not. Every color except the one with the most cells turns 5
+-class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, kind: str = 'l9100', color: int):
+     this.x is x
+     this.y 
 ```
 
-**File**: `docs/README.md` (modified, +46/-5)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +19/-0)
 ```diff
-@@ -854,9 +854,10 @@ settings.size
- - Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`.
- - Comparison words: `is` and `is not`, spellings of `==` and `!=` with a bare
-   word rule; see [is and is not comparisons](#is-and-is-not-comparisons).
--- Membership: `item in collection` and `item not in collection` for lists,
--  classes and strings, at the level of `<`; see
--  [membership tests](#membership-tests).
-+- Membership: `item in collection` and `item not in collection`, also
-+  written `item !in collection` as in Kotlin, for lists, classes and
-+  strings, at the level of `<`; see [membership tests](#membership-tests)
-+  and [negated membership with `!in`](#negated-membership-with-in).
- - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
- - Conditional: `condition ? consequent : alternate` or
-   `consequent if condition else alternate`; see below.
-@@ -1088,7 +1089,8 @@ Full detail: [NUC 64](nuc-0064.md).
-   quantifier does, so `"a" in {a: 1}` is an error rather than `undefined`.
- - They stand at the level of `<` and `>`: `x + 1 in xs` adds first,
-   `x in xs and y in ys` tests both, and `not x in xs` is `(not x) in xs`, as
--  `not x < y` is; write `x not in xs` to negate the test.
-+  `not x < y` is; write `x not in xs`, or `x !in xs` as Kotlin does, to
-+  negate the test.
- - A declaration that uses one stays live: it follows the list, the string
-   or the class's population, and whatever `item` reads.
+@@ -363,6 +363,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
  
-@@ -1120,6 +1122,44 @@ listed
- 
- Full detail: [NUC 97](nuc-0097.md).
- 
-+### Negated membership with !in
++### Kind instead of tag
 +
-+```
-+palette = ["red", "green"]
-+color = "blue"
-+unlisted = color !in palette
-+assert(unlisted, true)
-+palette.push("blue")
-+assert(unlisted, false)
-+assert(["z" !in "green", "ee" !in "green"], [true, false])
-+class Tag
-+urgent = Tag()
-+assert([urgent !in Tag, "late" !in Tag], [false, true])
-+assert(color !in palette, color not in palette)
-+unlisted
-+```
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and its rules move instances to the kind `l8384` with
++`$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
 +
-+- This is the complete `Nucleoid negates membership tests with !in` program
-+  in `tests/reference.md`, without its title and expected-return metadata;
-+  it returns `false`.
-+- `item !in collection` is Kotlin's spelling of `item not in collection`:
-+  the same test, at the same level of `<`, over the same lists, classes and
-+  strings, with the same `null` waiting and `TypeError`. A declaration that
-+  uses it stays live, as `unlisted` follows `palette`.
-+- `!` and `in` are written together, on one line, as Kotlin writes them.
-+  `x ! in xs` and a `!` at the end of a line keep their syntax errors, and
-+  `!` before anything else keeps its prefix reading, so `!inx` negates
-+  `inx`.
-+- The test renders as `(item not in collection)` in rules, `why`, `affects`
-+  and `--graph`. At the top level of a template interpolation `!` stays an
-+  ignored token, as `not` does: `` `${x !in xs}` `` renders `x`, while
-+  `` `${(x !in xs)}` `` tests membership. Grammar, errors and edge cases are
-+  in the authoritative
-+  [negated membership with !in](../nucleoid.spec.md#negated-membership-with-in)
-+  section.
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 4 input and 4 output snapshots of the 4 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 12 uses of the name, byte for byte.
 +
-+Full detail: [NUC 135](nuc-0135.md).
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
 +
- ### Indexing, slicing, and length
+ ## Runs
  
- - Lists and instance lists index with brackets; the index may be a variable.
-@@ -5590,7 +5630,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | Missing or non-function `sortBy` selector, including `null`, even on an empty receiver | `sortBy expects a function` |
- | Missing or non-function `partition` predicate, including `null`, even on an empty receiver | `partition expects a function` |
- | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
--| An `in` or `not in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
-+| An `in`, `not in` or `!in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
- | A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
- | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
- | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
-@@ -5767,6 +5807,7 @@ base ** exponent                       exactly Math.pow(base, exponent), right-a
- name **= exponent                      name = name ** (exponent) (NUC 64)
- item in collection                     list, class or string membership at the level of < (NUC 97)
- item not in collection                 its negation; not item in xs is (not item) in xs (NUC 97)
-+item !in collection                    Kotlin spelling: exactly item not in collection, ! and in adjacent (NUC 135)
- 
- for name of source:                    class/object-list/scalar-string iteration
- for name in source:                    equivalent explicit i
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `docs/examples.md` (modified, +28/-0)
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +20/-0)
 ```diff
-@@ -4577,6 +4577,34 @@ heavy
-   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
-   define. A vehicle built without a `color` label has none.
+@@ -442,6 +442,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
  
-+## Negated membership with !in
++### Kind instead of tag
 +
-+**Negated membership keeps a support queue's open tickets live**
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l7544'` and stores it with
++`this.kind is kind`, and its rules move instances to the kinds `l1707` and
++`l2404` with `$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and
++every value is unchanged.
 +
-+```nuc
-+class Ticket(status):
-+    this.status = status
-+closed = ["done", "spam"]
-+$Ticket.open = $Ticket.status !in closed
-+first = Ticket("new")
-+second = Ticket("done")
-+queue = Ticket.filter(ticket -> ticket.open).map(ticket -> ticket.status)
-+assert(queue, ["new"])
-+second.status = "reopened"
-+assert(queue, ["new", "reopened"])
-+closed.push("new")
-+assert(queue, ["reopened"])
-+queue
-+# return: ["reopened"]
-+```
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 4 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 35 uses of the name, byte for
++byte.
 +
-+- `$Ticket.status !in closed` is Kotlin's spelling of
-+  `$Ticket.status not in closed`. Each ticket's `open` follows its status and
-+  the `closed` list, and the queue follows every ticket, so reopening a ticket
-+  and closing a status both reach it without an imperative walk.
-+- See [NUC 135](nuc-0135.md) and the
-+  [root contract](../nucleoid.spec.md#negated-membership-with-in).
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
 +
- ## Copyright
+ ## Runs
  
- Copyright 2020 Nucleoid
+ | Date | Run | Commit | Exit status | Difference | Seconds |
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +20/-0)
 ```diff
-@@ -180,7 +180,7 @@ Created: 31-Jul-2026
- | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
--| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
-+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+@@ -330,6 +330,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
  
- ### Documentation
-@@ -327,7 +327,7 @@ Created: 31-Jul-2026
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
--| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
-+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Accepted |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l6953'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l6953`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `docs/nuc-0135.md` (modified, +1163/-11)
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +20/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 135
- Title: Kotlin Negated Membership Operator
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 22-Nov-2026
-@@ -20,14 +20,26 @@ Requires: 97
-   evaluation, liveness, rendering and errors are the accepted ones. After
-   `xs = [1, 2, 3]`, `[2 !in xs, 4 !in xs]` gives `[false, true]`, as
-   `[2 not in xs, 4 not in xs]` does.
-+- Directly means on one line, with the `in` in the column right after the
-+  `!`, as Kotlin writes its single `!in` token. `! in` with whitespace, a
-+  comment or a line break between the two keeps its parse error, and `!`
-+  before any other token keeps its prefix reading, so `x !inx` is still the
-+  two statements `x` and `!inx`.
- - At the accepted revision, every program in which `!` directly precedes
-   `in` where a membership operator can stand fails to parse, with errors
-   such as `SyntaxError("Unexpected keyword 'in'")` and
-   `SyntaxError("Expected ']' but found '!'")`, and only those programs
-   change. Inside a template interpolation, which ends before `not in` as it
--  ends before `!in`, the accepted reading stays, and `! in` with whitespace
--  between the two keeps its parse error. No keyword, lexer token, error or
--  syntax-tree variant is added.
-+  ends before `!in`, the accepted reading stays: `` `a ${4 !in xs} b` ``
-+  still gives `"a 4 b"`. The public Rust `parse_expression` changes only
-+  where NUC 97 changed it for `not in`: a Python-style conditional whose
-+  condition holds the test.
-+- A program written with `!in` shows `not in` in its rules, `why`,
-+  `affects`, `--graph` and graph keys, as programs written with `and`, `or`
-+  and `not` show `&&`, `||` and `!`.
-+- No keyword, lexer token, `BinaryOp`, syntax-tree variant, error type or
-+  message is added, and no public item changes. The authoritative contract
-+  is [Negated membership with !in](../nucleoid.spec.md#negated-membership-with-in).
+@@ -346,6 +346,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
  
- ## Motivation
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l3058'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l3058`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
  
-@@ -39,26 +51,1166 @@ Requires: 97
-   populations. Today each `!in` fails to parse, so a model's otherwise valid
-   rule, such as `$Order.flagged = $Order.status !in approved`, stops the
-   whole program before any statement runs.
-+- World models state exclusions as often as memberships: a user who is not
-+  blocked, an order whose status is not approved, a ticket whose status is
-+  not closed. These rules are standing, so they must follow every push to
-+  the list and every change of the status, which `not in` already does and
-+  the alias inherits.
- - An alias keeps one membership operator in the runtime and one canonical
--  spelling in rendered rules, as the accepted `===`, `!==`, `elif` and
--  `->` aliases do, and advances the language-superset aspiration of NUC 1's
--  Language compatibility category without changing any accepted form.
-+  spelling in rendered rules, as the accepted `and`, `or`, `not` and the
-+  Python-style conditional render as `&&`, `||`, `!` and `?:`, and advances
-+  the language-superset aspiration of NUC 1's Language compatibility
-+  category without changing any accepted form.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 4
-+  with probability 1/5 and no redraw, at 14:41:26 on 22-Nov-2026, and
-+  recorded the requested change in the allocation commit `d0894711`, which
-+  this revision pins. Token comparison is therefore skipped as
-+  `language_compatibility`. The skip is categorical; it is neither a
-+  measured comparison nor a passing token gate. Runtime applicability does
-+  not apply to this category.
-+- **Selection.** Within the category, the cycle chose one bounded alias that
-+  no NUC proposes: Kotlin's `!in`, which the open candidates that
-+  [NUC 131](nuc-0131.md)'s cycle surveyed name. It set aside JavaScript's
-+  `!==`, which is already accepted; spread arguments and `??=`, which are
-+  parse errors with no accepted equivalent to alias; and `copy()`,
-+  `toList()`, `extend` and `count()`, which extend methods rather than
-+  alias an operator. [NUC 134](nuc-0134.md), another session's proposal,
-+  holds Ruby's `collect` and `select`.
-+- **No counterparts.** Because comparison is skipped, the new cases have no
-+  accepted-syntax counterparts. They execute their assertions and explicit
-+  returns with full coverage, each gives exactly what its `not in`
-+  spelling gives on the accepted revision, and every pre-existing case is
-+  unchanged.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored (`missing_rubric`), not zero. Strategy learning is
-+  `not_configured`, so this revision is unattributed, with no policy,
-+  selection receipt, trial or reward.
-+- **One node.** `A !in B` builds the very `Expr::Binary` with
-+  `BinaryOp::NotIn` that `A not in
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `docs/nucleoid.ebnf` (modified, +16/-6)
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +19/-0)
 ```diff
-@@ -594,19 +594,28 @@ equalityOperator
-       | IS NOT?
+@@ -278,6 +278,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
  
- /*
-- * Membership contract (NUC 97):
-+ * Membership contract (NUC 97, NUC 135):
-  * - IN, and NOT directly followed by IN, after an additive operand build
-  *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
-  *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
-  *   operand limit. NOT before an operand stays a prefix, so
-  *   'NOT a IN b' is '(NOT a) IN b'.
-+ * - BANG directly followed by IN builds BinaryOp::NotIn in the same place
-+ *   (NUC 135), with the tree of NOT IN, only when the IN token starts on
-+ *   the line of the BANG, in the column right after it: no whitespace,
-+ *   comment or line break lies between them. Otherwise BANG stays a prefix
-+ *   and IN keeps its accepted reading and error, so 'a ! in b' fails as
-+ *   before. BANG before an operand stays a prefix, so 'BANG a IN b' is
-+ *   '(BANG a) IN b'.
-  * - Not at the top level of an interpolation or of an expressionInput,
-- *   whose trailing tokens are ignored: IN stays their first ignored token.
-+ *   whose trailing tokens are ignored: IN, NOT or BANG stays their first
-+ *   ignored token.
-  * - Not when COLON directly follows the right operand outside a clause:
-- *   such a colon can only close a malformed quantifier, so IN keeps its
-- *   accepted reading and error, "Unexpected keyword 'in'" where it would
-- *   begin a statement and the enclosing construct's error elsewhere, such
-- *   as "Expected '}' but found keyword 'in'" in an object value.
-+ *   such a colon can only close a malformed quantifier, so IN, NOT and BANG
-+ *   keep their accepted readings and errors, "Unexpected keyword 'in'"
-+ *   where IN would begin a statement and the enclosing construct's error
-+ *   elsewhere, such as "Expected '}' but found keyword 'in'", or "Expected
-+ *   '}' but found '!'" for BANG IN, in an object value.
-  */
- relational
-     ::= additive (relationalOperator additive)*              /* Expr::Binary, left */
-@@ -618,6 +627,7 @@ relationalOperator
-       | GREATER_EQUAL
-       | IN                                                  /* BinaryOp::In */
-       | NOT IN                                              /* BinaryOp::NotIn */
-+      | BANG IN                                             /* BinaryOp::NotIn */
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l9100`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 6 input and 6 output snapshots of the 6 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 15 uses of the name, byte for byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
  
- additive
-     ::= term ((PLUS | MINUS) term)*                          /* Expr::Binary, left */
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
 #### Recent Merged Pull Requests:
@@ -2144,32 +1969,55 @@ Hard criteria, evaluated on the frozen candidate at d0894711:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 139 Symmetric Difference Reasoning Selections
+## X. Rename ARC object tags to kinds
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c8cbc67`: Draft NUC 139 Symmetric Difference Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df1f1406`: Rename ARC object tags to kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+for world-model idioms, properties, rules, and kinds. The solver sends every
+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+  distinct sort of object the transformation needs. Each class whose
+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+  initial kind, and its body assigns every parameter to `this`, the kind with
+  `this.kind is kind` right after `this.volume is volume`. An implementation
+  passes `kind` only when its object needs a kind other than the default, as
+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+- A kind is `l` followed by four digits and names a geometry. It acts as a
+  child class that the rules assign declaratively: an instance never changes
+  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
+  Reuse the kind an existing dataset uses for the same geometry; otherwise
+  mint one unused elsewhere.
+instances, the transformation, properties the rules create, kinds, the original
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+for world-model idioms, properties, rules, and tags. The solver sends every
+  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+  distinct kind of object the transformation needs. Each class whose
+  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+  initial tag, and its body assigns every parameter to `this`, the tag with
+  `this.tag is tag` right after `this.volume is volume`. An implementation
+  passes `tag` only when its object needs a tag other than the default, as
+  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
+- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+  existing dataset uses for the same geometry; otherwise mint one unused
+  elsewhere.
+instances, the transformation, properties the rules create, tags, the original
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c8cbc67` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df1f1406` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

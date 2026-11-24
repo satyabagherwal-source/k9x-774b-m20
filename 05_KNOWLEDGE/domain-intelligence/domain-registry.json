@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T21:02:09.579Z",
+  "last_updated": "2026-11-24T21:15:57.606Z",
   "total_records": 2576,
   "domains": {
     "A": {
@@ -15655,8 +15655,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "b79b145dcf9fb19897845160146cbdb516e992319c99f7912103f10a5e0cc1f0",
-      "created_at": "2026-11-24T20:30:05.286Z"
+      "content_hash": "fdb4194b0a629870a7a19ea0574db9f4c538175c1ee17655fcc2e833bbfc7afa",
+      "created_at": "2026-11-24T21:15:52.261Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16105,8 +16105,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "9aa4db9959e7e71b8b14f5685ae5874e11a938bfb801fe04a53b885813bb067e",
-      "created_at": "2026-11-23T18:32:33.584Z"
+      "content_hash": "bada6f678d04bf4f9f0da75697e3fe04a25c4dd6d5c2313e77523b00b92c3503",
+      "created_at": "2026-11-24T21:15:57.606Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -28850,8 +28850,8 @@
       "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "fcdf006ef7534a675618b7c97c8f7c36baac26aeda925e7113576a7a1a50f135",
-      "created_at": "2026-11-22T23:06:25.483Z"
+      "content_hash": "754aa104a1e6b4a1031769c2673870e65ce152f148aefcf2c506d3ddde8b337f",
+      "created_at": "2026-11-24T21:15:48.712Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
@@ -28859,8 +28859,8 @@
       "title": "Technical Construction Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-learnings-technical-construction-intelligence-clockwor.md",
       "repository": "clockworklabs-spacetimedb-learnings",
-      "content_hash": "9968c3667295723ef55bae5eaaee9e2a41640582882e573b1a474cea90947724",
-      "created_at": "2026-11-20T18:41:55.418Z"
+      "content_hash": "8dd2cd14336530d07db0eb30e68ab7fbab929e22d820ef66b189d9d9bedc7c81",
+      "created_at": "2026-11-24T21:15:56.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
@@ -37071,8 +37071,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Inkling-2-Mini-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-research-knowledge-intelligence-unsloth-inkling-2.md",
       "repository": "unsloth/Inkling-2-Mini-GGUF",
-      "content_hash": "625a5532e392562dba2ac0bacc8d651d932afa5ad23440dd150f1504d5808537",
-      "created_at": "2026-11-20T22:07:11.609Z"
+      "content_hash": "d26d7774d958aed858f4ca1fb1cdfb0e1ebde43b1087c36a6c23d5e52a6c3621",
+      "created_at": "2026-11-24T21:15:32.964Z"
     },
     "DOM-D-0EAB1E60": {
       "record_id": "DOM-D-0EAB1E60",
@@ -37122,8 +37122,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-inkling-2-mini-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-inkling-2-mini-gguf-learnings",
-      "content_hash": "7d2b756e906617a72efe860f2d08fe1f9dcd2bf27573deea81fc55cd759cf702",
-      "created_at": "2026-11-20T22:08:02.453Z"
+      "content_hash": "8f6417aa62307133679bc0e9d50eba8be7f6962b503e74c76ec0f6e9a84a2e71",
+      "created_at": "2026-11-24T21:15:55.616Z"
     },
     "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants",

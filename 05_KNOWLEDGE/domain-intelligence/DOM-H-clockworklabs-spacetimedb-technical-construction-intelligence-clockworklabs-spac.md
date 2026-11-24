@@ -4,24 +4,24 @@
 {
   "source_repository": "clockworklabs/SpacetimeDB",
   "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-  "source_version": "340dc085",
+  "source_version": "01b14a89",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T23:06:25.319Z",
+  "timestamp": "2026-11-24T21:15:48.462Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `340dc085`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T23:06:25.319Z`  
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `01b14a89`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T21:15:48.462Z`  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clockworklabs/SpacetimeDB:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:06:24.055Z  
+> **Harvest Timestamp**: 2026-11-24T21:15:47.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25569 stars
+- **Stars / Engagement**: 25571 stars
 
 ---
 
@@ -844,21 +844,18 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `340dc085` (2026-11-22)
-**Commit Message**: Skip absent page slots when verifying snapshots (#6659)
+### Incident Patch 1: `01b14a89` (2026-11-24)
+**Commit Message**: Release - Double the Cargo publish index timeout (#6686)
 
 # Description of Changes
 
-Skip `ZERO_HASH_DENOTING_ABSENT_PAGE` when the snapshot fetcher
-enumerates pages.
-
-Snapshot metadata uses this sentinel for a freed page slot. Treating it
-as an object causes verification to fail on the previous snapshot's
-object lookup and prevents archival from advancing.
+Double Cargo's crates.io index wait from 60 to 120 seconds. The v2.16.3
+release hit this timeout waiting for `spacetimedb-sats`. [Release
+job](https://github.com/clockworklabs/SpacetimeDB/actions/runs/45450644164/job/138647121662)
 
 # API and ABI breaking changes
 
-None.
+None
 
 # Rollback safety impact
 
@@ -870,90 +867,55 @@ n/a
 
 # Testing
 
-- Added a regression test that verifies a snapshot containing an absent
-slot and a real page when a previous snapshot exists.
-  - reproduces `ENOENT` before the fix. Passes with the fix.
+- `cargo publish --dry-run` packaged and verified a test crate with the
+120-second setting on Cargo 1.97.1
+- Cargo reported `publish.timeout = 120` for the same configuration
+
+The live registry wait wasn't exercised.
 
 ---------
 
-Signed-off-by: joshua-spacetime <[REDACTED_EMAIL]>
-Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
-**File**: `crates/snapshot/src/remote.rs` (modified, +33/-3)
+**File**: `tools/release/src/targets/crates.rs` (modified, +20/-1)
 ```diff
-@@ -30,7 +30,7 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
- use tokio_util::io::{InspectReader, InspectWriter, StreamReader};
- use zstd_framed::AsyncZstdReader;
- 
--use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-+use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
- 
- pub type Result<T> = std::result::Result<T, SnapshotError>;
- 
-@@ -370,7 +370,8 @@ impl<P: BlobProvider> SnapshotFetcher<P> {
-             .snapshot
-             .tables
-             .iter()
--            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
-+            .flat_map(|entry| table_present_pages(&entry.pages))
-+            .map(|hash| self.fetch_page(hash))
-             .collect::<Box<[_]>>();
-         stream::iter(tasks)
-             .map(Ok)
-@@ -827,7 +828,10 @@ impl AsyncWrite for AsyncBufWriter<'_> {
- #[cfg(test)]
- mod tests {
-     use super::{default_page_pool, BlobProvider, BufPool, SnapshotFetcher};
--    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
-+    use crate::{
-+        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
-+        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
-+    };
-     use pretty_assertions::assert_matches;
-     use spacetimedb_lib::Identity;
-     use spacetimedb_paths::{server::SnapshotsPath, FromPathUnchecked};
-@@ -909,6 +913,32 @@ mod tests {
-         );
-     }
- 
-+    #[tokio::test]
-+    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
-+        let temp = tempdir()?;
-+        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
-+        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
-+
-+        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
-+        let sparse = Snapshot {
-+            tx_offset,
-+            tables: vec![TableEntry {
-+                table_id: 0.into(),
-+                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
-+            }],
-+            ..DUMMY_SNAPSHOT
-+        };
-+
-+        for snapshot in [DUMMY_SNAPSHOT, sparse] {
-+            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
-+            dir.create()?;
-+            repo.write_snapshot_file(&dir, snapshot)?;
-+        }
-+
-+        repo.verify_snapshot(tx_offset).await?;
-+        Ok(())
-+    }
-+
-     #[tokio::test]
-     async fn verifies_hash_of_uncompressed_page() {
-         let tmp = tempdir().unwrap();
+@@ -40,7 +40,26 @@ impl CratesRelease {
+         // Without this, dry-run doesn't work properly: every crate will look for its deps on crates.io
+         // and fail, but if they're on one invocation then they're able to resolve properly.
+         let mut cmd = Command::new("cargo");
+-        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
++        cmd.current_dir(workspace_root)
++            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
++            .env("RUSTC_BOOTSTRAP", "1")
++            .args([
++                "publish",
++                "--allow-dirty",
++                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
++                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
++                // index before publishing its dependents.
++                "-Zpublish-timeout",
++                "--config",
++                "publish.timeout=120",
++                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
++                // feature gates during package verification. force=true makes that value override
++                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
++                "--config",
++                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
++                "--config",
++                "env.RUSTC_BOOTSTRAP.force=true",
++            ]);
+         for crate_name in crates {
+             cmd.args(["-p", crate_name]);
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6686** (2026-11-24): Release - Double the Cargo publish index timeout (@bfops)
+- **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
+- **PR #6672** (2026-11-23): Bump versions to 2.16.3 (@rekhoff)
+- **PR #6666** (2026-11-23): Allow pre-release suffixes and patch downgrades in metadata.toml version check (@bfops)
+- **PR #6663** (2026-11-23): Smoketests: resolve C# ClientSDK version from the local package source (@bfops)
 - **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
-- **PR #6657** (2026-11-21): Tweak PR-writing guidance for agents (@bfops)
-- **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
-- **PR #6653** (closed): Ignore memory limit for replay if eviction fails (@aasoni)
-- **PR #6650** (2026-11-20): Update doc comment about http request timeout (@aasoni)
-- **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
 
 ---
 
@@ -973,60 +935,50 @@ Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip absent page slots when verifying snapshots
+## X. Release - Double the Cargo publish index timeout
 
 **RULE**:
-When implementing operations in `crates/snapshot/src/remote.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/release/src/targets/crates.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `340dc085`: Skip absent page slots when verifying snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01b14a89`: Release - Double the Cargo publish index timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/snapshot/src/remote.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/release/src/targets/crates.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-            .flat_map(|entry| table_present_pages(&entry.pages))
-            .map(|hash| self.fetch_page(hash))
-    use crate::{
-        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
-        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
-    };
-    #[tokio::test]
-    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
-        let temp = tempdir()?;
-        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
-        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
-
-        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
-        let sparse = Snapshot {
-            tx_offset,
-            tables: vec![TableEntry {
-                table_id: 0.into(),
-                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
-            }],
-            ..DUMMY_SNAPSHOT
-        };
-
-        for snapshot in [DUMMY_SNAPSHOT, sparse] {
-            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
-            dir.create()?;
-            repo.write_snapshot_file(&dir, snapshot)?;
-    
+        cmd.current_dir(workspace_root)
+            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
+            .env("RUSTC_BOOTSTRAP", "1")
+            .args([
+                "publish",
+                "--allow-dirty",
+                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
+                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
+                // index before publishing its dependents.
+                "-Zpublish-timeout",
+                "--config",
+                "publish.timeout=120",
+                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
+                // feature gates during package verification. force=true makes that value override
+                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
+                "--config",
+                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
+                "--config",
+                "env.RUSTC_BOOTSTRAP.force=true",
+            ]);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
-            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
-    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
+        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `340dc085` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01b14a89` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

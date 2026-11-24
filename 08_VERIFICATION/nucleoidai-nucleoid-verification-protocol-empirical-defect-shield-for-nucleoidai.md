@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "f2483549",
+  "source_version": "8f515043",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T20:30:05.136Z",
+  "timestamp": "2026-11-24T21:15:52.033Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f2483549`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T20:30:05.136Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8f515043`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T21:15:52.033Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `f2483549`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8f515043`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:30:04.393Z  
+> **Harvest Timestamp**: 2026-11-24T21:15:50.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1370,7 +1370,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "6150a2bd") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1444,7 +1444,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const input_instances = [];
+  const test_input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1456,7 +1456,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       input_instance_matrix,
     });
 
-    input_instances.push({
+    test_input_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1468,10 +1468,10 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances,
+    input_instances: test_input_instances,
   });
 
-  for (const input_instance of input_instances) {
+  for (const input_instance of test_input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1484,7 +1484,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: input_instances });
+  milestone.test_output_composed({ instances: test_input_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1500,7 +1500,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances: input_instances,
+    test_input_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1592,421 +1592,339 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2483549` (2026-11-24)
-**Commit Message**: NUC 139 Symmetric Difference Reasoning Selections
-
-Accepted under the automatic acceptance rule in a continuous
-/nuc-proposal cycle: every hard criterion passes and every policy
-check passes, the required token comparison among them. The cycle
-found no stale Draft, drew Reasoning enhancement uniformly from the
-five eligible categories, allocated the NUC in 6c8cbc67 and renewed
-its claim in 449e97bb. A fresh proposer prepared it in three phases
-with Baseline B, the caller's Rust improvement pass changed nothing,
-and a fresh independent evaluator decided Accepted.
-
-A reasoning pipeline gains the stage SELECTION |> xor(OTHER), the
-symmetric difference of two selections: SELECTION's steps whose nodes
-OTHER does not select, in SELECTION's order, then OTHER's steps whose
-nodes SELECTION does not select, in OTHER's order, each keeping its
-fields and distance. It is exactly
-S |> except(O) |> union(O |> except(S)), with each selection written
-and evaluated once. Only programs that were parse errors at the
-accepted revision change.
-
-Hard criteria, evaluated on the frozen candidate at 6c8cbc67:
-- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
-  1.99.1, rustdoc and the diff che
-
-**File**: `README.md` (modified, +29/-0)
-```diff
-@@ -3049,6 +3049,35 @@ item.total
-   labels are unchanged. See the
-   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
- 
-+## Symmetric difference reasoning selections
-+
-+**Xor tells two alarms apart**
-+
-+```nuc
-+smoke = 4
-+heat = 60
-+humidity = 70
-+haze = smoke * 2
-+fire = haze > 5 && heat > 50
-+fog = haze > 5 && humidity > 60
-+apart = why fire |> xor(why fog) |> stated
-+assert(apart.map(step -> step.node), ["heat", "humidity"])
-+fire = haze > 5 && heat > 50 && humidity < 90
-+assert(apart.map(step -> step.node), ["heat"])
-+```
-+
-+- [NUC 139](docs/nuc-0139.md) adds the reasoning stage `|> xor(OTHER)`, the
-+  symmetric difference of two selections. `why fire |> xor(why fog)` keeps
-+  the steps of the fire alarm's explanation whose node the fog alarm's does
-+  not hold, then the steps of the fog alarm's explanation whose node the
-+  fire alarm's does not hold. The haze and the smoke behind both alarms are
-+  left out, so what remains tells the two alarms apart.
-+- The result is still a selection, so `|> stated` narrows it to the facts,
-+  the heat and the humidity, and it stays live: once the fire rule also
-+  checks the humidity, the humidity stands behind both alarms and only the
-+  heat sets the fire alarm apart. See the
-+  [root contract](nucleoid.spec.md#symmetric-difference-reasoning-selections).
-+
- ## Negated membership with !in
- 
- **Kotlin's !in keeps an access rule live**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +7/-3)
-```diff
-@@ -867,6 +867,10 @@
- {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
- {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
- {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
--{"id":"spec-0870","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
--{"id":"spec-0871","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
--{"id":"spec-0872","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
-+{"id":"spec-0870","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
-+{"id":"spec-0871","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.
-```
-
-**File**: `dataset/nucleoid.synth.139.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-139-0001","description":"Xor keeps the steps of an explanation whose node another explanation does not select, then the steps of that explanation whose node the first does not select, in its order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\n(why total |> xor(why freight)).map(step -> step.node)","return":"[\"total\",\"subtotal\",\"tax\",\"price\",\"freight\",\"shipping\"]"}
-+{"id":"synth-139-0002","description":"Swapping the two explanations begins the symmetric difference with the other's own steps, over the same nodes","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\n[(why freight |> xor(why total)).map(step -> step.node), (why total |> xor(why freight)).length]","return":"[[\"freight\",\"shipping\",\"total\",\"subtotal\",\"tax\",\"price\"],6]"}
-+{"id":"synth-139-0003","description":"A symmetric difference of two impact selections lists what a change of exactly one of the two inputs reaches","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> xor(affects rate)).map(step -> step.node)","return":"[\"subtotal\",\"fee\"]"}
-+{"id":"synth-139-0004","description":"A state filter after xor keeps the facts that tell two explanations apart","code":"fan = 2\nload = 40\nspeed = 3\ncurrent = load * 2\nheat = current + fan\nnoise = fan * speed\n(why heat |> xor(why noise) |> stated).map(step -> step.node)","return":"[\"load\",\"speed\"]"}
-+{"id":"synth-139-0005","description":"A depth stage after xor measures each side from where its own walk began, which differs from the symmetric difference of the two limited walks","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\n[(why c |> xor(why d) |> depth(1)).map(step -> step.node), (why c |> depth(1) |> xor(why d |> depth(1))).map(step -> step.node)]","return":"[[\"c\",\"b\",\"d\"],[\"c\",\"b\",\"d\",\"a\"]]"}
-+{"id":"synth-139-0006","description":"A walk after xor starts from every step that the symmetric difference keeps","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nf = d + 1\n(b |> xor(d) |> affects).map(step -> step.node)","return":"[\"f\",\"c\"]"}
-+{"id":"synth-139-0007","description":"A standing symmetric difference follows a rewiring that moves a node into both explanations","code":"a = 1\nb = 2\nleft = a + b\nright = b + 1\napart = why left |> xor(why right)\nright = a + b + 1\napart.map(step -> step.node)","return":"[\"left\",\"right\"]"}
-+{"id":"synth-139-0008","description":"Xor with model selects the other nodes of the model in model order, and the symmetric difference of a selection with itself is empty","code":"a = 1\nb = a + 1\nc = 4\n[(why b |> xor(model)).map(step -> step.node), (why b |> xor(why b)).length]","return":"[[\"c\"],0]"}
-+{"id":"synth-139-0009","description":"A name that holds a selection is a reasoning observer, so as the other selection it selects nothing; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> xor(causes)).map(step -> step.node), (why tax |> xor(why shipping)).map(step -> step.node)]","return":"[[\"tax\",\"price\"],[\"tax\",\"shipping\"]]"}
-+{"id":"synth-139-0010","description":"A class-level rule gives every instance its own symmetric difference","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.apart = why $Item.total |> xor(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.apart.map(step -> step.node), cup.apart.map(step -> step.node)]","return":"[[\"pen.total\",\"pen.price\",\"pen.cost\",\"pen.fee\"],[\"cup.total\",\"cup.price\",\"cup.cost\",\"cup.fee\"]]"}
-+{"id":"synth-139-0011","description":"Nodes names the steps of a symmetric difference, and an other selection that a depth with a null limit makes undefined makes it undefined","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nn = null\n[c |> why |> xor(d |> why) |> nodes, c |> why |> xor(d |> why |> depth(n))]","return":"[[\"c\",\"b\",\"d\"],null]"}
-+{"id":"synth-139-0012","description":"A binding named xor shadows the stage when the pipeline runs, so a try statement can catch the error","code":"a = 1\nb = a + 1\nxor = 0\nresult = \"\"\ntry:\n    result = why b |> xor(why a)\ncatch error:\n    result = error\n[xor, result]","return":"[0,\"TypeError: xor is not an operation\"]"}
-```
-
-**File**: `docs/README.md` (modified, +78/-12)
-```diff
-@@ -5135,6 +5135,66 @@ facts.map(step => step.node)
-   [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
-   section.
- 
-+### Symmetric difference selections
-+
-+```
-+price = 10
-+quantity = 3
-+rate = 0.2
-+subtotal = price * quantity
-+tax = subtotal * rate
-+shipping = quantity * 2
-+apart = tax |> why |> xor(shipping |> why)
-+facts = tax |> why |> xor(shipping |> why) |> stated
-+assert(apart.map(step => step.node), ["tax", "subtotal", "rate", "price", "shipping"])
-+assert(facts.map(step => step.node), ["rate", "price"])
-+fee = 2
-+shipping = quantity * 2 + fee
-+facts.map(step => step.node)
-+```
-+
-+- This is the complete `Nucleoid separates two explanations with xor`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `["rate","price","fee"]`.
-+- [NUC 139](nuc-0139.md) adds the stage `selection |> xor(other)`, the
-+  symmetric difference of two selections. It selects the steps of
-+  `selection` whose node `other` does not select, in their order, followed
-+  by the steps of `other` whose node `selection` does not select, in
-+  `other`'s order, with their fields unchanged. So
-+  `tax |> why |> xor(shipping |> why)` is what the tax rests on and the
-+  shipping does not, then what the shipping rests on and the tax does not;
-+  the quantity, which both rest on, is left out. It is exactly
-+  `selection |> except(other) |> union(other |> except(selection))`, which
-+  writes each selection twice.
-+- `other` is written and evaluated as for `union`: a reference, `model`, a
-+  prefix stage such as `why shipping` or a pipeline, evaluated in place each
-+  time the stage applies, with steps compared by their node, whatever they
-+  hold.
-+- The result is a selection. `stated`, `derived`, `diff`, `intersect` and
-+  `except` after it keep what they keep of each side, so
-+  `tax |> why |> xor(shipping |> why) |> stated` is the facts that tell the
-+  two values apart, and a later `why` or `affects` walks from every step.
-+  Each step keeps the distance of the walk that selected it, so a later
-+  `depth(n)` measures each side from its own walk, and the stage keeps the
-+  direction of the selection's most recent walk, which a later `path` uses
-+  for every step.
-+- An `other` that is undefined, because a `depth` in it has a `null` limit,
-+  makes the selection undefined, as it makes the accepted spelling. An
-+  invalid `other` keeps the diagnostics of a pipeline source, such as
-+  `TypeError("Cannot explain 1")`.
-+- Only `|>` followed by `xor` and `(` is the stage; `xor` stays an ordinary
-+  name everywhere else, and a bare `|> xor` keeps its parse-time
-+  `TypeError("xor is not an operation")`. A local or parameter, variable,
-+  function or class named `xor` shadows the stage, as bindings shadow the
-+  other stages: the stage then raises `TypeError("xor is not an operation")`
-+  before selecting its source.
-+- The selection stays live through every observation of both selections,
-+  including the steps each one leaves out. It renders as
-+  `selection|>xor(other)`.
-+- The authoritative contract is the
-+  [symmetric difference reasoning selections](../nucleoid.spec.md#symmetric-difference-reasoning-selections)
-+  section.
-+
- ### Origins and outcomes of reasoning selections
- 
- ```
-@@ -5180,8 +5240,8 @@ fee = qty * 2
-   change enters and one of the model's results.
- - The result is a selection: the kept steps keep their distances and the
-   direction of the selection's most recent walk, so every stage applies to
--  it, and both stages may stand in an `intersect`, `except` or `union`
--  argument. A `path` target is a reference, so a `path` argument that ends
-+  it, and both stages may stand in an `intersect`, `except`, `union` or
-+  `xor` argument. A `path` target is a reference, so a `path` argument that ends
-   with either stage raises `TypeError("Cannot explain <target>")`. A
-   selection that a `depth(null)` makes undefined stays undefined.
- - Only `|>` followed by `origins` or `outcomes` is a stage; both names stay
-@@ -5234,9 +5294,9 @@ facts
-   `TypeError("number.map is not a function")`. An empty selection gives `[]`,
-   and a selection that a `depth(null)` makes undefined gives undefined.
- - The stage ends the pipeline: a stage after it, or an `intersect`, `except`,
--  `union` or `path` argument that ends with it, has a list of names rather
--  than a selection and raises `TypeError("Cannot explain <source>")`, as it
--  does after the accepted spelling.
-+  `union`, `xor` or `path` argument that ends with it, has a list of names
-+  rather than a selection and raises `TypeError("Cannot explain <source>")`,
-+  as it does after the accepted spelling.
- - Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
-   everywhere else, and there is no prefix form. A local or parameter,
-   variable, function or class named `nodes` shadows the stage, as bindings
-@@ -5287,8 +5347,8 @@ price = 20
-   selection gives `[]`, and a selection that a `depth(null)`
-```
-
-**File**: `docs/examples.md` (modified, +28/-0)
-```diff
-@@ -4577,6 +4577,34 @@ heavy
-   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
-   define. A vehicle built without a `color` label has none.
- 
-+## Symmetric difference reasoning selections
-+
-+**Xor lists what tells two diagnoses apart**
-+
-+```nuc
-+temperature = 39
-+cough = true
-+white_cells = 12
-+fever = temperature > 38
-+flu = fever && cough
-+infection = fever && white_cells > 11
-+apart = why flu |> xor(why infection) |> stated
-+assert(apart.map(step -> step.node), ["cough", "white_cells"])
-+infection = fever && white_cells > 11 && cough
-+[apart.map(step -> step.node), infection]
-+# return: [["white_cells"],true]
-+```
-+
-+- `why flu |> xor(why infection)` is what one diagnosis rests on and the
-+  other does not: the flu's own steps, in their order, then the
-+  infection's. The fever and the temperature behind both diagnoses are left
-+  out, and `|> stated` keeps the findings that tell them apart, the cough
-+  and the white cell count.
-+- The selection follows the model: once the infection rule also reads the
-+  cough, the cough supports both diagnoses and only the white cell count
-+  still tells them apart. See [NUC 139](nuc-0139.md) and the
-+  [root contract](../nucleoid.spec.md#symmetric-difference-reasoning-selections).
-+
- ## Negated membership with !in
- 
- **Negated membership keeps a support queue's open tickets live**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -160,7 +160,7 @@ Created: 31-Jul-2026
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
--| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -332,7 +332,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
--| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nucleoid.ebnf` (modified, +15/-5)
-```diff
-@@ -574,6 +574,7 @@ stage
-       | PATH LPAREN expression RPAREN                        /* Expr::Path */
-       | (INTERSECT | EXCEPT) LPAREN expression RPAREN        /* Expr::Combine */
-       | UNION LPAREN expression RPAREN                       /* Expr::Union */
-+      | XOR LPAREN expression RPAREN                         /* Expr::Xor */
- 
- logicalOr
-     ::= logicalAnd ((OR_OR | OR) logicalAnd)*                 /* Expr::Logical, left */
-@@ -988,6 +989,7 @@ enumName
-       | EXCEPTION
-       | AS
-       | UNION
-+      | XOR
-       | NODES
-       | HOLDS
-       | EDGES
-@@ -1082,6 +1084,7 @@ EXCEPT           ::= 'except'
- EXCEPTION        ::= 'Exception'
- AS               ::= 'as'
- UNION            ::= 'union'
-+XOR              ::= 'xor'
- NODES            ::= 'nodes'
- HOLDS            ::= 'holds'
- EDGES            ::= 'edges'
-@@ -1165,8 +1168,9 @@ WORD_TOKEN
-       | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
-       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
-       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
--      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | EDGES
--      | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
-+      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | XOR | NODES | HOLDS
-+      | EDGES | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT
-+      | PYTHON_INIT
- 
- NEWLINE
-     ::= #xA
-@@ -1323,16 +1327,22 @@ REGEX_ESCAPE
-  *                             model and 'a + model |> why' the name.
-  * |> intersect(model)      -> its other selection is Expr::Model when the
-  *                             whole argument is the name model, grouping
-- *                             aside; also except and union.
-+ *                             aside; also except, union and xor.
-  * s |> union(o)            -> Expr::Union: the steps of s, then the steps of o
-  *                             whose node s does not select, in o's order. A
-  *                             binding named union shadows it at run time, and
-  *                             a bare |> union stays the parse-time
-  *                             TypeError("union is not an operation").
-+ * s |> xor(o)              -> Expr::Xor: the steps of s whose node o does not
-+ *                             select, then the steps of o whose node s does
-+ *                             not select, in o's order. A binding named xor
-+ *                             shadows it at run time, and a bare |> xor stays
-+ *                             the parse-time TypeError("xor is not an
-+ *                             operation").
-  * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
-  *                             s's selection. It ends the pipeline: a stage
-- *                             after it, or an intersect, except, union or path
-- *                             argument that ends with it, parses and then
-+ *                             after it, or an intersect, except, union, xor or
-+ *                             path argument that ends with it, parses and then
-  *                             raises TypeError("Cannot explain <source>"),
-  *                             unless a binding shadows a stage after it or
-  *                             the stage taking it as argument, whose
-```
-
-**File**: `nucleoid.spec.md` (modified, +229/-10)
-```diff
-@@ -3471,6 +3471,137 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid restores unions after failed changes` specify the executable
-   behavior. `tests/union_selections.rs` executes the rest.
- 
-+## Symmetric difference reasoning selections
-+
-+- [NUC 139](docs/nuc-0139.md) adds the pipeline stage
-+  `SELECTION |> xor(OTHER)`, the symmetric difference of two selections: the
-+  steps of `SELECTION` whose node `OTHER` does not select, in their order,
-+  followed by the steps of `OTHER` whose node `SELECTION` does not select, in
-+  `OTHER`'s order. Every step keeps its `node`, `holds`, `rule`, `state` and
-+  `from` fields unchanged.
-+- So `total |> why |> xor(freight |> why)` and its prefix spelling
-+  `why total |> xor(why freight)` select what one of two explanations rests
-+  on and the other does not, which tells the two conclusions apart, and
-+  `affects price |> xor(affects rate)` selects what a change of exactly one
-+  of the two inputs reaches. What both select, such as a cause that both
-+  explanations share, is left out.
-+- It is exactly the accepted
-+  `SELECTION |> except(OTHER) |> union(OTHER |> except(SELECTION))`, where
-+  `SELECTION` is the selection that the pipeline before `xor` denotes, read
-+  as the accepted stages read their source, so a reference alone denotes its
-+  own one-step selection and `model` the model's steps. The accepted
-+  spelling writes each selection twice and evaluates each twice.
-+- Steps are compared by their graph node, whatever they hold, as
-+  `intersect`, `except` and `union` compare them, so a node that both
-+  selections select is left out whatever value it holds. `A |> xor(B)` and
-+  `B |> xor(A)` select the same nodes, each beginning with its own source's
-+  steps.
-+- `OTHER` is written and evaluated as for `union`: one expression in
-+  parentheses that denotes a selection, as the source of a pipeline does,
-+  such as a reference, `model`, a prefix stage such as `why freight` or a
-+  pipeline, which may hold `xor` too. It is evaluated in place each time the
-+  stage applies, after the source selection and the stages before it, and
-+  before the stages after it, even when `SELECTION` is empty. A reference to
-+  a node that is not in the model, such as an absent property, selects
-+  nothing until it is defined. A name whose declaration holds a reasoning
-+  expression, such as a selection or the list of a final stage, is a
-+  reasoning observer, which no selection holds, so after
-+  `causes = why freight` or `names = why freight |> nodes`, `xor(causes)`
-+  and `xor(names)` leave `SELECTION` as it is. A name that holds an
-+  ordinary value, a list included, is a reference that selects its own
-+  node.
-+- `S |> xor(S)` selects nothing, an `OTHER` that selects nothing leaves
-+  `SELECTION` as it is, and an empty `SELECTION` gives the steps of `OTHER`.
-+  `S |> xor(model)` and `model |> xor(S)` both select the model's nodes that
-+  `S` does not select, in model order, because every step of a selection is
-+  a node of the model. `S |> xor(O) |> xor(O)` selects the nodes of `S`
-+  again: the steps of `S` whose node `O` does not select, followed by those
-+  of `O` whose node `S` selects, in `O`'s order. `A |> xor(B) |> xor(C)` and
-+  `A |> xor(B |> xor(C))` select the same nodes, those that an odd number of
-+  the three selections select, though not always in the same order.
-+- The result is a selection, so further stages apply to it. `stated`,
-+  `derived`, `diff`, `intersect` and `except` keep a step by a property of
-+  its node, so after the stage they keep what they keep of each side:
-+  `S |> xor(O) |> stated` is `S |> stated |> xor(O |> stated)`. A later
-+  `why` or `affects` walks from every step, `union` and `xor` combine the
-+  result with another selection, `nodes` names its steps, `holds` gives
-+  their values, `edges` lists their edges, and `origins` and `outcomes` keep
-+  its ends as one selection.
-+- Each step keeps the distance it has in its own selection: the steps of
-+  `SELECTION` their own, and the steps of `OTHER` the distances of `OTHER`'s
-+  walk. So `S |> xor(O) |> depth(n)` is
-+  `S |> depth(n) |> except(O) |> union(O |> depth(n) |> except(S))`.
-+- The stage keeps the direction of `SELECTION`'s most recent walk, as
-+  `union` does, and a later `path` uses it for every step. After
-+  `why x |> xor(affects y)`, `path(t)` keeps the steps of either side that
-+  are `t` or rest on it, as after `why`; after `affects y |> xor(why x)` it
-+  keeps the steps that are `t` or that `t` rests on, as after `affects`.
-+- A `depth` stage whose limit is `null` or undefined makes `OTHER`
-+  undefined, and then the reasoning expression is undefined, as for `union`:
-+  the stages after it are not applied and their arguments are not
-+  evaluated, and a declaration stores the undefined value as `null`. The
-+  accepted spelling is undefined too, because its first `except` meets the
-+  undefined `OTHER`. When `SELECTION` is undefined,
-```
-
----
-
-### Incident Patch 2: `87d99403` (2026-11-24)
+### Incident Patch 1: `8f515043` (2026-11-24)
 **Commit Message**: Resume NUC 138 Reactive Secant
 
-Claim the lowest-numbered stale allocated Draft for a fresh continuous revision.
+Refresh this held Draft claim for fresh revision3 after Accepted NUC139 advanced the shared accepted runtime during revision2 preparation. Revision2 stops at its preparation checkpoint, without freezing or evaluation; preserve every source, baseline and log. No outcome recorded.
 
-Allocation: abc138d4a03c8631f7639946cf605eff0be3b332
-Latest prior claim/allocation: abc138d4a03c8631f7639946cf605eff0be3b332
-Idle: 43.950 hours.
-Category: Utility enhancement.
-
-Preserve the paused revision1 artifacts; pin this empty pushed claim for fresh accepted/candidate worktrees, baseline, proposer and evaluator. No outcome recorded.
+Original allocation: abc138d4a03c8631f7639946cf605eff0be3b332
+Previous held claim: 87d99403cf02872fc52ee2c5dd9a11bfed5c0c25
+Current accepted source basis: df1f1406f2481169243859f063498b7baf1e734c
+Category: Utility enhancement; mode: continuous. This is an early held-claim renewal for baseline alignment, not a stale takeover.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 
+
+---
+
+### Incident Patch 2: `df1f1406` (2026-11-24)
+**Commit Message**: Rename ARC object tags to kinds
+
+Rename the geometry property across ARC datasets, snapshots, documentation, and agent guidance. Update the default puzzle to 6150a2bd and clarify test instance naming.
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-12)
+```diff
+@@ -79,7 +79,7 @@ output-canvas mode for the whole dataset, inferred only from the training pairs.
+ Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one other
+ dataset, and the "Instruction datasets" and "Analysis" sections of
+ `arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
+-for world-model idioms, properties, rules, and tags. The solver sends every
++for world-model idioms, properties, rules, and kinds. The solver sends every
+ JSON instruction dataset as shared few-shot context. Match their structure,
+ key order, and
+ formatting exactly:
+@@ -129,16 +129,16 @@ formatting exactly:
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
+-  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+-  distinct kind of object the transformation needs. Each class whose
++  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
++  distinct sort of object the transformation needs. Each class whose
+   instances are annotated objects takes the standard entries `x: int, y: int,
+   width: int, height: int, orientation: int, volume: int` first, in that
+-  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+-  initial tag, and its body assigns every parameter to `this`, the tag with
+-  `this.tag is tag` right after `this.volume is volume`. An implementation
+-  passes `tag` only when its object needs a tag other than the default, as
++  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
++  initial kind, and its body assigns every parameter to `this`, the kind with
++  `this.kind is kind` right after `this.volume is volume`. An implementation
++  passes `kind` only when its object needs a kind other than the default, as
+   every implementation in `dataset.27a28665.json` names its block's shape
+-  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
++  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+   keeps its quotes, because accepted Nucleoid takes only a literal as a
+   parameter default. Add only the descriptive properties the transformation
+   needs, such as categorical colors.
+@@ -182,9 +182,11 @@ formatting exactly:
+   populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
+   `find`, and reasoning selections, where they express the rule. Avoid `for`
+   loops, imperative steps, and manual bookkeeping.
+-- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+-  existing dataset uses for the same geometry; otherwise mint one unused
+-  elsewhere.
++- A kind is `l` followed by four digits and names a geometry. It acts as a
++  child class that the rules assign declaratively: an instance never changes
++  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
++  Reuse the kind an existing dataset uses for the same geometry; otherwise
++  mint one unused elsewhere.
+ - Orientation is degrees clockwise from north (N = 0, E = 90, S = 180,
+   W = 270, diagonals 45, 135, 225, and 315). Use 0 for shapes that are
+   symmetric or not rotated.
+@@ -331,7 +333,7 @@ Add one paragraph about the dataset to the "Instruction datasets" section of
+ `arc/README.md`, in the style of the `dataset.28bf18c6.json` paragraph: source
+ puzzle, its single canonical path, that it contains the exact original training
+ pairs in order followed by the test pairs, pair and instance counts,
+-instances, the transformation, properties the rules create, tags, the original
++instances, the transformation, properties the rules create, kinds, the original
+ canvas and object sizes, and orientation.
+ With a candidate executable, also name the NUC whose feature the rules use.
+ 
+```
+
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +2/-2)
+```diff
+@@ -86,7 +86,7 @@ solver run.
+ ## References
+ 
+ The workflow and its workers may use every dataset in `arc/src/dataset/` as a
+-reference for structure, world-model idioms, properties, rules, and tags.
++reference for structure, world-model idioms, properties, rules, and kinds.
+ The solver sends every JSON instruction dataset as shared few-shot context,
+ including the running puzzle's own annotated test pairs. That is intended
+ while the datasets are prepared as few-shot examples, under the
+@@ -148,7 +148,7 @@ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
+ that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
+ `if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
+ `$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
+-profile's quoted default, `tag: str = 'lNNNN'`, is a quote that accepted
++profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
+ Nucleoid cannot do without, because it rejects a bare parameter default
+ with `SyntaxError`. Have the
+ handoff list every quote it keeps, with the actual result of its bare
+```
+
+**File**: `arc/README.md` (modified, +108/-105)
+```diff
+@@ -400,12 +400,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
+ rim above, and a vertical line that extends up from its bottom endpoint with
+ a horizontal line that extends left from its right endpoint.
+ Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-`orientation`, and `volume` first, then the optional `tag`, then its
++`orientation`, and `volume` first, then the optional `kind`, then its
+ descriptive properties in their existing order, and every implementation
+ passes the input shape's bounding-box `width` and `height` and its input
+-mask's `volume`, its number of nonzero cells, and leaves out `tag`. A rule
++mask's `volume`, its number of nonzero cells, and leaves out `kind`. A rule
+ that grows a shape computes its new size
+-from its first values in the branch that sets its output tag: a core corner
++from its first values in the branch that sets its output kind: a core corner
+ grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
+ column left when it points west, at orientation 225 or 315, and one row up
+ when it points north, at orientation 45 or 315; a curve point grows from
+@@ -439,16 +439,19 @@ every program it runs, as
+ rules read it from those variables. Native snapshots are captured the same
+ way, with the pair's `input_matrix` size declared first.
+ 
+-Every class takes `tag` right after `volume` as an optional parameter whose
+-default is the dataset's initial tag, such as `tag: str = 'l9100'`, and its
+-constructor stores it with `this.tag is tag`. An implementation passes `tag`
+-only when its object needs a tag other than that default: every
+-implementation of `dataset.27a28665.json` passes the tag of its block's
+-shape, as in `tag='l4262'`, and every other implementation leaves it out, so
++Every class takes `kind` right after `volume` as an optional parameter whose
++default is the dataset's initial kind, such as `kind: str = 'l9100'`, and its
++constructor stores it with `this.kind is kind`. An implementation passes `kind`
++only when its object needs a kind other than that default: every
++implementation of `dataset.27a28665.json` passes the kind of its block's
++shape, as in `kind='l4262'`, and every other implementation leaves it out, so
+ its input state carries the default. The parameter comes before the
+ descriptive parameters, in the order of the constructor's assignments:
+ Nucleoid lets a default occupy any parameter slot, and every implementation
+-names its arguments.
++names its arguments. A kind acts as a child class that the rules assign
++declaratively: Nucleoid never converts an instance to another class, so a
++class-level rule such as `$Obj.kind is l1707` moves the instance to another
++kind instead. The property was called `tag` until 24-Nov-2026.
+ 
+ Every dataset writes its assignments with `is`, the opt-in assignment of
+ [NUC 93](../docs/nuc-0093.md), and its equality tests with `is` and `is not`,
+@@ -459,15 +462,15 @@ and implementations construct
+ each `target is value` builds exactly the syntax tree of `target = value`. When
+ a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+-text, so tags and directions drop their quotes there, as in
+-`$Obj.tag is l3337` and `$Obj.extension_direction is right`, while
+-`this.tag is tag` reads the constructor's `tag` parameter. No dataset
++text, so kinds and directions drop their quotes there, as in
++`$Obj.kind is l3337` and `$Obj.extension_direction is right`, while
++`this.kind is kind` reads the constructor's `kind` parameter. No dataset
+ program defines a name with those spellings, and the solver adds only
+ `canvas_width` and `canvas_height`. Other strings keep their quotes, such as
+ the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
+-arguments such as `tag='l1707'`, which are not assignments, and the default
+-of the `tag` parameter, such as `tag: str = 'l9100'`: accepted Nucleoid takes
+-only a literal as a parameter default and rejects the bare `tag: str = l9100`
++arguments such as `kind='l1707'`, which are not assignments, and the default
++of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
++only a literal as a parameter default and rejects the bare `kind: str = l9100`
+ with `SyntaxError: Expected a scalar literal parameter default`.
+ `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
+ assignments without one since `d945213`, which removed the opt-in syntax
+@@ -508,14 +511,14 @@ derives them as `COMMENT`:
+ 
+ ```nuc
+ # Each object is all the cells of one color, touching or not. Every color except the one with the most cells turns 5
+-class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, kind: str = 'l9100', color: int):
+     this.x is x
+     this.y 
+```
+
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +19/-0)
+```diff
+@@ -363,6 +363,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and its rules move instances to the kind `l8384` with
++`$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 4 input and 4 output snapshots of the 4 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 12 uses of the name, byte for byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +20/-0)
+```diff
+@@ -442,6 +442,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l7544'` and stores it with
++`this.kind is kind`, and its rules move instances to the kinds `l1707` and
++`l2404` with `$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and
++every value is unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 4 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 35 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +20/-0)
+```diff
+@@ -330,6 +330,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l6953'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l6953`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +20/-0)
+```diff
+@@ -346,6 +346,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l3058'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l3058`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
++unchanged apart from that key, and the old and new datasets replay alike. The
++dataset differs from the old one only in its 33 uses of the name, byte for
++byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +19/-0)
+```diff
+@@ -278,6 +278,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
+ learning did not apply. No solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Kind instead of tag
++
++On 24-Nov-2026, at the user's request, the property that names the object's
++geometry is called `kind` instead of `tag`. It acts as a child class that the
++rules assign declaratively, since Nucleoid never converts an instance to
++another class. The class takes `kind: str = 'l9100'` and stores it with
++`this.kind is kind`, and no rule changes it, so every instance keeps the kind
++`l9100`. Every snapshot's `tag` key is now `kind`, and every value is
++unchanged.
++
++Offline, with the accepted runtime at `9dac162` (last runtime change
++`fda179e`), all 6 input and 6 output snapshots of the 6 pairs replay unchanged
++apart from that key, and the old and new datasets replay alike. The dataset
++differs from the old one only in its 15 uses of the name, byte for byte.
++
++No NUC was requested, so no proposal strategy was selected and strategy
++learning did not apply. No solver run has measured this version, so its
++difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -2034,59 +1952,55 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 139 Symmetric Difference Reasoning Selections
+## X. Rename ARC object tags to kinds
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2483549`: NUC 139 Symmetric Difference Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df1f1406`: Rename ARC object tags to kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Symmetric difference reasoning selections
-
-**Xor tells two alarms apart**
-
-```nuc
-smoke = 4
-heat = 60
-humidity = 70
-haze = smoke * 2
-fire = haze > 5 && heat > 50
-fog = haze > 5 && humidity > 60
-apart = why fire |> xor(why fog) |> stated
-assert(apart.map(step -> step.node), ["heat", "humidity"])
-fire = haze > 5 && heat > 50 && humidity < 90
-assert(apart.map(step -> step.node), ["heat"])
-```
-
-- [NUC 139](docs/nuc-0139.md) adds the reasoning stage `|> xor(OTHER)`, the
-  symmetric difference of two selections. `why fire |> xor(why fog)` keeps
-  the steps of the fire alarm's explanation whose node the fog alarm's does
-  not hold, then the steps of the fog alarm's explanation whose node the
-  fire alarm's does not hold. The haze and the smoke behind both alarms are
-  left out, so what remains tells the two alarms apart.
-- The result is still a selection, so `|> stated` narrows it to the facts,
-  the heat and the humidity, and it stays live: once the fire rule also
-  checks the humidity, the humidity stands behind both alarms and only the
-  heat sets the fire alarm apart. See the
-  [root contract](nucleoid.spec.md#symmetric-difference-reasoning-selections).
-
+for world-model idioms, properties, rules, and kinds. The solver sends every
+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+  distinct sort of object the transformation needs. Each class whose
+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+  initial kind, and its body assigns every parameter to `this`, the kind with
+  `this.kind is kind` right after `this.volume is volume`. An implementation
+  passes `kind` only when its object needs a kind other than the default, as
+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+- A kind is `l` followed by four digits and names a geometry. It acts as a
+  child class that the rules assign declaratively: an instance never changes
+  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
+  Reuse the kind an existing dataset uses for the same geometry; otherwise
+  mint one unused elsewhere.
+instances, the transformation, properties the rules create, kinds, the original
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+for world-model idioms, properties, rules, and tags. The solver sends every
+  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
+  distinct kind of object the transformation needs. Each class whose
+  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
+  initial tag, and its body assigns every parameter to `this`, the tag with
+  `this.tag is tag` right after `this.volume is volume`. An implementation
+  passes `tag` only when its object needs a tag other than the default, as
+  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
+- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+  existing dataset uses for the same geometry; otherwise mint one unused
+  elsewhere.
+instances, the transformation, properties the rules create, tags, the original
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2483549` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df1f1406` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
