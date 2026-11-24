@@ -4,22 +4,22 @@
 {
   "source_repository": "aquasecurity/trivy",
   "source_url": "https://github.com/aquasecurity/trivy",
-  "source_version": "edf9f5c1",
+  "source_version": "a7b0d649",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T02:57:50.392Z",
+  "timestamp": "2026-11-24T05:28:22.450Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aquasecurity-trivy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `edf9f5c1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T02:57:50.392Z`  
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `a7b0d649`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T05:28:22.450Z`  
 > **Learning ID**: `learn-github-aquasecurity-trivy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aquasecurity/trivy` (Commit: `edf9f5c1`)
+- **Target Repository**: `aquasecurity/trivy` (Commit: `a7b0d649`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:57:49.218Z  
+> **Harvest Timestamp**: 2026-11-24T05:28:20.723Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39581 stars
+- **Stars / Engagement**: 39665 stars
 
 ---
 
@@ -1013,495 +1013,613 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edf9f5c1` (2026-11-20)
-**Commit Message**: fix(java): check repository policy before skipping a shared Maven mirror (#11613)
+### Incident Patch 1: `f320e692` (2026-11-23)
+**Commit Message**: fix(arm): read NSG rules from the securityRules property and child resources (#11663)
 
-**File**: `pkg/dependency/parser/java/pom/mirror_test.go` (modified, +61/-0)
+**File**: `pkg/iac/adapters/arm/network/adapt.go` (modified, +40/-25)
 ```diff
-@@ -798,3 +798,64 @@ func Test_fetchPOMFromRemoteRepositories_mirror(t *testing.T) {
- 		})
+@@ -7,6 +7,11 @@ import (
+ 	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
+ )
+ 
++const (
++	securityGroupType = "Microsoft.Network/networkSecurityGroups"
++	securityRuleType  = "securityRules"
++)
++
+ func parsePortRange(input string, meta iacTypes.Metadata) common.PortRange {
+ 	return common.ParsePortRange(input, meta, common.WithWildcard())
+ }
+@@ -20,79 +25,89 @@ func Adapt(deployment azure.Deployment) network.Network {
+ }
+ 
+ func adaptSecurityGroups(deployment azure.Deployment) (sgs []network.SecurityGroup) {
+-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
++	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
+ 		sgs = append(sgs, adaptSecurityGroup(resource, deployment))
+ 	}
++	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
++		sgs = append(sgs, network.SecurityGroup{
++			Metadata: iacTypes.NewUnmanagedMetadata(),
++			Rules:    adaptSecurityRuleResources(orphans),
++		})
++	}
+ 	return sgs
+-
+ }
+ 
+ func adaptSecurityGroup(resource azure.Resource, deployment azure.Deployment) network.SecurityGroup {
++	var rules []network.SecurityGroupRule
++	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
++		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
++	}
+ 	return network.SecurityGroup{
+ 		Metadata: resource.Metadata,
+-		Rules:    adaptSecurityGroupRules(deployment),
++		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
  	}
  }
+ 
+-func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
+-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
+-		rules = append(rules, adaptSecurityGroupRule(resource))
++func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
++	var rules []network.SecurityGroupRule
++	for _, resource := range resources {
++		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
+ 	}
+ 	return rules
+ }
+ 
+-func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
+-	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
+-	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
++func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
++	sourceAddressPrefixes := properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
++	if prefix := properties.GetMapValue("sourceAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
+ 		sourceAddressPrefixes = append(sourceAddressPrefixes, prefix)
+ 	}
+ 
+ 	var sourcePortRanges []common.PortRange
+-	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
+-		rng := parsePortRange(portRange.AsString(), resource.Metadata)
++	for _, portRange := range properties.GetMapValue("sourcePortRanges").AsList() {
++		rng := parsePortRange(portRange.AsString(), metadata)
+ 		if rng.Valid() {
+ 			sourcePortRanges = append(sourcePortRanges, rng)
+ 		}
+ 	}
+-	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
++	if rng := parsePortRange(properties.GetMapValue("sourcePortRange").AsString(), metadata); rng.Valid() {
+ 		sourcePortRanges = append(sourcePortRanges, rng)
+ 	}
+ 
+-	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
+-	if prefix := resource.Properties.GetMapValue("destinationAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
++	destinationAddressPrefixes := properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
++	if prefix := properties.GetMapValue("destinationAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
+ 		destinationAddressPrefixes = append(destinationAddressPrefixes, prefix)
+ 	}
+ 
+ 	var destinationPortRanges []common.PortRange
+-	for _, portRange := range resource.Properties.GetMapValue("destinationPortRanges").AsList() {
+-		rng := parsePortRange(portRange.AsString(), resource.Metadata)
++	for _, portRange := range properties.GetMapValue("destinationPortRanges").AsList() {
++		rng := parsePortRange(portRange.AsString(), metadata)
+ 		if rng.Valid() {
+ 			destinationPortRanges = append(destinationPortRanges, rng)
+ 		}
+ 	}
+-	if rng := parsePortRange(resource.Properties.GetMapValue("destinationPortRange").AsString(), resource.Metadata); rng.Valid() {
++	if rng := parsePortRange(properties.GetMapValue("destinationPortRange").AsString(), metadata); rng.Valid() {
+ 		destinationPortRanges = append(destinationPortRanges, rng)
+ 	}
+ 
+-	allow := iacTypes.BoolDefault(false, resource.Metadata)
+-	if resource.Properties.GetMapValue("access
+```
+
+**File**: `pkg/iac/adapters/arm/network/adapt_test.go` (modified, +183/-1)
+```diff
+@@ -3,9 +3,14 @@ package network
+ import (
+ 	"testing"
+ 
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
 +
-+// Repositories with different release and snapshot policies can share one mirror.
-+// The mirror is requested for an artifact that only the second repository accepts.
-+func Test_fetchPOMFromRemoteRepositories_mirrorPolicy(t *testing.T) {
-+	releasesURL, err := url.Parse("https://releases.example.com/maven2/")
-+	require.NoError(t, err)
-+	snapshotsURL, err := url.Parse("https://snapshots.example.com/maven2/")
-+	require.NoError(t, err)
-+	releasesRepo := repository{id: "releases", url: *releasesURL, releaseEnabled: true}
-+	snapshotsRepo := repository{id: "snapshots", url: *snapshotsURL, snapshotEnabled: true}
-+
-+	tests := []struct {
-+		name      string
-+		repos     []repository
-+		snapshot  bool
-+		version   string
-+		wantPaths []string
-+	}{
++	"github.com/aquasecurity/trivy/internal/testutil"
+ 	"github.com/aquasecurity/trivy/pkg/iac/adapters/arm/adaptertest"
+ 	"github.com/aquasecurity/trivy/pkg/iac/adapters/common"
+ 	"github.com/aquasecurity/trivy/pkg/iac/providers/azure/network"
++	"github.com/aquasecurity/trivy/pkg/iac/scanners/azure/arm/parser"
+ 	"github.com/aquasecurity/trivy/pkg/iac/types"
+ )
+ 
+@@ -21,10 +26,12 @@ func TestAdapt(t *testing.T) {
+   "resources": [
+     {
+       "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
+       "properties": {}
+     },
+ 	{
+ 	  "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++	  "name": "nsg/rule",
+ 	  "properties": {}
+ 	},
+ 	{
+@@ -56,10 +63,12 @@ func TestAdapt(t *testing.T) {
+       }
+     },
+     {
+-      "type": "Microsoft.Network/networkSecurityGroups"
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg"
+     },
+     {
+       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "nsg/rule",
+       "properties": {
+         "access": "Allow",
+         "direction": "Inbound",
+@@ -141,6 +150,156 @@ func TestAdapt(t *testing.T) {
+ 				}},
+ 			},
+ 		},
 +		{
-+			name:     "snapshot artifact, release-only repository first",
-+			repos:    []repository{releasesRepo, snapshotsRepo},
-+			snapshot: true,
-+			version:  "1.0.0-SNAPSHOT",
-+			wantPaths: []string{
-+				"/com/example/example-api/1.0.0-SNAPSHOT/maven-metadata.xml",
-+				"/com/example/example-api/1.0.0-SNAPSHOT/example-api-1.0.0-SNAPSHOT.pom",
++			name: "rules in the securityRules property",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
++      "properties": {
++        "securityRules": [
++          {"name": "ssh", "properties": {"access": "Allow", "protocol": "Tcp"}},
++          {"name": "dns", "properties": {"access": "Deny", "protocol": "Udp"}}
++        ]
++      }
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{{
++					Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++						{Protocol: types.StringTest("Udp")},
++					},
++				}},
 +			},
 +		},
 +		{
-+			name:    "release artifact, snapshot-only repository first",
-+			repos:   []repository{snapshotsRepo, releasesRepo},
-+			version: "1.0.0",
-+			wantPaths: []string{
-+				"/com/example/example-api/1.0.0/example-api-1.0.0.pom",
++			name: "rules as child resources",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
++      "resources": [
++        {
++          "type": "securityRules",
++          "name": "ssh",
++          "properties": {"access": "Allow", "protocol": "Tcp"}
++        },
++        {
++          "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++          "name": "dns",
++          "properties": {"access": "Allow", "protocol": "Udp"}
++        }
++      ]
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{{
++					Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
++					},
++				}},
 +			},
++		},
++		{
++			name: "top-level rules go to the group they name",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "web"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "db"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "web/https",
++      "properties": {"access": "Allow", "protocol": "Tcp"}
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "DB/sql",
++      "properties": {"access": "Allow", "protocol": "Udp"}
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++					}},
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
++					}},
++				},
++			},
++		},
++		{
++			name: "top-level rule with an expression name goes to the orphan group",
++			source: `{
++  "parameters": {
++    "nsgName": {"type": "string", "defaultValue": "web"}
++  },
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "web"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "db"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "[concat(parameters('nsgName'), '/https')]",
++      "properties": {"access": "Allow", "protocol": "Tcp"}
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{
++					{},
++					{},
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++					}},
++				},
++			},
++		},
++		{
++			name: "top-level rule goes to the orphan group when the group name is an expression",
++			source: `{
++  "parameters": {
++    "nsgName": {"type": "string", "defaultValue": "web"}
++  },
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "[parameters('nsgName')]"
++    },
++    {
+```
+
+---
+
+### Incident Patch 2: `a7b0d649` (2026-11-23)
+**Commit Message**: fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (#11711)
+
+Signed-off-by: Solomon Wakhungu <[REDACTED_EMAIL]>
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map.go` (modified, +4/-1)
+```diff
+@@ -70,7 +70,10 @@ func resolveMapping(ctx *FileContext, mapName, topKey, secKey string) (any, erro
+ 	if !ok {
+ 		return nil, fmt.Errorf("key %s not found in map %s", topKey, mapName)
+ 	}
+-	mapValues := k.(map[string]any)
++	mapValues, ok := k.(map[string]any)
++	if !ok {
++		return nil, fmt.Errorf("key %s in map %s has invalid type", topKey, mapName)
++	}
+ 
+ 	prop, ok := mapValues[secKey]
+ 	if !ok {
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map_test.go` (modified, +44/-0)
+```diff
+@@ -93,3 +93,47 @@ Resources:
+ 	nodeTypeProp := testRes.GetBoolProperty("MultiAZ")
+ 	assert.False(t, nodeTypeProp.Value())
+ }
++
++func Test_FindInMap_MalformedMapping(t *testing.T) {
++	source := `---
++Mappings:
++  CacheNodeTypes:
++    scalarEntry: cache.t2.micro
++    listEntry:
++      - cache.t2.small
++    nullEntry: null
++Resources:
++  ClusterScalar:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType ]
++  ClusterScalarWithDefault:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType, DefaultValue: cache.t2.medium ]
++  ClusterList:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, listEntry, NodeType ]
++  ClusterNull:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, nullEntry, NodeType ]
++`
++
++	ctx := createTestFileContext(t, source)
++	require.NotNil(t, ctx)
++
++	for _, id := range []string{"ClusterScalar", "ClusterList", "ClusterNull"} {
++		res := ctx.GetResourceByLogicalID(id)
++		require.NotNil(t, res)
++		prop := res.GetProperty("CacheNodeType")
++		require.NotNil(t, prop)
++		assert.True(t, prop.IsUnresolved())
++	}
++
++	resWithDefault := ctx.GetResourceByLogicalID("ClusterScalarWithDefault")
++	require.NotNil(t, resWithDefault)
++	nodeType := resWithDefault.GetStringProperty("CacheNodeType", "")
++	assert.Equal(t, "cache.t2.medium", nodeType.Value())
++}
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_select.go` (modified, +4/-3)
+```diff
+@@ -30,10 +30,11 @@ func ResolveSelect(property *Property) (resolved *Property, success bool) {
+ 	}
+ 
+ 	listItems := list.AsList()
++	idx := index.AsInt()
+ 
+-	if len(listItems) <= index.AsInt() {
+-		return nil, false
++	if idx < 0 || idx >= len(listItems) {
++		return abortIntrinsic(property, "index on property [%s] is out of bounds, returning original Property", property.name)
+ 	}
+ 
+-	return listItems[index.AsInt()], true
++	return listItems[idx], true
+ }
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_select_test.go` (modified, +41/-0)
+```diff
+@@ -75,3 +75,44 @@ Resources:
+ 	require.Equal(t, "notification::arn::2", topic.AsString())
+ 
+ }
++
++func Test_SelectOutOfBoundsIndex(t *testing.T) {
++	tests := []struct {
++		name  string
++		index string
++	}{
++		{
++			name:  "negative int index",
++			index: "-1",
++		},
++		{
++			name:  "negative string index",
++			index: `"-1"`,
++		},
++		{
++			name:  "index equal to list length",
++			index: "2",
 +		},
 +	}
 +
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			var gotPaths []string
-+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				gotPaths = append(gotPaths, r.URL.Path)
-+				_, _ = w.Write([]byte(`<project><artifactId>example-api</artifactId></project>`))
-+			}))
-+			t.Cleanup(srv.Close)
++			source := `---
++Resources:
++  ElasticacheCluster:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      Engine: !Select [ ` + tt.index + `, [memcached, redis] ]
++`
++			ctx := createTestFileContext(t, source)
++			require.NotNil(t, ctx)
 +
-+			p := &Parser{
-+				logger:     log.WithPrefix("pom"),
-+				mirrors:    resolveMirrors([]Mirror{{ID: "m1", URL: srv.URL, MirrorOf: "*"}}, nil, nil),
-+				httpClient: http.DefaultClient,
-+			}
++			res := ctx.GetResourceByLogicalID("ElasticacheCluster")
++			require.NotNil(t, res)
 +
-+			paths := []string{"com", "example", "example-api", tt.version, "example-api-" + tt.version + ".pom"}
-+			got, err := p.fetchPOMFromRemoteRepositories(t.Context(), paths, tt.snapshot, tt.repos)
-+			require.NoError(t, err)
-+			require.NotNil(t, got)
-+			require.Equal(t, tt.wantPaths, gotPaths)
++			engineProp := res.GetProperty("Engine")
++			require.NotNil(t, engineProp)
++			assert.True(t, engineProp.IsUnresolved())
 +		})
 +	}
 +}
 ```
 
-**File**: `pkg/dependency/parser/java/pom/parse.go` (modified, +7/-5)
+**File**: `pkg/iac/scanners/cloudformation/scanner_test.go` (modified, +64/-0)
 ```diff
-@@ -857,6 +857,13 @@ func (p *Parser) fetchPOMFromRemoteRepositories(ctx context.Context, paths []str
- 		// Route each repository through its mirrors; a config-file mirror may expand
- 		// one repository into several ordered fallback candidates.
- 		for _, candidate := range p.mirrorFor(repo) {
-+			// Skip Release only repositories for snapshot artifacts and vice versa.
-+			// This is checked before the URL is marked as seen, because repositories with
-+			// different policies may share a mirror.
-+			if snapshot && !candidate.snapshotEnabled || !snapshot && !candidate.releaseEnabled {
-+				continue
-+			}
+@@ -223,3 +223,67 @@ Resources:
+ 		})
+ 	}
+ }
 +
- 			// After mirrorFor different source repositories may collapse to the same URL
- 			// (e.g. mirrorOf=*). Maven's aggregateRepositories deduplicates the post-mirror
- 			// set so a not-found artifact is fetched from each mirror only once; mirror by URL.
-@@ -865,11 +872,6 @@ func (p *Parser) fetchPOMFromRemoteRepositories(ctx context.Context, paths []str
- 			}
- 			seen.Append(candidate.url.String())
- 
--			// Skip Release only repositories for snapshot artifacts and vice versa
--			if snapshot && !candidate.snapshotEnabled || !snapshot && !candidate.releaseEnabled {
--				continue
--			}
--
- 			repoPaths := slices.Clone(paths) // Clone slice to avoid overwriting last element of `paths`
- 			if snapshot {
- 				pomFileName, err := p.fetchPomFileNameFromMavenMetadata(ctx, candidate.url, repoPaths)
-```
-
----
-
-### Incident Patch 2: `e4a56424` (2026-11-20)
-**Commit Message**: chore(deps): bump github.com/moby/buildkit from 0.34.2 to 0.35.0 in the docker group across 1 directory (#11685)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +20/-20)
-```diff
-@@ -77,7 +77,7 @@ require (
- 	github.com/masahiro331/go-xfs-filesystem v0.0.0-20260422061116-d21e5e4481bb
- 	github.com/mattn/go-shellwords v1.0.16
- 	github.com/mitchellh/hashstructure/v2 v2.0.2
--	github.com/moby/buildkit v0.34.2
-+	github.com/moby/buildkit v0.35.0
- 	github.com/moby/docker-image-spec v1.3.1
- 	github.com/moby/moby/api v1.56.1
- 	github.com/moby/moby/client v0.6.2
-@@ -146,7 +146,7 @@ require (
- 	buf.build/go/protoyaml v0.7.0 // indirect
- 	buf.build/go/spdx v0.2.0 // indirect
- 	buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5 // indirect
--	cel.dev/expr v0.25.2 // indirect
-+	cel.dev/expr v0.25.3 // indirect
- 	cloud.google.com/go v0.123.0 // indirect
- 	cloud.google.com/go/auth v0.23.3 // indirect
- 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
-@@ -161,7 +161,7 @@ require (
- 	github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 // indirect
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/DataDog/zstd v1.5.5 // indirect
--	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
-+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
- 	github.com/Intevation/gval v1.3.0 // indirect
-@@ -170,8 +170,8 @@ require (
- 	github.com/Masterminds/goutils v1.1.1 // indirect
- 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Masterminds/squirrel v1.5.4 // indirect
--	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 // indirect
--	github.com/Microsoft/hcsshim v0.15.0-rc.4 // indirect
-+	github.com/Microsoft/go-winio v0.6.4 // indirect
-+	github.com/Microsoft/hcsshim v0.15.0 // indirect
- 	github.com/ProtonMail/go-crypto v1.5.2 // indirect
- 	github.com/VividCortex/ewma v1.2.0 // indirect
- 	github.com/agext/levenshtein v1.2.3 // indirect
-@@ -240,7 +240,7 @@ require (
- 	github.com/ebitengine/purego v0.10.1 // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
- 	github.com/emirpasic/gods v1.18.1 // indirect
--	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
-+	github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be // indirect
- 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
- 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
-@@ -344,10 +344,10 @@ require (
- 	github.com/moby/locker v1.0.1 // indirect
- 	github.com/moby/patternmatcher v0.6.1 // indirect
- 	github.com/moby/sys/atomicwriter v0.1.0 // indirect
--	github.com/moby/sys/mountinfo v0.7.2 // indirect
-+	github.com/moby/sys/mountinfo v0.7.3 // indirect
- 	github.com/moby/sys/sequential v0.7.0 // indirect
- 	github.com/moby/sys/signal v0.7.1 // indirect
--	github.com/moby/sys/user v0.4.1 // indirect
-+	github.com/moby/sys/user v0.5.0 // indirect
- 	github.com/moby/sys/userns v0.2.1 // indirect
- 	github.com/moby/term v0.5.2 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-@@ -370,7 +370,7 @@ require (
- 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
--	github.com/prometheus/client_golang v1.24.1 // indirect
-+	github.com/prometheus/client_golang v1.25.0 // indirect
- 	github.com/prometheus/client_model v0.6.3 // indirect
- 	github.com/prometheus/common v0.72.0 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
-@@ -426,13 +426,13 @@ require (
- 	go.lsp.dev/protocol v0.12.0 // indirect
- 	go.lsp.dev/uri v0.3.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
-+	go.opentelemetry.io/contrib/detectors/gcp v1.45.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
- 	go.opentelemetry.io/otel v1.47.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0 // indirect
- 	go.opentelemetry.io/ot
-```
-
-**File**: `go.sum` (modified, +46/-46)
-```diff
-@@ -26,8 +26,8 @@ buf.build/go/spdx v0.2.0 h1:IItqM0/cMxvFJJumcBuP8NrsIzMs/UYjp/6WSpq8LTw=
- buf.build/go/spdx v0.2.0/go.mod h1:bXdwQFem9Si3nsbNy8aJKGPoaPi5DKwdeEp5/ArZ6w8=
- buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5 h1:njYKSWoLiq2i5O7y2bPPU2Yzp7iAU0Wk9KJ2OoAhNiU=
- buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5/go.mod h1:DQmodNT9EHX94WzUaWiZK+/4EaFa/xZTc1gzfCxZVXU=
--cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
--cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
-+cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
-+cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
- cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
- cloud.google.com/go/auth v0.23.3 h1:UMK+oBtuNGMCR/6i6mmySUItqjOazpJrbmZyhGbGBWo=
-@@ -89,8 +89,8 @@ github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
- github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
- github.com/GoogleCloudPlatform/docker-credential-gcr/v2 v2.2.1 h1:hlWYvaYrCCH1nTnUf39MdE+FOEmf2GYUYNF4ED9S3S0=
- github.com/GoogleCloudPlatform/docker-credential-gcr/v2 v2.2.1/go.mod h1:tkzPxS3e4iTgbA4PWtc84B3iwgLH+Shjtjgn134AHd4=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 h1:yzIYdwuro811Z27D3T80Wkd3rqZzb0K43nner7Eh1yE=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 h1:bN1gA3of5bXtbnLsRPrwfmbbe7A5UWFlcTHseujLnpc=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0/go.mod h1:Yj5vHEz/aAepZGliRJsA6uvHAVAQyEwajq9ORCHPxzM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 h1:jLdiS1vO+XJFyDSWRHBx56r4s/NNtcl5J6KyCcWUX/w=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0/go.mod h1:8lmpHY+1VRoteiOwyrQMDt1YGXOrFKCz+1wJW7n3ODY=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.57.0 h1:cSjUzZ7KU8hicTgzaSv9NmSyM9fTVK3y5lsBUl3wOis=
-@@ -112,10 +112,10 @@ github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSC
- github.com/Masterminds/squirrel v1.5.4 h1:uUcX/aBc8O7Fg9kaISIUsHXdKuqehiXAMQTYX8afzqM=
- github.com/Masterminds/squirrel v1.5.4/go.mod h1:NNaOrjSoIDfDA40n7sr2tPNZRfjzjA400rg+riTZj10=
- github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
--github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 h1:0kQAzHq8vLs7Pptv+7TxjdETLf/nIqJpIB4oC6Ba4vY=
--github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29/go.mod h1:ZWa7ssZJT30CCDGJ7fk/2SBTq9BIQrrVjrcss0UW2s0=
--github.com/Microsoft/hcsshim v0.15.0-rc.4 h1:aZFX4LH0S20Lgjq0wG61StIClj7im4yzrxIClkaR8Z8=
--github.com/Microsoft/hcsshim v0.15.0-rc.4/go.mod h1:BA9CBztgu4h/6Jsvo1O1M4qjWw09PoYpaEYgexPE578=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
-+github.com/Microsoft/hcsshim v0.15.0 h1:AWiHGf0+9f7cDcfhuU3zXORCAPmIOWzTYfHhcrMcx3U=
-+github.com/Microsoft/hcsshim v0.15.0/go.mod h1:eStXUkML1Fmkgmwr6XHbYkBC1j7p2FA8ZtA9dyRMbts=
- github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cqUQ3I=
- github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
- github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
-@@ -363,8 +363,8 @@ github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc
- github.com/emirpasic/gods v1.18.1/go.mod h1:8tpGGwCnJ5H4r6BWwaV6OrWmMoPhUl5jm/FMNAnJvWQ=
- github.com/envoyproxy/go-control-plane v0.14.0 h1:hbG2kr4RuFj222B6+7T83thSPqLjwBIfQawTkC++2HA=
- github.com/envoyproxy/go-control-plane v0.14.0/go.mod h1:NcS5X47pLl/hfqxU70yPwL9ZMkUlwlKxtAohpi2wBEU=
--github.com/envoyproxy/go-control-plane/envoy v1.37.0 h1:u3riX6BoYRfF4Dr7dwSOroNfdSbEPe9Yyl09/B6wBrQ=
--github.com/envoyproxy/go-control-plane/envoy v1.37.0/go.mod h1:DReE9MMrmecPy+YvQOAOHNYMALuowAnbjjEMkkWOi6A=
-+github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be h1:SWe0x6yfglnxuvOiYgTTnNq7QD/yvqthOh1RBI8Bj8w=
-+github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be/go.mod h1:PYEOlng9XcrulfyWpm49jECTPV0LT4q8cO7fLW/xwgk=
- github.com/envoyproxy/go-control-plane/ratelimit v0.1.0 h1:/G9QYbddjL25KvtKTv3an9lx6VBE2cnb8wp1vEGNYGI=
- github.com/envoyproxy/go-control-plane/ratelimit v0.1.0/go.mod h1:Wk+tMFAFbCXaJPzVVHnPgRKdUdwW/KdbRt94AzgRee4=
- github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMDjpqGAGacLe2T0ds=
-@@ -732,8 +732,8 @@ github.com/mitchellh/mapstructure v1.5.1-0.20231216201459-8508981c8b6c
-```
-
----
-
-### Incident Patch 3: `93f55093` (2026-11-20)
-**Commit Message**: fix(nodejs): add dependency edges for Bun workspaces (#11650)
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse.go` (modified, +13/-2)
-```diff
-@@ -147,9 +147,15 @@ func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, ma
- 		// A workspace member is written as "<name>@workspace:<dir>",
- 		// e.g. "a": ["a@workspace:packages/a"] for the workspace "packages/a".
- 		if wsDir, ok := strings.CutPrefix(pkgVersion, "workspace:"); ok {
-+			ws := lockFile.Workspaces[wsDir]
- 			wsPaths[wsDir] = pkgPath
--			pkgVersion = lockFile.Workspaces[wsDir].Version
-+			pkgVersion = ws.Version
- 			relationship = ftypes.RelationshipWorkspace
-+			// Since lockfileVersion 1 a workspace entry has no metadata, so its dependencies come from `workspaces`.
-+			// Duplicates (e.g. a peer dependency that is also a dev dependency,
-+			// or the dependencies in the metadata of lockfileVersion 0) are removed in mergePackages.
-+			depNames[pkgPath] = slices.Concat(lo.Keys(ws.Dependencies), lo.Keys(ws.PeerDependencies),
-+				lo.Keys(ws.OptionalDependencies), lo.Keys(ws.DevDependencies))
- 		}
- 		if pkgVersion != "" {
- 			if _, err := semver.Parse(pkgVersion); err != nil {
-@@ -169,7 +175,7 @@ func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, ma
- 		}
- 
- 		if depMap, ok := parsed.Meta["dependencies"].(map[string]any); ok && len(depMap) > 0 {
--			depNames[pkgPath] = lo.Keys(depMap)
-+			depNames[pkgPath] = append(depNames[pkgPath], lo.Keys(depMap)...)
- 		}
- 	}
- 	return pkgs, depNames, wsPaths
-@@ -235,6 +241,11 @@ func walkProdPackages(pkgPath string, pkgs map[string]ftypes.Package, deps map[s
- 	pkgs[pkgPath] = pkg
- 
- 	visited.Append(pkgPath)
-+	// The dependencies of a workspace include its dev dependencies, so the walk stops at a workspace.
-+	// Its prod dependencies are walked as direct dependencies.
-+	if pkg.Relationship == ftypes.RelationshipWorkspace {
-+		return
-+	}
- 	for _, dep := range deps[pkgPath] {
- 		walkProdPackages(dep, pkgs, deps, visited)
- 	}
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse_test.go` (modified, +6/-0)
-```diff
-@@ -53,6 +53,12 @@ func TestParse(t *testing.T) {
- 			want:     workspaceNestedPkgs,
- 			wantDeps: workspaceNestedDeps,
- 		},
++func Test_ScanMalformedIntrinsics(t *testing.T) {
++	tests := []struct {
++		name          string
++		src           string
++		wantStartLine int
++	}{
 +		{
-+			name:     "workspace as a dependency of a package",
-+			file:     "testdata/bun_workspace_as_dependency.lock",
-+			want:     workspaceAsDependencyPkgs,
-+			wantDeps: workspaceAsDependencyDeps,
-+		},
- 	}
- 
- 	for _, tt := range tests {
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse_testcase.go` (modified, +96/-1)
-```diff
-@@ -156,7 +156,20 @@ var (
- 		},
- 	}
- 
--	multipleWsDeps = []ftypes.Dependency(nil)
-+	multipleWsDeps = []ftypes.Dependency{
-+		{
-+			ID: "my-app@1.0.0",
-+			DependsOn: []string{
-+				"lodash@4.17.21",
-+			},
++			name: "negative Fn::Select index",
++			src: `---
++Resources:
++  BucketWithNegativeSelect:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: !Select [-1, [bucket-a, bucket-b]]
++  MisconfiguredBucket:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: test-bucket
++`,
++			wantStartLine: 10,
 +		},
 +		{
-+			ID: "my-lib@1.0.0",
-+			DependsOn: []string{
-+				"chalk@5.0.1",
-+			},
-+		},
-+	}
- 
- 	// testdata/bun_nested.lock is generated by bun 1.4.2.
- 	nestedPkgs = []ftypes.Package{
-@@ -1033,6 +1046,23 @@ var (
- 	}
- 
- 	workspaceNestedDeps = []ftypes.Dependency{
-+		{
-+			ID: "a@1.0.0",
-+			DependsOn: []string{
-+				"debug@2.6.9",
-+				"lodash@4.17.15",
-+				"minimist@0.0.8",
-+				"ms@0.7.1",
-+				"send@0.13.0",
-+			},
-+		},
-+		{
-+			ID: "b@1.0.0",
-+			DependsOn: []string{
-+				"a@1.0.0",
-+				"minimist@0.0.10",
-+			},
-+		},
- 		{
- 			ID: "debug@2.2.0",
- 			DependsOn: []string{
-@@ -1099,4 +1129,69 @@ var (
- 			},
- 		},
- 	}
-+
-+	// docker run --rm -it oven/bun:1.4.2 sh
-+	// mkdir -p /app/packages/ms && cd /app
-+	// echo '{"name": "edge-collision", "workspaces": ["packages/*"], "dependencies": {"debug": "2.6.9"}}' > package.json
-+	// echo '{"name": "ms", "version": "2.0.0", "devDependencies": {"minimist": "1.2.8"}}' > packages/ms/package.json
-+	// bun install
-+	// cat bun.lock
-+	//
-+	// "debug" depends on "ms", which bun links to the workspace "ms".
-+	workspaceAsDependencyPkgs = []ftypes.Package{
-+		{
-+			ID:           "ms@2.0.0",
-+			Name:         "ms",
-+			Version:      "2.0.0",
-+			Relationship: ftypes.RelationshipWorkspace,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 24,
-+					EndLine:   24,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "debug@2.6.9",
-+			Name:         "debug",
-+			Version:      "2.6.9",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 20,
-+					EndLine:   20,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "minimist@1.2.8",
-+			Name:         "minimist",
-+			Version:      "1.2.8",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 22,
-+					EndLine:   22,
-+				},
-+			},
++			name: "malformed Fn::FindInMap mapping",
++			src: `---
++Mappings:
++  BucketNames:
++    prod: not-a-map
++Resources:
++  BucketWithMalformedFindInMap:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: !FindInMap [BucketNames, prod, Name]
++  MisconfiguredBucket:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: test-bucket
++`,
++			wantStartLine: 13,
 +		},
 +	}
 +
-+	workspaceAsDependencyDeps = []ftypes.Dependency{
-+		{
-+			ID: "debug@2.6.9",
-+			DependsOn: []string{
-+				"ms@2.0.0",
-+			},
-+		},
-+		{
-+			ID: "ms@2.0.0",
-+			DependsOn: []string{
-+				"minimist@1.2.8",
-+			},
-+		},
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			fsys := testutil.CreateFS(map[string]string{
++				"/code/main.yaml": tt.src,
++			})
++
++			scanner := New(
++				rego.WithEmbeddedPolicies(false),
++				rego.WithPolicyReader(strings.NewReader(bucketNameCheck)),
++				rego.WithPolicyNamespaces("user"),
++			)
++
++			results, err := scanner.ScanFS(t.Context(), fsys, "code")
++			require.NoError(t, err)
++
++			failed := results.GetFailed()
++			require.Len(t, failed, 1)
++			assert.Equal(t, "AWS-001", failed[0].Rule().ID)
++			assert.Equal(t, tt.wantStartLine, failed[0].Range().GetStartLine())
++		})
 +	}
- )
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_workspace_as_dependency.lock` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+{
-+  "lockfileVersion": 2,
-+  "configVersion": 1,
-+  "workspaces": {
-+    "": {
-+      "name": "edge-collision",
-+      "dependencies": {
-+        "debug": "2.6.9",
-+      },
-+    },
-+    "packages/ms": {
-+      "name": "ms",
-+      "version": "2.0.0",
-+      "devDependencies": {
-+        "minimist": "1.2.8",
-+      },
-+    },
-+  },
-+  "packages": {
-+    "debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
-+
-+    "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
-+
-+    "ms": ["ms@workspace:packages/ms"],
-+  }
 +}
 ```
 
-**File**: `pkg/fanal/analyzer/language/nodejs/bun/bun.go` (modified, +1/-1)
+---
+
+### Incident Patch 3: `13e05e74` (2026-11-23)
+**Commit Message**: fix(flag): load built-in compliance spec from --cache-dir (#11675)
+
+Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
+
+**File**: `pkg/flag/report_flags.go` (modified, +3/-4)
 ```diff
-@@ -27,7 +27,7 @@ func init() {
+@@ -10,7 +10,6 @@ import (
+ 	"golang.org/x/xerrors"
+ 
+ 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
+-	"github.com/aquasecurity/trivy/pkg/cache"
+ 	"github.com/aquasecurity/trivy/pkg/compliance/spec"
+ 	"github.com/aquasecurity/trivy/pkg/log"
+ 	"github.com/aquasecurity/trivy/pkg/result"
+@@ -257,7 +256,7 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
+ 		return xerrors.New(`"--table-mode" can be used only with "--format table".`)
+ 	}
+ 
+-	cs, err := loadComplianceTypes(f.Compliance.Value())
++	cs, err := loadComplianceTypes(f.Compliance.Value(), opts.CacheDir)
+ 	if err != nil {
+ 		return xerrors.Errorf("unable to load compliance spec: %w", err)
+ 	}
+@@ -294,12 +293,12 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
+ 	return nil
  }
  
- const (
--	version = 2
-+	version = 3
- )
+-func loadComplianceTypes(compliance string) (spec.ComplianceSpec, error) {
++func loadComplianceTypes(compliance, cacheDir string) (spec.ComplianceSpec, error) {
+ 	if compliance != "" && !slices.Contains(types.SupportedCompliances, compliance) && !strings.HasPrefix(compliance, "@") {
+ 		return spec.ComplianceSpec{}, xerrors.Errorf("unknown compliance: %v", compliance)
+ 	}
  
- type bunLibraryAnalyzer struct {
+-	cs, err := spec.GetComplianceSpec(compliance, cache.DefaultDir())
++	cs, err := spec.GetComplianceSpec(compliance, cacheDir)
+ 	if err != nil {
+ 		return spec.ComplianceSpec{}, xerrors.Errorf("spec loading from file system error: %w", err)
+ 	}
+```
+
+**File**: `pkg/flag/report_flags_test.go` (modified, +35/-0)
+```diff
+@@ -1,6 +1,8 @@
+ package flag_test
+ 
+ import (
++	"os"
++	"path/filepath"
+ 	"testing"
+ 
+ 	"github.com/spf13/viper"
+@@ -282,4 +284,37 @@ func TestReportFlagGroup_ToOptions(t *testing.T) {
+ 		_, err := flags.ToOptions(nil)
+ 		assert.ErrorContains(t, err, "ignore file not found: doesntexist")
+ 	})
++
++	t.Run("load built-in compliance spec from --cache-dir", func(t *testing.T) {
++		t.Cleanup(viper.Reset)
++
++		cacheDir := t.TempDir()
++
++		policyDir := filepath.Join(cacheDir, "policy")
++		specDir := filepath.Join(policyDir, "content", "specs", "compliance")
++		require.NoError(t, os.MkdirAll(specDir, 0o755))
++		require.NoError(t, os.WriteFile(filepath.Join(policyDir, "metadata.json"), []byte(`{}`), 0o600))
++
++		specYAML := `spec:
++  id: docker-cis-1.6.0
++  title: Spec from the cache dir
++  description: Custom test spec
++  version: "1.6.0"
++  relatedResources: []
++  controls: []
++`
++		require.NoError(t, os.WriteFile(filepath.Join(specDir, "docker-cis-1.6.0.yaml"), []byte(specYAML), 0o600))
++
++		setValue(flag.CacheDirFlag.ConfigName, cacheDir)
++		setValue(flag.ComplianceFlag.ConfigName, "docker-cis-1.6.0")
++
++		flags := flag.Flags{
++			flag.NewGlobalFlagGroup(),
++			flag.NewReportFlagGroup(),
++		}
++
++		opts, err := flags.ToOptions(nil)
++		require.NoError(t, err)
++		assert.Equal(t, "Spec from the cache dir", opts.Compliance.Spec.Title)
++	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11712** (2026-11-23): chore(deps): upgrade apk packages in container images (@DmitriyLewen)
+- **PR #11711** (2026-11-23): fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (@1solomonwakhungu)
+- **PR #11702** (closed): fix(flag): use cache-dir flag for compliance spec loading (@prascli)
 - **PR #11700** (closed): Parses TF_VAR_ values for variables of complex types as HCL (@Aakarsh133)
+- **PR #11695** (2026-11-23): ci: trigger backport workflow via workflow_dispatch (@DmitriyLewen)
 - **PR #11687** (closed): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
-- **PR #11686** (2026-11-20): chore(deps): bump the testcontainers group with 2 updates (@dependabot[bot])
-- **PR #11685** (2026-11-20): chore(deps): bump github.com/moby/buildkit from 0.34.2 to 0.35.0 in the docker group across 1 directory (@dependabot[bot])
-- **PR #11673** (2026-11-18): fix(server): use the correct flag name in the --custom-headers warning (@farisbasha)
-- **PR #11672** (2026-11-20): feat(server): add Custom field to secret findings (@DmitriyLewen)
 
 ---
 
@@ -1521,61 +1639,66 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. java): check repository policy before skipping a shared Maven mirror
+## X. arm): read NSG rules from the securityRules property and child resources
 
 **RULE**:
-When implementing operations in `pkg/dependency/parser/java/pom/mirror_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/iac/adapters/arm/network/adapt.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edf9f5c1`: java): check repository policy before skipping a shared Maven mirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f320e692`: arm): read NSG rules from the securityRules property and child resources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dependency/parser/java/pom/mirror_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/arm/network/adapt.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+const (
+	securityGroupType = "Microsoft.Network/networkSecurityGroups"
+	securityRuleType  = "securityRules"
+)
 
-// Repositories with different release and snapshot policies can share one mirror.
-// The mirror is requested for an artifact that only the second repository accepts.
-func Test_fetchPOMFromRemoteRepositories_mirrorPolicy(t *testing.T) {
-	releasesURL, err := url.Parse("https://releases.example.com/maven2/")
-	require.NoError(t, err)
-	snapshotsURL, err := url.Parse("https://snapshots.example.com/maven2/")
-	require.NoError(t, err)
-	releasesRepo := repository{id: "releases", url: *releasesURL, releaseEnabled: true}
-	snapshotsRepo := repository{id: "snapshots", url: *snapshotsURL, snapshotEnabled: true}
-
-	tests := []struct {
-		name      string
-		repos     []repository
-		snapshot  bool
-		version   string
-		wantPaths []string
-	}{
-		{
-			name:     "snapshot artifact, release-only repository first",
-			repos:    []repository{releasesRepo, snapshotsRepo},
-			snapshot: true,
-			version:  "1.0.0-SNAPSHOT",
-			wantPaths: []string{
-				"/com/example/example-api/1.0.0-SNAPSHOT/maven-metadata.xml",
-				"/com/example/example-api/1.0.0-SNAPSHOT/example-api-1.0.0-SNAPSHOT.pom",
-			},
-		},
-		{
-			name:    "release artifact, snapshot-only repository first",
-			repos:   []repository{snapshotsRepo, relea
+	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
+	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
+		sgs = append(sgs, network.SecurityGroup{
+			Metadata: iacTypes.NewUnmanagedMetadata(),
+			Rules:    adaptSecurityRuleResources(orphans),
+		})
+	}
+	var rules []network.SecurityGroupRule
+	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
+		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
+	}
+		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
+func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
+	var rules []network.SecurityGroupRule
+	for _, resource := range resources {
+		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
+func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
+	sourceAddressPrefixes := properties.GetMapValue("sourceAddr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
+
+		Rules:    adaptSecurityGroupRules(deployment),
+func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
+	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
+		rules = append(rules, adaptSecurityGroupRule(resource))
+func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
+	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
+	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
+	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
+		rng := parsePortRange(portRange.AsString(), resource.Metadata)
+	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
+	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
+	if prefix := resource.Properties.GetMapValue("destinationAddressPrefi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edf9f5c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f320e692` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

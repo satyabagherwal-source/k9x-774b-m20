@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T05:14:15.501Z",
+  "last_updated": "2026-11-24T05:28:26.824Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
-      "verified_at": "2026-11-23T06:22:30.498Z",
+      "content_hash": "8fffd0ebcc620a66ff16e553bcae025218594fdb8122c67df5f2a477f17d67b1",
+      "verified_at": "2026-11-24T05:28:26.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:22:30.498Z"
+      "last_updated": "2026-11-24T05:28:26.824Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
-      "verified_at": "2026-11-21T13:30:27.940Z",
+      "content_hash": "951f8dc44efa3423c8ad1021e4540a0faaa76ecd0b413b78029eaaaba907a9c4",
+      "verified_at": "2026-11-24T05:28:14.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:30:27.940Z"
+      "last_updated": "2026-11-24T05:28:14.053Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "aaac4cebe0b25b16bb78cd81f130e6d164e675bff28f3191c5144f8a0f11739b",
-      "verified_at": "2026-11-21T02:57:50.206Z",
+      "content_hash": "46dcc4528ca0917e05bb944926f519c8e9704490e56b8a813e8bc261b0212829",
+      "verified_at": "2026-11-24T05:28:22.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:57:50.206Z"
+      "last_updated": "2026-11-24T05:28:22.153Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
-      "verified_at": "2026-11-21T09:52:22.249Z",
+      "content_hash": "7d50a6a7b59de036d15e29b57720d50bfafa307d93a3dba691fb42953fbb0609",
+      "verified_at": "2026-11-24T05:28:19.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T09:52:22.250Z"
+      "last_updated": "2026-11-24T05:28:19.703Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

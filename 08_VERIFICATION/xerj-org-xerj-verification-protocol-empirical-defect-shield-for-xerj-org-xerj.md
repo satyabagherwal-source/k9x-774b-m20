@@ -4,22 +4,22 @@
 {
   "source_repository": "xerj-org/xerj",
   "source_url": "https://github.com/xerj-org/xerj",
-  "source_version": "98e7681c",
+  "source_version": "7ba0069e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T06:22:30.699Z",
+  "timestamp": "2026-11-24T05:28:27.135Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xerj-org-xerj",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `98e7681c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T06:22:30.699Z`  
+> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `7ba0069e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T05:28:27.135Z`  
 > **Learning ID**: `learn-github-xerj-org-xerj`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `xerj-org/xerj` (Commit: `98e7681c`)
+- **Target Repository**: `xerj-org/xerj` (Commit: `7ba0069e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:22:29.524Z  
+> **Harvest Timestamp**: 2026-11-24T05:28:25.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19483 stars
+- **Stars / Engagement**: 20270 stars
 
 ---
 
@@ -1482,11 +1482,11 @@ impl DecideModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3466** (2026-11-23): **search: size:0 aggs under a numeric term filter take the brute corpus path (429 on an index with overwrites)**
-  *Symptoms*: ## What happens  A `size:0` aggregation whose query is a `term` on a numeric field still takes the brute `_source` corpus path. On an index with overwrite history the corpus estimate is over the 512 MB query cap, so it returns 429 at `aggregation corpus materialisation`. Below the cap it is just slow.  Measured during #3444 (200k live docs, 100k overwritten, ~1 KB text body): 1.2-2.4 s and +842-851 MB RSS per query on the brute path, or 429.  ```json {"size": 0,  "query": {"term": {"g": 1}},  "aggs": {"a": {"terms": {"field": "cat"}}}} ```  The same aggregation with a keyword `term` or a numeric `range` filter is served from doc values in tens of ms.  ## Root cause  `query_node_to_agg_filter` (engine/crates/xerj-engine/src/index.rs) only turns a `term` with a **string** value into the agg filter. A numeric `term` value returns `None`, so `try_fast_aggs` is never tried and the request falls to the brute corpus. `compile_pred` in fast_aggs.rs also bails on a numeric `term`.  ## Fix direction  On a numeric doc-values column, `term: N` is the same row set as `range: {gte: N, lte: N}`. That is already how `seg_term_positions` counts a numeric term (index.rs). The `_source` comparator `json_scalar_equal` compares numbers by value and compares integers exactly, so the rewrite is limited to |N| < 2^53, where f64 is exact. A segment whose column for the field is not numeric still bails, the same as for any numeric range.  Acceptance: peak RSS and latency before/after on the 200k/100k 
+- **Issue #3496** (2026-11-23): **cluster_metadata_replicates: election/backfill wall-clock waits still fail at load ~150 (after #3494)**
+  *Symptoms*: Residual of #3489 after PR #3494. That PR moves the metadata waits in `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` onto the raft applied index. At 12 runs at a time and load 53 -> 154, the whole file still failed 18 of 120 runs, all on wall-clock waits the applied index does not cover:  | wait | deadline | failures | |---|---|---| | `wait_leader` ("timed out waiting for one raft leader") | 10 s | 10 | | `wait_replica_title` (late member backfill) | 10 s | 9 | | `wait_refilled` (restarted replica refill) | 15 s | 5 | | async `_update_by_query` task poll (`update_by_query_from_a_non_owner_…`) | 5 s | 5 |  At 10 runs at a time (load 96 -> 117) the file passed 80 of 80.  Elections run on wall-clock timers, and backfill and refill run as async tasks off the raft step, so neither has a raft index to wait on. A deterministic fix needs an observable completion signal for each of them, for example a backfill or refill generation counter on the engine or handle that a test can wait on. Bumping these deadlines would only be a timeout bump. 
 
-- **Issue #3448** (2026-11-23): **Flaky tests: "no free port triple" in brain_cli / node_lifecycle / shutdown_signals under load**
-  *Symptoms*: \`xerj-server\` tests \`brain_cli\`, \`node_lifecycle\`, \`shutdown_signals\` and \`ask_folder_cli\` each carry their own \`free_port_triple()\`. At load 40 they panic \`no free port triple\` (4 failures in round 9: brain_cli 2 + node_lifecycle 2).  Root cause: each helper takes a base from \`bind(:0)\` and probes \`base+1\` and \`base+2\`. Linux gives \`bind(:0)\` ports of one parity and \`connect()\` the other. When the host makes lots of short loopback connections, which parallel test suites do, the \`connect()\` half of the ephemeral range fills with client sockets and TIME_WAIT. Then \`base+1\` is nearly always taken, and all 64 or 200 tries fail. The window between release and the child's bind is exposed to the same thing.  Repro (de56838e9): 8 threads making short loopback connections (TIME_WAIT 14-28k, all on the connect parity), 30 runs, 6 parallel: node_lifecycle **30/30**, brain_cli **30/30**, shutdown_signals **30/30** failed with \`no free port triple\`.
+- **Issue #3491** (2026-11-23): **Flaky cold_topk_with_source_includes_reads_only_winning_rows: warm skipped on a shared, pinned hydration budget**
+  *Symptoms*: `index::flush_publication_recovery_tests::cold_topk_with_source_includes_reads_only_winning_rows` (xerj-engine lib, #2422/#2423) fails with `background warm never landed` after its 30 s wait.  Measured on main 98e7681cb, ci-test profile, 10 processes at a time:  | what runs in the process | runs | failed | load (1m, start -> peak) | |---|---|---|---| | this test alone | 50 | 0 | 29.4 -> 29.4 | | this test + `fts_reader_displaces_decoded_sections_when_the_budget_is_full` | 50 | **11** | 27.9 -> 40.8 |  So load is not what triggers it; sharing the process with another test is.  Root cause: `schedule_cold_stored_warm` skips the warm when the hydration budget has no headroom for the segment's slices (`has_headroom(bound)`, #2427/#1122). That budget is process-wide (the governor's). `fts_reader_displaces_decoded_sections_when_the_budget_is_full` sets its target to its current `used` and never restores it, and any other test can fill it. The warm is then skipped every time, `all_cold` stays true, and the loop waits out its 30 s. A longer wait would not help: the warm never runs. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1503,552 +1503,1113 @@ impl DecideModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8dfd181` (2026-11-23)
-**Commit Message**: governor: run the pressure purge off the memory sampler thread (Refs #2427)
+### Incident Patch 1: `a7b82e8b` (2026-11-23)
+**Commit Message**: test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comments on the right fns
+
+Three cleanups left over from #3516, #3522 and #3498.
+
+1. a_cold_get_reads_one_row_and_matches_the_full_decode flaked under load (#3530)
+
+   Root cause: `built()` in get_row_decode_tests.rs lays out its
+   segments with flush + force_merge(round + 1), and the asserts depend
+   on that layout, but the index kept its background merge loop. At load
+   150-300 a merge tick (5 s) landed between a flush and its force_merge.
+   It merged everything into ONE segment (the `>= 2` assert), or left a
+   124-doc legacy-LZ4 shard segment (the `ZBS` magic assert), once
+   force_merge saw few enough segments to do nothing. Fix:
+   `idx.abort_background_tasks()` after get_index, the same thing
+   `hand_driven_index` does. No timeout changed.
+
+   Before (main 53e4db0c1, ci-test, 96 CPU burners):
+     alone, 60 runs x16 parallel, load 154-308: 36/60 failed
+       (30 x `1 segments`, 6 x `124 docs, magic LZ4`)
+     full --lib, 4 copies, --test-threads=16, load 213-225: 4/4 failed
+   After:
+     alone, 60 runs x16 parallel, load 217-350: 0/60 failed
+     full --lib, 8 runs, 4 copies, load 206-366: 0/8
+
+**File**: `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` (modified, +23/-12)
+```diff
+@@ -1333,6 +1333,27 @@ async fn a_document_is_stored_on_its_shard_owner_and_search_sees_it_from_any_mem
+     }
+ }
+ 
++/// Wait for a member's runner task to exit after its shutdown watch was set.
++///
++/// The runner races the shutdown watch against each step
++/// (`ClusterRunner::run`), so the join is the event: it resolves on the
++/// runner's next poll. It was a 5 s wall-clock join (left by #3516), which a
++/// runner starved at load 100+ can miss while still stopping correctly.
++/// [`RAFT_HANG_GUARD`] only catches a runner that never exits.
++async fn join_runner(member: &mut Member) {
++    let Some(task) = member.runner.take() else {
++        return;
++    };
++    match tokio::time::timeout(RAFT_HANG_GUARD, task).await {
++        Ok(Ok(())) => {}
++        Ok(Err(join)) => panic!("{} runner task failed: {join}", member.handle.node_id()),
++        Err(_) => panic!(
++            "{} runner did not exit in {RAFT_HANG_GUARD:?} after shutdown",
++            member.handle.node_id()
++        ),
++    }
++}
++
+ /// Stop one member and release its data directory.
+ ///
+ /// The shard handler is cleared first, so a document write during shutdown
+@@ -1342,12 +1363,7 @@ async fn a_document_is_stored_on_its_shard_owner_and_search_sees_it_from_any_mem
+ async fn shutdown_member(mut member: Member) -> tempfile::TempDir {
+     member.handle.clear_shard_handler();
+     let _ = member.shutdown.send(true);
+-    if let Some(task) = member.runner.take() {
+-        match tokio::time::timeout(Duration::from_secs(5), task).await {
+-            Ok(Ok(())) => {}
+-            other => panic!("cluster runner did not stop: {other:?}"),
+-        }
+-    }
++    join_runner(&mut member).await;
+     drop(member.app);
+     drop(member.state);
+     drop(member.engine);
+@@ -1359,12 +1375,7 @@ async fn shutdown_and_keep(members: Vec<Member>) -> Vec<tempfile::TempDir> {
+     let mut dirs = Vec::with_capacity(members.len());
+     for mut member in members {
+         let _ = member.shutdown.send(true);
+-        if let Some(task) = member.runner.take() {
+-            match tokio::time::timeout(Duration::from_secs(5), task).await {
+-                Ok(Ok(())) => {}
+-                other => panic!("cluster runner did not stop: {other:?}"),
+-            }
+-        }
++        join_runner(&mut member).await;
+         // ApiShardHandler holds AppState, which holds Engine, which holds
+         // this handle. The engine's data-dir node.lock stays taken until
+         // that cycle breaks, so a later Engine::new on the same directory
+```
+
+**File**: `engine/crates/xerj-engine/src/get_row_decode_tests.rs` (modified, +8/-0)
+```diff
+@@ -38,6 +38,14 @@ async fn built(name: &str) -> (tempfile::TempDir, crate::Engine, Arc<Index>, usi
+     let engine = crate::Engine::new(config).unwrap();
+     engine.create_index(name, Schema::empty()).unwrap();
+     let idx = engine.get_index(name).unwrap();
++    // Hand-driven: the segment layout below is what the asserts rely on, so
++    // no background merge tick may reshape it. At load 150-300 the build
++    // runs long enough for a tick (5 s) to land between a flush and its
++    // `force_merge`: 30 of 60 runs ended on ONE segment (the `>= 2` assert)
++    // and 6 kept a 124-doc legacy-LZ4 shard segment the tick left behind
++    // (the `ZBS` assert), once `force_merge(round + 1)` saw few enough
++    // segments to do nothing.
++    idx.abort_background_tasks();
+     // A flush splits into one small segment per memtable shard, and a stored
+     // section under 128 rows stays legacy LZ4 (the full-decode path), so each
+     // round is merged into one columnar segment before the next is written.
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +10/-10)
+```diff
+@@ -11818,16 +11818,6 @@ mod semantic_deadline_regression_tests {
+ #[path = "fast_aggs.rs"]
+ mod fast_aggs;
+ 
+-/// Reconstruct the ES-JSON form of a query filter that the columnar fast-agg
+-/// path (`fast_aggs::compile_top_pred` + `aggs::doc_matches_filter`) can
+-/// evaluate over doc-values WITHOUT hydrating `_source`.  Returns `None` for
+-/// any query that isn't a plain conjunctive filter over exact/numeric fields
+-/// (FTS, wild/prefix, must_not/should bool, numeric term keys on a field not
+-/// mapped `long`/`double`, …) — the caller then keeps the exact brute path.
+-///
+-/// Only the leaf/bool shapes that `doc_matches_filter` and `compile_pred`
+-/// jointly support are emitted, so the memtable matcher and the columnar
+-/// predicate stay byte-identical.
+ /// #3510: whether `q` is a pure conjunction (`bool` with only `must` /
+ /// `filter`, nested, or under `constant_score`) whose every leaf passes
+ /// `leaf_ok`. A leaf on its own is just checked. Used to admit a filter-only
+@@ -11855,6 +11845,16 @@ fn filter_conjunction_leaves_all(q: &QueryNode, leaf_ok: &dyn Fn(&QueryNode) ->
+     }
+ }
+ 
++/// Reconstruct the ES-JSON form of a query filter that the columnar fast-agg
++/// path (`fast_aggs::compile_top_pred` + `aggs::doc_matches_filter`) can
++/// evaluate over doc-values WITHOUT hydrating `_source`.  Returns `None` for
++/// any query that isn't a plain conjunctive filter over exact/numeric fields
++/// (FTS, wild/prefix, must_not/should bool, numeric term keys on a field not
++/// mapped `long`/`double`, …) — the caller then keeps the exact brute path.
++///
++/// Only the leaf/bool shapes that `doc_matches_filter` and `compile_pred`
++/// jointly support are emitted, so the memtable matcher and the columnar
++/// predicate stay byte-identical.
+ fn query_node_to_agg_filter(node: &QueryNode, schema: &Schema) -> Option<Value> {
+     match node {
+         QueryNode::MatchAll => Some(serde_json::json!({ "match_all": {} })),
+```
+
+---
+
+### Incident Patch 2: `6308204d` (2026-11-23)
+**Commit Message**: fix(search): filter-only bool scores 0, strict typed values 400, fvf missing value 400 (Fixes #3508, #3511, #3512)
+
+Three ES-semantics gaps on the search path, each found by a live repro on
+main 35584dccc (port 28100, throwaway data dir, --insecure) and each
+pinned by a new ES-YAML file.
+
+1. #3508: a filter-only bool scored 1.0 before a flush
 
 Motivation
-#3408 made the resource sampler purge freed jemalloc pages itself once RSS
-reaches 80% of the watermark, at most every 250 ms. The purge ran inline on
-the sampler thread (Thread A), the thread that refreshes the RSS figure the
-parent breaker compares against every 100 ms. Earlier rounds measured the
-purge at p50 62.7 ms / p99 231.7 ms but not what it costs or what it delays.
+- `bool { filter: [...] }` (no must, no should) runs every clause in
+  filter context; ES scores each hit 0.0. A must_not-only bool gets a
+  match-all FILTER clause (`Queries.fixNegativeQueryIfNeeded`, read for
+  semantics only) and also scores 0.0.
 
-Root cause (measured; main d36c4af6b plus a local timing patch, not
-committed: epoch / purge time per call, dirty+muzzy bytes per arena from
-jemalloc stats, sampler tick gaps >= 150 ms, madvise traced with bpftrace)
-- Duration follows bytes handed back. 651 calls over 5 runs: 16-64 MiB p50
-  6.6 ms, 128-256 MiB 30.9 ms, 256-512 MiB 68.6 ms, 512-1024 MiB 114.4 ms;
-  slope 199 ms/GiB, Pearson 0.76.
-- About 73% of purge time is the kernel: over one 120 s window the sampler's
-  40 purges took 3.70 s, of which 2.69 s was madvise(MADV_DONTNEED) in 93,781
-  calls (14.2 GiB, average 155 KiB, median extent 16-32 KiB).
-- The stats epoch is 5.5% (p50 2.5 ms). Calls with nothing to free: 36 of
-  651, all in one run, ~1.9 ms each. 75 of
+Root cause
+- The segment executor (`scored_fast_plan` -> `ScoredPlan::Filtered`,
+  score 0.0) was right. Two memtable-side paths were not:
+  - the id-only memtable arms (`AllDocIds` / `DocValuesHits`, served
+    by the fused doc-values walk) admit hits through `admit_hit!(count)`
+    with a hard-coded 1.0;
+  - `score_query_against_doc` (the brute scorer, used for every doc,
+    segment docs included, once the memtable is non-empty) fell through
+    to its 1.0 "zero sum" fallback.
 
-**File**: `engine/crates/xerj-engine/src/engine.rs` (modified, +102/-1)
+Before / after (index sw: t text, n long, k keyword; 3 docs)
+                                      memtabl
+
+**File**: `CHANGELOG.md` (modified, +26/-3)
 ```diff
-@@ -81,6 +81,56 @@ fn pressure_purge_due(
-     due
- }
+@@ -23,10 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   `strict_date_optional_time||epoch_millis`, four digits are a year and any
+   other integer is epoch millis. A `long` stored as `42.0` is found by `42`.
+   A date match now uses the segment's doc values, so a query that mixes words
+-  and a date or number keeps BM25 for its words there too. Known limit: when
++  and a date or number keeps BM25 for its words there too. Since #3511, when
+   `lenient` is off (a `prefix*` pattern without `lenient: true`, or
+-  `lenient: false`), ES returns 400 for a value that does not parse, and XERJ
+-  skips the field.
++  `lenient: false`), a value that does not parse is a 400, as in ES.
  
-+/// Runs the sampler's pressure purge on a thread of its own (#2427).
-+///
-+/// A purge hands every freed allocator page back to the kernel, and the
-+/// call takes about as long as the bytes it returns, roughly 125-200 ms per
-+/// GiB: about three quarters of it is `madvise(MADV_DONTNEED)` over many
-+/// small extents (median 16-32 KiB, ~2,300 calls per purge), and the stats
-+/// epoch is ~5%. Skipping calls with nothing to free would save little:
-+/// such a call costs ~2 ms. Run on the sampler thread, each call held back
-+/// the next RSS sample, so the breaker read an RSS figure up to 389 ms old
-+/// (1,722 ms once) during exactly the bursts the purge is there for. The
-+/// sampler now only asks. The channel is a rendezvous channel, so a
-+/// request lands only when the worker is idle; one that arrives mid-purge
-+/// is dropped and the next due tick asks again. Same
-+/// shape as ClickHouse's `MemoryWorker`, whose RSS thread flags a separate
-+/// purge thread (`src/Common/MemoryWorker.cpp:924-962`, `:1154-1230`,
-+/// Apache-2.0), written fresh here. Without a worker (the spawn failed)
-+/// the purge runs inline, as before.
-+struct PressurePurgeWorker {
-+    purge: Arc<dyn Fn() + Send + Sync + 'static>,
-+    tx: Option<std::sync::mpsc::SyncSender<()>>,
-+}
-+
-+impl PressurePurgeWorker {
-+    fn spawn(purge: Arc<dyn Fn() + Send + Sync + 'static>) -> Self {
-+        let (tx, rx) = std::sync::mpsc::sync_channel::<()>(0);
-+        let worker = Arc::clone(&purge);
-+        let running = spawn_governor_thread("xerj-mem-purge", move || {
-+            while let Ok(()) = rx.recv() {
-+                worker();
-+            }
-+        });
-+        Self {
-+            purge,
-+            tx: running.then_some(tx),
-+        }
-+    }
-+
-+    /// Ask for a purge without waiting for it. Returns whether one was
-+    /// started: `false` means the worker is still on the previous one.
-+    fn request(&self) -> bool {
-+        match &self.tx {
-+            Some(tx) => tx.try_send(()).is_ok(),
-+            None => {
-+                (self.purge)();
-+                true
-+            }
-+        }
-+    }
-+}
-+
- /// Whether this sampler tick should ask the drain worker to run on the fixed
- /// window (#948, #2238).
- ///
-@@ -355,6 +405,56 @@ mod pressure_cache_release_gate_tests {
-         assert!(!pressure_purge_due(u64::MAX, 0, &mut never, t0));
-     }
- 
-+    /// #2427: asking for a pressure purge never waits for it. A purge that
-+    /// is still running drops the next request instead of queueing it, and
-+    /// the worker takes requests again once it is done.
-+    #[test]
-+    fn a_pressure_purge_request_does_not_wait_for_the_purge() {
-+        use super::PressurePurgeWorker;
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+        use std::sync::Arc;
-+        let runs = Arc::new(AtomicUsize::new(0));
-+        let (started_tx, started_rx) = std::sync::mpsc::channel::<()>();
-+        let (release_tx, release_rx) = std::sync::mpsc::channel::<()>();
-+        let started_tx = std::sync::Mutex::new(started_tx);
-+        let release_rx = std::sync::Mutex::new(release_rx);
-+        let counted = Arc::clone(&runs);
-+        let worker = PressurePurgeWorker::spawn(Arc::new(move || {
-+            started_tx.lock().unwrap().send(()).unwrap();
-+            release_rx.lock().unwrap().recv().unwrap();
-+            counted.fetch_add(1, Ordering::SeqCst);
-+        }));
-+        let wait_until = |what: &str, mut f: Box<dyn FnMut() -> bool + '_>| {
-+            let by = Instant::now() + Duration::from_secs(10);
-+            while !f() {
-+                assert!(Instant::now() < by, "{what}");
-+                std::thread::sleep(Duration::from_millis(1));
-+            }
-+        };
-+        wait_until("the worker never went idle", Box::new(|| worker.request()));
-+        started_rx
-+            .recv_timeout(Duration::from_secs(10))
-+            .expect("the purge must start on the worker");
-+        let t = Instant::now();
-+        assert!(!worker.request(), "a busy worker must drop the request");
-+        assert!(
-+            t.elapsed() < Duration::from_secs(1),
-+            "a request must not block"
-+        );
-+        assert_eq!(runs.load(Ordering::SeqCst), 0);
-+        release_tx.send(()).unwrap();
-+        wait_until(
-+            "the worker never took a request again",
-+            Box::new(|| worker.request()),
-+        );
-+        started_rx.recv_timeout(Duration::from_secs(10)).unwrap();
-+        release_tx.send(()).unwrap();
-+        wait_until(
-+            "the second purge never finished",
-+            Box::new(|| runs.load(Ordering::SeqCst) == 2),
-+        );
-+    }
-+
-     #[test]
-     fn a_zero_interval_releases_on_every_tick() {
-         let mut gate = PressureCacheReleaseGate::new(Duration::ZERO);
-@@ -5108,6 +5208,7 @@ impl Engine {
-                 crate::governor::MemoryDrainSchedule::new(MEMORY_DRAIN_MIN_INTERVAL);
-             let mut last_memtable_drain_
-```
-
----
-
-### Incident Patch 2: `618cc874` (2026-11-23)
-**Commit Message**: fix(search,test): stored scan keeps a segment's best matches; three load flakes made deterministic
-
-Three tests failed now and then on the loaded shared box. Each one is
-fixed at its cause; no timeout was raised and nothing is #[ignore]d.
-
-1. term_on_multi_valued_keyword_matches_the_scan (#3465): a real ranking bug
-
-The stored-doc scan keeps the FIRST materialisation_limit matches of each
-segment; the cross-segment trim then keeps the best from+size. With the
-count not authoritative, a full collector did `continue`: it counted the
-match and dropped it unscored. The call site justified that with "a
-segment's first cap matches are its own cap best", which holds only when
-every match scores the same. score_query_against_doc scores `term` and
-`match` by the query's token count across ALL array elements
-(match_term_frequency), so ["Install guide", "Install"] beats ["Install"].
-With size 5 a merged segment whose first five "Install" matches include a
-one-element doc (d0006) dropped the two-element d0016 behind it. Whether a
-merge had produced such a segment depended on background merge timing,
-hence the flake.
-
-Fix: when the scan score can differ between matches (scan_scores_tied is
-fals
-
-**File**: `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` (modified, +169/-29)
-```diff
-@@ -93,36 +93,103 @@ async fn send(app: &Router, req: Request<Body>) -> (StatusCode, Value) {
-     (status, body)
- }
- 
-+/// The `ProposeError` reasons that mean "raft did not acknowledge this
-+/// change; nothing was reported applied" (`xerj_cluster::propose`). Shutdown
-+/// is left out: these tests stop members on purpose.
-+const RAFT_NOT_ACKNOWLEDGED: [&str; 3] = [
-+    "no elected raft leader",
-+    "timed out waiting for the metadata change to commit on a majority",
-+    "raft leadership changed before the metadata write committed",
-+];
-+
-+fn raft_not_acknowledged(status: StatusCode, body: &Value) -> bool {
-+    status == StatusCode::SERVICE_UNAVAILABLE && {
-+        let text = body.to_string();
-+        RAFT_NOT_ACKNOWLEDGED
-+            .iter()
-+            .any(|reason| text.contains(reason))
-+    }
-+}
-+
-+/// Upper bound on raft-unacknowledged answers before a write gives up. A
-+/// hang guard, not a timing budget: the loop ends when the answer changes.
-+const RAFT_RETRY_GUARD: u32 = 500;
-+
-+/// Send a write; while the answer is a raft-unacknowledged 503, send it again.
-+///
-+/// #3469: raft elections run on wall-clock timers (150-300 ms election
-+/// timeout, 50 ms heartbeat), so on a loaded box a starved runner loses or
-+/// never settles leadership, and a metadata change (an index create, or the
-+/// in-sync change a replicated write proposes) answers 503 "not
-+/// acknowledged". These tests are about what happens once a change commits,
-+/// not about elections, so they wait for the commit the way a client does:
-+/// send again until raft answers. The wait ends on that answer, not on a
-+/// sleep. A change whose unacknowledged attempt committed after all answers
-+/// the retry with "already done" (`resource_already_exists_exception` for a
-+/// create, 404 for a delete); that is the change succeeding, so it is
-+/// returned as 200.
-+async fn send_write(app: &Router, make: impl Fn() -> Request<Body>) -> (StatusCode, Value) {
-+    let is_delete = make().method() == axum::http::Method::DELETE;
-+    let mut unacknowledged = 0u32;
-+    loop {
-+        let (status, body) = send(app, make()).await;
-+        if raft_not_acknowledged(status, &body) {
-+            unacknowledged += 1;
-+            assert!(
-+                unacknowledged < RAFT_RETRY_GUARD,
-+                "raft never acknowledged the write: {status} {body}"
-+            );
-+            tokio::time::sleep(Duration::from_millis(20)).await;
-+            continue;
-+        }
-+        let already_done = if is_delete {
-+            status == StatusCode::NOT_FOUND
-+        } else {
-+            body.pointer("/error/type").and_then(Value::as_str)
-+                == Some("resource_already_exists_exception")
-+        };
-+        if unacknowledged > 0 && already_done {
-+            return (StatusCode::OK, body);
-+        }
-+        return (status, body);
-+    }
-+}
-+
-+fn json_request(method: &str, path: &str, content_type: &str, body: &str) -> Request<Body> {
-+    Request::builder()
-+        .method(method)
-+        .uri(path)
-+        .header("content-type", content_type)
-+        .body(Body::from(body.to_string()))
-+        .expect("request")
-+}
-+
- async fn put_json(app: &Router, path: &str, body: Value) -> (StatusCode, Value) {
-+    let body = body.to_string();
-+    send_write(app, || json_request("PUT", path, "application/json", &body)).await
-+}
-+
-+/// One PUT, no retry: for asserting the raft-unavailable answer itself.
-+async fn put_json_once(app: &Router, path: &str, body: Value) -> (StatusCode, Value) {
-     send(
-         app,
--        Request::put(path)
--            .header("content-type", "application/json")
--            .body(Body::from(body.to_string()))
--            .expect("request"),
-+        json_request("PUT", path, "application/json", &body.to_string()),
-     )
-     .await
- }
- 
- async fn post_json(app: &Router, path: &str, body: Value) -> (StatusCode, Value) {
--    send(
--        app,
--        Request::post(path)
--            .header("content-type", "application/json")
--            .body(Body::from(body.to_string()))
--            .expect("request"),
--    )
-+    let body = body.to_string();
-+    send_write(app, || {
-+        json_request("POST", path, "application/json", &body)
-+    })
-     .await
- }
- 
- async fn post_ndjson(app: &Router, path: &str, body: &str) -> (StatusCode, Value) {
--    send(
--        app,
--        Request::post(path)
--            .header("content-type", "application/x-ndjson")
--            .body(Body::from(body.to_string()))
--            .expect("request"),
--    )
-+    send_write(app, || {
-+        json_request("POST", path, "application/x-ndjson", body)
-+    })
-     .await
- }
- 
-@@ -135,10 +202,9 @@ async fn get(app: &Router, path: &str) -> (StatusCode, Value) {
- }
- 
- async fn delete(app: &Router, path: &str) -> (StatusCode, Value) {
--    send(
--        app,
--        Request::delete(path).body(Body::empty()).expect("request"),
--    )
-+    send_write(app, || {
-+        Request::delete(path).body(Body::empty()).ex
-```
-
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +14/-3)
-```diff
-@@ -7178,7 +7178,18 @@ precedence = ["a", "b"]
-             r#"{"corpus":"other","indexed_at":"2026-01-02T03:04:05Z","prefix":"xc-other"}"#,
-         )
-         .unwrap();
--        let before = server.requests().len();
-+        // Count catalog reads only (#3468). Each call also opens a bare TCP
-+        // connection first (`localnode::ensure_for_cli` asks whether the port
-+        // accepts), and the stand-in records it as an empty request whenever
-+        // its accept loop gets to it — before or after this call returns.
-+        let catalog_reads = || {
-+            server
-+                .requests()
-+                .iter()
-+                .filter(|req| req.contains("autoindex-catalog"))
-+                .count()
-+        };
-+        assert_eq!(catalog_reads(), 1, "the empty ledger read the catalog once");
-         let done = code_cli_outcome(&[
-             "proj".into(),
-             "how does it flush".into(),
-@@ -7196,8 +7207,8 @@ precedence = ["a", "b"]
-         );
-         assert!(!out.text.contains("autoindex catalog"), "{}", out.text);
-         assert_eq!(
--            server.requests().len(),
--            before,
-+            catalog_reads(),
-+            1,
-             "a non-empty ledger must not probe the catalog"
-         );
-         drop(_hold);
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +137/-1)
-```diff
-@@ -27070,6 +27070,12 @@ impl Index {
-             score
-         };
-         let score_doc: &(dyn Fn(&Value, &str) -> f32 + Send + Sync) = &score_doc;
-+        // #3465: whether `score_doc` gives every match the same score. Only
-+        // then may a full stored-scan collector keep a segment's first
-+        // matches; otherwise it keeps the segment's best by score.
-+        let scan_scores_tied: bool = ids_only
-+            || (peeled_fs.is_none()
-+                && (leaf_base_const.is_some() || scan_score_is_constant(query)));
- 
-         // Helper: admit a hit into the bounded `all_hits` collector.
-         //
-@@ -30541,6 +30547,7 @@ impl Index {
-                             &mut dbg_walked,
-                             &mut dbg_admitted,
-                             score_doc,
-+                            scan_scores_tied,
-                             &dmq_schema,
-                         );
-                         dbg_scan_ms += t_scan.elapsed().as_millis() as u64;
-@@ -30590,6 +30597,7 @@ impl Index {
-                                     Some(search_deadline),
-                                     &mut deadline_exceeded,
-                                     score_doc,
-+                                    scan_scores_tied,
-                                     &dmq_schema,
-                                 );
-                             }
-@@ -30613,6 +30621,7 @@ impl Index {
-                                     &mut dbg_walked,
-                                     &mut dbg_admitted,
-                                     score_doc,
-+                                    scan_scores_tied,
-                                     &dmq_schema,
-                                 );
-                             }
-@@ -30760,6 +30769,7 @@ impl Index {
-                                     &mut dbg_walked,
-                                     &mut dbg_admitted,
-                                     score_doc,
-+                                    scan_scores_tied,
-                                     &dmq_schema,
-                                 );
-                                 dbg_scan_ms += t_scan.elapsed().as_millis() as u64;
-@@ -39420,8 +39430,12 @@ impl Index {
-         // Per-doc scorer from `search_inner` (`score_doc`): single-applies
-         // any peeled function_score and resolves `_id` for ids clauses.
-         scorer: &(dyn Fn(&Value, &str) -> f32 + Send + Sync),
-+        // #3465: see `scan_stored_section_into`.
-+        scores_tied: bool,
-         schema: &Schema,
-     ) {
-+        // One call hydrates one segment: hits from `segment_floor` on are its own.
-+        let segment_floor = all_hits.len();
-         // LOSS_BATTLE_PLAN B7 (completed): the positions arrive PRE-SORTED
-         // ascending from the cached `PrefilterSet` — zero per-query set
-         // collection, selection, or sorting.  With an authoritative count
-@@ -39500,6 +39514,29 @@ impl Index {
-                 if count_authoritative {
-                     break;
-                 }
-+                // #3465: a match that outscores one of this segment's hits
-+                // takes its slot (see `scan_stored_section_into`).
-+                if !scores_tied && !ids_only && !seen_ids.contains(id_ref) {
-+                    let source_ref = doc.get("_source").unwrap_or(&doc);
-+                    let score = scorer(source_ref, id_ref);
-+                    if let Some(at) = stored_scan_displaced_slot(&all_hits[segment_floor..], score)
-+                    {
-+                        let id = id_ref.to_string();
-+                        seen_ids.insert(id.clone());
-+                        all_hits[segment_floor + at] = Hit {
-+                            id,
-+                            score,
-+                            source: source_ref.clone(),
-+                            seq_no: hit_seq_no,
-+                            version: hit_version,
-+                            sort: Vec::new(),
-+                            explain: None,
-+                            highlight: None,
-+                            matched_queries: Vec::new(),
-+                            passage: None,
-+                        };
-+                    }
-+                }
-                 continue;
-             }
-             let id: String = id_ref.to_string();
-@@ -39832,11 +39869,17 @@ impl Index {
-         // Per-doc scorer from `search_inner` (`score_doc`): single-applies
-         // any peeled function_score and resolves `_id` for ids clauses.
-         scorer: &(dyn Fn(&Value, &str) -> f32 + Send + Sync),
-+        // #3465: every match scores the same (`scan_scores_tied` in
-+        // `search_inner`). When false, a full collector keeps this segment's
-+        // best hits by score instead of its first ones.
-+        scores_tied: bool,
-         schema: &Schema,
-     ) {
-         // #3285: this walk is synchronous, so the scoped analyzer covers
-         // every `doc_matches_query_typed` below.
-         let _phrase_analyzer = ScanPhraseAnalyzer::enter(self.sca
-```
-
----
-
-### Incident Patch 3: `0abdca1a` (2026-11-23)
-**Commit Message**: test(autoindex): count catalog reads, not every request, in the empty-ledger prefix test (#3468)
-
-xerj_code_on_an_empty_ledger_names_catalog_prefixes asserted that a call
-with a non-empty ledger leaves the stand-in node's recorded request count
-unchanged. The count includes the bare TCP connection that
-localnode::ensure_for_cli opens to probe the node, which the stand-in's
-accept loop records as an empty request.
-
-On the first call the probe is recorded before the catalog POST is
-answered, so it is already in the count. On the second call nothing
-follows the probe, so whether it is recorded before server.requests()
-runs depends on thread scheduling. Under CPU contention it is, and the
-count goes from 2 to 3 although no catalog read happened.
-
-Count only the requests that name autoindex-catalog: one after the
-empty-ledger call, still one after the non-empty-ledger call. That is
-what the assertion message says it checks.
-
-Evidence (Windows, test binary pinned to 2 CPUs, 20 at a time, 60 runs):
-before, 2 passed and 58 failed with "left: 3" at the old
-xc.rs:7198; after, 60 passed.
-
-Signed-off-by: Raghuvar Karthik Durga <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -86,6 +86,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Object sub-fields get their own full-text index (#3464).** Each leaf of an
+   `object` mapping (`meta.note`, `meta.tag`) is now indexed under its dotted
+@@ -120,6 +119,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Fixed
  
-+- **`xerj_code_on_an_empty_ledger_names_catalog_prefixes` no longer counts the
-+  node probe as a catalog read
-+  ([#3468](https://github.com/xerj-org/xerj/issues/3468)).** Each `xerj code`
-+  call first probes the node with a bare TCP connection, and the test's
-+  stand-in server records that connection as an empty request. The test
-+  compared the total request count, so under CPU contention the second call's
-+  probe landed before the count and failed it (55 of 60 runs pinned to two
-+  CPUs). It now counts only requests that name `autoindex-catalog`: one after
-+  the empty-ledger call, still one after the non-empty-ledger call. Test-only
-+  change.
++- **A filter-only `bool` scores 0.0 before a flush too
++  ([#3508](https://github.com/xerj-org/xerj/issues/3508)).** A `bool` with
++  only `filter` and `must_not` clauses scored 1.0 while its docs sat in the
++  memtable, 0.0 once flushed, and 1.0 for every doc once one new doc was in
++  the memtable, so ordering changed at `_flush`. Every hit now scores 0.0, as
++  in Elasticsearch.
 +
- - **Native `q` and `multi_match` on `*` find documents again (#3413).**
-   `multi_match` with `fields: ["*"]`, which is what the native search `q`
-   parameter sends, matched nothing, so every `q` search returned 0 hits. A
++- **A strict value of the wrong type on a boolean, ip or date field is a 400
++  ([#3511](https://github.com/xerj-org/xerj/issues/3511)).** `term`/`terms`,
++  and `match`, `multi_match` and `query_string` unless `lenient` is on,
++  answered 0 hits for `b: "abc"`, `ip: "abc"` or `d: "abc"`. They now answer
++  400 with the Elasticsearch root cause (`query_shard_exception` for boolean
++  and ip, `parse_exception` for date), as numeric fields have since #1284. A
++  `*` field list with an explicit `lenient: false` gets the same check.
++  `lenient: true`, and `*` or a field-less `query_string` without `lenient`,
++  still skip the field.
++
++- **`field_value_factor` with no `missing` fails on a doc without the field
++  ([#3512](https://github.com/xerj-org/xerj/issues/3512)).** Such a doc
++  scored 0.0. The search now answers 400 `illegal_argument_exception`
++  `Missing value for field [f]`, as Elasticsearch does, when a scored doc has
++  no value (an unmapped field counts). Set `missing` to keep the old ranking.
++  Counts (`size: 0`) and field-sorted pages are not scored and do not fail.
++
+ - **A flush near the memory watermark no longer waits for the allocator purge
+   ([#3493](https://github.com/xerj-org/xerj/issues/3493)).** From 70% of the
+   watermark, a finished flush build returned its freed pages to the OS
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +17/-3)
+**File**: `engine/crates/xerj-api/src/error.rs` (modified, +6/-2)
 ```diff
-@@ -7136,6 +7136,16 @@ precedence = ["a", "b"]
-     #[test]
-     fn xerj_code_on_an_empty_ledger_names_catalog_prefixes() {
-         let server = JsonServer::start(|_| (200, catalog_hits(&["proj"])));
-+        // `localnode::ensure_for_cli` opens a bare TCP connection to probe the
-+        // node; the stand-in records it as an empty request, so only requests
-+        // that name the catalog count as catalog reads.
-+        let catalog_reads = || {
-+            server
-+                .requests()
-+                .iter()
-+                .filter(|req| req.contains("autoindex-catalog"))
-+                .count()
-+        };
-         let home = tempfile::tempdir().unwrap();
-         let _hold = code_home(home.path());
-         let done = code_cli_outcome(&[
-@@ -7178,7 +7188,11 @@ precedence = ["a", "b"]
-             r#"{"corpus":"other","indexed_at":"2026-01-02T03:04:05Z","prefix":"xc-other"}"#,
-         )
-         .unwrap();
--        let before = server.requests().len();
-+        assert_eq!(
-+            catalog_reads(),
-+            1,
-+            "an empty ledger must read the catalog once"
-+        );
-         let done = code_cli_outcome(&[
-             "proj".into(),
-             "how does it flush".into(),
-@@ -7196,8 +7210,8 @@ precedence = ["a", "b"]
-         );
-         assert!(!out.text.contains("autoindex catalog"), "{}", out.text);
-         assert_eq!(
--            server.requests().len(),
--            before,
-+            catalog_reads(),
-+            1,
-             "a non-empty ledger must not probe the catalog"
-         );
-         drop(_hold);
+@@ -208,11 +208,15 @@ impl ApiError {
+             // `failed to create query:` above — `query_shard_exception`
+             // in root_cause, outer wrapper unchanged.
+             "query_shard_exception".to_string()
+-        } else if reason.starts_with("function score query returned an invalid score:") {
++        } else if reason.starts_with("function score query returned an invalid score:")
++            || reason.starts_with("Missing value for field [")
++        {
+             // ES validates function_score results and raises
+             // `illegal_argument_exception` with a 400 status when a
+             // function produces a non-finite or negative score
+-            // (e.g. ln1p on qty=-1 → ln(0) = -∞).
++            // (e.g. ln1p on qty=-1 → ln(0) = -∞), and when a
++            // `field_value_factor` with no `missing` scores a doc that has
++            // no value for its field.
+             error_type = "illegal_argument_exception".into();
+             status_code = 400;
+             "illegal_argument_exception".to_string()
+```
+
+**File**: `engine/crates/xerj-api/tests/numeric_fields_enforce_their_type.rs` (modified, +18/-1)
+```diff
+@@ -549,12 +549,29 @@ async fn a_query_in_the_pre_coercion_spelling_still_matches_the_coerced_document
+     for query in [
+         json!({ "terms": { "b": ["false"] } }),
+         json!({ "term": { "b": false } }),
+-        json!({ "terms": { "b": ["yes"] } }),
+         json!({ "terms": { "i": ["6"] } }),
+     ] {
+         let body = search(&app, "t", query.clone()).await;
+         assert_eq!(hit_count(&body), 0, "{query} must not match: {body}");
+     }
++
++    // #3511: a spelling a boolean field cannot read is a query ES cannot
++    // build, not an empty result.
++    let (status, body) = json_req(
++        &app,
++        "POST",
++        "/t/_search",
++        json!({ "query": { "terms": { "b": ["yes"] } } }),
++    )
++    .await;
++    assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
++    assert_eq!(
++        body["error"]["root_cause"][0]["reason"],
++        json!(
++            "failed to create query: Can't parse boolean value [yes], expected [true] or [false]"
++        ),
++        "{body}"
++    );
+ }
+ 
+ /// An index that spans the upgrade holds BOTH representations of the same
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +338/-24)
+```diff
+@@ -3341,7 +3341,8 @@ mod flush_publication_recovery_tests {
+                 &snap.segments,
+                 &segments_dir,
+                 10,
+-                &schema
++                &schema,
++                &std::sync::OnceLock::new()
+             )
+             .is_some(),
+             "an unmapped field with no column scores every row as missing"
+@@ -3352,7 +3353,8 @@ mod flush_publication_recovery_tests {
+                 &snap.segments,
+                 &segments_dir,
+                 10,
+-                &schema
++                &schema,
++                &std::sync::OnceLock::new()
+             )
+             .is_none(),
+             "a mapped field whose column was suppressed keeps the brute scan"
+@@ -3363,7 +3365,8 @@ mod flush_publication_recovery_tests {
+                 &snap.segments,
+                 &segments_dir,
+                 10,
+-                &schema
++                &schema,
++                &std::sync::OnceLock::new()
+             )
+             .is_none(),
+             "a non-numeric column keeps the brute scan"
+@@ -3383,24 +3386,48 @@ mod flush_publication_recovery_tests {
+                 (hits, r.total.value)
+             }
+         };
+-        for missing in [json!(2.5), Value::Null] {
+-            let mut f = json!({ "field": "nope" });
+-            if !missing.is_null() {
+-                f["missing"] = missing.clone();
+-            }
+-            let fast = page(json!({ "size": 12, "query": { "function_score": {
+-                "query": { "match_all": {} }, "field_value_factor": f } } }))
+-            .await;
+-            let brute = page(
+-                json!({ "size": 12, "min_score": 0, "query": { "function_score": {
+-                "query": { "match_all": {} }, "field_value_factor": f } } }),
++        let f = json!({ "field": "nope", "missing": 2.5 });
++        let fast = page(json!({ "size": 12, "query": { "function_score": {
++            "query": { "match_all": {} }, "field_value_factor": f } } }))
++        .await;
++        let brute = page(
++            json!({ "size": 12, "min_score": 0, "query": { "function_score": {
++            "query": { "match_all": {} }, "field_value_factor": f } } }),
++        )
++        .await;
++        assert_eq!(fast.0.len(), 12);
++        assert!(fast.0.iter().all(|(_, s)| *s == 2.5), "{fast:?}");
++        assert_eq!(fast.0, brute.0);
++        assert_eq!(fast.0[0].0, "doc-0");
++
++        // With no `missing`, a doc without the field fails the request on
++        // both paths, as ES does (`Missing value for field [nope]`).
++        let missing = std::sync::OnceLock::new();
++        assert!(idx
++            .function_score_columnar(
++                &fvf("nope", None),
++                &snap.segments,
++                &segments_dir,
++                10,
++                &schema,
++                &missing
+             )
+-            .await;
+-            let want: f32 = if missing.is_null() { 0.0 } else { 2.5 };
+-            assert_eq!(fast.0.len(), 12);
+-            assert!(fast.0.iter().all(|(_, s)| *s == want), "{fast:?}");
+-            assert_eq!(fast.0, brute.0, "missing={missing}");
+-            assert_eq!(fast.0[0].0, "doc-0");
++            .is_none());
++        assert_eq!(missing.get().map(String::as_str), Some("nope"));
++        for min_score in [Value::Null, json!(0)] {
++            let mut body = json!({ "size": 12, "query": { "function_score": {
++                "query": { "match_all": {} }, "field_value_factor": { "field": "nope" } } } });
++            if !min_score.is_null() {
++                body["min_score"] = min_score;
++            }
++            let err = idx
++                .search(&xerj_query::parse_request(&body).unwrap())
++                .await
++                .expect_err("no `missing` on an absent field must fail");
++            assert!(
++                err.to_string().contains("Missing value for field [nope]"),
++                "{err}"
++            );
+         }
+     }
+ 
+@@ -27613,6 +27640,20 @@ impl Index {
+             None
+         };
+         let fs_min_passed = std::sync::atomic::AtomicU64::new(0);
++        // #3512: a `field_value_factor` with no `missing` fails the request on
++        // the first scored doc without a value for its field, as ES does. ES
++        // only scores when the page is ranked by score (or `min_score` needs
++        // one), so a field sort or a count-only request does not fail. The
++        // scorer records the field; the request fails after the scan.
++        let fvf_needs_value: bool = matches!(
++            peeled_fs,
++            Some((QueryNode::FunctionScore { functions, .. }, _))
++                if functions.iter().any(|f| {
++                    f.field_value_factor.as_ref().is_some_and(|v| v.missing.is_none())
++                })
++        ) && ((size > 0 && !field_sort_active)
++            || request.min_score.is_some());
++        let fvf_missing_field = std::sync::OnceLock::<String>::new();
+         // Population max over every score the brute scorer computes.
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/search/799_filter_only_bool_score.yml` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++# #3508: a `bool` with no `must` and no `should` runs every clause in filter
++# context, so ES scores each hit 0.0. XERJ scored 1.0 while the docs were in
++# the memtable, 0.0 once flushed, and 1.0 for every doc (segment docs too)
++# once one new doc sat in the memtable, so ordering changed at `_flush`.
++setup:
++  - do:
++      indices.create:
++        index: fob
++        body:
++          settings:
++            number_of_shards: 1
++          mappings:
++            properties:
++              t: { type: text }
++              n: { type: long }
++              k: { type: keyword }
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - '{"index": {"_index": "fob", "_id": "1"}}'
++          - '{"t": "alpha", "n": 1, "k": "x"}'
++          - '{"index": {"_index": "fob", "_id": "2"}}'
++          - '{"t": "beta", "n": 2, "k": "x"}'
++          - '{"index": {"_index": "fob", "_id": "3"}}'
++          - '{"t": "gamma", "n": 3, "k": "y"}'
++
++---
++"filter-only bool scores 0.0 in the memtable":
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
++  - match: { hits.total.value: 3 }
++  - match: { hits.max_score: 0.0 }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.1._score: 0.0 }
++  - match: { hits.hits.2._score: 0.0 }
++
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { filter: [ { range: { n: { gte: 1 } } }, { term: { k: x } } ] } }
++  - match: { hits.total.value: 2 }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.1._score: 0.0 }
++
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { must_not: [ { term: { k: y } } ] } }
++  - match: { hits.total.value: 2 }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.1._score: 0.0 }
++
++---
++"filter-only bool scores 0.0 on segments and in mixed state":
++  - do:
++      indices.flush:
++        index: fob
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
++  - match: { hits.total.value: 3 }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.2._score: 0.0 }
++
++  - do:
++      index:
++        index: fob
++        id: "4"
++        refresh: true
++        body: { t: "delta", n: 4, k: "x" }
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
++  - match: { hits.total.value: 4 }
++  - match: { hits.max_score: 0.0 }
++  - match: { hits.hits.0._id: "1" }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.1._score: 0.0 }
++  - match: { hits.hits.2._score: 0.0 }
++  - match: { hits.hits.3._id: "4" }
++  - match: { hits.hits.3._score: 0.0 }
++
++  - do:
++      search:
++        index: fob
++        body:
++          query: { bool: { must_not: [ { term: { k: y } } ] } }
++  - match: { hits.total.value: 3 }
++  - match: { hits.hits.0._score: 0.0 }
++  - match: { hits.hits.2._score: 0.0 }
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/search/799_fvf_missing_value.yml` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++# A `field_value_factor` with no `missing` cannot score a doc that has no
++# value for its field: ES fails the search with `Missing value for field [f]`
++# (illegal_argument_exception, 400). XERJ scored that doc 0.0. With `missing`
++# set, or when no scored doc lacks the field, the search succeeds.
++setup:
++  - do:
++      indices.create:
++        index: fvfm
++        body:
++          settings:
++            number_of_shards: 1
++          mappings:
++            properties:
++              n: { type: long }
++              k: { type: keyword }
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - '{"index": {"_index": "fvfm", "_id": "1"}}'
++          - '{"n": 2, "k": "x"}'
++          - '{"index": {"_index": "fvfm", "_id": "2"}}'
++          - '{"n": 3, "k": "x"}'
++          - '{"index": {"_index": "fvfm", "_id": "3"}}'
++          - '{"k": "y"}'
++
++---
++"no missing and a doc without the field is a 400":
++  - do:
++      catch: bad_request
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              field_value_factor: { field: n }
++  - match: { status: 400 }
++  - match: { error.root_cause.0.type: "illegal_argument_exception" }
++  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              functions: [ { field_value_factor: { field: n } } ]
++              boost_mode: sum
++  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
++
++  # Flushed: the doc-values path fails the same way.
++  - do:
++      indices.flush:
++        index: fvfm
++  - do:
++      catch: bad_request
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              field_value_factor: { field: n }
++  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              field_value_factor: { field: unmapped_field }
++  - match: { error.root_cause.0.reason: "Missing value for field [unmapped_field]" }
++
++---
++"missing set, or every scored doc has the field, succeeds":
++  - do:
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              field_value_factor: { field: n, missing: 1 }
++  - match: { hits.total.value: 3 }
++  - match: { hits.hits.0._id: "2" }
++  - match: { hits.hits.0._score: 3.0 }
++  - match: { hits.hits.2._id: "3" }
++  - match: { hits.hits.2._score: 1.0 }
++
++  - do:
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { term: { k: x } }
++              field_value_factor: { field: n }
++              boost_mode: replace
++  - match: { hits.total.value: 2 }
++  - match: { hits.hits.0._id: "2" }
++  - match: { hits.hits.0._score: 3.0 }
++
++  # A function filter that excludes the doc without the field.
++  - do:
++      search:
++        index: fvfm
++        body:
++          query:
++            function_score:
++              query: { match_all: {} }
++              functions: [ { filter: { term: { k: x } }, field_value_factor: { field: n } } ]
++              boost_mode: replace
++  - match: { hits.total.value: 3 }
++  - match: { hits.hits.0._id: "2" }
++  - match: { hits.hits.0._score: 3.0 }
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/search/799_lenient_typed_fields.yml` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++# A value that a boolean, ip or date field cannot read is a query ES cannot
++# build: `term`/`terms` always, and `match`/`multi_match`/`query_string` unless
++# `lenient` is on, answer 400. With `lenient: true` the field is skipped and
++# the request succeeds. XERJ answered a silent 0-hit 200 either way. Numeric
++# fields got the same rule in #1284 (720_non_numeric_term_value.yml).
++setup:
++  - do:
++      indices.create:
++        index: ltf
++        body:
++          settings:
++            number_of_shards: 1
++          mappings:
++            properties:
++              t: { type: text }
++              b: { type: boolean }
++              ip: { type: ip }
++              d: { type: date }
++              dy: { type: date, format: "yyyy-MM-dd" }
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - '{"index": {"_index": "ltf", "_id": "1"}}'
++          - '{"t": "hello", "b": true, "ip": "10.0.0.1", "d": "2020-01-01", "dy": "2020-01-01"}'
++
++---
++"boolean field: a value that is not true/false is a 400 unless lenient":
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { match: { b: { query: "abc", lenient: false } } }
++  - match: { status: 400 }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++  - match: { error.root_cause.0.reason: "failed to create query: Can't parse boolean value [abc], expected [true] or [false]" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { term: { b: "abc" } }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { multi_match: { query: "abc", fields: [ "b", "t" ] } }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { query_string: { query: "b:abc", lenient: false } }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { match: { b: { query: "abc", lenient: true } } }
++  - match: { hits.total.value: 0 }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { multi_match: { query: "abc", fields: [ "b", "t" ], lenient: true } }
++  - match: { hits.total.value: 0 }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { query_string: { query: "b:abc", lenient: true } }
++  - match: { hits.total.value: 0 }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { match: { b: "true" } }
++  - match: { hits.total.value: 1 }
++
++---
++"ip field: a value that is not an address or CIDR block is a 400 unless lenient":
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { match: { ip: "abc" } }
++  - match: { status: 400 }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++  - match: { error.root_cause.0.reason: "failed to create query: 'abc' is not an IP string literal." }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { term: { ip: "10.0.0.0/40" } }
++  - match: { error.root_cause.0.reason: "failed to create query: Illegal prefix length [40] in [10.0.0.0/40]. Must be 0-32 for IPv4 ranges, 0-128 for IPv6 ranges" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { query_string: { query: "abc", fields: [ "ip", "t" ] } }
++  - match: { error.root_cause.0.type: "query_shard_exception" }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { match: { ip: { query: "abc", lenient: true } } }
++  - match: { hits.total.value: 0 }
++
++  - do:
++      search:
++        index: ltf
++        body:
++          query: { term: { ip: "10.0.0.0/8" } }
++  - match: { hits.total.value: 1 }
++
++---
++"date field: a value the format cannot parse is a 400 unless lenient":
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { match: { d: "abc" } }
++  - match: { status: 400 }
++  - match: { error.root_cause.0.type: "parse_exception" }
++  - match: { error.root_cause.0.reason: "failed to parse date field [abc] with format [strict_date_optional_time||epoch_millis]: [failed to parse date field [abc] with format [strict_date_optional_time||epoch_millis]]" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { match: { dy: "2020/01/01" } }
++  - match: { error.root_cause.0.type: "parse_exception" }
++  - match: { error.root_cause.0.reason: "failed to parse date field [2020/01/01] with format [yyyy-MM-dd]: [failed to parse date field [2020/01/01] with format [yyyy-MM-dd]]" }
++
++  - do:
++      catch: bad_request
++      search:
++        index: ltf
++        body:
++          query: { multi_m
+```
+
+---
+
+### Incident Patch 3: `a2f18028` (2026-11-23)
+**Commit Message**: fix(search): return empty hits for full-text queries on unmapped sub-fields (#3515)
+
+Fixes #3515.
+
+Before `_flush`, a bare `match` on an unmapped dotted sub-field such as
+`title.raw` (where `title` is a dynamic `text` field with only `.keyword`)
+missed the memtable FTS field filter and returned 0 hits. After `_flush`,
+the segment FTS reader lacked `title.raw` and fell back to the stored-doc
+scan (`doc_matches_query_typed`), whose `get_field_value` strips trailing
+`.suffix` segments whenever the parent resolves to a scalar leaf — running
+the query against the analysed parent `title` instead. `constant_score`
+(and other doc-scan shapes) hit `get_field_value` on both sides of
+`_flush`.
+
+Root cause and fix:
+- Add zero-allocation `declared_field_in` and `is_unmapped_leaf_subfield`
+  in `engine/crates/xerj-engine/src/index.rs`: a dotted non-wildcard,
+  non-metadata field is an unmapped leaf sub-field when it is not declared
+  in `schema` itself and at least one dotted ancestor is declared as a
+  non-container leaf (`FieldType` other than `Object` / `Nested`). Mapped
+  multi-fields (`title.keyword`, explicit `title.raw`), object children
+  (`obj.name`, open `object` / `flattened` leaves),
+
+**File**: `engine/crates/xerj-api/tests/match_unmapped_subfield_empty.rs` (added, +410/-0)
+```diff
+@@ -0,0 +1,410 @@
++//! #3515: `match` (and other full-text queries) on an unmapped dotted sub-field
++//! (`title.raw`, where `title` is a dynamic `text` field with only `.keyword`)
++//! must return 0 hits on every path, before and after `_flush`, on `_search`
++//! and `_count`, as in ES.
++//!
++//! Before the fix, `match title.raw "fruit"` returned `[]` before `_flush` and
++//! `[1, 2]` after `_flush` (the segment FTS reader lacked `title.raw` and fell
++//! back to the stored-doc scan, whose `get_field_value` stripped `.raw` and ran
++//! the query against the analysed parent `title`), while `constant_score` over
++//! `match title.raw` hit the parent on both sides of `_flush`. Mapped
++//! multi-fields (`title.keyword`, or an explicit `title.raw`) keep their #3495
++//! behaviour.
++
++use axum::body::Body;
++use axum::http::{Request, StatusCode};
++use serde_json::{json, Value};
++use tower::ServiceExt;
++
++async fn app() -> (axum::Router, tempfile::TempDir) {
++    let dir = tempfile::tempdir().expect("tempdir");
++    let mut config = xerj_common::config::Config::default();
++    config.server.data_dir = dir.path().to_string_lossy().into_owned();
++    config.storage.wal_sync = xerj_common::config::WalSync::Async;
++    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
++    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
++    let state = xerj_api::state::AppState::new(config, engine, metrics);
++    (xerj_api::router::build_es_compat_router(state), dir)
++}
++
++async fn req(app: &axum::Router, method: &str, path: &str, body: String) -> (StatusCode, Value) {
++    let response = app
++        .clone()
++        .oneshot(
++            Request::builder()
++                .method(method)
++                .uri(path)
++                .header("content-type", "application/json")
++                .body(Body::from(body))
++                .expect("request"),
++        )
++        .await
++        .expect("response");
++    let status = response.status();
++    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
++        .await
++        .expect("body");
++    (
++        status,
++        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
++    )
++}
++
++async fn ids(app: &axum::Router, index: &str, query: &Value) -> Vec<String> {
++    let (status, body) = req(
++        app,
++        "POST",
++        &format!("/{index}/_search"),
++        json!({"query": query, "size": 10}).to_string(),
++    )
++    .await;
++    assert_eq!(status, StatusCode::OK, "{query}: {body}");
++    let mut out: Vec<String> = body["hits"]["hits"]
++        .as_array()
++        .expect("hits")
++        .iter()
++        .map(|h| h["_id"].as_str().expect("_id").to_string())
++        .collect();
++    out.sort();
++    let (status, count) = req(
++        app,
++        "POST",
++        &format!("/{index}/_count"),
++        json!({"query": query}).to_string(),
++    )
++    .await;
++    assert_eq!(status, StatusCode::OK, "{query}: {count}");
++    assert_eq!(
++        count["count"].as_u64(),
++        Some(out.len() as u64),
++        "_count disagrees with _search for {query}"
++    );
++    out
++}
++
++async fn flush(app: &axum::Router, index: &str) {
++    let (status, body) = req(app, "POST", &format!("/{index}/_flush"), String::new()).await;
++    assert_eq!(status, StatusCode::OK, "flush {index}: {body}");
++}
++
++#[tokio::test]
++async fn match_on_unmapped_subfield_returns_empty_before_and_after_flush() {
++    let (app, _dir) = app().await;
++    let bulk = concat!(
++        "{\"index\":{\"_id\":\"1\"}}\n",
++        "{\"title\":\"Fruit\",\"obj\":{\"name\":\"Fruit\"}}\n",
++        "{\"index\":{\"_id\":\"2\"}}\n",
++        "{\"title\":\"fruit salad\",\"obj\":{\"name\":\"fruit salad\"}}\n",
++        "{\"index\":{\"_id\":\"3\"}}\n",
++        "{\"title\":\"FRUiT\",\"obj\":{\"name\":\"FRUiT\"}}\n",
++    );
++    let (status, body) = req(&app, "POST", "/nonorm/_bulk?refresh=true", bulk.to_string()).await;
++    assert_eq!(status, StatusCode::OK, "bulk: {body}");
++    assert_eq!(body["errors"], json!(false), "bulk: {body}");
++
++    let cases: Vec<(Value, Vec<&str>)> = vec![
++        // Issue #3515 table: unmapped `.raw` sub-field matches nothing on every path.
++        (json!({"match": {"title.raw": "fruit"}}), vec![]),
++        (json!({"match": {"title.raw": "Fruit Salad"}}), vec![]),
++        (
++            json!({"constant_score": {"filter": {"match": {"title.raw": "fRuIt"}}}}),
++            vec![],
++        ),
++        (
++            json!({"bool": {"filter": [{"match": {"title.raw": "fruit"}}]}}),
++            vec![],
++        ),
++        (
++            json!({"bool": {"must": [{"match": {"title": "fruit"}}], "filter": [{"match": {"title.raw": "fruit"}}]}}),
++            vec![],
++        ),
++        (
++            json!({"bool": {"must": [{"match": {"title": "fruit"}}], "must_not": [{"match": {"title.raw": "fruit"}}]}}),
++            vec!["1", "2", "3"],
++        ),
++        (
++            json!({"bool": {"should": [{"match": {"title.r
+```
+
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +17/-4)
+```diff
+@@ -257,10 +257,15 @@ fn clause_targets_only_text(node: &QueryNode, schema: &Schema) -> bool {
+     match node {
+         QueryNode::Match { field, .. }
+         | QueryNode::MatchPhrase { field, .. }
+-        | QueryNode::MatchPhrasePrefix { field, .. }
+-        | QueryNode::Term { field, .. }
+-        | QueryNode::Terms { field, .. } => crate::index::declared_field(schema, field)
+-            .is_some_and(|f| matches!(f.field_type, FieldType::Text)),
++        | QueryNode::MatchPhrasePrefix { field, .. } => {
++            crate::index::declared_field(schema, field)
++                .is_some_and(|f| matches!(f.field_type, FieldType::Text))
++                || crate::index::is_unmapped_leaf_subfield(schema, field)
++        }
++        QueryNode::Term { field, .. } | QueryNode::Terms { field, .. } => {
++            crate::index::declared_field(schema, field)
++                .is_some_and(|f| matches!(f.field_type, FieldType::Text))
++        }
+         QueryNode::Bool {
+             must,
+             should,
+@@ -7322,6 +7327,14 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "match" | "match_phrase" => {
+                 if let Some(field_map) = query_body.as_object() {
+                     for (field, expected) in field_map {
++                        let unmapped_subfield = FILTER_SCHEMA.with(|cell| {
++                            cell.borrow()
++                                .as_ref()
++                                .is_some_and(|s| crate::index::is_unmapped_leaf_subfield(s, field))
++                        });
++                        if unmapped_subfield {
++                            return false;
++                        }
+                         let actual_values = extract_field_values(doc, field);
+                         let expected_str = match expected {
+                             Value::Object(o) => {
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +444/-56)
+```diff
+@@ -25846,10 +25846,13 @@ impl Index {
+                 &schema.schema,
+             );
+             let typeless = crate::memtable::lexically_typeless_fields(&schema.schema);
+-            let lowered = if typeless.is_empty() {
++            let lowered = if typeless.is_empty()
++                && (schema.schema.fields.is_empty()
++                    || !query_has_unmapped_leaf_subfield(&resolved, &schema.schema))
++            {
+                 resolved
+             } else {
+-                lower_lexically_typeless_clauses(&resolved, &typeless)
++                lower_unsatisfiable_clauses(&resolved, &typeless, &schema.schema)
+             };
+             unwrap_single_clause_bool(lowered)
+         };
+@@ -27122,10 +27125,13 @@ impl Index {
+             // the lowering the missing postings hand the clause to the
+             // stored-doc scan. See `lower_lexically_typeless_clauses`.
+             let typeless = crate::memtable::lexically_typeless_fields(&schema.schema);
+-            let lowered = if typeless.is_empty() {
++            let lowered = if typeless.is_empty()
++                && (schema.schema.fields.is_empty()
++                    || !query_has_unmapped_leaf_subfield(&resolved, &schema.schema))
++            {
+                 resolved
+             } else {
+-                lower_lexically_typeless_clauses(&resolved, &typeless)
++                lower_unsatisfiable_clauses(&resolved, &typeless, &schema.schema)
+             };
+             // #399 — and it belongs HERE for exactly the reason above: every
+             // path decision below is made on the SHAPE of this tree, so a
+@@ -52594,32 +52600,162 @@ fn lookup_vector_quantization(schema: &Schema, field: &str) -> Option<String> {
+ /// `FieldConfig::fields` (object sub-paths and multi-fields). Returns `None`
+ /// for anything the schema does not declare — dynamic fields have no declared
+ /// mapping options to honour.
+-pub(crate) fn declared_field<'a>(schema: &'a Schema, field: &str) -> Option<&'a FieldConfig> {
+-    fn find<'a>(fields: &'a [FieldConfig], path: &[&str]) -> Option<&'a FieldConfig> {
+-        if path.is_empty() {
+-            return None;
++/// Zero-allocation dotted-path lookup through `FieldConfig::fields`, preferring
++/// the longest literal dotted key at each level (matching `get_field_value_parts`).
++fn declared_field_in<'a>(fields: &'a [FieldConfig], path: &str) -> Option<&'a FieldConfig> {
++    if path.is_empty() {
++        return None;
++    }
++    if let Some(fc) = fields.iter().find(|fc| fc.name == path) {
++        return Some(fc);
++    }
++    let mut end = path.len();
++    while let Some(dot) = path[..end].rfind('.') {
++        let head = &path[..dot];
++        let tail = &path[dot + 1..];
++        for fc in fields {
++            if fc.name == head {
++                if let Some(found) = declared_field_in(&fc.fields, tail) {
++                    return Some(found);
++                }
++            }
+         }
+-        // Prefer the longest dotted-key match starting at this level, matching
+-        // `get_field_value_parts` so literal dotted field names in `Schema::fields`
+-        // (such as `files_manifest.json_recorded_at` or its `.keyword`
+-        // multi-field) resolve instead of failing with `No mapping found`.
+-        for take in (1..=path.len()).rev() {
+-            let candidate = path[..take].join(".");
+-            let tail = &path[take..];
+-            for fc in fields {
+-                if fc.name == candidate {
+-                    if tail.is_empty() {
+-                        return Some(fc);
+-                    }
+-                    if let Some(found) = find(&fc.fields, tail) {
+-                        return Some(found);
+-                    }
++        end = dot;
++    }
++    None
++}
++
++pub(crate) fn declared_field<'a>(schema: &'a Schema, field: &str) -> Option<&'a FieldConfig> {
++    declared_field_in(&schema.fields, field)
++}
++
++/// True when `field` names an undeclared dotted sub-field under a declared
++/// non-container leaf field — e.g. `title.raw` when `title` is a dynamic
++/// `text` field whose only declared multi-field is `.keyword`, or
++/// `obj.name.raw` when `obj.name` is a leaf field without a `.raw`
++/// multi-field (#3515).
++///
++/// Ancestors typed `Object` or `Nested` are skipped: a dotted path under an
++/// object/nested mapping (such as `meta.owner` on an empty `object` mapping)
++/// names a JSON child key rather than a multi-field suffix and resolves
++/// directly against `_source`.
++pub(crate) fn is_unmapped_leaf_subfield(schema: &Schema, field: &str) -> bool {
++    if schema.fields.is_empty()
++        || !field.contains('.')
++        || field.contains('*')
++        || field.starts_with('_')
++    {
++        return false;
++    }
++    if declared_field_in(&schema.fields, field).is_some() {
++        return false;
++    }
++    for (idx, ch) in field.char_indices() {
++        if ch == '.' {
++            if let Some(ancestor) = declared_field_in(&schema.fields, &field[..idx]) {
++        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3484** (closed): fix(engine): serve size:0 aggregations under a numeric term from doc values (#3466) (@drk-ram)
-- **PR #3483** (2026-11-23): hub: author-approved contribution candidates (14279 repos) (@xerj-team)
-- **PR #3482** (2026-11-23): perf(search): object sub-fields get their own FTS side-car (#3464) (@xerj-team)
-- **PR #3481** (2026-11-23): governor: run the pressure purge off the memory sampler thread (Refs #2427) (@xerj-team)
-- **PR #3479** (2026-11-23): fix(search,test): stored scan keeps a segment's best matches; three load flakes made deterministic (@xerj-team)
-- **PR #3478** (2026-11-23): perf(engine): read each segment once per columnar page, not once per hit (#3470) (@xerj-team)
+- **PR #3656** (2026-11-24): hub: author-approved contribution candidates (14302 repos) (@xerj-team)
+- **PR #3654** (2026-11-24): hub: author-approved contribution candidates (14300 repos) (@xerj-team)
+- **PR #3653** (2026-11-24): hub: author-approved contribution candidates (14296 repos) (@xerj-team)
+- **PR #3651** (2026-11-23): hub: author-approved contribution candidates (14291 repos) (@xerj-team)
+- **PR #3649** (2026-11-23): hub: author-approved contribution candidates (14193 repos) (@xerj-team)
+- **PR #3648** (2026-11-23): hub: author-approved contribution candidates (14288 repos) (@xerj-team)
 
 ---
 
@@ -2068,49 +2629,64 @@ Signed-off-by: Raghuvar Karthik Durga <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. governor: run the pressure purge off the memory sampler thread (Refs #2427)
+## X. test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm
 
 **RULE**:
-When implementing operations in `engine/crates/xerj-engine/src/engine.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8dfd181`: governor: run the pressure purge off the memory sampler thread (Refs #2427). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7b82e8b`: test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comments on the right fns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-engine/src/engine.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Runs the sampler's pressure purge on a thread of its own (#2427).
+/// Wait for a member's runner task to exit after its shutdown watch was set.
 ///
-/// A purge hands every freed allocator page back to the kernel, and the
-/// call takes about as long as the bytes it returns, roughly 125-200 ms per
-/// GiB: about three quarters of it is `madvise(MADV_DONTNEED)` over many
-/// small extents (median 16-32 KiB, ~2,300 calls per purge), and the stats
-/// epoch is ~5%. Skipping calls with nothing to free would save little:
-/// such a call costs ~2 ms. Run on the sampler thread, each call held back
-/// the next RSS sample, so the breaker read an RSS figure up to 389 ms old
-/// (1,722 ms once) during exactly the bursts the purge is there for. The
-/// sampler now only asks. The channel is a rendezvous channel, so a
-/// request lands only when the worker is idle; one that arrives mid-purge
-/// is dropped and the next due tick asks again. Same
-/// shape as ClickHouse's `MemoryWorker`, whose RSS thread flags a separate
-/// purge thread (`src/Common/MemoryWorker.cpp:924-962`, `:1154-1230`,
-/// Apache-2.0), written fresh here. Without a worker (the spawn failed)
-/// the purge runs inline, as before.
-struct PressurePurgeWorker {
-    purge: Arc<dyn Fn() + Send + Sync + 's
+/// The runner races the shutdown watch against each step
+/// (`ClusterRunner::run`), so the join is the event: it resolves on the
+/// runner's next poll. It was a 5 s wall-clock join (left by #3516), which a
+/// runner starved at load 100+ can miss while still stopping correctly.
+/// [`RAFT_HANG_GUARD`] only catches a runner that never exits.
+async fn join_runner(member: &mut Member) {
+    let Some(task) = member.runner.take() else {
+        return;
+    };
+    match tokio::time::timeout(RAFT_HANG_GUARD, task).await {
+        Ok(Ok(())) => {}
+        Ok(Err(join)) => panic!("{} runner task failed: {join}", member.handle.node_id()),
+        Err(_) => panic!(
+            "{} runner did not exit in {RAFT_HANG_GUARD:?} after shutdown",
+            member.handle.node_id()
+        ),
+    }
+}
+
+    join_runner(&mut member).await;
+        join_runner(&mut member).await;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    if let Some(task) = member.runner.take() {
+        match tokio::time::timeout(Duration::from_secs(5), task).await {
+            Ok(Ok(())) => {}
+            other => panic!("cluster runner did not stop: {other:?}"),
+        }
+    }
+        if let Some(task) = member.runner.take() {
+            match tokio::time::timeout(Duration::from_secs(5), task).await {
+                Ok(Ok(())) => {}
+                other => panic!("cluster runner did not stop: {other:?}"),
+            }
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8dfd181` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7b82e8b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

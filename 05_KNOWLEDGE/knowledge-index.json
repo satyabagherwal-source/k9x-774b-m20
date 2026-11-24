@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T05:14:24.347Z",
+  "last_updated": "2026-11-24T05:28:34.351Z",
   "total_verified_learnings": 9091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24458,
+  "total_items": 24469,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114261,10 +114261,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
       "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
       "repository": "storybookjs/storybook",
-      "source_version": "20075e60",
-      "content_hash": "57fbfe6b13da6918d615d4c895d7cdd8d0fce55d89e697e39cedaa31bcd2a200",
+      "source_version": "e5411198",
+      "content_hash": "07e0053f8ff1c076e522e2bbf253117058daaa3f431d2b3809b60ec7326aed75",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T09:52:22.609Z"
+      "persisted_at": "2026-11-24T05:28:20.240Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook",
@@ -114273,10 +114273,10 @@
       "relative_path": "12_DECISIONS/ADR-storybookjs-storybook-adr-subsystem-boundary-modular-decoupling-in-storybookjs-s.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "20075e60",
-      "content_hash": "33e5f52f623351ac328d1f89c43d30ddb8672dcdbd863bebe5a3c461ca1daba2",
+      "source_version": "e5411198",
+      "content_hash": "d39e35fe609636285a994fb6201498251bd0446a222628794bb2b5ade3cb1e08",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T09:52:22.758Z"
+      "persisted_at": "2026-11-24T05:28:20.473Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook",
@@ -114285,10 +114285,10 @@
       "relative_path": "08_VERIFICATION/storybookjs-storybook-verification-protocol-empirical-defect-shield-for-storyboo.md",
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "20075e60",
-      "content_hash": "265e25beec1f6b025b5849a461a3e8eeb23b5c121cc28d75b98bb8e3d6b30844",
+      "source_version": "e5411198",
+      "content_hash": "0aa96cdcdc6a12a578a91ca3f42daa01ffd22ced798b38cf0d42fd018abcf99b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T09:52:22.920Z"
+      "persisted_at": "2026-11-24T05:28:20.665Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
@@ -114310,9 +114310,9 @@
       "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "969419e4cfae4974a81565f6ed52e6a188969967830365089ad721fa0be77b03",
+      "content_hash": "57f085c3f26f49f2491aafa75265eeb477920f9a07645241fac9c36509ca7d3f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T09:52:49.368Z"
+      "persisted_at": "2026-11-24T05:28:32.706Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings",
@@ -114322,9 +114322,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "f843de9cdf2c2635b23d7174c47e510a79e7a40dfb3cfbcbbb653f5b0eba95c5",
+      "content_hash": "ff53556a1bb9763e10f4cd5c4fa9fb3a1a77f6ed7187b34bb96123769bc1ae00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T09:52:49.511Z"
+      "persisted_at": "2026-11-24T05:28:32.945Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning",
@@ -114334,9 +114334,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "699ae3dda505a4605f53a322872810c0280e72b023e3ed8497510cad934ca74a",
+      "content_hash": "27dc6cc690ffa7d72df0142ca68adc2d1c0182fb4c751f1ed85bc66a7a72f9a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T09:52:49.632Z"
+      "persisted_at": "2026-11-24T05:28:33.136Z"
     },
     "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766": {
       "item_id": "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766",
@@ -237195,8 +237195,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "edf9f5c1",
-      "content_hash": "aaac4cebe0b25b16bb78cd81f130e6d164e675bff28f3191c5144f8a0f11739b",
+      "source_version": "a7b0d649",
+      "content_hash": "46dcc4528ca0917e05bb944926f519c8e9704490e56b8a813e8bc261b0212829",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -237234,6 +237234,11 @@
           "number": 9708,
           "title": "check repository policy before skipping a shared Maven mirror",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10210,
+          "title": "read NSG rules from the securityRules property and child resources",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237241,7 +237246,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:57:50.007Z",
+      "verified_at": "2026-11-24T05:28:21.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237283,10 +237288,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "repository": "aquasecurity/trivy",
-      "source_version": "edf9f5c1",
-      "content_hash": "8f94fd0337ad985bc69ee1a518d166547039695103c3335eb43f7562e22e5708",
+      "source_version": "a7b0d649",
+      "content_hash": "d9b0703d6a56c5be43a27c5477e0fbdf2697e82d4644d75f4078225930a6eaa9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:50.541Z"
+      "persisted_at": "2026-11-24T05:28:22.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy",
@@ -237295,10 +237300,10 @@
       "relative_path": "08_VERIFICATION/aquasecurity-trivy-verification-protocol-empirical-defect-shield-for-aquasecurit.md",
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity/trivy",
       "repository": "aquasecurity/trivy",
-      "source_version": "edf9f5c1",
-      "content_hash": "77735aedc9fe89fbb06817ed2819d6cff612bc6f1a50ad3b7bc7574b926ee211",
+      "source_version": "a7b0d649",
+      "content_hash": "c68238709dc967cefb0e754c8aad8d7a758c2241520ff73cac7c4b5d838153c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:50.688Z"
+      "persisted_at": "2026-11-24T05:28:22.914Z"
     },
     "rule-8524": {
       "learning_id": "rule-8524",
@@ -237394,9 +237399,9 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "322b02bbe430c44ddb40b939b9d25bd61dc6f79c12bb9ba4c43abade50ac0f0d",
+      "content_hash": "1d3218c3608484965b35d9febde303aa8b05a11361f51b74f48bf1e2d9195c33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:15:13.693Z"
+      "persisted_at": "2026-11-24T05:28:34.124Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings",
@@ -237406,9 +237411,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity-trivy-learnings",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "76de3be89c01579c44da90314717264074f8758c2a122cb580b3877b2cf65df1",
+      "content_hash": "1418e7024c3a356bef39a0ccba7ee54c547f2926083d8246f40be0f79b022e8f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:15:13.884Z"
+      "persisted_at": "2026-11-24T05:28:34.351Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide-nvfp4": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
@@ -241519,8 +241524,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "ba35fb71",
-      "content_hash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
+      "source_version": "9efde4a3",
+      "content_hash": "951f8dc44efa3423c8ad1021e4540a0faaa76ecd0b413b78029eaaaba907a9c4",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -241538,6 +241543,11 @@
           "number": 9117,
           "title": "rerun uv sync when uv.lock changes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10208,
+          "title": "accept existing configurations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241545,7 +241555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T13:30:27.723Z",
+      "verified_at": "2026-11-24T05:28:13.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241587,10 +241597,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "repository": "cachix/devenv",
-      "source_version": "ba35fb71",
-      "content_hash": "9fbe94fa4cdf1a0f57400e0c2d7d1253ce5a22e91ed18c507ab73b098ca11701",
+      "source_version": "9efde4a3",
+      "content_hash": "93bf434dc12c8e8365f9d4d2c010837643624f5a1474a6262928c043a602f92b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:28.299Z"
+      "persisted_at": "2026-11-24T05:28:14.652Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
@@ -241599,10 +241609,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "ba35fb71",
-      "content_hash": "f558b78f425c01aaf739c39365c13ad7091be5e5cf7fcfcab5cb02050980ad13",
+      "source_version": "9efde4a3",
+      "content_hash": "bf6221066c434c30c223316c3bd7eb119eac8ff08bfb8795b1430c5e74becb4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:30:28.454Z"
+      "persisted_at": "2026-11-24T05:28:14.898Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -241818,9 +241828,9 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "8561164ad82e0d2ad33c6acb5069ec09191fd3a9a7767831dc492cdd4a032568",
+      "content_hash": "9ddb1202cfa28ba1a2960abd07f91e72298fcb443cada1d455c3aaa555998d10",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:47.074Z"
+      "persisted_at": "2026-11-24T05:28:31.687Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
@@ -241830,9 +241840,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cb87c58c0af1601b487e0c208287e49bd17e9b14f9f1c2cf344b0af760fecb3",
+      "content_hash": "8d5aa0d0567e323aa594818771de6fcd3349752dfad10e07462593c28899abcb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:30:47.222Z"
+      "persisted_at": "2026-11-24T05:28:31.912Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -271804,8 +271814,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "20075e60",
-      "content_hash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
+      "source_version": "e5411198",
+      "content_hash": "7d50a6a7b59de036d15e29b57720d50bfafa307d93a3dba691fb42953fbb0609",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -271823,6 +271833,11 @@
           "number": 9765,
           "title": "Apply contribution-review fixes: derive Yarn gate from npm day count",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10209,
+          "title": "Empirical Invariant Guard in dev-server.ts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271830,7 +271845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T09:52:22.010Z",
+      "verified_at": "2026-11-24T05:28:19.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283076,8 +283091,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "98e7681c",
-      "content_hash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
+      "source_version": "7ba0069e",
+      "content_hash": "8fffd0ebcc620a66ff16e553bcae025218594fdb8122c67df5f2a477f17d67b1",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -283105,6 +283120,11 @@
           "number": 10033,
           "title": "run the pressure purge off the memory sampler thread (Refs #2427)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10211,
+          "title": "hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -283112,7 +283132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:22:30.306Z",
+      "verified_at": "2026-11-24T05:28:26.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283140,10 +283160,10 @@
       "relative_path": "03_SKILLS/xerj-org-xerj-skill-operational-integration-playbook-for-xerj-org-xerj.md",
       "title": "Skill: Operational & Integration Playbook for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "98e7681c",
-      "content_hash": "29c913afeb069cc17200fc2c7433638c8594350ea77f8ff7bff0f40590adf6f9",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:22:30.996Z"
+      "source_version": "7ba0069e",
+      "content_hash": "755265cf6540ec247d158ab8714204b6c6119de045708dfabe5af292905f427f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-24T05:28:27.588Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj",
@@ -283152,10 +283172,10 @@
       "relative_path": "08_VERIFICATION/xerj-org-xerj-verification-protocol-empirical-defect-shield-for-xerj-org-xerj.md",
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "98e7681c",
-      "content_hash": "5667ec1549e5c2d87570dceeaa4489787b0329cdb5be22c34dc5bd04e562f8d5",
+      "source_version": "7ba0069e",
+      "content_hash": "2e96b00bdb23cc07257c82b46e3d5b94d1b88dfb30911bbbe0a4c7588a89661e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:22:31.125Z"
+      "persisted_at": "2026-11-24T05:28:27.788Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -333667,6 +333687,146 @@
       "content_hash": "71caa54489ae8d8cb39325601a50c650d122473b535fba6e695827d6fa7960dc",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T05:14:24.347Z"
+    },
+    "rule-10208": {
+      "learning_id": "rule-10208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10208,
+      "title": "accept existing configurations",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "9efde4a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:28:13.756Z"
+    },
+    "candidate_directive-accept-existing-configurations": {
+      "item_id": "candidate_directive-accept-existing-configurations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7GAG-accept-existing-configurations.md",
+      "title": "accept existing configurations",
+      "repository": "cachix/devenv",
+      "source_version": "9efde4a3",
+      "content_hash": "752ef51f01591031acbf0ec9916f2fbb93edbc38b4934e8351a6238d86fc2fe8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:28:14.398Z"
+    },
+    "rule-10209": {
+      "learning_id": "rule-10209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10209,
+      "title": "Empirical Invariant Guard in dev-server.ts",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "e5411198",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:28:19.420Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-dev-server-ts": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-dev-server-ts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7U8F-empirical-invariant-guard-in-dev-server-ts.md",
+      "title": "Empirical Invariant Guard in dev-server.ts",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3549124565bfa3b9962c82d85355e953043363b019c44f216ee60f0311a1f83",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T05:28:32.469Z"
+    },
+    "rule-10210": {
+      "learning_id": "rule-10210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10210,
+      "title": "read NSG rules from the securityRules property and child resources",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "a7b0d649",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:28:21.844Z"
+    },
+    "candidate_directive-read-nsg-rules-from-the-securityrules-property-and-child-resources": {
+      "item_id": "candidate_directive-read-nsg-rules-from-the-securityrules-property-and-child-resources",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7MI9-read-nsg-rules-from-the-securityrules-property-and-child-resources.md",
+      "title": "read NSG rules from the securityRules property and child resources",
+      "repository": "aquasecurity/trivy",
+      "source_version": "a7b0d649",
+      "content_hash": "b908c938bd79dd689e4e8db4258a6bd6ecbc8a957b419b09deb0e35c628a1efe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:28:22.451Z"
+    },
+    "rule-10211": {
+      "learning_id": "rule-10211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10211,
+      "title": "hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "7ba0069e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:28:26.537Z"
+    },
+    "candidate_directive-hand-driven-cold-get-fixture-event-joined-cluster-runners-3510-doc-comm": {
+      "item_id": "candidate_directive-hand-driven-cold-get-fixture-event-joined-cluster-runners-3510-doc-comm",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7Q49-hand-driven-cold-get-fixture-event-joined-cluster-runners-3510-doc-comm.md",
+      "title": "hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm",
+      "repository": "xerj-org/xerj",
+      "source_version": "7ba0069e",
+      "content_hash": "21ddb702ce9513e61f9d73ea6af3905b818b2a7ab855dffca277d662c6183562",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-24T05:28:27.136Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-search-distribution-intelligence-xerj-org-xerj-core-invariants.md",
+      "title": "Search & Distribution Intelligence: xerj-org/xerj Core Invariants",
+      "repository": "xerj-org/xerj",
+      "source_version": "7ba0069e",
+      "content_hash": "a933866319165820d17e58a5c1cdeb44c1f8b9bce7dea87bf8ef9c5220493013",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-24T05:28:27.361Z"
+    },
+    "candidate_directive-machines-accept-existing-configurations": {
+      "item_id": "candidate_directive-machines-accept-existing-configurations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7TGA-machines-accept-existing-configurations.md",
+      "title": "machines: accept existing configurations",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "109e61b4071a83724d1d061e7d96877c05d8997a79e18c607a353ac4f4c6d91b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:28:31.457Z"
+    },
+    "candidate_directive-arm-read-nsg-rules-from-the-securityrules-property-and-child-resources": {
+      "item_id": "candidate_directive-arm-read-nsg-rules-from-the-securityrules-property-and-child-resources",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7VC9-arm-read-nsg-rules-from-the-securityrules-property-and-child-resources.md",
+      "title": "arm): read NSG rules from the securityRules property and child resources",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "98779d175e7aba348007b0d3ef02749307b6b2b5490dc342c5a83e1b4040da1d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T05:28:33.898Z"
     }
   },
   "ai-builder-brain": {

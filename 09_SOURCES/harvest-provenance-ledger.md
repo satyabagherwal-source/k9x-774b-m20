@@ -12631,3 +12631,7 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `2a1f0dad` | Multi-dimensional audit evidence | 2026-11-24T05:14:11.582Z |
 | `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `4d8d7ea2` | Multi-dimensional audit evidence | 2026-11-24T05:14:11.664Z |
 | `learn-github-liyupi-yu-ai-agent` | `https://github.com/liyupi/yu-ai-agent` | `8b08b4bd` | Multi-dimensional audit evidence | 2026-11-24T05:14:15.482Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `9efde4a3` | Multi-dimensional audit evidence | 2026-11-24T05:28:14.030Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `e5411198` | Multi-dimensional audit evidence | 2026-11-24T05:28:19.683Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `a7b0d649` | Multi-dimensional audit evidence | 2026-11-24T05:28:22.133Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `7ba0069e` | Multi-dimensional audit evidence | 2026-11-24T05:28:26.804Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T05:14:23.957Z",
+  "last_updated": "2026-11-24T05:28:33.898Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53161,6 +53161,81 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-7GAG",
+      "directive_title": "accept existing configurations",
+      "source_repo": "cachix/devenv",
+      "source_commit": "9efde4a3",
+      "staged_file": "11_INBOX/candidate-directives/CD-7GAG-accept-existing-configurations.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7U8F",
+      "directive_title": "Empirical Invariant Guard in dev-server.ts",
+      "source_repo": "storybookjs-storybook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7U8F-empirical-invariant-guard-in-dev-server-ts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-7MI9",
+      "directive_title": "read NSG rules from the securityRules property and child resources",
+      "source_repo": "aquasecurity/trivy",
+      "source_commit": "a7b0d649",
+      "staged_file": "11_INBOX/candidate-directives/CD-7MI9-read-nsg-rules-from-the-securityrules-property-and-child-resources.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-7Q49",
+      "directive_title": "hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm",
+      "source_repo": "xerj-org/xerj",
+      "source_commit": "7ba0069e",
+      "staged_file": "11_INBOX/candidate-directives/CD-7Q49-hand-driven-cold-get-fixture-event-joined-cluster-runners-3510-doc-comm.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-7TGA",
+      "directive_title": "machines: accept existing configurations",
+      "source_repo": "cachix-devenv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7TGA-machines-accept-existing-configurations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A319A2",
+      "directive_title": "Empirical Invariant Guard in dev-server.ts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "storybookjs-storybook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A319A2-empirical-invariant-guard-in-dev-server-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-7VC9",
+      "directive_title": "arm): read NSG rules from the securityRules property and child resources",
+      "source_repo": "aquasecurity-trivy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7VC9-arm-read-nsg-rules-from-the-securityrules-property-and-child-resources.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
     }
   ]
 }

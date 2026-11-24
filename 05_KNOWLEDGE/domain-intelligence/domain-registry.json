@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T05:14:24.148Z",
-  "total_records": 2495,
+  "last_updated": "2026-11-24T05:28:34.124Z",
+  "total_records": 2496,
   "domains": {
     "A": {
       "total": 20,
@@ -2327,7 +2327,7 @@
       ]
     },
     "J": {
-      "total": 44,
+      "total": 45,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2372,7 +2372,8 @@
         "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants",
         "DOM-J-FBEC7580",
         "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-"
+        "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-",
+        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants"
       ]
     },
     "K": {
@@ -9600,8 +9601,8 @@
       "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
       "repository": "storybookjs/storybook",
-      "content_hash": "57fbfe6b13da6918d615d4c895d7cdd8d0fce55d89e697e39cedaa31bcd2a200",
-      "created_at": "2026-11-21T09:52:22.609Z"
+      "content_hash": "07e0053f8ff1c076e522e2bbf253117058daaa3f431d2b3809b60ec7326aed75",
+      "created_at": "2026-11-24T05:28:20.240Z"
     },
     "DOM-D-33D763C2": {
       "record_id": "DOM-D-33D763C2",
@@ -9660,8 +9661,8 @@
       "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-learnings-technical-construction-intelligence-storybookjs-.md",
       "repository": "storybookjs-storybook-learnings",
-      "content_hash": "969419e4cfae4974a81565f6ed52e6a188969967830365089ad721fa0be77b03",
-      "created_at": "2026-11-21T09:52:49.368Z"
+      "content_hash": "57f085c3f26f49f2491aafa75265eeb477920f9a07645241fac9c36509ca7d3f",
+      "created_at": "2026-11-24T05:28:32.706Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -17857,8 +17858,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "8f94fd0337ad985bc69ee1a518d166547039695103c3335eb43f7562e22e5708",
-      "created_at": "2026-11-21T02:57:50.541Z"
+      "content_hash": "d9b0703d6a56c5be43a27c5477e0fbdf2697e82d4644d75f4078225930a6eaa9",
+      "created_at": "2026-11-24T05:28:22.685Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -17884,8 +17885,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "322b02bbe430c44ddb40b939b9d25bd61dc6f79c12bb9ba4c43abade50ac0f0d",
-      "created_at": "2026-11-20T02:15:13.693Z"
+      "content_hash": "1d3218c3608484965b35d9febde303aa8b05a11361f51b74f48bf1e2d9195c33",
+      "created_at": "2026-11-24T05:28:34.124Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -19145,8 +19146,8 @@
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "repository": "cachix/devenv",
-      "content_hash": "9fbe94fa4cdf1a0f57400e0c2d7d1253ce5a22e91ed18c507ab73b098ca11701",
-      "created_at": "2026-11-21T13:30:28.299Z"
+      "content_hash": "93bf434dc12c8e8365f9d4d2c010837643624f5a1474a6262928c043a602f92b",
+      "created_at": "2026-11-24T05:28:14.652Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
@@ -19163,8 +19164,8 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-learnings-architecture-intelligence-cachix-devenv-learnings-core-i.md",
       "repository": "cachix-devenv-learnings",
-      "content_hash": "8561164ad82e0d2ad33c6acb5069ec09191fd3a9a7767831dc492cdd4a032568",
-      "created_at": "2026-11-21T13:30:47.074Z"
+      "content_hash": "9ddb1202cfa28ba1a2960abd07f91e72298fcb443cada1d455c3aaa555998d10",
+      "created_at": "2026-11-24T05:28:31.687Z"
     },
     "DOM-D-B43360BC": {
       "record_id": "DOM-D-B43360BC",
@@ -41840,6 +41841,15 @@
       "repository": "liyupi-yu-ai-agent-learnings",
       "content_hash": "52c69dd48333950e7e7c6ffab55414ba8a874651ab317828157dd5112c881057",
       "created_at": "2026-11-24T05:14:24.148Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: xerj-org/xerj Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-search-distribution-intelligence-xerj-org-xerj-core-invariants.md",
+      "repository": "xerj-org/xerj",
+      "content_hash": "a933866319165820d17e58a5c1cdeb44c1f8b9bce7dea87bf8ef9c5220493013",
+      "created_at": "2026-11-24T05:28:27.361Z"
     }
   }
 }

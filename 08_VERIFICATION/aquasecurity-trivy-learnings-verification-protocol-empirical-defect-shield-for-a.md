@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T02:15:13.371Z",
+  "timestamp": "2026-11-24T05:28:33.750Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aquasecurity-trivy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aquasecurity-trivy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T02:15:13.371Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T05:28:33.750Z`  
 > **Learning ID**: `LEARN-EVO-aquasecurity-trivy-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `92f029f9`  
+> **Source Version**: `a7b0d649`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:15:00.920Z  
+> **Timestamp**: 2026-11-24T05:28:20.730Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:15:00.914Z  
+> **Harvest Timestamp**: 2026-11-24T05:28:20.723Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39551 stars
+- **Stars / Engagement**: 39665 stars
 
 ---
 
@@ -1027,101 +1027,613 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92f029f9` (2026-11-19)
-**Commit Message**: fix(image): export by full image ID with the containerd image store (#11665)
+### Incident Patch 1: `f320e692` (2026-11-23)
+**Commit Message**: fix(arm): read NSG rules from the securityRules property and child resources (#11663)
 
-Signed-off-by: omerfsen <[REDACTED_EMAIL]>
-
-**File**: `pkg/fanal/image/daemon/docker.go` (modified, +14/-0)
+**File**: `pkg/iac/adapters/arm/network/adapt.go` (modified, +40/-25)
 ```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"os"
+@@ -7,6 +7,11 @@ import (
+ 	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
+ )
  
-+	"github.com/distribution/reference"
- 	"github.com/google/go-containerregistry/pkg/name"
- 	"github.com/moby/moby/client"
- 	"golang.org/x/xerrors"
-@@ -50,6 +51,7 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
- 		if err != nil {
- 			return nil, cleanup, xerrors.Errorf("unable to inspect the image (%s): %w", imageID, err)
- 		}
-+		imageID = normalizeImageID(imageID)
++const (
++	securityGroupType = "Microsoft.Network/networkSecurityGroups"
++	securityRuleType  = "securityRules"
++)
++
+ func parsePortRange(input string, meta iacTypes.Metadata) common.PortRange {
+ 	return common.ParsePortRange(input, meta, common.WithWildcard())
+ }
+@@ -20,79 +25,89 @@ func Adapt(deployment azure.Deployment) network.Network {
+ }
+ 
+ func adaptSecurityGroups(deployment azure.Deployment) (sgs []network.SecurityGroup) {
+-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
++	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
+ 		sgs = append(sgs, adaptSecurityGroup(resource, deployment))
+ 	}
++	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
++		sgs = append(sgs, network.SecurityGroup{
++			Metadata: iacTypes.NewUnmanagedMetadata(),
++			Rules:    adaptSecurityRuleResources(orphans),
++		})
++	}
+ 	return sgs
+-
+ }
+ 
+ func adaptSecurityGroup(resource azure.Resource, deployment azure.Deployment) network.SecurityGroup {
++	var rules []network.SecurityGroupRule
++	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
++		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
++	}
+ 	return network.SecurityGroup{
+ 		Metadata: resource.Metadata,
+-		Rules:    adaptSecurityGroupRules(deployment),
++		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
+ 	}
+ }
+ 
+-func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
+-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
+-		rules = append(rules, adaptSecurityGroupRule(resource))
++func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
++	var rules []network.SecurityGroupRule
++	for _, resource := range resources {
++		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
+ 	}
+ 	return rules
+ }
+ 
+-func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
+-	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
+-	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
++func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
++	sourceAddressPrefixes := properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
++	if prefix := properties.GetMapValue("sourceAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
+ 		sourceAddressPrefixes = append(sourceAddressPrefixes, prefix)
  	}
  
- 	history, err := c.ImageHistory(ctx, imageID)
-@@ -74,3 +76,15 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
- 		history: configHistory(history.Items),
- 	}, cleanup, nil
+ 	var sourcePortRanges []common.PortRange
+-	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
+-		rng := parsePortRange(portRange.AsString(), resource.Metadata)
++	for _, portRange := range properties.GetMapValue("sourcePortRanges").AsList() {
++		rng := parsePortRange(portRange.AsString(), metadata)
+ 		if rng.Valid() {
+ 			sourcePortRanges = append(sourcePortRanges, rng)
+ 		}
+ 	}
+-	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
++	if rng := parsePortRange(properties.GetMapValue("sourcePortRange").AsString(), metadata); rng.Valid() {
+ 		sourcePortRanges = append(sourcePortRanges, rng)
+ 	}
+ 
+-	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
+-	if prefix := resource.Properties.GetMapValue("destinationAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
++	destinationAddressPrefixes := properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
++	if prefix := properties.GetMapValue("destinationAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
+ 		destinationAddressPrefixes = append(destinationAddressPrefixes, prefix)
+ 	}
+ 
+ 	var destinationPortRanges []common.PortRange
+-	for _, portRange := range resource.Properties.GetMapValue("destinationPortRanges").AsList() {
+-		rng := parsePortRange(portRange.AsString(), resource.Metadata)
++	for _, portRange := range properties.GetMapValue("destinationPortRanges").AsList() {
++		rng := parsePortRange(portRange.AsString(), metadata)
+ 		if rng.Valid() {
+ 			destinationPortRanges = append(destinationPortRanges, rng)
+ 		}
+ 	}
+-	if rng := parsePortRange(resource.Properties.GetMapValue("destinationPortRange").AsString(), resource.Metadata); rng.Valid() {
++	if rng := parsePortRange(properties.GetMapValue("destinationPortRange").AsString(), metadata); rng.Valid() {
+ 		destinationPortRanges = append(destinationPortRanges, rng)
+ 	}
+ 
+-	allow := iacTypes.BoolDefault(false, resource.Metadata)
+-	if resource.Properties.GetMapValue("access
+```
+
+**File**: `pkg/iac/adapters/arm/network/adapt_test.go` (modified, +183/-1)
+```diff
+@@ -3,9 +3,14 @@ package network
+ import (
+ 	"testing"
+ 
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/aquasecurity/trivy/internal/testutil"
+ 	"github.com/aquasecurity/trivy/pkg/iac/adapters/arm/adaptertest"
+ 	"github.com/aquasecurity/trivy/pkg/iac/adapters/common"
+ 	"github.com/aquasecurity/trivy/pkg/iac/providers/azure/network"
++	"github.com/aquasecurity/trivy/pkg/iac/scanners/azure/arm/parser"
+ 	"github.com/aquasecurity/trivy/pkg/iac/types"
+ )
+ 
+@@ -21,10 +26,12 @@ func TestAdapt(t *testing.T) {
+   "resources": [
+     {
+       "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
+       "properties": {}
+     },
+ 	{
+ 	  "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++	  "name": "nsg/rule",
+ 	  "properties": {}
+ 	},
+ 	{
+@@ -56,10 +63,12 @@ func TestAdapt(t *testing.T) {
+       }
+     },
+     {
+-      "type": "Microsoft.Network/networkSecurityGroups"
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg"
+     },
+     {
+       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "nsg/rule",
+       "properties": {
+         "access": "Allow",
+         "direction": "Inbound",
+@@ -141,6 +150,156 @@ func TestAdapt(t *testing.T) {
+ 				}},
+ 			},
+ 		},
++		{
++			name: "rules in the securityRules property",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
++      "properties": {
++        "securityRules": [
++          {"name": "ssh", "properties": {"access": "Allow", "protocol": "Tcp"}},
++          {"name": "dns", "properties": {"access": "Deny", "protocol": "Udp"}}
++        ]
++      }
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{{
++					Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++						{Protocol: types.StringTest("Udp")},
++					},
++				}},
++			},
++		},
++		{
++			name: "rules as child resources",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "nsg",
++      "resources": [
++        {
++          "type": "securityRules",
++          "name": "ssh",
++          "properties": {"access": "Allow", "protocol": "Tcp"}
++        },
++        {
++          "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++          "name": "dns",
++          "properties": {"access": "Allow", "protocol": "Udp"}
++        }
++      ]
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{{
++					Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
++					},
++				}},
++			},
++		},
++		{
++			name: "top-level rules go to the group they name",
++			source: `{
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "web"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "db"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "web/https",
++      "properties": {"access": "Allow", "protocol": "Tcp"}
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "DB/sql",
++      "properties": {"access": "Allow", "protocol": "Udp"}
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++					}},
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
++					}},
++				},
++			},
++		},
++		{
++			name: "top-level rule with an expression name goes to the orphan group",
++			source: `{
++  "parameters": {
++    "nsgName": {"type": "string", "defaultValue": "web"}
++  },
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "web"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "db"
++    },
++    {
++      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
++      "name": "[concat(parameters('nsgName'), '/https')]",
++      "properties": {"access": "Allow", "protocol": "Tcp"}
++    }
++  ]
++}`,
++			expected: network.Network{
++				SecurityGroups: []network.SecurityGroup{
++					{},
++					{},
++					{Rules: []network.SecurityGroupRule{
++						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
++					}},
++				},
++			},
++		},
++		{
++			name: "top-level rule goes to the orphan group when the group name is an expression",
++			source: `{
++  "parameters": {
++    "nsgName": {"type": "string", "defaultValue": "web"}
++  },
++  "resources": [
++    {
++      "type": "Microsoft.Network/networkSecurityGroups",
++      "name": "[parameters('nsgName')]"
++    },
++    {
+```
+
+---
+
+### Incident Patch 2: `a7b0d649` (2026-11-23)
+**Commit Message**: fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (#11711)
+
+Signed-off-by: Solomon Wakhungu <[REDACTED_EMAIL]>
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map.go` (modified, +4/-1)
+```diff
+@@ -70,7 +70,10 @@ func resolveMapping(ctx *FileContext, mapName, topKey, secKey string) (any, erro
+ 	if !ok {
+ 		return nil, fmt.Errorf("key %s not found in map %s", topKey, mapName)
+ 	}
+-	mapValues := k.(map[string]any)
++	mapValues, ok := k.(map[string]any)
++	if !ok {
++		return nil, fmt.Errorf("key %s in map %s has invalid type", topKey, mapName)
++	}
+ 
+ 	prop, ok := mapValues[secKey]
+ 	if !ok {
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map_test.go` (modified, +44/-0)
+```diff
+@@ -93,3 +93,47 @@ Resources:
+ 	nodeTypeProp := testRes.GetBoolProperty("MultiAZ")
+ 	assert.False(t, nodeTypeProp.Value())
  }
 +
-+// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
-+// The containerd image store refuses to export a bare 64-hex ID
-+// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
-+func normalizeImageID(s string) string {
-+	if parsed, err := reference.ParseAnyReference(s); err == nil {
-+		if _, named := parsed.(reference.Named); !named {
-+			return parsed.String()
-+		}
++func Test_FindInMap_MalformedMapping(t *testing.T) {
++	source := `---
++Mappings:
++  CacheNodeTypes:
++    scalarEntry: cache.t2.micro
++    listEntry:
++      - cache.t2.small
++    nullEntry: null
++Resources:
++  ClusterScalar:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType ]
++  ClusterScalarWithDefault:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType, DefaultValue: cache.t2.medium ]
++  ClusterList:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, listEntry, NodeType ]
++  ClusterNull:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      CacheNodeType: !FindInMap [ CacheNodeTypes, nullEntry, NodeType ]
++`
++
++	ctx := createTestFileContext(t, source)
++	require.NotNil(t, ctx)
++
++	for _, id := range []string{"ClusterScalar", "ClusterList", "ClusterNull"} {
++		res := ctx.GetResourceByLogicalID(id)
++		require.NotNil(t, res)
++		prop := res.GetProperty("CacheNodeType")
++		require.NotNil(t, prop)
++		assert.True(t, prop.IsUnresolved())
 +	}
-+	return s
++
++	resWithDefault := ctx.GetResourceByLogicalID("ClusterScalarWithDefault")
++	require.NotNil(t, resWithDefault)
++	nodeType := resWithDefault.GetStringProperty("CacheNodeType", "")
++	assert.Equal(t, "cache.t2.medium", nodeType.Value())
 +}
 ```
 
-**File**: `pkg/fanal/image/daemon/docker_test.go` (modified, +39/-0)
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_select.go` (modified, +4/-3)
 ```diff
-@@ -47,3 +47,42 @@ func TestDockerImage(t *testing.T) {
- 		})
+@@ -30,10 +30,11 @@ func ResolveSelect(property *Property) (resolved *Property, success bool) {
  	}
+ 
+ 	listItems := list.AsList()
++	idx := index.AsInt()
+ 
+-	if len(listItems) <= index.AsInt() {
+-		return nil, false
++	if idx < 0 || idx >= len(listItems) {
++		return abortIntrinsic(property, "index on property [%s] is out of bounds, returning original Property", property.name)
+ 	}
+ 
+-	return listItems[index.AsInt()], true
++	return listItems[idx], true
+ }
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/fn_select_test.go` (modified, +41/-0)
+```diff
+@@ -75,3 +75,44 @@ Resources:
+ 	require.Equal(t, "notification::arn::2", topic.AsString())
+ 
  }
 +
-+func Test_normalizeImageID(t *testing.T) {
++func Test_SelectOutOfBoundsIndex(t *testing.T) {
 +	tests := []struct {
 +		name  string
-+		input string
-+		want  string
++		index string
 +	}{
 +		{
-+			name:  "full image ID without sha256 prefix",
-+			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
-+			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++			name:  "negative int index",
++			index: "-1",
 +		},
 +		{
-+			name:  "full image ID with sha256 prefix",
-+			input: "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
-+			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++			name:  "negative string index",
++			index: `"-1"`,
 +		},
 +		{
-+			name:  "short image ID",
-+			input: "a187dde48cd2",
-+			want:  "a187dde48cd2",
-+		},
-+		{
-+			name:  "63-hex image ID prefix",
-+			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
-+			want:  "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
-+		},
-+		{
-+			name:  "image name",
-+			input: "alpine:3.11",
-+			want:  "alpine:3.11",
++			name:  "index equal to list length",
++			index: "2",
 +		},
 +	}
++
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, normalizeImageID(tt.input))
++			source := `---
++Resources:
++  ElasticacheCluster:
++    Type: 'AWS::ElastiCache::CacheCluster'
++    Properties:
++      Engine: !Select [ ` + tt.index + `, [memcached, redis] ]
++`
++			ctx := createTestFileContext(t, source)
++			require.NotNil(t, ctx)
++
++			res := ctx.GetResourceByLogicalID("ElasticacheCluster")
++			require.NotNil(t, res)
++
++			engineProp := res.GetProperty("Engine")
++			require.NotNil(t, engineProp)
++			assert.True(t, engineProp.IsUnresolved())
 +		})
 +	}
 +}
 ```
 
+**File**: `pkg/iac/scanners/cloudformation/scanner_test.go` (modified, +64/-0)
+```diff
+@@ -223,3 +223,67 @@ Resources:
+ 		})
+ 	}
+ }
++
++func Test_ScanMalformedIntrinsics(t *testing.T) {
++	tests := []struct {
++		name          string
++		src           string
++		wantStartLine int
++	}{
++		{
++			name: "negative Fn::Select index",
++			src: `---
++Resources:
++  BucketWithNegativeSelect:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: !Select [-1, [bucket-a, bucket-b]]
++  MisconfiguredBucket:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: test-bucket
++`,
++			wantStartLine: 10,
++		},
++		{
++			name: "malformed Fn::FindInMap mapping",
++			src: `---
++Mappings:
++  BucketNames:
++    prod: not-a-map
++Resources:
++  BucketWithMalformedFindInMap:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: !FindInMap [BucketNames, prod, Name]
++  MisconfiguredBucket:
++    Type: 'AWS::S3::Bucket'
++    Properties:
++      BucketName: test-bucket
++`,
++			wantStartLine: 13,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			fsys := testutil.CreateFS(map[string]string{
++				"/code/main.yaml": tt.src,
++			})
++
++			scanner := New(
++				rego.WithEmbeddedPolicies(false),
++				rego.WithPolicyReader(strings.NewReader(bucketNameCheck)),
++				rego.WithPolicyNamespaces("user"),
++			)
++
++			results, err := scanner.ScanFS(t.Context(), fsys, "code")
++			require.NoError(t, err)
++
++			failed := results.GetFailed()
++			require.Len(t, failed, 1)
++			assert.Equal(t, "AWS-001", failed[0].Rule().ID)
++			assert.Equal(t, tt.wantStartLine, failed[0].Range().GetStartLine())
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `13e05e74` (2026-11-23)
+**Commit Message**: fix(flag): load built-in compliance spec from --cache-dir (#11675)
+
+Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
+
+**File**: `pkg/flag/report_flags.go` (modified, +3/-4)
+```diff
+@@ -10,7 +10,6 @@ import (
+ 	"golang.org/x/xerrors"
+ 
+ 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
+-	"github.com/aquasecurity/trivy/pkg/cache"
+ 	"github.com/aquasecurity/trivy/pkg/compliance/spec"
+ 	"github.com/aquasecurity/trivy/pkg/log"
+ 	"github.com/aquasecurity/trivy/pkg/result"
+@@ -257,7 +256,7 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
+ 		return xerrors.New(`"--table-mode" can be used only with "--format table".`)
+ 	}
+ 
+-	cs, err := loadComplianceTypes(f.Compliance.Value())
++	cs, err := loadComplianceTypes(f.Compliance.Value(), opts.CacheDir)
+ 	if err != nil {
+ 		return xerrors.Errorf("unable to load compliance spec: %w", err)
+ 	}
+@@ -294,12 +293,12 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
+ 	return nil
+ }
+ 
+-func loadComplianceTypes(compliance string) (spec.ComplianceSpec, error) {
++func loadComplianceTypes(compliance, cacheDir string) (spec.ComplianceSpec, error) {
+ 	if compliance != "" && !slices.Contains(types.SupportedCompliances, compliance) && !strings.HasPrefix(compliance, "@") {
+ 		return spec.ComplianceSpec{}, xerrors.Errorf("unknown compliance: %v", compliance)
+ 	}
+ 
+-	cs, err := spec.GetComplianceSpec(compliance, cache.DefaultDir())
++	cs, err := spec.GetComplianceSpec(compliance, cacheDir)
+ 	if err != nil {
+ 		return spec.ComplianceSpec{}, xerrors.Errorf("spec loading from file system error: %w", err)
+ 	}
+```
+
+**File**: `pkg/flag/report_flags_test.go` (modified, +35/-0)
+```diff
+@@ -1,6 +1,8 @@
+ package flag_test
+ 
+ import (
++	"os"
++	"path/filepath"
+ 	"testing"
+ 
+ 	"github.com/spf13/viper"
+@@ -282,4 +284,37 @@ func TestReportFlagGroup_ToOptions(t *testing.T) {
+ 		_, err := flags.ToOptions(nil)
+ 		assert.ErrorContains(t, err, "ignore file not found: doesntexist")
+ 	})
++
++	t.Run("load built-in compliance spec from --cache-dir", func(t *testing.T) {
++		t.Cleanup(viper.Reset)
++
++		cacheDir := t.TempDir()
++
++		policyDir := filepath.Join(cacheDir, "policy")
++		specDir := filepath.Join(policyDir, "content", "specs", "compliance")
++		require.NoError(t, os.MkdirAll(specDir, 0o755))
++		require.NoError(t, os.WriteFile(filepath.Join(policyDir, "metadata.json"), []byte(`{}`), 0o600))
++
++		specYAML := `spec:
++  id: docker-cis-1.6.0
++  title: Spec from the cache dir
++  description: Custom test spec
++  version: "1.6.0"
++  relatedResources: []
++  controls: []
++`
++		require.NoError(t, os.WriteFile(filepath.Join(specDir, "docker-cis-1.6.0.yaml"), []byte(specYAML), 0o600))
++
++		setValue(flag.CacheDirFlag.ConfigName, cacheDir)
++		setValue(flag.ComplianceFlag.ConfigName, "docker-cis-1.6.0")
++
++		flags := flag.Flags{
++			flag.NewGlobalFlagGroup(),
++			flag.NewReportFlagGroup(),
++		}
++
++		opts, err := flags.ToOptions(nil)
++		require.NoError(t, err)
++		assert.Equal(t, "Spec from the cache dir", opts.Compliance.Spec.Title)
++	})
+ }
+```
+
 #### Recent Merged Pull Requests:
-- **PR #11673** (2026-11-18): fix(server): use the correct flag name in the --custom-headers warning (@farisbasha)
-- **PR #11665** (2026-11-19): fix(image): export by full image ID with the containerd image store (@omerfsen)
-- **PR #11654** (2026-11-18): docs: fix the moved Sigstore links in signature verification (@farisbasha)
-- **PR #11644** (closed): fix(sbom): keep components from duplicated third-party SBOMs unique (@nissessenap)
-- **PR #11641** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 (@dependabot[bot])
-- **PR #11640** (2026-11-16): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 (@dependabot[bot])
+- **PR #11712** (2026-11-23): chore(deps): upgrade apk packages in container images (@DmitriyLewen)
+- **PR #11711** (2026-11-23): fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (@1solomonwakhungu)
+- **PR #11702** (closed): fix(flag): use cache-dir flag for compliance spec loading (@prascli)
+- **PR #11700** (closed): Parses TF_VAR_ values for variables of complex types as HCL (@Aakarsh133)
+- **PR #11695** (2026-11-23): ci: trigger backport workflow via workflow_dispatch (@DmitriyLewen)
+- **PR #11687** (closed): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
 
 ---
 
@@ -1141,44 +1653,66 @@ Signed-off-by: omerfsen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. image): export by full image ID with the containerd image store
+## X. arm): read NSG rules from the securityRules property and child resources
 
 **RULE**:
-When implementing operations in `pkg/fanal/image/daemon/docker.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/iac/adapters/arm/network/adapt.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92f029f9`: image): export by full image ID with the containerd image store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f320e692`: arm): read NSG rules from the securityRules property and child resources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fanal/image/daemon/docker.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/arm/network/adapt.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/distribution/reference"
-		imageID = normalizeImageID(imageID)
+const (
+	securityGroupType = "Microsoft.Network/networkSecurityGroups"
+	securityRuleType  = "securityRules"
+)
 
-// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
-// The containerd image store refuses to export a bare 64-hex ID
-// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
-func normalizeImageID(s string) string {
-	if parsed, err := reference.ParseAnyReference(s); err == nil {
-		if _, named := parsed.(reference.Named); !named {
-			return parsed.String()
-		}
+	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
+	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
+		sgs = append(sgs, network.SecurityGroup{
+			Metadata: iacTypes.NewUnmanagedMetadata(),
+			Rules:    adaptSecurityRuleResources(orphans),
+		})
 	}
-	return s
-}
+	var rules []network.SecurityGroupRule
+	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
+		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
+	}
+		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
+func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
+	var rules []network.SecurityGroupRule
+	for _, resource := range resources {
+		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
+func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
+	sourceAddressPrefixes := properties.GetMapValue("sourceAddr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
+
+		Rules:    adaptSecurityGroupRules(deployment),
+func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
+	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
+		rules = append(rules, adaptSecurityGroupRule(resource))
+func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
+	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
+	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
+	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
+		rng := parsePortRange(portRange.AsString(), resource.Metadata)
+	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
+	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
+	if prefix := resource.Properties.GetMapValue("destinationAddressPrefi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92f029f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f320e692` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

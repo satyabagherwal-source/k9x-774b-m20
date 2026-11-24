@@ -12598,3 +12598,7 @@
 | `CYCLE-20261124-PDYY` | `2026-11-24T05:14:11.578Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10205` | Yes (`0d1eab44...`) |
 | `CYCLE-20261124-PE17` | `2026-11-24T05:14:11.659Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10206` | Yes (`55fef7bc...`) |
 | `CYCLE-20261124-PGZ9` | `2026-11-24T05:14:15.477Z` | `liyupi/yu-ai-agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10207` | Yes (`a3f22a0d...`) |
+| `CYCLE-20261124-7G09` | `2026-11-24T05:28:14.025Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10208` | Yes (`951f8dc4...`) |
+| `CYCLE-20261124-7KDB` | `2026-11-24T05:28:19.679Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10209` | Yes (`7d50a6a7...`) |
+| `CYCLE-20261124-7M9C` | `2026-11-24T05:28:22.128Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10210` | Yes (`46dcc452...`) |
+| `CYCLE-20261124-7PV3` | `2026-11-24T05:28:26.799Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10211` | Yes (`8fffd0eb...`) |
