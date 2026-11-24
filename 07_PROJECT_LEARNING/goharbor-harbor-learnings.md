@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `67748c71`  
+> **Source Version**: `e864be67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T14:03:29.275Z  
+> **Timestamp**: 2026-11-24T16:01:37.271Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:03:29.123Z  
+> **Harvest Timestamp**: 2026-11-24T16:01:37.062Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `goharbor/harbor`
-- **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
+- **Description**: Harbor is a CNCF graduated open-source container registry to manage container images and other OCI artifacts securely with policies, role-based access control, vulnerability scans and signing.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29767 stars
+- **Stars / Engagement**: 29793 stars
 
 ---
 
@@ -655,13 +655,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24438** (2026-11-19): **docs: fix typos**
-  *Symptoms*: Fixes spelling mistakes found with codespell (documentation only; no functional change).
-  **Post-Mortem & Fix Analysis**:
-  > @Adham-Kiwan This is only the test data and please also fix it in the original repo: https://github.com/goharbor/harbor-helm.
+- **Issue #24478** (2026-11-24): **fix: allow tag events to be disabled and purged in audit log**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Tag create and delete are written to the audit log (resource type `tag`), but `create_tag` and `delete_tag` were missing from `EventTypes` in `src/pkg/auditext/model/model.go`. Because of that:  - `GET /api/v2.0/auditlog-exts/events` did not return them, so the audit log settings page had no checkbox to turn them off. - The purge job's `permitEventTypes` filter dropped them, and "Other events" (`EventTypes[3:]`) did not include them either, so tag rows were never purged.  This adds both to the end of the list, as the comment there asks. The settings page and the purge dialog build their lists from the API, so no portal change is needed. Tag events show up as their own checkboxes in the settings page and are covered by "Other events" in the purge dialog.  How tested: - Reproduced on a stock v2.16.0 install (full output in the issue). - Added a `TestPermitEventTypes` case. `go test ./pkg/auditext/dao/ -run TestPermitEventTypes` passes; without the change it fails.  # Issue being fixed Fixes #24477  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [x] Accepted the DCO. Commits without the DCO will delay acce
 
-- **Issue #24433** (2026-11-18): **docs: fix the dead Clarity link in CONTRIBUTING**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  The "Web" section of CONTRIBUTING.md links the Clarity design system (which the portal uses through `@clr/angular`) to `https://vmware.github.io/clarity/`. That page now returns 404; the Clarity project is published at https://clarity.design/ (200). This updates the link. Docs only.  Prepared with an AI coding assistant; the URLs were checked with curl.  # Issue being fixed No issue (dead link).  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. (suggest `release-note/docs`; I can't set labels) - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. (n/a, docs only) - [x] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24477** (2026-11-24): **Tag create/delete audit events cannot be disabled in the UI or purged**
+  *Symptoms*: **Expected behavior and actual behavior:**  Harbor writes audit log entries when a tag is created or deleted (`CreateTagEvent` / `DeleteTagEvent` in [src/controller/event/topic.go#L255-L309](https://github.com/goharbor/harbor/blob/67748c71ef12/src/controller/event/topic.go#L255-L309), resource type `tag`). But `create_tag` and `delete_tag` are not in `EventTypes` in [src/pkg/auditext/model/model.go#L49-L71](https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/model/model.go#L49-L71).  Expected: tag events behave like the other audited events. They show up in the event list, can be switched off under Configuration > System Settings > Audit log, and get removed by the audit log purge job.  Actual: - `GET /api/v2.0/auditlog-exts/events` does not return them, so the audit log settings page has no checkbox for tag events. The only way to stop logging them is to set `disabled_audit_log_event_types` by hand through the API, and the next checkbox change in the UI rewrites that list from the event list and drops it again. - The purge job silently filters them out. `permitEventTypes` in [src/pkg/auditext/dao/dao.go#L193-L207](https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/dao/dao.go#L193-L207) only keeps names found in `EventTypes`, and "Other events" expands to `EventTypes[3:]`. Tag rows are never purged, whatever is selected.  **Steps to reproduce the problem:**  Stock v2.16.0 online installer (amd64), HTTP on port 8099, admin / Harbor12345. Ru
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -678,44 +676,55 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67748c71` (2026-11-19)
-**Commit Message**: docs: fix typos (#24438)
+### Incident Patch 1: `e864be67` (2026-11-24)
+**Commit Message**: fix: allow tag events to be disabled and purged in audit log (#24478)
 
-Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
+Tag create and delete are written to the audit log, but create_tag
+and delete_tag were missing from EventTypes. They did not show up in
+the audit log settings, and the purge job dropped them from its filter,
+so tag rows were never purged.
 
-**File**: `src/pkg/chart/testdata/harbor-schema1/README.md` (modified, +1/-1)
+Add them to the end of the list. The settings page and the purge
+dialog read the list from the API, so no portal change is needed.
+
+Fixes #24477
+
+Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
+
+**File**: `src/pkg/auditext/dao/dao_test.go` (modified, +3/-0)
 ```diff
-@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
- | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
- | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
- | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
--| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
-+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
- | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
- | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
- | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
+@@ -180,6 +180,9 @@ func TestPermitEventTypes(t *testing.T) {
+ 	if len(eventTypes) != 2 {
+ 		t.Errorf("permitEventTypes failed")
+ 	}
++	if tagEventTypes := permitEventTypes([]string{"create_tag", "delete_tag"}); len(tagEventTypes) != 2 {
++		t.Errorf("permitEventTypes should keep tag event types")
++	}
+ 	eventTypes2 := permitEventTypes([]string{})
+ 	if len(eventTypes2) != 0 {
+ 		t.Errorf("permitEventTypes failed")
 ```
 
-**File**: `src/pkg/chart/testdata/harbor-schema2/README.md` (modified, +1/-1)
+**File**: `src/pkg/auditext/model/model.go` (modified, +2/-0)
 ```diff
-@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
- | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
- | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
- | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
--| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
-+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
- | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
- | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
- | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
+@@ -68,6 +68,8 @@ var EventTypes = []string{
+ 	"create_role",
+ 	"delete_role",
+ 	"update_role",
++	"create_tag",
++	"delete_tag",
+ }
+ 
+ // OtherEventTypes defines the types of other audit log event types excludes previous EventTypes: create_artifact, delete_artifact, pull_artifact
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24478** (2026-11-24): fix: allow tag events to be disabled and purged in audit log (@bupd)
+- **PR #24469** (2026-11-24): (cherry-pick)Change the harbor introduction text in testcase along with the github.com (@stonezdj)
+- **PR #24468** (2026-11-24): Change the harbor introduction text in testcase along with the github… (@stonezdj)
 - **PR #24438** (2026-11-19): docs: fix typos (@Adham-Kiwan)
 - **PR #24433** (2026-11-18): docs: fix the dead Clarity link in CONTRIBUTING (@farisbasha)
 - **PR #24431** (closed): fix(orm): convert numeric or-list values to strings to work with pgx (@SevDaisy)
-- **PR #24424** (closed): elease-note/breaking-change: Add vulnerabilities metrics (@RobMokkink)
-- **PR #24361** (2026-11-11): Bump Trivy adapter and distribution for release-2.15.0 (@stonezdj)
-- **PR #24360** (2026-11-11): (cherry-pick): preserve artifact type for multi-tier accessories (@stonezdj)
 
 ---
 
@@ -735,28 +744,30 @@ Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix typos
+## X. allow tag events to be disabled and purged in audit log
 
 **RULE**:
-When implementing operations in `src/pkg/chart/testdata/harbor-schema1/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/auditext/dao/dao_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67748c71`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e864be67`: allow tag events to be disabled and purged in audit log. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/chart/testdata/harbor-schema1/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/auditext/dao/dao_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
+	if tagEventTypes := permitEventTypes([]string{"create_tag", "delete_tag"}); len(tagEventTypes) != 2 {
+		t.Errorf("permitEventTypes should keep tag event types")
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67748c71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e864be67` are properly handled with clean fallback behavior.

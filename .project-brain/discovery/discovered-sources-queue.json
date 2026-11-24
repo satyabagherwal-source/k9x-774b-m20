@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T15:53:54.744Z",
+  "updated_at": "2026-11-24T16:01:50.453Z",
   "stats": {
-    "total_discovered": 8743,
-    "approved_pending_harvest": 8280,
+    "total_discovered": 8749,
+    "approved_pending_harvest": 8286,
     "harvested_count": 0,
     "rejected_count": 463,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8264,
+      "COMMUNITY_AND_EXPERT": 8270,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -189128,6 +189128,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-572CBC2A9E29": {
+      "id": "SRC-572CBC2A9E29",
+      "url": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/controller/event/topic.go",
+      "title": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/controller/event/topic.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:49.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-9A581A2FD5FC": {
+      "id": "SRC-9A581A2FD5FC",
+      "url": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/model/model.go",
+      "title": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/model/model.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:49.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-DB5DF2EAD7FE": {
+      "id": "SRC-DB5DF2EAD7FE",
+      "url": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/dao/dao.go",
+      "title": "https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/dao/dao.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:49.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-80799D5C37A9": {
+      "id": "SRC-80799D5C37A9",
+      "url": "https://en.wikipedia.org/wiki/Token_bucket",
+      "title": "https://en.wikipedia.org/wiki/Token_bucket",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:50.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-D846664E538F": {
+      "id": "SRC-D846664E538F",
+      "url": "https://nda.ya.ru/t/70BKZy6j7xFrvo",
+      "title": "https://nda.ya.ru/t/70BKZy6j7xFrvo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:50.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-FE7FE43295B8": {
+      "id": "SRC-FE7FE43295B8",
+      "url": "https://nda.ya.ru/t/E_KXQsTm7xFqZe",
+      "title": "https://nda.ya.ru/t/E_KXQsTm7xFqZe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:01:50.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }

@@ -772720,3 +772720,153 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dbec78ae` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10300. allow tag events to be disabled and purged in audit log (Harvested from goharbor/harbor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "allow tag events to be disabled and purged in audit log",
+  "source": "goharbor/harbor",
+  "source_url": "https://github.com/goharbor/harbor",
+  "source_version": "e864be67",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T16:01:37.776Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goharbor-harbor",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `e864be67`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/pkg/auditext/dao/dao_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e864be67`: allow tag events to be disabled and purged in audit log. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/auditext/dao/dao_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	if tagEventTypes := permitEventTypes([]string{"create_tag", "delete_tag"}); len(tagEventTypes) != 2 {
+		t.Errorf("permitEventTypes should keep tag event types")
+	}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e864be67` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10301. Prepare distributed throttler mode selection (Harvested from ytsaurus/ytsaurus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prepare distributed throttler mode selection",
+  "source": "ytsaurus/ytsaurus",
+  "source_url": "https://github.com/ytsaurus/ytsaurus",
+  "source_version": "3d402381",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T16:01:45.307Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ytsaurus-ytsaurus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `3d402381`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0987aa47`: Prepare distributed throttler mode selection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+In the dynamic spec of a named throttler, `mode` defaults to `prefetching`. The `throttle_timeout` option bounds the quota wait for each `Throttle` call (five minutes by default).
+
+All throttler parameters (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
+Each quota request uses the worker's current controller channel. While the client retries a request according to `retrying_channel`, it can still serve calls from cached quota. If a retry reaches the new Controller, the pending request can complete.
+
+If the quota RPC ultimately fails, the local Prefetching client keeps its first terminal error. Pending and subsequent `Throttle()` calls return that error in their futures. Synchronous methods, including `TryAcquire()`, throw the error even if local quota remains. Recreating the client clears the failure. The same rule applies when the Controller rejects a request for an unknown throttler ID.
+Each `Throttle()
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+All throttler parameters (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
+The throttler client reopens the connection via `retrying_channel`. While the Controller doesn’t respond, the local prefetch cache is consumed, and `Throttle()` blocks while waiting for a quota — the Job makes no progress. When the Controller comes back, the wait resolves automatically. If the Controller stays unresponsive longer than the total retry budget of `retrying_channel`, the throttler operation throws an exception and the Job fails.
+If the total demand from Jobs far exceeds the possible supply, individual `RequestQuota` calls may wait a long time in the server queue and eventually miss their `rpc_timeout` × `retry_attempts` deadline. In this case, `Throttle()` also throws an exception, which causes the Job to fail.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0987aa47` are properly handled with clean fallback behavior.

@@ -12729,3 +12729,5 @@
 | `CYCLE-20261124-835K` | `2026-11-24T15:44:35.576Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10297` | Yes (`ed1bf2c6...`) |
 | `CYCLE-20261124-JPQ3` | `2026-11-24T15:53:38.043Z` | `nativewind/nativewind` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10298` | Yes (`fe2a1e45...`) |
 | `CYCLE-20261124-JXGL` | `2026-11-24T15:53:48.069Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10299` | Yes (`181237dc...`) |
+| `CYCLE-20261124-U09J` | `2026-11-24T16:01:38.263Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10300` | Yes (`7e7bb60c...`) |
+| `CYCLE-20261124-U61O` | `2026-11-24T16:01:45.756Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10301` | Yes (`011cd001...`) |

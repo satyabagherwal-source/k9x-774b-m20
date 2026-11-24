@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:53:56.606Z",
+  "last_updated": "2026-11-24T16:01:51.704Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -8359,8 +8359,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ef82d3984a8be8a43f135b43bd5e78ac9f479f5462cde6541f1c91adaf9e2310",
-      "created_at": "2026-11-24T15:09:07.457Z"
+      "content_hash": "8e87866536dd2b97516b2a7f50209560f6b14462e239981856780d38f2e3326e",
+      "created_at": "2026-11-24T16:01:51.704Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -12793,8 +12793,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "848749f561b4689cc7b56ab54d72419f5e0de2742d0352f40ee8e7a62871570f",
-      "created_at": "2026-11-19T14:03:30.443Z"
+      "content_hash": "3bac4a19a7971a1771c2e57aeb9eaffd697200f12bd312e0e18d92a82745c2d9",
+      "created_at": "2026-11-24T16:01:38.752Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -12871,8 +12871,8 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
       "repository": "goharbor-harbor-learnings",
-      "content_hash": "24bb6bed70ebdd876371e93dcff0d6cbd5406a43d5392975e2c8d2762e81979a",
-      "created_at": "2026-11-19T14:03:39.292Z"
+      "content_hash": "618987b147ee42f1a3c085362c2c1b0b2b2738c8818951dcd04dd829d2ee088b",
+      "created_at": "2026-11-24T16:01:49.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
@@ -23803,8 +23803,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "e187bd1b35c9840cb958376bc73722d37423e1f4b00972ecc1749ccaab46d04f",
-      "created_at": "2026-11-23T19:34:43.462Z"
+      "content_hash": "3e8899d18253cd573c3734824a52b32ac0e050832be95ab09cabcf2aa122edc7",
+      "created_at": "2026-11-24T16:01:46.131Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -23821,8 +23821,8 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
       "repository": "ytsaurus-ytsaurus-learnings",
-      "content_hash": "28f383639b676ed74020c4f23dd9b0f56b596e5c7aa4748fed06f4e9f137d5c6",
-      "created_at": "2026-11-23T19:34:49.274Z"
+      "content_hash": "07f89221a7cdba803939877e21e83783424719dc210a659d2a9577c4fe4bb2f1",
+      "created_at": "2026-11-24T16:01:50.862Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",

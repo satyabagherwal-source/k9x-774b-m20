@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T15:53:51.650Z",
-    "lastVerified": "2026-11-24T15:53:51.650Z",
+    "lastChecked": "2026-11-24T16:01:48.973Z",
+    "lastVerified": "2026-11-24T16:01:48.973Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,12 +248,12 @@
     "lastVerified": "2026-11-24T13:56:32.942Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T11:44:32.485Z",
-    "lastVerified": "2026-11-24T11:44:32.485Z",
+    "lastChecked": "2026-11-24T16:01:34.597Z",
+    "lastVerified": "2026-11-24T16:01:34.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -262,7 +262,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3233be23"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -274,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T15:27:14.381Z",
+    "lastChecked": "2026-11-24T16:01:39.623Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T15:27:14.381Z"
+    "lastVerified": "2026-11-24T16:01:39.623Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1499,22 +1500,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "goharbor-harbor": {
-    "name": "harbor",
+    "name": "goharbor/harbor",
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T20:30:31.403Z",
-    "lastVerified": "2026-11-23T20:30:31.403Z",
+    "lastChecked": "2026-11-24T16:01:37.062Z",
+    "lastVerified": "2026-11-24T16:01:37.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "95292329bc2e9c91cd39e4dadd04ea587c51389f09d95c6c4345e0bd62e1e306",
+    "contentHash": "7e7bb60c2ef463633115a4e7ade8c13da8511f3da856265b10929f0384f300b8",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "67748c71"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "build-trust-ockam": {
     "name": "ockam",
@@ -4330,9 +4330,9 @@
   "midudev-preguntas-entrevista-react": {
     "name": "preguntas-entrevista-react",
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
-    "lastChecked": "2026-11-22T00:24:36.646Z",
+    "lastChecked": "2026-11-24T16:01:29.524Z",
     "revisionIdentifier": "99d805f1",
-    "lastVerified": "2026-11-22T00:24:36.646Z"
+    "lastVerified": "2026-11-24T16:01:29.524Z"
   },
   "go-eagle-eagle": {
     "name": "eagle",
@@ -5192,9 +5192,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-11-23T14:46:20.943Z",
+    "lastChecked": "2026-11-24T16:01:24.558Z",
     "revisionIdentifier": "3c4584ae",
-    "lastVerified": "2026-11-23T14:46:20.943Z"
+    "lastVerified": "2026-11-24T16:01:24.559Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -6511,14 +6511,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-23T19:34:41.880Z",
-    "lastVerified": "2026-11-23T19:34:41.880Z",
+    "lastChecked": "2026-11-24T16:01:44.825Z",
+    "lastVerified": "2026-11-24T16:01:44.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
+    "contentHash": "011cd001946301e67f48467420c7f99c6e5a3aa5e7963c18bda848d4d81ee88b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10659,12 +10659,12 @@
     "lastVerified": "2026-11-23T16:20:31.244Z"
   },
   "webrecorder-pywb": {
-    "name": "webrecorder/pywb",
+    "name": "pywb",
     "officialUrl": "https://github.com/webrecorder/pywb",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T15:15:12.222Z",
-    "lastVerified": "2026-11-20T15:15:12.222Z",
+    "lastChecked": "2026-11-24T16:01:27.142Z",
+    "lastVerified": "2026-11-24T16:01:27.142Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webrecorder-pywb",
@@ -10673,7 +10673,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "28750e62"
   },
   "duongductrong-snapzy": {
     "name": "duongductrong/Snapzy",

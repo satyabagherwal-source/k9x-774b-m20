@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:53:48.082Z",
-  "total_cycles_completed": 12096,
-  "total_learnings_persisted": 12096,
-  "total_rules_promoted": 11161,
+  "last_updated": "2026-11-24T16:01:45.765Z",
+  "total_cycles_completed": 12098,
+  "total_learnings_persisted": 12098,
+  "total_rules_promoted": 11163,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:31:24.531Z",
-      "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T23:31:27.323Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:31:31.660Z",
       "repository": "TypeWhisper/typewhisper-mac",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T15:53:48.082Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:01:38.272Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:01:45.765Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

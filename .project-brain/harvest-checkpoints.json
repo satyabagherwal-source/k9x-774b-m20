@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T15:53:48.101Z",
+  "last_updated": "2026-11-24T16:01:45.776Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
-      "verified_at": "2026-11-23T19:34:43.016Z",
+      "content_hash": "011cd001946301e67f48467420c7f99c6e5a3aa5e7963c18bda848d4d81ee88b",
+      "verified_at": "2026-11-24T16:01:45.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:34:43.016Z"
+      "last_updated": "2026-11-24T16:01:45.775Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "95292329bc2e9c91cd39e4dadd04ea587c51389f09d95c6c4345e0bd62e1e306",
-      "verified_at": "2026-11-19T14:03:29.970Z",
+      "content_hash": "7e7bb60c2ef463633115a4e7ade8c13da8511f3da856265b10929f0384f300b8",
+      "verified_at": "2026-11-24T16:01:38.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:03:29.970Z"
+      "last_updated": "2026-11-24T16:01:38.283Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

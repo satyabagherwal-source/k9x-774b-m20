@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:53:57.244Z",
+  "last_updated": "2026-11-24T16:01:51.998Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-24T15:09:06.715Z",
+      "processed_at": "2026-11-24T16:01:51.178Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -433,7 +433,7 @@
       "staged_for_review": 1
     },
     "goharbor-harbor-learnings.md": {
-      "processed_at": "2026-11-19T14:03:38.550Z",
+      "processed_at": "2026-11-24T16:01:49.117Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2718,7 +2718,7 @@
       "staged_for_review": 0
     },
     "ytsaurus-ytsaurus-learnings.md": {
-      "processed_at": "2026-11-23T19:34:48.576Z",
+      "processed_at": "2026-11-24T16:01:50.209Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3828,
+  "total_dossiers_evaluated": 3831,
   "total_canonical_promoted": 511,
-  "total_staged_for_review": 2902
+  "total_staged_for_review": 2905
 }

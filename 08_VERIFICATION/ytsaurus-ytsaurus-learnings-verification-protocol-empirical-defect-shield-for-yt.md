@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T19:34:48.973Z",
+  "timestamp": "2026-11-24T16:01:50.612Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ytsaurus-ytsaurus-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ytsaurus-ytsaurus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T19:34:48.973Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T16:01:50.612Z`  
 > **Learning ID**: `LEARN-EVO-ytsaurus-ytsaurus-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `787c7d04`  
+> **Source Version**: `3d402381`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:34:41.886Z  
+> **Timestamp**: 2026-11-24T16:01:44.830Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:34:41.880Z  
+> **Harvest Timestamp**: 2026-11-24T16:01:44.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1220,526 +1220,279 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0bcd7c6` (2026-11-23)
-**Commit Message**: YT-30579: Embed key-visitor fixtures in describe tests
+### Incident Patch 1: `0987aa47` (2026-11-23)
+**Commit Message**: Prepare distributed throttler mode selection
 
-CMake runs the test binary directly with an empty source root. The fixture lookup introduced in [rXXXXXX](https://nda.ya.ru/t/R4paDW1c7xAm7a consequently fails with ENOENT at `/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson`.
-commit_hash:c0c36ce9040b72815155e28a9dae695430264c46
+* Changelog entry
+Type: change
+Component: flow
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt` (modified, +22/-0)
+Named Flow throttlers support dynamic mode selection with prefetching as the default. Each quota wait has a configurable five-minute timeout. After a terminal quota RPC error, local calls fail until the prefetching client is replaced.
+commit_hash:0d5f6061fd1894305090a5f9c086edf5c0b50fe6
+
+**File**: `yt/docs/en/_includes/flow/concepts/distributed_throttler.md` (modified, +7/-3)
 ```diff
-@@ -12,6 +12,13 @@
- # Please refer to the build instructions in the repository for more information about manual
- # changes in this file.
+@@ -1,5 +1,7 @@
+ # Distributed Throttler in {{product-name}} Flow
  
-+get_built_tool_path(
-+  TOOL_rescompiler_bin
-+  TOOL_rescompiler_dependency
-+  tools/rescompiler/bin
-+  rescompiler
-+)
++In the dynamic spec of a named throttler, `mode` defaults to `prefetching`. The `throttle_timeout` option bounds the quota wait for each `Throttle` call (five minutes by default).
 +
- add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ Use the distributed throttler to globally limit the rate across the entire [pipeline](../../../flow/concepts/glossary.md#pipeline). The Controller holds a [token bucket](https://en.wikipedia.org/wiki/Token_bucket) for each named throttler; [Jobs](../../../flow/concepts/glossary.md#job) request a quota from the Controller before processing messages or performing any custom user action.
  
+ You can apply quotas to either the number of processed messages or the total size of their payload in bytes — separately or together.
+@@ -64,7 +66,7 @@ Observed shares match the configured weights only while every measured class sta
  
-@@ -35,6 +42,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
-   build-cow-on
-   cpp-testing-gtest
-   cpp-testing-gtest_main
-+  library-cpp-resource
-   cpp-testing-common
-   common-unittests-mock
-   controller-unittests-mock
-@@ -61,6 +69,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+ ## Live reconfiguration {#reconfigure}
  
- target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
- )
+-All throttler parameters (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
++All throttler parameters (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
  
+ Weights and the server chunk size change without rebuilding the prefetch client. The exception is `use_class_weights_as_limit`: a weight is then part of the rate, so a weight change that resizes the prefetch window rebuilds the client — a change too small to move that window leaves the client, and its prefetched quota, in place. The new rate applies on the server either way. Changing `input_rows_throttler_class_id` or `input_bytes_throttler_class_id` affects subsequent RPCs; quota already fetched locally or still in flight stays accounted to the previous class.
  
-@@ -86,6 +95,19 @@ set_property(
-   ENVIRONMENT
- )
+@@ -74,11 +76,13 @@ Quota availability does not override watermark alignment: reading is allowed onl
  
-+resources(yt-flow-library-cpp-controller-describe-unittests
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-+  INPUTS
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+  KEYS
-+  key_visitor/cpp/pipeline/pipeline.yson
-+  key_visitor/cpp/pipeline_external/pipeline.yson
-+  key_visitor/joiner/pipeline/pipeline.yson
-+  OPTS
-+)
+ ## What happens if the Controller is unavailable {#controller-unavailable}
+ 
+-The throttler client reopens the connection via `retrying_channel`. While the Controller doesn’t respond, the local prefetch cache is consumed, and `Throttle()` blocks while waiting for a quota — the Job makes no progress. When the Controller comes back, the wait resolves automatically. If the Controller stays unresponsive longer than the total retry budget of `retrying_channel`, the throttler operation throws an exception and the Job fails.
++Each quota request uses the worker's current controller channel. While the client retries a request according to `retrying_channel`, it can still serve calls from cached quota. If a retry reaches the new Controller, the pending request can complete.
 +
- vcs_info(yt-flow-library-cpp-controller-describe-unittests)
++If the quota RPC ultimately fails, the local Prefetching client keeps its first terminal error. Pending and subsequent `Throttle()` calls return that error in their futures. Synchronous methods, including `TryAcquire()`, throw the error even if local quota remains. Recreating the client clears the failure. The same rule applies when the Controller rejects a request for an unknown throttler ID.
  
- set_property(
+ ## What happens if there isn’t enough quota {#quota-insufficient}
+ 
+-If the total demand from Jobs far exceeds the possible supply, individual `RequestQuota` calls may wait a long time in the server queue and eventually miss their `rpc_timeout` × `retry_attempts` deadline. In this case, `Throttle()` also throws an exception, which causes the Job to fail.
++Each `Throttle()` call has its own `throttle_timeout` (five minutes by default). When it expires, the future for that call returns a timeout error. Other calls can still receive quota as long as the client is healthy. If the underlying quota RPC exhausts its retries first, the whole client fails as described above. Automatic input throttling propagates either error to the Job.
+ 
+ Fallback to a local limit isn’t supported in either of these cases right now.
+ 
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-x86_64.txt` (modified, +22/-0)
+**File**: `yt/docs/en/flow/generated_docs/NYT_NFlow_EThrottlerMode.md` (added, +9/-0)
 ```diff
-@@ -12,6 +12,13 @@
- # Please refer to the build instructions in the repository for more information about manual
- # changes in this file.
- 
-+get_built_tool_path(
-+  TOOL_rescompiler_bin
-+  TOOL_rescompiler_dependency
-+  tools/rescompiler/bin
-+  rescompiler
-+)
+@@ -0,0 +1,9 @@
++## NYT::NFlow::EThrottlerMode {#NYT_NFlow_EThrottlerMode}
++<!-- This file is generated by yt/yt/flow/yandex/tools/generate_yson_struct_doc/generate.sh script -->
++<!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
 +
- add_executable(yt-flow-library-cpp-controller-describe-unittests)
- 
- 
-@@ -36,6 +43,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
-   library-cpp-cpuid_check
-   cpp-testing-gtest
-   cpp-testing-gtest_main
-+  library-cpp-resource
-   cpp-testing-common
-   common-unittests-mock
-   controller-unittests-mock
-@@ -62,6 +70,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
- 
- target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
- )
- 
- 
-@@ -87,6 +96,19 @@ set_property(
-   ENVIRONMENT
- )
- 
-+resources(yt-flow-library-cpp-controller-describe-unittests
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-+  INPUTS
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+  KEYS
-+  key_visitor/cpp/pipeline/pipeline.yson
-+  key_visitor/cpp/pipeline_external/pipeline.yson
-+  key_visitor/joiner/pipeline/pipeline.yson
-+  OPTS
-+)
++#|
++|| Possible values | **Description** ||
++|| `prefetching` |  ||
++|#
 +
- vcs_info(yt-flow-library-cpp-controller-describe-unittests)
- 
- set_property(
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.linux-aarch64.txt` (modified, +22/-0)
+**File**: `yt/docs/en/flow/generated_docs/NYT_NFlow_TDynamicThrottlerSpec.md` (modified, +7/-1)
 ```diff
-@@ -14,6 +14,13 @@
+@@ -3,10 +3,13 @@
+ <!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
+ Source: [yt/yt/flow/library/cpp/common/spec.h]({{source-root}}/yt/yt/flow/library/cpp/common/spec.h)
  
- find_package(linux-headers-generic REQUIRED)
+-Configuration of a named distributed throttler.
++Dynamic settings of a named distributed throttler.
  
-+get_built_tool_path(
-+  TOOL_rescompiler_bin
-+  TOOL_rescompiler_dependency
-+  tools/rescompiler/bin
-+  rescompiler
-+)
-+
- add_executable(yt-flow-library-cpp-controller-describe-unittests)
- 
- 
-@@ -38,6 +45,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
-   build-cow-on
-   cpp-testing-gtest
-   cpp-testing-gtest_main
-+  library-cpp-resource
-   cpp-testing-common
-   common-unittests-mock
-   controller-unittests-mock
-@@ -67,6 +75,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
- 
- target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
- )
- 
- 
-@@ -92,6 +101,19 @@ set_property(
-   ENVIRONMENT
- )
- 
-+resources(yt-flow-library-cpp-controller-describe-unittests
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-+  INPUTS
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+  KEYS
-+  key_visitor/cpp/pipeline/pipeline.yson
-+  key_visitor/cpp/pipeline_external/pipeline.yson
-+  key_visitor/joiner/pipeline/pipeline.yson
-+  OPTS
-+)
-+
- vcs_info(yt-flow-library-cpp-controller-describe-unittests)
- 
- set_property(
+ #|
+ || **Parameter** | **Description** ||
++|| `mode` | **Type**: [NYT::NFlow::EThrottlerMode](./all_yson_structs#NYT_NFlow_EThrottlerMode)
++**Default value**: `prefetching`
++Throttler implementation. Defaults to prefetching. ||
+ || `limit` | **Type**: `std::optional<double>`
+ Average quota issuance rate in units per second. `none` means `unlimited`. ||
+ || `period` | **Type**: [TDuration](./all_yson_structs#TDuration)
+@@ -29,6 +32,9 @@ Retry parameters for requests to the throttler service. The defaults are designe
+ || `rpc_timeout` | **Type**: [TDuration](./all_yson_structs#TDuration)
+ **Default value**: `30s`
+ Timeout for a single `RequestQuota` request. ||
++|| `throttle_timeout` | **Type**: [TDuration](./all_yson_structs#TDuration)
++**Default value**: `5m`
++Maximum quota wait for a Throttle call. Changes apply to subsequent calls. ||
+ || `classes` | **Type**: `THashMap<`[NYT::NFlow::TQuotaClassId](./all_yson_structs#NYT_NFlow_TQuotaClassId)`, NYT::TIntrusivePtr<`[NYT::NFlow::TDynamicThrottlerClassSpec](./all_yson_structs#NYT_NFlow_TDynamicThrottlerClassSpec)`>>`
+ **Default value**: `{}`
+ Named weighted quota classes. Keys must match `[0-9A-Za-z_-]+`. Backlogged classes share bandwidth in proportion to their weights and idle shares are redistributed. ||
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.linux-x86_64.txt` (modified, +22/-0)
+**File**: `yt/docs/en/flow/generated_docs/all_yson_structs.md` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,13 @@
+@@ -76,6 +76,8 @@ This file contains descriptions of all specs and configs used for {{product-name
  
- find_package(linux-headers-generic REQUIRED)
+ {% include [_](./NYT_NFlow_EQueueTabletIndexRoutingHashPolicy.md) %}
  
-+get_built_tool_path(
-+  TOOL_rescompiler_bin
-+  TOOL_rescompiler_dependency
-+  tools/rescompiler/bin
-+  rescompiler
-+)
++{% include [_](./NYT_NFlow_EThrottlerMode.md) %}
 +
- add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ {% include [_](./NYT_NFlow_ETimeType.md) %}
  
- 
-@@ -39,6 +46,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
-   library-cpp-cpuid_check
-   cpp-testing-gtest
-   cpp-testing-gtest_main
-+  library-cpp-resource
-   cpp-testing-common
-   common-unittests-mock
-   controller-unittests-mock
-@@ -69,6 +77,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
- 
- target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
- )
- 
- 
-@@ -94,6 +103,19 @@ set_property(
-   ENVIRONMENT
- )
- 
-+resources(yt-flow-library-cpp-controller-describe-unittests
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-+  INPUTS
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+  KEYS
-+  key_visitor/cpp/pipeline/pipeline.yson
-+  key_visitor/cpp/pipeline_external/pipeline.yson
-+  key_visitor/joiner/pipeline/pipeline.yson
-+  OPTS
-+)
-+
- vcs_info(yt-flow-library-cpp-controller-describe-unittests)
- 
- set_property(
+ {% include [_](./NYT_NFlow_ETimerStoreBackend.md) %}
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.windows-x86_64.txt` (modified, +22/-0)
+**File**: `yt/docs/ru/_includes/flow/concepts/distributed_throttler.md` (modified, +7/-3)
 ```diff
-@@ -12,6 +12,13 @@
- # Please refer to the build instructions in the repository for more information about manual
- # changes in this file.
+@@ -1,5 +1,7 @@
+ # Distributed Throttler в {{product-name}} Flow
  
-+get_built_tool_path(
-+  TOOL_rescompiler_bin
-+  TOOL_rescompiler_dependency
-+  tools/rescompiler/bin
-+  rescompiler
-+)
++В динамической спеке именованного троттлера параметр `mode` по умолчанию равен `prefetching`. Параметр `throttle_timeout` ограничивает ожидание квоты одним вызовом `Throttle` (по умолчанию 5 минут).
 +
- add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ Распределённый троттлер — глобальный для всего [пайплайна](../../../flow/concepts/glossary.md#pipeline) механизм ограничения скорости. На контроллере для каждого именованного троттлера держится [token bucket](https://en.wikipedia.org/wiki/Token_bucket); [джобы](../../../flow/concepts/glossary.md#job) запрашивают у контроллера квоту перед обработкой сообщений или перед произвольным пользовательским действием.
  
+ Квотироваться может либо число обработанных сообщений, либо суммарный размер их payload в байтах — отдельно или вместе.
+@@ -64,7 +66,7 @@
  
-@@ -26,6 +33,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
-   library-cpp-cpuid_check
-   cpp-testing-gtest
-   cpp-testing-gtest_main
-+  library-cpp-resource
-   cpp-testing-common
-   common-unittests-mock
-   controller-unittests-mock
-@@ -44,6 +52,7 @@ target_allocator(yt-flow-library-cpp-controller-describe-unittests
+ ## Реконфигурация на лету {#reconfigure}
  
- target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
- )
+-Все параметры троттлера (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) подхватываются без перезапуска пайплайна — достаточно обновить `dynamic_spec`. Кэшированный в пользовательском коде `IThroughputThrottlerPtr` остаётся валидным после смены конфига.
++Все параметры троттлера (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) подхватываются без перезапуска пайплайна — достаточно обновить `dynamic_spec`. Кэшированный в пользовательском коде `IThroughputThrottlerPtr` остаётся валидным после смены конфига.
  
+ Вес и размер серверного чанка меняются без перестроения prefetch-клиента. Исключение — `use_class_weights_as_limit`: тогда вес входит в скорость, поэтому изменение веса, меняющее размер prefetch-окна, приводит к перестроению клиента, а слишком малое для этого изменение оставляет клиента и уже полученную им квоту на месте. Новая скорость в любом случае применяется на сервере. Смена `input_rows_throttler_class_id` или `input_bytes_throttler_class_id` влияет на последующие RPC; уже полученная локально или находящаяся в полёте квота остаётся учтённой в прежнем классе.
  
-@@ -69,6 +78,19 @@ set_property(
-   ENVIRONMENT
- )
+@@ -74,11 +76,13 @@
  
-+resources(yt-flow-library-cpp-controller-describe-unittests
-+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-+  INPUTS
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+  KEYS
-+  key_visitor/cpp/pipeline/pipeline.yson
-+  key_visitor/cpp/pipeline_external/pipeline.yson
-+  key_visitor/joiner/pipeline/pipeline.yson
-+  OPTS
-+)
+ ## Что будет, если контроллер недоступен {#controller-unavailable}
+ 
+-Клиент троттлера переоткрывает соединение через `retrying_channel`. Пока контроллер не отвечает, локальный prefetch-кэш доедается, и `Throttle()` блокируется в ожидании квоты — джоба прогресса не делает. Когда контроллер возвращается, ожидание разрешается само. Если же контроллер не отвечает дольше, чем суммарный бюджет ретраев `retrying_channel`, работа с троттлером выкинет исключение и джоба упадёт.
++Воркер запрашивает квоту по каналу текущего контроллера. Пока клиент повторяет запрос согласно настройкам `retrying_channel`, он может выдавать остаток локальной квоты. Если повторный запрос доходит до нового контроллера, ожидающий вызов может получить квоту.
 +
- vcs_info(yt-flow-library-cpp-controller-describe-unittests)
++При окончательной ошибке RPC локальный клиент Prefetching запоминает первую ошибку. Все ожидающие и последующие вызовы `Throttle()` получают её в результате future. Синхронные методы, включая `TryAcquire()`, бросают исключение, даже если на клиенте осталась квота. После пересоздания клиента можно снова запрашивать квоту. Это правило действует и в случае, когда контроллер сообщает о неизвестном идентификаторе троттлера.
  
- set_property(
+ ## Что будет, если квоты не хватает {#quota-insufficient}
+ 
+-Если суммарный спрос джоб на много порядков превышает возможную выдачу, отдельные `RequestQuota` могут долго стоять в серверной очереди и в итоге не уложиться в свой `rpc_timeout` × `retry_attempts`. В таком случае `Throttle()` тоже выкинет исключение, что приведет к падению джобы.
++У каждого вызова `Throttle()` есть свой `throttle_timeout`, по умолчанию пять минут. Когда это время истекает, future этого вызова завершается ошибкой таймаута. Остальные вызовы могут получить квоту, пока клиент исправен. Если раньше исчерпались попытки самого RPC, ошибка распространяется на весь клиент. При автоматическом троттлинге входа обе ошибки передаются джобе.
+ 
+ Fallback на локальный лимит ни в одном из этих случаев сейчас не поддержан.
+ 
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp` (modified, +4/-5)
+**File**: `yt/docs/ru/flow/generated_docs/NYT_NFlow_EThrottlerMode.md` (added, +9/-0)
 ```diff
-@@ -41,12 +41,11 @@
- #include <yt/yt/core/test_framework/framework.h>
- 
- #include <library/cpp/json/json_writer.h>
--#include <library/cpp/testing/common/env.h>
--#include <library/cpp/testing/gtest/matchers.h>
- 
--#include <util/folder/path.h>
-+#include <library/cpp/resource/resource.h>
- 
--#include <util/stream/file.h>
-+#include <library/cpp/testing/common/env.h>
-+#include <library/cpp/testing/gtest/matchers.h>
- 
- #include <util/string/split.h>
- 
-@@ -1127,7 +1126,7 @@ TEST_W(TDescribeTest, DescribePipelineExposesKeyVisitorStreams)
- //! letting |patch| adjust the spec node first.
- TPipelineDescription DescribeKeyVisitorTestPipeline(TStringBuf path, const std::function<void(const IMapNodePtr&)>& patch = {})
- {
--    auto config = ConvertToNode(TYsonString(TFileInput(JoinFsPaths(ArcadiaSourceRoot(), "yt/yt/flow/tests", path)).ReadAll()));
-+    auto config = ConvertToNode(TYsonString(NResource::Find(path)));
-     auto specNode = config->AsMap()->GetChildOrThrow("spec")->AsMap();
-     if (patch) {
-         patch(specNode);
+@@ -0,0 +1,9 @@
++## NYT::NFlow::EThrottlerMode {#NYT_NFlow_EThrottlerMode}
++<!-- This file is generated by yt/yt/flow/yandex/tools/generate_yson_struct_doc/generate.sh script -->
++<!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
++
++#|
++|| Возможные значения | **Описание** ||
++|| `prefetching` |  ||
++|#
++
 ```
 
-**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/ya.make` (modified, +4/-4)
+**File**: `yt/docs/ru/flow/generated_docs/NYT_NFlow_TDynamicThrottlerSpec.md` (modified, +7/-1)
 ```diff
-@@ -8,10 +8,10 @@ SRCS(
-     describe_ut.cpp
- )
+@@ -3,10 +3,13 @@
+ <!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
+ Источник: [yt/yt/flow/library/cpp/common/spec.h]({{source-root}}/yt/yt/flow/library/cpp/common/spec.h)
  
--DATA(
--    arcadia/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
--    arcadia/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
--    arcadia/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-+RESOURCE(
-+    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson key_visitor/cpp/pipeline/pipeline.yson
-+    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson key_visitor/cpp/pipeline_external/pipeline.yson
-+    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson key_visitor/joiner/pipeline/pipeline.yson
- )
+-Конфигурация именованного распределённого троттлера.
++Динамические настройки именованного троттлера.
  
- PEERDIR(
+ #|
+ || **Параметр** | **Описание** ||
++|| `mode` | **Тип**: [NYT::NFlow::EThrottlerMode](./all_yson_structs#NYT_NFlow_EThrottlerMode)
++**Значение по умолчанию**: `prefetching`
++Режим троттлера. По умолчанию используется prefetching. ||
+ || `limit` | **Тип**: `std::optional<double>`
+ Средняя скорость выдачи квоты в единицах в секунду. `none` означает `unlimited`. ||
+ || `period` | **Тип**: [TDuration](./all_yson_structs#TDuration)
+@@ -29,6 +32,9 @@
+ || `rpc_timeout` | **Тип**: [TDuration](./all_yson_structs#TDuration)
+ **Значение по умолчанию**: `30s`
+ Таймаут одного запроса `RequestQuota`. ||
++|| `throttle_timeout` | **Тип**: [TDuration](./all_yson_structs#TDuration)
++**Значение по умолчанию**: `5m`
++Максимальное время ожидания квоты одним вызовом Throttle. Изменения действуют для следующих вызовов. ||
+ || `classes` | **Тип**: `THashMap<`[NYT::NFlow::TQuotaClassId](./all_yson_structs#NYT_NFlow_TQuotaClassId)`, NYT::TIntrusivePtr<`[NYT::NFlow::TDynamicThrottlerClassSpec](./all_yson_structs#NYT_NFlow_TDynamicThrottlerClassSpec)`>>`
+ **Значение по умолчанию**: `{}`
+ Именованные взвешенные классы квоты. Ключи должны соответствовать `[0-9A-Za-z_-]+`. Активные классы делят полосу пропорционально весам, а свободная доля перераспределяется. ||
+```
+
+**File**: `yt/docs/ru/flow/generated_docs/all_yson_structs.md` (modified, +2/-0)
+```diff
+@@ -76,6 +76,8 @@
+ 
+ {% include [_](./NYT_NFlow_EQueueTabletIndexRoutingHashPolicy.md) %}
+ 
++{% include [_](./NYT_NFlow_EThrottlerMode.md) %}
++
+ {% include [_](./NYT_NFlow_ETimeType.md) %}
+ 
+ {% include [_](./NYT_NFlow_ETimerStoreBackend.md) %}
 ```
 
 ---
 
-### Incident Patch 2: `25cbc9e7` (2026-11-23)
-**Commit Message**: Fix typo
-commit_hash:2ea1fc34d283c6824d8be0a01943f2cb38cd30a4
+### Incident Patch 2: `ec8de005` (2026-11-24)
+**Commit Message**: Fix babenko issues in Improve incremental heartbeat throttling to work with sequoia modifications batching
 
-**File**: `yt/yt/server/node/tablet_node/tablet_cell_write_manager.cpp` (modified, +2/-2)
+Fix babenko issues in Improve incremental heartbeat throttling to work with sequoia modifications batching
+
+<https://nda.ya.ru/t/70BKZy6j7xFrvo>
+commit_hash:7152edab331735c4812b3a73e18b621ed5a06054
+
+**File**: `yt/yt/server/master/chunk_server/config.cpp` (modified, +2/-2)
 ```diff
-@@ -1050,8 +1050,8 @@ class TTabletCellWriteManager
-         YT_ASSERT_THREAD_AFFINITY(AutomatonThread);
-         YT_VERIFY(HasMutationContext());
- 
--        auto coarseSerializingTabletIds = transaction->PerRowSerializingTabletIds();
--        for (auto tabletId : coarseSerializingTabletIds) {
-+        auto perRowSerializingTabletIds = transaction->PerRowSerializingTabletIds();
-+        for (auto tabletId : perRowSerializingTabletIds) {
-             auto* tablet = Host_->FindTablet(tabletId);
-             if (!tablet) {
-                 EraseOrCrash(transaction->PerRowSerializingTabletIds(), tabletId);
+@@ -1170,8 +1170,8 @@ void TDynamicChunkManagerConfig::Register(TRegistrar registrar)
+                 if (dataNodeTrackerConfig->MaxConcurrentChunkReplicasDuringIncrementalHeartbeat <
+                     sequoiaReplicasConfig->MaxReplicasInIncrementalHeartbeatBatch * 2)
+                 {
+-                    // We should allow at least 2x of MaxReplicasInIncrementalHeartbeatBatch so that batching does not get stuck.
+-                    THROW_ERROR_EXCEPTION("max_concurrent_chunk_replicas_during_incremental_heartbeat should be at least 2x of Sequoia max_replicas_in_incremental_heartbeat_batch");
++                    // We should allow at least twice of MaxReplicasInIncrementalHeartbeatBatch so that batching does not get stuck.
++                    THROW_ERROR_EXCEPTION("max_concurrent_chunk_replicas_during_incremental_heartbeat should be at least twice of Sequoia max_replicas_in_incremental_heartbeat_batch");
+                 }
+             } else {
+                 if (dataNodeTrackerConfig->MaxConcurrentIncrementalHeartbeats <=
 ```
 
 ---
 
-### Incident Patch 3: `76a883b2` (2026-11-23)
-**Commit Message**: Automatic release build for os_test_tool, ya_bin, os_ya, test_tool
+### Incident Patch 3: `079949d5` (2026-11-24)
+**Commit Message**: Fix babenko issues in Fetch chunk replicas for journal chunks only from chunk replica fetcher
 
-Update tools: os_test_tool, ya_bin, os_ya, test_tool
-commit_hash:e35fe6eba57ba618e83051c2667341d351e583ea
+Fix babenko issues in Fetch chunk replicas for journal chunks only from chunk replica fetcher
 
-**File**: `build/mapping.conf.json` (modified, +8/-0)
+<https://nda.ya.ru/t/E_KXQsTm7xFqZe>
+commit_hash:1c1039c326aa556bf0c867ebeda5a46b2a31f67d
+
+**File**: `yt/yt/server/master/chunk_server/chunk_autotomizer.cpp` (modified, +1/-1)
 ```diff
-@@ -610,6 +610,7 @@
-         "14273187565": "{registry_endpoint}/14273187565",
-         "14282041991": "{registry_endpoint}/14282041991",
-         "14302583543": "{registry_endpoint}/14302583543",
-+        "14328599345": "{registry_endpoint}/14328599345",
-         "13945857237": "{registry_endpoint}/13945857237",
-         "14100700440": "{registry_endpoint}/14100700440",
-         "14140236624": "{registry_endpoint}/14140236624",
-@@ -622,6 +623,7 @@
-         "14273187155": "{registry_endpoint}/14273187155",
-         "14282037424": "{registry_endpoint}/14282037424",
-         "14302581226": "{registry_endpoint}/14302581226",
-+        "14328598108": "{registry_endpoint}/14328598108",
-         "10074623276": "{registry_endpoint}/10074623276",
-         "10105424729": "{registry_endpoint}/10105424729",
-         "10116586272": "{registry_endpoint}/10116586272",
-@@ -732,6 +734,7 @@
-         "14273188458": "{registry_endpoint}/14273188458",
-         "14282048128": "{registry_endpoint}/14282048128",
-         "14302587653": "{registry_endpoint}/14302587653",
-+        "14328601032": "{registry_endpoint}/14328601032",
-         "5486713852": "{registry_endpoint}/5486713852",
-         "5514352253": "{registry_endpoint}/5514352253",
-         "5523579199": "{registry_endpoint}/5523579199",
-@@ -944,6 +947,7 @@
-         "14273186815": "{registry_endpoint}/14273186815",
-         "14282034536": "{registry_endpoint}/14282034536",
-         "14302578897": "{registry_endpoint}/14302578897",
-+        "14328597140": "{registry_endpoint}/14328597140",
-         "5486731632": "{registry_endpoint}/5486731632",
-         "5514350352": "{registry_endpoint}/5514350352",
-         "5514360398": "{registry_endpoint}/5514360398",
-@@ -3480,6 +3484,7 @@
-         "14273187565": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
-         "14282041991": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
-         "14302583543": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
-+        "14328599345": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
-         "13945857237": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-         "14100700440": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-         "14140236624": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-@@ -3492,6 +3497,7 @@
-         "14273187155": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-         "14282037424": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-         "14302581226": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-+        "14328598108": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
-         "10074623276": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "10105424729": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "10116586272": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-@@ -3602,6 +3608,7 @@
-         "14273188458": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "14282048128": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "14302587653": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-+        "14328601032": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "5486713852": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "5514352253": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-         "5523579199": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
-@@ -3814,6 +3821,7 @@
-         "14273186815": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
-         "14282034536": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
-         "14302578897": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
-+        "14328597140": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
-         "5486731632": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
-         "5514350352": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
-         "5514360398": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
-```
-
-**File**: `build/platform/test_tool/host.ya.make.inc` (modified, +5/-5)
-```diff
-@@ -1,12 +1,12 @@
- IF (HOST_OS_DARWIN AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302566265)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328604671)
- ELSEIF (HOST_OS_DARWIN AND HOST_ARCH_ARM64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302563191)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328603282)
- ELSEIF (HOST_OS_LINUX AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302571076)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328606754)
- ELSEIF (HOST_OS_LINUX AND HOST_ARCH_AARCH64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302561730)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328602456)
- ELSEIF (HOST_OS_WINDOWS AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302568603)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328605567)
+@@ -158,7 +158,7 @@ class TAutotomyJob
  
- ENDIF()
-```
-
-**File**: `build/platform/test_tool/host_os.ya.make.inc` (modified, +5/-5)
-```diff
-@@ -1,12 +1,12 @@
- IF (HOST_OS_DARWIN AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302583543)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328599345)
- ELSEIF (HOST_OS_DARWIN AND HOST_ARCH_ARM64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302581226)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328598108)
- ELSEIF (HOST_OS_LINUX AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302587653)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328601032)
- ELSEIF (HOST_OS_LINUX AND HOST_ARCH_AARCH64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302578897)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328597140)
- ELSEIF (HOST_OS_WINDOWS AND HOST_ARCH_X86_64)
--    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302585523)
-+    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328600299)
+         const auto& chunkReplicaFetcher = chunkManager->GetChunkReplicaFetcher();
  
- ENDIF()
+-        // This is a context switch, so we should check that chunk is still alive.
++        // Replica fetching is a context switch, so we should check that chunk is still alive.
+         TEphemeralObjectPtr<TChunk> bodyChunkPtr(bodyChunk);
+ 
+         auto replicasOrError = chunkReplicaFetcher->GetChunkReplicas(bodyChunkPtr, /*includeUnapproved*/ true);
 ```
 
-**File**: `ya` (modified, +10/-10)
+**File**: `yt/yt/server/master/chunk_server/config.h` (modified, +2/-2)
 ```diff
-@@ -46,33 +46,33 @@ REGISTRY_ENDPOINT = os.environ.get("YA_REGISTRY_ENDPOINT", "https://devtools-reg
- PLATFORM_MAP = {
-     "data": {
-         "win32": {
--            "md5": "236ac61849a473c182ec71525b238a39",
-+            "md5": "8eb415494e358e646daf81aed7ee57b3",
-             "urls": [
--                f"{REGISTRY_ENDPOINT}/14302631203"
-+                f"{REGISTRY_ENDPOINT}/14328615029"
-             ]
-         },
-         "darwin": {
--            "md5": "8cbd53c8ed973ee9c8492b61f90c81c0",
-+            "md5": "31c463b25b2de9a202de8a3c20b064c3",
-             "urls": [
--                f"{REGISTRY_ENDPOINT}/14302628757"
-+                f"{REGISTRY_ENDPOINT}/14328614064"
-             ]
-         },
-         "darwin-arm64": {
--            "md5": "763d9857907bb7ee496818eeafa5c272",
-+            "md5": "94af6e6a97c54bd9ba2bcd8eb42841b7",
-             "urls": [
--                f"{REGISTRY_ENDPOINT}/14302626606"
-+                f"{REGISTRY_ENDPOINT}/14328612437"
-             ]
-         },
-         "linux-aarch64": {
--            "md5": "705965b5be2078a8d686765d55836c08",
-+            "md5": "77e7d477d336027826b490c1dac89ed0",
-             "urls": [
--                f"{REGISTRY_ENDPOINT}/14302624818"
-+                f"{REGISTRY_ENDPOINT}/14328611440"
-             ]
-         },
-         "linux": {
--            "md5": "e1a2db0bf549f71b2f6bd8925811ef25",
-+            "md5": "3ae225245b8dbb9905f1631a4f6886a5",
-             "urls": [
--                f"{REGISTRY_ENDPOINT}/14302633409"
-+                f"{REGISTRY_ENDPOINT}/14328615919"
-             ]
-         }
-     }
+@@ -758,7 +758,7 @@ struct TDynamicChunkManagerConfig
+     //! (where the chunk will be put).
+     int MaxRunningReplicationJobsPerTargetNode;
+ 
+-    //! Alerts if number of unsuccessful schedule seal job per chunk replica exceeds this value.
++    //! Alerts if the number of unsuccessful attempts to schedule a seal job for a chunk replica exceeds this value.
+     int MaxUnsuccessfulScheduleSealJobAttemptsPerChunkReplica;
+ 
+     //! If set to false, fully disables background chunk refresh.
+@@ -829,7 +829,7 @@ struct TDynamicChunkManagerConfig
+     int MaxChunksPerSeal;
+     //! Maximum number of chunks that can be sealed concurrently.
+     int MaxConcurrentChunkSeals;
+-    //! Alert if the number of chunk seal attempts reaches that number.
++    //! Alert if the number of unsuccessful chunk seal attempts reaches that number.
+     int MaxUnsuccessfulSealAttempts;
+ 
+     //! Maximum number of chunks to report per single fetch request.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1903** (closed): Go SDK: Serialization of Composite types. #1902 (@psk-nebi)
 - **PR #1897** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1895** (closed): yt/chyt: remove hardcoded jaeger (@koct9i)
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
 - **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
-- **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1759,52 +1512,39 @@ commit_hash:e35fe6eba57ba618e83051c2667341d351e583ea
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30579: Embed key-visitor fixtures in describe tests
+## X. Prepare distributed throttler mode selection
 
 **RULE**:
-When implementing operations in `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0bcd7c6`: YT-30579: Embed key-visitor fixtures in describe tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0987aa47`: Prepare distributed throttler mode selection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-get_built_tool_path(
-  TOOL_rescompiler_bin
-  TOOL_rescompiler_dependency
-  tools/rescompiler/bin
-  rescompiler
-)
+In the dynamic spec of a named throttler, `mode` defaults to `prefetching`. The `throttle_timeout` option bounds the quota wait for each `Throttle` call (five minutes by default).
 
-  library-cpp-resource
-  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-resources(yt-flow-library-cpp-controller-describe-unittests
-  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
-  INPUTS
-  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
-  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
-  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
-  KEYS
-  key_visitor/cpp/pipeline/pipeline.yson
-  key_visitor/cpp/pipeline_external/pipeline.yson
-  key_visitor/joiner/pipeline/pipeline.yson
-  OPTS
-)
+All throttler parameters (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
+Each quota request uses the worker's current controller channel. While the client retries a request according to `retrying_channel`, it can still serve calls from cached quota. If a retry reaches the new Controller, the pending request can complete.
 
+If the quota RPC ultimately fails, the local Prefetching client keeps its first terminal error. Pending and subsequent `Throttle()` calls return that error in their futures. Synchronous methods, including `TryAcquire()`, throw the error even if local quota remains. Recreating the client clears the failure. The same rule applies when the Controller rejects a request for an unknown throttler ID.
+Each `Throttle()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+All throttler parameters (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
+The throttler client reopens the connection via `retrying_channel`. While the Controller doesn’t respond, the local prefetch cache is consumed, and `Throttle()` blocks while waiting for a quota — the Job makes no progress. When the Controller comes back, the wait resolves automatically. If the Controller stays unresponsive longer than the total retry budget of `retrying_channel`, the throttler operation throws an exception and the Job fails.
+If the total demand from Jobs far exceeds the possible supply, individual `RequestQuota` calls may wait a long time in the server queue and eventually miss their `rpc_timeout` × `retry_attempts` deadline. In this case, `Throttle()` also throws an exception, which causes the Job to fail.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0bcd7c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0987aa47` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -12762,3 +12762,5 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `0103aff4` | Multi-dimensional audit evidence | 2026-11-24T15:44:35.581Z |
 | `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `fbe86240` | Multi-dimensional audit evidence | 2026-11-24T15:53:38.048Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `dbec78ae` | Multi-dimensional audit evidence | 2026-11-24T15:53:48.074Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e864be67` | Multi-dimensional audit evidence | 2026-11-24T16:01:38.267Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `3d402381` | Multi-dimensional audit evidence | 2026-11-24T16:01:45.760Z |
