@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:30:11.696Z",
-  "total_cycles_completed": 12186,
-  "total_learnings_persisted": 12186,
-  "total_rules_promoted": 11240,
+  "last_updated": "2026-11-24T22:42:37.202Z",
+  "total_cycles_completed": 12189,
+  "total_learnings_persisted": 12189,
+  "total_rules_promoted": 11243,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:11:24.114Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:20:45.403Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:20:48.080Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:30:07.366Z",
       "repository": "metalbear-co/mirrord",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T22:30:11.696Z",
       "repository": "kotest/kotest",
       "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:42:26.329Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:42:27.747Z",
+      "repository": "google/closure-compiler",
+      "learningId": "learn-github-google-closure-compiler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:42:37.202Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

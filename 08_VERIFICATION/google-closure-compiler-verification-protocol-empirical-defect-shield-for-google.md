@@ -4,22 +4,22 @@
 {
   "source_repository": "google/closure-compiler",
   "source_url": "https://github.com/google/closure-compiler",
-  "source_version": "77c890f4",
+  "source_version": "1b85768e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T23:05:27.803Z",
+  "timestamp": "2026-11-24T22:42:28.106Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-google-closure-compiler",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [google/closure-compiler](https://github.com/google/closure-compiler) (Revision: `77c890f4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:05:27.803Z`  
+> **Provenance**: Harvested from [google/closure-compiler](https://github.com/google/closure-compiler) (Revision: `1b85768e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T22:42:28.106Z`  
 > **Learning ID**: `learn-github-google-closure-compiler`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `google/closure-compiler` (Commit: `77c890f4`)
+- **Target Repository**: `google/closure-compiler` (Commit: `1b85768e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:05:26.421Z  
+> **Harvest Timestamp**: 2026-11-24T22:42:26.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2472,318 +2472,398 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `906c51c8` (2026-11-19)
-**Commit Message**: Merge pull request #4397 from rajath201:substr-length-overflow
+### Incident Patch 1: `cb49bb8a` (2026-11-20)
+**Commit Message**: Accept `continue` targeting outer labels of multiply-labeled loops.
 
-PiperOrigin-RevId: 1025121299
+The parser now accepts `continue <label>` when `<label>` names an outer label
+on a multiply-labeled loop (`for`, `for..in`, `for..of`, `for await..of`,
+`while`, or `do..while`), matching ECMA-262 `ContainsUndefinedContinueTarget`.
+Previously, on input such as
+`async function f(xs) { a: b: for await (const x of xs) { continue a; } }`,
+the parser checked only the immediate statement child of the outer label. It
+saw the inner label instead of the loop and rejected valid code with
+`continue can only use labels of iteration statements`.
 
-**File**: `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java` (modified, +3/-1)
+`IRFactory.validateBreakContinue()` now unwraps consecutive `Token.LABEL` nodes
+from `parent.getLastChild()` before calling `isContinueTarget()`. The parser
+still rejects `continue` statements that target labels wrapping non-iteration
+statements (such as blocks, `switch`, `if`, `try`, or `with`) or that cross
+function or class static-block boundaries.
+
+PiperOrigin-RevId: 1026793930
+
+**File**: `src/com/google/javascript/jscomp/parsing/IRFactory.java` (modified, +13/-4)
 ```diff
-@@ -1121,7 +1121,9 @@ private Node tryFoldStringSubstr(Node n, Node stringNode, Node arg1) {
-     // specify the behavior in some of these cases, but we haven't
-     // done a thorough investigation that it is correctly implemented
-     // in all browsers.
--    if ((start + length) > stringAsString.length() || (length < 0) || (start < 0)) {
-+    // Compare against the remaining length instead of computing start + length, which can
-+    // overflow when the length argument is large (e.g. Infinity saturates to Integer.MAX_VALUE).
-+    if ((start < 0) || (length < 0) || length > stringAsString.length() - start) {
-       return n;
-     }
- 
-```
-
-**File**: `test/com/google/javascript/jscomp/PeepholeReplaceKnownMethodsTest.java` (modified, +6/-0)
-```diff
-@@ -567,6 +567,12 @@ public void testFoldStringSubstr() {
-     foldSame("x = 'abcde'.substr(1, 2, 3)");
-     foldSame("x = 'a'.substr(0, 2)");
- 
-+    // start + length must not overflow int
-+    foldSame("x = 'abcde'.substr(1, Infinity)");
-+    foldSame("x = 'abcde'.substr(1, 2147483647)");
-+    foldSame("x = 'abcde'.substr(2, 4294967296)");
-+    foldSame("x = 'abcde'.substr(Infinity, Infinity)");
-+
-     // Template strings
-     foldSame("x = `abcdef`.substr(0,2)");
-     foldSame("x = `abc ${xyz} def`.substr(0,2)");
-```
-
----
-
-### Incident Patch 2: `c921833f` (2026-11-18)
-**Commit Message**: Speed up UnionType.Builder deduplication with lazy identity sets, hoisted invariants, and disjoint fast-skips.
-
-Optimizes `UnionType.Builder.addAlternate` without changing union
-canonicalization or diagnostics:
-- Adds a lazy `IdentityHashMap` (`>= 8` alternates, synchronized across
-  unresolved additions, `functionTypePosition` replacements, and element
-  removals) for O(1) pointer-identity short-circuiting.
-- Hoists alternate-invariant `isUnknownType()` and lazy
-  `hasAnyTemplateTypes()` queries out of the linear scan loop (resetting them
-  when `case 7a` rewrites `alternate`).
-- Skips `SubtypeChecker` allocation for provably disjoint pairs of non-identical
-  pure `ValueType` singletons (excluding `KnownSymbolType`) and clean
-  non-generic `InstanceObjectType`s.
-
-PiperOrigin-RevId: 1024869417
-
-**File**: `src/com/google/javascript/rhino/jstype/UnionType.java` (modified, +110/-13)
-```diff
-@@ -58,6 +58,7 @@
- import java.util.ArrayList;
- import java.util.Collection;
- import java.util.Collections;
-+import java.util.IdentityHashMap;
- import java.util.List;
- import org.jspecify.annotations.Nullable;
- 
-@@ -669,10 +670,16 @@ public boolean hasAnyTemplateTypesInternal() {
-    * <p>Most users of this class should prefer {@link JSTypeRegistry#createUnionType} instead.
-    */
-   public static final class Builder {
-+    private static final int IDENTITY_SET_THRESHOLD = 8;
-+
-     private final @Nullable UnionType rebuildTarget;
-     private final JSTypeRegistry registry;
- 
-     private final List<JSType> alternates = new ArrayList<>();
-+
-+    @SuppressWarnings("DeterministicDatastructure")
-+    private @Nullable IdentityHashMap<JSType, Boolean> alternateIdentitySet = null;
-+
-     private @Nullable ImmutableList<JSType> finalAlternates = null;
- 
-     // If a union has ? or *, we do not care about any other types, except for undefined (for
-@@ -757,13 +764,10 @@ public Builder addAlternate(JSType alternate) {
-       // JSType operations like equality and subtyping are not reliable pre-resolution.
-       if (!alternate.isResolved()) {
-         this.alternatesResolvedBeforeBuild = false;
--
--        for (JSType current : alternates) {
--          if (identical(current, alternate)) {
--            return this;
--          }
-+        if (containsIdenticalAlternate(alternate)) {
-+          return this;
-         }
--        alternates.add(alternate);
-+        appendAlternate(alternate);
-         return this;
+@@ -621,10 +621,19 @@ private void validateBreakContinue(Node n) {
        }
  
-@@ -785,17 +789,27 @@ public Builder addAlternate(JSType alternate) {
-         return this;
-       }
- 
-+      if (containsIdenticalAlternate(alternate)) {
-+        return this;
-+      }
-+
-       // Function types are special, because they have their
-       // own bizarre sub-lattice. See the comments on
-       // FunctionType#supAndInf helper and above at functionTypePosition.
-       if (alternate.isFunctionType() && functionTypePosition != -1) {
-         // See the comments on functionTypePosition above.
-         FunctionType other = alternates.get(functionTypePosition).toMaybeFunctionType();
-         FunctionType supremum = alternate.toMaybeFunctionType().supAndInfHelper(other, true);
--        alternates.set(functionTypePosition, supremum);
-+        replaceAlternate(functionTypePosition, other, supremum);
-         return this;
-       }
- 
-+      boolean altIsUnknown = alternate.isUnknownType();
-+      boolean altHasTemplateTypesComputed = false;
-+      boolean altHasTemplateTypes = false;
-+      boolean altIsDisjointValue = isDisjointValueType(alternate);
-+      boolean altIsCleanObject = isCleanConcreteObjectForDisjointCheck(alternate);
-+
-       // Look through the alternates we've got so far,
-       // and check if any of them are duplicates of
-       // one another.
-@@ -805,14 +819,19 @@ public Builder addAlternate(JSType alternate) {
-         if (!current.isResolved()) { // Defer de-duplicating unresolved alternates.
-           continue;
+       if (parent.isLabel() && labelsMatch(parent, labelName)) {
+-        if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
+-          // report invalid continue target
+-          errorReporter.error(
+-              UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
++        if (n.isContinue()) {
++          // Consecutive labels (e.g. `a: b: for (...) {}`) share the same label set for the
++          // labeled statement per ECMA-262 ContainsUndefinedContinueTarget. Unwrap nested LABEL
++          // nodes to inspect the underlying statement.
++          Node target = parent.getLastChild();
++          while (target.isLabel()) {
++            target = target.getLastChild();
++          }
++          if (!isContinueTarget(target)) {
++            // report invalid continue target
++            errorReporter.error(
++                UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
++          }
          }
-+        if (areDisjointFast(altIsDisjointValue, altIsCleanObject, alternate, current)) {
-+          continue;
-+        }
- 
-         // Unknown types may just be names that haven't
-         // been resolved yet. So keep these in the union, and just use
-         // equality checking for simple de-duping.
--        if (alternate.isUnknownType()
--            || current.isUnknownType()
--            || alternate.hasAnyTemplateTypes()
--            || current.hasAnyTemplateTypes()) {
-+        boolean curIsUnknown = current.isUnknownType();
-+        if (!altIsUnknown && !curIsUnknown && !altHasTemplateTypesComputed) {
-+          altHasTemplateTypes = alternate.hasAnyTemplateTypes();
-+          altHasTemplateTypesComputed = true;
-+        }
-+        if (altIsUnknown || curIsUnknown || altHasTemplateTypes || current.hasAnyTemplateTypes()) {
-           if (alternate.equals(current)) {
-             // Alternate is unnecessary.
-             return this;
-@@ -871,6 +890,11 @@ public Builder addAlternate(JSType alternate) {
-                 ObjectType rawType = templatizedCurrent.getReferencedObjTypeInternal();
-                 // Providing no type-parameter values specializes `rawType` on `?` by default.
-                 alternate = registry.createTemplatizedType(rawType, ImmutableList.of());
-+                altIsUnknown = alternate.isUnknownType();
-+                altHasTemplateTypesComputed = false;
-+                altHasTemplateTypes = false;
-+                altIsDisjointValue = isDisjointValueType(alternate);
-+                altIsCleanObject = isCleanConcreteObjectForDisjointCheck(alternate);
-                 removeCurrent = true;
-               }
-             }
-@@ -888,7 +912,7 @@ public Builder addAlternate(JSType alternate) {
-         }
- 
-         if (removeCurrent) {
--          alternates.remove(index);
-+          removeAlternateAt(index);
- 
-           if (index == functionTypePosition) {
-             functionTypePosition = -1;
-@@ -906,10 +930,83 @@ public 
+       }
+     } else if (n.isContinue()) {
 ```
 
-**File**: `test/com/google/javascript/rhino/jstype/UnionTypeBuilderTest.java` (modified, +198/-0)
+**File**: `test/com/google/javascript/jscomp/ControlFlowAnalysisTest.java` (modified, +37/-0)
 ```diff
-@@ -42,6 +42,7 @@
- import static com.google.javascript.rhino.testing.TypeSubject.assertType;
- import static org.junit.Assert.assertThrows;
+@@ -271,6 +271,18 @@ private ControlFlowGraph<Node> createCfg(String input) {
+     return createCfg(input, false);
+   }
  
-+import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
- import com.google.javascript.rhino.testing.BaseJSTypeTestCase;
- import com.google.javascript.rhino.testing.MapBasedScope;
-@@ -448,6 +449,203 @@ public void testLargeUnion_recordTypeEqualityAndNonStructuralSubtyping() {
-     assertThat(union.getAlternates()).hasSize(12);
++  private ControlFlowGraph<Node> createCfgWithNoErrors(String input) {
++    Compiler compiler = new Compiler();
++    Node root = compiler.parseSyntheticCode("cfgtest", input);
++    assertThat(compiler.getErrors()).isEmpty();
++    return ControlFlowAnalysis.builder()
++        .setCompiler(compiler)
++        .setCfgRoot(root)
++        .setTraverseFunctions(true)
++        .setIncludeEdgeAnnotations(true)
++        .computeCfg();
++  }
++
+   @Test
+   public void testSimpleStatementsInScript() {
+     String src = "var a; a = a; a = a";
+@@ -335,6 +347,31 @@ public void testBreakWithMultipleLabels() throws IOException {
+     assertReturnEdge(cfg, Token.BREAK);
    }
  
 +  @Test
-+  public void
-+      testIdentitySetThreshold_growthReplacementsAndRemovalsMaintainIdentityDeduplication() {
-+    List<ObjectType> classes = createDistinctInstanceTypes("ThreshCls", 9);
-+    FunctionType fnString = createFunctionWithReturn(STRING_TYPE);
-+    FunctionType fnNumber = createFunctionWithReturn(NUMBER_TYPE);
-+    FunctionType fnSub = createFunctionWithReturn(sub);
-+    FunctionType fnBase = createFunctionWithReturn(base);
-+
-+    UnionType.Builder builder = UnionType.builder(registry);
-+    // Stay below IDENTITY_SET_THRESHOLD (7 alternates: sub, fnString, classes[0..4]).
-+    builder.addAlternate(sub).addAlternate(fnString);
-+    for (int i = 0; i < 5; i++) {
-+      builder.addAlternate(classes.get(i));
-+    }
-+    // Linear identity scan before threshold must drop exact duplicates.
-+    builder.addAlternate(sub).addAlternate(fnString).addAlternate(classes.get(0));
-+
-+    // Cross IDENTITY_SET_THRESHOLD = 8 (7 -> 8 -> 9 -> 10 -> 11 alternates).
-+    for (int i = 5; i < classes.size(); i++) {
-+      builder.addAlternate(classes.get(i));
-+    }
-+    // Lazy IdentityHashMap must contain alternates added both before and after crossing 8.
-+    builder.addAlternate(classes.get(0)).addAlternate(classes.get(8)).addAlternate(fnString);
-+
-+    // Function supremum replacement (`replaceAlternate`) updates alternateIdentitySet to hold
-+    // `function(): (number|string)` and evict `fnString`.
-+    builder.addAlternate(fnNumber);
-+    // Removing `sub` via `removeAlternateAt` shifts `functionTypePosition` down and evicts `sub`.
-+    builder.addAlternate(base);
-+    builder.addAlternate(base).addAlternate(fnString).addAlternate(fnNumber);
-+
-+    UnionType union = builder.build().toMaybeUnionType();
-+    assertThat(union).isNotNull();
-+    // 9 classes + base + 1 merged function = 11 alternates.
-+    assertThat(union.getAlternates()).hasSize(11);
-+    assertThat(union.getAlternates()).containsAtLeastElementsIn(classes);
-+    assertThat(union.getAlternates()).contains(base);
-+    assertThat(union.getAlternates()).doesNotContain(sub);
-+    assertThat(union.getAlternates().stream().filter(JSType::isFunctionType).count()).isEqualTo(1);
-+    assertType(
-+            union.getAlternates().stream().filter(JSType::isFunctionType).findFirst().orElseThrow())
-+        .isEqualTo(createFunctionWithReturn(registry.createUnionType(NUMBER_TYPE, STRING_TYPE)));
-+
-+    // Also verify `replaceAlternate` when supremum is reference-identical to the incoming function
-+    // (`fnBase`), and `removeAlternateAt` when `OBJECT_TYPE` removes all classes and the function
-+    // at `index == functionTypePosition`.
-+    UnionType.Builder collapseBuilder = UnionType.builder(registry);
-+    collapseBuilder.addAlternate(STRING_TYPE).addAlternate(fnSub);
-+    for (ObjectType cls : classes) {
-+      collapseBuilder.addAlternate(cls);
-+    }
-+    collapseBuilder.addAlternate(fnBase).addAlternate(fnBase);
-+    collapseBuilder.addAlternate(OBJECT_TYPE).addAlternate(OBJECT_TYPE).addAlternate(STRING_TYPE);
-+
-+    UnionType collapsed = collapseBuilder.build().toMaybeUnionType();
-+    assertThat(collapsed).isNotNull();
-+    assertThat(collapsed.getAlternates()).containsExactly(STRING_TYPE, OBJECT_TYPE);
++  public void testContinueWithMultipleLabels_while() {
++    String src = "La: Lb: while (true) { continue La; }";
++    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
++    assertEdge(cfg, Token.CONTINUE, Token.WHILE, Branch.UNCOND);
 +  }
 +
 +  @Test
-+  public void testDisjointFastSkips_valueTypesKnownSymbolsAndCleanInstanceObjects() {
-+    // All 7 pure ValueType singletons are mutually disjoint, while identical repeats short-circuit.
-+    UnionType allPureValues =
-+        UnionType.builder(registry)
-+            .addAlternate(BOOLEAN_TYPE)
-+            .addAlternate(NUMBER_TYPE)
-+            .addAlternate(BIGINT_TYPE)
-+            .addAlternate(STRING_TYPE)
-+            .addAlternate(VOID_TYPE)
-+            .addAlternate(NULL_TYPE)
-+            .addAlternate(SYMBOL_TYPE)
-+            .addAlternate(STRING_TYPE)
-+            .addAlternate(SYMBOL_TYPE)
-+            .build()
-+            .toMaybeUnionType();
-+    assertThat(allPureValues).isNotNull();
-+    assertThat(allPureValues.getAlternates())
-+        .containsExactly(
-+            BOOLEAN_TYPE,
-+            NUMBER_TYPE,
-+            BIGINT_TYPE,
-+            STRING_TYPE,
-+            VOID_TYPE,
-+            NULL_TYPE,
-+            SYMBOL_TYPE);
++  public void testContinueWithMultipleLabels_for() {
++    String src = "La: Lb: for (var i = 0; i < 10; i++) { while (x) { continue La; } }";
++    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
++    assertCrossEdge(cfg, Token.CONTINUE, Token.INC, Branch.UNCOND);
++    assertNoEdge(cfg, Token.CONTINUE, Token.WHILE);
++  }
 +
-+    // KnownSymbolType extends SymbolType (a ValueType) and is a subtype of `symbol`, so it must NOT
-+    // be fast-skipped as disjoint from SYMBOL_TYPE, while distinct KnownSymbolTypes stay separate.
-+    KnownSymbolType symIterator = new KnownSymbolType(registry
++  @Test
++  public void testContinueWithMultipleLabels_forAwaitOf() {
++    String src =
++        "async function f(xs) { La: Lb: for await (const x of xs) { if (x) continue La; break Lb;"
++            + " } return 0; }";
++    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
++    assertEdge(cfg, Token.CONTINUE, Token.FOR_AWAIT_OF, Branch.UNCOND);
++    assertCrossEdge(cfg, Token.BREAK, Token.RETURN, Branch.UNCOND);
++  }
++
+   @Test
+   public void testBreakingWhile() {
+     String src = "var x; while(true) { break; } x();";
 ```
 
----
-
-### Incident Patch 3: `365b8b6e` (2026-11-19)
-**Commit Message**: Merge pull request #4394 from Mwrnk:fix/async-generator-yield-star-await
-
-PiperOrigin-RevId: 1025751306
-
-**File**: `src/com/google/javascript/jscomp/js/es6/async_generator_wrapper.js` (modified, +3/-1)
+**File**: `test/com/google/javascript/jscomp/Es6ForOfConverterTest.java` (modified, +36/-0)
 ```diff
-@@ -430,7 +430,9 @@ $jscomp.AsyncGeneratorWrapper.prototype.runDelegateFrame_ = function() {
-       if (param instanceof $jscomp.AsyncGeneratorWrapper$ActionRecord) {
-         param = param.value;
-       }
--      this.delegate_[frame.method](param)
-+      // Per the spec, `yield*` awaits the inner result, so the delegate may
-+      // return a plain {value, done} object instead of a Promise.
-+      Promise.resolve(this.delegate_[frame.method](param))
-           .then(this.boundHandleDelegateResult_, this.boundHandleDelegateError_)
-           .catch(this.boundRejectAndClose_);
-     } catch (err) {
+@@ -393,6 +393,26 @@ public void testLabelForOf() {
+           $jscomp.iteratorClose(ITER$0, KEY$1$x);
+         }
+         """);
++    test(
++        "a: b: for (var x of [1, 2]) { if (x) continue a; break b; }",
++        """
++        var x;
++        var ITER$0 = (0, $jscomp.makeIterator)([1, 2]);
++        var KEY$1$x = ITER$0.next();
++        try {
++          a: b: for (; !KEY$1$x.done; KEY$1$x = ITER$0.next()) {
++            x = KEY$1$x.value;
++            {
++              if (x) {
++                continue a;
++              }
++              break b;
++            }
++          }
++        } finally {
++          $jscomp.iteratorClose(ITER$0, KEY$1$x);
++        }
++        """);
+   }
+ 
+   @Test
+@@ -430,6 +450,22 @@ public void testLabelForOf_assumeIteratorCloseIsNotNeeded() {
+           }
+         }
+         """);
++    test(
++        "a: b: for (var x of [1, 2]) { if (x) continue a; break b; }",
++        """
++        var x;
++        var ITER$0 = (0, $jscomp.makeIterator)([1, 2]);
++        var KEY$1$x = ITER$0.next();
++        a: b: for (; !KEY$1$x.done; KEY$1$x = ITER$0.next()) {
++          x = KEY$1$x.value;
++          {
++            if (x) {
++              continue a;
++            }
++            break b;
++          }
++        }
++        """);
+   }
+ 
+   @Test
+```
+
+**File**: `test/com/google/javascript/jscomp/RenameLabelsTest.java` (modified, +9/-0)
+```diff
+@@ -110,6 +110,15 @@ public void testRenameGlobals() {
+     test(
+         "Foo:Goo:while(1){a(); continue Goo; break Foo;}",
+         "a:b:while(1){a(); continue b;break a;}");
++    test(
++        "Foo:Goo:while(1){a(); continue Foo; break Goo;}",
++        "a:b:while(1){a(); continue a;break b;}");
++    test("Foo:Goo:while(1){a(); continue Foo;}", "a:while(1){a(); continue a;}");
++    test(
++        "async function f(xs) { Foo: Goo: for await (const x of xs) { if (x) continue Foo; break"
++            + " Goo; } }",
++        "async function f(xs) { a: b: for await (const x of xs) { if (x) continue a; break b; }"
++            + " }");
+ 
+     test("Foo:Bar:X:{ break Bar; }", "b:{ break b; }");
+     test("Foo:Bar:X:{ break Bar; break X; }", "b:c:{ break b; break c;}");
+```
+
+**File**: `test/com/google/javascript/jscomp/integration/IntegrationTest.java` (modified, +94/-0)
+```diff
+@@ -6462,5 +6462,99 @@ function h(fn) {
+         b.out = [c, d];
+         """);
+   }
++
++  @Test
++  public void testContinueOuterLabelOfDoublyLabeledForAwait_whitespaceOnly() {
++    CompilerOptions options = createCompilerOptions();
++    CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
++    options.setLanguageIn(LanguageMode.UNSTABLE);
++    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
++    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
++
++    testSame(
++        options,
++        "async function f(xs) { a: b: for await (const x of xs) { if (x) continue a; break b; } }");
++  }
++
++  @Test
++  public void testContinueOuterLabelOfDoublyLabeledForAwait_simple() {
++    CompilerOptions options = createCompilerOptions();
++    CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
++    options.setLanguageIn(LanguageMode.UNSTABLE);
++    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
++    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
++    externs =
++        ImmutableList.of(
++            SourceFile.fromCode(
++                "testExterns.js",
++                new TestExternsBuilder().addConsole().addExtra("var window;").build()));
++
++    test(
++        options,
++        """
++        async function f(xs, cond) {
++          outer: inner: for await (const x of xs) {
++            for (let i = 0; i < 2; i++) {
++              if (cond(x, i)) continue outer;
++              if (x) break inner;
++            }
++            console.log(x);
++          }
++        }
++        window['f'] = f;
++        """,
++        """
++        async function f(a, c) {
++          a: b: for await (let b of a) {
++            for (a = 0; a < 2; a++) {
++              if (c(b, a)) continue a;
++              if (b) break b;
++            }
++            console.log(b);
++          }
++        }
++        window.f = f;
++        """);
++  }
++
++  @Test
++  public void testContinueOuterLabelOfDoublyLabeledForAwait_advanced() {
++    CompilerOptions options = createCompilerOptions();
++    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
++    options.setLanguageIn(LanguageMode.UNSTABLE);
++    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
++    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
++    externs =
++        ImmutableList.of(
++            SourceFile.fromCode(
++                "testExterns.js",
++                new TestExternsBuilder().addConsole().addExtra("var window;").build()));
++
++    test(
++        options,
++        """
++        async function f(xs, cond) {
++          outer: inner: for await (const x of xs) {
++            for (let i = 0; i < 2; i++) {
++              if (cond(x, i)) continue outer;
++              if (x) break inner;
++            }
++            console.log(x);
++          }
++        }
++        window['f'] = f;
++        """,
++        """
++        window.f = async function(a, c) {
++          a: b: for await (let b of a) {
++            for (a = 0; a < 2; a++) {
++              if (c(b, a)) continue a;
++              if (b) break b;
++            }
++            console.log(b);
++          }
++        };
++        """);
++  }
+ }
+ 
+```
+
+**File**: `test/com/google/javascript/jscomp/parsing/ParserTest.java` (modified, +93/-0)
+```diff
+@@ -470,6 +470,99 @@ public void testContinueInForOf() {
+         """);
+   }
+ 
++  @Test
++  public void testContinueToOuterLabelOfStackedLabeledLoops() {
++    parse("a: b: for (;;) { continue a; continue b; }");
++    parse("a: b: for (;;) continue a;");
++    parse("a: b: for (var k in o) { continue a; continue b; }");
++    parse("a: b: while (1) { continue a; continue b; }");
++    parse("a: b: while (1) continue a;");
++    parse("a: b: do { continue a; continue b; } while (1);");
++    parse("a: b: c: while (1) { continue a; continue b; continue c; }");
++    parse("a: b: for (;;) { c: for (;;) { continue a; continue b; continue c; } }");
++    parse("a: { b: c: while (1) { continue b; continue c; } }");
++    parse("class C { static { a: b: while (true) { continue a; } } }");
++  }
++
++  @Test
++  public void testContinueToOuterLabelOfStackedLabeledForOf() {
++    expectFeatures(Feature.FOR_OF);
++    parse("a: b: for (const x of xs) { if (x) continue a; break b; }");
++  }
++
++  @Test
++  public void testContinueToOuterLabelOfStackedLabeledForAwaitOf() {
++    expectFeatures(Feature.FOR_AWAIT_OF);
++    parse(
++        """
++        async function f(xs) {
++          a: b: for await (const x of xs) {
++            if (x) continue a;
++            break b;
++          }
++        }
++        """);
++    parse(
++        """
++        async function f(xs) {
++          a: b: c: for await (const x of xs) {
++            continue a;
++            continue b;
++            continue c;
++          }
++        }
++        """);
++  }
++
++  @Test
++  public void testContinueToOuterLabelOfStackedLabeledNonLoops_error() {
++    parseError("a: b: { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: b: { while (1) { continue b; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: b: c: { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: { b: while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError(
++        "while (1) { a: b: switch (1) { case 1: continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: b: if (x) { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: b: try { while (1) { continue a; } } finally {}", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("while (1) { a: b: continue a; }", UNEXPECTED_LABELLED_CONTINUE);
++    parseError(
++        "class C { static { a: b: { while (true) { continue a; } } } }",
++        UNEXPECTED_LABELLED_CONTINUE);
++  }
++
++  @Test
++  public void testContinueToOuterLabelOfStackedLabeledWith_error() {
++    strictMode = SLOPPY;
++    parseError("a: b: with (o) { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
++  }
++
++  @Test
++  public void testContinueToStackedLabel_duplicateLabels_error() {
++    parseError("a: a: while (1) { continue a; }", "Duplicate label \"a\"");
++    parseError("a: { a: b: while (1) { continue a; } }", "Duplicate label \"a\"");
++    parseError(
++        "a: while (1) { a: b: { continue a; } }",
++        "Duplicate label \"a\"",
++        UNEXPECTED_LABELLED_CONTINUE);
++  }
++
++  @Test
++  public void testContinueToStackedLabel_ideModeErrorRecovery() {
++    isIdeMode = true;
++    parseError("a: b:", "primary expression expected");
++    parseError("a: b: continue a;", UNEXPECTED_LABELLED_CONTINUE);
++    parseError("a: b: for (;;) { continue a;", "'}' expected");
++  }
++
++  @Test
++  public void testContinueToStackedLabelCrossingBoundary_error() {
++    parseError(
++        "a: b: while (1) { var f = function() { continue a; }; }", UNDEFINED_LABEL + " \"a\"");
++    parseError("a: b: while (1) { () => { continue a; }; }", UNDEFINED_LABEL + " \"a\"");
++    parseError(
++        "a: b: while (1) { class C { static { continue a; } } }", UNDEFINED_LABEL + " \"a\"");
++  }
++
+   /**
+    * @bug 19100575
+    */
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4398** (2026-11-21): Move Element.children from Gecko to W3C extern (@zbynek)
 - **PR #4397** (2026-11-19): don't overflow start + length when folding String.prototype.substr (@rajath201)
 - **PR #4394** (2026-11-19): Await the delegate result in async generator yield* (@Mwrnk)
 - **PR #4392** (2026-11-13): Move Event.isTrusted from Gecko to W3C extern (@zbynek)
 - **PR #4391** (2026-11-16): Add externs for Intl.DurationFormat. (@avelad)
 - **PR #4389** (2026-11-19): Name the current renaming report flags in their conflict errors (@ZainnQureshii)
-- **PR #4384** (2026-11-19): print a raw backspace in a regex literal as \x08, not \b (@rajath201)
 
 ---
 
@@ -2803,33 +2883,46 @@ PiperOrigin-RevId: 1025751306
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in PeepholeReplaceKnownMethods.java
+## X. Accept `continue` targeting outer labels of multiply-labeled loops.
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/parsing/IRFactory.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `906c51c8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cb49bb8a`: Accept `continue` targeting outer labels of multiply-labeled loops.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/parsing/IRFactory.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    // Compare against the remaining length instead of computing start + length, which can
-    // overflow when the length argument is large (e.g. Infinity saturates to Integer.MAX_VALUE).
-    if ((start < 0) || (length < 0) || length > stringAsString.length() - start) {
+        if (n.isContinue()) {
+          // Consecutive labels (e.g. `a: b: for (...) {}`) share the same label set for the
+          // labeled statement per ECMA-262 ContainsUndefinedContinueTarget. Unwrap nested LABEL
+          // nodes to inspect the underlying statement.
+          Node target = parent.getLastChild();
+          while (target.isLabel()) {
+            target = target.getLastChild();
+          }
+          if (!isContinueTarget(target)) {
+            // report invalid continue target
+            errorReporter.error(
+                UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
+          }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-    if ((start + length) > stringAsString.length() || (length < 0) || (start < 0)) {
+        if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
+          // report invalid continue target
+          errorReporter.error(
+              UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `906c51c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cb49bb8a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

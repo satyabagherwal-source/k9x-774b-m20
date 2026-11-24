@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "ac734972",
+    "sourceVersion": "d0c6ad20",
     "license": "NOASSERTION",
-    "contentHash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
-    "lastHarvestedAt": "2026-11-23T19:51:15.444Z",
+    "contentHash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
+    "lastHarvestedAt": "2026-11-24T22:42:26.322Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "a26f8abe",
+    "sourceVersion": "fe49e548",
     "license": "Apache-2.0",
-    "contentHash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
-    "lastHarvestedAt": "2026-11-24T02:04:21.195Z",
+    "contentHash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
+    "lastHarvestedAt": "2026-11-24T22:42:37.195Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "77c890f4",
+    "sourceVersion": "1b85768e",
     "license": "Apache-2.0",
-    "contentHash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
-    "lastHarvestedAt": "2026-11-20T23:05:27.582Z",
+    "contentHash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
+    "lastHarvestedAt": "2026-11-24T22:42:27.740Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:30:20.650Z",
+  "last_updated": "2026-11-24T22:42:44.929Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -1063,7 +1063,7 @@
       "staged_for_review": 1
     },
     "google-closure-compiler-learnings.md": {
-      "processed_at": "2026-11-20T23:05:39.060Z",
+      "processed_at": "2026-11-24T22:42:42.207Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1273,7 +1273,7 @@
       "staged_for_review": 1
     },
     "restatedev-restate-learnings.md": {
-      "processed_at": "2026-11-23T19:51:26.434Z",
+      "processed_at": "2026-11-24T22:42:40.925Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2153,7 +2153,7 @@
       "staged_for_review": 1
     },
     "alibaba-zvec-learnings.md": {
-      "processed_at": "2026-11-24T02:04:26.311Z",
+      "processed_at": "2026-11-24T22:42:43.910Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3868,7 +3868,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3948,
+  "total_dossiers_evaluated": 3951,
   "total_canonical_promoted": 519,
-  "total_staged_for_review": 3009
+  "total_staged_for_review": 3012
 }

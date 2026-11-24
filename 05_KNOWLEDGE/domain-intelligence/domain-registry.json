@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T22:30:20.009Z",
+  "last_updated": "2026-11-24T22:42:44.507Z",
   "total_records": 2587,
   "domains": {
     "A": {
@@ -14045,8 +14045,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "c25c862023001f7ecb52d8299b9fa45b091563e4aa0a185adca34d479619167d",
-      "created_at": "2026-11-23T19:51:15.808Z"
+      "content_hash": "a3a19011f596d0d4bbda0c2678af2c7b2765bbfb9d9f78068101b18b7dac5d71",
+      "created_at": "2026-11-24T22:42:26.928Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -14122,8 +14122,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "b5b1eded5ddc80e24e4f3321a88a22f7ececa4e2d3fb9f0bd83e18e4b3a4806f",
-      "created_at": "2026-11-23T19:51:26.919Z"
+      "content_hash": "c1a220b9265a684ebb034c835ca46a228906075ae1059bbef01dc82bd59621e6",
+      "created_at": "2026-11-24T22:42:41.727Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -24962,8 +24962,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "b6f7ca619ff2aa364a3f01ed9e5ace119dc2b3633a22823df7910025f7e239c4",
-      "created_at": "2026-11-24T02:04:21.604Z"
+      "content_hash": "e0b11ec77b6f1acd8e32357e400c1eb8fea41aa44280a05b0bbdb88a4243e6a9",
+      "created_at": "2026-11-24T22:42:37.751Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -26080,8 +26080,8 @@
       "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
       "repository": "google/closure-compiler",
-      "content_hash": "50c4ea2f8dbdfa832be64953b1c6ad226b30fec748e84f58db00ac892cbf3d30",
-      "created_at": "2026-11-20T23:05:27.978Z"
+      "content_hash": "cf7b3029393439cb068ae0555e3d3da32909b10371197da72ef064400081e7f3",
+      "created_at": "2026-11-24T22:42:28.341Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
@@ -26089,8 +26089,8 @@
       "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-learnings-technical-construction-intelligence-google-clo.md",
       "repository": "google-closure-compiler-learnings",
-      "content_hash": "b7f78787329cabc47f03856e00112cae4a76711ad20c4495d6e7940948901fb9",
-      "created_at": "2026-11-20T23:05:39.738Z"
+      "content_hash": "bfe1a6138ac1bf5657f5e658fc1a1412c46ec846c311c1e71eee1f9300666efc",
+      "created_at": "2026-11-24T22:42:43.433Z"
     },
     "DOM-H-7AD63040": {
       "record_id": "DOM-H-7AD63040",
@@ -36959,8 +36959,8 @@
       "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-learnings-technical-construction-intelligence-alibaba-zvec-learning.md",
       "repository": "alibaba-zvec-learnings",
-      "content_hash": "8b8d89e133121425e9704d150ac2060f82e72bbeacaeafb0307ace39601876b4",
-      "created_at": "2026-11-24T02:04:26.726Z"
+      "content_hash": "886f4e25f44b8ca1c1974ac5ace391cb704dd644c275be6834ac9fa9d1c41f4d",
+      "created_at": "2026-11-24T22:42:44.507Z"
     },
     "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",

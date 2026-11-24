@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-TPNT",
-    "timestamp": "2026-11-23T06:53:51.785Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-8MUX",
-    "timestamp": "2026-11-23T07:05:27.993Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-PBJZ",
-    "timestamp": "2026-11-23T07:18:26.495Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-PJ6C",
     "timestamp": "2026-11-23T07:18:36.372Z",
     "repository": "ShiftHackZ/SDAI-KMP",
@@ -7490,6 +7445,51 @@
     "repository": "kotest/kotest",
     "learningId": "learn-github-kotest-kotest",
     "contentHash": "6e5be600d9b802b26c12a7645da4a943507d8b914bb29721a4cf6eea5c4f8c4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-5FV1",
+    "timestamp": "2026-11-24T22:42:26.317Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-5GYG",
+    "timestamp": "2026-11-24T22:42:27.736Z",
+    "repository": "google/closure-compiler",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-5O92",
+    "timestamp": "2026-11-24T22:42:37.190Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

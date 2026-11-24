@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T22:30:11.710Z",
+  "last_updated": "2026-11-24T22:42:37.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
-      "verified_at": "2026-11-23T19:51:15.451Z",
+      "content_hash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
+      "verified_at": "2026-11-24T22:42:26.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:51:15.451Z"
+      "last_updated": "2026-11-24T22:42:26.344Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
-      "verified_at": "2026-11-24T02:04:21.209Z",
+      "content_hash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
+      "verified_at": "2026-11-24T22:42:37.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T02:04:21.209Z"
+      "last_updated": "2026-11-24T22:42:37.215Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
-      "verified_at": "2026-11-20T23:05:27.590Z",
+      "content_hash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
+      "verified_at": "2026-11-24T22:42:27.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:05:27.590Z"
+      "last_updated": "2026-11-24T22:42:27.764Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",

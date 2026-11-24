@@ -12827,3 +12827,6 @@
 | `CYCLE-20261124-7GE2` | `2026-11-24T22:16:00.698Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10369` | Yes (`22499c45...`) |
 | `CYCLE-20261124-PM6F` | `2026-11-24T22:30:08.007Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10370` | Yes (`928ed21a...`) |
 | `CYCLE-20261124-PP0J` | `2026-11-24T22:30:11.683Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10371` | Yes (`6e5be600...`) |
+| `CYCLE-20261124-5FV1` | `2026-11-24T22:42:26.317Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10372` | Yes (`58a29a68...`) |
+| `CYCLE-20261124-5GYG` | `2026-11-24T22:42:27.736Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10373` | Yes (`4742c193...`) |
+| `CYCLE-20261124-5O92` | `2026-11-24T22:42:37.190Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10374` | Yes (`2eb9e5f5...`) |

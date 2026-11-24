@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T22:30:20.450Z",
+  "last_updated": "2026-11-24T22:42:44.737Z",
   "total_verified_learnings": 9103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24961,
+  "total_items": 24968,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215661,8 +215661,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "a26f8abe",
-      "content_hash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
+      "source_version": "fe49e548",
+      "content_hash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215690,6 +215690,11 @@
           "number": 10176,
           "title": "restore legacy interleaved matrix distance performance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10374,
+          "title": "fold four UINT4 distance sums in AVX-512 lanes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215697,7 +215702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:04:20.987Z",
+      "verified_at": "2026-11-24T22:42:36.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215751,10 +215756,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "a26f8abe",
-      "content_hash": "6a1f18b447185cbd697c0894f8d321660499e30e75a422b23e44dc8a67d04610",
+      "source_version": "fe49e548",
+      "content_hash": "b1a57c1e27aeb8d1eb7319d9b54a1758a43a6dc371fd50a0c00552eafd51ce87",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:04:21.778Z"
+      "persisted_at": "2026-11-24T22:42:37.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -215824,9 +215829,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for alibaba-zvec-learnings",
       "repository": "alibaba-zvec-learnings",
       "source_version": "HEAD",
-      "content_hash": "30f77c3aadbd1c6537a816b1e9d62e17feb3ca909faab12f1429525e42807603",
+      "content_hash": "e5eeb443b32a84520d571e1c14eb3462171e753e710f3b4eca3d3fb035ac6050",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:04:26.895Z"
+      "persisted_at": "2026-11-24T22:42:44.737Z"
     },
     "learn-huggingface-google-electra-base-discriminator": {
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
@@ -225952,8 +225957,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "ac734972",
-      "content_hash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
+      "source_version": "d0c6ad20",
+      "content_hash": "58a29a68f2391c9456f1e8713eafb0dfa12383dfd81d35beff0d9d01b14874fd",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -226001,6 +226006,11 @@
           "number": 10107,
           "title": "[DataFusion] Give query tasks their own lane and memory pool, and never shed the",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10372,
+          "title": "[Invoker] Keep the per-invocation memory limit above the accepted message size",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226008,7 +226018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:51:15.259Z",
+      "verified_at": "2026-11-24T22:42:26.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226102,10 +226112,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "ac734972",
-      "content_hash": "c25c862023001f7ecb52d8299b9fa45b091563e4aa0a185adca34d479619167d",
+      "source_version": "d0c6ad20",
+      "content_hash": "a3a19011f596d0d4bbda0c2678af2c7b2765bbfb9d9f78068101b18b7dac5d71",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T19:51:15.808Z"
+      "persisted_at": "2026-11-24T22:42:26.928Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -226139,9 +226149,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5b1eded5ddc80e24e4f3321a88a22f7ececa4e2d3fb9f0bd83e18e4b3a4806f",
+      "content_hash": "c1a220b9265a684ebb034c835ca46a228906075ae1059bbef01dc82bd59621e6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T19:51:26.919Z"
+      "persisted_at": "2026-11-24T22:42:41.727Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -226163,9 +226173,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "de8f61b59b5a2ff529aea7b1735b46f5fd339b8cc31cb5e58b44720f65501adc",
+      "content_hash": "b7063a4d8b696bd0d55d5af03cee8c67b546022a8590275ebc3d162af777dad6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:51:27.081Z"
+      "persisted_at": "2026-11-24T22:42:41.980Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -262930,10 +262940,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "a26f8abe",
-      "content_hash": "b6f7ca619ff2aa364a3f01ed9e5ace119dc2b3633a22823df7910025f7e239c4",
+      "source_version": "fe49e548",
+      "content_hash": "e0b11ec77b6f1acd8e32357e400c1eb8fea41aa44280a05b0bbdb88a4243e6a9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:04:21.604Z"
+      "persisted_at": "2026-11-24T22:42:37.751Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -268735,8 +268745,8 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "77c890f4",
-      "content_hash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
+      "source_version": "1b85768e",
+      "content_hash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
@@ -268749,6 +268759,11 @@
           "number": 9654,
           "title": "Empirical Invariant Guard in PeepholeReplaceKnownMethods.java",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10373,
+          "title": "Accept `continue` targeting outer labels of multiply-labeled loops.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268756,7 +268771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:05:27.365Z",
+      "verified_at": "2026-11-24T22:42:27.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268798,10 +268813,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
       "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
       "repository": "google/closure-compiler",
-      "source_version": "77c890f4",
-      "content_hash": "50c4ea2f8dbdfa832be64953b1c6ad226b30fec748e84f58db00ac892cbf3d30",
+      "source_version": "1b85768e",
+      "content_hash": "cf7b3029393439cb068ae0555e3d3da32909b10371197da72ef064400081e7f3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:05:27.978Z"
+      "persisted_at": "2026-11-24T22:42:28.341Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler",
@@ -268810,10 +268825,10 @@
       "relative_path": "08_VERIFICATION/google-closure-compiler-verification-protocol-empirical-defect-shield-for-google.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/closure-compiler",
       "repository": "google/closure-compiler",
-      "source_version": "77c890f4",
-      "content_hash": "c5a102056677bbf5519bde8cec4777b6b714ec405514bd64f37ab71d7d8ebb63",
+      "source_version": "1b85768e",
+      "content_hash": "4cf706a15d8f3b6c5294fcb85595b417cc648c6fefa86be29054310c42bbdd56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:28.133Z"
+      "persisted_at": "2026-11-24T22:42:28.576Z"
     },
     "rule-8858": {
       "learning_id": "rule-8858",
@@ -268861,9 +268876,9 @@
       "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
       "repository": "google-closure-compiler-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7f78787329cabc47f03856e00112cae4a76711ad20c4495d6e7940948901fb9",
+      "content_hash": "bfe1a6138ac1bf5657f5e658fc1a1412c46ec846c311c1e71eee1f9300666efc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:05:39.738Z"
+      "persisted_at": "2026-11-24T22:42:43.433Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler-learni",
@@ -268873,9 +268888,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-closure-compiler-learnings",
       "repository": "google-closure-compiler-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e5054306f40b61968f2b4b35ea5601ebf972c3b54c0f8dd4365f75e3b7a394b",
+      "content_hash": "4405e820269fc3dbedd43a3bfe70702a2a48490a7fa9fd35e79040e09f6840e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:39.909Z"
+      "persisted_at": "2026-11-24T22:42:43.666Z"
     },
     "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-": {
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-",
@@ -310528,9 +310543,9 @@
       "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
       "repository": "alibaba-zvec-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b8d89e133121425e9704d150ac2060f82e72bbeacaeafb0307ace39601876b4",
+      "content_hash": "886f4e25f44b8ca1c1974ac5ace391cb704dd644c275be6834ac9fa9d1c41f4d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:04:26.726Z"
+      "persisted_at": "2026-11-24T22:42:44.507Z"
     },
     "rule-9637": {
       "learning_id": "rule-9637",
@@ -341043,6 +341058,96 @@
       "content_hash": "373351312bd9c29276e626aad8cfdffcc2c3cedb137bc8e80683e8159d5f8b54",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T22:30:18.665Z"
+    },
+    "rule-10372": {
+      "learning_id": "rule-10372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10372,
+      "title": "[Invoker] Keep the per-invocation memory limit above the accepted message size",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "d0c6ad20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:42:26.022Z"
+    },
+    "candidate_directive-invoker-keep-the-per-invocation-memory-limit-above-the-accepted-message-size": {
+      "item_id": "candidate_directive-invoker-keep-the-per-invocation-memory-limit-above-the-accepted-message-size",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5RKB-invoker-keep-the-per-invocation-memory-limit-above-the-accepted-message-size.md",
+      "title": "[Invoker] Keep the per-invocation memory limit above the accepted message size",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8f6f1c310484ad0e7bdd082aea99e8055c407969e366c2e0edfe5e9dfb8c959b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:42:41.488Z"
+    },
+    "rule-10373": {
+      "learning_id": "rule-10373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10373,
+      "title": "Accept `continue` targeting outer labels of multiply-labeled loops.",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "1b85768e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:42:27.431Z"
+    },
+    "candidate_directive-accept-continue-targeting-outer-labels-of-multiply-labeled-loops": {
+      "item_id": "candidate_directive-accept-continue-targeting-outer-labels-of-multiply-labeled-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5SVX-accept-continue-targeting-outer-labels-of-multiply-labeled-loops.md",
+      "title": "Accept `continue` targeting outer labels of multiply-labeled loops.",
+      "repository": "google-closure-compiler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a300d3e65085042c71312d33a2b4dc6e6319a7e8a427a24689d739f0b5c316a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:42:43.201Z"
+    },
+    "rule-10374": {
+      "learning_id": "rule-10374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10374,
+      "title": "fold four UINT4 distance sums in AVX-512 lanes",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "fe49e548",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:42:36.907Z"
+    },
+    "candidate_directive-fold-four-uint4-distance-sums-in-avx-512-lanes": {
+      "item_id": "candidate_directive-fold-four-uint4-distance-sums-in-avx-512-lanes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5OI4-fold-four-uint4-distance-sums-in-avx-512-lanes.md",
+      "title": "fold four UINT4 distance sums in AVX-512 lanes",
+      "repository": "alibaba/zvec",
+      "source_version": "fe49e548",
+      "content_hash": "ba4527211fd0172eb6fb158a320993d0459bb05c30ba1a6f88c6b069de8599cd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:42:37.517Z"
+    },
+    "candidate_directive-turbo-fold-four-uint4-distance-sums-in-avx-512-lanes": {
+      "item_id": "candidate_directive-turbo-fold-four-uint4-distance-sums-in-avx-512-lanes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5TPV-turbo-fold-four-uint4-distance-sums-in-avx-512-lanes.md",
+      "title": "turbo): fold four UINT4 distance sums in AVX-512 lanes",
+      "repository": "alibaba-zvec-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c4d817e2aef29e10f30337de44a043d781c5440ac2eeedeec6cf5ed573c2a129",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:42:44.275Z"
     }
   },
   "ai-builder-brain": {

@@ -12860,3 +12860,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d245524c` | Multi-dimensional audit evidence | 2026-11-24T22:16:00.703Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `dfbb3093` | Multi-dimensional audit evidence | 2026-11-24T22:30:08.013Z |
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `1185d7cf` | Multi-dimensional audit evidence | 2026-11-24T22:30:11.688Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `d0c6ad20` | Multi-dimensional audit evidence | 2026-11-24T22:42:26.322Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `1b85768e` | Multi-dimensional audit evidence | 2026-11-24T22:42:27.740Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `fe49e548` | Multi-dimensional audit evidence | 2026-11-24T22:42:37.195Z |
