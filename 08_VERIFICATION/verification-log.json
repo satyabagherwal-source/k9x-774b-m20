@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-L3SM",
-    "timestamp": "2026-11-22T09:47:27.478Z",
-    "repository": "ConceptCountry/qwen-concept-27b",
-    "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
-    "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-L8BU",
     "timestamp": "2026-11-22T09:47:33.354Z",
     "repository": "necolas/react-native-web",
@@ -7490,6 +7475,21 @@
     "repository": "sharkdp/bat",
     "learningId": "learn-github-sharkdp-bat",
     "contentHash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-DLHR",
+    "timestamp": "2026-11-24T04:37:01.839Z",
+    "repository": "MetrolistGroup/Metrolist",
+    "learningId": "learn-github-metrolistgroup-metrolist",
+    "contentHash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

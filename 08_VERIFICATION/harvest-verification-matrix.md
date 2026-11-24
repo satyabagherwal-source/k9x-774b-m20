@@ -12588,3 +12588,4 @@
 | `CYCLE-20261124-S6VW` | `2026-11-24T04:20:23.132Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10197` | Yes (`abd9e17e...`) |
 | `CYCLE-20261124-SDAV` | `2026-11-24T04:20:31.447Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10198` | Yes (`3bc5f61c...`) |
 | `CYCLE-20261124-2ZSY` | `2026-11-24T04:28:47.170Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`10c19903...`) |
+| `CYCLE-20261124-DLHR` | `2026-11-24T04:37:01.839Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10199` | Yes (`9564362f...`) |

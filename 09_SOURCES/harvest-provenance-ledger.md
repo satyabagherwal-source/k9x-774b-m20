@@ -12621,3 +12621,4 @@ Every entry in this ledger must capture:
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `7f2412e2` | Multi-dimensional audit evidence | 2026-11-24T04:20:23.136Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `da75fa74` | Multi-dimensional audit evidence | 2026-11-24T04:20:31.452Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `4bd5c5b6` | Multi-dimensional audit evidence | 2026-11-24T04:28:47.174Z |
+| `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `af3d0533` | Multi-dimensional audit evidence | 2026-11-24T04:37:01.844Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T04:28:59.398Z",
+  "last_updated": "2026-11-24T04:37:08.146Z",
   "total_records": 2490,
   "domains": {
     "A": {
@@ -8305,8 +8305,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "263fee8dda518b165724d42467b2c0d8e9abc96d8778261598cea54647165547",
-      "created_at": "2026-11-24T03:05:29.377Z"
+      "content_hash": "336984969576c2d7ed229543b759b5927f1b4b533e508be22bb9c61931844d56",
+      "created_at": "2026-11-24T04:37:08.146Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9223,8 +9223,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "901f5520431b2b536da610cff9f37b7cebeb3b0847608f7453265175d8949223",
-      "created_at": "2026-11-24T03:33:37.659Z"
+      "content_hash": "fc688e6f69f1666f06700c990b505392195c226aa040a58bd54b1e78421f5b6c",
+      "created_at": "2026-11-24T04:37:07.024Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -23235,8 +23235,8 @@
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "repository": "MetrolistGroup/Metrolist",
-      "content_hash": "1348f0331f5428894faf5d73ef4bee45bc1e868b101ac3127356482a9ca66210",
-      "created_at": "2026-11-21T07:58:48.096Z"
+      "content_hash": "b1a85919a8c46c39dba57e82339e267fb38ffec1078eed096fb957887ef4d477",
+      "created_at": "2026-11-24T04:37:02.255Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
@@ -23262,8 +23262,8 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-learnings-architecture-intelligence-metrolistgroup-metr.md",
       "repository": "metrolistgroup-metrolist-learnings",
-      "content_hash": "7d69a3a87240c55af7889e77a6eb2b9567f8dbb2de03973a41e40aa6b4bc2ae6",
-      "created_at": "2026-11-21T07:59:01.610Z"
+      "content_hash": "c82e12ee9da2701c95b1a02e976fc4d941b021b85a6d4dcca35c66c3a0e90927",
+      "created_at": "2026-11-24T04:37:06.234Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",

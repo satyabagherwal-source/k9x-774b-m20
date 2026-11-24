@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T07:59:01.394Z",
+  "timestamp": "2026-11-24T04:37:05.928Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-metrolistgroup-metrolist-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [metrolistgroup-metrolist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T07:59:01.394Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T04:37:05.928Z`  
 > **Learning ID**: `LEARN-EVO-metrolistgroup-metrolist-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md`  
 > **Source**: github ([https://github.com/MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist))  
-> **Source Version**: `5189f16f`  
+> **Source Version**: `af3d0533`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T07:58:46.931Z  
+> **Timestamp**: 2026-11-24T04:37:00.762Z  
 > **Learning ID**: `learn-github-metrolistgroup-metrolist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T07:58:46.926Z  
+> **Harvest Timestamp**: 2026-11-24T04:37:00.482Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Material Design YouTube Music client for Android, iOS and desktop
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14730 stars
+- **Stars / Engagement**: 14899 stars
 
 ---
 
@@ -258,12 +258,16 @@ internal class PlaybackPersistenceWriter(
     class Request internal constructor(
         internal val revision: Long,
         internal val state: PersistPlayerState?,
+        internal val clear: Boolean,
     )
 
     private val lock = Any()
     private val revision = AtomicLong()
 
-    fun request(state: PersistPlayerState?): Request = Request(revision.incrementAndGet(), state)
+    // A null state is a skipped checkpoint; only requestClear discards the saved queue.
+    fun request(state: PersistPlayerState?): Request = Request(revision.incrementAndGet(), state, clear = false)
+
+    fun requestClear(): Request = Request(revision.incrementAndGet(), state = null, clear = true)
 
     private var lastState: PersistPlayerState? = null
     private var lastCheckpoint: PlayerPositionCheckpoint? = null
@@ -271,14 +275,14 @@ internal class PlaybackPersistenceWriter(
     fun write(request: Request) {
         synchronized(lock) {
             if (request.revision != revision.get()) return
-            val state = request.state
-            if (state == null) {
+            if (request.clear) {
                 writeStoredValue("")
                 writePosition("")
                 lastState = null
                 lastCheckpoint = null
                 return
             }
+            val state = request.state ?: return
             val previous = lastState
             val sameQueue =
                 if (state.queueSnapshot != null) {
@@ -1084,11 +1088,14 @@ internal fun queuePlaybackResolveBudget(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5097** (2026-11-21): **Repeat Playback Mode Resets When Switching to Another Song**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  14.0.1+0a9dbca  ARM64-V8A  ### Issue  The Repeat playback setting does not persist when switching to a different song. Once Repeat One is enabled, it works correctly for the currently playing track and playing next song. However, when a new song starts by manually clicking a new song or recommended song or any song, the Repeat One setting is automatically disabled. This requires users to manually enable Repeat One again every time they switch songs.  ### Logs  ```shell  ```
+- **Issue #5269** (2026-11-24): **Tempo and pitch inputs accept different decimal separators depending on language**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  Nightly  ### Issue  The tempo and pitch inputs behave differently depending on the app language.  Some languages accept `,` but reject `.`. Others accept `.` but reject `,`.  Both `.` and `,` should be accepted for tempo and pitch in all languages.  Tested with English, Indonesian, and Spanish.   | Indonesian | Spanish | English | |:---:|:---:|:---:| | <img src="https://github.com/user-attachments/assets/6f746613-a0a8-4bd2-86f1-9c017f2e4008" width="230" /> | <img src="https://github.com/user-attachments/assets/6ca500b5-eac8-43a3-8581-7915c37b61af" width="230" /> | <img src="https://github.com/user-attachments/assets/8283d5ca-5762-42e9-b2d0-918641a61c42" width="230" /> |   ### Logs  ```shell  ```
 
-- **Issue #5085** (2026-11-21): **Device connect fails to pair devices**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android, Linux  ### Version  14.0.1, izzy and flatpak  ### Issue  When trying to connect linux laptop with android, i get  `Account identity unavailable. Sign in again on both devices and select the same YouTube channel.` on both devices. I'm using the same account on both devices  <img width="1162" height="117" alt="obraz" src="https://github.com/user-attachments/assets/123b5178-2dcf-4428-8dbd-4393e0f63ccc" />  ### Logs  ```shell  ```
+- **Issue #5265** (2026-11-23): **Songs keep stopping**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  14.0.1  ### Issue  When a song is playing, it will sporadically stop for a few seconds  ### Logs  ```shell  ```
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit -->  <details> <summary>⚠️ Possible Duplicate Issue(s)</summary> <dl> <dd> <br>  - https://github.com/MetrolistGroup/Metrolist/issues/5057 </dd> </dl> </details> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  MetrolistGroup/Metrolist#5155 - fix(android): rearm watchdog after offload fallback [closed] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrich
+  > Duplicate of #5057. Playback stopping for a few seconds on 14.0.1 comes from the next track preloading in a player that shares the current audio session, which stalls on some phones. dfb737eda fixed it after 14.0.1. Please install the nightly (https://github.com/MetrolistGroup/Metrolist/releases/download/nightly/Metrolist.apk) and comment here if songs still stop.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1105,1045 +1112,696 @@ internal fun queuePlaybackResolveBudget(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5189f16f` (2026-11-21)
-**Commit Message**: fix(i18n): integrate Weblate translations with corrections (#5131)
+### Incident Patch 1: `17f78c37` (2026-11-23)
+**Commit Message**: feat(desktop): support pure Wayland sessions on Linux (#5264)
 
-**File**: `androidApp/build.gradle.kts` (modified, +10/-1)
+* feat(desktop): support pure Wayland sessions on Linux
+
+* feat(desktop): use Nucleus Tao backend for pure Wayland on JVM and native image
+
+* fix(desktop): make the Tao Wayland backend compile and start
+
+The Tao branch did not compile: Tao exposes isFocused and isMinimized as
+properties, KMP dependency blocks need string notation for exclusions,
+FileKit's directory picker takes its title through dialog settings, and
+WindowDraggableArea needs a WindowScope that Tao windows lack.
+
+At startup Tao's Dispatchers.Main ran launched coroutines inline on its
+own thread, so PlayerState's init collected settings before its history
+field existed and crashed. Main now always queues work as Swing does,
+while Main.immediate keeps Tao's inline behaviour.
+
+related to: #5222
+
+* feat(desktop): embed WebKitGTK views on native Wayland
+
+wry attaches WebKitGTK to an X11 window, so YouTube sign-in and the
+other embedded pages were unavailable when Metrolist ran on Wayland
+without XWayland. Under native Wayland a WebKitGTK 4.1 view is now
+created through JNA and embedded in the Tao window as a GTK widget.
+
+DesktopBrowser chooses that view or wr
+
+**File**: `.github/tests/test_desktop_launcher.py` (modified, +20/-5)
 ```diff
-@@ -193,14 +193,23 @@ java {
+@@ -58,11 +58,26 @@ def launch(self, native=False):
+         return result.stdout.splitlines()
  
- val sentryAuthToken = providers.environmentVariable("SENTRY_AUTH_TOKEN").filter(String::isNotBlank)
- val appVersion = providers.gradleProperty("appVersion").get()
-+val bundledLanguageParser =
-+    DocumentBuilderFactory
-+        .newInstance()
-+        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
-+        .newDocumentBuilder()
- val bundledLanguageTags =
-     rootProject
-         .file("shared/src/commonMain/composeResources")
-         .listFiles()
-         .orEmpty()
-         .asSequence()
-         .filter { it.isDirectory && it.name.startsWith("values-") && it.name != "values-xml" }
--        .map { directory ->
-+        .filter { directory ->
-+            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
-+            val root = bundledLanguageParser.parse(catalog).documentElement
-+            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
-+        }.map { directory ->
-             val qualifier = directory.name.removePrefix("values-")
-             val languageTag =
-                 if (qualifier.startsWith("b+")) {
-```
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/state/DesktopLocaleManager.kt` (modified, +5/-97)
-```diff
-@@ -4,10 +4,7 @@ import com.metrolist.shared.BuildConfig
- import com.metrolist.shared.settings.canonicalAppLanguageTag
- import com.metrolist.shared.utils.SystemLocale
- import com.metrolist.shared.utils.desktopSystemLocale
--import java.io.File
--import java.net.JarURLConnection
- import java.util.Locale
--import java.util.jar.JarFile
+     def test_webview_uses_x11_and_preserves_explicit_backend(self):
+-        self.executable(self.bin / "Metrolist.bin", 'printf "%s\n" "$GDK_BACKEND"')
+-        self.environment.update(XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
+-        self.assertEqual(["x11"], self.launch())
+-        self.environment["GDK_BACKEND"] = "x11,wayland"
+-        self.assertEqual(["x11,wayland"], self.launch())
++        probe = 'printf "%s\n" "${GDK_BACKEND-unset}"'
++        self.executable(self.bin / "Metrolist.bin", probe)
++        self.executable(self.bin.parent / "lib/native/Metrolist", probe)
++        for native in (False, True):
++            with self.subTest(native=native):
++                self.environment.pop("GDK_BACKEND", None)
++                self.environment.pop("WAYLAND_DISPLAY", None)
++                self.environment.pop("METROLIST_USE_WAYLAND", None)
++                self.environment.pop("METROLIST_USE_WAKEFIELD", None)
++                self.environment.update(DISPLAY=":77", XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
++                self.assertEqual(["x11"], self.launch(native))
++                self.environment["GDK_BACKEND"] = "x11,wayland"
++                self.assertEqual(["x11,wayland"], self.launch(native))
++                del self.environment["GDK_BACKEND"]
++                del self.environment["DISPLAY"]
++                self.environment["WAYLAND_DISPLAY"] = "wayland-0"
++                self.assertEqual(["wayland"], self.launch(native))
++                self.environment["DISPLAY"] = ":77"
++                self.environment["METROLIST_USE_WAYLAND"] = "1"
++                self.assertEqual(["wayland"], self.launch(native))
  
- data class DesktopLanguage(
-     val tag: String,
-@@ -18,8 +15,11 @@ data class DesktopLanguage(
- object DesktopLocaleManager {
-     const val SYSTEM = "SYSTEM"
-     private val bundledTags: List<String> by lazy {
--        val staticTags = BuildConfig.BUNDLED_LANGUAGE_TAGS.split(',').filter(String::isNotBlank)
--        (staticTags + discoverBundledLanguages()).distinct().sorted()
-+        BuildConfig.BUNDLED_LANGUAGE_TAGS
-+            .split(',')
-+            .filter(String::isNotBlank)
-+            .distinct()
-+            .sorted()
-     }
-     val systemLocale: Locale = desktopSystemLocale
- 
-@@ -63,96 +63,4 @@ object DesktopLocaleManager {
-         val language = Locale.forLanguageTag(normalized).language
-         return bundledTags.firstOrNull { it.equals(language, ignoreCase = true) }
-     }
--
--    private fun discoverBundledLanguages(): List<String> {
--        val langs = mutableSetOf<String>()
--
--        val classLoader = DesktopLocaleManager::class.java.classLoader
--        val resourceUrls = classLoader.getResources("composeResources")
--        while (resourceUrls.hasMoreElements()) {
--            val resourceUrl = resourceUrls.nextElement()
--            when (resourceUrl.protocol) {
--                "file" -> {
--                    val basePath = File(resourceUrl.toURI())
--                    collectFromDirectory(basePath, langs)
--                }
--
--                "jar" -> {
--                    val connection = resourceUrl.openConnection() as? JarURLConnection
--                    if (connection != null) {
--                        connection.useCaches = false
--                        connection.jarFile.use { jar -> collectFromJar(jar, langs) }
--                    }
--                }
--            }
--        }
--
--        return langs.sorted()
--    }
--
--    private fun collectFromDirectory(
--        basePath: File,
--        langs: MutableSet<String>,
--    ) {
--        if (!basePath.isDirectory) return
--        basePath.listFiles()?.forEach { child ->
--            when {
--                !child.isDirectory -> {
--                    return@forEach
--                }
--
--                child.name == "values-xml" -> {
--                    return@forEach
--                }
--
--                child.name == "values" -> {
--                    return@forEach
--                }
--
--                child.name.startsWith("values-") -> {
--                    val tag = languageTagFromValuesDirectory(child.name)
--                    if (tag.isNotBlank()) langs.add(tag)
--                    return@forEach
--                }
--
--                else -> {
--                    collectFromDirectory(child, langs)
--                }
--            }
--        }
--    }
--
--    private fun collectFromJar(
--        jar: JarFile,
--        langs: MutableSet<String>,
--    ) {
--        val seenDirs = mutableSetOf<String>()
--        val entries = jar.entries()
--        while (entries.hasMoreElements()) {
--            val entry = entries.nextElement()
--            val valuesDir = valuesDirectory(entry.name) ?: continue
--            if (!seenDirs.add(valuesDir)) continue
--            if (valuesDir == "values-xml") continue
--            if (valuesDir != "values") {
--                val tag = languageTagFromValuesDirectory(valuesDir)
--                if (tag.isNotBlank()) langs.add(tag)
--            }
--        }
--    }
--
--    private fun valuesDirectory(entryPath: String): String? {
--        val segments = entryPath.split('/')
--        return segments.firstOrNull { it == "values" || it.startsWith("values-") }
--    }
--
--    internal fun languageTagFromValuesDirectory(valuesDirectory: String): String {
--        val qualifier = valuesDirectory.removePrefix("values-")
--        val languageTag =
--            if (qualifier.startsWith("b+")) {
--                qualifier.removePrefix("b+").replace('+', '-')
--            } else {
--                qualifier.replace(Regex("-r(?=[A-Z]{2}(?:$|-))"), "-")
--            }
--        return Locale.forLanguageTag(languageTag).toLanguageTag()
--    }
- }
+     def test_missing_display_is_not_guessed_from_global_sockets(self):
+         self.executable(self.bin / "Metrolist.bin", 'printf "%s\\n" "${DISPLAY-unset}"')
 ```
 
-**File**: `docs/strings.md` (modified, +1/-1)
+**File**: `desktopApp/build.gradle.kts` (modified, +27/-5)
 ```diff
-@@ -8,7 +8,7 @@ Agents and contributors edit only `values/strings.xml`. Never add, remove, renam
- 
- Desktop and shared Compose code use `com.metrolist.shared.generated.resources.Res`. Android's `generateAndroidStrings` scans non-test sources in `androidApp/src` and `shared/src/androidMain` for `R.string`, `R.plurals`, `@string` and `@plurals` references. It generates only those keys for each locale. Missing referenced base keys fail the build. Do not create platform-local catalogs or translation tables.
- 
--Gradle derives bundled language tags from resource directories. Hinglish uses `values-b+hi+Latn` and `hi-Latn`; saved `hin` selections migrate to that tag. `prepareComposeResourceAliases` generates `values-id` from `values-in` and `values-he` from `values-iw` for Compose. Weblate edits the original catalogs, not generated aliases.
-+Gradle derives bundled language tags from resource directories containing translated entries. Empty Weblate catalogs stay in the repository but do not appear in app-language choices. Desktop uses the same generated tags. Hinglish uses `values-b+hi+Latn` and `hi-Latn`; saved `hin` selections migrate to that tag. `prepareComposeResourceAliases` generates `values-id` from `values-in` and `values-he` from `values-iw` for Compose. Weblate edits the original catalogs, not generated aliases.
- 
- Content-language and country preferences use the selected code or system locale. UI resource fallback does not authorize a hardcoded content-language default.
- 
-```
-
-**File**: `fastlane/metadata/android/it/full_description.txt` (modified, +5/-5)
-```diff
-@@ -3,19 +3,19 @@ Client YouTube Music per Android in stile Material 3
- Funzionalità:
- 
- - Riproduzione di YouTube Music ultra rapida e senza interruzioni
--- Supporto per l'accesso a YouTube Music (utilizzabile appieno anche senza effettuare il login)
-+- Supporto per l'accesso a YouTube Music (utilizzabile appieno anche senza login)
- - Design **Material 3 Expressive**
- - **Discord Rich Presence**, scrobbling tramite **Last.fm e ListenBrainz**
--- **Nessuna pubblicità**, mai
-+- **Nessuna pubblicità**, per sempre
- - Ascolta insieme ad altre persone online in tempo reale
- - Trasmissione su **Google Cast**, F-Cast, dispositivi SONOS e tramite DLNA
- - Importazione di backup e playlist da oltre 29 altri client e 6 diversi servizi
- - Riconoscimento musicale tramite **Shazam**
--- Provider personalizzato ad alta velocità per i testi, con supporto per traduzione e traslitterazione
-+- Provider per i testi personalizzato ad alta velocità, con supporto per traduzione e romanizzazione
- - Tradotta in oltre 15 lingue
- - Supporto per la **riproduzione video**
- - Filtri avanzati per i contenuti
- - **Canvas da Apple Music**, Spotify e YouTube Music
--- Diversi stili di lettore, copertina, miniplayer e sfondo tra cui scegliere
-+- Diversi stili di lettore, copertina, minilettore e sfondo tra cui scegliere
- - Supporto per font e icone dell'app personalizzati
--- ... e molto altro ancora!
-+- …e molto altro ancora!
-```
-
-**File**: `fastlane/metadata/android/it/short_description.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Client YouTube Music per Android in stile Materiale 3
-+Client YouTube Music per Android in stile Material 3
-```
-
-**File**: `shared/build.gradle.kts` (modified, +11/-1)
-```diff
-@@ -26,6 +26,7 @@ import java.util.Base64
- import java.util.Locale
- import java.util.Properties
- import java.util.zip.ZipFile
-+import javax.xml.parsers.DocumentBuilderFactory
- 
- plugins {
-     alias(libs.plugins.kotlin.multiplatform)
-@@ -246,13 +247,22 @@ tasks.matching { it.name == "lintAnalyzeAndroidHostTest" || it.name == "generate
- 
- val appVersion = providers.gradleProperty("appVersion").get()
- val innerTubeXVersion = providers.gradleProperty("innerTubeXVersion").get()
-+val bundledLanguageParser =
-+    DocumentBuilderFactory
-+        .newInstance()
-+        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
-+        .newDocumentBuilder()
- val bundledLanguageTags =
-     file("src/commonMain/composeResources")
-         .listFiles()
-         .orEmpty()
-         .asSequence()
-         .filter { it.isDirectory && it.name.startsWith("values-") && it.name != "values-xml" }
--        .map { directory ->
-+        .filter { directory ->
-+            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
-+            val root = bundledLanguageParser.parse(catalog).documentElement
-+            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
-+        }.map { directory ->
-             val qualifier = directory.name.removePrefix("values-")
-             val languageTag =
-                 if (qualifier.startsWith("b+")) {
-```
-
-**File**: `shared/src/commonMain/composeResources/values-az/strings.xml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+</resources>
-```
-
-**File**: `shared/src/commonMain/composeResources/values-jv/strings.xml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+</resources>
-```
-
----
-
-### Incident Patch 2: `ebfe654a` (2026-11-21)
-**Commit Message**: fix(i18n): preserve non-breaking unit and separator spacing
-
-**File**: `shared/src/commonMain/composeResources/values-cs/strings.xml` (modified, +40/-40)
-```diff
-@@ -86,7 +86,7 @@
-     <string name="bitrate">Přenosová rychlost</string>
-     <string name="sample_rate">Vzorkovací frekvence</string>
-     <string name="loudness">Hlučnost</string>
--    <string name="loudness_value">%1$s dB</string>
-+    <string name="loudness_value">%1$s dB</string>
-     <string name="volume">Hlasitost</string>
-     <string name="file_size">Velikost souboru</string>
-     <string name="unknown">Neznámé</string>
-@@ -116,22 +116,22 @@
-         <item quantity="other">%1$d alb</item>
-     </plurals>
-     <plurals name="n_week">
--        <item quantity="one">%1$d týden</item>
--        <item quantity="few">%1$d týdny</item>
--        <item quantity="many">%1$d týdnů</item>
--        <item quantity="other">%1$d týdnů</item>
-+        <item quantity="one">%1$d týden</item>
-+        <item quantity="few">%1$d týdny</item>
-+        <item quantity="many">%1$d týdnů</item>
-+        <item quantity="other">%1$d týdnů</item>
-     </plurals>
-     <plurals name="n_month">
--        <item quantity="one">%1$d měsíc</item>
--        <item quantity="few">%1$d měsíce</item>
--        <item quantity="many">%1$d měsíců</item>
--        <item quantity="other">%1$d měsíců</item>
-+        <item quantity="one">%1$d měsíc</item>
-+        <item quantity="few">%1$d měsíce</item>
-+        <item quantity="many">%1$d měsíců</item>
-+        <item quantity="other">%1$d měsíců</item>
-     </plurals>
-     <plurals name="n_year">
--        <item quantity="one">%1$d rok</item>
--        <item quantity="few">%1$d roky</item>
--        <item quantity="many">%1$d let</item>
--        <item quantity="other">%1$d let</item>
-+        <item quantity="one">%1$d rok</item>
-+        <item quantity="few">%1$d roky</item>
-+        <item quantity="many">%1$d let</item>
-+        <item quantity="other">%1$d let</item>
-     </plurals>
-     <string name="undo">Zrušit</string>
-     <string name="lyrics_not_found">Text skladby nenalezen</string>
-@@ -150,10 +150,10 @@
-     <string name="queue_loading">Načítání fronty…</string>
-     <string name="calculating">Vypočítavám…</string>
-     <plurals name="queue_track_count_duration">
--        <item quantity="one">%1$d skladba · %2$s</item>
--        <item quantity="few">%1$d skladby · %2$s</item>
--        <item quantity="many">%1$d skladeb · %2$s</item>
--        <item quantity="other">%1$d skladeb · %2$s</item>
-+        <item quantity="one">%1$d skladba · %2$s</item>
-+        <item quantity="few">%1$d skladby · %2$s</item>
-+        <item quantity="many">%1$d skladeb · %2$s</item>
-+        <item quantity="other">%1$d skladeb · %2$s</item>
-     </plurals>
-     <string name="suggested_tracks">Navrhované</string>
-     <string name="playback_notification_channel_name">Přehrávání</string>
-@@ -987,10 +987,10 @@
-         <item quantity="other">Před %1$d minutami</item>
-     </plurals>
-     <plurals name="hours">
--        <item quantity="one">%1$d hodina</item>
--        <item quantity="few">%1$d hodiny</item>
--        <item quantity="many">%1$d hodin</item>
--        <item quantity="other">%1$d hodin</item>
-+        <item quantity="one">%1$d hodina</item>
-+        <item quantity="few">%1$d hodiny</item>
-+        <item quantity="many">%1$d hodin</item>
-+        <item quantity="other">%1$d hodin</item>
-     </plurals>
-     <plurals name="listening_times">
-         <item quantity="one">%1$skrát</item>
-@@ -1011,10 +1011,10 @@
-         <item quantity="other">Navrhněte %1$d skladeb hostiteli. Pouze hostitel je schopen nahradit frontu.</item>
-     </plurals>
-     <plurals name="minutes">
--        <item quantity="one">%1$d minuta</item>
--        <item quantity="few">%1$d minuty</item>
--        <item quantity="many">%1$d minut</item>
--        <item quantity="other">%1$d minut</item>
-+        <item quantity="one">%1$d minuta</item>
-+        <item quantity="few">%1$d minuty</item>
-+        <item quantity="many">%1$d minut</item>
-+        <item quantity="other">%1$d minut</item>
-     </plurals>
-     <plurals name="n_track">
-         <item quantity="one">%1$d skladba</item>
-@@ -1119,10 +1119,10 @@
-     <string name="subscribe">Odebírat</string>
-     <string name="subscribed">Odebíráno</string>
-     <plurals name="seconds">
--        <item quantity="one">%1$d sekunda</item>
--        <item quantity="few">%1$d sekundy</item>
--        <item quantity="many">%1$d sekund</item>
--        <item quantity="other">%1$d sekund</item>
-+        <item quantity="one">%1$d sekunda</item>
-+        <item quantity="few">%1$d sekundy</item>
-+        <item quantity="many">%1$d sekund</item>
-+        <item quantity="other">%1$d sekund</item>
-     </plurals>
-     <string name="beta_tag">[BETA]</string>
-     <string name="crossfade">Prolínání</string>
-@@ -1613,7 +1613,7 @@
-     <string name="device_connect_device_type_desktop">Počítač</string>
-     <string name="device_connect_device_type_android_auto">Android Auto</string>
-     <string name="device_connect_device_type_unknown">Neznámé zařízení</string>
--    <string name="device_connect_device_type_and_model">%1$s 
-```
-
-**File**: `shared/src/commonMain/composeResources/values-it/strings.xml` (modified, +31/-31)
-```diff
-@@ -112,19 +112,19 @@
-         <item quantity="other">%1$d album</item>
-     </plurals>
-     <plurals name="n_week">
--        <item quantity="one">%1$d settimana</item>
--        <item quantity="many">%1$d settimane</item>
--        <item quantity="other">%1$d settimane</item>
-+        <item quantity="one">%1$d settimana</item>
-+        <item quantity="many">%1$d settimane</item>
-+        <item quantity="other">%1$d settimane</item>
-     </plurals>
-     <plurals name="n_month">
--        <item quantity="one">%1$d mese</item>
--        <item quantity="many">%1$d mesi</item>
--        <item quantity="other">%1$d mesi</item>
-+        <item quantity="one">%1$d mese</item>
-+        <item quantity="many">%1$d mesi</item>
-+        <item quantity="other">%1$d mesi</item>
-     </plurals>
-     <plurals name="n_year">
--        <item quantity="one">%1$d anno</item>
--        <item quantity="many">%1$d anni</item>
--        <item quantity="other">%1$d anni</item>
-+        <item quantity="one">%1$d anno</item>
-+        <item quantity="many">%1$d anni</item>
-+        <item quantity="other">%1$d anni</item>
-     </plurals>
-     <string name="undo">Annulla</string>
-     <string name="lyrics_not_found">Testo non trovato</string>
-@@ -703,8 +703,8 @@
-     <string name="downloaded_songs_empty_hint">Clicca sul pulsante di download su qualsiasi brano per salvarlo per l'ascolto offline.</string>
-     <string name="imported_playlist">Playlist importata</string>
-     <string name="import_error_unsupported_link">Questo link non è riconosciuto o supportato.</string>
--    <string name="bitrate_value">%1$d kbps</string>
--    <string name="sample_rate_value">%1$d Hz</string>
-+    <string name="bitrate_value">%1$d kbps</string>
-+    <string name="sample_rate_value">%1$d Hz</string>
-     <string name="import_error_unsupported_playlist_entries">Questa playlist contiene file locali o link diretti a cui Android non può accedere. Importa una playlist contenente link di YouTube, oppure scegli i file locali sul computer.</string>
-     <string name="import_error_local_files_require_local_playlist">I file audio locali possono essere importati solo in una playlist locale.</string>
-     <string name="import_error_file_read_failed">Impossibile leggere il file della playlist. Selezionalo di nuovo e concedi l’accesso ai file.</string>
-@@ -923,9 +923,9 @@
-     <string name="library_sort_updated">Aggiornati</string>
-     <string name="playlist_direction_descending">Ordine: decrescente</string>
-     <plurals name="hours">
--        <item quantity="one">%1$d ora</item>
--        <item quantity="many">%1$d ore</item>
--        <item quantity="other">%1$d ore</item>
-+        <item quantity="one">%1$d ora</item>
-+        <item quantity="many">%1$d ore</item>
-+        <item quantity="other">%1$d ore</item>
-     </plurals>
-     <plurals name="added_songs_to_playlist">
-         <item quantity="one">Aggiunto %1$d brano a %2$s</item>
-@@ -1081,9 +1081,9 @@
-         <item quantity="other">Suggerisci %1$d brani all'host. Solo l'host può sostituire la coda della stanza.</item>
-     </plurals>
-     <plurals name="minutes">
--        <item quantity="one">%1$d minuto</item>
--        <item quantity="many">%1$d minuti</item>
--        <item quantity="other">%1$d minuti</item>
-+        <item quantity="one">%1$d minuto</item>
-+        <item quantity="many">%1$d minuti</item>
-+        <item quantity="other">%1$d minuti</item>
-     </plurals>
-     <plurals name="n_track">
-         <item quantity="one">%1$d brano</item>
-@@ -1169,9 +1169,9 @@
-     <string name="subscribe">Iscriviti</string>
-     <string name="subscribed">Iscritto</string>
-     <plurals name="seconds">
--        <item quantity="one">%1$d secondo</item>
--        <item quantity="many">%1$d secondi</item>
--        <item quantity="other">%1$d secondi</item>
-+        <item quantity="one">%1$d secondo</item>
-+        <item quantity="many">%1$d secondi</item>
-+        <item quantity="other">%1$d secondi</item>
-     </plurals>
-     <string name="beta_tag">[BETA]</string>
-     <string name="crossfade">Dissolvenza</string>
-@@ -1370,7 +1370,7 @@
-     <string name="import_source_youtube_music">YouTube Music</string>
-     <string name="video_stats_mv_source">Fonte video musicale</string>
-     <string name="video_stats_stream_source">Fonte stream</string>
--    <string name="settings_seconds_value">%1$d secondi</string>
-+    <string name="settings_seconds_value">%1$d secondi</string>
-     <string name="settings_playback_speed_locked_listen_together">La velocità di riproduzione è fissata quando si utilizza Listen Together</string>
-     <string name="settings_diagnostic_logging">Log di diagnostica</string>
-     <string name="settings_diagnostic_logging_description">Scrive la diagnostica dell'applicazione su un file di log locale</string>
-@@ -1816,7 +1816,7 @@
-     <string name="canvas_source_youtube_music_video">Video musicale da YouTube</string>
-     <string name="seek_duration_description_android">Secondi da saltare toccando due volte sulla
-```
-
-**File**: `shared/src/commonMain/composeResources/values-zh-rCN/strings.xml` (modified, +8/-8)
-```diff
-@@ -80,7 +80,7 @@
-     <string name="bitrate">比特率</string>
-     <string name="sample_rate">采样率</string>
-     <string name="loudness">响度</string>
--    <string name="loudness_value">%1$s dB</string>
-+    <string name="loudness_value">%1$s dB</string>
-     <string name="volume">音量</string>
-     <string name="file_size">文件大小</string>
-     <string name="unknown">未知</string>
-@@ -104,13 +104,13 @@
-         <item quantity="other">%1$d 张专辑</item>
-     </plurals>
-     <plurals name="n_week">
--        <item quantity="other">%1$d 周</item>
-+        <item quantity="other">%1$d 周</item>
-     </plurals>
-     <plurals name="n_month">
-         <item quantity="other">%1$d 个月</item>
-     </plurals>
-     <plurals name="n_year">
--        <item quantity="other">%1$d 年</item>
-+        <item quantity="other">%1$d 年</item>
-     </plurals>
-     <string name="undo">撤销</string>
-     <string name="lyrics_not_found">未找到歌词</string>
-@@ -129,7 +129,7 @@
-     <string name="queue_loading">正在加载队列…</string>
-     <string name="calculating">正在计算…</string>
-     <plurals name="queue_track_count_duration">
--        <item quantity="other">%1$d 首 · %2$s</item>
-+        <item quantity="other">%1$d 首 · %2$s</item>
-     </plurals>
-     <string name="suggested_tracks">推荐</string>
-     <string name="playback_notification_channel_name">播放</string>
-@@ -292,14 +292,14 @@
-     <string name="app_font_picker_desc">选择 TTF 或 OTF 文件。Metrolist 会将其复制到应用专属存储空间。</string>
-     <string name="app_font_system">系统默认</string>
-     <string name="app_font_applied">使用 %1$s</string>
--    <string name="app_font_invalid">无法使用该字体。请选择有效的 TTF 或 OTF 文件，大小小于 20 MB。</string>
-+    <string name="app_font_invalid">无法使用该字体。请选择有效的 TTF 或 OTF 文件，大小小于 20 MB。</string>
-     <string name="app_font_downloads">快速字体下载</string>
-     <string name="app_font_checking">正在检查已安装字体…</string>
-     <string name="app_font_reset">重置字体</string>
-     <string name="app_font_reset_description">使用系统字体并移除导入的字体</string>
-     <string name="app_font_downloading">正在下载 %1$s…</string>
-     <string name="app_font_active">激活</string>
--    <string name="app_font_installed">已安装 · 点击使用</string>
-+    <string name="app_font_installed">已安装 · 点击使用</string>
-     <string name="app_font_download_and_use">点击下载并使用</string>
-     <string name="app_font_download_error">无法下载 %1$s。请检查连接并重试。</string>
-     <string name="app_font_import_custom">导入 TTF 或 OTF 文件</string>
-@@ -530,8 +530,8 @@
-     <string name="file_size_unit_terabyte">TB</string>
-     <string name="partial_song_count">≥ %1$s</string>
-     <string name="http_status_code">HTTP %1$d</string>
--    <string name="lyrics_offset_decrease">−%1$d 毫秒</string>
--    <string name="lyrics_offset_increase">+%1$d 毫秒</string>
-+    <string name="lyrics_offset_decrease">−%1$d 毫秒</string>
-+    <string name="lyrics_offset_increase">+%1$d 毫秒</string>
-     <string name="milliseconds_unit">毫秒</string>
-     <string name="playlist_add_progress">已处理 %1$d 首歌曲，共 %2$d 首</string>
-     <string name="playlist_add_stopped">%1$d 首歌曲已添加或已存在；%2$d 首歌曲的添加状态仍未确认。已添加的歌曲已保留。</string>
-```
-
----
-
-### Incident Patch 3: `e78c7ede` (2026-11-21)
-**Commit Message**: fix(i18n): integrate current Weblate translations and main
-
-**File**: `androidApp/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -448,6 +448,7 @@ dependencies {
- 
-     implementation(libs.activity)
-     implementation(libs.lifecycle.process)
-+    implementation(libs.androidx.work.runtime)
-     implementation(libs.material3)
-     implementation(libs.androidx.navigation3.ui)
-     implementation(libs.androidx.navigation3.runtime)
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/App.kt` (modified, +38/-0)
-```diff
-@@ -14,6 +14,7 @@ import android.content.pm.PackageManager
- import android.os.Build
- import android.os.SystemClock
- import android.service.quicksettings.TileService
-+import android.util.Log
- import android.webkit.WebView
- import androidx.compose.runtime.snapshots.Snapshot
- import androidx.core.app.NotificationChannelCompat
-@@ -67,6 +68,8 @@ import com.metrolist.shared.state.coreModule
- import com.metrolist.shared.utils.isCrashReportingAvailable
- import com.metrolist.shared.youtube.di.sharedModule
- import com.metrolist.shared.youtube.playback.AndroidContextProvider
-+import com.metrolist.shared.youtube.playback.PlaybackEventLevel
-+import com.metrolist.shared.youtube.playback.PlaybackEventLog
- import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
- import kotlinx.coroutines.CoroutineScope
- import kotlinx.coroutines.CoroutineStart
-@@ -85,6 +88,8 @@ import org.koin.android.ext.koin.androidContext
- import org.koin.core.context.startKoin
- import timber.log.Timber
- import java.io.File
-+import java.io.PrintWriter
-+import java.io.StringWriter
- import com.metrolist.shared.BuildConfig as SharedBuildConfig
- 
- class App :
-@@ -150,6 +155,7 @@ class App :
-     @OptIn(ExperimentalResourceApi::class)
-     override fun onCreate() {
-         super.onCreate()
-+        Timber.plant(AppFailureTree())
-         instance = this
-         AndroidContextProvider.applicationContext = applicationContext
-         val processName = currentProcessName()
-@@ -427,6 +433,38 @@ class App :
-     override fun newImageLoader(context: Context): ImageLoader = createAppImageLoader(context)
- }
- 
-+private class AppFailureTree : Timber.Tree() {
-+    override fun isLoggable(
-+        tag: String?,
-+        priority: Int,
-+    ): Boolean = priority == Log.WARN || priority == Log.ERROR
-+
-+    override fun log(
-+        priority: Int,
-+        tag: String?,
-+        message: String,
-+        t: Throwable?,
-+    ) {
-+        val level =
-+            when (priority) {
-+                Log.ERROR -> PlaybackEventLevel.ERROR
-+                Log.WARN -> PlaybackEventLevel.WARN
-+                else -> return
-+            }
-+        if (message.startsWith("[YtLogger] ")) return
-+        val messageWithoutThrowable =
-+            t?.let { throwable ->
-+                val stackTrace =
-+                    StringWriter(256)
-+                        .also { writer ->
-+                            throwable.printStackTrace(PrintWriter(writer, false))
-+                        }.toString()
-+                message.removeSuffix("\n$stackTrace").removeSuffix(stackTrace).removeSuffix("\n")
-+            } ?: message
-+        PlaybackEventLog.captureApplicationFailure(level, tag ?: "Android", messageWithoutThrowable, t)
-+    }
-+}
-+
- private fun currentProcessName(): String =
-     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-         Application.getProcessName()
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/backup/AutomaticBackupWorker.kt` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+package com.metrolist.android.backup
-+
-+import android.content.Context
-+import androidx.work.CoroutineWorker
-+import androidx.work.ExistingPeriodicWorkPolicy
-+import androidx.work.ExistingWorkPolicy
-+import androidx.work.OneTimeWorkRequestBuilder
-+import androidx.work.PeriodicWorkRequestBuilder
-+import androidx.work.WorkManager
-+import androidx.work.WorkerParameters
-+import androidx.work.workDataOf
-+import com.metrolist.shared.backup.AutoBackupFrequency
-+import com.metrolist.shared.backup.defaultBackupFilename
-+import com.metrolist.shared.db.MusicDatabase
-+import com.metrolist.shared.settings.Settings
-+import kotlinx.coroutines.sync.Mutex
-+import kotlinx.coroutines.sync.withLock
-+import org.koin.core.context.GlobalContext
-+import java.io.File
-+import java.util.concurrent.TimeUnit
-+
-+class AutomaticBackupWorker(
-+    context: Context,
-+    parameters: WorkerParameters,
-+) : CoroutineWorker(context, parameters) {
-+    override suspend fun doWork(): Result = backupMutex.withLock { doWorkLocked() }
-+
-+    private suspend fun doWorkLocked(): Result {
-+        if (inputData.getBoolean(PRUNE_ONLY_KEY, false)) {
-+            return runCatching { pruneBackups(File(applicationContext.filesDir, BACKUP_DIRECTORY)) }
-+                .fold({ Result.success() }, { Result.retry() })
-+        }
-+        val settings = Settings.shared
-+        if (!settings.autoBackupEnabled) return Result.success()
-+
-+        val directory = File(applicationContext.filesDir, BACKUP_DIRECTORY)
-+        val destination = File(directory, "${defaultBackupFilename(BACKUP_FILENAME_PREFIX)}.zip")
-+        val backupResult =
-+            runCatching {
-+                check(directory.isDirectory || directory.mkdirs()) { "Could not create automatic backup directory" }
-+                BackupRestoreManager(applicationContext, GlobalContext.get().get<MusicDatabase>())
-+                    .backup(destination)
-+                    .getOrThrow()
-+            }
-+        if (backupResult.isFailure) return Result.retry()
-+
-+        settings.autoBackupLastSuccessEpochMillis = System.currentTimeMillis()
-+        runCatching { settings.flush() }
-+        val pruneResult = runCatching { pruneBackups(directory) }
-+        if (pruneResult.isFailure) {
-+            WorkManager
-+                .getInstance(applicationContext)
-+                .enqueueUniqueWork(
-+                    PRUNE_WORK_NAME,
-+                    ExistingWorkPolicy.KEEP,
-+                    OneTimeWorkRequestBuilder<AutomaticBackupWorker>()
-+                        .setInputData(workDataOf(PRUNE_ONLY_KEY to true))
-+                        .build(),
-+                )
-+        }
-+        return Result.success()
-+    }
-+
-+    private fun pruneBackups(directory: File) {
-+        directory
-+            .listFiles { file -> file.isFile && (file.extension == "tmp" || file.name.endsWith(".tmp")) }
-+            ?.forEach { it.delete() }
-+        directory
-+            .listFiles { file -> file.isFile && file.extension == "zip" }
-+            .orEmpty()
-+            .sortedByDescending(File::lastModified)
-+            .drop(MAX_RETAINED_BACKUPS)
-+            .forEach { check(it.delete()) { "Could not remove expired automatic backup" } }
-+    }
-+
-+    companion object {
-+        private val backupMutex = Mutex()
-+        private const val BACKUP_DIRECTORY = "automatic-backups"
-+        private const val BACKUP_FILENAME_PREFIX = "metrolist-backup"
-+        private const val MAX_RETAINED_BACKUPS = 10
-+        private const val WORK_NAME = "automatic-backup"
-+        private const val PRUNE_WORK_NAME = "automatic-backup-prune"
-+        private const val PRUNE_ONLY_KEY = "pruneOnly"
-+
-+        fun schedule(
-+            context: Context,
-+            enabled: Boolean,
-+            frequency: AutoBackupFrequency,
-+        ) {
-+            val workManager = WorkManager.getInstance(context)
-+            if (!enabled) {
-+                workManager.cancelUniqueWork(WORK_NAME)
-+                return
-+            }
-+            val request =
-+                PeriodicWorkRequestBuilder<AutomaticBackupWorker>(frequency.intervalMillis, TimeUnit.MILLISECONDS)
-+                    .build()
-+            workManager.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
-+        }
-+    }
-+}
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/backup/BackupRestoreManager.kt` (modified, +38/-6)
-```diff
-@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase
- import android.net.Uri
- import android.os.Build
- import android.os.Process
-+import android.system.Os
- import androidx.core.database.sqlite.transaction
- import androidx.datastore.preferences.core.PreferenceDataStoreFactory
- import androidx.room3.exclusiveTransaction
-@@ -52,6 +53,7 @@ import kotlinx.serialization.Serializable
- import kotlinx.serialization.encodeToString
- import kotlinx.serialization.json.Json
- import java.io.File
-+import java.io.InputStream
- import java.util.UUID
- import java.util.zip.ZipEntry
- import java.util.zip.ZipInputStream
-@@ -140,6 +142,35 @@ class BackupRestoreManager(
-     private val database: MusicDatabase,
- ) {
-     suspend fun backup(uri: Uri): Result<Unit> =
-+        backup { archive ->
-+            context.contentResolver.openOutputStream(uri, "wt")?.use { output ->
-+                archive.inputStream().buffered().use { it.copyTo(output) }
-+                output.flush()
-+            } ?: error("Could not open backup destination")
-+        }
-+
-+    suspend fun backup(destination: File): Result<Unit> =
-+        backup { archive ->
-+            val liveDatabase = context.getDatabasePath(BACKUP_DATABASE_ENTRY)
-+            val protectedPaths =
-+                listOf(
-+                    liveDatabase,
-+                    File(liveDatabase.path + "-wal"),
-+                    File(liveDatabase.path + "-shm"),
-+                    File(liveDatabase.path + "-journal"),
-+                ).map { it.canonicalFile }
-+            check(destination.canonicalFile !in protectedPaths) { "Backup destination cannot replace the live database or its sidecars" }
-+            check(destination.parentFile?.let { it.mkdirs() || it.isDirectory } != false) { "Could not create backup directory" }
-+            val temporary = File(destination.parentFile, ".${destination.name}.tmp")
-+            try {
-+                archive.inputStream().buffered().use { input -> temporary.outputStream().buffered().use(input::copyTo) }
-+                Os.rename(temporary.absolutePath, destination.absolutePath)
-+            } finally {
-+                temporary.delete()
-+            }
-+        }
-+
-+    private suspend fun backup(writeArchive: (File) -> Unit): Result<Unit> =
-         withContext(Dispatchers.IO) {
-             runCatching {
-                 DiscordTokenStore.migrateLegacyCredentials(context)
-@@ -177,17 +208,18 @@ class BackupRestoreManager(
-                         snapshot.inputStream().buffered().use { it.copyTo(zip, BackupArchiveLimits.DATABASE_BYTES) }
-                         zip.closeEntry()
-                     }
--                    context.contentResolver.openOutputStream(uri, "wt")?.use { output ->
--                        archive.inputStream().buffered().use { it.copyTo(output) }
--                        output.flush()
--                    } ?: error("Could not open backup destination")
-+                    writeArchive(archive)
-                 } finally {
-                     staging.deleteRecursively()
-                 }
+@@ -329,6 +329,15 @@ kotlin {
+                 implementation(libs.sharesheet)
+                 implementation(libs.windowstaskbar)
+                 implementation(libs.mediacontrols)
++                // KMP's dependency handler takes exclusions only with string notation.
++                implementation(
++                    libs.decorated.window.tao
++                        .get()
++                        .toString(),
++                ) {
++                    exclude(group = "dev.nucleusframework", module = "nucleus.angle-natives")
++                    exclude(group = "org.jetbrains.compose.desktop")
++                }
              }
          }
  
--    suspend fun restore(uri: Uri): Result<Unit> =
-+    suspend fun restore(uri: Uri): Result<Unit> = restoreInput { context.contentResolver.openInputStream(uri) }
-+
-+    suspend fun restore(file: File): Result<Unit> = restoreInput { file.inputStream() }
-+
-+    private suspend fun restoreInput(openInput: () -> InputStream?): Result<Unit> =
-         withContext(Dispatchers.IO) {
-             var restoreStage = RestoreStage.READING_BACKUP
-             val stagedDb = File(context.cacheDir, "restore-$BACKUP_DATABASE_ENTRY")
-@@ -214,7 +246,7 @@ class BackupRestoreManager(
-                     var manifest: BackupManifest? = null
-                     var entryCount = 0
-                     var extractedBytes = 0L
--                    context.contentResolver.openInputStream(uri)?.use { rawInput ->
-+                    openInput()?.use { rawInput ->
-                         ZipInputStream(rawInput.buffered()).use { zip ->
-                             var entry = zip.nextEntry
-                             while (entry != null) {
+@@ -418,7 +427,7 @@ val syncExternalResources =
+ val desktopJavaLauncher =
+     extensions.getByType<JavaToolchainService>().launcherFor {
+         languageVersion.set(JavaLanguageVersion.of(25))
+-        vendor.set(jdkVendor)
++        jdkVendor?.let(vendor::set)
+     }
+ 
+ tasks.withType<JavaExec>().configureEach {
+@@ -464,10 +473,23 @@ tasks.withType<JavaExec>().configureEach {
+         }
+ 
+         environment("LC_NUMERIC", "C")
+-        environment(
+-            "GDK_BACKEND",
+-            providers.environmentVariable("GDK_BACKEND").orNull ?: "x11",
+-        )
++        val hasDisplay = !providers.environmentVariable("DISPLAY").orNull.isNullOrBlank()
++        val runtimeDir = providers.environmentVariable("XDG_RUNTIME_DIR").orNull
++        val hasWaylandDisplay =
++            !providers.environmentVariable("WAYLAND_DISPLAY").orNull.isNullOrBlank() ||
++                (!runtimeDir.isNullOrBlank() && File(runtimeDir, "wayland-0").exists())
++        val wantsWayland =
++            providers.environmentVariable("METROLIST_USE_WAYLAND").orNull == "1" ||
++                providers.environmentVariable("METROLIST_USE_WAKEFIELD").orNull == "1"
++        val gdkBackend =
++            providers.environmentVariable("GDK_BACKEND").orNull
++                ?: when {
++                    wantsWayland && hasWaylandDisplay -> "wayland"
++                    hasDisplay -> "x11"
++                    hasWaylandDisplay -> "wayland"
++                    else -> "x11"
++                }
++        environment("GDK_BACKEND", gdkBackend)
+         environment("_JAVA_AWT_WM_NONREPARENTING", "1")
+         environment(
+             "SKIKO_WAYLAND",
 ```
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/data/PlayHistoryRepository.kt` (modified, +43/-0)
+**File**: `desktopApp/packaging-integrity.gradle.kts` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,7 @@ import com.metrolist.shared.db.RemoteHistoryDate
- import com.metrolist.shared.db.daos.DatabaseDao
- import com.metrolist.shared.db.deleteHistoryEntries
- import com.metrolist.shared.db.entities.Event
-+import com.metrolist.shared.db.entities.RelatedSongMap
- import com.metrolist.shared.db.historyAlbumStatistics
- import com.metrolist.shared.db.historyArtistStatistics
- import com.metrolist.shared.db.historySongStatistics
-@@ -29,8 +30,13 @@ import com.metrolist.shared.model.HistorySortMode
- import com.metrolist.shared.model.SongItem
- import com.metrolist.shared.model.SortDirection
- import com.metrolist.shared.settings.BlockedContent
-+import com.metrolist.shared.settings.Settings
- import com.metrolist.shared.state.GlobalYouTubeRepository
-+import kotlinx.coroutines.CancellationException
+@@ -340,7 +340,7 @@ private class VerifyReleaseDistributableAction(
+             when (platform) {
+                 "win" -> listOf("nucleus_windows_theme.dll", "nucleus_share.dll", "nucleus_media_control_windows.dll")
+                 "mac" -> listOf("libnucleus_darkmode.dylib", "libnucleus_share.dylib", "libnucleus_media_control_macos.dylib")
+-                else -> listOf("libnucleus_linux_theme.so", "libnucleus_share.so", "libnucleus_media_control_linux.so")
++                else -> listOf("libnucleus_linux_theme.so", "libnucleus_share.so", "libnucleus_media_control_linux.so", "libnucleus_tao.so")
+             }
+         requiredNatives.forEach { native ->
+             check("$nucleusPlatform$native" in packagedEntries) { "Release distributable is missing $nucleusPlatform$native" }
+```
+
+**File**: `desktopApp/packaging-launchers.gradle.kts` (modified, +11/-2)
+```diff
+@@ -171,8 +171,17 @@ tasks.register("patchLinuxLauncher") {
+ # Wayland support in Skiko
+ export SKIKO_WAYLAND="${SKIKO_WAYLAND:-1}"
+ 
+-# Embedded GTK login windows are X11 children of AWT windows
+-export GDK_BACKEND="${GDK_BACKEND:-x11}"
++# Embedded GTK login windows are X11 children of AWT windows; use Wayland when X11 is absent or native Wayland is requested.
++if [ -n "${WAYLAND_DISPLAY:-}" ] || [ -S "${XDG_RUNTIME_DIR:-}/wayland-0" ]; then has_wayland=1; else has_wayland=0; fi
++if [ -z "${GDK_BACKEND:-}" ]; then
++    if [ "$has_wayland" = "1" ] && { [ "${METROLIST_USE_WAYLAND:-0}" = "1" ] || [ "${METROLIST_USE_WAKEFIELD:-0}" = "1" ]; }; then
++        export GDK_BACKEND=wayland
++    elif [ -n "${DISPLAY:-}" ]; then
++        export GDK_BACKEND=x11
++    elif [ "$has_wayland" = "1" ]; then
++        export GDK_BACKEND=wayland
++    fi
++fi
+ 
+ # Prevent AWT from reparenting (needed for some tiling WMs)
+ export _JAVA_AWT_WM_NONREPARENTING="${_JAVA_AWT_WM_NONREPARENTING:-1}"
+```
+
+**File**: `desktopApp/proguard-rules.pro` (modified, +8/-1)
+```diff
+@@ -15,6 +15,7 @@
+ -keep class * implements com.sun.jna.Library { *; }
+ -keep class io.github.kdroidfilter.** { *; }
+ -keep class dev.nucleusframework.** { *; }
++-keep interface dev.nucleusframework.** { *; }
+ -keep interface io.github.kdroidfilter.** { *; }
+ -keep class uniffi.** { *; }
+ -keep interface uniffi.** { *; }
+@@ -40,19 +41,23 @@
+     public static ** valueOf(java.lang.String);
+ }
+ 
+-# Compose internals used by the custom window hit-test bridge.
++# Compose internals used by the custom window hit-test bridge and Tao scene host.
+ -keep class androidx.compose.ui.node.HitTestResult { *; }
+ -keep class androidx.compose.ui.node.PointerInputModifierNode { *; }
++-keep class androidx.compose.ui.node.TaoLayerTreeAccess { *; }
++-keep class androidx.compose.ui.platform.TaoGraphicsResourceCacheAccess { *; }
+ -keep class androidx.compose.ui.scene.CanvasLayersComposeSceneImpl { *; }
+ -keep class androidx.compose.ui.scene.CanvasLayersComposeSceneImpl$AttachedComposeSceneLayer { *; }
+ -keep class androidx.compose.ui.scene.CopiedList { *; }
+ -keep class androidx.compose.ui.scene.PlatformLayersComposeSceneImpl { *; }
++-keep class androidx.compose.ui.scene.TaoComposeSceneContextAccess { *; }
+ 
+ # ServiceLoader providers.
+ -keep class coil3.network.okhttp.internal.OkHttpNetworkFetcherServiceLoaderTarget { *; }
+ -keep class io.ktor.client.engine.cio.CIOEngineContainer { *; }
+ -keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
+ -keep class io.ktor.serialization.kotlinx.json.KotlinxSerializationJsonExtensionProvider { *; }
++-keep class kotlinx.coroutines.internal.MainDispatcherFactory
+ -keep class kotlinx.coroutines.swing.SwingDispatcherFactory { *; }
+ -keep class org.freedesktop.dbus.transport.jre.NativeTransportProvider { *; }
+ -keep class org.slf4j.simple.SimpleServiceProvider { *; }
+@@ -73,5 +78,7 @@
+ -dontwarn io.github.kdroidfilter.**
+ -dontwarn uniffi.**
+ -dontwarn com.charleskorn.kaml.**
++-dontwarn org.jetbrains.compose.devtools.**
++-dontwarn org.jetbrains.compose.reload.**
+ 
+ -keepattributes Exceptions,InnerClasses,Signature,EnclosingMethod,*Annotation*
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/Main.kt` (modified, +225/-153)
+```diff
+@@ -72,16 +72,15 @@ import androidx.compose.ui.graphics.luminance
+ import androidx.compose.ui.graphics.painter.Painter
+ import androidx.compose.ui.graphics.toArgb
+ import androidx.compose.ui.input.pointer.pointerInput
++import androidx.compose.ui.platform.LocalClipboard
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.text.font.FontFamily
+ import androidx.compose.ui.unit.DpSize
+ import androidx.compose.ui.unit.dp
+-import androidx.compose.ui.window.Window
++import androidx.compose.ui.window.DialogProperties
+ import androidx.compose.ui.window.WindowPlacement
+ import androidx.compose.ui.window.WindowPosition
+-import androidx.compose.ui.window.WindowScope
+-import androidx.compose.ui.window.application
+ import androidx.compose.ui.window.rememberWindowState
+ import coil3.compose.setSingletonImageLoaderFactory
+ import com.materialkolor.ktx.isLight
+@@ -156,12 +155,18 @@ import com.metrolist.desktop.utils.isDesktopPlatformSupported
+ import com.metrolist.desktop.utils.isOmarchy
+ import com.metrolist.desktop.utils.openStopOmarchy
+ import com.metrolist.desktop.web.DesktopWebViewError
++import com.metrolist.desktop.window.DesktopWindow
++import com.metrolist.desktop.window.DesktopWindowScope
+ import com.metrolist.desktop.window.IconResources
+ import com.metrolist.desktop.window.LinuxWindowFrame
+ import com.metrolist.desktop.window.WindowFrame
+ import com.metrolist.desktop.window.WindowVisibility
++import com.metrolist.desktop.window.asComposeFrameWindowScope
++import com.metrolist.desktop.window.desktopApplication
++import com.metrolist.desktop.window.findRenderApi
+ import com.metrolist.desktop.window.findSkiaLayer
+ import com.metrolist.desktop.window.restoreWindowPosition
++import com.metrolist.desktop.window.runOnDesktopUiThread
+ import com.metrolist.desktop.window.setWindowPlacement
+ import com.metrolist.desktop.youtube.DesktopPageBoundTokenHost
+ import com.metrolist.desktop.youtube.DesktopPageBoundTokenRuntime
+@@ -213,11 +218,13 @@ import com.metrolist.shared.state.applyContentRegion
+ import com.metrolist.shared.state.coreModule
+ import com.metrolist.shared.ui.YouTubeSyncSnackbar
+ import com.metrolist.shared.ui.components.AlertDialog
++import com.metrolist.shared.ui.components.Dialog
+ import com.metrolist.shared.ui.components.HomeLoadingPlaceholder
+ import com.metrolist.shared.ui.components.LoadingScreen
+ import com.metrolist.shared.ui.components.LocalDownloadedSongIds
+ import com.metrolist.shared.ui.components.LocalVisualWorkActive
+ import com.metrolist.shared.ui.components.PopupVisibility
++import com.metrolist.shared.ui.crash.CrashLogsScreen
+ import com.metrolist.shared.ui.navigation.LocalNavigationContainerState
+ import com.metrolist.shared.ui.navigation.LocalNavigator
+ import com.metrolist.shared.ui.navigation.NavigationContentProvider
+@@ -256,7 +263,6 @@ import org.koin.core.context.stopKoin
+ import sun.misc.Signal
+ import sun.misc.SignalHandler
+ import java.awt.Desktop
+-import java.awt.EventQueue
+ import java.awt.Frame
+ import java.awt.GraphicsEnvironment
+ import java.awt.Toolkit
+@@ -276,13 +282,18 @@ import kotlin.system.exitProcess
+ import java.awt.Color as AwtColor
+ 
+ @Composable
+-fun WindowScope.App(
++fun DesktopWindowScope.App(
+     navigator: Navigator,
+     onMaximized: () -> Unit,
+     toggleWindowFullscreen: () -> Unit,
+     checkDarkMode: (Boolean) -> Unit,
+     isLinux: Boolean = false,
+ ) {
++    val clipboard = LocalClipboard.current
++    DisposableEffect(clipboard) {
++        AppState.bindClipboard(clipboard)
++        onDispose { AppState.unbindClipboard(clipboard) }
++    }
+     val playbackController = remember { DesktopPlaybackController(AppState.scope) }
+     val downloadStates = LibraryState.downloadStates
+     val downloadedSongIds = remember(downloadStates) { downloadStates.filterValues { it == DownloadState.DOWNLOADED }.keys }
+@@ -299,7 +310,7 @@ fun WindowScope.App(
+ }
+ 
+ @Composable
+-private fun WindowScope.AppContent(
++private fun DesktopWindowScope.AppContent(
+     navigator: Navigator,
+     onMaximized: () -> Unit,
+     toggleWindowFullscreen: () -> Unit,
+@@ -358,7 +369,7 @@ private fun WindowScope.AppContent(
+                 val dark = colorScheme.background.luminance() < 0.5f
+                 ComposeTrayManager.setThemeColors(bg, fg, border, dark)
+                 if (!isLinux) {
+-                    window.background = colorScheme.background.toAwtColor()
++                    awtWindow?.background = colorScheme.background.toAwtColor()
+                 }
+             } catch (_: Exception) {
+             }
+@@ -407,17 +418,6 @@ private fun WindowScope.AppContent(
+                     .clip(RoundedCornerShape(windowCornerRadius)),
+         ) {
+             LastFmArtistBrowserHost(lastFmBrowser)
+-            Box(
+-                Modifier
+-                    .fillMaxSize()
+-                    .windowInsetsPadding(LocalCaptionBarInsets.current.only(WindowInsetsSides.Top))
+-                    .focusRequester(rootFocusR
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/crash/DesktopCrashRecovery.kt` (modified, +93/-59)
+```diff
+@@ -1,8 +1,10 @@
+ package com.metrolist.desktop.crash
+ 
+ import com.metrolist.desktop.update.DesktopUpdateManager
++import com.metrolist.desktop.utils.WaylandScale
+ import com.metrolist.desktop.utils.desktopRestartCommand
+ import com.metrolist.desktop.utils.prepareDesktopRelaunch
++import com.metrolist.desktop.utils.saveDesktopFile
+ import com.metrolist.shared.BuildConfig
+ import com.metrolist.shared.crash.CrashReport
+ import com.metrolist.shared.crash.FatalCrashHandler
+@@ -18,19 +20,26 @@ import com.metrolist.shared.generated.resources.crash_menu_reload
+ import com.metrolist.shared.generated.resources.crash_no_log
+ import com.metrolist.shared.generated.resources.crash_restart
+ import com.metrolist.shared.generated.resources.crash_share_logs
++import com.metrolist.shared.generated.resources.crash_share_title
+ import com.metrolist.shared.generated.resources.crash_title
+ import com.metrolist.shared.generated.resources.crash_updates_action
+ import com.metrolist.shared.generated.resources.crash_updates_checking
+ import com.metrolist.shared.generated.resources.crash_updates_error
+ import com.metrolist.shared.generated.resources.crash_updates_no_updates
+ import com.metrolist.shared.utils.XdgUtils
+ import com.metrolist.shared.utils.openUrl
 +import kotlinx.coroutines.CoroutineScope
- import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.Dispatchers
 +import kotlinx.coroutines.SupervisorJob
 +import kotlinx.coroutines.launch
- import kotlinx.coroutines.withContext
- import kotlinx.datetime.TimeZone
- import kotlinx.datetime.toLocalDateTime
-@@ -41,6 +47,7 @@ import java.util.Locale
- import kotlin.time.Instant
+ import kotlinx.coroutines.runBlocking
+ import org.jetbrains.compose.resources.StringResource
+ import org.jetbrains.compose.resources.getString
++import java.awt.AWTError
+ import java.awt.BorderLayout
+ import java.awt.EventQueue
+ import java.awt.GraphicsEnvironment
++import java.awt.HeadlessException
+ import java.awt.Toolkit
+ import java.awt.datatransfer.StringSelection
+ import java.awt.event.WindowAdapter
+@@ -50,6 +59,8 @@ object DesktopCrashRecovery {
+     const val ARGUMENT = "--crash-report"
+     val store get() = FileCrashStore(File(XdgUtils.getXdgDataHome(), "metrolist/crashes"))
  
- private const val HISTORY_LOG_TAG = "PlayHistory"
-+private const val RELATED_SONGS_LIMIT = 20
- 
- data class HistoryEntry(
-     val id: Long,
-@@ -99,6 +106,8 @@ class PlayHistoryRepository(
-     private val database: MusicDatabase,
-     private val dao: DatabaseDao,
- ) {
-+    private val relatedSongsScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
++    private val shareScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 +
-     private data class SqlFilter(
-         val sql: String,
-         val args: List<Any?> = emptyList(),
-@@ -313,6 +322,40 @@ class PlayHistoryRepository(
-             playTimeMs,
-             song.artists.size,
-         )
-+        // Keep the optional network fetch out of the ordered history writes.
-+        if (Settings.shared.classicRecommendations) {
-+            relatedSongsScope.launch { recordRelatedSongs(song.id) }
+     fun install() {
+         val fallback =
+             Thread.getDefaultUncaughtExceptionHandler() ?: Thread.UncaughtExceptionHandler { _, error ->
+@@ -78,8 +89,8 @@ object DesktopCrashRecovery {
+ 
+     private fun prompt(report: String): DesktopCrashChoice =
+         awaitDesktopCrashChoice(
+-            isHeadless = GraphicsEnvironment.isHeadless(),
+-            isDispatchThread = EventQueue.isDispatchThread(),
++            isHeadless = runCatching { GraphicsEnvironment.isHeadless() }.getOrDefault(true),
++            isDispatchThread = runCatching { EventQueue.isDispatchThread() }.getOrDefault(false),
+             dispatch = EventQueue::invokeLater,
+         ) { onVisible ->
+             val reload = label(Res.string.crash_menu_reload)
+@@ -114,67 +125,83 @@ object DesktopCrashRecovery {
+     fun show(id: String) {
+         store.acknowledge(id)
+         val report = store.list().firstOrNull { it.id == id }?.text ?: label(Res.string.crash_no_log)
+-        EventQueue.invokeLater {
+-            val frame = JFrame(label(Res.string.crash_title))
+-            frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+-            installCrashScreenshotHint(frame, onCopy = { copy(report) }, onShare = { share(report) })
+-            frame.add(
+-                JScrollPane(
+-                    JTextArea(report).apply {
+-                        isEditable = false
+-                        caretPosition = 0
+-                    },
+-                ),
+-                BorderLayout.CENTER,
+-            )
+-            val actions = JPanel()
++        val headless = runCatching { GraphicsEnvironment.isHeadless() }.getOrDefault(true)
++        if (headless) {
++            System.err.println(report)
++            return
 +        }
-+    }
-+
-+    /** Stores the songs YouTube relates to [songId], feeding the classic local Quick picks. */
-+    private suspend fun recordRelatedSongs(songId: String) {
-+        // Local files have no YouTube watch id, so their relations cannot be fetched.
-+        if (songId.startsWith("local_")) return
-+        try {
-+            if (dao.hasRelatedSongs(songId)) return
-+            val related =
-+                GlobalYouTubeRepository.instance
-+                    .startRadioQueue(songId)
-+                    .songs
-+                    .filter { it.id.isNotBlank() && it.id != songId }
-+                    .distinctBy { it.id }
-+                    .take(RELATED_SONGS_LIMIT)
-+            if (related.isEmpty()) return
-+            database.withDatabaseTransaction {
-+                // Recheck inside the transaction: overlapping qualified plays of the
-+                // same seed could both pass the check above before either write.
-+                if (dao.hasRelatedSongs(songId)) return@withDatabaseTransaction
-+                related.forEach { relatedSong ->
-+                    dao.upsertHistorySong(relatedSong)
-+                    dao.insert(RelatedSongMap(songId = songId, relatedSongId = relatedSong.id))
-+                }
-+            }
-+        } catch (e: CancellationException) {
-+            throw e
-+        } catch (e: Exception) {
-+            Timber.tag(HISTORY_LOG_TAG).w("related songs fetch failed type=%s", e::class.simpleName)
++        runCatching {
++            EventQueue.invokeLater {
++                val frame =
++                    try {
++                        JFrame(label(Res.string.crash_title))
++                    } catch (error: Throwable) {
++                        if (error !is HeadlessException && error !is AWTError && error !is LinkageError) throw error
++                        System.err.println(report)
++                        exitProcess(1)
++                    }
++                frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
++                installCrashScreenshotHint(frame, onCopy = { copy(report) }, onShare = { share(report) })
++                frame.add(
++                    JScrollPane(
++                        JTextArea(report).apply {
++                            isEditable = false
++                            caretPosition = 0
++                        },
++                    ),
++                    BorderLayout.CENTER,
++                )
++                val actions = JPanel()
+ 
+-            fun action(
+-                resource: StringResource,
+-                block: () -> Unit,
+-            ): JButton =
+-                JButton(lab
+```
+
+**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/input/DesktopShortcuts.kt` (modified, +83/-12)
+```diff
+@@ -14,13 +14,27 @@ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberUpdatedState
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.input.key.Key
++import androidx.compose.ui.input.key.KeyEventType
++import androidx.compose.ui.input.key.isAltPressed
++import androidx.compose.ui.input.key.isCtrlPressed
++import androidx.compose.ui.input.key.isMetaPressed
++import androidx.compose.ui.input.key.isShiftPressed
++import androidx.compose.ui.input.key.key
++import androidx.compose.ui.input.key.onPreviewKeyEvent
++import androidx.compose.ui.input.key.type
++import androidx.compose.ui.input.pointer.PointerEventPass
++import androidx.compose.ui.input.pointer.PointerEventType
++import androidx.compose.ui.input.pointer.isForwardPressed
++import androidx.compose.ui.input.pointer.isPrimaryPressed
++import androidx.compose.ui.input.pointer.pointerInput
+ import androidx.compose.ui.platform.InterceptPlatformTextInput
+ import androidx.compose.ui.platform.PlatformTextInputInterceptor
+ import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
+ import com.metrolist.desktop.state.app.DesktopNavigation
+ import com.metrolist.desktop.state.app.UiState
+ import com.metrolist.desktop.state.playback.LyricsState
+ import com.metrolist.desktop.state.playback.PlayerState
++import com.metrolist.desktop.utils.WaylandScale
+ import com.metrolist.desktop.web.DesktopWebViewAvailability
+ import com.metrolist.shared.settings.Settings
+ import com.metrolist.shared.ui.navigation.NavigationBackHandler
+@@ -110,24 +124,81 @@ fun DesktopShortcutLayer(
+                 }
+             }
+         }
+-    DisposableEffect(Unit) {
+-        val dispatcher =
+-            installGlobalShortcutDispatcher(
+-                keyFocus,
+-                { backgroundFocused() },
+-                { refresh() },
+-                { toggleFullscreen() },
+-                { forward() },
+-                { clearFocus() },
+-            )
+-        onDispose { dispatcher.close() }
++    val useTaoWayland = WaylandScale.isNativeWaylandActive()
++    if (!useTaoWayland) {
++        DisposableEffect(Unit) {
++            val dispatcher =
++                installGlobalShortcutDispatcher(
++                    keyFocus,
++                    { backgroundFocused() },
++                    { refresh() },
++                    { toggleFullscreen() },
++                    { forward() },
++                    { clearFocus() },
++                )
++            onDispose { dispatcher.close() }
 +        }
      }
  
-     suspend fun getSongListeningStats(songId: String): SongListeningStats =
++    val boxModifier =
++        if (useTaoWayland) {
++            // Matches the AWT mouse queue: a primary click leaves keyboard navigation.
++            modifier
++                .pointerInput(keyFocus) {
++                    awaitPointerEventScope {
++                        var forwardHeld = false
++                        while (true) {
++                            val event = awaitPointerEvent(PointerEventPass.Initial)
++                            // buttons is the held state, so only the transition to held counts as a forward press.
++                            val forwardPressed = event.buttons.isForwardPressed && !forwardHeld
++                            forwardHeld = event.buttons.isForwardPressed
++                            if (event.type != PointerEventType.Press) continue
++                            if (event.buttons.isPrimaryPressed) keyFocus.keyboardNavigation = false
++                            // The AWT forward-button handler is not installed on Tao.
++                            if (forwardPressed && !isComposeModalActive()) {
++                                event.changes.forEach { it.consume() }
++                                forward()
++                            }
++                        }
++                    }
++                }.onPreviewKeyEvent { event ->
++                    if (event.type != KeyEventType.KeyDown || event.key == Key.Escape) return@onPreviewKeyEvent false
++                    if (event.key == Key.Tab ||
++                        ((event.key == Key.DirectionUp || event.key == Key.DirectionDown) && !backgroundFocused())
++                    ) {
++                        keyFocus.keyboardNavigation = true
++                    }
++                    val editableInputActive = keyFocus.textInputActive || UiState.isTextInputFocused || UiState.isSearchFocused
++                    val modalActive = isComposeModalActive()
++                    if (event.key == Key.F5 && modalActive) return@onPreviewKeyEvent false
++                    val pairingApprovalPending =
++                        DesktopDeviceConnect.manager.state.value.pairingRequests
++                            .any { it.requiresApproval }
++                    handleShortcut(
++                        ctrl = event.isCtrlPressed,
++                        meta = event.isMetaPressed,
++                        shift = event.isShiftPressed,
++                        keyCode = ShortcutKeyCode.Compose(event.key),
++                        suppressUnmodified = editableIn
 ```
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/models/PersistPlayerState.kt` (modified, +2/-0)
-```diff
-@@ -45,12 +45,14 @@ data class PersistPlayerState(
-     val radioQueueSeedSongId: String? = null,
-     val radioQueueFinite: Boolean? = null,
-     val radioQueue: Boolean = false,
-+    val explicitRadioQueue: Boolean? = null,
-     val queueSessionId: Long? = null,
-     val radioQueueChips: List<PersistRadioQueueChip> = emptyList(),
-     val radioQueueSelectedChipId: String? = null,
-     val radioQueueContinuation: String? = null,
-     val radioQueuePlaylistId: String? = null,
-     val radioQueueParams: String? = null,
-+    val radioQueueExplicitFeed: Boolean? = null,
-     val revision: String? = null,
- ) : java.io.Serializable
- 
-```
+---
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AndroidAudioTrackSelection.kt` (modified, +5/-1)
-```diff
-@@ -5,6 +5,7 @@ import com.metrolist.shared.api.musicvideo.MusicTrackResult
- import com.metrolist.shared.model.ArtistTiny
- import com.metrolist.shared.model.SongItem
- import com.metrolist.shared.model.canSwitchToAudioTrack
-+import com.metrolist.shared.model.playlistOccurrenceIdentity
- import com.metrolist.shared.youtube.playback.PlaybackResource
- import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.currentCoroutineContext
-@@ -111,7 +112,10 @@ internal fun mergeSelectedQueueSong(
-         queueSourceTitle = currentQueueSong.queueSourceTitle,
-         customTitle = customTitle,
-         customArtist = customArtist,
--    ).copy(originalQueueItemId = sourceSongAtSelection.originalQueueItemId ?: sourceSongAtSelection.id)
-+    ).copy(
-+        originalQueueItemId = sourceSongAtSelection.originalQueueItemId ?: sourceSongAtSelection.id,
-+        playlistOccurrenceId = sourceSongAtSelection.playlistOccurrenceIdentity(),
-+    )
- }
- 
- private fun applyAudioTrackMetadata(
-```
+### Incident Patch 2: `39fa99bf` (2026-11-23)
+**Commit Message**: fix(desktop): stop applying video frame snapshots on the decoder thread
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AndroidDeviceConnectPlayback.kt` (modified, +26/-3)
+Every decoded video frame was published through Snapshot.withMutableSnapshot
+on the decoder thread. Applying it there made Compose run layer
+invalidation off the UI thread, and the next frame on the event thread
+crashed with "Detected multithreaded access to SnapshotStateObserver".
+This is the most frequent fatal desktop crash on 14.0.1 in Sentry and
+matches crashes with music videos and animated covers on screen.
+
+related to: #4563
+related to: #4625
+
+**File**: `shared/src/desktopMain/kotlin/com/metrolist/shared/playback/VideoPlayer.kt` (modified, +3/-4)
 ```diff
-@@ -57,6 +57,13 @@ internal class AndroidDeviceConnectPlayback(
-     private var appliedSyncTrackRevision: Long? = null
-     val port: DeviceConnectPlaybackPort =
-         object : DeviceConnectPlaybackPort {
-+            @Volatile private var pendingExplicitRadioRequest = false
-+            private var explicitRadioBootstrapPending = false
-+
-+            override fun onExplicitRadioRequest() {
-+                pendingExplicitRadioRequest = true
-+            }
-+
-             override val canStartDefaultPlayback: Boolean get() = !isCasting()
+@@ -1,6 +1,5 @@
+ package com.metrolist.shared.playback
  
-             override suspend fun snapshot(): DcLocalPlaybackState =
-@@ -80,6 +87,7 @@ internal class AndroidDeviceConnectPlayback(
-                                     .getOrNull(player.currentMediaItemIndex.value)
-                                     ?.id,
-                         finite = queue.isFiniteQueue,
-+                        explicitRadioQueue = queue.explicitRadioQueue,
-                         scrobbleSession = scrobbleManager.session(),
-                     )
-                 }
-@@ -114,11 +122,18 @@ internal class AndroidDeviceConnectPlayback(
-                 }
-                 transitions.cancelNextTrackPreload()
-                 val seedId = desiredQueue.originalItems.firstOrNull()?.id
-+                val startsExplicitRadio =
-+                    desired.explicitRadioQueue && desiredQueue.displayedItems.size == 1 &&
-+                        (pendingExplicitRadioRequest || !queue.explicitRadioQueue || appliedSyncSessionId != snapshot.sessionId)
-+                pendingExplicitRadioRequest = false
-                 if (AndroidDeviceConnect.manager.remote.isFollowing || desired.finite != queue.isFiniteQueue ||
--                    seedId != queue.recommendationSeedSongId
-+                    seedId != queue.recommendationSeedSongId || desired.explicitRadioQueue != queue.explicitRadioQueue ||
-+                    startsExplicitRadio
-                 ) {
-                     queue.resetQueueSession(seedId, desired.title, desired.finite)
-+                    explicitRadioBootstrapPending = startsExplicitRadio
-                 }
-+                queue.setExplicitRadioQueue(desired.explicitRadioQueue)
-                 queue.setTitle(desired.title)
-                 repeatMode.value = desired.repeatMode.toPlayerRepeatMode()
-                 if (trackChanged || previousQueue != desiredQueue) player.restoreQueue(desiredQueue, currentTrackChanged = trackChanged)
-@@ -183,8 +198,14 @@ internal class AndroidDeviceConnectPlayback(
-                     player.isPlaying.value,
-                     desired.scrobbleSession,
-                 )
--                if (!queue.isFiniteQueue && queue.recommendationBootstrapJob == null && song != null) {
--                    queue.bootstrapRecommendations(queue.recommendationSeedSongId ?: song.id)
-+                if (!queue.isFiniteQueue && queue.recommendationBootstrapJob == null && song != null &&
-+                    (!desired.explicitRadioQueue || explicitRadioBootstrapPending)
-+                ) {
-+                    queue.bootstrapRecommendations(
-+                        queue.recommendationSeedSongId ?: song.id,
-+                        allowRepeatMode = desired.explicitRadioQueue,
-+                    )
-+                    explicitRadioBootstrapPending = queue.recommendationBootstrapJob == null
-                 }
-                 onSave()
+-import androidx.compose.runtime.snapshots.Snapshot
+ import com.metrolist.shared.playback.ffmpeg.FFmpegFrameGrabber
+ import com.metrolist.shared.playback.ffmpeg.Frame
+ import com.metrolist.shared.playback.ffmpeg.HttpRangeInputStream
+@@ -1044,9 +1043,9 @@ actual class VideoPlayer actual constructor(
+                 videoFrame.close()
+                 return false
              }
-@@ -221,12 +242,14 @@ internal class AndroidDeviceConnectPlayback(
-                             playback.title,
-                             playback.finite,
-                         )
-+                        queue.setExplicitRadioQueue(playback.explicitRadioQueue)
-                         queue.setTitle(playback.title)
-                         repeatMode.value = playback.repeatMode.toPlayerRepeatMode()
-                         if (player.queueSnapshots.value != playback.queue) player.restoreQueue(playback.queue)
-                         shuffleModeEnabled.value = playback.queue.isShuffled
-                         syncTargetLoaded = false
-                     }
-+                    if (playback != null) queue.setExplicitRadioQueue(playback.explicitRadioQueue)
-                     controllerPlayback = playback
-                     player.setControllerPlayback(playback)
-                     if (playback !=
+-            Snapshot.withMutableSnapshot {
+-                onFrame(videoFrame)
+-            }
++            // A global state write lets Compose send the change from the UI thread. Applying a snapshot here
++            // sent it from the decoder thread, and Compose then crashed on cross-thread layer observation.
++            onFrame(videoFrame)
+         }
+         val renderDuration = processDuration + (System.nanoTime() - emitStartNanos)
+ 
+```
+
+---
+
+### Incident Patch 3: `54dea630` (2026-11-23)
+**Commit Message**: fix(library): wait for the network instead of reporting offline sync failures
+
+When the device lost its connection, every library refresh failed with
+UnknownHostException, the retries ran out within a minute and the app
+showed "Could not sync with YouTube Music" although nothing was out of
+sync. Network failures now keep the cached library, skip the warning and
+refresh again once Android reports a new connection, or after five
+minutes.
+
+related to: #5260
+
+**File**: `shared/src/commonMain/kotlin/com/metrolist/shared/viewmodels/LibraryViewModel.kt` (modified, +32/-3)
+```diff
+@@ -24,13 +24,15 @@ import com.metrolist.shared.model.SongItem
+ import com.metrolist.shared.model.YTItem
+ import com.metrolist.shared.model.librarySearchKey
+ import com.metrolist.shared.model.parseDisplayCount
++import com.metrolist.shared.network.isHttpTransportException
+ import com.metrolist.shared.playlist.LibraryBookmarkMutations
+ import com.metrolist.shared.playlist.LibraryBookmarkSnapshot
+ import com.metrolist.shared.playlist.LibraryDeletionTracker
+ import com.metrolist.shared.settings.Settings
+ import com.metrolist.shared.state.GlobalYouTubeRepository
+ import com.metrolist.shared.state.PodcastLibrary
+ import com.metrolist.shared.youtube.logging.YtLogger
++import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
+ import kotlinx.coroutines.CancellationException
+ import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.Dispatchers
+@@ -53,6 +55,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
+ import kotlinx.coroutines.flow.update
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
++import kotlinx.coroutines.withTimeoutOrNull
+ import kotlinx.datetime.LocalDateTime
+ import kotlinx.datetime.TimeZone
+ import kotlinx.datetime.toInstant
+@@ -64,6 +67,7 @@ import kotlinx.serialization.json.Json
+ import kotlin.time.Clock
+ import kotlin.time.Duration
+ import kotlin.time.Duration.Companion.milliseconds
++import kotlin.time.Duration.Companion.minutes
+ import kotlin.time.Duration.Companion.seconds
+ 
+ const val LIBRARY_REFRESH_TTL_MILLIS = 5 * 60 * 1000L
+@@ -72,6 +76,7 @@ internal const val LIBRARY_SEARCH_PAGE_SIZE = 200
+ 
+ // A refresh makes ~100 requests; retry the whole sync quietly before reporting a blip as a failure.
+ private val LIBRARY_SYNC_RETRY_DELAYS = listOf(5.seconds, 15.seconds, 45.seconds)
++private val OFFLINE_SYNC_RETRY_INTERVAL = 5.minutes
+ 
+ fun shouldRefreshLibrary(
+     nowEpochMillis: Long,
+@@ -500,7 +505,12 @@ class LibraryViewModel(
+                     Settings.shared.lastLibraryRefreshAccount = accountKey
+                     YouTubeSyncState.succeeded("library")
+                 } else {
+-                    onRefreshFailed(accountKey, retryAttempt)
++                    val networkFailure =
++                        listOfNotNull(
++                            podcastsResult.exceptionOrNull(),
++                            episodesResult.exceptionOrNull(),
++                        ).any { it.isHttpTransportException() }
++                    onRefreshFailed(accountKey, retryAttempt, networkFailure)
+                 }
+                 localReloads.trySend(Unit)
+                 countResolutionJob =
+@@ -565,7 +575,7 @@ class LibraryViewModel(
+             } catch (e: Exception) {
+                 if (generation == refreshGeneration && currentLibraryAccountKey() == accountKey) {
+                     YtLogger.e("LibrarySync", "Refresh failed type=${e::class.simpleName}")
+-                    onRefreshFailed(accountKey, retryAttempt)
++                    onRefreshFailed(accountKey, retryAttempt, e.isHttpTransportException())
+                 }
+             } finally {
+                 refreshInProgress = false
+@@ -580,10 +590,29 @@ class LibraryViewModel(
+     private fun onRefreshFailed(
+         accountKey: String,
+         retryAttempt: Int,
++        networkFailure: Boolean,
+     ) {
+         val retryDelay = syncRetryDelays.getOrNull(retryAttempt)
++        // Without a connection the library is not out of sync, so wait for the network instead of reporting a failure.
++        val offline = networkFailure || !PlaybackNetworkStateStore.current.connected
+         _uiState.update {
+-            it.copy(isLoading = retryDelay != null && it.items.isEmpty(), isRefreshing = false, error = retryDelay == null)
++            it.copy(
++                isLoading = retryDelay != null && it.items.isEmpty(),
++                isRefreshing = false,
++                error = retryDelay == null && (!offline || it.items.isEmpty()),
++            )
++        }
++        if (retryDelay == null && offline) {
++            val failedNetwork = PlaybackNetworkStateStore.current
++            syncRetryJob =
++                scope.launch {
++                    withTimeoutOrNull(OFFLINE_SYNC_RETRY_INTERVAL) {
++                        PlaybackNetworkStateStore.state.first { it.connected && it != failedNetwork }
++                    }
++                    syncRetryJob = null
++                    if (currentLibraryAccountKey() == accountKey) refresh(force = true)
++                }
++            return
+         }
+         if (retryDelay == null) {
+             YouTubeSyncState.failed("library") { if (currentLibraryAccountKey() == accountKey) refresh(force = true) }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5141** (2026-11-21): fix(device-connect): keep Radio bootstrap across shuffle and transfer (@nyxiereal)
-- **PR #5140** (2026-11-21): fix(radio): retain bootstrap continuations and selected feeds (@nyxiereal)
-- **PR #5139** (2026-11-21): fix(lyrics): preserve repeated and nested background vocals (@nyxiereal)
-- **PR #5138** (2026-11-21): fix(player): retain fullscreen contrast behind tablet controls (@nyxiereal)
-- **PR #5137** (2026-11-21): fix(cast): accept receiver updates after a startup seek (@nyxiereal)
-- **PR #5136** (2026-11-21): fix(backup): recheck desktop deadlines after suspend (@nyxiereal)
+- **PR #5291** (2026-11-24): fix(android): keep mini-player visible during floating navigation drags (@nyxiereal)
+- **PR #5274** (2026-11-24): feat(cast): add a volume step setting for the phone volume buttons (@CrackedOnTiti)
+- **PR #5273** (2026-11-24): fix(ui): stop repeating the playlist name in the Add to playlist dialog (@CrackedOnTiti)
+- **PR #5272** (2026-11-23): fix(android): restore resume on Bluetooth connect (@nyxiereal)
+- **PR #5271** (2026-11-23): feat(updates): install updates through root or Shizuku (@nyxiereal)
+- **PR #5270** (2026-11-24): fix(player): accept both decimal separators in tempo and pitch inputs (@alfa-reza)
 
 ---
 
@@ -2163,40 +1821,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. i18n): integrate Weblate translations with corrections
+## X. desktop): support pure Wayland sessions on Linux
 
 **RULE**:
-When implementing operations in `androidApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/tests/test_desktop_launcher.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5189f16f`: i18n): integrate Weblate translations with corrections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17f78c37`: desktop): support pure Wayland sessions on Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/build.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/tests/test_desktop_launcher.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-val bundledLanguageParser =
-    DocumentBuilderFactory
-        .newInstance()
-        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
-        .newDocumentBuilder()
-        .filter { directory ->
-            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
-            val root = bundledLanguageParser.parse(catalog).documentElement
-            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
-        }.map { directory ->
+        probe = 'printf "%s\n" "${GDK_BACKEND-unset}"'
+        self.executable(self.bin / "Metrolist.bin", probe)
+        self.executable(self.bin.parent / "lib/native/Metrolist", probe)
+        for native in (False, True):
+            with self.subTest(native=native):
+                self.environment.pop("GDK_BACKEND", None)
+                self.environment.pop("WAYLAND_DISPLAY", None)
+                self.environment.pop("METROLIST_USE_WAYLAND", None)
+                self.environment.pop("METROLIST_USE_WAKEFIELD", None)
+                self.environment.update(DISPLAY=":77", XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
+                self.assertEqual(["x11"], self.launch(native))
+                self.environment["GDK_BACKEND"] = "x11,wayland"
+                self.assertEqual(["x11,wayland"], self.launch(native))
+                del self.environment["GDK_BACKEND"]
+                del self.environment["DISPLAY"]
+                self.environment["WAYLAND_DISPLAY"] = "wayland-0"
+                self.assertEqual(["wayland"], self.launch(native))
+                self.environment["DISPLAY"] = ":77"
+                self.environment["METROLIST_USE_WAYLAND"] = "1"
+                self.assertE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        .map { directory ->
+        self.executable(self.bin / "Metrolist.bin", 'printf "%s\n" "$GDK_BACKEND"')
+        self.environment.update(XCURSOR_THEME="Theme", XCURSOR_SIZE="24")
+        self.assertEqual(["x11"], self.launch())
+        self.environment["GDK_BACKEND"] = "x11,wayland"
+        self.assertEqual(["x11,wayland"], self.launch())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5189f16f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17f78c37` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

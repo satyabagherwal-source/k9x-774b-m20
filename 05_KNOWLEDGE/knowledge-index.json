@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T04:28:59.565Z",
+  "last_updated": "2026-11-24T04:37:08.146Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24426,
+  "total_items": 24429,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "263fee8dda518b165724d42467b2c0d8e9abc96d8778261598cea54647165547",
+      "content_hash": "336984969576c2d7ed229543b759b5927f1b4b533e508be22bb9c61931844d56",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T03:05:29.377Z"
+      "persisted_at": "2026-11-24T04:37:08.146Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "901f5520431b2b536da610cff9f37b7cebeb3b0847608f7453265175d8949223",
+      "content_hash": "fc688e6f69f1666f06700c990b505392195c226aa040a58bd54b1e78421f5b6c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:33:37.659Z"
+      "persisted_at": "2026-11-24T04:37:07.024Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2953f8aef41f6c4a6b8a06219f74821ffa05fe0b75aadc2aca21b61f34e09dd5",
+      "content_hash": "cd3668070df58c52f0ec6b9971e7fcc34cf9ef7016d30dfac3a3d431c3b8aeaa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:33:37.885Z"
+      "persisted_at": "2026-11-24T04:37:07.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -253759,8 +253759,8 @@
       "slug": "metrolistgroup-metrolist",
       "platform": "github",
       "source_url": "https://github.com/MetrolistGroup/Metrolist",
-      "source_version": "5189f16f",
-      "content_hash": "90d0aeffeef1fde17680d2a1af6831b4e0a6930d1c8ff4947e8868983e101b88",
+      "source_version": "af3d0533",
+      "content_hash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
       "dossier_path": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "promoted_rules": [
@@ -253773,6 +253773,11 @@
           "number": 9747,
           "title": "integrate Weblate translations with corrections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10199,
+          "title": "support pure Wayland sessions on Linux",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -253780,7 +253785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T07:58:47.613Z",
+      "verified_at": "2026-11-24T04:37:01.634Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253822,10 +253827,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "5189f16f",
-      "content_hash": "1348f0331f5428894faf5d73ef4bee45bc1e868b101ac3127356482a9ca66210",
+      "source_version": "af3d0533",
+      "content_hash": "b1a85919a8c46c39dba57e82339e267fb38ffec1078eed096fb957887ef4d477",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T07:58:48.096Z"
+      "persisted_at": "2026-11-24T04:37:02.255Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist",
@@ -253834,10 +253839,10 @@
       "relative_path": "08_VERIFICATION/metrolistgroup-metrolist-verification-protocol-empirical-defect-shield-for-metro.md",
       "title": "Verification Protocol: Empirical Defect Shield for MetrolistGroup/Metrolist",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "5189f16f",
-      "content_hash": "aecde9955e8b9d44eb1f49a2e7702e23d01d09e9003d6f24637caae4a3613016",
+      "source_version": "af3d0533",
+      "content_hash": "60fd924d2182045bebf6a5d8734c1efc73c8babd6f265c6c29e8a6cbb778d1f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:58:48.224Z"
+      "persisted_at": "2026-11-24T04:37:02.425Z"
     },
     "learn-github-ehpanda-team-ehpanda": {
       "learning_id": "learn-github-ehpanda-team-ehpanda",
@@ -254065,9 +254070,9 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d69a3a87240c55af7889e77a6eb2b9567f8dbb2de03973a41e40aa6b4bc2ae6",
+      "content_hash": "c82e12ee9da2701c95b1a02e976fc4d941b021b85a6d4dcca35c66c3a0e90927",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T07:59:01.610Z"
+      "persisted_at": "2026-11-24T04:37:06.234Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn",
@@ -254077,9 +254082,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metrolistgroup-metrolist-learnings",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "0db11c89c7b693288a9a0d6792089825dcdd62f27d2d355faa76adf9b0249e8d",
+      "content_hash": "8c3c647afa5cd7c3d5149ef93b9b645e7f646ae23af45bcd268208b01e52b6c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:59:01.730Z"
+      "persisted_at": "2026-11-24T04:37:06.402Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
@@ -319708,13 +319713,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-41ZQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DPD1-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8203e8baec372d1f830c913599f4658c5feaf9d4f2444ecee492e2464410ef38",
+      "content_hash": "2432f089cca2bb8a5d7b8e9582264f95e8cf21cff9dc3c564f076684189638e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:33:37.436Z"
+      "persisted_at": "2026-11-24T04:37:06.856Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -333195,6 +333200,44 @@
       "content_hash": "1d563ab1f1defd954939e19fe38dd8915544a4afc6299d7bef37175de727e357",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T04:20:39.516Z"
+    },
+    "rule-10199": {
+      "learning_id": "rule-10199",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10199,
+      "title": "support pure Wayland sessions on Linux",
+      "source_url": "https://github.com/MetrolistGroup/Metrolist",
+      "source_version": "af3d0533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:37:01.634Z"
+    },
+    "candidate_directive-support-pure-wayland-sessions-on-linux": {
+      "item_id": "candidate_directive-support-pure-wayland-sessions-on-linux",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DLOH-support-pure-wayland-sessions-on-linux.md",
+      "title": "support pure Wayland sessions on Linux",
+      "repository": "MetrolistGroup/Metrolist",
+      "source_version": "af3d0533",
+      "content_hash": "c9330e1d15e0ea999ef3e4bf9fa43621cf5c3a4a4fdfb1ab2cac69ff309f28e1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T04:37:02.084Z"
+    },
+    "candidate_directive-desktop-support-pure-wayland-sessions-on-linux": {
+      "item_id": "candidate_directive-desktop-support-pure-wayland-sessions-on-linux",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DOQS-desktop-support-pure-wayland-sessions-on-linux.md",
+      "title": "desktop): support pure Wayland sessions on Linux",
+      "repository": "metrolistgroup-metrolist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0a9d5e24f2184aa023a600627c69df937bbb8d899198e317152074b439adf9f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T04:37:06.055Z"
     }
   },
   "ai-builder-brain": {
