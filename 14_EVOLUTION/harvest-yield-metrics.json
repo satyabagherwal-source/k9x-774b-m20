@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:19:20.141Z",
-  "total_cycles_completed": 12153,
-  "total_learnings_persisted": 12153,
-  "total_rules_promoted": 11211,
+  "last_updated": "2026-11-24T19:36:13.818Z",
+  "total_cycles_completed": 12155,
+  "total_learnings_persisted": 12155,
+  "total_rules_promoted": 11213,
   "history": [
-    {
-      "timestamp": "2026-11-24T03:33:24.214Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:33:30.280Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T03:41:38.180Z",
       "repository": "Automattic/harper",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T19:19:20.141Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:36:00.307Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:36:13.818Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

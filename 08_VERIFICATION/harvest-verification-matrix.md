@@ -12791,3 +12791,5 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T19:10:44.611Z` | `beclab-olares` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-C-AF8B1B7F` [Domain C] | Yes (`e8a021ad...`) |
 | `CYCLE-20261124-W18C` | `2026-11-24T19:19:10.140Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10344` | Yes (`8e3362aa...`) |
 | `CYCLE-20261124-W8XW` | `2026-11-24T19:19:20.132Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10345` | Yes (`ae281061...`) |
+| `CYCLE-20261124-HOO9` | `2026-11-24T19:36:00.297Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10346` | Yes (`9ea7fcba...`) |
+| `CYCLE-20261124-HZ3K` | `2026-11-24T19:36:13.808Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10347` | Yes (`54a3e8e3...`) |

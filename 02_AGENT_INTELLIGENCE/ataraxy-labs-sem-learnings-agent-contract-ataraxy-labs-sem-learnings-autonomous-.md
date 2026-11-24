@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:46:31.070Z",
+  "timestamp": "2026-11-24T19:36:17.340Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ataraxy-labs-sem-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ataraxy-labs-sem-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:46:31.070Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:36:17.340Z`  
 > **Learning ID**: `LEARN-EVO-ataraxy-labs-sem-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `1ab7cfb2`  
+> **Source Version**: `e98c27d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:46:14.263Z  
+> **Timestamp**: 2026-11-24T19:35:59.162Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:46:14.257Z  
+> **Harvest Timestamp**: 2026-11-24T19:35:59.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3461 stars
+- **Stars / Engagement**: 3459 stars
 
 ---
 
@@ -1846,11 +1846,11 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #553** (2026-11-24): **Unbounded thread-per-file and unbounded result limits allow single-call resource exhaustion**
+  *Symptoms*: ## Summary  Calling `sem_find` with `mode="context"` and `files=[...]` dispatches to `read_files`, which spawns one OS thread per path via `std::thread::scope` and `scope.spawn`, without bounding `paths.len()`. Each thread reads the full file, even when the same path is repeated.  Other resource controls are also unbounded:  - `sem_grep` has no upper bound on `limit`, and each batched pattern triggers a full repository scan. - `sem_context` has no upper bound on `token_budget` or the size of the `entities` batch. - The stdio transport has no request-size limit, unlike the HTTP transport's 1 MiB limit.  ## To reproduce  1. Start `sem mcp` in a repository containing a large text file and initialize an MCP session. 2. Send a `tools/call` request for `sem_find` with `mode="context"` and the same existing file path repeated in `files`. For example:     ```json    {      "jsonrpc": "2.0",      "id": 1,      "method": "tools/call",      "params": {        "name": "sem_find",        "arguments": {          "mode": "context",          "files": [            "path/to/large-file.txt",            "path/to/large-file.txt",            "path/to/large-file.txt"          ]        }      }    }    ```     Replace `path/to/large-file.txt` with the file's repository-relative path. The example shows three entries; the recorded measurements used 100, 1,000, and 5,000 entries.  3. Monitor peak thread count and elapsed time while increasing the number of entries.  ## Expected  Tool inputs and concurr
+
 - **Issue #550** (2026-11-14): **fix: sem update across filesystems, and sem find --text honors --in and --json**
   *Symptoms*: Fixes #549 and #548.  **#549.** `sem update` extracted the release into the temp dir and renamed the binary from there onto the installed one, which fails with EXDEV (os error 18) when `/tmp` is tmpfs and the binary is on ext4, btrfs or xfs. The new binary is now copied next to the installed one first (`sem.new`, 0755), so the swap is two renames inside one directory. Rollback on failure is unchanged.  **#548.** `sem find --text` and `sem entities --text` returned before reading `--in`, `--only`/`--except` and `--json`. The entities are now narrowed by path (a file or folder, from the repo root or a subfolder) and by kind, and `--json` prints `{text, total, hits: [{file, entity, type, line, text}]}`. The reproduction from the issue now returns only `src/a.rs::keep`, as JSON.  Thanks @kevmoo for both reports and the clear reproductions. 
-
-- **Issue #549** (2026-11-14): **`sem update` fails with `os error 18` when `/tmp` is on `tmpfs`**
-  *Symptoms*: Running `sem update` on Linux fails with `Failed to install new binary: Invalid cross-device link (os error 18)` whenever `std::env::temp_dir()` (`/tmp`, commonly `tmpfs`) and the installed `sem` binary (for example, `~/.local/bin/sem`) sit on different mountpoints, because [`crates/sem-cli/src/commands/update.rs#L209-L248`](https://github.com/Ataraxy-Labs/sem/blob/036dde8/crates/sem-cli/src/commands/update.rs#L209-L248) extracts into `std::env::temp_dir()` and calls `fs::rename(&new_binary, &exe)` across filesystems.  ### Reproduction (`sem 0.30.1` / `036dde8`)  1. On a Linux host where `/tmp` is mounted as `tmpfs` and `~/.local/bin` is on an `ext4`/`btrfs`/`xfs` filesystem (`df -T /tmp ~/.local/bin`), install an older `sem` release to `~/.local/bin/sem`. 2. Run `sem update` with default `TMPDIR` (`/tmp`):    ```text    Error: Failed to install new binary: Invalid cross-device link (os error 18)    ``` 3. Setting `TMPDIR` onto the target binary's filesystem (`mkdir -p ~/.local/tmp && TMPDIR="$HOME/.local/tmp" sem update`) succeeds.  ### Possible Directions  - Stage or copy `new_binary` to a sibling temp path in `exe.parent()` (for example, `exe.with_extension("new")`, setting `0o755` permissions before `fs::rename`) so the final `fs::rename` onto `exe` is always same-filesystem and atomic. - Alternatively, fall back to `fs::copy` + `fs::remove_file` when `fs::rename(&new_binary, &exe)` returns `io::ErrorKind::CrossesDevices` (`EXDEV`). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1867,40 +1867,529 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ab7cfb2` (2026-11-22)
-**Commit Message**: land: setup script (Rust stable, crates vendored for offline tests)
+### Incident Patch 1: `f1f906ef` (2026-11-24)
+**Commit Message**: mcp: bound what one tool call may ask for (fixes #553)
 
-**File**: `.land/setup.sh` (added, +28/-0)
+A single call could exhaust threads, memory or output:
+
+- sem_find's file read spawned one OS thread per path and reread repeated paths. It now reads
+  each distinct path once, at most 100 files per call, on at most 8 threads, and refuses a file
+  over 8 MiB with its size.
+- sem_grep's limit had no ceiling and each batched pattern scans the repository: limit is
+  clamped to 2,000 and a call takes at most 50 patterns.
+- sem_context's token_budget and entities batch were unbounded: the budget is clamped to
+  100,000 tokens (also for sem_grep's bodies) and a call takes at most 50 entities; sem_find's
+  queries batch has the same 50.
+- stdio had no request-size limit: a request line is at most 1 MiB, as on HTTP. A longer line is
+  drained in the reader's own chunks, never held whole, answered with an Invalid Request error,
+  and the session continues.
+
+Thanks @pzr21 for the report.
+
+**File**: `crates/sem-mcp/src/server.rs` (modified, +84/-21)
 ```diff
-@@ -0,0 +1,28 @@
-+#!/bin/bash
-+# Rust stable (standalone, no rustup, so it works for any user and HOME), the packages sem's Dockerfile builds
-+# with, and every crate vendored to /opt/cargo-vendor so the tests build and run offline.
-+set -e
-+export DEBIAN_FRONTEND=noninteractive
-+apt-get update -qq
-+apt-get install -y -qq --no-install-recommends curl ca-certificates xz-utils build-essential pkg-config \
-+  libssl-dev cmake git
-+v=1.100.0
-+curl -fsSL https://static.rust-lang.org/dist/rust-$v-x86_64-unknown-linux-gnu.tar.xz | tar -xJ -C /tmp
-+/tmp/rust-$v-x86_64-unknown-linux-gnu/install.sh --prefix=/usr/local \
-+  --components=rustc,cargo,rust-std-x86_64-unknown-linux-gnu
-+rm -rf /tmp/rust-$v-x86_64-unknown-linux-gnu
-+export CARGO_HOME=/tmp/cargo-setup
-+(cd crates && cargo vendor --locked --versioned-dirs /opt/cargo-vendor > /dev/null)
-+rm -rf "$CARGO_HOME"
-+# Found from any working directory (cargo walks up to /), independent of the test user's HOME.
-+mkdir -p /.cargo
-+cat > /.cargo/config.toml <<'CFG'
-+[source.crates-io]
-+replace-with = "vendored-sources"
-+[source.vendored-sources]
-+directory = "/opt/cargo-vendor"
-+[net]
-+offline = true
-+CFG
-+chmod -R a+rX /opt/cargo-vendor /.cargo
-+cargo --version; rustc --version
+@@ -2415,6 +2415,9 @@ impl SemServer {
+         // agent waited on — let the speed be felt, not claimed.
+         let start = Instant::now();
+ 
++        if let Some(msg) = params.entities().and_then(|e| crate::tools::batch_over(e.len(), "entities")) {
++            return Ok(tool_error(msg));
++        }
+         if let Some(entities) = params.entities() {
+             // Batch form: one block per entity, resolution failures reported
+             // inline per entity (a miss on one never hides the others). The
+@@ -2497,7 +2500,7 @@ impl SemServer {
+             None => None,
+         };
+         let no_default_excludes = params.no_default_excludes.unwrap_or(false);
+-        let budget = params.token_budget.unwrap_or(8000);
++        let budget = params.token_budget.unwrap_or(8000).min(crate::tools::MAX_TOKEN_BUDGET);
+         let hops = params.hops.unwrap_or(0);
+ 
+         // File-hinted queries stay local (same gate as the CLI, #409): the
+@@ -2710,6 +2713,9 @@ impl SemServer {
+     ) -> Result<CallToolResult, rmcp::ErrorData> {
+         let query = params.query.as_deref().map(str::trim).filter(|q| !q.is_empty()).map(str::to_string);
+         let queries = params.queries().map(<[String]>::to_vec);
++        if let Some(msg) = queries.as_ref().and_then(|q| crate::tools::batch_over(q.len(), "queries")) {
++            return Ok(tool_error(msg));
++        }
+         // `files` or `lines` with no entity named can only mean "read these"
+         let reading = query.is_none() && queries.is_none() && (params.files.as_ref().is_some_and(|f| !f.is_empty()) || params.lines.is_some());
+         let mode = if reading { Some("context") } else { params.mode.as_deref().map(str::trim).filter(|m| !m.is_empty()) };
+@@ -2896,27 +2902,52 @@ impl SemServer {
+             Ok(r) => r,
+             Err(e) => return tool_error(e),
+         };
++        // Issue #553: a path named twice is read once, at most MAX_FILES distinct files per call, read on at most
++        // READ_THREADS threads (never one thread per path), and a file past MAX_FILE_BYTES is refused with its size.
++        let mut seen = std::collections::HashSet::new();
++        let paths: Vec<String> = paths.into_iter().filter(|p| seen.insert(p.clone())).collect();
++        if paths.len() > crate::tools::MAX_FILES {
++            return tool_error(format!(
++                "{} files in one read; at most {} (split the read)",
++                paths.len(),
++                crate::tools::MAX_FILES
++            ));
++        }
+         let root = ctx.repo_root.clone();
+         let read: Vec<(String, Result<String, String>)> = tokio::task::spawn_blocking(move || {
++            let read_one = |p: &String| -> (String, Result<String, String>) {
++                let (rel, abs) = Self::resolve_file_path(&root, p);
++                let size = std::fs::metadata(&abs).map(|m| m.len()).unwrap_or(0);
++                let text = if size > crate::tools::MAX_FILE_BYTES {
++                    Err(format!(
++                        "{size} bytes, over the {} MiB a read returns",
++                        crate::tools::MAX_FILE_BYTES / (1024 * 1024)
++                    ))
++                } else {
++                    match std::fs::read(&abs) {
++                        Ok(b) if b.contains(&0) => Err(format!("binary file, {} bytes", b.len())),
++                        Ok(b) => Ok(String::from_utf8_lossy(&b).into_owned()),
++                        Err(e) if abs.is_dir() => Err(format!("a directory ({e}); list it with `in` and no mode")),
++                        Err(e) => Err(e.to_string()),
++                    }
++                };
++                (rel, text)
++            };
++            let next = std::sync::atomic::AtomicUsize::new(0);
++            let slots: Vec<std::sync::Mutex<Option<(String, Result<String, String>)>>> =
++                paths.iter().map(|_| std::sync::Mutex::new(None)).collect();
++            let workers = crate::tools::READ_THREADS.min(paths.len()).max(1);
+             std::thread::scope(|scope| {
+-                let jobs: Vec<_> = paths
+-                    .iter()
+-                    .map(|p| {
+-                        let root = &root;
+-                        scope.spawn(move || {
+-                            let (rel, abs) = Self::resolve_file_path(root, p);
+-                            let text = match std::fs::read(&abs) {
+-                                Ok(b) if b.contains(&0) => Err(format!("binary file, {} bytes", b.len())),
+-                                Ok(b) => Ok(String::from_utf8_lossy(&b).into_owned()),
+-                                Err(e) if abs.is_dir() => Err(format!("a directory ({e}); list it with `in` and no mode")),
+-                                Err(e) => Err(e.to_string()),
+-                            };
+-                            (rel, text)
+-                        })
+-                    })
+-                    .collect();
+-                jobs.into_iter().filter_map(|j| j.join().ok()).collect()
+-            })
++                for _
+```
+
+**File**: `crates/sem-mcp/src/tools.rs` (modified, +21/-1)
+```diff
+@@ -2,6 +2,26 @@ use serde::Deserialize;
+ 
+ // ── Tool parameter structs ──
+ 
++/// Bounds on what one tool call may ask for (issue #553): a single call must not be able to exhaust threads,
++/// memory or output. Batches past MAX_BATCH and reads past MAX_FILES are refused with the bound named; limits and
++/// budgets past theirs are clamped.
++pub const MAX_BATCH: usize = 50;
++/// Distinct files one read may name.
++pub const MAX_FILES: usize = 100;
++/// Threads one read uses, however many files it names.
++pub const READ_THREADS: usize = 8;
++/// The largest file one read returns whole (a larger one is refused, with its size).
++pub const MAX_FILE_BYTES: u64 = 8 * 1024 * 1024;
++/// The largest token_budget any tool honors.
++pub const MAX_TOKEN_BUDGET: usize = 100_000;
++/// The largest per-pattern hit limit sem_grep honors.
++pub const MAX_GREP_LIMIT: usize = 2_000;
++
++/// A batch past MAX_BATCH, refused before any work: Some(message) names the bound.
++pub fn batch_over(len: usize, what: &str) -> Option<String> {
++    (len > MAX_BATCH).then(|| format!("{len} {what} in one call; at most {MAX_BATCH} (split the batch)"))
++}
++
+ #[derive(Debug, Deserialize, schemars::JsonSchema)]
+ #[serde(deny_unknown_fields)]
+ pub struct EntitiesParams {
+@@ -277,7 +297,7 @@ pub struct GrepParams {
+ 
+ impl GrepParams {
+     pub fn limit(&self) -> usize {
+-        self.limit.unwrap_or(200).max(1)
++        self.limit.unwrap_or(200).clamp(1, MAX_GREP_LIMIT)
+     }
+ 
+     pub fn case_insensitive(&self) -> bool {
+```
+
+**File**: `crates/sem-mcp/src/transport.rs` (modified, +91/-3)
+```diff
+@@ -12,6 +12,62 @@ use tokio::sync::Mutex;
+ const PARSE_ERROR_RESPONSE: &[u8] =
+     br#"{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}"#;
+ 
++/// The largest request line stdio accepts (issue #553), the same 1 MiB the HTTP transport's body limit allows.
++const MAX_REQUEST_BYTES: usize = 1024 * 1024;
++
++const TOO_LARGE_RESPONSE: &[u8] =
++    br#"{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request: a request line is at most 1 MiB"}}"#;
++
++/// What one bounded read of a line found.
++#[derive(Debug, PartialEq)]
++enum Bounded {
++    /// a line (possibly the last, unterminated one) in the buffer
++    Line,
++    /// a line past the bound: read through its end and discarded, never held in memory
++    TooLong,
++    /// end of input, nothing read
++    Eof,
++}
++
++/// Read one '\n'-terminated line into `out`, holding at most `max` bytes of it (plus the newline). A longer line is
++/// consumed through its newline in the reader's own chunks and reported as TooLong, so the next read starts at the
++/// next request.
++async fn read_bounded_line<R: AsyncRead + Unpin>(
++    r: &mut BufReader<R>,
++    out: &mut Vec<u8>,
++    max: usize,
++) -> std::io::Result<Bounded> {
++    let mut too_long = false;
++    loop {
++        let buf = r.fill_buf().await?;
++        if buf.is_empty() {
++            return Ok(if too_long {
++                Bounded::TooLong
++            } else if out.is_empty() {
++                Bounded::Eof
++            } else {
++                Bounded::Line
++            });
++        }
++        let (n, done) = match buf.iter().position(|&b| b == b'\n') {
++            Some(i) => (i + 1, true),
++            None => (buf.len(), false),
++        };
++        if !too_long {
++            if out.len() + n > max + 1 {
++                too_long = true;
++                out.clear();
++            } else {
++                out.extend_from_slice(&buf[..n]);
++            }
++        }
++        r.consume(n);
++        if done {
++            return Ok(if too_long { Bounded::TooLong } else { Bounded::Line });
++        }
++    }
++}
++
+ pub(crate) struct ResilientStdioTransport<R, W> {
+     read: BufReader<R>,
+     write: Arc<Mutex<Option<W>>>,
+@@ -51,9 +107,18 @@ where
+         loop {
+             line.clear();
+ 
+-            match self.read.read_until(b'\n', &mut line).await {
+-                Ok(0) => return None,
+-                Ok(_) => {}
++            match read_bounded_line(&mut self.read, &mut line, MAX_REQUEST_BYTES).await {
++                Ok(Bounded::Eof) => return None,
++                Ok(Bounded::Line) => {}
++                Ok(Bounded::TooLong) => {
++                    tracing::debug!("Request line over {} bytes discarded", MAX_REQUEST_BYTES);
++                    let write = Arc::clone(&self.write);
++                    if let Err(error) = write_raw_line(&write, TOO_LARGE_RESPONSE).await {
++                        tracing::error!("Error writing request too large response: {}", error);
++                        return None;
++                    }
++                    continue;
++                }
+                 Err(error) => {
+                     tracing::error!("Error reading from stream: {}", error);
+                     return None;
+@@ -396,4 +461,27 @@ mod tests {
+         let err = write_raw_line(&transport.write, b"{}").await.unwrap_err();
+         assert_eq!(err.kind(), std::io::ErrorKind::NotConnected);
+     }
++
++
++    /// Issue #553: a request line past the bound is drained and reported, never held whole, and the next line
++    /// reads normally.
++    #[tokio::test]
++    async fn an_oversized_line_is_drained_and_the_next_one_reads() {
++        let mut input = vec![b'x'; 300];
++        input.push(b'\n');
++        input.extend_from_slice(b"short\n");
++        input.extend_from_slice(b"last");
++        let mut r = BufReader::with_capacity(16, &input[..]);
++        let mut line = Vec::new();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::TooLong);
++        assert!(line.is_empty());
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Line);
++        assert_eq!(line, b"short\n");
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Line);
++        assert_eq!(line, b"last");
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Eof);
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `e98c27d7` (2026-11-24)
+**Commit Message**: land: merge fix/553-bounds onto main
+
+Land-Tree: fafa567322d194c358541626eb5613fada7e9829
+Land-Result: b0e4e6207b04d26f71795e7ecf2accb64c08e796
+
+**File**: `crates/sem-mcp/src/server.rs` (modified, +84/-21)
+```diff
+@@ -2415,6 +2415,9 @@ impl SemServer {
+         // agent waited on — let the speed be felt, not claimed.
+         let start = Instant::now();
+ 
++        if let Some(msg) = params.entities().and_then(|e| crate::tools::batch_over(e.len(), "entities")) {
++            return Ok(tool_error(msg));
++        }
+         if let Some(entities) = params.entities() {
+             // Batch form: one block per entity, resolution failures reported
+             // inline per entity (a miss on one never hides the others). The
+@@ -2497,7 +2500,7 @@ impl SemServer {
+             None => None,
+         };
+         let no_default_excludes = params.no_default_excludes.unwrap_or(false);
+-        let budget = params.token_budget.unwrap_or(8000);
++        let budget = params.token_budget.unwrap_or(8000).min(crate::tools::MAX_TOKEN_BUDGET);
+         let hops = params.hops.unwrap_or(0);
+ 
+         // File-hinted queries stay local (same gate as the CLI, #409): the
+@@ -2710,6 +2713,9 @@ impl SemServer {
+     ) -> Result<CallToolResult, rmcp::ErrorData> {
+         let query = params.query.as_deref().map(str::trim).filter(|q| !q.is_empty()).map(str::to_string);
+         let queries = params.queries().map(<[String]>::to_vec);
++        if let Some(msg) = queries.as_ref().and_then(|q| crate::tools::batch_over(q.len(), "queries")) {
++            return Ok(tool_error(msg));
++        }
+         // `files` or `lines` with no entity named can only mean "read these"
+         let reading = query.is_none() && queries.is_none() && (params.files.as_ref().is_some_and(|f| !f.is_empty()) || params.lines.is_some());
+         let mode = if reading { Some("context") } else { params.mode.as_deref().map(str::trim).filter(|m| !m.is_empty()) };
+@@ -2896,27 +2902,52 @@ impl SemServer {
+             Ok(r) => r,
+             Err(e) => return tool_error(e),
+         };
++        // Issue #553: a path named twice is read once, at most MAX_FILES distinct files per call, read on at most
++        // READ_THREADS threads (never one thread per path), and a file past MAX_FILE_BYTES is refused with its size.
++        let mut seen = std::collections::HashSet::new();
++        let paths: Vec<String> = paths.into_iter().filter(|p| seen.insert(p.clone())).collect();
++        if paths.len() > crate::tools::MAX_FILES {
++            return tool_error(format!(
++                "{} files in one read; at most {} (split the read)",
++                paths.len(),
++                crate::tools::MAX_FILES
++            ));
++        }
+         let root = ctx.repo_root.clone();
+         let read: Vec<(String, Result<String, String>)> = tokio::task::spawn_blocking(move || {
++            let read_one = |p: &String| -> (String, Result<String, String>) {
++                let (rel, abs) = Self::resolve_file_path(&root, p);
++                let size = std::fs::metadata(&abs).map(|m| m.len()).unwrap_or(0);
++                let text = if size > crate::tools::MAX_FILE_BYTES {
++                    Err(format!(
++                        "{size} bytes, over the {} MiB a read returns",
++                        crate::tools::MAX_FILE_BYTES / (1024 * 1024)
++                    ))
++                } else {
++                    match std::fs::read(&abs) {
++                        Ok(b) if b.contains(&0) => Err(format!("binary file, {} bytes", b.len())),
++                        Ok(b) => Ok(String::from_utf8_lossy(&b).into_owned()),
++                        Err(e) if abs.is_dir() => Err(format!("a directory ({e}); list it with `in` and no mode")),
++                        Err(e) => Err(e.to_string()),
++                    }
++                };
++                (rel, text)
++            };
++            let next = std::sync::atomic::AtomicUsize::new(0);
++            let slots: Vec<std::sync::Mutex<Option<(String, Result<String, String>)>>> =
++                paths.iter().map(|_| std::sync::Mutex::new(None)).collect();
++            let workers = crate::tools::READ_THREADS.min(paths.len()).max(1);
+             std::thread::scope(|scope| {
+-                let jobs: Vec<_> = paths
+-                    .iter()
+-                    .map(|p| {
+-                        let root = &root;
+-                        scope.spawn(move || {
+-                            let (rel, abs) = Self::resolve_file_path(root, p);
+-                            let text = match std::fs::read(&abs) {
+-                                Ok(b) if b.contains(&0) => Err(format!("binary file, {} bytes", b.len())),
+-                                Ok(b) => Ok(String::from_utf8_lossy(&b).into_owned()),
+-                                Err(e) if abs.is_dir() => Err(format!("a directory ({e}); list it with `in` and no mode")),
+-                                Err(e) => Err(e.to_string()),
+-                            };
+-                            (rel, text)
+-                        })
+-                    })
+-                    .collect();
+-                jobs.into_iter().filter_map(|j| j.join().ok()).collect()
+-            })
++                for _
+```
+
+**File**: `crates/sem-mcp/src/tools.rs` (modified, +21/-1)
+```diff
+@@ -2,6 +2,26 @@ use serde::Deserialize;
+ 
+ // ── Tool parameter structs ──
+ 
++/// Bounds on what one tool call may ask for (issue #553): a single call must not be able to exhaust threads,
++/// memory or output. Batches past MAX_BATCH and reads past MAX_FILES are refused with the bound named; limits and
++/// budgets past theirs are clamped.
++pub const MAX_BATCH: usize = 50;
++/// Distinct files one read may name.
++pub const MAX_FILES: usize = 100;
++/// Threads one read uses, however many files it names.
++pub const READ_THREADS: usize = 8;
++/// The largest file one read returns whole (a larger one is refused, with its size).
++pub const MAX_FILE_BYTES: u64 = 8 * 1024 * 1024;
++/// The largest token_budget any tool honors.
++pub const MAX_TOKEN_BUDGET: usize = 100_000;
++/// The largest per-pattern hit limit sem_grep honors.
++pub const MAX_GREP_LIMIT: usize = 2_000;
++
++/// A batch past MAX_BATCH, refused before any work: Some(message) names the bound.
++pub fn batch_over(len: usize, what: &str) -> Option<String> {
++    (len > MAX_BATCH).then(|| format!("{len} {what} in one call; at most {MAX_BATCH} (split the batch)"))
++}
++
+ #[derive(Debug, Deserialize, schemars::JsonSchema)]
+ #[serde(deny_unknown_fields)]
+ pub struct EntitiesParams {
+@@ -277,7 +297,7 @@ pub struct GrepParams {
+ 
+ impl GrepParams {
+     pub fn limit(&self) -> usize {
+-        self.limit.unwrap_or(200).max(1)
++        self.limit.unwrap_or(200).clamp(1, MAX_GREP_LIMIT)
+     }
+ 
+     pub fn case_insensitive(&self) -> bool {
+```
+
+**File**: `crates/sem-mcp/src/transport.rs` (modified, +91/-3)
+```diff
+@@ -12,6 +12,62 @@ use tokio::sync::Mutex;
+ const PARSE_ERROR_RESPONSE: &[u8] =
+     br#"{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}"#;
+ 
++/// The largest request line stdio accepts (issue #553), the same 1 MiB the HTTP transport's body limit allows.
++const MAX_REQUEST_BYTES: usize = 1024 * 1024;
++
++const TOO_LARGE_RESPONSE: &[u8] =
++    br#"{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request: a request line is at most 1 MiB"}}"#;
++
++/// What one bounded read of a line found.
++#[derive(Debug, PartialEq)]
++enum Bounded {
++    /// a line (possibly the last, unterminated one) in the buffer
++    Line,
++    /// a line past the bound: read through its end and discarded, never held in memory
++    TooLong,
++    /// end of input, nothing read
++    Eof,
++}
++
++/// Read one '\n'-terminated line into `out`, holding at most `max` bytes of it (plus the newline). A longer line is
++/// consumed through its newline in the reader's own chunks and reported as TooLong, so the next read starts at the
++/// next request.
++async fn read_bounded_line<R: AsyncRead + Unpin>(
++    r: &mut BufReader<R>,
++    out: &mut Vec<u8>,
++    max: usize,
++) -> std::io::Result<Bounded> {
++    let mut too_long = false;
++    loop {
++        let buf = r.fill_buf().await?;
++        if buf.is_empty() {
++            return Ok(if too_long {
++                Bounded::TooLong
++            } else if out.is_empty() {
++                Bounded::Eof
++            } else {
++                Bounded::Line
++            });
++        }
++        let (n, done) = match buf.iter().position(|&b| b == b'\n') {
++            Some(i) => (i + 1, true),
++            None => (buf.len(), false),
++        };
++        if !too_long {
++            if out.len() + n > max + 1 {
++                too_long = true;
++                out.clear();
++            } else {
++                out.extend_from_slice(&buf[..n]);
++            }
++        }
++        r.consume(n);
++        if done {
++            return Ok(if too_long { Bounded::TooLong } else { Bounded::Line });
++        }
++    }
++}
++
+ pub(crate) struct ResilientStdioTransport<R, W> {
+     read: BufReader<R>,
+     write: Arc<Mutex<Option<W>>>,
+@@ -51,9 +107,18 @@ where
+         loop {
+             line.clear();
+ 
+-            match self.read.read_until(b'\n', &mut line).await {
+-                Ok(0) => return None,
+-                Ok(_) => {}
++            match read_bounded_line(&mut self.read, &mut line, MAX_REQUEST_BYTES).await {
++                Ok(Bounded::Eof) => return None,
++                Ok(Bounded::Line) => {}
++                Ok(Bounded::TooLong) => {
++                    tracing::debug!("Request line over {} bytes discarded", MAX_REQUEST_BYTES);
++                    let write = Arc::clone(&self.write);
++                    if let Err(error) = write_raw_line(&write, TOO_LARGE_RESPONSE).await {
++                        tracing::error!("Error writing request too large response: {}", error);
++                        return None;
++                    }
++                    continue;
++                }
+                 Err(error) => {
+                     tracing::error!("Error reading from stream: {}", error);
+                     return None;
+@@ -396,4 +461,27 @@ mod tests {
+         let err = write_raw_line(&transport.write, b"{}").await.unwrap_err();
+         assert_eq!(err.kind(), std::io::ErrorKind::NotConnected);
+     }
++
++
++    /// Issue #553: a request line past the bound is drained and reported, never held whole, and the next line
++    /// reads normally.
++    #[tokio::test]
++    async fn an_oversized_line_is_drained_and_the_next_one_reads() {
++        let mut input = vec![b'x'; 300];
++        input.push(b'\n');
++        input.extend_from_slice(b"short\n");
++        input.extend_from_slice(b"last");
++        let mut r = BufReader::with_capacity(16, &input[..]);
++        let mut line = Vec::new();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::TooLong);
++        assert!(line.is_empty());
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Line);
++        assert_eq!(line, b"short\n");
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Line);
++        assert_eq!(line, b"last");
++        line.clear();
++        assert_eq!(read_bounded_line(&mut r, &mut line, 100).await.unwrap(), Bounded::Eof);
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1929,58 +2418,69 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. land: setup script (Rust stable, crates vendored for offline tests)
+## X. mcp: bound what one tool call may ask for (fixes #553)
 
 **RULE**:
-When implementing operations in `.land/setup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/sem-mcp/src/server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ab7cfb2`: land: setup script (Rust stable, crates vendored for offline tests). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1f906ef`: mcp: bound what one tool call may ask for (fixes #553). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.land/setup.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/sem-mcp/src/server.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#!/bin/bash
-# Rust stable (standalone, no rustup, so it works for any user and HOME), the packages sem's Dockerfile builds
-# with, and every crate vendored to /opt/cargo-vendor so the tests build and run offline.
-set -e
-export DEBIAN_FRONTEND=noninteractive
-apt-get update -qq
-apt-get install -y -qq --no-install-recommends curl ca-certificates xz-utils build-essential pkg-config \
-  libssl-dev cmake git
-v=1.100.0
-curl -fsSL https://static.rust-lang.org/dist/rust-$v-x86_64-unknown-linux-gnu.tar.xz | tar -xJ -C /tmp
-/tmp/rust-$v-x86_64-unknown-linux-gnu/install.sh --prefix=/usr/local \
-  --components=rustc,cargo,rust-std-x86_64-unknown-linux-gnu
-rm -rf /tmp/rust-$v-x86_64-unknown-linux-gnu
-export CARGO_HOME=/tmp/cargo-setup
-(cd crates && cargo vendor --locked --versioned-dirs /opt/cargo-vendor > /dev/null)
-rm -rf "$CARGO_HOME"
-# Found from any working directory (cargo walks up to /), independent of the test user's HOME.
-mkdir -p /.cargo
-cat > /.cargo/config.toml <<'CFG'
-[source.crates-io]
-replace-with = "vendored-sources"
-[source.vendored-sources]
-directory = "/opt/cargo-vendor"
-[net]
-offline = true
-CFG
-chmod -R a+rX /opt/cargo-vendor /.cargo
-cargo --version; rustc --version
+        if let Some(msg) = params.entities().and_then(|e| crate::tools::batch_over(e.len(), "entities")) {
+            return Ok(tool_error(msg));
+        }
+        let budget = params.token_budget.unwrap_or(8000).min(crate::tools::MAX_TOKEN_BUDGET);
+        if let Some(msg) = queries.as_ref().and_then(|q| crate::tools::batch_over(q.len(), "queries")) {
+            return Ok(tool_error(msg));
+        }
+        // Issue #553: a path named twice is read once, at most MAX_FILES distinct files per call, read on at most
+        // READ_THREADS threads (never one thread per path), and a file past MAX_FILE_BYTES is refused with its size.
+        let mut seen = std::collections::HashSet::new();
+        let paths: Vec<String> = paths.into_iter().filter(|p| seen.insert(p.clone())).collect();
+        if paths.len() > crate::tools::MAX_FILES {
+            return tool_error(format!(
+                "{} files in one read; at most {} (split the read)",
+                paths.len(),
+                crate::tools::MAX_FILES
+            ));
+        }
+            let read_one = |p: &String| -> (String, Result<String, String>) {
+                let (rel, abs) = Self::resolve_file_path(&root, p);
+       
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        let budget = params.token_budget.unwrap_or(8000);
+                let jobs: Vec<_> = paths
+                    .iter()
+                    .map(|p| {
+                        let root = &root;
+                        scope.spawn(move || {
+                            let (rel, abs) = Self::resolve_file_path(root, p);
+                            let text = match std::fs::read(&abs) {
+                                Ok(b) if b.contains(&0) => Err(format!("binary file, {} bytes", b.len())),
+                                Ok(b) => Ok(String::from_utf8_lossy(&b).into_owned()),
+                                Err(e) if abs.is_dir() => Err(format!("a directory ({e}); list it with `in` and no mode")),
+                                Err(e) => Err(e.to_string()),
+                            };
+                            (rel, text)
+                        })
+                    })
+                    .collect();
+                jobs.into_iter().filter_map(|j| j.join().ok()).collect()
+            })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ab7cfb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1f906ef` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

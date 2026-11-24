@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:27:50.487Z",
+  "last_updated": "2026-11-24T19:36:20.158Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-24T18:26:02.534Z",
+      "processed_at": "2026-11-24T19:36:19.238Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1108,7 +1108,7 @@
       "staged_for_review": 1
     },
     "milvus-io-milvus-learnings.md": {
-      "processed_at": "2026-11-22T21:41:06.619Z",
+      "processed_at": "2026-11-24T19:36:18.183Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1143,7 +1143,7 @@
       "staged_for_review": 1
     },
     "ataraxy-labs-sem-learnings.md": {
-      "processed_at": "2026-11-23T17:46:30.858Z",
+      "processed_at": "2026-11-24T19:36:17.229Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3853,7 +3853,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3900,
+  "total_dossiers_evaluated": 3903,
   "total_canonical_promoted": 516,
-  "total_staged_for_review": 2966
+  "total_staged_for_review": 2969
 }

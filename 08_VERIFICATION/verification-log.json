@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-M8P7",
-    "timestamp": "2026-11-23T04:00:05.515Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "e5820ba17fe38e3e0eea30eacb6666b7bcacfc72e24f6b9e506504e5e64a670e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-MHRA",
-    "timestamp": "2026-11-23T04:00:17.254Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-MJ9U",
     "timestamp": "2026-11-23T04:00:19.218Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HOO9",
+    "timestamp": "2026-11-24T19:36:00.297Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "9ea7fcba4b6be076e6c48c460676d889e243b7efe88d00e41df045d5e13cfe5b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HZ3K",
+    "timestamp": "2026-11-24T19:36:13.808Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "54a3e8e3dd0bb782576c0bcb6b3ae82e15031252918a1fb283f3b88155d63b6a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

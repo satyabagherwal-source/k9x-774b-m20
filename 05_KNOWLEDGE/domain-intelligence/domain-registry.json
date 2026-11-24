@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:27:50.161Z",
-  "total_records": 2566,
+  "last_updated": "2026-11-24T19:36:19.814Z",
+  "total_records": 2568,
   "domains": {
     "A": {
       "total": 22,
@@ -1620,7 +1620,7 @@
       ]
     },
     "H": {
-      "total": 611,
+      "total": 613,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2232,7 +2232,9 @@
         "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",
         "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants",
-        "DOM-H-7BF1A4EC"
+        "DOM-H-7BF1A4EC",
+        "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8381,8 +8383,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "10b88fe8f9ec8e343691db1ef97a4d972f2964b50c90f00b2965a28f0158d47f",
-      "created_at": "2026-11-24T18:26:03.129Z"
+      "content_hash": "74db9babdb209588e39c248844a5b520ad5942463c10e48fcd32d2a9692327c8",
+      "created_at": "2026-11-24T19:36:19.814Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9593,8 +9595,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "fecd8d8634cf427123c68d3507ea34074a0eb959c05c463a952288cdbac32c02",
-      "created_at": "2026-11-23T23:18:25.240Z"
+      "content_hash": "d33185ed502b41cd79376798dbd1560baf01fbcd78cbc6a02c076528d2469d7c",
+      "created_at": "2026-11-24T19:36:14.230Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -9653,8 +9655,8 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
       "repository": "milvus-io-milvus-learnings",
-      "content_hash": "6820c04798e300078274c741209cb03136efced3c80d1afaa58637526de2b171",
-      "created_at": "2026-11-22T21:41:07.162Z"
+      "content_hash": "a399763591a61f902bf2d9eafcf672ddcb71098b9073ad863c5e89ffa63fe2dd",
+      "created_at": "2026-11-24T19:36:18.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -43121,6 +43123,24 @@
       "confidence": 0.7,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T19:10:44.558Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Ataraxy-Labs/sem Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ataraxy-labs-sem-technical-construction-intelligence-ataraxy-labs-sem-core-invar.md",
+      "repository": "Ataraxy-Labs/sem",
+      "content_hash": "a29fd554d1b4225cea300b2fbe530787ab5b51a46e72cf296aa2c20f1137077f",
+      "created_at": "2026-11-24T19:36:00.729Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ataraxy-labs-sem-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ataraxy-labs-sem-learnings-technical-construction-intelligence-ataraxy-labs-sem-.md",
+      "repository": "ataraxy-labs-sem-learnings",
+      "content_hash": "7e7d4552805e9c35108b4ce0d67fad00b31c466c9ff6b0c9e0b9a96564665513",
+      "created_at": "2026-11-24T19:36:17.672Z"
     }
   }
 }

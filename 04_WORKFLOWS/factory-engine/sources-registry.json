@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T19:27:47.566Z",
-    "lastVerified": "2026-11-24T19:27:47.566Z",
+    "lastChecked": "2026-11-24T19:36:17.080Z",
+    "lastVerified": "2026-11-24T19:36:17.080Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T19:00:37.687Z",
+    "lastChecked": "2026-11-24T19:36:09.550Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T19:00:37.687Z"
+    "lastVerified": "2026-11-24T19:36:09.550Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -474,14 +474,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T23:18:23.862Z",
-    "lastVerified": "2026-11-23T23:18:23.862Z",
+    "lastChecked": "2026-11-24T19:36:12.693Z",
+    "lastVerified": "2026-11-24T19:36:12.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
+    "contentHash": "54a3e8e3dd0bb782576c0bcb6b3ae82e15031252918a1fb283f3b88155d63b6a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2365,12 +2365,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T15:36:09.727Z",
-    "lastVerified": "2026-11-24T15:36:09.727Z",
+    "lastChecked": "2026-11-24T19:36:04.602Z",
+    "lastVerified": "2026-11-24T19:36:04.602Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2379,7 +2379,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "04985e7d"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3256,9 +3257,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-24T00:31:41.266Z",
+    "lastChecked": "2026-11-24T19:36:02.205Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-24T00:31:41.266Z"
+    "lastVerified": "2026-11-24T19:36:02.205Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -5862,9 +5863,9 @@
   "shoutem-ui": {
     "name": "ui",
     "officialUrl": "https://github.com/shoutem/ui",
-    "lastChecked": "2026-11-22T05:12:31.912Z",
+    "lastChecked": "2026-11-24T19:35:59.548Z",
     "revisionIdentifier": "101f9805",
-    "lastVerified": "2026-11-22T05:12:31.912Z"
+    "lastVerified": "2026-11-24T19:35:59.548Z"
   },
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
@@ -6542,14 +6543,14 @@
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T17:46:14.257Z",
-    "lastVerified": "2026-11-23T17:46:14.257Z",
+    "lastChecked": "2026-11-24T19:35:59.040Z",
+    "lastVerified": "2026-11-24T19:35:59.040Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
+    "contentHash": "9ea7fcba4b6be076e6c48c460676d889e243b7efe88d00e41df045d5e13cfe5b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11199,9 +11200,9 @@
   "encode-httpx": {
     "name": "httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-20T20:41:29.592Z",
+    "lastChecked": "2026-11-24T19:35:57.072Z",
     "revisionIdentifier": "7cff5f79",
-    "lastVerified": "2026-11-20T20:41:29.592Z"
+    "lastVerified": "2026-11-24T19:35:57.072Z"
   },
   "jasonjmcghee-rem": {
     "name": "rem",

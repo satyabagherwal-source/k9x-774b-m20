@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T21:41:06.908Z",
+  "timestamp": "2026-11-24T19:36:18.545Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-milvus-io-milvus-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [milvus-io-milvus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T21:41:06.908Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T19:36:18.545Z`  
 > **Learning ID**: `LEARN-EVO-milvus-io-milvus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `09c8c207`  
+> **Source Version**: `e5152348`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T21:41:01.952Z  
+> **Timestamp**: 2026-11-24T19:36:12.699Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T21:41:01.947Z  
+> **Harvest Timestamp**: 2026-11-24T19:36:12.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46718 stars
+- **Stars / Engagement**: 46733 stars
 
 ---
 
@@ -1575,14 +1575,14 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55814** (2026-11-22): **fix: Clear HasMoreResult for empty retrieve results**
-  *Symptoms*: issue: #55795  Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The second commit adjusts a unit test that depended on the bug, which was failing #55796's C++ unit tests.  ## Problem  A resumed query iterator can return an empty page and stop early (`test_query_iterator_normal`, `assert 2000 == 4000`).  - `RetrieveResult::has_more_result` defaults to `true`. When execution produces no rows, the empty-result branch of `ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it. A growing segment with no rows visible at the snapshot timestamp returns 0 rows with `has_more_result=true`. - The QueryNode reduce ORs the flag of every segment result, the empty ones included. A worker whose segments are all empty returns 0 rows with `HasMoreResult=true`. - The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on by default) ends the page at a drained child that reports more results, so it does not skip that child's later rows. For a child with no rows the page is empty, and the client stops iterating. - The batch reduce drops empty results before merging, so it is not affected.  The test inserts rows after saving the checkpoint, so the resumed query always sees a growing segment with no visible rows. It fails only when that segment is the only one on its worker, which depends on placement and flush timing.  ## Fix  Set `has_more_result=false` in the empty-result branch. A result with no rows is not truncated, so the flag was wrong; the stre
-
-- **Issue #55791** (2026-11-21): **fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client**
-  *Symptoms*: issue: #55002 pr: #55003  #55004 bumped `github.com/andybalholm/brotli` to v1.2.7 in the root `go.mod` on 3.0 but left `tests/go_client` at v1.1.0. `tests/go_client` replaces `github.com/milvus-io/milvus` with the repo root, so its `go.mod` has to select the same version. Without that, golangci-lint cannot load the module (`no go files to analyze: running go mod tidy may solve the problem`), and the static-check step of Code-Check fails on every 3.0 PR.  This applies the `tests/go_client` part of #55003. Only `tests/go_client/go.mod` and `go.sum` change.  ### Validation On this branch, in `tests/go_client`: - `GOFLAGS=-mod=readonly go list -tags L0,L1,L2,test ./...` succeeds. - `golangci-lint run --build-tags L0,L1,L2,test --config .golangci.yml` (v2.11.3, the CI version) reports `0 issues`. With the current 3.0 `tests/go_client` it fails with the error above.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #55914** (2026-11-24): **fix: [3.0] default OpenBLAS to one thread in runtime images**
+  *Symptoms*: Cherry-pick from master pr: #55650 issue: #50892  Backport 08d5f216f56390828c9e416433b22580f88b19b5 to 3.0.  Concurrent Knowhere tasks can call BLAS while OpenBLAS also starts internal workers. #50892 covers ARM Neoverse-V2 PQ loading and amd64 HNSW_PQ loading / IVF_RABITQ searches alongside compaction. This backport supplies the recommended temporary default, OPENBLAS_NUM_THREADS=1, in all six final CPU/GPU runtime images. Deployments can override it through their container environment.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5eb0ed25563fe772c6341aea81b23e2fa31c3c69","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T02:57:29.051777Z">2026-11-21T02:57:29.051777Z</relative-time> | `5eb0ed2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[tests/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/tests/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
+  > /kind bug /area compilation /milestone 3.0.7 /refresh-label 
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/milvus-io/milvus/pull/55914#pullrequestreview-6039080591" title="LGTM">foxspy</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[build/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/build/OWNERS)~~ [foxspy]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+
+- **Issue #55907** (2026-11-24): **fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds**
+  *Symptoms*: ## What changed  Backport #55906 to `3.0`: move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile` inside the `ifeq ($(USE_TSAN), ON)` branch (matching `scripts/build_plan_parser.sh`), and add `make -n build-go` regression checks in `scripts/sanitizer_env_test.sh`.  ### Why  PR #55130 backported #53895 to `3.0`, which unconditionally set `CGO_CXXFLAGS` from `$(shell $(GO) env CGO_CXXFLAGS)` (`-O2 -g`) and passed `CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo` (`go version -m`), ordinary (`USE_TSAN=OFF`) `3.0` builds started recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is empty or unset).  This broke downstream Go plugin artifact verification comparing `go version -m` build settings between `milvus` and plugin `.so` artifacts (`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).  Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when `USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes `CGO_CXXFLAGS` non-empty and would otherwise drop Go's default `-O2`).  issue: #53763 pr: #55906  ## Verification  - Full `bash scripts/sanitizer_env_test.sh` passed, including the 4 new `make -n build-go` assertions (`USE_TSAN=OFF` unset/overridden and `USE_TSAN=ON` unset/overridden). - Verified with `go build -a -x` and `go version -m` that `CGO_CXXFLAGS=""` preserves 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1599,70 +1599,576 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09c8c207` (2026-11-22)
-**Commit Message**: fix: Clear HasMoreResult for empty retrieve results (#55814)
+### Incident Patch 1: `08d5f216` (2026-11-24)
+**Commit Message**: fix: default OpenBLAS to one thread in runtime images (#55650)
 
-issue: #55795
+issue: #50892
 
-Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The
-second commit adjusts a unit test that depended on the bug, which was
-failing #55796's C++ unit tests.
+Concurrent Knowhere tasks can invoke BLAS while OpenBLAS also uses
+internal worker threads. #50892 first reported crashes during PQ index
+loading on ARM Neoverse-V2; later reports cover HNSW_PQ loading on amd64
+and IVF_RABITQ searches alongside compaction. The discussion recommends
+single-threaded OpenBLAS as an immediate mitigation, but the runtime
+images do not currently provide that default.
 
-## Problem
+Set `ENV OPENBLAS_NUM_THREADS=1` in all six final CPU/GPU runtime
+Dockerfiles. This supplies the recommended default for both
+architectures and allows deployments to override it through their
+container environment. Set it in the final GPU Ubuntu 20.04 image as
+well, so the mitigation does not depend on rebuilding its pinned base
+image.
 
-A resumed query iterator can return an empty page and stop early
-(`test_query_iterator_normal`, `assert 2000 == 4000`).
+This is a temporary default for BLAS internal threading. Broader
+OpenMP/thread-pool changes remain separate follow-up work, and workloads
+relying on BLAS internal parallelism may need to override the default.
 
-- `RetrieveResult::has_more_result` defaults to `true`. When execution
-produces no rows, the empty-result branch of
-`ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it.
-A growing segment with no rows visible at the snapshot timestamp returns
-0 rows with `has_more_result=true`.
-- The QueryNode reduce ORs the flag of every segment result, the empty
-ones included. A worker whose segments are all empty returns 0 rows with
-`HasMoreResult=true`.
-- The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on
-by default) ends the page at a drained child that reports more results,
-so it does not skip that child's later rows. For a child with no rows
-the page is empty, and the client stops iterating.
-- The batch reduce drops empty results before merging, so it is not
-affected.
+Validation:
 
-The te
+- `git diff --check` passes; all six final runtime Dockerfiles contain
+the default after their final `FROM`, with no later override.
+- On this amd64 host, built
 
-**File**: `internal/core/src/query/ExecPlanNodeVisitor.cpp` (modified, +1/-0)
+**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +2/-0)
 ```diff
-@@ -322,6 +322,7 @@ ExecPlanNodeVisitor::setupRetrieveResult(
-                 tmp_retrieve_result.field_data_[i] = std::move(data_array);
-             }
-         }
-+        tmp_retrieve_result.has_more_result = false;
-         retrieve_result_opt_ = std::move(tmp_retrieve_result);
-         return;
-     }
+@@ -57,6 +57,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
 ```
 
-**File**: `internal/core/src/segcore/RetrieveCandidatesTest.cpp` (modified, +0/-3)
+**File**: `build/docker/milvus/gpu/ubuntu20.04/Dockerfile` (modified, +2/-0)
 ```diff
-@@ -296,9 +296,6 @@ TEST_P(RetrieveCandidatesTest, BudgetsAndCancellation) {
-     auto offsets_only =
-         segment->Retrieve(nullptr, plan.get(), 100, kRows * 8, false);
-     EXPECT_EQ(offsets_only->offset_size(), kRows);
--    // No visible rows: the offsets fit, but serialized metadata exceeds budget.
--    ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 1, 1, false); },
--               InvalidParameter);
-     ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 100, 0, false); },
-                UnexpectedError);
-     folly::CancellationSource cancellation;
+@@ -48,6 +48,8 @@ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+ ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ 
+ # Run as milvus by default; downstream images may select another user at build time.
+ USER ${MILVUS_RUNTIME_USER}
+```
+
+**File**: `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -49,6 +49,8 @@ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+ ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +2/-0)
+```diff
+@@ -59,6 +59,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ 
+ # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
+ # container-overflow false positives during static initialization, disable it.
+```
+
+**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+---
+
+### Incident Patch 2: `4e7326e0` (2026-11-24)
+**Commit Message**: fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (#55906)
+
+## What changed
+
+Move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile`
+inside the `ifeq ($(USE_TSAN), ON)` branch (matching
+`scripts/build_plan_parser.sh`), and add `make -n build-go` regression
+checks in `scripts/sanitizer_env_test.sh`.
+
+### Why
+
+PR #53895 initialized `CGO_CXXFLAGS` unconditionally from `$(shell $(GO)
+env CGO_CXXFLAGS)` (`-O2 -g`) and passed
+`CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the
+raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo`
+(`go version -m`), ordinary (`USE_TSAN=OFF`) Milvus builds started
+recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even
+though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is
+empty or unset).
+
+This broke downstream Go plugin artifact verification comparing `go
+version -m` build settings between `milvus` and plugin `.so` artifacts
+(`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).
+
+Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when
+`USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes
+`CGO_CXXFLAGS` non-empty and would otherwise drop 
+
+**File**: `Makefile` (modified, +3/-2)
+```diff
+@@ -57,8 +57,6 @@ endif
+ 
+ USE_TSAN ?= OFF
+ export USE_TSAN
+-# Preserve Go's default C++ flags when the caller did not provide an override.
+-CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
+ ifneq ($(USE_TSAN),ON)
+ ifneq ($(USE_TSAN),OFF)
+ $(error USE_TSAN must be ON or OFF)
+@@ -76,6 +74,9 @@ endif
+ ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
+ $(error USE_TSAN cannot be combined with Go -race)
+ endif
++# Preserve Go's default C++ flags before appending TSan flags so ordinary
++# builds do not stamp CGO_CXXFLAGS="-O2 -g" into Go buildinfo.
++	CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
+ 	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
+ 	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
+ 	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
+```
+
+**File**: `scripts/sanitizer_env_test.sh` (modified, +33/-0)
+```diff
+@@ -139,6 +139,39 @@ for target in build-cpp build-cpp-with-unittest build-cpp-with-coverage; do
+     grep -q 'TANTIVY_ANALYZER_REMOTE_TLS=OFF .*core_build.sh .* -T ON .* -G OFF ' "${test_root}/make.log"
+ done
+ 
++# Ordinary Go builds must not materialize Go's default CGO_CXXFLAGS into the
++# environment (which stamps CGO_CXXFLAGS="-O2 -g" into Go buildinfo and breaks
++# plugin artifact verification), while TSan builds must preserve it before
++# appending sanitizer flags.
++mkdir -p "${test_root}/make-bin"
++cat > "${test_root}/make-bin/go" <<'EOF'
++#!/usr/bin/env bash
++if [[ "${1:-}" == env ]]; then
++    case "${2:-}" in
++        CGO_CXXFLAGS) printf '%s\n' '-O2 -g' ;;
++        GOPATH) printf '%s\n' '/tmp/gopath' ;;
++        GOFLAGS) ;;
++    esac
++fi
++EOF
++chmod +x "${test_root}/make-bin/go"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O1" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O2 -g -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O1 -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
++
+ # Exercise the parser's Go and handwritten C++ commands without compiling. This
+ # also protects the non-TSan path on systems whose /bin/bash is still Bash 3.2.
+ mkdir -p "${test_root}/repo/scripts" "${test_root}/bin" \
+```
+
+---
+
+### Incident Patch 3: `8f5bd72b` (2026-11-24)
+**Commit Message**: fix: resolve segment schema at WAL append (#55821)
+
+issue: #55626
+
+- Resolve the collection schema version and TEXT storage requirement
+when CreateSegment holds the data VChannel lock, so the WAL record and
+segment registration agree with schema DDL ordering.
+- Keep schema-dependent decisions out of the asynchronous segment
+allocation worker.
+
+Signed-off-by: chyezh <[REDACTED_EMAIL]>
+
+**File**: `docs/agent_guides/streaming-system/wal/shard-management.md` (modified, +5/-0)
+```diff
+@@ -10,6 +10,11 @@ source/spec. Only the `schema` mask flushes/fences segment allocation; ordinary
+ metadata updates keep SchemaVersion unchanged. RecoveryStorage applies the same
+ mask semantics. `collection.on.truncating` remains coordinator/DataCoord state.
+ 
++The CreateSegment append interceptor sets the encoding SchemaVersion and applies
++the schema's storage format requirements while holding the VChannel lock.
++An asynchronous allocation started before a schema DDL therefore uses the
++schema in effect when its CreateSegment enters the WAL.
++
+ ## Seal Policies
+ 
+ Growing segments are sealed when any registered policy triggers. See `internal/streamingnode/server/wal/interceptors/shard/policy/seal_policy.go` for the full list of policies.
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor.go` (modified, +11/-0)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 
+ 	"github.com/cockroachdb/errors"
+ 
++	"github.com/milvus-io/milvus/internal/storage"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/redo"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
+@@ -19,6 +20,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message/messageutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+ )
+ 
+ const interceptorName = "shard"
+@@ -390,6 +392,15 @@ func (impl *shardInterceptor) handleCreateSegment(ctx context.Context, msg messa
+ 		return nil, status.NewUnrecoverableError(err.Error())
+ 	}
+ 
++	// The worker can start before a schema DDL. The outer VChannel lock
++	// serializes this append (including registration) with the DDL.
++	schema := impl.shardManager.GetCollectionSchemaSnapshot(h.GetCollectionId())
++	h.SchemaVersion = schema.GetVersion()
++	if typeutil.HasTextField(schema) {
++		h.StorageVersion = storage.StorageV3
++	}
++	createSegmentMsg.OverwriteHeader(h)
++
+ 	msgID, err := appendOp(ctx, msg)
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor_test.go` (modified, +88/-0)
+```diff
+@@ -3,6 +3,7 @@ package shard
+ import (
+ 	"context"
+ 	"testing"
++	"time"
+ 
+ 	"github.com/bytedance/mockey"
+ 	"github.com/cockroachdb/errors"
+@@ -16,11 +17,14 @@ import (
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
++	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/mock_wal"
+ 	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
++	"github.com/milvus-io/milvus/internal/storage"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/stats"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/moduleapi"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
+@@ -1001,3 +1005,87 @@ func TestDropPartitionUpdatesManagerAfterAppend(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestCreateSegmentSchemaDDLOrdering(t *testing.T) {
++	paramtable.Init()
++	resource.InitForTest(t)
++	cfg := paramtable.Get()
++	cfg.Save(cfg.CommonCfg.UseLoonFFI.Key, "false")
++	defer cfg.Reset(cfg.CommonCfg.UseLoonFFI.Key)
++
++	// Control when each worker's request reaches the interceptor.
++	pending := make(chan message.MutableMessage, 1)
++	appended := make(chan uint64)
++	transport := mock_wal.NewMockWAL(t)
++	patch := mockey.Mock((*mock_wal.MockWAL).Append).To(func(_ *mock_wal.MockWAL, _ context.Context, msg message.MutableMessage) (*wal.AppendResult, error) {
++		pending <- msg
++		tick := <-appended
++		return &wal.AppendResult{MessageID: rmq.NewRmqID(int64(tick)), TimeTick: tick}, nil
++	}).Build()
++	defer patch.UnPatch()
++	defer close(appended)
++	future := syncutil.NewFuture[wal.WAL]()
++	future.Set(transport)
++	old := &schemapb.CollectionSchema{Version: 5, Fields: []*schemapb.FieldSchema{{FieldID: 100, IsPrimaryKey: true, DataType: schemapb.DataType_Int64}}}
++	const channel = "p0_1v0"
++	manager := shards.RecoverShardManager(&shards.ShardManagerRecoverParam{
++		ChannelInfo: types.PChannelInfo{Name: "p0", Term: 1}, WAL: future,
++		InitialRecoverSnapshot: &recovery.RecoverySnapshot{
++			Checkpoint: &recovery.WALCheckpoint{TimeTick: 1},
++			WritePathRecovery: &moduleapi.WritePathRecoveryModuleSnapshot{VChannels: map[string]moduleapi.VChannelWritePathRecoveryState{
++				channel: {VChannel: channel, CollectionID: 1, PartitionIDs: []int64{10, 11}, Schema: old},
++			}},
++		},
++	})
++	defer manager.Close()
++	i := NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{ShardManager: manager})
++	defer i.Close()
++
++	beginAllocation := func(partition int64) message.MutableMessage {
++		t.Helper()
++		_, err := manager.AssignSegment(&shards.AssignSegmentRequest{CollectionID: 1, PartitionID: partition, TimeTick: 20, ModifiedMetrics: stats.ModifiedMetrics{Rows: 1, BinarySize: 16}})
++		require.ErrorIs(t, err, shards.ErrWaitForNewSegment)
++		select {
++		case msg := <-pending:
++			return msg
++		case <-time.After(5 * time.Second):
++			t.Fatal("allocation worker did not submit CreateSegment")
++			return nil
++		}
++	}
++	appendCreate := func(msg message.MutableMessage, tick uint64, version int32, format int64) int64 {
++		t.Helper()
++		var segmentID int64
++		_, err := i.DoAppend(t.Context(), msg.WithTimeTick(tick).WithLastConfirmedUseMessageID(), func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
++			h := message.MustAsMutableCreateSegmentMessageV2(msg).Header()
++			require.Equal(t, version, h.GetSchemaVersion())
++			require.Equal(t, format, h.GetStorageVersion())
++			segmentID = h.GetSegmentId()
++			return rmq.NewRmqID(int64(tick)), nil
++		})
++		require.NoError(t, err)
++		appended <- tick
++		return segmentID
++	}
++
++	before := appendCreate(beginAllocation(10), 25, 5, storage.StorageV2)
++	pendingAtDDL := beginAllocation(11)
++	updated := proto.CloneOf(old)
++	updated.Version = 6
++	updated.Fields = append(updated.Fields, &schemapb.FieldSchema{FieldID: 125, DataType: schemapb.DataType_Text})
++	ddl := message.NewAlterCollectionMessageBuilderV2().WithVChannel(channel).
++		WithHeader(&message.AlterCollectionMessageHeader{CollectionId: 1, UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{message.FieldMaskCollectionSchema}}}).
++		WithBody(&message.AlterCollectionMessageBody{Updates: &message.AlterCollectionMessageUpdates{Schema: updated}}).
++		MustBuildMutable().WithTimeTick(30)
++	_, err := i.DoAppend(t.Context(), ddl, func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
++		require.Equal(t, []int64{before}, message.MustAsMutableAlterCollectionMessageV2(msg).Header().GetFlushedSegmentIds())
++		return rmq.Ne
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager.go` (modified, +1/-2)
+```diff
+@@ -89,7 +89,6 @@ func (m *partitionManager) GetSegmentManager(segmentID int64) *segmentAllocManag
+ }
+ 
+ // AssignSegment assigns a segment for a assign segment request.
+-// req.SchemaVersion must be set by the caller before invoking.
+ func (m *partitionManager) AssignSegment(req *AssignSegmentRequest) (*AssignSegmentResult, error) {
+ 	// !!! We have promised that the fencedAssignTimeTick is always less than new incoming insert request by Barrier TimeTick of ManualFlush.
+ 	// So it's just a promise check here.
+@@ -210,6 +209,6 @@ func (m *partitionManager) assignSegment(req *AssignSegmentRequest) (*AssignSegm
+ 
+ 	// There is no segment can be allocated for the insert request.
+ 	// Ask a new pending segment to insert.
+-	m.asyncAllocSegment(req.SchemaVersion, req.RequiresStorageV3)
++	m.asyncAllocSegment()
+ 	return nil, ErrWaitForNewSegment
+ }
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager_test.go` (modified, +2/-2)
+```diff
+@@ -61,7 +61,7 @@ func TestPartitionManagerLogging(t *testing.T) {
+ 	}
+ 	for _, manager := range managers {
+ 		require.Same(t, parent, manager.Logger())
+-		manager.asyncAllocSegment(0, false)
++		manager.asyncAllocSegment()
+ 		manager.asyncFlushSegment(ctx, segment)
+ 	}
+ 	for range 4 {
+@@ -75,7 +75,7 @@ func TestPartitionManagerLogging(t *testing.T) {
+ 	canceledCtx, cancel := context.WithCancel(ctx)
+ 	cancel()
+ 	for _, manager := range managers {
+-		manager.asyncAllocSegment(0, false)
++		manager.asyncAllocSegment()
+ 		manager.wal = syncutil.NewFuture[wal.WAL]()
+ 		manager.asyncFlushSegment(canceledCtx, segment)
+ 	}
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_alloc_worker.go` (modified, +11/-20)
+```diff
+@@ -17,7 +17,7 @@ import (
+ )
+ 
+ // asyncAllocSegment allocates a new growing segment asynchronously.
+-func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorageV3 bool) {
++func (m *partitionManager) asyncAllocSegment() {
+ 	if m.onAllocating != nil {
+ 		m.Logger().Debug(m.ctx, "segment alloc worker is already on allocating",
+ 			mlog.FieldVChannel(m.vchannel),
+@@ -29,13 +29,11 @@ func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorag
+ 	// Create a notifier to notify the waiter when the allocation is done.
+ 	m.onAllocating = make(chan struct{})
+ 	w := &segmentAllocWorker{
+-		ctx:               m.ctx,
+-		collectionID:      m.collectionID,
+-		partitionID:       m.partitionID,
+-		vchannel:          m.vchannel,
+-		wal:               m.wal.Get(),
+-		schemaVersion:     schemaVersion,
+-		requiresStorageV3: requiresStorageV3,
++		ctx:          m.ctx,
++		collectionID: m.collectionID,
++		partitionID:  m.partitionID,
++		vchannel:     m.vchannel,
++		wal:          m.wal.Get(),
+ 	}
+ 	w.SetLogger(m.Logger().With(
+ 		mlog.FieldVChannel(m.vchannel),
+@@ -56,11 +54,9 @@ type segmentAllocWorker struct {
+ 	wal          wal.WAL
+ 	// The following fields are preserved across retries to ensure the same segment
+ 	// configuration is used when rebuilding the message after a failed append.
+-	segmentID         uint64            // allocated segment ID
+-	storageVersion    int64             // storage version determined at first attempt
+-	limitation        segmentLimitation // segment limitation determined at first attempt
+-	schemaVersion     int32
+-	requiresStorageV3 bool
++	segmentID      uint64            // allocated segment ID
++	storageVersion int64             // storage version determined at first attempt
++	limitation     segmentLimitation // segment limitation determined at first attempt
+ }
+ 
+ // do is the main loop of the segment allocation worker.
+@@ -106,10 +102,6 @@ func (w *segmentAllocWorker) doOnce() error {
+ 	// Build a fresh message each time to avoid reusing a contaminated message.
+ 	// After a failed WAL append, the message may have internal state set (e.g., WAL term)
+ 	// that would cause a panic if reused.
+-	// TODO: include SchemaVersion in CreateSegmentMessageHeader so that the flusher
+-	// can propagate it to DataCoord's AllocSegment RPC. Currently streaming-created
+-	// segments get SchemaVersion=0, causing unnecessary backfill triggers.
+-	// Tracked in companion PR: https://github.com/milvus-io/milvus/pull/48865
+ 	msg := message.NewCreateSegmentMessageBuilderV2().
+ 		WithVChannel(w.vchannel).
+ 		WithHeader(&message.CreateSegmentMessageHeader{
+@@ -120,7 +112,6 @@ func (w *segmentAllocWorker) doOnce() error {
+ 			MaxRows:        w.limitation.SegmentRows,
+ 			MaxSegmentSize: w.limitation.SegmentSize,
+ 			Level:          datapb.SegmentLevel_L1,
+-			SchemaVersion:  w.schemaVersion,
+ 		}).
+ 		WithBody(&message.CreateSegmentMessageBody{}).
+ 		MustBuildMutable()
+@@ -151,9 +142,9 @@ func (w *segmentAllocWorker) initSegmentConfig() error {
+ 	}
+ 	w.segmentID = segmentID
+ 
+-	// Determine storage version.
++	// Capture the configured default across retries. CreateSegment applies schema requirements at append.
+ 	w.storageVersion = storage.StorageV2
+-	if w.requiresStorageV3 || paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
++	if paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
+ 		w.storageVersion = storage.StorageV3
+ 	}
+ 
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_workers_test.go` (modified, +8/-11)
+```diff
+@@ -296,30 +296,27 @@ func TestSegmentAllocWorker_InitSegmentConfig(t *testing.T) {
+ 	assert.Equal(t, firstLimitation, w.limitation)
+ }
+ 
+-func TestSegmentAllocWorkerStorageVersionFollowsRequirements(t *testing.T) {
++func TestSegmentAllocWorkerUsesConfiguredStorageVersion(t *testing.T) {
+ 	paramtable.Init()
+ 	resource.InitForTest(t)
+ 	param := paramtable.Get()
+ 	defer param.Reset(param.CommonCfg.UseLoonFFI.Key)
+ 
+ 	for name, tc := range map[string]struct {
+-		useLoonFFI        string
+-		requiresStorageV3 bool
+-		expected          int64
++		useLoonFFI string
++		expected   int64
+ 	}{
+ 		"v2_without_requirement": {useLoonFFI: "false", expected: storage.StorageV2},
+-		"v3_required_by_schema":  {useLoonFFI: "false", requiresStorageV3: true, expected: storage.StorageV3},
+ 		"v3_with_ffi":            {useLoonFFI: "true", expected: storage.StorageV3},
+ 	} {
+ 		t.Run(name, func(t *testing.T) {
+ 			param.Save(param.CommonCfg.UseLoonFFI.Key, tc.useLoonFFI)
+ 			w := &segmentAllocWorker{
+-				ctx:               context.Background(),
+-				collectionID:      1,
+-				partitionID:       2,
+-				vchannel:          "v1",
+-				wal:               mock_wal.NewMockWAL(t),
+-				requiresStorageV3: tc.requiresStorageV3,
++				ctx:          context.Background(),
++				collectionID: 1,
++				partitionID:  2,
++				vchannel:     "v1",
++				wal:          mock_wal.NewMockWAL(t),
+ 			}
+ 			w.SetLogger(mlog.With())
+ 
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/shard_manager.go` (modified, +0/-11)
+```diff
+@@ -275,17 +275,6 @@ func (c *CollectionInfo) AllowGrowingSourceFlush() bool {
+ 		paramtable.Get().CommonCfg.EnableGrowingSourceFlush.GetAsBool())
+ }
+ 
+-func (c *CollectionInfo) RequiresStorageV3() bool {
+-	return c.HasTextField()
+-}
+-
+-func (c *CollectionInfo) HasTextField() bool {
+-	if c == nil || c.Schema == nil || c.Schema.GetSchema() == nil {
+-		return false
+-	}
+-	return typeutil.HasTextField(c.Schema.GetSchema())
+-}
+-
+ // RuntimeFlushSize estimates the in-memory footprint used by flush pressure decisions.
+ func (c *CollectionInfo) RuntimeFlushSize(modified stats.ModifiedMetrics) uint64 {
+ 	if modified.Rows == 0 || modified.BinarySize == 0 {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55814** (2026-11-22): fix: Clear HasMoreResult for empty retrieve results (@xiaofan-luan)
-- **PR #55791** (2026-11-21): fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client (@xiaofan-luan)
-- **PR #55785** (2026-11-21): enhance: [cp3.0] Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
-- **PR #55784** (2026-11-21): enhance: Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
-- **PR #55779** (2026-11-20): test: use unary QueryView RPCs in Proxy auto-load retry fixtures (@sijie-ni-0214)
-- **PR #55763** (2026-11-21): test: fix exact-distance controls in Paimon HNSW refresh test (@zhuwenxing)
+- **PR #55914** (2026-11-24): fix: [3.0] default OpenBLAS to one thread in runtime images (@CLiqing)
+- **PR #55907** (2026-11-24): fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
+- **PR #55906** (2026-11-24): fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
+- **PR #55894** (2026-11-24): fix: sort partition-mode namespace segments by primary key (@sunby)
+- **PR #55889** (2026-11-24): fix: [2.6] Reject unknown storage versions during recovery (@congqixia)
+- **PR #55888** (2026-11-24): fix: [3.0] Reject unknown storage versions during recovery (@congqixia)
 
 ---
 
@@ -1682,21 +2188,22 @@ The te
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clear HasMoreResult for empty retrieve results
+## X. default OpenBLAS to one thread in runtime images
 
 **RULE**:
-When implementing operations in `internal/core/src/query/ExecPlanNodeVisitor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/docker/milvus/amazonlinux2023/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09c8c207`: Clear HasMoreResult for empty retrieve results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08d5f216`: default OpenBLAS to one thread in runtime images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/query/ExecPlanNodeVisitor.cpp`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/docker/milvus/amazonlinux2023/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        tmp_retrieve_result.has_more_result = false;
+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
+ENV OPENBLAS_NUM_THREADS=1
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1706,7 +2213,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09c8c207` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08d5f216` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

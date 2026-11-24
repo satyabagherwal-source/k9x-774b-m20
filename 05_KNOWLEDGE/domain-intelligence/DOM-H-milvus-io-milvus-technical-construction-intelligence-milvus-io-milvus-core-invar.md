@@ -4,24 +4,24 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "72e14334",
+  "source_version": "e5152348",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T23:18:25.082Z",
+  "timestamp": "2026-11-24T19:36:14.054Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `72e14334`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T23:18:25.082Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `e5152348`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T19:36:14.054Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io/milvus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:18:23.862Z  
+> **Harvest Timestamp**: 2026-11-24T19:36:12.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46726 stars
+- **Stars / Engagement**: 46733 stars
 
 ---
 
@@ -1561,11 +1561,14 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55829** (2026-11-23): **fix: format RPC context for QueryView streaming errors**
-  *Symptoms*: ## What type of PR is this?  - [x] Bug Fix  ## Which issue(s) this PR fixes  Fixes #55827 (regression from #55219)  ## Description  `NewServiceStreamClientInterceptor` attaches `viewpb.RPCRequestContext` to `SearchOnViewStream` and `QueryOnViewStream` errors, just like the unary interceptor does for `SearchOnView` and `QueryOnView`. However, `formatRPCContext` in `internal/views/queryclient/error.go` only switched on the unary method names, causing streaming QueryView errors to hit `default: return err` and drop the `"fail to search on QueryNode <id>: "` / `"fail to query on QueryNode <id>: "` prefix.  This broke all 6 index variants of `test_search_invalid_params_type` on `master` nightly suites (`milvus-e2e-master` and `cardinal-e2e-master`) once #55219 enabled streaming reduction by default.  ### Changes - Handle `ViewQueryService_SearchOnViewStream_FullMethodName` and `ViewQueryService_QueryOnViewStream_FullMethodName` in `formatRPCContext` (`internal/views/queryclient/error.go`). - Add streaming method cases for both QueryNode and StreamingNode to `TestToMilvusErrorFormatsRPCContext` (`internal/views/queryclient/error_test.go`).  ### Verification - `golangci-lint fmt --diff --enable {gci,gofmt,gofumpt,goimports}`: no diff on all 4 formatters. - Remote Go UT (`milvus-dev-cli go-ut local . -b master -t ./internal/views/queryclient -k 'TestToMilvusError'`, task `go-ut-local-wenxing-fix-queryview-d1fa78a-c89227464cd654a8-u482`): PASS (`ok github.com/milvus-io/milvus/internal
+- **Issue #55914** (2026-11-24): **fix: [3.0] default OpenBLAS to one thread in runtime images**
+  *Symptoms*: Cherry-pick from master pr: #55650 issue: #50892  Backport 08d5f216f56390828c9e416433b22580f88b19b5 to 3.0.  Concurrent Knowhere tasks can call BLAS while OpenBLAS also starts internal workers. #50892 covers ARM Neoverse-V2 PQ loading and amd64 HNSW_PQ loading / IVF_RABITQ searches alongside compaction. This backport supplies the recommended temporary default, OPENBLAS_NUM_THREADS=1, in all six final CPU/GPU runtime images. Deployments can override it through their container environment.
+  **Post-Mortem & Fix Analysis**:
+  > /kind bug /area compilation /milestone 3.0.7 /refresh-label 
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/milvus-io/milvus/pull/55914#pullrequestreview-6039080591" title="LGTM">foxspy</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[build/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/build/OWNERS)~~ [foxspy]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #55828** (2026-11-23): **test: fix remaining chaos cleanup hooks for pytest 8**
-  *Symptoms*: ## What type of PR is this?  - [x] Test  ## Description  Follow-up to #55501 (`test: fix chaos cleanup hook for pytest 8`), which updated `tests/python_client/chaos/test_chaos_apply.py` from legacy `def teardown(self)` to `def teardown_method(self)`.  Six remaining chaos test files still defined `def teardown(self)`, which pytest 8 silently ignores. In `chaos-test-kafka-cron` build 4770 and `chaos-test-wp-cron` build 2934, when `test_chaos_apply_to_determined_pod.py` failed after creating a `PodChaos` CR, cleanup never ran and leaked `PodChaos` CRs (`test-etcd-leader-pod-kill-1795307084`, `test-etcd-followers-pod-kill-1795354005`) into `chaos-testing`.  ### Changes - Rename `def teardown(self)` to `def teardown_method(self)` in:   - `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py`   - `tests/python_client/chaos/test_chaos_apply_multi_replicas.py`   - `tests/python_client/chaos/test_chaos_apply_to_coord.py`   - `tests/python_client/chaos/test_chaos.py`   - `tests/python_client/chaos/test_chaos_bulk_insert.py`   - `tests/python_client/chaos/test_load_with_checker.py` - Guard attribute lookups with `getattr(...)` and non-empty `meta_name` checks so teardown does not mask an earlier failure with `AttributeError` when a test fails before creating a chaos CR.  ### Verification - `python -m py_compile` on all 6 files: PASS. - `ruff check --select E,F,W`: 0 warnings on touched lines. - Isolated pytest lifecycle verification using the real `TestChaosApply.teardown_met
+- **Issue #55907** (2026-11-24): **fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds**
+  *Symptoms*: ## What changed  Backport #55906 to `3.0`: move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile` inside the `ifeq ($(USE_TSAN), ON)` branch (matching `scripts/build_plan_parser.sh`), and add `make -n build-go` regression checks in `scripts/sanitizer_env_test.sh`.  ### Why  PR #55130 backported #53895 to `3.0`, which unconditionally set `CGO_CXXFLAGS` from `$(shell $(GO) env CGO_CXXFLAGS)` (`-O2 -g`) and passed `CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo` (`go version -m`), ordinary (`USE_TSAN=OFF`) `3.0` builds started recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is empty or unset).  This broke downstream Go plugin artifact verification comparing `go version -m` build settings between `milvus` and plugin `.so` artifacts (`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).  Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when `USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes `CGO_CXXFLAGS` non-empty and would otherwise drop Go's default `-O2`).  issue: #53763 pr: #55906  ## Verification  - Full `bash scripts/sanitizer_env_test.sh` passed, including the 4 new `make -n build-go` assertions (`USE_TSAN=OFF` unset/overridden and `USE_TSAN=ON` unset/overridden). - Verified with `go build -a -x` and `go version -m` that `CGO_CXXFLAGS=""` preserves 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1582,1092 +1585,576 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f81b4bca` (2026-11-23)
-**Commit Message**: fix: record replicated idempotency keys on the secondary (#54903)
+### Incident Patch 1: `08d5f216` (2026-11-24)
+**Commit Message**: fix: default OpenBLAS to one thread in runtime images (#55650)
 
-issue: #54572
+issue: #50892
 
-### Problem
+Concurrent Knowhere tasks can invoke BLAS while OpenBLAS also uses
+internal worker threads. #50892 first reported crashes during PQ index
+loading on ARM Neoverse-V2; later reports cover HNSW_PQ loading on amd64
+and IVF_RABITQ searches alongside compaction. The discussion recommends
+single-threaded OpenBLAS as an immediate mitigation, but the runtime
+images do not currently provide that default.
 
-A replicated Insert carries the source cluster's idempotency key and
-insert result, but the secondary recorded neither. The idempotency
-interceptor appended it without touching the window, and the summary
-observer stored it as keyless. After a planned switchover, the promoted
-cluster had no entry for the key. A client retry took the Owner path,
-allocated new autoIDs and appended a second copy (32 -> 64 rows in the
-issue).
+Set `ENV OPENBLAS_NUM_THREADS=1` in all six final CPU/GPU runtime
+Dockerfiles. This supplies the recommended default for both
+architectures and allows deployments to override it through their
+container environment. Set it in the final GPU Ubuntu 20.04 image as
+well, so the mitigation does not depend on rebuilding its pinned base
+image.
 
-### Fix
+This is a temporary default for BLAS internal threading. Broader
+OpenMP/thread-pool changes remain separate follow-up work, and workloads
+relying on BLAS internal parallelism may need to override the default.
 
-The secondary records replicated keys but never checks against them.
+Validation:
 
-- The window is never read for a replicated message. The interceptor
-still appends every replicated message unconditionally. So the hazards
-the design doc lists for deduplicating a replicated write locally (a
-demotion, or a legal key reuse after the source evicted the key) cannot
-occur.
-- The window is written after the append. The new `Window.Record` stores
-key -> result and replaces an entry already held for the key
-(last-wins). `Complete` and `Record` share one `storeLocked`, so bytes
-and commit order stay consistent.
-- A replicated transaction buffers its body results and records on the
-c
+- `git diff --check` passes; all six final runtime Dockerfiles contain
+the default after their final `FROM`, with no later override.
+- On this amd64 host, built
 
-**File**: `docs/design-docs/design_docs/20260604-idempotent_write.md` (modified, +72/-10)
+**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +2/-0)
 ```diff
-@@ -91,8 +91,11 @@ cannot be done correctly for autoID collections at all.
-   sent (`client/milvusclient`), but REST, pymilvus and raw gRPC callers reach the server,
-   where it is dropped silently. Deleting the same rows twice is already effectively a
-   no-op; `Upsert` needs its delete leg deduped as well, which is a separate design.
--- Cross-cluster dedup. Replicated writes bypass the window entirely (see
--  [Replication and CDC](#replication-and-cdc)).
-+- Cross-cluster dedup of replicated writes. A replicated write is never deduplicated
-+  against the local window; it is only recorded there, so that a client retry after a
-+  planned switchover can reuse the result while the secondary retains the key (see
-+  [Replication and CDC](#replication-and-cdc)). Keys that replication had not delivered
-+  before a force promote are not recovered.
- - Unbounded retention. Duplicate visibility is a bounded window (see
-   [Retention](#retention)).
+@@ -57,6 +57,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
  
-@@ -466,17 +469,75 @@ be recovered from WALSummary.
- 
- ## Replication and CDC
- 
--Replicated messages **bypass the window entirely**. The replicate stream has its own
-+Replicated messages are **recorded in the window but never checked against it**.
-+
-+The window is never read for a replicated message. The replicate stream has its own
- exactly-once delivery via source-timetick checkpoints, and the idempotency key inside a
- replicated message belongs to the *source* cluster's window history. Deduplicating
- against the local window would silently drop replicated writes whenever the key happens
- to sit in this cluster's window — after a demotion, or after the source released the key
--and a client legally re-issued it.
--
--The recovery observer applies the same rule: a replicated write becomes a *keyless*
--committed write in Summary, so a foreign key can never materialize a local dedup
--entry. Its local WAL positions still participate in Summary persistence and
--checkpoint gating.
-+and a client legally re-issued it. So a replicated message is appended unconditionally.
-+
-+The window is written after the append. A replicated Insert carries the source's key and
-+its `idempotent_result` header; a replicated transaction carries them on its bodies and
-+its commit, and the interceptor merges the body results on the commit exactly as it does
-+for a native transaction. The recorded entry replaces an entry already held for the key:
-+when the source evicted the key and a client legally reused it, the newer write is the one
-+a retry must see. The recovery observer applies the same rule, so a window rebuilt from
-+Summary carries the replicated keys too, and restore already keeps the newest record per
-+key.
-+
-+During a **planned switchover**, each PChannel appends `AlterReplicateConfig`
-+after its preceding replicated writes have updated the window. A client retry on the
-+promoted cluster returns the original primary keys if its window still holds the entry.
-+Each cluster enforces its own idle TTL and byte budget. A duplicate hit on the old
-+primary refreshes only that cluster's entry, so the secondary can evict the key sooner.
-+Routing lines up because row *i* goes to shard `i % n` on every attempt and a secondary
-+names its VChannels by PChannel index.
-+
-+A native request releases the role lock while waiting for function resources, segment
-+readiness, or another owner of the same key. If the topology changed during the wait,
-+the request checks the current role and window again before it can append.
-+
-+After a **force promote**, replication may also have missed writes. A retry appends
-+again when the promoted cluster has no entry for the key.
-+
-+Recording is best effort. A replicated write must land even when its key cannot be
-+remembered. A replicated transaction is recorded only when the buffer holds a result for
-+every body, that is, when the buffered count equals the commit's `BodyCnt`. On a restart the
-+replicate side recovers an open replicated transaction from the WAL and ignores the resent
-+bodies it already holds; the interceptor restores the buffered results of those bodies from
-+the same `TxnBuffer`, so the commit still finds every body. The buffer is released only
-+after the commit lands, so a rejected commit that the source replays also finds the earlier
-+bodies.
-+
-+A replicated body is buffered with an infinite keepalive, no matter what keepalive the
-+source stamped on it. The source owns a replicated transaction's lifecycle, so the buffer
-+is reclaimed only once the txn session leaves the txn manager — never by a timetick-based
-+expiry. That matters on a restart: the reopened WAL places the vchannel MVCC at the
-+recovery timetick, which can sit far beyond a body's timetick plus the source keepalive,
-+and would otherwise delete the very results the restore just filled, leaving the commit
-+unrecordable and the key forgotten.
-+
-+When a replicated write lands but cannot be recorded (a malformed result header, an
-+incomplete transaction, or a commit without `BodyCnt`), the entry he
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
 ```
 
-**File**: `internal/streamingnode/server/wal/adaptor/preparation_test.go` (modified, +71/-2)
+**File**: `build/docker/milvus/gpu/ubuntu20.04/Dockerfile` (modified, +2/-0)
 ```diff
-@@ -9,12 +9,16 @@ import (
- 	"github.com/bytedance/mockey"
- 	"github.com/stretchr/testify/require"
+@@ -48,6 +48,8 @@ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+ ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
  
-+	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ # Run as milvus by default; downstream images may select another user at build time.
+ USER ${MILVUS_RUNTIME_USER}
+```
+
+**File**: `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -49,6 +49,8 @@ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+ ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +2/-0)
+```diff
+@@ -59,6 +59,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ 
+ # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
+ # container-overflow false positives during static initialization, disable it.
+```
+
+**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +2/-0)
+```diff
+@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
+ ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
+ ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
++# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
++ENV OPENBLAS_NUM_THREADS=1
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
+ # Generate fipsmodule.cnf for FIPS module integrity self-test.
+```
+
+---
+
+### Incident Patch 2: `4e7326e0` (2026-11-24)
+**Commit Message**: fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (#55906)
+
+## What changed
+
+Move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile`
+inside the `ifeq ($(USE_TSAN), ON)` branch (matching
+`scripts/build_plan_parser.sh`), and add `make -n build-go` regression
+checks in `scripts/sanitizer_env_test.sh`.
+
+### Why
+
+PR #53895 initialized `CGO_CXXFLAGS` unconditionally from `$(shell $(GO)
+env CGO_CXXFLAGS)` (`-O2 -g`) and passed
+`CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the
+raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo`
+(`go version -m`), ordinary (`USE_TSAN=OFF`) Milvus builds started
+recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even
+though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is
+empty or unset).
+
+This broke downstream Go plugin artifact verification comparing `go
+version -m` build settings between `milvus` and plugin `.so` artifacts
+(`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).
+
+Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when
+`USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes
+`CGO_CXXFLAGS` non-empty and would otherwise drop 
+
+**File**: `Makefile` (modified, +3/-2)
+```diff
+@@ -57,8 +57,6 @@ endif
+ 
+ USE_TSAN ?= OFF
+ export USE_TSAN
+-# Preserve Go's default C++ flags when the caller did not provide an override.
+-CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
+ ifneq ($(USE_TSAN),ON)
+ ifneq ($(USE_TSAN),OFF)
+ $(error USE_TSAN must be ON or OFF)
+@@ -76,6 +74,9 @@ endif
+ ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
+ $(error USE_TSAN cannot be combined with Go -race)
+ endif
++# Preserve Go's default C++ flags before appending TSan flags so ordinary
++# builds do not stamp CGO_CXXFLAGS="-O2 -g" into Go buildinfo.
++	CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
+ 	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
+ 	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
+ 	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
+```
+
+**File**: `scripts/sanitizer_env_test.sh` (modified, +33/-0)
+```diff
+@@ -139,6 +139,39 @@ for target in build-cpp build-cpp-with-unittest build-cpp-with-coverage; do
+     grep -q 'TANTIVY_ANALYZER_REMOTE_TLS=OFF .*core_build.sh .* -T ON .* -G OFF ' "${test_root}/make.log"
+ done
+ 
++# Ordinary Go builds must not materialize Go's default CGO_CXXFLAGS into the
++# environment (which stamps CGO_CXXFLAGS="-O2 -g" into Go buildinfo and breaks
++# plugin artifact verification), while TSan builds must preserve it before
++# appending sanitizer flags.
++mkdir -p "${test_root}/make-bin"
++cat > "${test_root}/make-bin/go" <<'EOF'
++#!/usr/bin/env bash
++if [[ "${1:-}" == env ]]; then
++    case "${2:-}" in
++        CGO_CXXFLAGS) printf '%s\n' '-O2 -g' ;;
++        GOPATH) printf '%s\n' '/tmp/gopath' ;;
++        GOFLAGS) ;;
++    esac
++fi
++EOF
++chmod +x "${test_root}/make-bin/go"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O1" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O2 -g -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
++env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
++    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
++    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
++grep -q 'CGO_CXXFLAGS="-O1 -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
++
+ # Exercise the parser's Go and handwritten C++ commands without compiling. This
+ # also protects the non-TSan path on systems whose /bin/bash is still Bash 3.2.
+ mkdir -p "${test_root}/repo/scripts" "${test_root}/bin" \
+```
+
+---
+
+### Incident Patch 3: `8f5bd72b` (2026-11-24)
+**Commit Message**: fix: resolve segment schema at WAL append (#55821)
+
+issue: #55626
+
+- Resolve the collection schema version and TEXT storage requirement
+when CreateSegment holds the data VChannel lock, so the WAL record and
+segment registration agree with schema DDL ordering.
+- Keep schema-dependent decisions out of the asynchronous segment
+allocation worker.
+
+Signed-off-by: chyezh <[REDACTED_EMAIL]>
+
+**File**: `docs/agent_guides/streaming-system/wal/shard-management.md` (modified, +5/-0)
+```diff
+@@ -10,6 +10,11 @@ source/spec. Only the `schema` mask flushes/fences segment allocation; ordinary
+ metadata updates keep SchemaVersion unchanged. RecoveryStorage applies the same
+ mask semantics. `collection.on.truncating` remains coordinator/DataCoord state.
+ 
++The CreateSegment append interceptor sets the encoding SchemaVersion and applies
++the schema's storage format requirements while holding the VChannel lock.
++An asynchronous allocation started before a schema DDL therefore uses the
++schema in effect when its CreateSegment enters the WAL.
++
+ ## Seal Policies
+ 
+ Growing segments are sealed when any registered policy triggers. See `internal/streamingnode/server/wal/interceptors/shard/policy/seal_policy.go` for the full list of policies.
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor.go` (modified, +11/-0)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 
+ 	"github.com/cockroachdb/errors"
+ 
++	"github.com/milvus-io/milvus/internal/storage"
  	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/idempotency"
  	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/redo"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/replicate"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/replicate/replicates"
  	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
- 	"github.com/milvus-io/milvus/internal/util/fileresource"
- 	"github.com/milvus-io/milvus/internal/util/function"
- 	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
-@@ -69,11 +73,16 @@ func installPreparationTestInterceptor(t *testing.T, w *walAdaptorImpl) function
- 	redoInterceptor := redo.NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{
- 		ShardManager: &preparationTestShardManager{},
- 	})
--	idempotencyInterceptor := idempotency.NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{})
-+	rm, err := replicates.RecoverReplicateManager(&replicates.ReplicateManagerRecoverParam{
-+		ChannelInfo: w.Channel(), CurrentClusterID: "local", InitialRecoverSnapshot: &recovery.RecoverySnapshot{},
-+	})
-+	require.NoError(t, err)
-+	param := &interceptors.InterceptorBuildParam{ReplicateManager: rm}
-+	idempotencyInterceptor := idempotency.NewInterceptorBuilder().Build(param)
- 	t.Cleanup(redoInterceptor.Close)
- 	t.Cleanup(idempotencyInterceptor.Close)
- 	w.interceptorBuildResult.Interceptor = interceptors.NewChainedInterceptor(
--		idempotencyInterceptor, redoInterceptor, w.interceptorBuildResult.Interceptor, &preparationTestInterceptor{})
-+		idempotencyInterceptor, redoInterceptor, w.interceptorBuildResult.Interceptor, replicate.NewInterceptorBuilder().Build(param), &preparationTestInterceptor{})
- 	return manager
- }
+@@ -19,6 +20,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message/messageutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+ )
  
-@@ -197,6 +206,66 @@ func TestAppendPreparationReleasesWALLockAndHonorsCancellation(t *testing.T) {
+ const interceptorName = "shard"
+@@ -390,6 +392,15 @@ func (impl *shardInterceptor) handleCreateSegment(ctx context.Context, msg messa
+ 		return nil, status.NewUnrecoverableError(err.Error())
  	}
- }
  
-+func TestAppendRechecksRoleAfterPreparation(t *testing.T) {
-+	mockey.PatchConvey("demotion can finish while owner and duplicate wait", t, func() {
-+		var persisted atomic.Int32
-+		w := newFenceTestWAL(t, newFirstTimeTickWALImpls(func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+			persisted.Add(1)
-+			return finishFenceTestAppend(ctx, 1), nil
-+		}))
-+		manager := installPreparationTestInterceptor(t, w)
-+		defer manager.Close()
-+		started, resume := make(chan struct{}), make(chan struct{})
-+		var once sync.Once
-+		release := func() { once.Do(func() { close(resume) }) }
-+		defer release()
-+		mockey.Mock(fileresource.Acquire).To(func(context.Context, []int64, ...string) (*fileresource.Resources, error) {
-+			close(started)
-+			<-resume
-+			return &fileresource.Resources{}, nil
-+		}).Build()
-+		mockey.Mock(function.BuildEmbeddingRunner).Return(&preparationTestRunner{}, nil).Build()
-+		mockey.Mock((*preparationTestRunner).Close).Return().Build()
-+		waiterJoined := make(chan struct{})
-+		var original func(*idempotency.PendingEntry, context.Context, message.MutableMessage) idempotency.PendingResult
-+		mockey.Mock((*idempotency.PendingEntry).Wait).Origin(&original).To(func(p *idempotency.PendingEntry, ctx context.Context, msg message.MutableMessage) idempotency.PendingResult {
-+			close(waiterJoined)
-+			return original(p, ctx, msg)
-+		}).Build()
-+		result := make(chan error, 2)
-+		insert := func() {
-+			_, err := w.Append(t.Context(), newPreparationTestInsert("same-key"))
-+			result <- err
-+		}
-+		go insert()
-+		waitFenceTestSignal(t, started)
-+		go insert()
-+		waitFenceTestSignal(t, waiterJoined)
-+		config := &commonpb.ReplicateConfiguration{
-+			Clusters: []*commonpb.MilvusCluster{
-+				{ClusterId: "local", Pchannels: []string{w.Channel().Name}},
-+				{ClusterId: "peer", Pchannels: []string{"peer-channel"}},
-+			},
-+			CrossClusterTopology: []*commonpb.CrossClusterTopology{{SourceClusterId: "peer", TargetClusterId: "local"}},
-+		}
-+		ddl := make(chan error, 1)
-+		go func() {
-+			_, err := w.Append(t.Context(), message.NewAlterReplicateConfigMessageBuilderV2().WithAllVChannel().
-+				WithHeader(&message.AlterReplicateConfigMessageHeader{ReplicateConfiguration: config}).
-+				WithBody(&message.AlterReplicateConfigMessageBody{}).MustBuildMutable())
-+			ddl <- err
-+		}()
-+		require.NoError(t, waitFenceTestError(t, ddl))
-+		release()
-+		for range 2 {
-+			err := waitFenceTestError(t, result)
-+			require.Error(t, err)
-+			require.True(t, status.AsStreamingError(err).IsReplicateViolation())
-+		}
-+		require.EqualValues(t, 1, persisted.Load())
-+	})
-+}
++	// The worker can start before a schema DDL. The outer VChannel lock
++	// serializes this append (including registration) with the DDL.
++	schema := impl.shardManager.GetCollectionSchemaSnapshot(h.GetCollectionId())
++	h.SchemaVersion = schema.GetVersion()
++	if typeutil.HasTextField(schema) {
++		h.StorageVersion = storage.StorageV3
++	}
++	createSegmentMsg.OverwriteHeader(h)
 +
- func TestAppendResumesAfte
+ 	msgID, err := appendOp(ctx, msg)
+ 	if err != nil {
+ 		return nil, err
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/idempotency_interceptor.go` (modified, +230/-33)
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor_test.go` (modified, +88/-0)
 ```diff
-@@ -2,7 +2,9 @@ package idempotency
- 
+@@ -3,6 +3,7 @@ package shard
  import (
  	"context"
-+	"sync"
- 
-+	"github.com/cockroachdb/errors"
- 	"github.com/pingcap/failpoint"
- 
- 	walpoint "github.com/milvus-io/milvus/internal/streamingnode/server/wal/failpoint"
-@@ -15,11 +17,13 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
- 	"github.com/milvus-io/milvus/pkg/v3/util/replicateutil"
--	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
- 
- const interceptorName = "idempotency"
- 
-+// Consumed inside DoAppend before the caller sees an append outcome.
-+var errTopologyChanged = errors.New("topology changed while append was waiting")
-+
- var (
- 	_ interceptors.Interceptor            = (*idempotencyInterceptor)(nil)
- 	_ interceptors.InterceptorWithMetrics = (*idempotencyInterceptor)(nil)
-@@ -29,8 +33,13 @@ type idempotencyInterceptor struct {
- 	config WindowConfig
- 	cache  *windowManager
- 
--	windows                *typeutil.ConcurrentMap[string, *Window]
- 	txnInsertResultBuffers *idempotencyutils.TxnInsertResultBuffers
-+	// A replicated append holds exclusive admission from checkpoint acceptance
-+	// through publication of its results. Native writes share admission across
-+	// their role check, window decision and append. Redo and duplicate waits
-+	// release admission before blocking and check the generation on resumption.
-+	replicatedMu       sync.RWMutex
-+	topologyGeneration uint64
- 	// txnActive reports whether a txn session is still tracked by the txn
- 	// manager; a duplicate commit only synthesizes a rollback for a txn that is
- 	// positively known to be still open. nil means "unknown" and skips the
-@@ -78,21 +87,24 @@ func newIdempotencyInterceptorWithParam(config WindowConfig, param *interceptors
- 	}
- 	cache := newWindowManager(config)
- 	cache.start()
--	return &idempotencyInterceptor{
-+	interceptor := &idempotencyInterceptor{
- 		cache:                  cache,
--		windows:                typeutil.NewConcurrentMap[string, *Window](),
- 		txnInsertResultBuffers: idempotencyutils.NewTxnInsertResultBuffers(currentTimeTick, txnActive),
- 		txnActive:              txnActive,
- 		replicateRole:          replicateRole,
- 		config:                 config,
- 	}
-+	if param != nil && param.InitialRecoverSnapshot != nil {
-+		interceptor.restoreReplicatedTxnBuffers(param.InitialRecoverSnapshot.TxnBuffer)
-+	}
-+	return interceptor
- }
- 
- func newIdempotencyInterceptorWithSnapshots(config WindowConfig, snapshots map[string]*idempotencyview.Snapshot, param *interceptors.InterceptorBuildParam) *idempotencyInterceptor {
- 	interceptor := newIdempotencyInterceptorWithParam(config, param)
- 	interceptor.cache.mu.Lock()
- 	for vchannel, window := range interceptor.cache.restore(snapshots) {
--		interceptor.windows.Insert(vchannel, window)
-+		interceptor.cache.registerRecoveredWindow(vchannel, window)
- 	}
- 	interceptor.cache.mu.Unlock()
- 	return interceptor
-@@ -102,24 +114,104 @@ func newIdempotencyInterceptorWithRecovery(config WindowConfig, snapshot *idempo
- 	interceptor := newIdempotencyInterceptorWithParam(config, param)
- 	interceptor.cache.mu.Lock()
- 	for vc, window := range interceptor.cache.restoreOrdered(snapshot) {
--		interceptor.windows.Insert(vc, window)
-+		interceptor.cache.registerRecoveredWindow(vc, window)
- 	}
- 	interceptor.cache.mu.Unlock()
- 	return interceptor
- }
- 
-+// restoreReplicatedTxnBuffers buffers the insert results of the bodies of every
-+// open replicated transaction in txnBuffer. On a restart the replicate side
-+// recovers such a transaction from the same TxnBuffer (recoverSecondaryState)
-+// and ignores the resent bodies it already holds, so those bodies never pass
-+// through appendTxnBodyWithInsertResult again. Native transactions are skipped:
-+// the producer rebuilds them under a new txnID instead of resending them.
-+func (impl *idempotencyInterceptor) restoreReplicatedTxnBuffers(txnBuffer *utility.TxnBuffer) {
-+	if txnBuffer == nil {
-+		return
-+	}
-+	for _, builder := range txnBuffer.GetUncommittedMessageBuilder() {
-+		begin, bodies := builder.Messages()
-+		if begin.ReplicateHeader() == nil {
-+			continue
-+		}
-+		for _, body := range bodies {
-+			if body.MessageType() != message.MessageTypeInsert {
-+				continue
-+			}
-+			insertMsg, err := message.AsImmutableInsertMessageV1(body)
-+			if err != nil {
-+				continue
-+			}
-+			result, ok := message.IdempotentInsertResultFromInsertHeader(insertMsg.Header())
-+			if !ok || message.ValidateIdempotentInsertResult(result) != nil {
-+				continue
-+			}
-+			impl.txnInsertResultBuffers.Restore(body, result)
-+		}
-+	}
-+}
-+
- func (impl *idempotencyInterceptor) DoAppend(ctx context.Context, msg message.MutableMessage, append interceptors.Append) (message.MessageID, error) {
--	// Replicated messages bypass the idempotency window entirely: the replicate
--	// stream has its own exactly-once delivery (source-timetick checkpoints),
--	// and the idempotency key inside a replicated header belongs to the SOURCE
--	// cluster's window histo
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/idempotency_interceptor_test.go` (modified, +696/-21)
-```diff
-@@ -27,9 +27,11 @@ import (
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/timetick/mvcc"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/txn"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/metricsutil"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
- 	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
- 	"github.com/milvus-io/milvus/pkg/v3/metrics"
-+	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/streamingpb"
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
-@@ -39,6 +41,12 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
- )
- 
-+func testWindow(t *testing.T, impl *idempotencyInterceptor, vc string) *Window {
-+	w := impl.cache.acquireWindow(vc)
-+	t.Cleanup(w.release)
-+	return w
-+}
-+
- func newInterceptor(config WindowConfig) *idempotencyInterceptor {
- 	return newIdempotencyInterceptor(config)
- }
-@@ -117,28 +125,77 @@ func TestInterceptorBypassesReplicatedInsert(t *testing.T) {
- 	require.NoError(t, err)
- 	require.True(t, replicatedID.EQ(msgID))
- 	require.Equal(t, 2, appendCount)
-+}
- 
--	// A replicated insert with a fresh key must leave no trace in the window: a
--	// later native insert reusing that key is still the owner and appends.
--	ctx = utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
--	_, err = interceptor.DoAppend(ctx, withTestReplicateHeader(newIdempotentInsertMessage(t, "v1", "key-2")), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+// A replicated insert is recorded after it lands, so a client retry on this
-+// cluster after a promotion answers with the source cluster's primary keys
-+// instead of appending a second copy.
-+func TestInterceptorRecordsReplicatedInsert(t *testing.T) {
-+	interceptor := newInterceptor(WindowConfig{})
-+	insertResult := &messagespb.IdempotentInsertResult{
-+		RowOffsets: []uint32{0, 1},
-+		Ids: &schemapb.IDs{
-+			IdField: &schemapb.IDs_IntId{IntId: &schemapb.LongArray{Data: []int64{100, 101}}},
-+		},
-+	}
-+
-+	appendCount := 0
-+	replicatedID := newTestMessageID(12)
-+	replicatedLastConfirmed := newTestMessageID(11)
-+	ctx := utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
-+	_, err := interceptor.DoAppend(ctx, withTestReplicateHeader(newIdempotentInsertMessageWithInsertResult(t, "v1", "key-2", insertResult)), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
- 		appendCount++
--		return newTestMessageID(12), nil
-+		utility.ReplaceAppendResultTimeTick(ctx, 200)
-+		utility.ReplaceAppendResultLastConfirmedMessageID(ctx, replicatedLastConfirmed)
-+		return replicatedID, nil
- 	})
- 	require.NoError(t, err)
--	require.Equal(t, 3, appendCount)
-+	require.Equal(t, 1, appendCount)
- 
--	nativeID := newTestMessageID(13)
- 	ctx = utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
--	msgID, err = interceptor.DoAppend(ctx, newIdempotentInsertMessage(t, "v1", "key-2"), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+	msgID, err := interceptor.DoAppend(ctx, newIdempotentInsertMessage(t, "v1", "key-2"), func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
- 		appendCount++
--		utility.ReplaceAppendResultTimeTick(ctx, 200)
--		utility.ReplaceAppendResultLastConfirmedMessageID(ctx, newTestMessageID(12))
--		return nativeID, nil
-+		return newTestMessageID(13), nil
- 	})
- 	require.NoError(t, err)
--	require.True(t, nativeID.EQ(msgID))
--	require.Equal(t, 4, appendCount)
-+	require.Equal(t, 1, appendCount)
-+	require.True(t, replicatedID.EQ(msgID))
-+
-+	extra := utility.GetExtraAppendResult(ctx)
-+	require.Equal(t, uint64(200), extra.TimeTick)
-+	require.True(t, replicatedLastConfirmed.EQ(extra.LastConfirmedMessageID))
-+	require.True(t, proto.Equal(insertResult, extra.Extra.(*messagespb.IdempotentInsertResult)))
-+}
-+
-+// A replicated insert whose key the window already holds replaces the entry:
-+// the source evicted the key and a client legally reused it, so the newer
-+// write is what a retry must see.
-+func TestInterceptorReplicatedInsertOverwritesSameKey(t *testing.T) {
-+	interceptor := newInterceptor(WindowConfig{})
-+
-+	appendCount := 0
-+	appendAt := func(timetick uint64, id int64) func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+		return func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+			appendCount++
-+			utility.ReplaceAppendResultTimeTick(ctx, timetick)
-+			utility.ReplaceAppendResultLastConfirmedMessageID(ctx, newTestMessageID(id-1))
-+			return newTestMessageID(id), nil
-+		}
-+	}
-+	ctx := utility.WithExtraAppendResult(context.Background(), &utility.ExtraAppendResult{})
-+	_, err := interceptor.DoAppend(ctx,
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/metrics.go` (modified, +9/-0)
-```diff
-@@ -41,9 +41,18 @@ func observeWindowEviction(vchannel string, count int) {
- // do not accumulate forever in the registry as the interceptor tears down. The
- // series are keyed by (node_id, vchannel); vchannel encodes its pchannel.
- func deleteWindowMetrics(vchannel string) {
-+	deleteWindowGauges(vchannel)
-+	deleteWindowCounters(vchannel)
-+}
-+
-+func deleteWindowGauges(vchannel string) {
- 	nodeID := paramtable.GetStringNodeID()
- 	metrics.WALIdempotencyWindowEntries.DeleteLabelValues(nodeID, vchannel)
- 	metrics.WALIdempotencyWindowInflight.DeleteLabelValues(nodeID, vchannel)
-+}
-+
-+func deleteWindowCounters(vchannel string) {
-+	nodeID := paramtable.GetStringNodeID()
- 	metrics.WALIdempotencyDuplicateTotal.DeleteLabelValues(nodeID, vchannel)
- 	metrics.WALIdempotencyEvictionTotal.DeleteLabelValues(nodeID, vchannel)
- }
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/retention_test.go` (modified, +42/-1)
-```diff
-@@ -17,15 +17,18 @@
- package idempotency
- 
- import (
-+	"context"
- 	"fmt"
- 	"sync"
- 	"sync/atomic"
  	"testing"
- 	"time"
++	"time"
  
-+	"github.com/prometheus/client_golang/prometheus/testutil"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/idempotencyview"
-+	"github.com/milvus-io/milvus/pkg/v3/metrics"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
- 	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
- )
-@@ -123,14 +126,19 @@ func TestPChannelRetentionIdleCleanupAndShutdown(t *testing.T) {
- 		Now: func() time.Time { return time.Unix(0, clock.Load()) },
- 	})
- 	defer interceptor.Close()
--	w := interceptor.window("idle")
-+	w := interceptor.cache.acquireWindow("idle")
- 	for i := 0; i < 600; i++ {
- 		completeKey(t, w, IdempotencyKey(fmt.Sprint(i)), uint64(i+1))
- 	}
- 	require.Equal(t, 600, w.Len())
-+	w.release()
- 	clock.Add(int64(20 * time.Millisecond))
- 	require.Eventually(t, func() bool { return w.Len() == 0 }, 5*time.Second, 5*time.Millisecond,
- 		"expired records must be reclaimed without another append")
-+	interceptor.cache.mu.Lock()
-+	_, found := interceptor.cache.windows["idle"]
-+	interceptor.cache.mu.Unlock()
-+	require.False(t, found)
- 	interceptor.cache.shutdown()
- 	select {
- 	case <-interceptor.cache.done:
-@@ -139,6 +147,39 @@ func TestPChannelRetentionIdleCleanupAndShutdown(t *testing.T) {
- 	}
- }
- 
-+func TestEmptyWindowRemainsRegisteredWhileInUse(t *testing.T) {
-+	paramtable.Init()
-+	m := newWindowManager(WindowConfig{MaxSize: 1})
-+	const vc = "pending-window"
-+	owner := m.acquireWindow(vc)
-+	msg := newIdempotentInsertMessage(t, vc, "key")
-+	pending := owner.Begin("key", msg).Pending
-+	waiter := m.acquireWindow(vc)
-+	require.Same(t, pending, waiter.Begin("key", msg).Pending)
-+	owner.Complete(pending, CommitResult{CommitTimeTick: 1}, msg)
-+	owner.release()
-+	require.Zero(t, waiter.Len(), "the record exceeds the byte budget")
-+	again := m.acquireWindow(vc)
-+	require.Same(t, waiter, again)
-+	again.release()
-+	require.NotNil(t, pending.Wait(context.Background(), msg).Entry)
-+	waiter.release()
-+	require.NotContains(t, m.windows, vc)
-+	node := paramtable.GetStringNodeID()
-+	require.False(t, metrics.WALIdempotencyWindowEntries.DeleteLabelValues(node, vc))
-+	require.False(t, metrics.WALIdempotencyWindowInflight.DeleteLabelValues(node, vc))
-+	require.EqualValues(t, 1, testutil.ToFloat64(metrics.WALIdempotencyDuplicateTotal.WithLabelValues(node, vc)))
-+	require.EqualValues(t, 1, testutil.ToFloat64(metrics.WALIdempotencyEvictionTotal.WithLabelValues(node, vc)))
-+	next := m.acquireWindow(vc)
-+	completeKey(t, next, "other", 2)
-+	next.release()
-+	require.EqualValues(t, 2, testutil.ToFloat64(metrics.WALIdempotencyEvictionTotal.WithLabelValues(node, vc)))
-+	m.dropVChannel(vc)
-+	require.NotContains(t, m.idleCounters, vc)
-+	require.False(t, metrics.WALIdempotencyDuplicateTotal.DeleteLabelValues(node, vc))
-+	require.False(t, metrics.WALIdempotencyEvictionTotal.DeleteLabelValues(node, vc))
-+}
-+
- func TestPChannelRetentionConcurrentWindows(t *testing.T) {
- 	m := newWindowManager(WindowConfig{TTL: time.Hour, MaxSize: 512, MinCount: 2})
- 	var wg sync.WaitGroup
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/utils/txn_insert_results_buffer.go` (modified, +61/-2)
-```diff
-@@ -48,7 +48,34 @@ func (bs *TxnInsertResultBuffers) Add(msg message.MutableMessage, result *messag
- 	if !hasTxnKey {
- 		return
- 	}
--	expiredTimeTick := txnExpiredTimeTick(msg.TxnContext(), timeTick)
-+	bs.add(key, bufferTxnContext(msg.TxnContext(), msg.ReplicateHeader() != nil), result, timeTick)
-+}
-+
-+// Restore records the insert result of a txn body that is already in the WAL,
-+// for a transaction that is still open after a restart.
-+func (bs *TxnInsertResultBuffers) Restore(body message.ImmutableMessage, result *messagespb.IdempotentInsertResult) {
-+	txnCtx := body.TxnContext()
-+	if txnCtx == nil {
-+		return
-+	}
-+	bs.add(txnKey{vchannel: body.VChannel(), txnID: txnCtx.TxnID}, bufferTxnContext(txnCtx, body.ReplicateHeader() != nil), result, body.TimeTick())
-+}
-+
-+// bufferTxnContext returns the txn context whose keepalive bounds a body's
-+// buffered result. A replicated body carries the source cluster's finite
-+// keepalive, but the source owns a replicated transaction's lifecycle: it cannot
-+// expire locally, so its buffer is reclaimed only through the txn-active check,
-+// never by a keepalive measured from a body timetick that a restart leaves far
-+// behind.
-+func bufferTxnContext(txnCtx *message.TxnContext, replicated bool) *message.TxnContext {
-+	if txnCtx == nil || !replicated || txnCtx.Keepalive == message.TxnKeepaliveInfinite {
-+		return txnCtx
-+	}
-+	return &message.TxnContext{TxnID: txnCtx.TxnID, Keepalive: message.TxnKeepaliveInfinite}
-+}
-+
-+func (bs *TxnInsertResultBuffers) add(key txnKey, txnCtx *message.TxnContext, result *messagespb.IdempotentInsertResult, timeTick uint64) {
-+	expiredTimeTick := txnExpiredTimeTick(txnCtx, timeTick)
- 	currentTimeTick, hasCurrentTimeTick := bs.vchannelTimeTick(key.vchannel)
- 
- 	bs.mu.Lock()
-@@ -85,6 +112,30 @@ func (bs *TxnInsertResultBuffers) Build(msg message.MutableMessage) *messagespb.
- 	return builder.build()
- }
- 
-+// BuildIfComplete merges buffered insert results for a txn commit message, but
-+// only when every body of the transaction contributed one: the number of
-+// buffered results must equal bodyCnt, the body count the commit carries. It
-+// returns nil when bodyCnt is 0 (unknown) or when results are missing, for
-+// example after a restart emptied the buffer while the transaction itself
-+// survived. A caller that records the result must not record a partial one,
-+// which would answer a later retry with missing primary keys.
-+func (bs *TxnInsertResultBuffers) BuildIfComplete(msg message.MutableMessage, bodyCnt uint64) *messagespb.IdempotentInsertResult {
-+	key, hasTxnKey := keyOfTxnMessage(msg)
-+	if !hasTxnKey || bodyCnt == 0 {
-+		return nil
-+	}
-+	currentTimeTick, hasCurrentTimeTick := bs.vchannelTimeTick(key.vchannel)
-+
-+	bs.mu.Lock()
-+	defer bs.mu.Unlock()
-+	bs.clearExpiredLocked(key.vchannel, currentTimeTick, hasCurrentTimeTick)
-+	builder := bs.builders[key.vchannel][key.txnID]
-+	if builder == nil || uint64(len(builder.insertResults)) != bodyCnt {
-+		return nil
-+	}
-+	return builder.build()
-+}
-+
- // Remove drops buffered insert results for a transaction.
- func (bs *TxnInsertResultBuffers) Remove(msg message.MutableMessage) {
- 	key, hasTxnKey := keyOfTxnMessage(msg)
-@@ -101,6 +152,13 @@ func (bs *TxnInsertResultBuffers) Remove(msg message.MutableMessage) {
- 	bs.clearExpiredLocked(key.vchannel, currentTimeTick, hasCurrentTimeTick)
- }
- 
-+// Clear releases buffered results after a PChannel-wide transaction abort.
-+func (bs *TxnInsertResultBuffers) Clear() {
-+	bs.mu.Lock()
-+	defer bs.mu.Unlock()
-+	clear(bs.builders)
-+}
-+
- // RemoveVChannel drops every buffered transaction result for a reclaimed
- // vchannel. DropCollection is the last message for that vchannel, so normal
- // Add/Build/Remove-triggered sweeping will not get another chance to run.
-@@ -126,7 +184,8 @@ func (bs *TxnInsertResultBuffers) clearExpiredLocked(vchannel string, currentTim
- 		// manager. These transactions ended without a commit/rollback message
- 		// reaching the interceptor (abort, expiry, failover), so the
- 		// timetick-based expiry below cannot reclaim them -- in particular it
--		// never fires for infinite-keepalive (replicated) transactions.
-+		// never fires for replicated transactions, whose bodies are buffered
-+		// with an infinite keepalive (bufferTxnContext).
- 		if bs.txnActive != nil && !bs.txnActive(txnID) {
- 			delete(builders, txnID)
- 			continue
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/idempotency/utils/txn_insert_results_buffer_test.go` (modified, +65/-0)
-```diff
-@@ -11,6 +11,8 @@ import (
+ 	"github.com/bytedance/mockey"
+ 	"github.com/cockroachdb/errors"
+@@ -16,11 +17,14 @@ import (
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
  	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
-+	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
++	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/mock_wal"
+ 	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
++	"github.com/milvus-io/milvus/internal/storage"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/stats"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/moduleapi"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
+@@ -1001,3 +1005,87 @@ func TestDropPartitionUpdatesManagerAfterAppend(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestCreateSegmentSchemaDDLOrdering(t *testing.T) {
++	paramtable.Init()
++	resource.InitForTest(t)
++	cfg := paramtable.Get()
++	cfg.Save(cfg.CommonCfg.UseLoonFFI.Key, "false")
++	defer cfg.Reset(cfg.CommonCfg.UseLoonFFI.Key)
++
++	// Control when each worker's request reaches the interceptor.
++	pending := make(chan message.MutableMessage, 1)
++	appended := make(chan uint64)
++	transport := mock_wal.NewMockWAL(t)
++	patch := mockey.Mock((*mock_wal.MockWAL).Append).To(func(_ *mock_wal.MockWAL, _ context.Context, msg message.MutableMessage) (*wal.AppendResult, error) {
++		pending <- msg
++		tick := <-appended
++		return &wal.AppendResult{MessageID: rmq.NewRmqID(int64(tick)), TimeTick: tick}, nil
++	}).Build()
++	defer patch.UnPatch()
++	defer close(appended)
++	future := syncutil.NewFuture[wal.WAL]()
++	future.Set(transport)
++	old := &schemapb.CollectionSchema{Version: 5, Fields: []*schemapb.FieldSchema{{FieldID: 100, IsPrimaryKey: true, DataType: schemapb.DataType_Int64}}}
++	const channel = "p0_1v0"
++	manager := shards.RecoverShardManager(&shards.ShardManagerRecoverParam{
++		ChannelInfo: types.PChannelInfo{Name: "p0", Term: 1}, WAL: future,
++		InitialRecoverSnapshot: &recovery.RecoverySnapshot{
++			Checkpoint: &recovery.WALCheckpoint{TimeTick: 1},
++			WritePathRecovery: &moduleapi.WritePathRecoveryModuleSnapshot{VChannels: map[string]moduleapi.VChannelWritePathRecoveryState{
++				channel: {VChannel: channel, CollectionID: 1, PartitionIDs: []int64{10, 11}, Schema: old},
++			}},
++		},
++	})
++	defer manager.Close()
++	i := NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{ShardManager: manager})
++	defer i.Close()
++
++	beginAllocation := func(partition int64) message.MutableMessage {
++		t.Helper()
++		_, err := manager.AssignSegment(&shards.AssignSegmentRequest{CollectionID: 1, PartitionID: partition, TimeTick: 20, ModifiedMetrics: stats.ModifiedMetrics{Rows: 1, BinarySize: 16}})
++		require.ErrorIs(t, err, shards.ErrWaitForNewSegment)
++		select {
++		case msg := <-pending:
++			return msg
++		case <-time.After(5 * time.Second):
++			t.Fatal("allocation worker did not submit CreateSegment")
++			return nil
++		}
++	}
++	appendCreate := func(msg message.MutableMessage, tick uint64, version int32, format int64) int64 {
++		t.Helper()
++		var segmentID int64
++		_, err := i.DoAppend(t.Context(), msg.WithTimeTick(tick).WithLastConfirmedUseMessageID(), func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
++			h := message.MustAsMutableCreateSegmentMessageV2(msg).Header()
++			require.Equal(t, version, h.GetSchemaVersion())
++			require.Equal(t, format, h.GetStorageVersion())
++			segmentID = h.GetSegmentId()
++			return rmq.NewRmqID(int64(tick)), nil
++		})
++		require.NoError(t, err)
++		appended <- tick
++		return segmentID
++	}
++
++	before := appendCreate(beginAllocation(10), 25, 5, storage.StorageV2)
++	pendingAtDDL := beginAllocation(11)
++	updated := proto.CloneOf(old)
++	updated.Version = 6
++	updated.Fields = append(updated.Fields, &schemapb.FieldSchema{FieldID: 125, DataType: schemapb.DataType_Text})
++	ddl := message.NewAlterCollectionMessageBuilderV2().WithVChannel(channel).
++		WithHeader(&message.AlterCollectionMessageHeader{CollectionId: 1, UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{message.FieldMaskCollectionSchema}}}).
++		WithBody(&message.AlterCollectionMessageBody{Updates: &message.AlterCollectionMessageUpdates{Schema: updated}}).
++		MustBuildMutable().WithTimeTick(30)
++	_, err := i.DoAppend(t.Context(), ddl, func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
++		require.Equal(t, []int64{before}, message.MustAsMutableAlterCollectionMessageV2(msg).Header().GetFlushedSegmentIds())
++		return rmq.Ne
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager.go` (modified, +1/-2)
+```diff
+@@ -89,7 +89,6 @@ func (m *partitionManager) GetSegmentManager(segmentID int64) *segmentAllocManag
+ }
+ 
+ // AssignSegment assigns a segment for a assign segment request.
+-// req.SchemaVersion must be set by the caller before invoking.
+ func (m *partitionManager) AssignSegment(req *AssignSegmentRequest) (*AssignSegmentResult, error) {
+ 	// !!! We have promised that the fencedAssignTimeTick is always less than new incoming insert request by Barrier TimeTick of ManualFlush.
+ 	// So it's just a promise check here.
+@@ -210,6 +209,6 @@ func (m *partitionManager) assignSegment(req *AssignSegmentRequest) (*AssignSegm
+ 
+ 	// There is no segment can be allocated for the insert request.
+ 	// Ask a new pending segment to insert.
+-	m.asyncAllocSegment(req.SchemaVersion, req.RequiresStorageV3)
++	m.asyncAllocSegment()
+ 	return nil, ErrWaitForNewSegment
+ }
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager_test.go` (modified, +2/-2)
+```diff
+@@ -61,7 +61,7 @@ func TestPartitionManagerLogging(t *testing.T) {
+ 	}
+ 	for _, manager := range managers {
+ 		require.Same(t, parent, manager.Logger())
+-		manager.asyncAllocSegment(0, false)
++		manager.asyncAllocSegment()
+ 		manager.asyncFlushSegment(ctx, segment)
+ 	}
+ 	for range 4 {
+@@ -75,7 +75,7 @@ func TestPartitionManagerLogging(t *testing.T) {
+ 	canceledCtx, cancel := context.WithCancel(ctx)
+ 	cancel()
+ 	for _, manager := range managers {
+-		manager.asyncAllocSegment(0, false)
++		manager.asyncAllocSegment()
+ 		manager.wal = syncutil.NewFuture[wal.WAL]()
+ 		manager.asyncFlushSegment(canceledCtx, segment)
+ 	}
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_alloc_worker.go` (modified, +11/-20)
+```diff
+@@ -17,7 +17,7 @@ import (
  )
  
- func newTestTxnMessage(t *testing.T, vchannel string, txnID message.TxnID) message.MutableMessage {
-@@ -23,6 +25,18 @@ func newTestTxnMessage(t *testing.T, vchannel string, txnID message.TxnID) messa
- 		WithTxnContext(message.TxnContext{TxnID: txnID, Keepalive: 10 * time.Second})
+ // asyncAllocSegment allocates a new growing segment asynchronously.
+-func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorageV3 bool) {
++func (m *partitionManager) asyncAllocSegment() {
+ 	if m.onAllocating != nil {
+ 		m.Logger().Debug(m.ctx, "segment alloc worker is already on allocating",
+ 			mlog.FieldVChannel(m.vchannel),
+@@ -29,13 +29,11 @@ func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorag
+ 	// Create a notifier to notify the waiter when the allocation is done.
+ 	m.onAllocating = make(chan struct{})
+ 	w := &segmentAllocWorker{
+-		ctx:               m.ctx,
+-		collectionID:      m.collectionID,
+-		partitionID:       m.partitionID,
+-		vchannel:          m.vchannel,
+-		wal:               m.wal.Get(),
+-		schemaVersion:     schemaVersion,
+-		requiresStorageV3: requiresStorageV3,
++		ctx:          m.ctx,
++		collectionID: m.collectionID,
++		partitionID:  m.partitionID,
++		vchannel:     m.vchannel,
++		wal:          m.wal.Get(),
+ 	}
+ 	w.SetLogger(m.Logger().With(
+ 		mlog.FieldVChannel(m.vchannel),
+@@ -56,11 +54,9 @@ type segmentAllocWorker struct {
+ 	wal          wal.WAL
+ 	// The following fields are preserved across retries to ensure the same segment
+ 	// configuration is used when rebuilding the message after a failed append.
+-	segmentID         uint64            // allocated segment ID
+-	storageVersion    int64             // storage version determined at first attempt
+-	limitation        segmentLimitation // segment limitation determined at first attempt
+-	schemaVersion     int32
+-	requiresStorageV3 bool
++	segmentID      uint64            // allocated segment ID
++	storageVersion int64             // storage version determined at first attempt
++	limitation     segmentLimitation // segment limitation determined at first attempt
  }
  
-+func replicatedTestTxnBody(t *testing.T, vchannel string, txnID message.TxnID) message.MutableMessage {
-+	t.Helper()
-+	return newTestTxnMessage(t, vchannel, txnID).
-+		WithReplicateHeader(&message.ReplicateHeader{
-+			ClusterID:              "source-cluster",
-+			MessageID:              walimplstest.NewTestMessageID(1),
-+			LastConfirmedMessageID: walimplstest.NewTestMessageID(1),
-+			TimeTick:               1,
-+			VChannel:               vchannel,
-+		})
-+}
-+
- func intIDsResult(offsets []uint32, data ...int64) *messagespb.IdempotentInsertResult {
- 	return &messagespb.IdempotentInsertResult{
- 		RowOffsets: offsets,
-@@ -42,6 +56,23 @@ func TestTxnInsertResultBuffersDropsEmptyVChannel(t *testing.T) {
- 	require.Empty(t, buffers.builders, "an empty vchannel buffer must be dropped so the map does not leak one entry per vchannel")
+ // do is the main loop of the segment allocation worker.
+@@ -106,10 +102,6 @@ func (w *segmentAllocWorker) doOnce() error {
+ 	// Build a fresh message each time to avoid reusing a contaminated message.
+ 	// After a failed WAL append, the message may have internal state set (e.g., WAL term)
+ 	// that would cause a panic if reused.
+-	// TODO: include SchemaVersion in CreateSegmentMessageHeader so that the flusher
+-	// can propagate it to DataCoord's AllocSegment RPC. Currently streaming-created
+-	// segments get SchemaVersion=0, causing unnecessary backfill triggers.
+-	// Tracked in companion PR: https://github.com/milvus-io/milvus/pull/48865
+ 	msg := message.NewCreateSegmentMessageBuilderV2().
+ 		WithVChannel(w.vchannel).
+ 		WithHeader(&message.CreateSegmentMessageHeader{
+@@ -120,7 +112,6 @@ func (w *segmentAllocWorker) doOnce() error {
+ 			MaxRows:        w.limitation.SegmentRows,
+ 			MaxSegmentSize: w.limitation.SegmentSize,
+ 			Level:          datapb.SegmentLevel_L1,
+-			SchemaVersion:  w.schemaVersion,
+ 		}).
+ 		WithBody(&message.CreateSegmentMessageBody{}).
+ 		MustBuildMutable()
+@@ -151,9 +142,9 @@ func (w *segmentAllocWorker) initSegmentConfig() error {
+ 	}
+ 	w.segmentID = segmentID
+ 
+-	// Determine storage version.
++	// Capture the configured default across retries. CreateSegment applies schema requirements at append.
+ 	w.storageVersion = storage.StorageV2
+-	if w.requiresStorageV3 || paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
++	if paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
+ 		w.storageVersion = storage.StorageV3
+ 	}
+ 
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_workers_test.go` (modified, +8/-11)
+```diff
+@@ -296,30 +296,27 @@ func TestSegmentAllocWorker_InitSegmentConfig(t *testing.T) {
+ 	assert.Equal(t, firstLimitation, w.limitation)
  }
  
-+// BuildIfComplete merges only when every body contributed: a partial merge would
-+// answer a later retry with missing primary keys.
-+func TestTxnInsertResultBuffersBuildIfCompleteRequiresEveryBody(t *testing.T) {
-+	buffers := NewTxnInsertResultBuffers(nil, nil)
-+	msg := newTestTxnMessage(t, "v1", 1)
-+	buffers.Add(msg, intIDsResult([]uint32{0}, 100), 0)
-+
-+	require.Nil(t, buffers.BuildIfComplete(msg, 2), "one of two bodies is buffered")
-+	require.Nil(t, buffers.BuildIfComplete(msg, 0), "an unknown body count cannot prove completeness")
-+	require.Nil(t, buffers.BuildIfComplete(newTestTxnMessage(t, "v1", 2), 1), "nothing is buffered for this txn")
-+
-+	buffers.Add(msg, intIDsResult([]uint32{1}, 101), 0)
-+	merged := buffers.BuildIfComplete(msg, 2)
-+	require.NotNil(t, merged)
-+	require.ElementsMatch(t, []int64{100, 101}, merged.GetIds().GetIntId().GetData())
-+}
-+
- func TestTxnInsertResultBuffersRemoveVChannel(t *testing.T) {
- 	buffers := NewTxnInsertResultBuffers(nil, nil)
- 	msg1 := newTestTxnMessage(t, "v1", 1)
-@@ -102,3 +133,37 @@ func TestTxnInsertResultBuffersConcurrentAddBuildRemove(t *testing.T) {
- 	wg.Wait()
- 	require.Empty(t, buffers.builders, "all txns removed: the vchannel buffer must be dropped")
+-func TestSegmentAllocWorkerStorageVersionFollowsRequirements(t *testing.T) {
++func TestSegmentAllocWorkerUsesConfiguredStorageVersion(t *testing.T) {
+ 	paramtable.Init()
+ 	resource.InitForTest(t)
+ 	param := paramtable.Get()
+ 	defer param.Reset(param.CommonCfg.UseLoonFFI.Key)
+ 
+ 	for name, tc := range map[string]struct {
+-		useLoonFFI        string
+-		requiresStorageV3 bool
+-		expected          int64
++		useLoonFFI string
++		expected   int64
+ 	}{
+ 		"v2_without_requirement": {useLoonFFI: "false", expected: storage.StorageV2},
+-		"v3_required_by_schema":  {useLoonFFI: "false", requiresStorageV3: true, expected: storage.StorageV3},
+ 		"v3_with_ffi":            {useLoonFFI: "true", expected: storage.StorageV3},
+ 	} {
+ 		t.Run(name, func(t *testing.T) {
+ 			param.Save(param.CommonCfg.UseLoonFFI.Key, tc.useLoonFFI)
+ 			w := &segmentAllocWorker{
+-				ctx:               context.Background(),
+-				collectionID:      1,
+-				partitionID:       2,
+-				vchannel:          "v1",
+-				wal:               mock_wal.NewMockWAL(t),
+-				requiresStorageV3: tc.requiresStorageV3,
++				ctx:          context.Background(),
++				collectionID: 1,
++				partitionID:  2,
++				vchannel:     "v1",
++				wal:          mock_wal.NewMockWAL(t),
+ 			}
+ 			w.SetLogger(mlog.With())
+ 
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/shard_manager.go` (modified, +0/-11)
+```diff
+@@ -275,17 +275,6 @@ func (c *CollectionInfo) AllowGrowingSourceFlush() bool {
+ 		paramtable.Get().CommonCfg.EnableGrowingSourceFlush.GetAsBool())
  }
-+
-+// A WAL reopen places the vchannel MVCC at the recovery timetick, which can sit
-+// far ahead of a body written more than one keepalive before the restart. A
-+// replicated body must survive that timetick: the source owns the transaction's
-+// lifecycle, so its buffer is reclaimed only through the txn-active check.
-+func TestTxnInsertResultBuffersReplicatedBodySurvivesAheadMVCC(t *testing.T) {
-+	currentTimeTick := tsoutil.ComposeTS(20000, 0)
-+	buffers := NewTxnInsertResultBuffers(func(string) (uint64, bool) {
-+		return currentTimeTick, true
-+	}, nil)
-+
-+	restored := replicatedTestTxnBody(t, "v1", 7).WithTimeTick(tsoutil.ComposeTS(0, 11))
-+	buffers.Restore(restored.IntoImmutableMessage(walimplstest.NewTestMessageID(11)), intIDsResult([]uint32{0}, 100))
-+	require.NotNil(t, buffers.BuildIfComplete(restored, 1),
-+		"a restored replicated body must not expire just because the recovery MVCC is ahead")
-+
-+	added := replicatedTestTxnBody(t, "v1", 8).WithTimeTick(tsoutil.ComposeTS(0, 11))
-+	buffers.Add(added, intIDsResult([]uint32{0}, 200), tsoutil.ComposeTS(0, 11))
-+	require.NotNil(t, buffers.BuildIfComplete(added, 1),
-+		"a replicated body buffered live must also ignore a MVCC that moved ahead")
-+}
-+
-+// The same ahead MVCC still reclaims a native body: only replicated transactions
-+// are immune to timetick-based expiry.
-+func TestTxnInsertResultBuffersNativeBodyExpiresWhenMVCCAhead(t *testing.T) {
-+	currentTimeTick := tsoutil.ComposeTS(20000, 0)
-+	buffers := NewTxnInsertResultBuffers(func(string) (uint64, bool) {
-+		return currentTimeTick, true
-+	}, nil)
-+
-+	msg := newTestTxnMessage(t, "v1", 7).WithTimeTick(tsoutil.ComposeTS(0, 11))
-+	buffers.Add(msg, intIDsResult([]uint32{0}, 100), tsoutil.ComposeTS(0, 11))
-+	require.Nil(t, buffers.Build(msg))
-+}
-```
-
----
-
-### Incident Patch 2: `548817d2` (2026-11-23)
-**Commit Message**: build(deps): upgrade Go to 1.26.11 and golang.org/x/crypto to v0.59.0 for CVEs (#55781)
-
-## Summary
-
-Fix the High-severity Go stdlib CVE and the x/crypto openpgp advisory
-reported by the daily image scan
-(`milvusdb/milvus:master-20261119-20746425`).
-
-| CVE | Component | Installed | Fixed | Severity |
-|-----|-----------|-----------|-------|----------|
-| CVE-2026-97054 | Go stdlib | v1.26.10 | 1.26.11 / 1.27.4 | High |
-| GO-2026-5932 | golang.org/x/crypto (openpgp) | v0.58.0 | v0.59.0 |
-Advisory |
-
-- CVE-2026-97054: Go stdlib vulnerability fixed in 1.26.11 / 1.27.4.
-- GO-2026-5932: `golang.org/x/crypto/openpgp` is unmaintained and unsafe
-by design; removed in x/crypto v0.59.0. Milvus itself only imports
-`x/crypto/bcrypt` (not openpgp), so this clears the scanner finding and
-drops the unsafe package from the module graph.
-
-## Change scope
-
-Bump the Go toolchain `1.26.10` -> `1.26.11`:
-
-- `go.mod` / `pkg/go.mod` / `tests/go_client/go.mod`
-- builder images:
-`build/docker/builder/cpu/{ubuntu22.04,ubuntu20.04,ubuntu24.04,amazonlinux2023,rockylinux9}/Dockerfile`,
-`build/docker/builder/gpu/{ubuntu22.04,ubuntu20.04}/Dockerfile`
-- `build/docker/meta-migration/builder/Dockerfile`,
-`build/rpm/s
-
-**File**: `.github/workflows/mac.yaml` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ jobs:
-       - name: Setup Go environment
-         uses: actions/setup-go@v4
-         with:
--          go-version: '1.26.10'
-+          go-version: '1.26.11'
-           cache: false
-       - name: Download Caches
-         uses: ./.github/actions/macos-cache-restore
-```
-
-**File**: `.github/workflows/publish-krte-images.yaml` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ jobs:
-         working-directory: build/docker/krte
-         run: |
-           export TAG=${{ steps.extracter.outputs.version }}-${{ steps.extracter.outputs.sha_short }}
--          docker build --build-arg IMAGE_ARG="milvusdb/krte:$TAG" --build-arg GO_VERSION=1.26.10 -t "milvusdb/krte:$TAG" .
-+          docker build --build-arg IMAGE_ARG="milvusdb/krte:$TAG" --build-arg GO_VERSION=1.26.11 -t "milvusdb/krte:$TAG" .
-       - name: Docker Push
-         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' )&& github.repository == 'milvus-io/milvus'
-         continue-on-error: true
-```
-
-**File**: `build/docker/builder/cpu/amazonlinux2023/Dockerfile` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     go clean --modcache && \
-     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
-```
-
-**File**: `build/docker/builder/cpu/rockylinux9/Dockerfile` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     go clean --modcache && \
-     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
-```
-
-**File**: `build/docker/builder/cpu/ubuntu20.04/Dockerfile` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     go clean --modcache && \
-     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
-```
-
-**File**: `build/docker/builder/cpu/ubuntu22.04/Dockerfile` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     go clean --modcache && \
-     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
-```
-
-**File**: `build/docker/builder/cpu/ubuntu24.04/Dockerfile` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     go clean --modcache && \
-     chmod -R 777 "$GOPATH" && chmod -R a+w $(go env GOTOOLDIR)
-```
-
-**File**: `build/docker/builder/gpu/ubuntu20.04/Dockerfile` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ ENV GOPATH /go
- ENV GOROOT /usr/local/go
- ENV GO111MODULE on
- ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
--RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.10.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-+RUN mkdir -p /usr/local/go && wget -qO- "https://go.dev/dl/go1.26.11.linux-$TARGETARCH.tar.gz" | tar --strip-components=1 -xz -C /usr/local/go && \
-     mkdir -p "$GOPATH/src" "$GOPATH/bin" && \
-     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOROOT}/bin v2.11.3 && \
-     # export GO111MODULE=on && go get github.com/quasilyte/go-ruleguard/cmd/ruleguard@v0.2.1 && \
-```
-
----
-
-### Incident Patch 3: `aa17fe45` (2026-11-23)
-**Commit Message**: test: fix remaining chaos cleanup hooks for pytest 8 (#55828)
-
-## What type of PR is this?
-
-- [x] Test
-
-## Description
-
-Follow-up to #55501 (`test: fix chaos cleanup hook for pytest 8`), which
-updated `tests/python_client/chaos/test_chaos_apply.py` from legacy `def
-teardown(self)` to `def teardown_method(self)`.
-
-Six remaining chaos test files still defined `def teardown(self)`, which
-pytest 8 silently ignores. In `chaos-test-kafka-cron` build 4770 and
-`chaos-test-wp-cron` build 2934, when
-`test_chaos_apply_to_determined_pod.py` failed after creating a
-`PodChaos` CR, cleanup never ran and leaked `PodChaos` CRs
-(`test-etcd-leader-pod-kill-1795307084`,
-`test-etcd-followers-pod-kill-1795354005`) into `chaos-testing`.
-
-### Changes
-- Rename `def teardown(self)` to `def teardown_method(self)` in:
-  - `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py`
-  - `tests/python_client/chaos/test_chaos_apply_multi_replicas.py`
-  - `tests/python_client/chaos/test_chaos_apply_to_coord.py`
-  - `tests/python_client/chaos/test_chaos.py`
-  - `tests/python_client/chaos/test_chaos_bulk_insert.py`
-  - `tests/python_client/chaos/test_load_with_checker.py`
-- Guard attribute lookups with `getatt
-
-**File**: `tests/python_client/chaos/test_chaos.py` (modified, +12/-9)
-```diff
-@@ -121,15 +121,18 @@ def init_health_checkers(self):
-         }
-         self.health_checkers = checkers
  
--    def teardown(self):
--        chaos_res = CusResource(
--            kind=self._chaos_config["kind"],
--            group=constants.CHAOS_GROUP,
--            version=constants.CHAOS_VERSION,
--            namespace=constants.CHAOS_NAMESPACE,
--        )
--        meta_name = self._chaos_config.get("metadata", None).get("name", None)
--        chaos_res.delete(meta_name, raise_ex=False)
-+    def teardown_method(self):
-+        chaos_config = getattr(self, "_chaos_config", None)
-+        if chaos_config:
-+            chaos_res = CusResource(
-+                kind=chaos_config["kind"],
-+                group=constants.CHAOS_GROUP,
-+                version=constants.CHAOS_VERSION,
-+                namespace=constants.CHAOS_NAMESPACE,
-+            )
-+            meta_name = chaos_config.get("metadata", {}).get("name", None)
-+            if meta_name:
-+                chaos_res.delete(meta_name, raise_ex=False)
-         sleep(2)
-         log.info(f"Alive threads: {threading.enumerate()}")
- 
-```
-
-**File**: `tests/python_client/chaos/test_chaos_apply_multi_replicas.py` (modified, +4/-2)
-```diff
-@@ -250,8 +250,10 @@ def reconnect(self):
-         if connections.has_connection("default") is False:
-             raise Exception("no connections")
- 
--    def teardown(self):
--        for chaos_config in self.chaos_configs:
-+    def teardown_method(self):
-+        for chaos_config in getattr(self, "chaos_configs", []):
-+            if not chaos_config:
-+                continue
-             chaos_res = CusResource(
-                 kind=chaos_config["kind"],
-                 group=constants.CHAOS_GROUP,
-```
-
-**File**: `tests/python_client/chaos/test_chaos_apply_to_coord.py` (modified, +12/-9)
-```diff
-@@ -46,15 +46,18 @@ def reconnect(self):
-         if connections.has_connection("default") is False:
-             raise Exception("no connections")
- 
--    def teardown(self):
--        chaos_res = CusResource(
--            kind=self.chaos_config["kind"],
--            group=constants.CHAOS_GROUP,
--            version=constants.CHAOS_VERSION,
--            namespace=constants.CHAOS_NAMESPACE,
--        )
--        meta_name = self.chaos_config.get("metadata", None).get("name", None)
--        chaos_res.delete(meta_name, raise_ex=False)
-+    def teardown_method(self):
-+        chaos_config = getattr(self, "chaos_config", None)
-+        if chaos_config:
-+            chaos_res = CusResource(
-+                kind=chaos_config["kind"],
-+                group=constants.CHAOS_GROUP,
-+                version=constants.CHAOS_VERSION,
-+                namespace=constants.CHAOS_NAMESPACE,
-+            )
-+            meta_name = chaos_config.get("metadata", {}).get("name", None)
-+            if meta_name:
-+                chaos_res.delete(meta_name, raise_ex=False)
-         sleep(2)
- 
-     def test_chaos_apply(self, chaos_type, role_type, target_component, chaos_duration, chaos_interval):
-```
-
-**File**: `tests/python_client/chaos/test_chaos_apply_to_determined_pod.py` (modified, +4/-3)
-```diff
-@@ -51,7 +51,7 @@ def reconnect(self):
-         if connections.has_connection("default") is False:
-             raise Exception("no connections")
- 
--    def teardown(self):
-+    def teardown_method(self):
-         chaos_config = getattr(self, "chaos_config", None)
-         if chaos_config:
-             chaos_res = CusResource(
-@@ -60,8 +60,9 @@ def teardown(self):
-                 version=constants.CHAOS_VERSION,
-                 namespace=constants.CHAOS_NAMESPACE,
-             )
--            meta_name = chaos_config.get("metadata", None).get("name", None)
--            chaos_res.delete(meta_name, raise_ex=False)
-+            meta_name = chaos_config.get("metadata", {}).get("name", None)
-+            if meta_name:
-+                chaos_res.delete(meta_name, raise_ex=False)
-         sleep(2)
- 
-     def test_chaos_apply(self, chaos_type, target_pod, chaos_duration, chaos_interval, wait_signal):
-```
-
-**File**: `tests/python_client/chaos/test_chaos_bulk_insert.py` (modified, +12/-9)
-```diff
-@@ -132,15 +132,18 @@ def prepare_bulk_insert(self, nb=3000):
-         self.health_checkers[Op.bulk_insert].update(schema=schema, files=files)
-         log.info("prepare data for bulk load done")
- 
--    def teardown(self):
--        chaos_res = CusResource(
--            kind=self._chaos_config["kind"],
--            group=constants.CHAOS_GROUP,
--            version=constants.CHAOS_VERSION,
--            namespace=constants.CHAOS_NAMESPACE,
--        )
--        meta_name = self._chaos_config.get("metadata", None).get("name", None)
--        chaos_res.delete(meta_name, raise_ex=False)
-+    def teardown_method(self):
-+        chaos_config = getattr(self, "_chaos_config", None)
-+        if chaos_config:
-+            chaos_res = CusResource(
-+                kind=chaos_config["kind"],
-+                group=constants.CHAOS_GROUP,
-+                version=constants.CHAOS_VERSION,
-+                namespace=constants.CHAOS_NAMESPACE,
-+            )
-+            meta_name = chaos_config.get("metadata", {}).get("name", None)
-+            if meta_name:
-+                chaos_res.delete(meta_name, raise_ex=False)
-         sleep(2)
-         log.info(f"Alive threads: {threading.enumerate()}")
- 
-```
-
-**File**: `tests/python_client/chaos/test_load_with_checker.py` (modified, +12/-9)
-```diff
-@@ -99,15 +99,18 @@ def prepare_bulk_insert(self, nb=30000, row_based=True):
-         self.health_checkers[Op.bulk_insert].update(schema=schema, files=files, row_based=row_based)
-         log.info("prepare data for bulk insert done")
- 
--    def teardown(self):
--        chaos_res = CusResource(
--            kind=self._chaos_config["kind"],
--            group=constants.CHAOS_GROUP,
--            version=constants.CHAOS_VERSION,
--            namespace=constants.CHAOS_NAMESPACE,
--        )
--        meta_name = self._chaos_config.get("metadata", None).get("name", None)
--        chaos_res.delete(meta_name, raise_ex=False)
-+    def teardown_method(self):
-+        chaos_config = getattr(self, "_chaos_config", None)
-+        if chaos_config:
-+            chaos_res = CusResource(
-+                kind=chaos_config["kind"],
-+                group=constants.CHAOS_GROUP,
-+                version=constants.CHAOS_VERSION,
-+                namespace=constants.CHAOS_NAMESPACE,
-+            )
-+            meta_name = chaos_config.get("metadata", {}).get("name", None)
-+            if meta_name:
-+                chaos_res.delete(meta_name, raise_ex=False)
-         sleep(2)
-         log.info(f"Alive threads: {threading.enumerate()}")
- 
+-func (c *CollectionInfo) RequiresStorageV3() bool {
+-	return c.HasTextField()
+-}
+-
+-func (c *CollectionInfo) HasTextField() bool {
+-	if c == nil || c.Schema == nil || c.Schema.GetSchema() == nil {
+-		return false
+-	}
+-	return typeutil.HasTextField(c.Schema.GetSchema())
+-}
+-
+ // RuntimeFlushSize estimates the in-memory footprint used by flush pressure decisions.
+ func (c *CollectionInfo) RuntimeFlushSize(modified stats.ModifiedMetrics) uint64 {
+ 	if modified.Rows == 0 || modified.BinarySize == 0 {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55829** (2026-11-23): fix: format RPC context for QueryView streaming errors (@zhuwenxing)
-- **PR #55828** (2026-11-23): test: fix remaining chaos cleanup hooks for pytest 8 (@zhuwenxing)
-- **PR #55826** (2026-11-23): build(deps): [3.0] bump milvus-storage for independent writer buffer release (@xaxys)
-- **PR #55824** (2026-11-23): fix: [cp 3.0] retain unhandled WAL messages after consumer reconnect (@chyezh)
-- **PR #55822** (2026-11-23): fix: retain unhandled WAL messages after consumer reconnect (@chyezh)
-- **PR #55817** (2026-11-22): enhance: Read the schema snapshot in the growing segment load path (@xiaofan-luan)
+- **PR #55914** (2026-11-24): fix: [3.0] default OpenBLAS to one thread in runtime images (@CLiqing)
+- **PR #55907** (2026-11-24): fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
+- **PR #55906** (2026-11-24): fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
+- **PR #55894** (2026-11-24): fix: sort partition-mode namespace segments by primary key (@sunby)
+- **PR #55889** (2026-11-24): fix: [2.6] Reject unknown storage versions during recovery (@congqixia)
+- **PR #55888** (2026-11-24): fix: [3.0] Reject unknown storage versions during recovery (@congqixia)
 
 ---
 
@@ -2687,55 +2174,32 @@ pytest 8 silently ignores. In `chaos-test-kafka-cron` build 4770 and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. record replicated idempotency keys on the secondary
+## X. default OpenBLAS to one thread in runtime images
 
 **RULE**:
-When implementing operations in `docs/design-docs/design_docs/20260604-idempotent_write.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/docker/milvus/amazonlinux2023/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f81b4bca`: record replicated idempotency keys on the secondary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08d5f216`: default OpenBLAS to one thread in runtime images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/20260604-idempotent_write.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/docker/milvus/amazonlinux2023/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Cross-cluster dedup of replicated writes. A replicated write is never deduplicated
-  against the local window; it is only recorded there, so that a client retry after a
-  planned switchover can reuse the result while the secondary retains the key (see
-  [Replication and CDC](#replication-and-cdc)). Keys that replication had not delivered
-  before a force promote are not recovered.
-Replicated messages are **recorded in the window but never checked against it**.
-
-The window is never read for a replicated message. The replicate stream has its own
-and a client legally re-issued it. So a replicated message is appended unconditionally.
-
-The window is written after the append. A replicated Insert carries the source's key and
-its `idempotent_result` header; a replicated transaction carries them on its bodies and
-its commit, and the interceptor merges the body results on the commit exactly as it does
-for a native transaction. The recorded entry replaces an entry already held for the key:
-when the source evicted the key and a client legally reused it, the newer write is the one
-a retry must see. The recovery observer applies the same rule, so a window rebuilt from
-Summary carries the repli
+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
+ENV OPENBLAS_NUM_THREADS=1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- Cross-cluster dedup. Replicated writes bypass the window entirely (see
-  [Replication and CDC](#replication-and-cdc)).
-Replicated messages **bypass the window entirely**. The replicate stream has its own
-and a client legally re-issued it.
-
-The recovery observer applies the same rule: a replicated write becomes a *keyless*
-committed write in Summary, so a foreign key can never materialize a local dedup
-entry. Its local WAL positions still participate in Summary persistence and
-checkpoint gating.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f81b4bca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08d5f216` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

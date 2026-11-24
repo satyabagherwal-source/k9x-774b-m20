@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:27:50.340Z",
+  "last_updated": "2026-11-24T19:36:19.993Z",
   "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24873,
+  "total_items": 24880,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "10b88fe8f9ec8e343691db1ef97a4d972f2964b50c90f00b2965a28f0158d47f",
+      "content_hash": "74db9babdb209588e39c248844a5b520ad5942463c10e48fcd32d2a9692327c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T18:26:03.129Z"
+      "persisted_at": "2026-11-24T19:36:19.814Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c54a90d889e4238ffeb50ddc6e8bfd288f5ae325f46caf48f52b4785a1cfed4",
+      "content_hash": "858951c1374390a9d6f4a03cdc78c5c330d1c9a7eb477e05ad3a890984d81386",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:26:03.311Z"
+      "persisted_at": "2026-11-24T19:36:19.993Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "72e14334",
-      "content_hash": "fecd8d8634cf427123c68d3507ea34074a0eb959c05c463a952288cdbac32c02",
+      "source_version": "e5152348",
+      "content_hash": "d33185ed502b41cd79376798dbd1560baf01fbcd78cbc6a02c076528d2469d7c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:18:25.240Z"
+      "persisted_at": "2026-11-24T19:36:14.230Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "72e14334",
-      "content_hash": "52827e0f1ec66778eac7d07c10367475adb8dedd06351f6ee8d30fc104046da3",
+      "source_version": "e5152348",
+      "content_hash": "6a9cea2e22d83220ffa6dfcebb78b442079a097b1a50de5c75dce562de0e851b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:18:25.398Z"
+      "persisted_at": "2026-11-24T19:36:14.404Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -114214,9 +114214,9 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "6820c04798e300078274c741209cb03136efced3c80d1afaa58637526de2b171",
+      "content_hash": "a399763591a61f902bf2d9eafcf672ddcb71098b9073ad863c5e89ffa63fe2dd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:41:07.162Z"
+      "persisted_at": "2026-11-24T19:36:18.868Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings",
@@ -114226,9 +114226,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io-milvus-learnings",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "43ff2df15bb69e3fa8957b9943203a74559b5d28208a5b3b682b8eeb77669843",
+      "content_hash": "c3522d6792082ede8354941d620a6c3045860ae2759a58f128401ad6582399c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:41:07.314Z"
+      "persisted_at": "2026-11-24T19:36:19.051Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -243389,8 +243389,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "72e14334",
-      "content_hash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
+      "source_version": "e5152348",
+      "content_hash": "54a3e8e3dd0bb782576c0bcb6b3ae82e15031252918a1fb283f3b88155d63b6a",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -243438,6 +243438,11 @@
           "number": 10144,
           "title": "record replicated idempotency keys on the secondary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10347,
+          "title": "default OpenBLAS to one thread in runtime images",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243445,7 +243450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:18:24.673Z",
+      "verified_at": "2026-11-24T19:36:13.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253641,14 +253646,19 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "1ab7cfb2",
-      "content_hash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
+      "source_version": "e98c27d7",
+      "content_hash": "9ea7fcba4b6be076e6c48c460676d889e243b7efe88d00e41df045d5e13cfe5b",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
         {
           "number": 10085,
           "title": "setup script (Rust stable, crates vendored for offline tests)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10346,
+          "title": "bound what one tool call may ask for (fixes #553)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -253657,7 +253667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:46:15.131Z",
+      "verified_at": "2026-11-24T19:36:00.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253697,10 +253707,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/ataraxy-labs-sem-agent-contract-ataraxy-labs-sem-autonomous-specialist-persona.md",
       "title": "Agent Contract: Ataraxy-Labs/sem Autonomous Specialist Persona",
       "repository": "Ataraxy-Labs/sem",
-      "source_version": "1ab7cfb2",
-      "content_hash": "0035d96d7beb5b98a490ed98f1731771dd439c5b95364407a22ff1548281917a",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:46:15.947Z"
+      "source_version": "e98c27d7",
+      "content_hash": "01c88327d66f02ce9dcfab9ecf407438e1ffb46f2c2870a83dddd4431ebadcf3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:00.914Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem",
@@ -253709,10 +253719,10 @@
       "relative_path": "08_VERIFICATION/ataraxy-labs-sem-verification-protocol-empirical-defect-shield-for-ataraxy-labs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ataraxy-Labs/sem",
       "repository": "Ataraxy-Labs/sem",
-      "source_version": "1ab7cfb2",
-      "content_hash": "0a4dbde7e5ecbfa56ce3147c4cf0bcc9ba39cdd6292c2810f58090c690bdf551",
+      "source_version": "e98c27d7",
+      "content_hash": "1ae4fc9e74589367e46286b4365814f74e5d63dec5ae28737d113fc0a7a8a0a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:16.094Z"
+      "persisted_at": "2026-11-24T19:36:01.066Z"
     },
     "rule-8665": {
       "learning_id": "rule-8665",
@@ -253810,9 +253820,9 @@
       "title": "Agent Contract: ataraxy-labs-sem-learnings Autonomous Specialist Persona",
       "repository": "ataraxy-labs-sem-learnings",
       "source_version": "HEAD",
-      "content_hash": "1370ca665eec3f65f23ca71f78c0a9574ea9a00240d1ae5222123f64af21e35d",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:46:31.574Z"
+      "content_hash": "aaa35b7277ff637330888dc14679316758480d63ac39903be1654e079303d421",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:17.847Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem-learnings",
@@ -253822,9 +253832,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ataraxy-labs-sem-learnings",
       "repository": "ataraxy-labs-sem-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c78ac25e34f46c4fc427a3655413cf9d93897fa1c6781fb084b5bc4ba074f7c",
+      "content_hash": "10befb4f438e843a9e1490f82db87dff4c99e347009d9151fc18b426b0530492",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:31.720Z"
+      "persisted_at": "2026-11-24T19:36:17.997Z"
     },
     "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings": {
       "item_id": "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings",
@@ -335402,13 +335412,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZPZ6-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I3LD-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3fcf2354f6aa67e5bc2c69d10ada5bfa2c6cab0b804ff8a374237943721648a",
+      "content_hash": "6cd546125e745002d1d6877916105b29d143e0e0703ca623ad16119069ce2730",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T18:26:02.950Z"
+      "persisted_at": "2026-11-24T19:36:19.636Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -339765,6 +339775,94 @@
       "content_hash": "fb0e430f4c70160ce2f3644e7fcb2ae18c6eb26e137742e7e7457d849f336fc0",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T19:19:23.794Z"
+    },
+    "rule-10346": {
+      "learning_id": "rule-10346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10346,
+      "title": "bound what one tool call may ask for (fixes #553)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "e98c27d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:36:00.076Z"
+    },
+    "candidate_directive-bound-what-one-tool-call-may-ask-for-fixes-553": {
+      "item_id": "candidate_directive-bound-what-one-tool-call-may-ask-for-fixes-553",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HOV5-bound-what-one-tool-call-may-ask-for-fixes-553.md",
+      "title": "bound what one tool call may ask for (fixes #553)",
+      "repository": "Ataraxy-Labs/sem",
+      "source_version": "e98c27d7",
+      "content_hash": "20d0417529739a3f47590607666059a612a1933d9b90b6af4af871838f8b1645",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:00.549Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ataraxy-labs-sem-technical-construction-intelligence-ataraxy-labs-sem-core-invar.md",
+      "title": "Technical Construction Intelligence: Ataraxy-Labs/sem Core Invariants",
+      "repository": "Ataraxy-Labs/sem",
+      "source_version": "e98c27d7",
+      "content_hash": "a29fd554d1b4225cea300b2fbe530787ab5b51a46e72cf296aa2c20f1137077f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:00.729Z"
+    },
+    "rule-10347": {
+      "learning_id": "rule-10347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10347,
+      "title": "default OpenBLAS to one thread in runtime images",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "e5152348",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:36:13.596Z"
+    },
+    "candidate_directive-default-openblas-to-one-thread-in-runtime-images": {
+      "item_id": "candidate_directive-default-openblas-to-one-thread-in-runtime-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I2UU-default-openblas-to-one-thread-in-runtime-images.md",
+      "title": "default OpenBLAS to one thread in runtime images",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b55ae63333d7e90cec219798c6c031e9ab1dc034fed9b28e98dfc84b2ab555d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:18.682Z"
+    },
+    "candidate_directive-mcp-bound-what-one-tool-call-may-ask-for-fixes-553": {
+      "item_id": "candidate_directive-mcp-bound-what-one-tool-call-may-ask-for-fixes-553",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I1XI-mcp-bound-what-one-tool-call-may-ask-for-fixes-553.md",
+      "title": "mcp: bound what one tool call may ask for (fixes #553)",
+      "repository": "ataraxy-labs-sem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9bede86d204bae8514d820d83969ef4a0730b5431e257ffb5deba159aba82b76",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:17.482Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ataraxy-labs-sem-learnings-technical-construction-intelligence-ataraxy-labs-sem-.md",
+      "title": "Technical Construction Intelligence: ataraxy-labs-sem-learnings Core Invariants",
+      "repository": "ataraxy-labs-sem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e7d4552805e9c35108b4ce0d67fad00b31c466c9ff6b0c9e0b9a96564665513",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:36:17.672Z"
     }
   },
   "ai-builder-brain": {
