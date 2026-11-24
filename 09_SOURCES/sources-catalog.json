@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "498c9553",
+    "sourceVersion": "5ec7db6d",
     "license": "MPL-2.0",
-    "contentHash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
-    "lastHarvestedAt": "2026-11-20T02:15:07.962Z",
+    "contentHash": "e16f12d36cc8d90f6f1400cbb4679054d019cbf67469834ad765c4f07904ac4f",
+    "lastHarvestedAt": "2026-11-24T11:05:18.900Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "a25c64b8",
+    "sourceVersion": "582f5637",
     "license": "Apache-2.0",
-    "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
-    "lastHarvestedAt": "2026-11-23T16:03:01.755Z",
+    "contentHash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
+    "lastHarvestedAt": "2026-11-24T11:05:47.335Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

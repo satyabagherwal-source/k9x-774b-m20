@@ -12682,3 +12682,5 @@ Every entry in this ledger must capture:
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `05194abb` | Multi-dimensional audit evidence | 2026-11-24T09:57:13.332Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0bb27e65` | Multi-dimensional audit evidence | 2026-11-24T09:57:17.412Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `9ca9eb57` | Multi-dimensional audit evidence | 2026-11-24T10:43:53.682Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `5ec7db6d` | Multi-dimensional audit evidence | 2026-11-24T11:05:18.900Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `582f5637` | Multi-dimensional audit evidence | 2026-11-24T11:05:47.335Z |

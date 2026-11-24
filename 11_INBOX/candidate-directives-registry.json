@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T10:44:04.189Z",
+  "last_updated": "2026-11-24T11:05:52.519Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4498,11 +4498,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-HLBK",
+      "id": "CD-9NK5",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HLBK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9NK5-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -54265,6 +54265,57 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-763B97-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-9N03",
+      "directive_title": "server crash when an attribute variable is compared with itself",
+      "source_repo": "typedb-typedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9N03-server-crash-when-an-attribute-variable-is-compared-with-itself.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-9JQC",
+      "directive_title": "find a pod's retry node by name, not by scanning every node",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "582f5637",
+      "staged_file": "11_INBOX/candidate-directives/CD-9JQC-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-9MC8",
+      "directive_title": "controller): find a pod's retry node by name, not by scanning every node",
+      "source_repo": "argoproj-argo-workflows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9MC8-controller-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-3C0B1D",
+      "directive_title": "server crash when an attribute variable is compared with itself",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typedb-typedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3C0B1D-server-crash-when-an-attribute-variable-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-68C374",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-68C374-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
     }
   ]

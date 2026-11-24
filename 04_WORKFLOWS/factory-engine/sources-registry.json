@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T09:57:15.556Z",
-    "lastVerified": "2026-11-24T09:57:15.556Z",
+    "lastChecked": "2026-11-24T11:04:59.217Z",
+    "lastVerified": "2026-11-24T11:04:59.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T10:44:02.046Z",
-    "lastVerified": "2026-11-24T10:44:02.046Z",
+    "lastChecked": "2026-11-24T11:05:50.531Z",
+    "lastVerified": "2026-11-24T11:05:50.531Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2372,12 +2372,12 @@
     "revisionIdentifier": "8429622d"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T04:45:17.845Z",
-    "lastVerified": "2026-11-24T04:45:17.845Z",
+    "lastChecked": "2026-11-24T11:04:54.236Z",
+    "lastVerified": "2026-11-24T11:04:54.236Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2386,7 +2386,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2325502f"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2432,9 +2433,9 @@
   "wix-react-native-navigation": {
     "name": "react-native-navigation",
     "officialUrl": "https://github.com/wix/react-native-navigation",
-    "lastChecked": "2026-11-21T17:41:47.788Z",
+    "lastChecked": "2026-11-24T11:04:49.278Z",
     "revisionIdentifier": "f5ab5e81",
-    "lastVerified": "2026-11-21T17:41:47.788Z"
+    "lastVerified": "2026-11-24T11:04:49.278Z"
   },
   "alexellis-k3sup": {
     "name": "k3sup",
@@ -3553,9 +3554,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-23T04:08:06.703Z",
+    "lastChecked": "2026-11-24T11:04:44.230Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-23T04:08:06.703Z"
+    "lastVerified": "2026-11-24T11:04:44.230Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -4590,22 +4591,21 @@
     "lastVerified": "2026-11-24T04:20:21.036Z"
   },
   "typedb-typedb": {
-    "name": "typedb",
+    "name": "typedb/typedb",
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T15:12:43.150Z",
-    "lastVerified": "2026-11-23T15:12:43.150Z",
+    "lastChecked": "2026-11-24T11:05:00.288Z",
+    "lastVerified": "2026-11-24T11:05:00.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
-    "contentHash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
+    "contentHash": "e16f12d36cc8d90f6f1400cbb4679054d019cbf67469834ad765c4f07904ac4f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "498c9553"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -6494,12 +6494,12 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T16:03:00.668Z",
-    "lastVerified": "2026-11-23T16:03:00.668Z",
+    "lastChecked": "2026-11-24T11:04:55.312Z",
+    "lastVerified": "2026-11-24T11:04:55.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
+    "contentHash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -10035,9 +10035,9 @@
   "berkaycubuk-kitsune": {
     "name": "kitsune",
     "officialUrl": "https://github.com/berkaycubuk/kitsune",
-    "lastChecked": "2026-11-20T06:10:45.920Z",
+    "lastChecked": "2026-11-24T11:04:46.739Z",
     "revisionIdentifier": "616da5b1",
-    "lastVerified": "2026-11-20T06:10:45.920Z"
+    "lastVerified": "2026-11-24T11:04:46.739Z"
   },
   "shifthackz-stable-diffusion-kmp": {
     "name": "ShiftHackZ/SDAI-KMP",

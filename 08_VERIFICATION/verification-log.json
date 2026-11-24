@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-M6CD",
-    "timestamp": "2026-11-22T16:48:11.677Z",
-    "repository": "mrkai77/Loop",
-    "learningId": "learn-github-mrkai77-loop",
-    "contentHash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-MDHP",
-    "timestamp": "2026-11-22T16:48:20.941Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XZD6",
     "timestamp": "2026-11-22T16:57:22.506Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7490,6 +7460,36 @@
     "repository": "GitoxideLabs/gitoxide",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
     "contentHash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-8XM9",
+    "timestamp": "2026-11-24T11:05:18.897Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "e16f12d36cc8d90f6f1400cbb4679054d019cbf67469834ad765c4f07904ac4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-9JK3",
+    "timestamp": "2026-11-24T11:05:47.331Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

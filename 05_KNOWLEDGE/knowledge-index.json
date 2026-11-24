@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T10:44:04.550Z",
+  "last_updated": "2026-11-24T11:05:52.824Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24574,
+  "total_items": 24579,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "022e3da8f6f86db39f57e87e6b48612ff9c9180672a8026b4d76c5af35c305ec",
+      "content_hash": "aa399fcee235778c84661614a0fa0cebd41a2d0a6c8f1cb972b45c91ab1bea0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T10:44:03.426Z"
+      "persisted_at": "2026-11-24T11:05:52.672Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "82cfc3124675ca44946070cb6965d10ecfa5b3abae34d7be8cc1de6b45262726",
+      "content_hash": "82b336cbc988992d21b7d447c1928b2190adc9a9d98ee5cfc22452632157081a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:44:03.598Z"
+      "persisted_at": "2026-11-24T11:05:52.824Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "a25c64b8",
-      "content_hash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
+      "source_version": "582f5637",
+      "content_hash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212428,6 +212428,11 @@
           "number": 10063,
           "title": "ignore unspecified container timestamps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10246,
+          "title": "find a pod's retry node by name, not by scanning every node",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212435,7 +212440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:03:01.542Z",
+      "verified_at": "2026-11-24T11:05:47.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212477,10 +212482,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "e651c727",
-      "content_hash": "057d9370df78e139aa6b156e8c5a784d0008223604601f9a70285dd4faa18725",
+      "source_version": "582f5637",
+      "content_hash": "7049db8d2643706dfcb8adcb68d15cc7a77b981d88c1217001e5ae5be6d8d51d",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T11:38:42.340Z"
+      "persisted_at": "2026-11-24T11:05:47.721Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212489,10 +212494,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "a25c64b8",
-      "content_hash": "880fdd868bd75769c90ba0316fa51950e5fd51addfc81a965a073ffef6f1bd04",
+      "source_version": "582f5637",
+      "content_hash": "f70065418082d8cee2f8cb34e838c94712a8e26d86db5baf7a5bd2655de18f54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:03:02.329Z"
+      "persisted_at": "2026-11-24T11:05:47.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212526,9 +212531,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "32c17107da6a19f53d7e02fff8a839e69abfdae191f1daac1ebd57351fa0d0ad",
+      "content_hash": "c66a763a403871ca288abcdc0dd10ca0c83680620f43b4e574f9d851da086d2a",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T11:38:52.288Z"
+      "persisted_at": "2026-11-24T11:05:51.103Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212538,9 +212543,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5c2aa30cd9a3ad24f069c5138047c17d5a5d90c25869f6554ff0d782fc5ee2d",
+      "content_hash": "9c0b1cfde6eb428102c97bf2294255f3324003b71d4035aa464cf833b6a07aa3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:03:06.921Z"
+      "persisted_at": "2026-11-24T11:05:51.264Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -228507,8 +228512,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "498c9553",
-      "content_hash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
+      "source_version": "5ec7db6d",
+      "content_hash": "e16f12d36cc8d90f6f1400cbb4679054d019cbf67469834ad765c4f07904ac4f",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -228531,6 +228536,11 @@
           "number": 9495,
           "title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10245,
+          "title": "server crash when an attribute variable is compared with itself",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228538,7 +228548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:15:07.714Z",
+      "verified_at": "2026-11-24T11:05:18.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228580,10 +228590,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "repository": "typedb/typedb",
-      "source_version": "498c9553",
-      "content_hash": "aa5c35d72521e7f7d9df14388144413e760b4db554ea7fd5ae90841eb8d0bcc9",
+      "source_version": "5ec7db6d",
+      "content_hash": "70ab354188d5e056811835be2520477769c8228d1c1da91c667886af070265a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:15:08.432Z"
+      "persisted_at": "2026-11-24T11:05:19.260Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb",
@@ -228592,10 +228602,10 @@
       "relative_path": "08_VERIFICATION/typedb-typedb-verification-protocol-empirical-defect-shield-for-typedb-typedb.md",
       "title": "Verification Protocol: Empirical Defect Shield for typedb/typedb",
       "repository": "typedb/typedb",
-      "source_version": "498c9553",
-      "content_hash": "f86f343e1cf543ab1dfaa3071f241e5497662bac9dbde53177dc955fd915cb20",
+      "source_version": "5ec7db6d",
+      "content_hash": "71b04da23d07ac8bc2e40f4e6a9c9a498b1b2845f92aec8b271d1183b9309f09",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:15:08.625Z"
+      "persisted_at": "2026-11-24T11:05:19.428Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
@@ -228629,9 +228639,9 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "2fe27f9fbe00ac955efd7ac352d355222e276f8ed015ffd08dd2a893d22b5f20",
+      "content_hash": "cf8bb6a50604d138528f980a6fd8ab16be32b34f5e05f019d3d2c0f670e9e4b7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:15:14.577Z"
+      "persisted_at": "2026-11-24T11:05:51.951Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings",
@@ -228641,9 +228651,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typedb-typedb-learnings",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c61f5d05034a72c6b1b2fe784ea0d4a969bb46077529543f834f1df85b8e68fa",
+      "content_hash": "6cd6b48741751034ed49c718c3a7f601697ab64d805cc3ea6e602c1f69e44ca4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:15:14.792Z"
+      "persisted_at": "2026-11-24T11:05:52.106Z"
     },
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
@@ -319913,13 +319923,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HLBK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9NK5-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "62605853a2608ea597792aed022ce64f7580c70e2988938750dfd7b2246c0a4e",
+      "content_hash": "0c82ca13aad4db3bdf2ca6818a2d12cd6bbe79d0f7d490c3995e1acda040a475",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:44:03.252Z"
+      "persisted_at": "2026-11-24T11:05:52.519Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -335348,6 +335358,70 @@
       "content_hash": "6dec851f16d7c27466a98bbc5da7878b1436a2c598e8fca358e6c5412cc207a8",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T10:44:02.443Z"
+    },
+    "rule-10245": {
+      "learning_id": "rule-10245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10245,
+      "title": "server crash when an attribute variable is compared with itself",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "5ec7db6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T11:05:18.704Z"
+    },
+    "candidate_directive-server-crash-when-an-attribute-variable-is-compared-with-itself": {
+      "item_id": "candidate_directive-server-crash-when-an-attribute-variable-is-compared-with-itself",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9N03-server-crash-when-an-attribute-variable-is-compared-with-itself.md",
+      "title": "server crash when an attribute variable is compared with itself",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5733bdf1f3c9761444362d06b4f89efde801e1264334314906a1a0bd51794ebe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T11:05:51.797Z"
+    },
+    "rule-10246": {
+      "learning_id": "rule-10246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10246,
+      "title": "find a pod's retry node by name, not by scanning every node",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "582f5637",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T11:05:47.135Z"
+    },
+    "candidate_directive-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node": {
+      "item_id": "candidate_directive-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9JQC-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node.md",
+      "title": "find a pod's retry node by name, not by scanning every node",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "582f5637",
+      "content_hash": "67dc5f5bfa5a4e91385b3ff6d9aa80f42e082c35b941aee129e1a488c9bdb272",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T11:05:47.557Z"
+    },
+    "candidate_directive-controller-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node": {
+      "item_id": "candidate_directive-controller-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9MC8-controller-find-a-pod-s-retry-node-by-name-not-by-scanning-every-node.md",
+      "title": "controller): find a pod's retry node by name, not by scanning every node",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f1e2ed123af92a7daf0da3775344206be9dcf0335ca0fb07c159f0f74836571",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T11:05:50.937Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T02:15:14.254Z",
+  "timestamp": "2026-11-24T11:05:51.680Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-typedb-typedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [typedb-typedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T02:15:14.254Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T11:05:51.680Z`  
 > **Learning ID**: `LEARN-EVO-typedb-typedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from typedb-typedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `498c9553`  
+> **Source Version**: `5ec7db6d`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:15:06.680Z  
+> **Timestamp**: 2026-11-24T11:05:17.870Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:15:06.673Z  
+> **Harvest Timestamp**: 2026-11-24T11:05:00.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4519 stars
+- **Stars / Engagement**: 4529 stars
 
 ---
 
@@ -246,10 +246,12 @@ impl fmt::Debug for Base64Formatter<'_> {
 
 pub use crate::{
     interval_runner::IntervalRunner,
+    parallel::parallel_flat_map,
     tokio_task::{IntervalTaskParameters, TokioTaskSpawner, TokioTaskTracker},
 };
 
 mod interval_runner;
+mod parallel;
 mod tokio_task;
 
 ```
@@ -319,6 +321,96 @@ impl Drop for IntervalRunner {
         let (done_sender, done_receiver) = sync_channel(1);
         self.shutdown_sink.send(done_sender).expect("Expected interval runner shutdown signal sending");
         done_receiver.recv().expect("Expected interval runner shutdown finishing")
+    }
+}
+
+```
+
+### Core Architecture Module: `common/concurrency/parallel.rs`
+```
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+use std::{
+    num::NonZeroUsize,
+    panic,
+    sync::atomic::{AtomicUsize, Ordering},
+    thread,
+};
+
+// maps the tasks across up to one scoped thread per cpu, collecting outputs in no particular order;
+// an error stops every worker, and a worker's panic is resumed on the caller
+pub fn parallel_flat_map<Task, Output, Outputs, Error>(
+    tasks: &[Task],
+    map: impl Fn(&Task) -> Result<Outputs, Error> + Sync,
+) -> Result<Vec<Output>, Error>
+where
+    Task: Sync,
+    Output: Send,
+    Outputs: IntoIterator<Item = Output>,
+    Error: Send,
+{
+    let next_task = AtomicUsize::new(0);
+    let work = || -> Result<Vec<Output>, Error> {
+        let mut outputs = Vec::new();
+        while let Some(task) = tasks.get(next_task.fetch_add(1, Ordering::Relaxed)) {
+            match map(task) {
+                Ok(task_outputs) => outputs.extend(task_outputs),
+                Err(error) => {
+                    next_task.store(tasks.len(), Ordering::Relaxed);
+                    return Err(error);
+                }
+            }
+        }
+        Ok(outputs)
+    };
+
+    let worker_count = thread::available_parallelism().map_or(1, NonZeroUsize::get).min(tasks.len());
+    let results: Vec<_> = thread::scope(|scope| {
+        let workers: Vec<_> = (0..worker_count).map(|_| scope.spawn(&work)).collect();
+        workers.into_iter().map(|worker| worker.join().unwrap_or_else(|err| panic::resume_unwind(err))).collect()
+    });
+    let mut outputs = Vec::new();
+    for result in results {
+        outputs.extend(result?);
+    }
+    Ok(outputs)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn every_task_is_mapped_once() {
+        let tasks: Vec<u64> = (0..100).collect();
+        let mut outputs = parallel_flat_map(&tasks, |&task| Ok::<_, ()>([task, task + 1000])).unwrap();
+        outputs.sort();
+        let mut expected: Vec<u64> = tasks.iter().flat_map(|&task| [task, task + 1000]).collect();
+        expected.sort();
+        assert_eq!(outputs, expected);
+    }
+
+    #[test]
+    fn no_tasks_map_to_nothing() {
+        let outputs = parallel_flat_map(&[] as &[u64], |&task| Ok::<_, ()>([task])).unwrap();
+        assert!(outputs.is_empty());
+    }
+
+    #[test]
+    fn an_error_is_returned() {
+        let tasks: Vec<u64> = (0..10).collect();
+        let result = parallel_flat_map(&tasks, |&task| if task == 7 { Err(task) } else { Ok([task]) });
+        assert_eq!(result, Err(7));
+    }
+
+    #[test]
+    #[should_panic(expected = "task failed")]
+    fn a_panic_is_resumed() {
+        let _ = parallel_flat_map(&[1u64], |_| -> Result<[u64; 0], ()> { panic!("task failed") });
     }
 }
 
@@ -1603,263 +1695,17 @@ impl TransactionOperator for LocalTransactionOperator {
 
 ```
 
-### Core Architecture Module: `server/state/user_operator.rs`
-```
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- */
-
-use std::{
-    fmt::Debug,
-    sync::{Arc, RwLock as StdRwLock},
-};
-
-use async_trait::async_trait;
-use database::database_manager::DatabaseManager;
-use resource::constants::server::DEFAULT_USER_NAME;
-use system::concepts::{Credential, User};
-use user::{permission_manager::PermissionManager, user_manager::UserManager};
-use uuid::Uuid;
-
-use super::TransactionOperator;
-use crate::{
-    authentication::{Accessor, credential_verifier::CredentialVerifier, token_manager::TokenManager},
-    error::{ArcServerStateError, LocalServerStateError, arc_server_state_err},
-    system_init::SYSTEM_DB,
-};
-
-#[async_trait]
-pub trait UserOperator: Debug + Send + Sync {
-    async fn all(&self, accessor: Accessor) -> Result<Vec<User>, ArcServerStateError>;
-
-    async fn contains(&self, accessor: Accessor, name: &str) -> Result<bool, ArcServerStateError>;
-
-    async fn get(&self, accessor: Accessor, name: &str) -> Result<User, ArcServerStateError>;
-
-    async fn create(
-        &self,
-        accessor: Accessor,
-        user: User,
-        credential: Credential,
-        user_uuid: Option<Uuid>,
-        credential_uuid: Option<Uuid>,
-    ) -> Result<(), ArcServerStateError>;
-
-    async fn update(
-        &self,
-        accessor: Accessor,
-        username: &str,
-        user_update: Option<User>,
-        credential_update: Option<Credential>,
-    ) -> Result<(), ArcServerStateError>;
-
-    async fn delete(&self, accessor: Accessor, username: &str) -> Result<(), ArcServerStateError>;
-
-    async fn verify_password(&self, username: &str, password: &str) -> Result<(), ArcServerStateError>;
-
-    async fn token_create(&self, username: String, password: String) -> Result<String, ArcServerStateError>;
-
-    async fn token_get_owner(&self, token: &str) -> Option<String>;
-
-    fn is_initialised(&self) -> bool;
-}
-
-#[derive(Debug)]
-pub struct LocalUserOperator {
-    database_manager: Arc<DatabaseManager>,
-    token_manager: Arc<TokenManager>,
-    user_manager: StdRwLock<Option<Arc<UserManager>>>,
-    credential_verifier: StdRwLock<Option<Arc<CredentialVerifier>>>,
-    transaction_operator: Arc<dyn TransactionOperator>,
-}
-
-impl LocalUserOperator {
-    pub fn new(
-        database_manager: Arc<DatabaseManager>,
-        token_manager: Arc<TokenManager>,
-        transaction_operator: Arc<dyn TransactionOperator>,
-    ) -> Self {
-        Self {
-            database_manager,
-            token_manager,
-            user_manager: StdRwLock::new(None),
-            credential_verifier: StdRwLock::new(None),
-            transaction_operator,
-        }
-    }
-
-    fn try_load_system_managers(&self) {
-        if let Some(system_db) = self.database_manager.database_unrestricted(SYSTEM_DB) {
-            let user_manager = Arc::new(UserManager::new(system_db));
-            let credential_verifier = Arc::new(CredentialVerifier::new(user_manager.clone()));
-            *self.user_manager.write().unwrap() = Some(user_manager);
-            *self.credential_verifier.write().unwrap() = Some(credential_verifier);
-        }
-    }
-
-    fn get_user_manager(&self) -> Result<Arc<UserManager>, LocalServerStateError> {
-        if let Some(um) = self.user_manager.read().unwrap().clone() {
-            return Ok(um);
-        }
-        self.try_load_system_managers();
-        self.user_manager.read().unwrap().clone().ok_or(LocalServerStateError::NotInitialised {})
-    }
-
-    fn get_credential_verifier(&self) -> Result<Arc<CredentialVerifier>, LocalServerStateError> {
-        if let Some(cv) = self.credential_verifier.read().unwrap().clone() {
-            return Ok(cv);
-        }
-        self.try_load_system_managers();
-        self.credential_verifier.read().unwrap().clone().ok_or(LocalServerStateError::NotInitialised {})
-    }
-}
-
-#[async_trait]
-impl UserOperator for LocalUserOperator {
-    async fn all(&self, accessor: Accessor) -> Result<Vec<User>, ArcServerStateError> {
-        if !PermissionManager::exec_user_all_permitted(accessor.as_str()) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        match self.get_user_manager() {
-            Ok(user_manager) => Ok(user_manager.all()),
-            Err(err) => Err(Arc::new(err)),
-        }
-    }
-
-    async fn contains(&self, accessor: Accessor, name: &str) -> Result<bool, ArcServerStateError> {
-        if !PermissionManager::exec_user_get_permitted(accessor.as_str(), name) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        match self.get_user_manager() {
-            Ok(user_manager) => match user_manager.contains(name) {
-                Ok(bool) => Ok(bool),
-                Err(typedb_source) => Err(Arc::new(LocalServerStateError::UserCannotBeRetrieved { typedb_source })),
-            },
-            Err(err) => Err(Arc::new(err)),
-        }
-    }
-
-    async fn get(&self, accessor: Accessor, name: &str) -> Result<User, ArcServerStateError> {
-        if !PermissionManager::exec_user_get_permitted(accessor.as_str(), name) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        match self.get_user_manager() {
-            Ok(user_manager) => match user_manager.get(name) {
-                Ok(get) => match get {
-                    Some((user, _)) => Ok(user),
-                    None => Err(Arc::new(LocalServerStateError::UserNotFound {})),
-                },
-                Err(typedb_source) => Err(Arc::new(LocalServerStateError::UserCannotBeRetrieved { typedb_source })),
-            },
-            Err(err) => Err(Arc::new(err)),
-        }
-    }
-
-    async fn create(
-        &self,
-        accessor: Accessor,
-        user: User,
-        credential: Credential,
-        user_uuid: Option<Uuid>,
-        credential_uuid: Option<Uuid>,
-    ) -> Result<(), ArcServerStateError> {
-        if !PermissionManager::exec_user_create_permitted(accessor.as_str()) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        let user_manager = self.get_user_manager().map_err(arc_server_state_err)?;
-        let user_uuid = user_uuid.unwrap_or_else(Uuid::new_v4);
-        let credential_uuid = credential_uuid.unwrap_or_else(Uuid::new_v4);
-        user_manager
-            .create(&user, &credential, user_uuid, credential_uuid)
-            .map_err(|typedb_source| arc_server_state_err(LocalServerStateError::UserCannotBeCreated { typedb_source }))
-    }
-
-    async fn update(
-        &self,
-        accessor: Accessor,
-        username: &str,
-        user_update: Option<User>,
-        credential_update: Option<Credential>,
-    ) -> Result<(), ArcServerStateError> {
-        if !PermissionManager::exec_user_update_permitted(accessor.as_str(), username) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        let user_manager = self.get_user_manager().map_err(arc_server_state_err)?;
-        user_manager.update(username, &user_update, &credential_update).map_err(|typedb_source| {
-            arc_server_state_err(LocalServerStateError::UserCannotBeUpdated { typedb_source })
-        })?;
-
-        self.token_manager.invalidate_user(username).await;
-        self.transaction_operator.close_by_owner(username).await;
-        Ok(())
-    }
-
-    async fn delete(&self, accessor: Accessor, username: &str) -> Result<(), ArcServerStateError> {
-        if !PermissionManager::exec_user_delete_allowed(accessor.as_str(), username) {
-            return Err(Arc::new(LocalServerStateError::OperationNotPermitted {}));
-        }
-
-        let user_manager = self.get_user_manager().map_err(arc_server_state_err)?;
-        user_manager.delete(username).map_err(|typedb_source| {
-            arc_server_state_err(LocalServerStateError::UserCannotBeDeleted { typedb_source })
-        })?;
-
-        self.token_manager.invalidate_user(username).await;
-        self.transaction_operator.close_by_owner(username).await;
-        Ok(())
-    }
-
-    async fn verify_password(&self, username: &str, password: &str) -> Result<(), ArcServerStateError> {
-        if !self.is_initialised() {
-            return Err(Arc::new(LocalServerStateError::NotInitialised {}));
-        }
-        match self.get_credential_verifier() {
-            Ok(credential_verifier) => match credential_verifier.verify_password(username, password) {
-                Ok(()) => Ok(()),
-                Err(typedb_source) => Err(Arc::new(LocalServerStateError::AuthenticationError { typedb_source })),
-            },
-            Err(err) => Err(Arc::new(err)),
-        }
-    }
-
-    async fn token_create(&self, username: String, password: String) -> Result<String, ArcServerStateError> {
-        self.verify_password(&username, &password).await?;
-        Ok(self.token_manager.new_token(username).await)
-    }
-
-    async fn token_get_owner(&self, token: &str) -> Option<String> {
-        self.token_manager.get_valid_token_owner(token).await
-    }
-
-    fn is_initialised(&self) -> bool {
-        let Some(system_db) = self.database_manager.database_unrestricted(SYSTEM_DB) else {
-            return false;
-        };
-        let user_manager = UserManager::new(system_db);
-        user_manager.contains(DEFAULT_USER_NAME).unwrap_or(false)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8079** (2026-11-23): **Implement connection string steps for the HTTP behaviour tests**
+  *Symptoms*: ## Product change and motivation  We update typedb-behaviour to include the connection string scenarios added in typedb/typedb-behaviour#461, and implement their steps in the HTTP behaviour tests. Without them, `//tests/behaviour/service/http/driver:test_http_driver_connection` fails with "Step doesn't match any function" once the behaviour dependency moves past that commit.  ## Implementation  - `connection opens with a connection string for the default address{may_error}` builds `typedb://admin:password@http://127.0.0.1:8000`, and `connection opens with connection string: {string}{may_error}` uses the given string. Both mirror the Rust driver's steps in typedb/typedb-driver#939. - `http_steps/connection/connection_string.rs` is a port of the Rust driver's `ConnectionString` parser from typedb/typedb-driver#939, so the HTTP tests accept and reject exactly the strings the drivers do: `typedb://<username>:<password>@<addresses>[/<database>][?<params>]`, with comma-separated `http(s)://host[:port]` addresses or `public;private` translation pairs, one scheme across all addresses, and percent-encoded credentials. Addresses without a port default to 8000, the HTTP port, as in the HTTP TypeScript driver. - The steps sign in at the first parsed address, the only one the test server listens on, and store the token as the other `connection opens ...` steps do. - Malformed strings fail with a new `HttpBehaviourTestError::InvalidConnectionString`, whose message matches the driver's: "In
+
 - **Issue #8075** (2026-11-19): **Don't count 'is' as a thing constraint when deciding if a query involves only types**
   *Symptoms*: ## Product change and motivation This allows `is` constraints to be used in type queries, so an unsatisfiable query returns 0 answers instead of throwing a compilation error.  ## Implementation Move is to the type constraint category in check_non_type_constraints
-
-- **Issue #8074** (2026-11-18): **Sync cargo files**
-  *Symptoms*: Sync cargo files
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1876,62 +1722,170 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `498c9553` (2026-11-19)
-**Commit Message**: Don't count 'is' as a thing constraint when deciding if a query involves only types (#8075)
+### Incident Patch 1: `5ec7db6d` (2026-11-23)
+**Commit Message**: Fix server crash when an attribute variable is compared with itself (#8072)
 
 ## Product change and motivation
-This allows `is` constraints to be used in type queries, so an unsatisfiable query returns 0 answers instead of throwing a compilation error.
+
+`match $n isa name; $n == $n;` crashed the server with an
+index-out-of-bounds panic in `executor/row.rs`. It now answers: `==`,
+`<=`, `>=` keep every row; `!=`, `<`, `>` keep none.
+
+Fixes https://github.com/typedb/typedb/issues/7725
+
+Reproduced on 3.12.3, 3.13.6 and 3.14.0 for all six comparators, on
+owned and independent attributes (matrix below).
 
 ## Implementation
-Move is to the type constraint category in check_non_type_constraints
 
-**File**: `compiler/annotation/inference/validation.rs` (modified, +2/-2)
+The instruction that produces `$x` evaluates an attached comparison in
+two places. Each looks for the other side of the comparison somewhere
+else:
+
+| Step | Looks for the other side, `$x`, in | With `$x == $x` |
+| --- | --- | --- |
+| Range pre-filter, before the scan (`Checker::value_restriction_for`) |
+the input row | not there yet: index out of bounds |
+| Tuple filter, per candidate (`filter_fn_for_row`) | the produced tuple
+| found |
+
+The pre-filter no longer reads a check whose other side is the variable
+being produced. A value always equals itself, so the comparator alone
+decides: `==`, `<=`, `>=` cannot restrict the scan and are skipped;
+`!=`, `<`, `>` match nothing and fold to
+`ValueRestriction::Unsati
+
+**File**: `executor/instruction/checker.rs` (modified, +13/-0)
 ```diff
-@@ -82,7 +82,6 @@ fn check_non_type_constraints_satisfiable(
-     _variable_registry: &VariableRegistry,
- ) -> Result<(), TypeInferenceError> {
-     let not_only_type_constraints = graph.conjunction.constraints().iter().any(|constraint| match constraint {
--        Constraint::Is(_)
-         | Constraint::Isa(_)
-         | Constraint::Iid(_)
-         | Constraint::Links(_)
-@@ -94,7 +93,8 @@ fn check_non_type_constraints_satisfiable(
-         | Constraint::DeleteConcepts(_)
-         | Constraint::Comparison(_) => true,
- 
--        Constraint::IsSet(_)
-+        Constraint::Is(_) // There will be a different thing constraint which bound the variables.
-+        | Constraint::IsSet(_)  // There will be a different thing constraint which bound the variables.
-         | Constraint::Kind(_)
-         | Constraint::Label(_)
-         | Constraint::RoleName(_)
+@@ -104,6 +104,19 @@ impl<T> Checker<T> {
+                 }
+                 _ => continue,
+             };
++            // The target has no input value yet, but a value always equals itself: reflexive
++            // comparators cannot restrict, and strict ones match nothing. Stored doubles are
++            // finite, so NaN cannot break reflexivity.
++            if other.as_variable() == Some(target_variable) {
++                match comparator {
++                    Comparator::Equal | Comparator::LessOrEqual | Comparator::GreaterOrEqual => continue,
++                    Comparator::NotEqual | Comparator::Less | Comparator::Greater => {
++                        return Ok(ValueRestriction::Unsatisfiable);
++                    }
++                    // Left to the tuple filter.
++                    Comparator::Like | Comparator::Contains => continue,
++                }
++            }
+             let other_variable_value = get_vertex_value(&other, row.as_ref(), &context.parameters);
+             let Some(other_value) = Self::read_value(
+                 context.snapshot.as_ref(),
 ```
 
----
-
-### Incident Patch 2: `a2da3ff3` (2026-11-19)
-**Commit Message**: Reduce bazel cache size limit to 40G from 100G
-
-**File**: `.bazelrc` (modified, +1/-1)
+**File**: `executor/tests/compile_execute.rs` (modified, +89/-0)
 ```diff
-@@ -28,7 +28,7 @@ common --@rules_rust//:rustfmt.toml=//:rustfmt_config --noincompatible_disallow_
- # Fix Java runfiles path resolution in Bzlmod mode (required by release note validation)
- build --legacy_external_runfiles
+@@ -1007,6 +1007,95 @@ fn test_mismatched_input_types() {
+     }
+ }
  
--build --incompatible_strict_action_env --remote_download_toplevel --disk_cache=~/.bazel_disk_cache --experimental_disk_cache_gc_max_size=100G --experimental_disk_cache_gc_max_age=60d --java_runtime_version=remotejdk_21
-+build --incompatible_strict_action_env --remote_download_toplevel --disk_cache=~/.bazel_disk_cache --experimental_disk_cache_gc_max_size=40G --experimental_disk_cache_gc_max_age=60d --java_runtime_version=remotejdk_21
- run --incompatible_strict_action_env
- test --incompatible_strict_action_env --test_env=PATH
- 
++// https://github.com/typedb/typedb/issues/7725
++#[test]
++fn test_independent_attribute_self_comparison() {
++    let (_tmp_dir, mut storage) = create_core_storage();
++    setup_concept_storage(&mut storage);
++    let (type_manager, thing_manager) = load_managers(storage.clone(), None);
++    let schema = "define attribute name @independent, value string;";
++    let data = "insert $_ isa name 'John'; $_ isa name 'James';";
++    let statistics = setup(&storage, type_manager, thing_manager, schema, data);
++    let (type_manager, thing_manager) = load_managers(storage.clone(), None);
++
++    let cases = [
++        ("match $n isa name; $n == $n;", 2),
++        ("match $n isa name; $n != $n;", 0),
++        ("match $n isa name; $n < $n;", 0),
++        ("match $n isa name; $n <= $n;", 2),
++        ("match $n isa name; $n > $n;", 0),
++        ("match $n isa name; $n >= $n;", 2),
++    ];
++    for (query, expected) in cases {
++        assert_eq!(
++            execute_query(&storage, &type_manager, thing_manager.clone(), &statistics, query).len(),
++            expected,
++            "{query}"
++        );
++    }
++}
++
++#[test]
++fn test_owned_attribute_self_comparison() {
++    let (_tmp_dir, mut storage) = create_core_storage();
++    setup_concept_storage(&mut storage);
++    let (type_manager, thing_manager) = load_managers(storage.clone(), None);
++    let schema = "define
++        attribute nc, value decimal;
++        attribute nd, value double;
++        entity sample, owns nc, owns nd;
++    ";
++    let data = "insert $s isa sample, has nc 0.1dec, has nd 0.1;";
++    let statistics = setup(&storage, type_manager, thing_manager, schema, data);
++    let (type_manager, thing_manager) = load_managers(storage.clone(), None);
++
++    let cases = [
++        ("match $s isa sample, has nc $x; $x == $x;", 1),
++        ("match $s isa sample, has nc $x; $x != $x;", 0),
++        ("match $s isa sample, has nc $x; $x < $x;", 0),
++        ("match $s isa sample, has nc $x; $x <= $x;", 1),
++        ("match $s isa sample, has nc $x; $x > $x;", 0),
++        ("match $s isa sample, has nc $x; $x >= $x;", 1),
++        ("match $s isa sample, has nd $x; $x == $x;", 1),
++        ("match $s isa sample, has nc $x;", 1),
++        ("match $s isa sample, has nc $a, has nc $b; $a == $b;", 1),
++    ];
++    for (query, expected) in cases {
++        assert_eq!(
++            execute_query(&storage, &type_manager, thing_manager.clone(), &statistics, query).len(),
++            expected,
++            "{query}"
++        );
++    }
++}
++
++fn execute_query(
++    storage: &Arc<MVCCStorage<WALClient>>,
++    type_manager: &TypeManager,
++    thing_manager: Arc<ThingManager>,
++    statistics: &Statistics,
++    query: &str,
++) -> Vec<MaybeOwnedRow<'static>> {
++    let snapshot = Arc::new(storage.clone().open_snapshot_read());
++    let executable = compile_query(&*snapshot, type_manager, thing_manager.clone(), statistics, query);
++    let executor = MatchExecutor::new(
++        &executable,
++        &snapshot,
++        &thing_manager,
++        FixedBatch::from(MaybeOwnedRow::empty()),
++        Arc::new(ExecutableFunctionRegistry::empty()),
++        &QueryProfile::new(false),
++    )
++    .unwrap();
++    let context = ExecutionContext::new(snapshot, thing_manager, Arc::default(), Arc::default());
++    executor
++        .into_iterator(context, ExecutionInterrupt::new_uninterruptible())
++        .map_static(|row| row.map(|row| row.into_owned()).map_err(|err| err.clone()))
++        .into_iter()
++        .try_collect::<_, Vec<_>, _>()
++        .unwrap()
++}
++
+ fn compile_query(
+     snapshot: &impl ReadableSnapshot,
+     type_manager: &TypeManager,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8079** (closed): Implement connection string steps for the HTTP behaviour tests (@flyingsilverfin)
 - **PR #8075** (2026-11-19): Don't count 'is' as a thing constraint when deciding if a query involves only types (@krishnangovindraj)
 - **PR #8074** (2026-11-18): Sync cargo files (@genovoselov)
 - **PR #8073** (2026-11-18): Simplify workspace referencing (@genovoselov)
+- **PR #8072** (2026-11-23): Fix server crash when an attribute variable is compared with itself (@ds1sqe)
 - **PR #8071** (2026-11-16): Prepare release 3.15.0 (@krishnangovindraj)
-- **PR #8067** (2026-11-13): Prepare for release 3.15.0-rc1 (@genovoselov)
-- **PR #8066** (2026-11-13): Update error messages & a missed warning on usages of try blocks in write stages (@krishnangovindraj)
 
 ---
 
@@ -1951,33 +1905,43 @@ Move is to the type constraint category in check_non_type_constraints
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't count 'is' as a thing constraint when deciding if a query involves only ty
+## X. server crash when an attribute variable is compared with itself
 
 **RULE**:
-When implementing operations in `compiler/annotation/inference/validation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `executor/instruction/checker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `498c9553`: Don't count 'is' as a thing constraint when deciding if a query involves only types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ec7db6d`: server crash when an attribute variable is compared with itself. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `compiler/annotation/inference/validation.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `executor/instruction/checker.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Constraint::Is(_) // There will be a different thing constraint which bound the variables.
-        | Constraint::IsSet(_)  // There will be a different thing constraint which bound the variables.
+            // The target has no input value yet, but a value always equals itself: reflexive
+            // comparators cannot restrict, and strict ones match nothing. Stored doubles are
+            // finite, so NaN cannot break reflexivity.
+            if other.as_variable() == Some(target_variable) {
+                match comparator {
+                    Comparator::Equal | Comparator::LessOrEqual | Comparator::GreaterOrEqual => continue,
+                    Comparator::NotEqual | Comparator::Less | Comparator::Greater => {
+                        return Ok(ValueRestriction::Unsatisfiable);
+                    }
+                    // Left to the tuple filter.
+                    Comparator::Like | Comparator::Contains => continue,
+                }
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Constraint::Is(_)
-        Constraint::IsSet(_)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `498c9553` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ec7db6d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

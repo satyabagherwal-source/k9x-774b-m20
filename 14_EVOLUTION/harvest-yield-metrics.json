@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T10:43:53.688Z",
-  "total_cycles_completed": 12024,
-  "total_learnings_persisted": 12024,
-  "total_rules_promoted": 11099,
+  "last_updated": "2026-11-24T11:05:47.340Z",
+  "total_cycles_completed": 12026,
+  "total_learnings_persisted": 12026,
+  "total_rules_promoted": 11101,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:26:16.534Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:34:24.716Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:34:27.144Z",
       "repository": "topgrade-rs/topgrade",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T10:43:53.688Z",
       "repository": "GitoxideLabs/gitoxide",
       "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:05:18.905Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:05:47.340Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

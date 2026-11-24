@@ -4,22 +4,22 @@
 {
   "source_repository": "argoproj/argo-workflows",
   "source_url": "https://github.com/argoproj/argo-workflows",
-  "source_version": "a25c64b8",
+  "source_version": "582f5637",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T16:03:01.975Z",
+  "timestamp": "2026-11-24T11:05:47.556Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-argoproj-argo-workflows",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `a25c64b8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T16:03:01.975Z`  
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `582f5637`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T11:05:47.556Z`  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `argoproj/argo-workflows` (Commit: `a25c64b8`)
+- **Target Repository**: `argoproj/argo-workflows` (Commit: `582f5637`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:03:00.668Z  
+> **Harvest Timestamp**: 2026-11-24T11:04:55.312Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17110 stars
+- **Stars / Engagement**: 17114 stars
 
 ---
 
@@ -778,11 +778,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #17553** (2026-11-24): **fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1)**
+  *Symptoms*: Cherry-picked fix(controller): find a pod's retry node by name, not by scanning every node (#17447)  Signed-off-by: Ian Wormsbecker <iwormsy@gmail.com>
+
 - **Issue #17549** (2026-11-23): **fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1)**
   *Symptoms*: Cherry-picked fix(resource): ignore unspecified container timestamps (#17523)  Signed-off-by: Shubham Singh <development.shubhamsingh@gmail.com>
-
-- **Issue #17545** (2026-11-20): **fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0)**
-  *Symptoms*: Cherry-picked fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (#17396)  Signed-off-by: Srinivas Chippagiri <cvas22@gmail.com>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -799,149 +799,185 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a25c64b8` (2026-11-23)
-**Commit Message**: fix(resource): ignore unspecified container timestamps (#17523)
+### Incident Patch 1: `582f5637` (2026-11-24)
+**Commit Message**: fix(controller): find a pod's retry node by name, not by scanning every node (#17447)
 
-Signed-off-by: Shubham Singh <[REDACTED_EMAIL]>
+Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
 
-**File**: `util/resource/duration_test.go` (modified, +55/-0)
+**File**: `workflow/controller/retry_tweak.go` (modified, +54/-0)
 ```diff
-@@ -142,3 +142,58 @@ func TestDurationForPod(t *testing.T) {
- 		})
- 	}
- }
+@@ -1,6 +1,8 @@
+ package controller
+ 
+ import (
++	"strings"
 +
-+func TestDurationForPodTerminatedContainerTimes(t *testing.T) {
-+	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-+	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-+	epoch := metav1.NewTime(time.Unix(0, 0))
-+	tests := []struct {
-+		name       string
-+		startedAt  metav1.Time
-+		finishedAt metav1.Time
-+		seconds    int64
-+	}{
-+		{name: "missing timestamps"},
-+		{name: "start error", finishedAt: now},
-+		{name: "CRI start error", startedAt: epoch, finishedAt: metav1.NewTime(time.Unix(1763519017, 0))},
-+		{name: "missing finish", startedAt: minuteAgo},
-+		{name: "CRI zero finish", startedAt: metav1.NewTime(time.Unix(-60, 0)), finishedAt: epoch},
-+		{name: "finish before start", startedAt: now, finishedAt: minuteAgo},
-+		{name: "equal timestamps", startedAt: now, finishedAt: now},
-+		{name: "valid timestamps", startedAt: minuteAgo, finishedAt: now, seconds: 60},
-+		{name: "valid timestamps near CRI zero", startedAt: metav1.NewTime(time.Unix(0, 1)), finishedAt: metav1.NewTime(time.Unix(60, 1)), seconds: 60},
-+		{name: "valid timestamps before CRI zero", startedAt: metav1.NewTime(time.Unix(-120, 0)), finishedAt: metav1.NewTime(time.Unix(-60, 0)), seconds: 60},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			pod := &corev1.Pod{
-+				Spec: corev1.PodSpec{Containers: []corev1.Container{
-+					{Name: "main", Resources: corev1.ResourceRequirements{Limits: corev1.ResourceList{
-+						corev1.ResourceCPU:                    resource.MustParse("3900m"),
-+						corev1.ResourceMemory:                 resource.MustParse("100Mi"),
-+						corev1.ResourceEphemeralStorage:       resource.MustParse("10Gi"),
-+						corev1.ResourceName("nvidia.com/gpu"): resource.MustParse("1"),
-+					}}},
-+					{Name: "sidecar"},
-+				}},
-+				Status: corev1.PodStatus{ContainerStatuses: []corev1.ContainerStatus{
-+					{Name: "main", State: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
-+						Reason:     "StartError",
-+						StartedAt:  tt.startedAt,
-+						FinishedAt: tt.finishedAt,
-+					}}},
-+					{Name: "sidecar", State: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
-+						StartedAt:  metav1.NewTime(now.Add(-10 * time.Second)),
-+						FinishedAt: now,
-+					}}},
-+				}},
-+			}
-+			assert.Equal(t, wfv1.ResourcesDuration{
-+				corev1.ResourceCPU:                    wfv1.ResourceDuration(tt.seconds*39/10 + 1),
-+				corev1.ResourceMemory:                 wfv1.ResourceDuration(tt.seconds + 10),
-+				corev1.ResourceEphemeralStorage:       wfv1.ResourceDuration(tt.seconds),
-+				corev1.ResourceName("nvidia.com/gpu"): wfv1.ResourceDuration(tt.seconds),
-+			}, DurationForPod(pod))
-+		})
-+	}
-+}
-```
-
-**File**: `util/resource/summary.go` (modified, +8/-2)
-```diff
-@@ -14,8 +14,14 @@ type Summary struct {
+ 	apiv1 "k8s.io/api/core/v1"
+ 	"k8s.io/utils/env"
+ 
+@@ -23,6 +25,58 @@ func FindRetryNode(nodes wfv1.Nodes, nodeID string) *wfv1.NodeStatus {
+ 	return nil
  }
  
- func (s Summary) age() time.Duration {
--	if s.ContainerState.Terminated != nil {
--		return s.ContainerState.Terminated.FinishedAt.Sub(s.ContainerState.Terminated.StartedAt.Time)
-+	if terminated := s.ContainerState.Terminated; terminated != nil {
-+		startedAt, finishedAt := terminated.StartedAt.Time, terminated.FinishedAt.Time
-+		// Kubelet converts unspecified CRI timestamps to the Unix epoch.
-+		epoch := time.Unix(0, 0)
-+		if startedAt.IsZero() || finishedAt.IsZero() || startedAt.Equal(epoch) || finishedAt.Equal(epoch) || finishedAt.Before(startedAt) {
-+			return 0
-+		}
-+		return finishedAt.Sub(startedAt)
- 	}
- 	return 0
- }
++// FindRetryNodeByName finds the same node as FindRetryNode without scanning
++// every node. A retry node names each attempt "<retry node name>(<attempt>)"
++// (see handleRetries), so the only node that can be a node's retry parent is
++// the one named by dropping that suffix, found by name in constant time.
++// FindRetryNode visits every node of the workflow, which a controller
++// creating thousands of pods in a large workflow pays once per pod.
++func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
++	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
++		return parentNode
++	}
++	node, ok := wf.Status.Nodes[nodeID]
++	if !ok {
++		return nil
++	}
++	return retryParentByName(wf, node.BoundaryID)
++}
++
++// retryParentByName returns the retry node that has childID as an attempt, if
++// any.
++func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
++	child, ok := wf.Status.Nodes[childID]
++	if !ok {
++		return nil
++	}
++	parentName, ok := retryParentName(child.Name)
++	if !ok {
++		return nil
++	}
++	parentNode, err := wf.GetNodeByName(parentName)
++	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
++		return nil
++	}
++	return parentNode
++}
++
++// retryParentName strips a retry attempt suffix, "(<digits>)", from a node
++// name, reporting whether the name had one.
++func retryParentName(name string) (string, bool) {
++	if !strings.HasSuffix(name, ")") {
++		return "", false
++	}
++	open := strings.LastIndex(name, "(")
++	if open < 0 {
++		return "", false
++	}
++	attempt := name[open+1 : len(name)-1]
++	if attempt == "" || strings.Trim(attempt, "0123456789") != "" {
++		return "", false
++	}
++	return name[:open], true
++}
++
+ // RetryOnDifferentHost append affinity with fail host to pod
+ func RetryOnDifferentHost(retryNodeName string) RetryTweak {
+ 	return func(retryStrategy wfv1.RetryStrategy, nodes wfv1.Nodes, pod *apiv1.Pod) {
 ```
 
-**File**: `util/resource/summary_test.go` (added, +42/-0)
+**File**: `workflow/controller/retry_tweak_test.go` (modified, +67/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+package resource
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	corev1 "k8s.io/api/core/v1"
+@@ -4,6 +4,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
+ 
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+ )
+@@ -93,3 +94,69 @@ func TestFindRetryNode(t *testing.T) {
+ 		assert.Equal(t, FindRetryNode(allNodes, "C2"), &node)
+ 	})
+ }
 +
-+func TestSummaryAge(t *testing.T) {
-+	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-+	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-+	epoch := metav1.NewTime(time.Unix(0, 0))
-+
-+	tests := []struct {
-+		name  string
-+		state corev1.ContainerState
-+		want  time.Duration
-+	}{
-+		{name: "no state"},
-+		{name: "waiting", state: corev1.ContainerState{Waiting: &corev1.ContainerStateWaiting{}}},
-+		{name: "running", state: corev1.ContainerState{Running: &corev1.ContainerStateRunning{StartedAt: minuteAgo}}},
-+		{name: "missing timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{}}},
-+		{name: "missing start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{FinishedAt: now}}},
-+		{name: "missing finish", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: minuteAgo}}},
-+		{name: "CRI zero start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: epoch, FinishedAt: now}}},
-+		{name: "CRI zero finish", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(time.Unix(-60, 0)), FinishedAt: epoch}}},
-+		{name: "CRI zero start in another timezone", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(epoch.In(time.FixedZone("offset", 3600))), FinishedAt: now}}},
-+		{name: "finish before start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: minuteAgo}}},
-+		{name: "equal timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: now}}},
-+		{name: "valid timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: minuteAgo, FinishedAt: now}}, want: time.Minute},
-+		{name: "subsecond duration", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: metav1.NewTime(now.Add(time.Millisecond))}}, want: time.Millisecond},
-+		{name: "nanosecond after CRI zero", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(time.Unix(0, 1)), FinishedAt: metav1.NewTime(time.Unix(0, 2))}}, want: time.Nanosecond},
++func TestFindRetryNodeByName(t *testing.T) {
++	wf := &wfv1.Workflow{ObjectMeta: metav1.ObjectMeta{Name: "wf"}}
++	wf.Status.Nodes = wfv1.Nodes{}
++	add := func(name string, nodeType wfv1.NodeType, boundary string, children ...string) string {
++		id := wf.NodeID(name)
++		childIDs := make([]string, len(children))
++		for i, child := range children {
++			childIDs[i] = wf.NodeID(child)
++		}
++		boundaryID := ""
++		if boundary != "" {
++			boundaryID = wf.NodeID(boundary)
++		}
++		wf.Status.Nodes[id] = wfv1.NodeStatus{ID: id, Name: name, Type: nodeType, BoundaryID: boundaryID, Children: childIDs}
++		return id
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, (Summary{ContainerState: tt.state}).age())
-+		})
++	root := add("wf", wfv1.NodeTypeSteps, "", "wf[0].steps", "wf[0].ref", "wf[0].plain", "wf[0].items(0:a)", "wf[0].decoy")
++	// A retried steps template: its pod's retry parent is found through the boundary.
++	stepsRetry := add("wf[0].steps", wfv1.NodeTypeRetry, "wf", "wf[0].steps(0)")
++	add("wf[0].steps(0)", wfv1.NodeTypeSteps, "wf", "wf[0].steps(0)[0].pod")
++	stepsPod := add("wf[0].steps(0)[0].pod", wfv1.NodeTypePod, "wf[0].steps(0)")
++	// A retried pod on its second attempt.
++	refRetry := add("wf[0].ref", wfv1.NodeTypeRetry, "wf", "wf[0].ref(0)", "wf[0].ref(1)")
++	add("wf[0].ref(0)", wfv1.NodeTypePod, "wf")
++	refPod := add("wf[0].ref(1)", wfv1.NodeTypePod, "wf")
++	plainPod := add("wf[0].plain", wfv1.NodeTypePod, "wf")
++	itemsPod := add("wf[0].items(0:a)", wfv1.NodeTypePod, "wf")
++	// Named like an attempt, but its parent is not a retry node.
++	add("wf[0].decoy", wfv1.NodeTypeSteps, "wf", "wf[0].decoy(0)")
++	decoyPod := add("wf[0].decoy(0)", wfv1.NodeTypePod, "wf[0].decoy")
++
++	t.Run("Finds the retry node through the boundary", func(t *testing.T) {
++		assert.Equal(t, stepsRetry, FindRetryNodeByName(wf, stepsPod).ID)
++	})
++	t.Run("Finds the retry node of a later attempt", func(t *testing.T) {
++		assert.Equal(t, refRetry, FindRetryNodeByName(wf, refPod).ID)
++	})
++	t.Run("Finds nothing without a retry parent", func(t *testing.T) {
++		for _, id := range []string{root, plainPod, itemsPod, decoyPod, "missing"} {
++			assert.Nil(t, FindRetryNodeByName(wf, id), wf.Status.Nodes[id].Name)
++		}
++	})
++	t.Run("Agrees with FindRetryNode for every node", func(t *testing.T) {
++		for id, node := range wf.Status.Nodes {
++			assert.Equal(t, FindRetryNode(wf.Status.Nodes, id), FindRetryNodeByName(wf, id), node.Name)
++		}
++	})
++}
++
++func TestRetryParentName(t *testing.T) {
++	for name, want := range map[string]string{
++		"wf[0].step(0)":        "wf[0].step",
++		"wf[0].step(12)":       "wf[0].step",
++		"wf[0].step(0:a)(3)":   "wf[0].step(0:a)",
++		"wf[0].step(0:a)":      "",
++		"wf[0].step":           "",
++		"wf[0].step()":         "",
++		"wf[0].step(-1)":       "",
++		"wf[0].step(1)[0].pod": "",
++	} {
++		got, ok := retryParentName(name)
++		assert.Equal(t, want != "", ok, name)
++		assert.Equal(t, want, got, name)
 +	}
 +}
+```
+
+**File**: `workflow/controller/workflowpod_deps.go` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ func (woc *wfOperationCtx) getNodeByName(nodeName string) (*wfv1.NodeStatus, err
+ 
+ // findRetryNode locates the closest retry-node ancestor of nodeID in live status.
+ func (woc *wfOperationCtx) findRetryNode(nodeID string) *wfv1.NodeStatus {
+-	return FindRetryNode(woc.wf.Status.Nodes, nodeID)
++	return FindRetryNodeByName(woc.wf, nodeID)
+ }
+ 
+ // retryStrategyForTemplate resolves the retry strategy applicable to tmpl.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17553** (2026-11-24): fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17549** (2026-11-23): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17545** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17544** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17540** (2026-11-18): fix: build the OSS Scanner image like release builds (@Joibel)
 - **PR #17539** (2026-11-20): chore(deps): update dependency go to v1.27.4 (main) (@renovate[bot])
-- **PR #17538** (2026-11-18): chore(deps): update rancher/k3s docker tag to v1.37.2 (main) (@renovate[bot])
 
 ---
 
@@ -961,43 +997,55 @@ Signed-off-by: Shubham Singh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resource): ignore unspecified container timestamps
+## X. controller): find a pod's retry node by name, not by scanning every node
 
 **RULE**:
-When implementing operations in `util/resource/duration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/controller/retry_tweak.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a25c64b8`: resource): ignore unspecified container timestamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `582f5637`: controller): find a pod's retry node by name, not by scanning every node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/resource/duration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/retry_tweak.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	"strings"
 
-func TestDurationForPodTerminatedContainerTimes(t *testing.T) {
-	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-	epoch := metav1.NewTime(time.Unix(0, 0))
-	tests := []struct {
-		name       string
-		startedAt  metav1.Time
-		finishedAt metav1.Time
-		seconds    int64
-	}{
-		{name: "missing timestamps"},
-		{name: "start error", finishedAt: now},
-		{name: "CRI start error", startedAt: epoch, finishedAt: metav1.NewTime(time.Unix(1763519017, 0))},
-		{name: "missing finish", startedAt: minuteAgo},
-		{name: "CRI zero finish", startedAt: metav1.NewTime(time.Unix(-60, 0)), finishedAt: epoch},
-		{name: "finish before start", startedAt: now, finishedAt: minuteAgo},
-		{name: "equal timestamps", startedAt: now, finishedAt: now},
-		{name: "valid timestamps", startedAt: minuteAgo, finishedAt: now, seconds: 60},
-		{name: "valid timestamps near CRI zero", startedAt: metav1.NewTime(time.Unix(0, 1)), finishedAt: metav1.NewTime(time.Unix(60, 1)), seconds: 60},
-		{name: "valid timestamps before CRI zero", startedAt: metav1.NewTime(time.Unix(-120, 0)), finishedAt: metav1.NewTime(time.Unix(-60, 0)), seconds: 60},
+// FindRetryNodeByName finds the same node as FindRetryNode without scanning
+// every node. A retry node names each attempt "<retry node name>(<attempt>)"
+// (see handleRetries), so the only node that can be a node's retry parent is
+// the one named by dropping that suffix, found by name in constant time.
+// FindRetryNode visits every node of the workflow, which a controller
+// creating thousands of pods in a large workflow pays once per pod.
+func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
+	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
+		return parentNode
 	}
-	for _
+	node, ok := wf.Status.Nodes[nodeID]
+	if !ok {
+		return nil
+	}
+	return retryParentByName(wf, node.BoundaryID)
+}
+
+// retryParentByName returns the retry node that has childID as an attempt, if
+// any.
+func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
+	child, ok := wf.Status.Nodes[childID]
+	if !ok {
+		return nil
+	}
+	parentName, ok := retryParentName(child.Name)
+	if !ok {
+		return nil
+	}
+	parentNode, err := wf.GetNodeByName(parentName)
+	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
+		return nil
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1007,7 +1055,7 @@ func TestDurationForPodTerminatedContainerTimes(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a25c64b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `582f5637` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
