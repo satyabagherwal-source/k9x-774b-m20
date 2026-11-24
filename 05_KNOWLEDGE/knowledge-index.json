@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T11:05:52.824Z",
+  "last_updated": "2026-11-24T11:22:04.401Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24579,
+  "total_items": 24582,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9ea1482f912470defffe23d4b0f8eb0826ac0f62f5e43f2dcbe1c029c59caa4",
+      "content_hash": "ea41d66f1299c8be2ac934aa17f0fd1b6564cfc8689bdb662d1ba3596ff22080",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:44:04.362Z"
+      "persisted_at": "2026-11-24T11:22:04.223Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fa88470bcd18c5a27b5fcde284e83d6827a82a5193235fb2a8b58ee3b55523b",
+      "content_hash": "c600e8d78535c721f7b14d5843a0aaa5e378dc8610ae45df5c7561f1ed93da4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:44:04.550Z"
+      "persisted_at": "2026-11-24T11:22:04.401Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa399fcee235778c84661614a0fa0cebd41a2d0a6c8f1cb972b45c91ab1bea0b",
+      "content_hash": "1ebd139629df85b7bacfcc7467637413cf618b47ceb1b391f32965863c903674",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T11:05:52.672Z"
+      "persisted_at": "2026-11-24T11:22:03.323Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "82b336cbc988992d21b7d447c1928b2190adc9a9d98ee5cfc22452632157081a",
+      "content_hash": "46d875f88859a0bd828133a322c8243d875d9fd4b4bbeeff0a2a827ad8fb8403",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:05:52.824Z"
+      "persisted_at": "2026-11-24T11:22:03.497Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212802,8 +212802,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "6118713b",
-      "content_hash": "b29819a8396afe9e64c095838b8728986c931ce0be2b5186c092ebc9a2646a1d",
+      "source_version": "8ee0ca3e",
+      "content_hash": "018417823bff8370acf617960f4f09d0eea4c05f7d67a1149e6bbbf715410acd",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -212841,6 +212841,11 @@
           "number": 10064,
           "title": "keep an O_TMPFILE inode alive after linkat",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10247,
+          "title": "fix FlushAfterRmdir ut",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212848,7 +212853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:11:49.270Z",
+      "verified_at": "2026-11-24T11:21:58.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212876,10 +212881,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "repository": "juicedata/juicefs",
-      "source_version": "6118713b",
-      "content_hash": "3af1aed3ef76632f093215af778b7c0a1cf229a2fa5c511d79cd1f059fb3f91d",
+      "source_version": "8ee0ca3e",
+      "content_hash": "492878cbe67b5913b1efc2c41528d9f868ddd6ba0ae823bcdfdce608013f18a2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:11:50.051Z"
+      "persisted_at": "2026-11-24T11:21:59.064Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs",
@@ -212900,10 +212905,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "6118713b",
-      "content_hash": "77d38cbba774e3f5dc5800a98724c793247b4ae627df658acdd28e45dcc7fef5",
+      "source_version": "8ee0ca3e",
+      "content_hash": "8fe3e64a52c535e08331ef79cc9b0756ec9f729e35bd0ef3629412aab755e122",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:11:50.456Z"
+      "persisted_at": "2026-11-24T11:21:59.240Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -258761,9 +258766,9 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0f694f6daf68f66017e2435c838efa3aaa9198162609063af4c2c2a47c91eff",
+      "content_hash": "b35e256455df93820865bcad010db22143d346709debbac1530910562f8e43a8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:11:54.661Z"
+      "persisted_at": "2026-11-24T11:22:02.494Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings",
@@ -258785,9 +258790,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "aeda1d01fb24a54656ff68c749df7d39cdf398add31824d8eaf19e8a159dac2c",
+      "content_hash": "e25f14b0aaeaf18f945c1c978567fdadc339395f38b06e7d947670dbdc5d2ced",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:11:55.073Z"
+      "persisted_at": "2026-11-24T11:22:02.686Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -319923,13 +319928,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9NK5-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UGI0-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c82ca13aad4db3bdf2ca6818a2d12cd6bbe79d0f7d490c3995e1acda040a475",
+      "content_hash": "adf2802e132b5d2cf6023867c4b0731e114e66e018be6358dfd2f4236eaa4645",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:05:52.519Z"
+      "persisted_at": "2026-11-24T11:22:03.147Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334902,13 +334907,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HM1L-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UH76-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dbbcea58ac4b1f389ad9332fc6c3ee3f33081622b419d7b779a0f52d5be87ec",
+      "content_hash": "0c96b2b84fbf4feb54712eba3c29deebcee5da14203b4d58933d3c63a18490e8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:44:04.189Z"
+      "persisted_at": "2026-11-24T11:22:04.053Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -335422,6 +335427,44 @@
       "content_hash": "6f1e2ed123af92a7daf0da3775344206be9dcf0335ca0fb07c159f0f74836571",
       "domain_letter": "A",
       "persisted_at": "2026-11-24T11:05:50.937Z"
+    },
+    "rule-10247": {
+      "learning_id": "rule-10247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10247,
+      "title": "fix FlushAfterRmdir ut",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "8ee0ca3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T11:21:58.426Z"
+    },
+    "candidate_directive-fix-flushafterrmdir-ut": {
+      "item_id": "candidate_directive-fix-flushafterrmdir-ut",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UD7Q-fix-flushafterrmdir-ut.md",
+      "title": "fix FlushAfterRmdir ut",
+      "repository": "juicedata/juicefs",
+      "source_version": "8ee0ca3e",
+      "content_hash": "1c14451cec97a3f8151a3c447fb16e7e3ef0553d74564454af664b8b6d4ae8a0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T11:21:58.887Z"
+    },
+    "candidate_directive-test-fix-flushafterrmdir-ut": {
+      "item_id": "candidate_directive-test-fix-flushafterrmdir-ut",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UFV1-test-fix-flushafterrmdir-ut.md",
+      "title": "test: fix FlushAfterRmdir ut",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "11a07f8dcb83ff505e691ffcbc91f6e789dfb73b584ff2cb12129bc20140e289",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T11:22:02.318Z"
     }
   },
   "ai-builder-brain": {

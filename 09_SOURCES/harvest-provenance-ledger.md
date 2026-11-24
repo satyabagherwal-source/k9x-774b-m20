@@ -12684,3 +12684,4 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `9ca9eb57` | Multi-dimensional audit evidence | 2026-11-24T10:43:53.682Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `5ec7db6d` | Multi-dimensional audit evidence | 2026-11-24T11:05:18.900Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `582f5637` | Multi-dimensional audit evidence | 2026-11-24T11:05:47.335Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `8ee0ca3e` | Multi-dimensional audit evidence | 2026-11-24T11:21:58.641Z |

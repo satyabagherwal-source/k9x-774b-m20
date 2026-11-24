@@ -12651,3 +12651,4 @@
 | `CYCLE-20261124-HDXQ` | `2026-11-24T10:43:53.678Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10244` | Yes (`44e5afc4...`) |
 | `CYCLE-20261124-8XM9` | `2026-11-24T11:05:18.897Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10245` | Yes (`e16f12d3...`) |
 | `CYCLE-20261124-9JK3` | `2026-11-24T11:05:47.331Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10246` | Yes (`560d38d8...`) |
+| `CYCLE-20261124-UD0T` | `2026-11-24T11:21:58.637Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10247` | Yes (`01841782...`) |

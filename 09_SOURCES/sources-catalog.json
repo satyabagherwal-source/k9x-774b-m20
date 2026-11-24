@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "6118713b",
+    "sourceVersion": "8ee0ca3e",
     "license": "Apache-2.0",
-    "contentHash": "b29819a8396afe9e64c095838b8728986c931ce0be2b5186c092ebc9a2646a1d",
-    "lastHarvestedAt": "2026-11-23T16:11:49.532Z",
+    "contentHash": "018417823bff8370acf617960f4f09d0eea4c05f7d67a1149e6bbbf715410acd",
+    "lastHarvestedAt": "2026-11-24T11:21:58.641Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

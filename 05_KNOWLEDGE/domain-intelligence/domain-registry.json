@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T11:05:52.672Z",
+  "last_updated": "2026-11-24T11:22:04.223Z",
   "total_records": 2511,
   "domains": {
     "A": {
@@ -8326,8 +8326,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b9ea1482f912470defffe23d4b0f8eb0826ac0f62f5e43f2dcbe1c029c59caa4",
-      "created_at": "2026-11-24T10:44:04.362Z"
+      "content_hash": "ea41d66f1299c8be2ac934aa17f0fd1b6564cfc8689bdb662d1ba3596ff22080",
+      "created_at": "2026-11-24T11:22:04.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9244,8 +9244,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "aa399fcee235778c84661614a0fa0cebd41a2d0a6c8f1cb972b45c91ab1bea0b",
-      "created_at": "2026-11-24T11:05:52.672Z"
+      "content_hash": "1ebd139629df85b7bacfcc7467637413cf618b47ceb1b391f32965863c903674",
+      "created_at": "2026-11-24T11:22:03.323Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10279,8 +10279,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "3af1aed3ef76632f093215af778b7c0a1cf229a2fa5c511d79cd1f059fb3f91d",
-      "created_at": "2026-11-23T16:11:50.051Z"
+      "content_hash": "492878cbe67b5913b1efc2c41528d9f868ddd6ba0ae823bcdfdce608013f18a2",
+      "created_at": "2026-11-24T11:21:59.064Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -24246,8 +24246,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "f0f694f6daf68f66017e2435c838efa3aaa9198162609063af4c2c2a47c91eff",
-      "created_at": "2026-11-23T16:11:54.661Z"
+      "content_hash": "b35e256455df93820865bcad010db22143d346709debbac1530910562f8e43a8",
+      "created_at": "2026-11-24T11:22:02.494Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",

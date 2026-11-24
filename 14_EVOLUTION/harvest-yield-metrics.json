@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T11:05:47.340Z",
-  "total_cycles_completed": 12026,
-  "total_learnings_persisted": 12026,
-  "total_rules_promoted": 11101,
+  "last_updated": "2026-11-24T11:21:58.647Z",
+  "total_cycles_completed": 12027,
+  "total_learnings_persisted": 12027,
+  "total_rules_promoted": 11102,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:34:27.144Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:34:43.012Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T11:05:47.340Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:21:58.647Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
