@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T05:28:34.351Z",
+  "last_updated": "2026-11-24T05:42:51.845Z",
   "total_verified_learnings": 9091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24469,
+  "total_items": 24472,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -36492,15 +36492,15 @@
       "learning_id": "rule-1863",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1863,
-      "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)",
-      "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "048de9ff",
+      "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY]",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "9968d91c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:39:15.931Z"
+      "verified_at": "2026-11-24T05:42:36.288Z"
     },
     "rule-1864": {
       "learning_id": "rule-1864",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "24d967b5",
-      "content_hash": "8af5715ba34e792e16d7d75c2306d20a3e79522ae7a4ad7eb2ef45d48d923b13",
+      "source_version": "f0980efc",
+      "content_hash": "c722b75b55d28d77cbfc9076c94a9f88ae50c8e18803d029ad8067fc9cc36357",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:40:16.848Z"
+      "persisted_at": "2026-11-24T05:42:43.998Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "983dd6773604a4910de8fb86a79d3b9d1d29f4016a89b4d4d5fa3ed5e842876e",
+      "content_hash": "43c507e423f57b16a16fca6ec02863be0d74b3417226af2abac4026f57fb94b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:29:45.268Z"
+      "persisted_at": "2026-11-24T05:42:50.767Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "928caaedaa2e31cc0f33da2af4f17efb022caaf6a95747139248d18c465de775",
+      "content_hash": "4799f41bb25c547a7aae14b1665fa5b071ebc2edb72ebb79bab48560828f98c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:54:36.197Z"
+      "persisted_at": "2026-11-24T05:42:51.598Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9c58169f41812d997f724dedcad3af443adea3f14124e2ed1e478a57375d4e5",
+      "content_hash": "3d6dff04fd5166b58125b6825c3174c5ceb4aa35a1fdc1bcf38053afa71adebd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:54:36.468Z"
+      "persisted_at": "2026-11-24T05:42:51.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -220149,8 +220149,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "24d967b5",
-      "content_hash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
+      "source_version": "f0980efc",
+      "content_hash": "7ef2064016667c6da19c1e0db78ba3c27c46b4f21d3040cb0afaed09e8e7c8e6",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220343,6 +220343,11 @@
           "number": 10156,
           "title": "validate,stats): add --quote, --escape and --no-quoting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10212,
+          "title": "moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220350,7 +220355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:40:16.046Z",
+      "verified_at": "2026-11-24T05:42:42.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221392,10 +221397,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "24d967b5",
-      "content_hash": "d787e5571aff39b333654d692de33d9c236795e4ac817b5e90a1d33776402cda",
+      "source_version": "f0980efc",
+      "content_hash": "02f2ed53730d44441bf9a8c2d0f03462676f2bbf8e37ad88f247949a81c306fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:40:16.674Z"
+      "persisted_at": "2026-11-24T05:42:43.769Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221465,9 +221470,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "511c2a107d4df9dbac00a47f24fc632554432ca18f7ac13209217e2728cb2eff",
+      "content_hash": "54be12d1d4bebab08e02a8cb2f76b86c2a3afe900e7565b3a4526062e0b98a27",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:29:45.005Z"
+      "persisted_at": "2026-11-24T05:42:50.519Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -237462,11 +237467,16 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "5efdf449",
-      "content_hash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
+      "source_version": "9968d91c",
+      "content_hash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
+        {
+          "number": 1863,
+          "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY]",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8525,
           "title": "Markdown rendering of `pulumi package publish` help text",
@@ -237503,7 +237513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:27:34.388Z",
+      "verified_at": "2026-11-24T05:42:36.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237545,10 +237555,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "5efdf449",
-      "content_hash": "bba026ec9dfe2dee3817d97e58e4e30f77f444dfad93adbd96e448c8ae12b8cb",
+      "source_version": "9968d91c",
+      "content_hash": "186c26200d419ce37c3a4e5d69dcc75fc23d29441767b9466270b0dabcd9ab74",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:27:34.918Z"
+      "persisted_at": "2026-11-24T05:42:37.248Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -237557,10 +237567,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "5efdf449",
-      "content_hash": "1a1cbc6824c2bb5e3adf090b7bd1ceb106a61de49355912c77d0f6de3aaa8045",
+      "source_version": "9968d91c",
+      "content_hash": "08a617a05fe52ba301322cba9b55c76cd6ae9e642ef0f491fb2f925090c89880",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:27:35.082Z"
+      "persisted_at": "2026-11-24T05:42:37.520Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -237700,9 +237710,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "8939814ae00db20420cdfb5040e0384ae3e3369e0f8ec6414d782248bb323bb0",
+      "content_hash": "73a1e712e71d84d11efad8415ad394854c7fe07754d0cf56542bb815d3fb1a48",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T06:27:39.155Z"
+      "persisted_at": "2026-11-24T05:42:48.468Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -237712,9 +237722,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "800f21be7f1aa25556814c4b3a0bb10297c74b366b0b29fc954dc07c5fe44dd1",
+      "content_hash": "84f2908f0f3774a366c023a48bf2996b2f7b312aaf48f409dc9d549bc96afc90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:27:39.296Z"
+      "persisted_at": "2026-11-24T05:42:48.750Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -319758,13 +319768,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-06UO-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q8YP-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "183d84420783fc24c7df1e624095e1e7031c7708d85074941fd471d582ed55ea",
+      "content_hash": "5c2bf40601ab66b12bf05a226b74ee31616eff616a59861f5e0cf6ca72cc2766",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:54:35.967Z"
+      "persisted_at": "2026-11-24T05:42:51.364Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -333827,6 +333837,44 @@
       "content_hash": "98779d175e7aba348007b0d3ef02749307b6b2b5490dc342c5a83e1b4040da1d",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T05:28:33.898Z"
+    },
+    "candidate_directive-update-module-google-golang-org-grpc-to-v1-83-2-security": {
+      "item_id": "candidate_directive-update-module-google-golang-org-grpc-to-v1-83-2-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q6J5-update-module-google-golang-org-grpc-to-v1-83-2-security.md",
+      "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY]",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4626fcc4e0f0c48670220f4acdb8ab5e8386007286540628173a1c90cb861ebf",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T05:42:48.213Z"
+    },
+    "rule-10212": {
+      "learning_id": "rule-10212",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10212,
+      "title": "moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "f0980efc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T05:42:42.905Z"
+    },
+    "candidate_directive-moarstats-pragmastat-scoresql-check-a-stats-cache-s-parsing-options-before-reu": {
+      "item_id": "candidate_directive-moarstats-pragmastat-scoresql-check-a-stats-cache-s-parsing-options-before-reu",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q84S-moarstats-pragmastat-scoresql-check-a-stats-cache-s-parsing-options-before-reu.md",
+      "title": "moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95a58bea9465699298cd21a9b7822d59b04df704c821c50853e9ec88050d9b96",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T05:42:50.288Z"
     }
   },
   "ai-builder-brain": {

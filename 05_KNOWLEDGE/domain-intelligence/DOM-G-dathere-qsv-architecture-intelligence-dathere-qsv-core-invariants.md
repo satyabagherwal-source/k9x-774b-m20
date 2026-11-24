@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "24d967b5",
+  "source_version": "f0980efc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T00:40:16.499Z",
+  "timestamp": "2026-11-24T05:42:43.506Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `24d967b5`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T00:40:16.499Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `f0980efc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T05:42:43.506Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:40:15.160Z  
+> **Harvest Timestamp**: 2026-11-24T05:42:41.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3847 stars
+- **Stars / Engagement**: 3848 stars
 
 ---
 
@@ -2272,11 +2272,11 @@ mod tests;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5105** (2026-11-24): **moarstats, pragmastat and scoresql reuse a stats cache without checking how it was parsed**
+  *Symptoms*: Follow-up to #5104 (#4610), from its "Known gaps".  A stats cache is located by input path and validated by mtime, not by the options the input was parsed with. `util::stats_cache::stats_cache_parsing_opts_match` closes that gap for the `get_stats_records` loaders, which serve `schema`, `tojsonl`, `pivotp`, `viz`, `sortcheck` and others. It checks `--no-headers`, `--delimiter`, `--prefer-dmy`, `--flexible`, sniffed preamble rows and, since #5104, `--quote`/`--escape`/`--no-quoting`.  Three commands read the cache files themselves and skip that check:  | command | reads | checks today | |---|---|---| | `moarstats` | the baseline `<stem>.stats.csv` (then rewrites it and regenerates the `.data.jsonl`) | freshness, qsv version, `QSV_STATS_SEPARATOR`, percentile coverage | | `pragmastat` | `<stem>.stats.csv.data.jsonl` | mtime only | | `scoresql` | `<stem>.stats.csv.data.jsonl` | mtime only |  So a cache computed under other parsing options than the command reads with is used anyway. The two repros below use `--quote`, and the same applies to `--flexible` and the other options above.  ### Repro: `moarstats` republishes stats of another reading ```bash printf "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n" > d.csv qsv stats --quote "'" --stats-jsonl d.csv > /dev/null qsv moarstats d.csv qsv select field,max d.stats.csv     # b max = 4 qsv stats --force d.csv | qsv select field,max    # read with the default quoting: b max = 9 ``` `moarstats` adds its columns to the `'`-quoted baseline, and it r
+
 - **Issue #4829** (2026-10-16): **schema: --enum-threshold ignored when no column is under it (every column gets a full enum)**
   *Symptoms*: ## Summary  `qsv schema --enum-threshold N` is supposed to limit `enum` constraints to columns with at most N distinct values. But when **no** column has between 2 and N distinct values, **every** column gets a complete `enum`, however many distinct values it has. When at least one column does qualify, the threshold works as documented. So whether a column gets an `enum` depends on the *other* columns in the file.  Found while reviewing #4827.  ## Repro (qsv 25.0.0 / master)  ```sh # every column is above the threshold -> every column gets a full enum { echo id,txt; for i in $(seq 1 80); do echo "$i,v$i"; done; } > hc.csv qsv schema hc.csv --enum-threshold 50 jq -c '.properties|map_values(.enum|length)' hc.csv.schema.json # {"id":80,"txt":80}  # add one column with 3 distinct values -> the threshold suddenly applies { echo id,txt,cat; for i in $(seq 1 80); do echo "$i,v$i,c$((i%3))"; done; } > mx.csv qsv schema mx.csv jq -c '.properties|map_values(.enum|length)' mx.csv.schema.json # {"id":0,"txt":0,"cat":3} ```  Similarly, `--enum-threshold 1` (where no column with more than one value can qualify) enumerates every column instead of none.  ## Cause  `build_low_cardinality_column_selector_arg` returns `""` when no column qualifies. `get_unique_values` then calls `SelectColumns::parse("")`, which means "select all columns", so `frequency` gathers values for every column, and an `enum` is emitted for each one (80 values each in the first repro, even though the threshold is 50).  
-
-- **Issue #4783** (2026-10-10): **validate --split-ragged: compressed inputs write split files to the current dir, and can overwrite another input's**
-  *Symptoms*: `validate --split-ragged` writes `<input>.valid`, `<input>.invalid` and `<input>.validation-errors.tsv` next to a plain input. For `.sz` and `.zip` inputs, which `process_input` unpacks into a temp dir, it writes them into the **current directory** instead, under the input's path relative to that temp dir. So where the files land depends on the input's format, and they can collide.  ### Reproduce (qsv at `257ae7b38`) Split files land in three different places: ```sh mkdir jan feb mar run printf 'x,y\n1,2\n3\n' > jan/data.csv; cp jan/data.csv feb/data.csv; cp jan/data.csv mar/data.csv qsv snappy compress feb/data.csv -o feb/data.csv.sz; rm feb/data.csv (cd mar && zip -q data.zip data.csv && rm data.csv) cd run && qsv validate --split-ragged ../jan/data.csv ../feb/data.csv.sz ../mar/data.zip ``` ``` jan/data.csv.valid, .invalid, .validation-errors.tsv        # plain: next to the input run/data.csv.valid, .invalid, .validation-errors.tsv        # .sz: cwd run/data/data.csv.valid, .invalid, .validation-errors.tsv   # zip: cwd/<archive name>/ ``` A plain file and a `.sz` file in the same folder **overwrite each other's split files, silently**: ```sh printf 'x,y\n1,2\n3\n' > data.csv printf 'x,y\n5,6\n7,8,9\n' > other.csv qsv snappy compress other.csv -o data.csv.sz qsv validate --split-ragged data.csv data.csv.sz cat data.csv.valid      # x,y / 5,6        ← data.csv's 1,2 is gone cat data.csv.invalid    # x,y / 7,8,9      ← data.csv's 3 is gone ``` Both runs print `Wrote data.csv.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2293,372 +2293,424 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24d967b5` (2026-11-24)
-**Commit Message**: feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (#5104)
+### Incident Patch 1: `f0980efc` (2026-11-24)
+**Commit Message**: fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (#5106)
 
-* feat(validate,stats): add --quote, --escape and --no-quoting (#4610)
+* fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105)
 
-Both commands read only "-quoted data, so a field quoted with another
-character, like 'x,1', was split in two: validate --split-ragged
-quarantined good rows as ragged, and stats failed on the "ragged" record.
+These three read the stats cache files directly and checked only their age,
+so a cache computed under other parsing options (delimiter, --no-headers,
+--flexible, sniffed preamble, or stats --quote/--escape/--no-quoting) than
+they read the input with was trusted: moarstats and pragmastat's append
+mode extended such a baseline with statistics of another reading, and
+pragmastat --standalone skipped numeric columns it had typed as text.
 
-An index records where rows start under " quoting, and Polars counts rows
-under it, so neither is used under other quoting: Config::index_files and
-count_rows skip them, and stats' out-of-memory fallback no longer builds an
-index for such a run. stats records the quoting in its cache metadata, so a
-cache computed under one quoting doesn't answer a run under another.
+They now run stats_cache_parsing_opts_conflict, the check behind
+get_stats_records, and recompute the baseline (or, for --standalone,
+ignore the cache). A --flexible baseline still counts as compatible when
+--stats-options asks for --flexible, so such runs don't recompute every time.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(stats,validate): keep non-default quoting out of shared caches & converted inputs (#4610)
+* fix(pragmastat,scoresql): don't trust a JSONL older than its sidecar; match pragmastat's flexible rule (#5105)
 
-- Other commands read a stats cache with the default quoting, so the shared
-  cache check now refuses one computed under --quote, --escape or
-  --no-quoting (sortcheck reported an unsorted column as sorted).
-- qsv converts JSONL/JSON/Parquet/IPC/Avro to a CSV it writes with the
-  default quoting, so that CSV is read bac
-
-**File**: `.claude/skills/qsv/qsv-stats.json` (modified, +17/-1)
-```diff
-@@ -48,6 +48,11 @@
-         "type": "string",
-         "description": "The field delimiter for READING CSV data. Must be a single character. (default: ,)"
-       },
-+      {
-+        "flag": "--escape",
-+        "type": "string",
-+        "description": "The escape character for READING CSV data, for data that escapes quotes as \\\" instead of \"\". When not set, quotes are escaped by doubling them."
-+      },
-       {
-         "flag": "--everything",
-         "type": "flag",
-@@ -91,7 +96,7 @@
-       {
-         "flag": "--memcheck",
-         "type": "flag",
--        "description": "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators. When modes are computed (with --mode or with the everything option) and no mode cardinality cap is set, approx cardinality is NOT auto-enabled: the exact mode table is kept either way, so it would save nothing. A wwarn suggests --mode-cardinality-cap, which is what bounds that table."
-+        "description": "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin and for non-default quoting) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators. When modes are computed (with --mode or with the everything option) and no mode cardinality cap is set, approx cardinality is NOT auto-enabled: the exact mode table is kept either way, so it would save nothing. A wwarn suggests --mode-cardinality-cap, which is what bounds that table."
-       },
-       {
-         "flag": "--mode",
-@@ -109,6 +114,11 @@
-         "type": "flag",
-         "description": "When set, the first row will NOT be interpreted as column names. i.e., They will be included in statistics."
-       },
-+      {
-+        "flag": "--no-quoting",
-+        "type": "flag",
-+        "description": "Read quote characters as ordinary data."
-+      },
-       {
-         "flag": "--nulls",
-         "type": "flag",
-@@ -151,6 +161,12 @@
-         "type": "flag",
-         "description": "Compute the quartiles (using method 3), the IQR, the lower/upper, inner/outer fences and skewness. https://en.wikipedia.org/wiki/Quartile#Method_3"
-       },
-+      {
-+        "flag": "--quote",
-+        "type": "string",
-+        "description": "The quote character for READING CSV data. When this, --escape or --no-quoting is set to other than its default, an index is not used, so the file is not split into chunks computed in parallel: slower on a large file.",
-+        "default": "\""
-+      },
-       {
-         "flag": "--round",
-         "type": "number",
-```
-
-**File**: `.claude/skills/qsv/qsv-validate.json` (modified, +16/-0)
-```diff
-@@ -85,6 +85,11 @@
-         "type": "flag",
-         "description": "Require the email to have a valid Top-Level Domain (TLD) (e.g. .com, .org, .net, etc.). e.g. \"john.doe@example\" is VALID if this option is NOT set."
-       },
-+      {
-+        "flag": "--escape",
-+        "type": "string",
-+        "description": "The escape character for reading CSV data, for data that escapes quotes as \\\" instead of \"\". When not set, quotes are escaped by doubling them."
-+      },
-       {
-         "flag": "--fail-fast",
-         "type": "flag",
-@@ -116,6 +121,11 @@
-         "type": "flag",
-         "description": "When set, the first row will not be interpreted as headers. It will be validated with the rest of the rows. Otherwise, the first row will always appear as the header row in the output. Note that this option is only valid when running in RFC 4180 validation mode as JSON Schema validation requires headers."
-       },
-+      {
-+        "flag": "--no-quoting",
-+        "type": "flag",
-+        "description": "Read quote characters as ordinary data."
-+      },
-       {
-         "flag": "--offline",
-         "type": "flag",
-@@ -126,6 +136,12 @@
-         "type": "flag",
-         "description": "Same as --json, but pretty printed."
-       },
-+      {
-+        "flag": "--quote",
-+        "type": "string",
-+        "description": "The quote character for reading CSV data. When this, --escape or --no-quoting is set to other than its default, an index is not used. Whatever the quoting read, the valid and invalid split files are written quoted with \", escaped by doubling it.",
-+        "default": "\""
-+      },
-       {
-         "flag": "--sarif",
-         "type": "string",
-```
+- A stats run without --stats-jsonl rewrites the sidecar but leaves the
+  JSONL, so the sidecar ca
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
  
- ### Added
-+- `validate`, `stats`: new `--quote`, `--escape` and `--no-quoting` options for reading CSV data quoted with another character (e.g. `'`), with quotes escaped as `\"` instead of `""`, or with no quoting at all. Both commands used to read only `"`-quoted data, so a field like `'x,1'` was split in two: `validate --split-ragged` quarantined good rows as ragged, and `stats` failed with "found record with 4 fields". `validate` still writes its `.valid`/`.invalid` split files with standard `"` quoting. Under any non-default quoting, neither an index nor Polars' row count is used, since both assume `"` quoting, so `stats` runs sequentially (slower on large files). A stats cache computed under one quoting is not reused under another. Requested in [#4610](https://github.com/dathere/qsv/issues/4610) ([#5104](https://github.com/dathere/qsv/pull/5104)).
- - `validate`: an unknown JSON Schema `format` now names the closest known one when it looks like a typo, in row validation's warning (`Unknown format "emial" is not checked (did you mean "email"?)`) and in `validate schema`'s error (`... Did you mean "email"?`). Names are compared case-insensitively, within a third of the name's length (at least one edit, a swapped pair of letters counting as one), against the formats the schema's draft checks and qsv's own `currency`. A name close to none of them gets no hint, and the warning is otherwise unchanged. ([#5100](https://github.com/dathere/qsv/pull/5100))
- - `synthesize`: `correlated` relationships may now take categorical members (up to 50 values; not dates or faker columns), e.g. `{"kind": "correlated", "members": ["borough", "latitude", "longitude"]}`. The rows split into strata, one per source combination of the categorical values seen at least `--min-count` times. Each stratum keeps its share of rows, and the numeric members are drawn from that stratum's own quantile buckets, coupled by a copula fitted within strata, so each borough keeps its own coordinates. A `joint` group sharing a categorical member joins the strata, so its tuples stay real, provided no other relationship names its columns (otherwise the usual first-relationship-wins order applies); the rows of a tuple too rare to print count toward the kept tuples sharing its categorical value, which draw that share of their numbers from the rare rows' own buckets, so each value keeps its share and its numeric range (a row printed as a kept city may then carry a rarer city's numbers in the same borough). A stratum too small for buckets of its own (fewer than 2 × `--min-count` − 1 values) uses its categorical value's, then the column's. Categorical members stay only when the strata explain some numeric member by a rank-based correlation ratio at or above `--correlation-threshold`, and a numeric member stays when the strata explain it or it correlates with another member within strata; otherwise the numeric members fall back to a plain `correlated` group and the `joint` groups it took in resolve on their own (or the run aborts under `--strict-relationships`). `--discover-relationships` proposes such members at a correlation ratio of 0.7 or more: on `NYC311-500.csv`, `Borough` joins `Incident Zip`, `BBL`, both State Plane coordinates, `Latitude` and `Longitude` in one group, and synthetic Latitude and Longitude keep Borough's correlation ratio (0.894 and 0.892, vs 0.892 and 0.878 in the source) and their 5th-95th percentiles. A discovered group holds up to 8 of its own members; the `joint` columns its strata take in don't count toward it. Groups without categorical members write the same bytes as before, and save the same model. [#5093](https://github.com/dathere/qsv/pull/5093)
- - `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, and the same dictionary date format, or none on either (it writes every member in its anchor's format
+ ### Fixed
++- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+ - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
+ - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - `synthesize`: input with non-UTF8 cells failed outright when it had any numeric or date column ("invalid UTF-8"), or when a column it enumerated held one ("Unable to parse output of qsv command frequency"). It also failed when a relationship was declared, and with `QSV_NO_HEADERS` when the first row held one. Every pass now reads raw bytes, and invalid bytes are written as U+FFFD (`�`), as `stats` already reports them, and `--report` keys source cells the same way, so a copied row still counts as an exact match. A non-UTF8 header is still refused by `stats`. ([#5084](https://github.com/dathere/qsv/pull/5084))
 ```
 
-**File**: `docs/help/stats.md` (modified, +4/-1)
+**File**: `src/cmd/moarstats.rs` (modified, +29/-1)
 ```diff
-@@ -291,7 +291,10 @@ qsv stats --help
- | &nbsp;`‑n,`<br>`‑‑no‑headers`&nbsp; | flag | When set, the first row will NOT be interpreted as column names. i.e., They will be included in statistics. |  |
- | &nbsp;`‑d,`<br>`‑‑delimiter`&nbsp; | string | The field delimiter for READING CSV data. Must be a single character. (default: ,) |  |
- | &nbsp;`‑‑flexible`&nbsp; | flag | Allow records with a varying number of fields. Without this, a "ragged" record (one with more or fewer fields than the header) is an error. With it, extra fields are ignored and a SHORT record contributes no value at all for its missing columns (not even a null), so those columns are computed over fewer observations. Note that field selection stops at the first missing column, so an out-of-order selection (e.g. `3,1`) makes a short record skip columns that ARE present. |  |
--| &nbsp;`‑‑memcheck`&nbsp; | flag | Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators. When modes are computed (with --mode or with the everything option) and no mode cardinality cap is set, approx cardinality is NOT auto-enabled: the exact mode table is kept either way, so it would save nothing. A wwarn suggests --mode-cardinality-cap, which is what bounds that table. |  |
-+| &nbsp;`‑‑quote`&nbsp; | string | The quote character for READING CSV data. When this, --escape or --no-quoting is set to other than its default, an index is not used, so the file is not split into chunks computed in parallel: slower on a large file. | `"` |
-+| &nbsp;`‑‑escape`&nbsp; | string | The escape character for READING CSV data, for data that escapes quotes as \" instead of "". When not set, quotes are escaped by doubling them. |  |
-+| &nbsp;`‑‑no‑quoting`&nbsp; | flag | Read quote characters as ordinary data. |  |
-+| &nbsp;`‑‑memcheck`&nbsp; | flag | Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin and for non-default quoting) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators. When modes are computed (with --mode or with the everything option) and no mode cardinality cap is set, approx cardinality is NOT auto-enabled: the exact mode table is kept either way, so it would save nothing. A wwarn suggests --mode-cardinality-cap, which is what bounds that table. |  |
- 
- ---
- **Source:** [`src/cmd/stats.rs`](https://github.com/dathere/qsv/blob/master/src/cmd/stats.rs)
+@@ -5215,6 +5215,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // so a CSV joined with another one would lose every statistic derived from them.
+         let separator_mismatch =
+             stats_current && util::stats_csv_separator_mismatch(&path, &stats_separator);
++        // The input is read below with the default parsing options, so a baseline computed
++        // under others (another delimiter or quoting, --no-headers, ...) describes other
++        // columns (#5105). A --flexible baseline is what `--stats-options --flexible` asks for.
++        let parsing_mismatch = stats_current
++            && util::stats_cache_parsing_opts_conflict(
++                input_path,
++                &input_path
++                    .canonicalize()
++                    .unwrap_or_else(|_| input_path.to_path_buf()),
++                false,
++                None,
++                None,
++                args.flag_stats_options
++                    .split_whitespace()
++                    .any(|o| o == "--flexible"),
++            );
+         // A current stats CSV can still be unusable for --use-percentiles: it
+         // may have been computed with a --percentile-list that lacks the
+         // requested --pct-thresholds (issue #4455). Treat that as stale so the
+@@ -5230,7 +5246,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             } else {
+                 true
+             };
+-        if !stats_current || version_mismatch || separator_mismatch || !covers_thresholds {
++        if !stats_current
++            || version_mismatch
++            || separator_mismatch
++            || parsing_mismatch
++            || !covers_thresholds
++        {
+             if args.flag_force {
+                 winfo!("Force flag set: recomputing stats...");
+             } else if !stats_current {
+@@ -5257,6 +5278,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                      {}\nRecomputing baseline stats...",
+                     path.display()
+                 );
++            } else if parsing_mismatch {
++                wwarn!(
++                    "Stats CSV file was computed with other CSV parsing options (e.g. delimiter \
++                     or quoting) than moarstats reads the input with: {}\nRecomputing baseline \
++                     stats...",
++                    path.display()
++                );
+             } else {
+                 wwarn!(
+                     "Stats CSV file was computed with a --percentile-list that does not include \
 ```
 
-**File**: `docs/help/validate.md` (modified, +3/-0)
+**File**: `src/cmd/pragmastat.rs` (modified, +49/-3)
 ```diff
-@@ -351,6 +351,9 @@ qsv validate --help
- | &nbsp;`‑h,`<br>`‑‑help`&nbsp; | flag | Display this message |  |
- | &nbsp;`‑n,`<br>`‑‑no‑headers`&nbsp; | flag | When set, the first row will not be interpreted as headers. It will be validated with the rest of the rows. Otherwise, the first row will always appear as the header row in the output. Note that this option is only valid when running in RFC 4180 validation mode as JSON Schema validation requires headers. |  |
- | &nbsp;`‑d,`<br>`‑‑delimiter`&nbsp; | string | The field delimiter for reading CSV data. Must be a single character. |  |
-+| &nbsp;`‑‑quote`&nbsp; | string | The quote character for reading CSV data. When this, --escape or --no-quoting is set to other than its default, an index is not used. Whatever the quoting read, the valid and invalid split files are written quoted with ", escaped by doubling it. | `"` |
-+| &nbsp;`‑‑escape`&nbsp; | string | The escape character for reading CSV data, for data that escapes quotes as \" instead of "". When not set, quotes are escaped by doubling them. |  |
-+| &nbsp;`‑‑no‑quoting`&nbsp; | flag | Read quote characters as ordinary data. |  |
- | &nbsp;`‑p,`<br>`‑‑progressbar`&nbsp; | flag | Show progress bars. Not valid for stdin. |  |
- | &nbsp;`‑q,`<br>`‑‑quiet`&nbsp; | flag | Do not display validation summary message. |  |
- 
-```
-
-**File**: `src/cmd/sniff.rs` (modified, +4/-1)
-```diff
-@@ -1262,10 +1262,13 @@ fn distributed_types(
-         // (and round-tripped to the PASS 2 temp file) consistently with how PASS 2
-         // is sniffed below - including for non-comma/odd-quote dialects (TSV, SSV,
-         // backtick-quoted, unquoted, etc.).
-+        // sampling tolerates an index whose records the detected quoting splits otherwise,
-+        // as it always has
-         let mut idx_conf = conf
-             .clone()
-             .no_headers(!has_header)
--            .delimiter(Some(Delimiter(dialect_meta.dialect.delimiter)));
-+            .delimiter(Some(Delimiter(dialect_meta.dialect.delimiter)))
-+            .index_with_any_quoting(true);
-         idx_conf = match dialect_meta.dialect.quote {
-             csv_nose::Quote::Some(q) => idx_conf.quote(q),
-             csv_nose::Quote::None => idx_conf.quoting(false),
-```
-
-**File**: `src/cmd/stats.rs` (modified, +58/-4)
-```diff
-@@ -410,6 +410,15 @@ Common options:
-                            stops at the first missing column, so an
-                            out-of-order selection (e.g. `3,1`) makes a short
-                            record skip columns that ARE present.
-+    --quote <arg>          The quote character for READING CSV data. When
-+                           this, --escape or --no-quoting is set to other
-+                           than its default, an index is not used, so the
-+                           file is not split into chunks computed in
-+                           parallel: slower on a large file. [default: "]
-+    --escape <arg>         The escape character for READING CSV data, for data
-+                           that escapes quotes as \" instead of "". When not
-+                           set, quotes are escaped by doubling them.
-+    --no-quoting           Read quote characters as ordinary data.
-     --memcheck             Use CONSERVATIVE heuristics for the in-memory load
-                            check (file size vs. available + free_swap × platform
-                            factor − headroom), instead of the default NORMAL
-@@ -422,7 +431,8 @@ Common options:
-                            check runs whenever stats takes the non-parallel
-                            path with non-streaming columns. On OOM (in either
-                            NORMAL or CONSERVATIVE mode), qsv auto-creates an
--                           index when no index exists (skipped for stdin) AND
-+                           index when no index exists (skipped for stdin and
-+                           for non-default quoting) AND
-                            switches to approx quantile + approx cardinality
-                            methods (DataSketches t-digest and HyperLogLog)
-                            where compatible. The sketch fallback can also
-@@ -531,6 +541,9 @@ pub struct Args {
-     pub flag_no_headers:           bool,
-     pub flag_delimiter:            Option<Delimiter>,
-     pub flag_flexible:             bool,
-+    pub flag_quote:                Delimiter,
-+    pub flag_escape:               Option<Delimiter>,
-+    pub flag_no_quoting:           bool,
-     pub flag_memcheck:             bool,
-     pub flag_vis_whitespace:       bool,
-     pub flag_weight:               Option<String>,
-@@ -576,6 +589,15 @@ struct StatsArgs {
-     // run's stats (or vice versa) since raggedness changes the counts.
-     #[serde(default)]
-     flag_flexible: bool,
-+    // the quoting the input was READ with: another quote/escape character splits the same
-+    // bytes into other fields. Defaults match the flags' defaults, so a cache written before
-+    // these fields existed still matches a run with the default quoting.
-+    #[serde(default = "default_stats_quote")]
-+    flag_quote: String,
-+    #[serde(default)]
-+    flag_escape: String,
-+    #[serde(default)]
-+    flag_no_quoting: bool,
-     // the preamble rows QSV_SNIFF_PREAMBLE skipped: stats computed past them describe other
-     // rows (and another header) than stats of the file as stored. serde(default) so an older
-     // cache reads as 0 and still matches runs without the env var.
-@@ -601,6 +623,10 @@ struct StatsArgs {
-     hash: FileHash,
+@@ -389,6 +389,13 @@ fn append_to_filename(path: &std::path::Path, suffix: &str) -> std::path::PathBu
  }
  
-+fn default_stats_quote() -> String {
-+    "\"".to_string()
+ /// Append pragmastat one-sample columns to the .stats.csv cache file.
++/// Does `--stats-options` ask for a `--flexible` baseline?
++fn stats_options_flexible(args: &Args) -> bool {
++    args.flag_stats_options
++        .split_whitespace()
++        .any(|o| o == "--flexible")
 +}
 +
- fn default_stats_separator() -> String {
-     DEFAULT_STATS_SEPARATOR.to_string()
- }
-@@ -688,6 +714,9 @@ impl StatsArgs {
-             flag_no_headers: get_bool("flag_no_headers"),
-             flag_delimiter: get_str("flag_delimiter"),
-             flag_flexible: get_bool("flag_flexible"),
-+            flag_quote: get_str_or("flag_quote", "\""),
-+            flag_escape: get_str("flag_escape"),
-+            flag_no_quoting: get_bool("flag_no_quoting"),
-             preamble_rows: get_u64("preamble_rows"),
-             stats_separator: get_str_or("stats_separator", DEFAULT_STATS_SEPARATOR),
-             flag_output_snappy: get_bool("flag_output_snappy"),
-@@ -1833,6 +1862,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             .map(|d| (d.as_byte() as char).to_string())
-             .unwrap_or_default(),
-         flag_flexible: args.flag_flexible,
-+        flag_quote: (args.flag_quote.as_byte() as char).to_string(),
-+        flag_escape: args
-+            .flag_escape
-+            .as_ref()
-+            .map(|d| (d.as_byte() as char).to_string())
-+            .unwrap_or_default(),
-+        flag_no_quoting: args.flag_no_quoting,
-         // set from the resolved rconfig below
-         preamble_rows: 0,
-         stats_separator: stats_separator_from_env(),
-@@ -2174,6 +2210,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                             // narrower request, including a plain `qsv stats`.
-                             && existing_stats_args_json.flag_flexible
-                                 == current_stats_args.flag_flexible
-+                            // so is the quoting: it decides where fields and records end
-+                           
-```
-
-**File**: `src/cmd/validate.rs` (modified, +30/-2)
-```diff
-@@ -361,6 +361,15 @@ Common options:
-                                requires headers.
-     -d, --delimiter <arg>      The field delimiter for reading CSV data.
-                                Must be a single character.
-+    --quote <arg>              The quote character for reading CSV data. When
-+                               this, --escape or --no-quoting is set to other than
-+                               its default, an index is not used. Whatever the
-+                               quoting read, the valid and invalid split files are
-+                               written quoted with ", escaped by doubling it. [default: "]
-+    --escape <arg>             The escape character for reading CSV data, for data that
-+                               escapes quotes as \" instead of "". When not set, quotes
-+                               are escaped by doubling them.
-+    --no-quoting               Read quote characters as ordinary data.
-     -p, --progressbar          Show progress bars. Not valid for stdin.
-     -q, --quiet                Do not display validation summary message.
- "#;
-@@ -457,6 +466,9 @@ struct Args {
-     flag_batch:                usize,
-     flag_no_headers:           bool,
-     flag_delimiter:            Option<Delimiter>,
-+    flag_quote:                Delimiter,
-+    flag_escape:               Option<Delimiter>,
-+    flag_no_quoting:           bool,
-     flag_progressbar:          bool,
-     flag_quiet:                bool,
-     arg_input:                 Vec<std::path::PathBuf>,
-@@ -476,6 +488,19 @@ struct Args {
-     flag_email_domain_literal: bool,
- }
+ fn run_cache_append(args: &Args) -> CliResult<()> {
+     use csv::{ReaderBuilder, WriterBuilder};
  
-+impl Args {
-+    /// `rconfig` reading with the --quote, --escape and --no-quoting settings.
-+    fn with_quoting(&self, rconfig: Config) -> Config {
-+        let rconfig = rconfig
-+            .quote(self.flag_quote.as_byte())
-+            .quoting(!self.flag_no_quoting);
-+        match self.flag_escape {
-+            Some(escape) => rconfig.escape(Some(escape.as_byte())).double_quote(false),
-+            None => rconfig,
-+        }
-+    }
-+}
-+
- /// The non-string JSON types a column's schema allows (its `type`, ignoring "null"). A cell
- /// reads as a number when numbers are allowed and it parses as one, else as a boolean when
- /// booleans are, else as a string; so `["boolean", "integer"]` and `["integer", "boolean"]`
-@@ -504,7 +529,8 @@ impl JSONtypes {
- struct RFC4180Struct {
-     delimiter_char: char,
-     header_row:     bool,
--    quote_char:     char,
-+    // null under --no-quoting
-+    quote_char:     Option<char>,
-     num_records:    u64,
-     num_fields:     u64,
-     fields:         Vec<String>,
-@@ -2179,6 +2205,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     if args.flag_delimiter.is_some() {
-         rconfig = rconfig.delimiter(args.flag_delimiter);
+@@ -403,16 +410,37 @@ fn run_cache_append(args: &Args) -> CliResult<()> {
+     // A stats CSV written by another qsv version is stale too: existing ps_* columns are
+     // otherwise kept as-is, and that version's values survive an upgrade
+     let stats_current = util::stats_csv_is_current(&stats_csv_path, input_path);
++    let version_mismatch = stats_current && util::stats_csv_version_mismatch(&stats_csv_path);
++    // A baseline computed under other parsing options than this run reads the input with
++    // (another delimiter or quoting, --no-headers, ...) describes other columns (#5105). A
++    // --flexible baseline is what `--stats-options --flexible` asks for.
++    let parsing_mismatch = stats_current
++        && !version_mismatch
++        && util::stats_cache_parsing_opts_conflict(
++            input_path,
++            &input_path
++                .canonicalize()
++                .unwrap_or_else(|_| input_path.to_path_buf()),
++            args.flag_no_headers,
++            args.flag_delimiter,
++            None,
++            stats_options_flexible(args),
++        );
+     // a baseline computed here has a known selection, so its rows map to columns exactly
+-    let baseline_computed_here =
+-        !stats_current || util::stats_csv_version_mismatch(&stats_csv_path);
++    let baseline_computed_here = !stats_current || version_mismatch || parsing_mismatch;
+     if baseline_computed_here {
+-        if stats_current {
++        if version_mismatch {
+             wwarn!(
+                 "Stats CSV file was generated by a different qsv version: {}\nRecomputing \
+                  baseline stats...",
+                 stats_csv_path.display()
+             );
++        } else if parsing_mismatch {
++            wwarn!(
++                "Stats CSV file was computed with other CSV parsing options (e.g. delimiter or \
++                 quoting) than pragmastat reads the input with: {}\nRecomputing baseline stats...",
++                stats_csv_path.display()
++            );
+         } else if stats_csv_path.exists() {
+             wwarn!(
+                 "Stats CSV file is older than the input: {}\nRecomputing baseline stats...",
+@@ -805,6 +833,24 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
+     if cache_mtime <= input_mtime {
+         return None;
      }
-+    rconfig = args.with_quoting(rconfig);
-     // ignore the "already set" error so re-entrant calls (e.g., qsv used as a library)
-     // don't panic; first-call value wins, which is fine for a single-shot command.
-     let _ = DELIMITER.set(args.flag_delimiter);
-@@ -2715,6 +2742,7 @@ fn validate_rfc4180_mode(args: &Args) -> CliResult<()> {
-         if args.flag_delimiter.is_some() {
-             rconfig = rconfig.delimiter(args.flag_delimiter);
-         }
-+        rconfig = args.with_quoting(rconfig);
++    // nor one parsed otherwise than this run reads the input (#5105), judged by a sidecar that
++    // describes this JSONL rather than a later stats run
++    let given_path = std::path::Path::new(input_path);
++    if util::stats_jsonl_predates_stats_cache(&cache_path, [given_path, &canonical])
++        || util::stats_cache_parsing_opts_conflict(
++            given_path,
++            &canonical,
++            args.flag_no_headers,
++            args.flag_delimiter,
++            // only the column types are used, which --prefer-dmy doesn't decide
++            None,
++            // as the append baseline: a --flexible one is what `--stats-options --flexible`
++            // asks for
++            !args.flag_standalone && stats_options_flexible(args),
++        )
++    {
++        return None;
++    }
  
-         // in --split-ragged mode, read flexibly so ragged rows are diverted rather than aborting
-         if split_ragged {
-@@ -3285,7 +3313,7 @@ Alternatively, transcode your data to UTF-8 first using `iconv` or `recode`."
-         let rfc4180 = RFC4180Struct {
-             delimiter_char: rconfig.get_delimiter() as char,
-             header_row:     !rconfig.no_headers,
--            quote_char:     rconfig.quote as char,
-+            quote_char:     rconfig.is_quoting().then_some(rconfig.quote as char),
-             num_records:    record_idx,
-             num_fields:     header_len as u64,
-             fields:         field_vec,
+     // Read the JSONL cache directly — no routing through get_stats_records,
+     // so we truly never trigger a stats run.
+```
+
+**File**: `src/cmd/scoresql.rs` (modified, +13/-1)
+```diff
+@@ -928,7 +928,19 @@ fn load_or_generate_caches(
+ 
+     // Check for stats cache
+     let stats_path = canonical.with_extension("stats.csv.data.jsonl");
+-    let stats = if stats_path.exists() && is_cache_fresh(&stats_path, &canonical) {
++    // a fresh cache parsed otherwise than scoresql reads the input describes other columns (#5105)
++    let stats = if stats_path.exists()
++        && is_cache_fresh(&stats_path, &canonical)
++        // a later stats run's sidecar doesn't describe this JSONL
++        && !util::stats_jsonl_predates_stats_cache(&stats_path, [input_path, &canonical])
++        && !util::stats_cache_parsing_opts_conflict(
++            input_path,
++            &canonical,
++            false,
++            Some(Delimiter(delim)),
++            None,
++            false,
++        ) {
+         load_stats_cache(&stats_path)?
+     } else {
+         if !quiet {
+```
+
+**File**: `src/util/stats_cache.rs` (modified, +2/-2)
+```diff
+@@ -371,7 +371,7 @@ pub fn stats_csv_separator_mismatch(stats_csv_path: &Path, separator: &str) -> b
+ ///
+ /// Both locations are checked for the same reason `stats_cache_parsing_opts_conflict` checks
+ /// both: for a symlinked input they differ.
+-pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
++pub(crate) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
+     let Ok(jsonl_meta) = std::fs::metadata(statsdata_path) else {
+         return false;
+     };
+@@ -396,7 +396,7 @@ pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&P
+ ///
+ /// (`get_stats_records_readonly` still fails closed on missing metadata: it returns an `Option`
+ /// its callers treat as a best-effort accelerator, so refusing costs nothing there.)
+-pub(super) fn stats_cache_parsing_opts_conflict(
++pub(crate) fn stats_cache_parsing_opts_conflict(
+     input_path: &Path,
+     canonical_input_path: &Path,
+     no_headers: bool,
+```
+
+**File**: `tests/test_moarstats.rs` (modified, +44/-0)
+```diff
+@@ -8304,3 +8304,47 @@ fn moarstats_derived_statistics_skip_nan_cells() {
+     );
+     assert_eq!(derived[0], derived[1]);
+ }
++
++/// `stat` of `field` in the stats CSV at `path`
++fn stats_csv_value(path: &std::path::Path, field: &str, stat: &str) -> String {
++    let mut rdr = ReaderBuilder::new().from_path(path).unwrap();
++    let headers = rdr.headers().unwrap().clone();
++    let field_idx = get_column_index(&headers, "field").unwrap();
++    let stat_idx = get_column_index(&headers, stat).unwrap();
++    rdr.records()
++        .map(Result::unwrap)
++        .find(|r| r.get(field_idx) == Some(field))
++        .and_then(|r| get_field_value(&r, stat_idx))
++        .unwrap_or_else(|| panic!("no {stat} for {field}"))
++}
++
++// moarstats reads the input with the default parsing options, so it must not extend a
++// baseline `stats` computed under others (#5105). Read with `'`, `b` is 1,2,3,4; read with
++// `"`, it is 9,1,2,3,4.
++#[test]
++fn moarstats_recomputes_a_baseline_parsed_otherwise() {
++    let wrk = Workdir::new("moarstats_recomputes_a_baseline_parsed_otherwise");
++    wrk.create_from_string("data.csv", "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n");
++    let mut stats = wrk.command("stats");
++    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
++    wrk.assert_success(&mut stats);
++    assert_eq!(
++        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
++        "4"
++    );
++
++    let mut cmd = wrk.command("moarstats");
++    cmd.arg("data.csv");
++    let got = wrk.stderr_on_success(&mut cmd);
++    assert!(got.contains("other CSV parsing options"), "{got}");
++    assert_eq!(
++        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
++        "9"
++    );
++
++    // the recomputed baseline is the default reading's, so it is reused from now on
++    let mut again = wrk.command("moarstats");
++    again.arg("data.csv");
++    let got = wrk.stderr_on_success(&mut again);
++    assert!(!got.contains("Recomputing"), "{got}");
++}
+```
+
+**File**: `tests/test_pragmastat.rs` (modified, +74/-0)
+```diff
+@@ -2006,3 +2006,77 @@ fn pragmastat_cache_append_no_headers_partial_cache_left_empty() {
+     assert_eq!(rows.len(), 1);
+     assert!(rows[0][1..].iter().all(String::is_empty), "{rows:?}");
+ }
++
++// Read with `'`, the `"10"` cells keep their quotes, so a cache computed that way types `n`
++// as String. pragmastat reads the input with the default quoting, so it must not trust such a
++// cache to pick its columns, nor extend it as a baseline (#5105).
++fn quote_cached_data(wrk: &Workdir) {
++    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
++    let mut stats = wrk.command("stats");
++    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
++    wrk.assert_success(&mut stats);
++}
++
++#[test]
++fn pragmastat_standalone_ignores_a_cache_parsed_otherwise() {
++    let wrk = Workdir::new("pragmastat_standalone_ignores_a_cache_parsed_otherwise");
++    quote_cached_data(&wrk);
++    let mut cmd = wrk.command("pragmastat");
++    cmd.args(["--standalone", "data.csv"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
++    assert_eq!(fields, ["id", "n"]);
++}
++
++#[test]
++fn pragmastat_append_recomputes_a_baseline_parsed_otherwise() {
++    let wrk = Workdir::new("pragmastat_append_recomputes_a_baseline_parsed_otherwise");
++    quote_cached_data(&wrk);
++    let mut cmd = wrk.command("pragmastat");
++    cmd.arg("data.csv");
++    let got = wrk.stderr_on_success(&mut cmd);
++    assert!(got.contains("other CSV parsing options"), "{got}");
++    // `n` is numeric again: ps_n, ps_center
++    let rows = ps_rows(&wrk.path("data.stats.csv"));
++    let n = rows.iter().find(|r| r[0] == "n").unwrap();
++    assert_eq!(n[1..3], ["2", "15"], "{rows:?}");
++}
++
++// A later stats run without --stats-jsonl rewrites the sidecar but leaves the JSONL, so the
++// sidecar no longer describes it: the stale `'`-quoted JSONL must not be trusted either.
++#[test]
++fn pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar() {
++    let wrk = Workdir::new("pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar");
++    quote_cached_data(&wrk);
++    let mut restats = wrk.command("stats");
++    restats.args(["--cache-threshold", "1", "data.csv"]);
++    wrk.assert_success(&mut restats);
++
++    let mut cmd = wrk.command("pragmastat");
++    cmd.args(["--standalone", "data.csv"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
++    assert_eq!(fields, ["id", "n"]);
++}
++
++// A --flexible baseline is accepted when --stats-options asks for one, so the column types
++// must come from that same cache, or the date column is read as numbers.
++#[test]
++fn pragmastat_append_flexible_baseline_keeps_its_column_types() {
++    let wrk = Workdir::new("pragmastat_append_flexible_baseline_keeps_its_column_types");
++    wrk.create_from_string(
++        "data.csv",
++        "d,x\n2020-01-01,1\n2020-02-01,2\n2020-03-01,3\n",
++    );
++    let options = "--flexible --infer-dates --stats-jsonl";
++    let mut stats = wrk.command("stats");
++    stats.args(options.split(' ')).arg("data.csv");
++    wrk.assert_success(&mut stats);
++
++    let mut cmd = wrk.command("pragmastat");
++    cmd.args(["--stats-options", options, "data.csv"]);
++    wrk.assert_success(&mut cmd);
++    let rows = ps_rows(&wrk.path("data.stats.csv"));
++    let d = rows.iter().find(|r| r[0] == "d").unwrap();
++    assert_eq!(d[1], "3", "{rows:?}");
++}
+```
+
+**File**: `tests/test_scoresql.rs` (modified, +47/-0)
+```diff
+@@ -1230,3 +1230,50 @@ fn scoresql_duckdb_bare_non_identifier_wildcard_qualifier() {
+         serde_json::from_str(&got).unwrap_or_else(|e| panic!("{e}: {got}"));
+     assert!(json["plan"].as_str().unwrap().contains("READ_CSV"), "{got}");
+ }
++
++// scoresql reads the input with the default quoting, so a stats cache computed under another
++// is regenerated rather than used (#5105): read with `'`, the `"10"` cells keep their quotes
++#[test]
++fn scoresql_regenerates_a_stats_cache_parsed_otherwise() {
++    let wrk = Workdir::new("scoresql_regenerates_a_stats_cache_parsed_otherwise");
++    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
++    let mut stats = wrk.command("stats");
++    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
++    wrk.assert_success(&mut stats);
++
++    let mut cmd = wrk.command("scoresql");
++    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
++    let got = wrk.output(&mut cmd);
++    let parsed: serde_json::Value =
++        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
++    assert_eq!(
++        parsed["cache_status"]["stats_available"],
++        serde_json::json!(["data"]),
++        "{parsed}"
++    );
++}
++
++// A later stats run without --stats-jsonl rewrites the sidecar but leaves the `'`-quoted JSONL,
++// which that sidecar no longer describes
++#[test]
++fn scoresql_regenerates_a_jsonl_older_than_its_sidecar() {
++    let wrk = Workdir::new("scoresql_regenerates_a_jsonl_older_than_its_sidecar");
++    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
++    let mut stats = wrk.command("stats");
++    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
++    wrk.assert_success(&mut stats);
++    let mut restats = wrk.command("stats");
++    restats.args(["--cache-threshold", "1", "data.csv"]);
++    wrk.assert_success(&mut restats);
++
++    let mut cmd = wrk.command("scoresql");
++    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
++    let got = wrk.output(&mut cmd);
++    let parsed: serde_json::Value =
++        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
++    assert_eq!(
++        parsed["cache_status"]["stats_available"],
++        serde_json::json!(["data"]),
++        "{parsed}"
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
 - **PR #5104** (2026-11-24): feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (@jqnatividad)
 - **PR #5103** (2026-11-23): fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (@jqnatividad)
 - **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
 - **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
 - **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
-- **PR #5099** (2026-11-23): build(deps): bump datasketches from 0.6.0 to 0.7.0 (@dependabot[bot])
 
 ---
 
@@ -2678,36 +2730,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. validate,stats): add --quote, --escape and --no-quoting
+## X. moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-stats.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24d967b5`: validate,stats): add --quote, --escape and --no-quoting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0980efc`: moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-stats.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      {
-        "flag": "--escape",
-        "type": "string",
-        "description": "The escape character for READING CSV data, for data that escapes quotes as \\\" instead of \"\". When not set, quotes are escaped by doubling them."
-      },
-        "description": "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin and for non-default quoting) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file).
+- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators. When modes are computed (with --mode or with the everything option) and no mode cardinality cap is set, approx cardinality is NOT auto-enabled: the exact mode table is kept either way, so it would save nothing. A ww
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24d967b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0980efc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

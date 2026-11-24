@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T05:28:26.811Z",
-  "total_cycles_completed": 11981,
-  "total_learnings_persisted": 11981,
-  "total_rules_promoted": 11061,
+  "last_updated": "2026-11-24T05:42:43.199Z",
+  "total_cycles_completed": 11983,
+  "total_learnings_persisted": 11983,
+  "total_rules_promoted": 11063,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:20:35.431Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:20:42.927Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:20:46.109Z",
       "repository": "envoyproxy/envoy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T05:28:26.811Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T05:42:36.636Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T05:42:43.199Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

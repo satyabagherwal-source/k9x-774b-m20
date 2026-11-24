@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T05:28:30.539Z",
-    "lastVerified": "2026-11-24T05:28:30.539Z",
+    "lastChecked": "2026-11-24T05:42:46.737Z",
+    "lastVerified": "2026-11-24T05:42:46.737Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -181,22 +181,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T04:45:18.136Z",
-    "lastVerified": "2026-11-24T04:45:18.136Z",
+    "lastChecked": "2026-11-24T05:42:41.834Z",
+    "lastVerified": "2026-11-24T05:42:41.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
+    "contentHash": "7ef2064016667c6da19c1e0db78ba3c27c46b4f21d3040cb0afaed09e8e7c8e6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "24d967b5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -354,8 +353,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T00:49:03.774Z",
-    "lastVerified": "2026-11-24T00:49:03.774Z",
+    "lastChecked": "2026-11-24T05:42:33.312Z",
+    "lastVerified": "2026-11-24T05:42:33.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -430,9 +429,9 @@
   "enaqx-awesome-react": {
     "name": "awesome-react",
     "officialUrl": "https://github.com/enaqx/awesome-react",
-    "lastChecked": "2026-11-21T10:37:34.157Z",
+    "lastChecked": "2026-11-24T05:42:28.321Z",
     "revisionIdentifier": "e6fd973e",
-    "lastVerified": "2026-11-21T10:37:34.157Z"
+    "lastVerified": "2026-11-24T05:42:28.321Z"
   },
   "nginx-kubernetes-ingress": {
     "name": "nginx/kubernetes-ingress",
@@ -1869,8 +1868,8 @@
     "officialUrl": "https://github.com/watchexec/watchexec",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T21:56:52.615Z",
-    "lastVerified": "2026-11-22T21:56:52.615Z",
+    "lastChecked": "2026-11-24T05:42:23.317Z",
+    "lastVerified": "2026-11-24T05:42:23.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-watchexec-watchexec",
@@ -3146,9 +3145,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-23T06:37:40.338Z",
+    "lastChecked": "2026-11-24T05:42:35.837Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-23T06:37:40.338Z"
+    "lastVerified": "2026-11-24T05:42:35.837Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -5004,22 +5003,21 @@
     "lastVerified": "2026-11-22T02:40:08.699Z"
   },
   "pulumi-pulumi": {
-    "name": "pulumi",
+    "name": "pulumi/pulumi",
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T07:36:48.019Z",
-    "lastVerified": "2026-11-23T07:36:48.019Z",
+    "lastChecked": "2026-11-24T05:42:35.528Z",
+    "lastVerified": "2026-11-24T05:42:35.528Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
+    "contentHash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5efdf449"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tako8ki-gobang": {
     "name": "gobang",
@@ -9601,9 +9599,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-11-20T01:42:01.735Z",
+    "lastChecked": "2026-11-24T05:42:25.839Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-11-20T01:42:01.735Z"
+    "lastVerified": "2026-11-24T05:42:25.839Z"
   },
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "24d967b5",
+    "sourceVersion": "f0980efc",
     "license": "NOASSERTION",
-    "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
-    "lastHarvestedAt": "2026-11-24T00:40:16.265Z",
+    "contentHash": "7ef2064016667c6da19c1e0db78ba3c27c46b4f21d3040cb0afaed09e8e7c8e6",
+    "lastHarvestedAt": "2026-11-24T05:42:43.192Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "5efdf449",
+    "sourceVersion": "9968d91c",
     "license": "Apache-2.0",
-    "contentHash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
-    "lastHarvestedAt": "2026-11-22T06:27:34.551Z",
+    "contentHash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
+    "lastHarvestedAt": "2026-11-24T05:42:36.630Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

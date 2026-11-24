@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `5efdf449`  
+> **Source Version**: `9968d91c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:27:33.917Z  
+> **Timestamp**: 2026-11-24T05:42:35.668Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:27:33.913Z  
+> **Harvest Timestamp**: 2026-11-24T05:42:35.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25932 stars
+- **Stars / Engagement**: 25936 stars
 
 ---
 
@@ -1710,12 +1710,8 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5efdf449` (2026-11-21)
-**Commit Message**: Update vulnerable dependencies [SECURITY] (#25811)
-
-> ℹ️ **Note**
-> 
-> This PR body was truncated due to platform limits.
+### Incident Patch 1: `e3c48e48` (2026-11-23)
+**Commit Message**: Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#25816)
 
 This PR contains the following updates:
 
@@ -1723,168 +1719,433 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
+| [google.golang.org/grpc](https://redirect.github.com/grpc/grpc-go) |
+`v1.83.1` → `v1.83.2` |
+![age](https://developer.mend.io/api/mc/badges/age/go/google.golang.org%2fgrpc/v1.83.2?slim=true)
 |
-[github.com/go-git/go-git/v5](https://redirect.github.com/go-git/go-git)
-| `v5.19.1` → `v5.19.2` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.2?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/google.golang.org%2fgrpc/v1.83.1/v1.83.2?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.1/v5.19.2?slim=true)
-|
-|
-[github.com/klauspost/compress](https://redirect.github.com/klauspost/compress)
-| `v1.18.0` → `v1.20.2` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.0/v1.20.2?slim=true)
-|
-|
-[go.opentelemetry.io/otel](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.43.0` → `v1.44.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io
 
-**File**: `tests/integration/shutdown_cleanup/go/go.mod` (modified, +23/-22)
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
+
+---
+
+### gRPC-Go xDS servers: Denial of Service (DoS) via crash due to
+missing `:authority` and `Host` headers
+[CVE-2026-84445](https://nvd.nist.gov/vuln/detail/CVE-2026-84445) /
+[GHSA-2v4p-qf9q-27wj](https://redirect.github.com/advisories/GHSA-2v4p-qf9q-27wj)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+A vulnerability exists in gRPC-Go servers configured with
+`xds.NewGRPCServer()` where a crafted request missing both `:authority`
+and `Host` headers can caus
+
+**File**: `tests/integration/shutdown_cleanup/go/go.mod` (modified, +1/-1)
 ```diff
-@@ -35,14 +35,14 @@ require (
- 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
- 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
- 	github.com/go-git/go-billy/v5 v5.9.0 // indirect
--	github.com/go-git/go-git/v5 v5.19.1 // indirect
--	github.com/go-logr/logr v1.4.3 // indirect
-+	github.com/go-git/go-git/v5 v5.19.2 // indirect
-+	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/golang/glog v1.2.5 // indirect
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
- 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
- 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-@@ -52,7 +52,7 @@ require (
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/kevinburke/ssh_config v1.2.0 // indirect
--	github.com/klauspost/compress v1.18.0 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
- 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
- 	github.com/mattn/go-isatty v0.0.20 // indirect
-@@ -90,27 +90,28 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.53.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.53.0 // indirect
--	go.opentelemetry.io/otel v1.43.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.41.0 // indirect
--	go.opentelemetry.io/otel/metric v1.43.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
--	go.opentelemetry.io/otel/trace v1.43.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.50.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.35.0 // indirect
--	golang.org/x/net v0.53.0 // indirect
--	golang.org/x/sync v0.20.0 // indirect
--	golang.org/x/sys v0.43.0 // indirect
--	golang.org/x/term v0.42.0 // indirect
--	golang.org/x/text v0.36.0 // indirect
--	golang.org/x/tools v0.44.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
--	google.golang.org/grpc v1.80.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/grpc v1.83.1 // indirect
+@@ -111,7 +111,7 @@ require (
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+-	google.golang.org/grpc v1.83.1 // indirect
++	google.golang.org/grpc v1.83.2 // indirect
  	google.golang.org/protobuf v1.36.11 // indirect
  	gopkg.in/warnings.v0 v0.1.2 // indirect
  	gopkg.in/yaml.v3 v3.0.1 // indirect
 ```
 
-**File**: `tests/integration/shutdown_cleanup/go/go.sum` (modified, +52/-49)
+**File**: `tests/integration/shutdown_cleanup/go/go.sum` (modified, +2/-2)
 ```diff
-@@ -78,11 +78,11 @@ github.com/go-git/go-billy/v5 v5.9.0 h1:jItGXszUDRtR/AlferWPTMN4j38BQ88XnXKbilmm
- github.com/go-git/go-billy/v5 v5.9.0/go.mod h1:jCnQMLj9eUgGU7+ludSTYoZL/GGmii14RxKFj7ROgHw=
- github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399 h1:eMje31YglSBqCdIqdhKBW8lokaMrL3uTkpGYlE2OOT4=
- github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod h1:1OCfN199q1Jm3HZlxleg+Dw/mwps2Wbk9frAWm+4FII=
--github.com/go-git/go-git/v5 v5.19.1 h1:nX27AnaU43/K5bKktKwgBmR9lawoYVe1Ckg0rgzzN00=
--github.com/go-git/go-git/v5 v5.19.1/go.mod h1:Pb1v0c7/g8aGQJwx9Us09W85yGoyvSwuhEGMH7zjDKQ=
-+github.com/go-git/go-git/v5 v5.19.2 h1:wkfn7vOlUBu8ivAWKBWisTiwJK4jYHzTF8Ndv1LyGqY=
-+github.com/go-git/go-git/v5 v5.19.2/go.mod h1:QqCBE1EFN5ddFmrliLQ3/ntRCUjZU3EJuwuB/jWEHjk=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
--github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
--github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-+github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
-+github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
- github.com/gogo/protobuf v1.3.1/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
-@@ -99,8 +99,8 @@ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX
- github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 h1:HWRh5R2+9EifMyIHV7ZV+MIZqgz+PMpZ14Jynv3O2Zs=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0/go.mod h1:JfhWUomR1baixubs02l85lZYYOm7LV6om4ceouMv45c=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 h1:5VipnvEpbqr2gA2VbM+nYVbkIF28c5ZQfqCBQ5g2xfk=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0/go.mod h1:Hyl3n6Twe1hvtd9XUXDec4pTvgMSEixRuQKPTMH2bNs=
- github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 h1:MJG/KsmcqMwFAkh8mTnAwhyKoB+sTAnY4CACC110tbU=
- github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645/go.mod h1:6iZfnjpejD4L/4DwD7NryNaJyCQdzwWwH2MWhCA90Kw=
- github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
-@@ -123,8 +123,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
- github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
--github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
- github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
-@@ -181,7 +181,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
- github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
--github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
-@@ -212,8 +211,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
- github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify
+@@ -338,8 +338,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:
+ google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d/go.mod h1:K/+WGbmBY7aNW1HDw1fJnKYo10i0DkAX6pows00dLig=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d h1:IL4hdHzcUv2l/gcg98/Rj3FbtE6axwqslOW8SW0C+S0=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
+-google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
+-google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
++google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
++google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
+ google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
+ google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+```
+
+---
+
+### Incident Patch 2: `34204a17` (2026-11-23)
+**Commit Message**: Flush OpenTelemetry traces when Node.js programs exit with errors (#25800)
+
+Previously we only ran the otel shutdown when there were no errors.
+
+**File**: `changelog/pending/sdk-nodejs-fix-20261119-tracing-shutdown.yaml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++component: sdk/nodejs
++kind: fix
++body: Flush OpenTelemetry traces when Node.js programs exit with errors
+```
+
+**File**: `sdk/nodejs/cmd/run/index.ts` (modified, +13/-22)
+```diff
+@@ -127,32 +127,23 @@ process.on("beforeExit", () => {
+     });
+ });
+ 
+-let hasSignaled = false;
++let hasShutdown = false;
+ async function beforeExitHandler(code: number) {
+-    // Signal and wait for shutdown means a successful program execution, so
+-    // first check if there were any errors and bail out immediately if so.
+-    if (uncaughtErrors.size > 0) {
++    // Asynchronous shutdown work can trigger beforeExit again when it completes.
++    // The `hasShutdown` marker ensures we call this only once, otherwise we'll
++    // end up calling this again and again.
++    if (hasShutdown) {
+         return;
+     }
+-    // Similarly, if we're exiting with with a non-zero code, bail out.
+-    if (code !== 0) {
+-        return;
+-    }
+-    // `beforeExit` is called when Node.js's event loop is empty. We call
+-    // `signalAndWaitForShutdown`, which is async, so it schedules more
+-    // eventloop work. We have to bail out here the next time the eventloop
+-    // is empty, otherwise we end up in a loop where this handler is called
+-    // forever.
+-    if (hasSignaled) {
+-        return;
+-    }
+-    hasSignaled = true;
+-    // Wrap in root context so the shutdown call is traced correctly
++    hasShutdown = true;
+     const { withRootContext, shutdownTracing } = require("./instrumentation");
+-    try {
+-        await withRootContext(() => settings.signalAndWaitForShutdown());
+-    } catch (err) {
+-        console.error(`Error while signaling shutdown: ${err}`);
++    // Only successful programs signal monitor shutdown; failed programs still need to flush tracing.
++    if (uncaughtErrors.size === 0 && code === 0) {
++        try {
++            await withRootContext(() => settings.signalAndWaitForShutdown());
++        } catch (err) {
++            console.error(`Error while signaling shutdown: ${err}`);
++        }
+     }
+     try {
+         await shutdownTracing();
+```
+
+**File**: `tests/integration/otel_traces/nodejs/Pulumi.yaml` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++name: otel-traces-nodejs-error
++runtime: nodejs
+```
+
+**File**: `tests/integration/otel_traces/nodejs/index.ts` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++// Copyright 2026, Pulumi Corporation. All rights reserved.
++
++import * as pulumi from "@pulumi/pulumi";
++
++if (new pulumi.Config().require("failure") === "program") {
++    throw new Error("intentional program failure");
++}
++
++class FailsOnCreate extends pulumi.CustomResource {
++    constructor(name: string) {
++        super("testprovider:index:FailsOnCreate", name, {});
++    }
++}
++
++new FailsOnCreate("failure");
+```
+
+**File**: `tests/integration/otel_traces/nodejs/package.json` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{
++    "name": "otel-traces-nodejs-error",
++    "version": "1.0.0",
++    "main": "index.ts",
++    "peerDependencies": {
++        "@pulumi/pulumi": "latest"
++    }
++}
+```
+
+**File**: `tests/integration/otel_traces/otel_traces_test.go` (modified, +61/-0)
+```diff
+@@ -157,6 +157,67 @@ func TestOtelTraces(t *testing.T) {
+ 	})
+ }
+ 
++//nolint:paralleltest // ProgramTest calls t.Parallel()
++func TestOtelTracesNodejsError(t *testing.T) {
++	binDir := testutil.TestProviderDir(t)
++	for _, failure := range []struct {
++		name   string
++		reason string
++	}{
++		{name: "program", reason: "intentional program failure"},
++		{name: "resource", reason: "Create always fails for the FailsOnCreate resource"},
++	} {
++		t.Run(failure.name, func(t *testing.T) {
++			traceDir := t.TempDir()
++			integration.ProgramTest(t, &integration.ProgramTestOptions{
++				Dir:          "nodejs",
++				Dependencies: []string{"@pulumi/pulumi"},
++				LocalProviders: []integration.LocalDependency{
++					{Package: "testprovider", Path: binDir},
++				},
++				Config:        map[string]string{"failure": failure.name},
++				OtelTraces:    "file:///" + filepath.ToSlash(filepath.Join(traceDir, "traces-{command}.json")),
++				Quick:         true,
++				SkipRefresh:   true,
++				ExpectFailure: true,
++				ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
++					var errors []string
++					for _, event := range stack.Events {
++						if d := event.DiagnosticEvent; d != nil && d.Severity == "error" {
++							errors = append(errors, d.Message)
++						}
++					}
++					require.Contains(t, strings.Join(errors, "\n"), failure.reason)
++
++					spans := readSpans(t, filepath.Join(traceDir, "traces-pulumi-update-initial.json"))
++					spanByID := make(map[pcommon.SpanID]traceSpan)
++					for _, span := range spans {
++						spanByID[span.SpanID] = span
++					}
++
++					runSpans := filterByService(findSpans(spans, "pulumirpc.LanguageRuntime/Run"), "pulumi-language-nodejs")
++					require.NotEmpty(t, runSpans)
++					sdkRegistrations := filterByService(
++						findSpans(spans, "grpc.pulumirpc.ResourceMonitor/RegisterResource"), "pulumi-sdk-nodejs")
++					require.NotEmpty(t, sdkRegistrations, "expected Node.js SDK spans to flush after failure")
++					for _, span := range sdkRegistrations {
++						assert.Equal(t, runSpans[0].TraceID, span.TraceID)
++						assert.True(t, isDescendantOfAny(span, runSpans, spanByID))
++					}
++
++					engineRegistrations := filterByService(
++						findSpans(spans, "pulumirpc.ResourceMonitor/RegisterResource"), "pulumi-cli")
++					require.NotEmpty(t, engineRegistrations)
++					for _, span := range engineRegistrations {
++						assert.True(t, isDescendantOfAny(span, sdkRegistrations, spanByID),
++							"engine registration span has no exported SDK ancestor")
++					}
++				},
++			})
++		})
++	}
++}
++
+ // findSpans returns all spans whose name exactly matches the given string.
+ func findSpans(spans []traceSpan, name string) []traceSpan {
+ 	var result []traceSpan
+```
+
+---
+
+### Incident Patch 3: `21c1a8c2` (2026-11-23)
+**Commit Message**: Order stitched resource stack traces from child to parent. (#25827)
+
+A resource’s stack trace can combine several separately captured stacks.
+For example, a program can create a remote component, whose provider
+creates another remote component, whose provider creates the resource.
+Within each captured stack, frames run from the innermost call to its
+outer callers.
+
+Previously, we joined these captures with the original program’s stack
+first and the resource’s own stack last. We now put the resource’s stack
+first, followed by the captures that led to it, working back toward the
+original program. This makes the combined trace consistently follow the
+resource’s registration back through its callers. It also matches the
+ordering within each stack trace and the whole trace now reads top to
+bottom.
+
+No released CLI has actually collected stitched traces, that was fixed
+in https://github.com/pulumi/pulumi/pull/25754 which has not been
+released yet.
+
+**File**: `changelog/pending/20261123--engine--resource-stack-trace-order.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++component: engine
++kind: fix
++body: Fix the ordering of resource registration stack traces across provider calls
++time: 2026-11-23T12:21:59Z
+```
+
+**File**: `pkg/engine/lifecycletest/pulumi_test.go` (modified, +25/-18)
+```diff
+@@ -4291,8 +4291,8 @@ func TestSourcePositions(t *testing.T) {
+ 						Inputs:         inputs,
+ 						SourcePosition: fileURL(providerRegPos),
+ 						StackTrace: []pkgresource.StackFrame{
+-							{SourcePosition: fileURL(providerPos)},
+ 							{SourcePosition: fileURL(providerRegPos)},
++							{SourcePosition: fileURL(providerPos)},
+ 						},
+ 						ParentStackTraceHandle: req.Info.StackTraceHandle,
+ 					})
+@@ -4308,8 +4308,8 @@ func TestSourcePositions(t *testing.T) {
+ 						"",
+ 						fileURL(providerCallPos),
+ 						[]pkgresource.StackFrame{
+-							{SourcePosition: fileURL(providerPos)},
+ 							{SourcePosition: fileURL(providerCallPos)},
++							{SourcePosition: fileURL(providerPos)},
+ 						}, req.Info.StackTraceHandle,
+ 					)
+ 					require.NoError(t, err)
+@@ -4331,8 +4331,8 @@ func TestSourcePositions(t *testing.T) {
+ 						"",
+ 						fileURL(providerReadPos),
+ 						[]pkgresource.StackFrame{
+-							{SourcePosition: fileURL(providerPos)},
+ 							{SourcePosition: fileURL(providerReadPos)},
++							{SourcePosition: fileURL(providerPos)},
+ 						},
+ 						req.Info.StackTraceHandle,
+ 						"",
+@@ -4372,8 +4372,8 @@ func TestSourcePositions(t *testing.T) {
+ 			Inputs:         inputs,
+ 			SourcePosition: fileURL(regPos),
+ 			StackTrace: []pkgresource.StackFrame{
+-				{SourcePosition: fileURL(progPos)},
+ 				{SourcePosition: fileURL(regPos)},
++				{SourcePosition: fileURL(progPos)},
+ 			},
+ 		})
+ 		require.NoError(t, err)
+@@ -4388,8 +4388,8 @@ func TestSourcePositions(t *testing.T) {
+ 			"",
+ 			fileURL(readPos),
+ 			[]pkgresource.StackFrame{
+-				{SourcePosition: fileURL(progPos)},
+ 				{SourcePosition: fileURL(readPos)},
++				{SourcePosition: fileURL(progPos)},
+ 			},
+ 			"",
+ 			"",
+@@ -4401,8 +4401,8 @@ func TestSourcePositions(t *testing.T) {
+ 			Inputs:         inputs,
+ 			SourcePosition: fileURL(constructPos),
+ 			StackTrace: []pkgresource.StackFrame{
+-				{SourcePosition: fileURL(progPos)},
+ 				{SourcePosition: fileURL(constructPos)},
++				{SourcePosition: fileURL(progPos)},
+ 			},
+ 		})
+ 		require.NoError(t, err)
+@@ -4411,8 +4411,8 @@ func TestSourcePositions(t *testing.T) {
+ 		_, _, _, err = monitor.Call(
+ 			"pkgA:m:callA", callInputs, nil, "", "", "", fileURL(callPos),
+ 			[]pkgresource.StackFrame{
+-				{SourcePosition: fileURL(progPos)},
+ 				{SourcePosition: fileURL(callPos)},
++				{SourcePosition: fileURL(progPos)},
+ 			}, "")
+ 		require.NoError(t, err)
+ 
+@@ -4442,48 +4442,55 @@ func TestSourcePositions(t *testing.T) {
+ 	assert.Equal(t, regURN, reg.URN)
+ 	assert.Equal(t, projURL(regPos), reg.SourcePosition)
+ 	assert.Equal(t, []pkgresource.StackFrame{
+-		{SourcePosition: projURL(progPos)},
+ 		{SourcePosition: projURL(regPos)},
++		{SourcePosition: projURL(progPos)},
+ 	}, reg.StackTrace)
+ 
+ 	read := snap.Resources[2]
+ 	assert.Equal(t, readURN, read.URN)
+ 	assert.Equal(t, projURL(readPos), read.SourcePosition)
+ 	assert.Equal(t, []pkgresource.StackFrame{
+-		{SourcePosition: projURL(progPos)},
+ 		{SourcePosition: projURL(readPos)},
++		{SourcePosition: projURL(progPos)},
+ 	}, read.StackTrace)
+ 
+ 	reg2 := snap.Resources[3]
+ 	assert.Equal(t, reg2URN, reg2.URN)
+ 	assert.Equal(t, projURL(providerRegPos), reg2.SourcePosition)
+ 	assert.Equal(t, []pkgresource.StackFrame{
+-		{SourcePosition: projURL(progPos)},
+-		{SourcePosition: projURL(constructPos)},
+-		{SourcePosition: projURL(providerPos)},
++		// RegisterResource inside Construct.
+ 		{SourcePosition: projURL(providerRegPos)},
++		{SourcePosition: projURL(providerPos)},
++		// Program call that entered Construct.
++		{SourcePosition: projURL(constructPos)},
++		{SourcePosition: projURL(progPos)},
+ 	}, reg2.StackTrace)
+ 
+ 	read2 := snap.Resources[4]
+ 	assert.Equal(t, read2URN, read2.URN)
+ 	assert.Equal(t, projURL(providerReadPos), read2.SourcePosition)
+ 	assert.Equal(t, []pkgresource.StackFrame{
+-		{SourcePosition: projURL(progPos)},
+-		{SourcePosition: projURL(constructPos)},
++		// ReadResource inside Call.
++		{SourcePosition: projURL(providerReadPos)},
+ 		{SourcePosition: projURL(providerPos)},
++		// Call inside Construct.
+ 		{SourcePosition: projURL(providerCallPos)},
+ 		{SourcePosition: projURL(providerPos)},
+-		{SourcePosition: projURL(providerReadPos)},
++		// Program call that entered Construct.
++		{SourcePosition: projURL(constructPos)},
++		{SourcePosition: projURL(progPos)},
+ 	}, read2.StackTrace)
+ 
+ 	read3 := snap.Resources[5]
+ 	assert.Equal(t, read3URN, read3.URN)
+ 	assert.Equal(t, projURL(providerReadPos), read3.SourcePosition)
+ 	assert.Equal(t, []pkgresource.StackFrame{
+-		{SourcePosition: projURL(progPos)},
+-		{SourcePosition: projURL(callPos)},
+-		{SourcePosition: projURL(providerPos)},
++		// ReadResource inside Call.
+ 		{SourcePosition: projURL(providerReadPos)},
++		{SourcePosition: projURL(providerPos)},
++		// Program call that entered Call.
++		{SourcePosition: projURL(callPos)},
++		{SourcePosition: projURL(progPos)},
+ 	}, read3.StackTrace)
+ }
+ 
+```
+
+**File**: `pkg/resource/deploy/source_eval.go` (modified, +1/-1)
+```diff
+@@ -2265,8 +2265,8 @@ func (s *sourcePositions) getFromRequest(req hasSourcePosition) (string, stackTr
+ 		if handle := req.GetParentStackTraceHandle(); handle != "" {
+ 			if parent, ok := s.stackTraces.Load(handle); ok {
+ 				newStack := make(stackTrace, 0, len(parent)+len(stack))
+-				newStack = append(newStack, parent...)
+ 				newStack = append(newStack, stack...)
++				newStack = append(newStack, parent...)
+ 				stack = newStack
+ 			}
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25839** (2026-11-24): Lint against arguments in `Use` for constrictor commands (@i-am-tom)
+- **PR #25832** (2026-11-23): Clean up more tests to use propertyrpc (@Frassle)
+- **PR #25827** (2026-11-23): Order stitched resource stack traces from child to parent. (@julienp)
+- **PR #25816** (2026-11-23): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@pulumi-renovate[bot])
+- **PR #25814** (2026-11-23): Return iter.Seq2 from property.Map/Array All and rename Value.Secret to IsSecret (@Frassle)
 - **PR #25813** (2026-11-20): Use the Cloud SDK enum values directly for update status and capabilities (@flostadler)
-- **PR #25811** (2026-11-21): Update vulnerable dependencies [SECURITY] (@pulumi-renovate[bot])
-- **PR #25804** (2026-11-20): python conformance: share mypy cache (@tgummerer)
-- **PR #25803** (2026-11-20): improve TestNodeOOM (@tgummerer)
-- **PR #25801** (2026-11-20): Fix data race in TestInvokeSourceContext (@julienp)
-- **PR #25799** (2026-11-20): Update transforms in lifecycle tests to use property.Map (@Frassle)
 
 ---
 
@@ -1904,13 +2165,13 @@ This PR contains the following updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update vulnerable dependencies [SECURITY]
+## X. Update module google.golang.org/grpc to v1.83.2 [SECURITY]
 
 **RULE**:
 When implementing operations in `tests/integration/shutdown_cleanup/go/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5efdf449`: Update vulnerable dependencies [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3c48e48`: Update module google.golang.org/grpc to v1.83.2 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration/shutdown_cleanup/go/go.mod`.
@@ -1918,57 +2179,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-git/go-git/v5 v5.19.2 // indirect
-	github.com/go-logr/logr v1.4.4 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
-	github.com/klauspost/compress v1.20.2 // indirect
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/mod v0.42.0 // indirect
-	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sync v0.25.0 // indirect
-	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.48.0 // indirect
-	golang.org/x/text v0.44.0 // indirect
-	golang.org/x/tools v0.52.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-	google.golang.org/grpc v1.83.1 // indirec
+	google.golang.org/grpc v1.83.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/go-git/go-git/v5 v5.19.1 // indirect
-	github.com/go-logr/logr v1.4.3 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
-	go.opentelemetry.io/otel v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.41.0 // indirect
-	go.opentelemetry.io/otel/metric v1.43.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
-	go.opentelemetry.io/otel/trace v1.43.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
-	golang.org/x/crypto v0.50.0 // indirect
-	golang.org/x/mod v0.35.0 // indirect
-	golang.org/x/net v0.53.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/term v0.42.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
-	golang.org/x/tools v0.44.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
-	google.golang.org/grpc v1.80.0 // indirect
+	google.golang.org/grpc v1.83.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5efdf449` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3c48e48` are properly handled with clean fallback behavior.

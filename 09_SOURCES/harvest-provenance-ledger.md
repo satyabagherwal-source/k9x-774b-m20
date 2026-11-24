@@ -12635,3 +12635,5 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `e5411198` | Multi-dimensional audit evidence | 2026-11-24T05:28:19.683Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `a7b0d649` | Multi-dimensional audit evidence | 2026-11-24T05:28:22.133Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `7ba0069e` | Multi-dimensional audit evidence | 2026-11-24T05:28:26.804Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9968d91c` | Multi-dimensional audit evidence | 2026-11-24T05:42:36.630Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f0980efc` | Multi-dimensional audit evidence | 2026-11-24T05:42:43.192Z |

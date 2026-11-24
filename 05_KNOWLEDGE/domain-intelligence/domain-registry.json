@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T05:28:34.124Z",
+  "last_updated": "2026-11-24T05:42:51.598Z",
   "total_records": 2496,
   "domains": {
     "A": {
@@ -9229,8 +9229,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "928caaedaa2e31cc0f33da2af4f17efb022caaf6a95747139248d18c465de775",
-      "created_at": "2026-11-24T04:54:36.197Z"
+      "content_hash": "4799f41bb25c547a7aae14b1665fa5b071ebc2edb72ebb79bab48560828f98c9",
+      "created_at": "2026-11-24T05:42:51.598Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12553,8 +12553,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "d787e5571aff39b333654d692de33d9c236795e4ac817b5e90a1d33776402cda",
-      "created_at": "2026-11-24T00:40:16.674Z"
+      "content_hash": "02f2ed53730d44441bf9a8c2d0f03462676f2bbf8e37ad88f247949a81c306fe",
+      "created_at": "2026-11-24T05:42:43.769Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12622,8 +12622,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "511c2a107d4df9dbac00a47f24fc632554432ca18f7ac13209217e2728cb2eff",
-      "created_at": "2026-11-22T16:29:45.005Z"
+      "content_hash": "54be12d1d4bebab08e02a8cb2f76b86c2a3afe900e7565b3a4526062e0b98a27",
+      "created_at": "2026-11-24T05:42:50.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -17903,8 +17903,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "bba026ec9dfe2dee3817d97e58e4e30f77f444dfad93adbd96e448c8ae12b8cb",
-      "created_at": "2026-11-22T06:27:34.918Z"
+      "content_hash": "186c26200d419ce37c3a4e5d69dcc75fc23d29441767b9466270b0dabcd9ab74",
+      "created_at": "2026-11-24T05:42:37.248Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -17972,8 +17972,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "8939814ae00db20420cdfb5040e0384ae3e3369e0f8ec6414d782248bb323bb0",
-      "created_at": "2026-11-22T06:27:39.155Z"
+      "content_hash": "73a1e712e71d84d11efad8415ad394854c7fe07754d0cf56542bb815d3fb1a48",
+      "created_at": "2026-11-24T05:42:48.468Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",

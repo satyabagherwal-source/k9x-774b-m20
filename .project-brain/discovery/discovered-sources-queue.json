@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T05:28:31.126Z",
+  "updated_at": "2026-11-24T05:42:49.878Z",
   "stats": {
-    "total_discovered": 8384,
-    "approved_pending_harvest": 7945,
+    "total_discovered": 8396,
+    "approved_pending_harvest": 7957,
     "harvested_count": 0,
     "rejected_count": 439,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7932,
+      "COMMUNITY_AND_EXPERT": 7943,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 45,
+      "SECURITY_ADVISORIES": 46,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -181398,6 +181398,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
         "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-7F6DC1D76AD9": {
+      "id": "SRC-7F6DC1D76AD9",
+      "url": "https://redirect.github.com/grpc/grpc-go",
+      "title": "https://redirect.github.com/grpc/grpc-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-64193CAFC460": {
+      "id": "SRC-64193CAFC460",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/google.golang.org%2fgrpc/v1.83.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/google.golang.org%2fgrpc/v1.83.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-1CF46A2D532A": {
+      "id": "SRC-1CF46A2D532A",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/google.golang.org%2fgrpc/v1.83.1/v1.83.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/google.golang.org%2fgrpc/v1.83.1/v1.83.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.637Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-E89EDE3ABF47": {
+      "id": "SRC-E89EDE3ABF47",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84445",
+      "title": "https://nvd.nist.gov/vuln/detail/CVE-2026-84445",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-366E6E8474BD": {
+      "id": "SRC-366E6E8474BD",
+      "url": "https://redirect.github.com/advisories/GHSA-2v4p-qf9q-27wj",
+      "title": "https://redirect.github.com/advisories/GHSA-2v4p-qf9q-27wj",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-53429BFF8E8E": {
+      "id": "SRC-53429BFF8E8E",
+      "url": "https://github.com/pulumi/pulumi/pull/25754",
+      "title": "https://github.com/pulumi/pulumi/pull/25754",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:47.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-B04BEC99E4E2": {
+      "id": "SRC-B04BEC99E4E2",
+      "url": "https://github.com/dathere/qsv/issues/5105",
+      "title": "https://github.com/dathere/qsv/issues/5105",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-695111C51064": {
+      "id": "SRC-695111C51064",
+      "url": "https://github.com/dathere/qsv/pull/5106",
+      "title": "https://github.com/dathere/qsv/pull/5106",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-8F6BEC779006": {
+      "id": "SRC-8F6BEC779006",
+      "url": "https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b",
+      "title": "https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-17D67CD4E604": {
+      "id": "SRC-17D67CD4E604",
+      "url": "https://github.com/jrothbaum/polars_readstat/pull/72",
+      "title": "https://github.com/jrothbaum/polars_readstat/pull/72",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-2FAF6BEA8786": {
+      "id": "SRC-2FAF6BEA8786",
+      "url": "https://github.com/dathere/qsv/issues/5094",
+      "title": "https://github.com/dathere/qsv/issues/5094",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-08B7F7C4A9F6": {
+      "id": "SRC-08B7F7C4A9F6",
+      "url": "https://github.com/dathere/qsv/pull/5103",
+      "title": "https://github.com/dathere/qsv/pull/5103",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T05:42:49.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

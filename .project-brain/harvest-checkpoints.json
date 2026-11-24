@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T05:28:26.824Z",
+  "last_updated": "2026-11-24T05:42:43.212Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
-      "verified_at": "2026-11-24T00:40:16.273Z",
+      "content_hash": "7ef2064016667c6da19c1e0db78ba3c27c46b4f21d3040cb0afaed09e8e7c8e6",
+      "verified_at": "2026-11-24T05:42:43.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:40:16.273Z"
+      "last_updated": "2026-11-24T05:42:43.211Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
-      "verified_at": "2026-11-22T06:27:34.559Z",
+      "content_hash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
+      "verified_at": "2026-11-24T05:42:36.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:27:34.559Z"
+      "last_updated": "2026-11-24T05:42:36.647Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

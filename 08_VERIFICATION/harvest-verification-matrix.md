@@ -12602,3 +12602,5 @@
 | `CYCLE-20261124-7KDB` | `2026-11-24T05:28:19.679Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10209` | Yes (`7d50a6a7...`) |
 | `CYCLE-20261124-7M9C` | `2026-11-24T05:28:22.128Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10210` | Yes (`46dcc452...`) |
 | `CYCLE-20261124-7PV3` | `2026-11-24T05:28:26.799Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10211` | Yes (`8fffd0eb...`) |
+| `CYCLE-20261124-PXLA` | `2026-11-24T05:42:36.622Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1863` | Yes (`ab1059c4...`) |
+| `CYCLE-20261124-Q2NN` | `2026-11-24T05:42:43.187Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10212` | Yes (`7ef20640...`) |
