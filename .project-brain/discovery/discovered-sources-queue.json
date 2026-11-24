@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T20:12:59.601Z",
+  "updated_at": "2026-11-24T20:30:10.613Z",
   "stats": {
-    "total_discovered": 8899,
-    "approved_pending_harvest": 8424,
+    "total_discovered": 8903,
+    "approved_pending_harvest": 8427,
     "harvested_count": 0,
-    "rejected_count": 475,
+    "rejected_count": 476,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8419,
+      "COMMUNITY_AND_EXPERT": 8422,
       "OFFICIAL_DOCUMENTATION": 270,
-      "STANDARDS_AND_SPECIFICATIONS": 146,
+      "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 46,
       "LEGAL_AND_REGULATORY": 2,
@@ -192480,6 +192480,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-AD55C846E8DA": {
+      "id": "SRC-AD55C846E8DA",
+      "url": "http://www.w3.org/TR/sparql11-update",
+      "title": "http://www.w3.org/TR/sparql11-update",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-24T20:30:08.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-A5EC13631EC2": {
+      "id": "SRC-A5EC13631EC2",
+      "url": "https://gist.github.com/myot233/209141f8950bb1e256ebccf8a993a7de",
+      "title": "https://gist.github.com/myot233/209141f8950bb1e256ebccf8a993a7de",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:30:09.695Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+        "fileName": "open-ani-animeko-learnings.md"
+      }
+    },
+    "SRC-73939564AE74": {
+      "id": "SRC-73939564AE74",
+      "url": "https://gist.github.com/myot233/9b6f38665974b79a98cc1b845efb5f10",
+      "title": "https://gist.github.com/myot233/9b6f38665974b79a98cc1b845efb5f10",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:30:09.743Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+        "fileName": "open-ani-animeko-learnings.md"
+      }
+    },
+    "SRC-15EFFF3E98DD": {
+      "id": "SRC-15EFFF3E98DD",
+      "url": "https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/$%7BGRPC_HEALTH_PROBE_VERSION",
+      "title": "https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/$%7BGRPC_HEALTH_PROBE_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:30:10.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
       }
     }
   }

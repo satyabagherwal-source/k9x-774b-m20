@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:32:57.425Z",
+  "timestamp": "2026-11-24T20:30:09.884Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-open-ani-animeko-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-ani-animeko-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:32:57.425Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T20:30:09.884Z`  
 > **Learning ID**: `LEARN-EVO-open-ani-animeko-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), E (Creative Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-ani-animeko-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source**: github ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
-> **Source Version**: `c9064896`  
+> **Source Version**: `da675ddc`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:32:40.467Z  
+> **Timestamp**: 2026-11-24T20:29:53.792Z  
 > **Learning ID**: `learn-github-open-ani-animeko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:32:40.458Z  
+> **Harvest Timestamp**: 2026-11-24T20:29:53.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Multiplatform
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 21856 stars
+- **Stars / Engagement**: 22061 stars
 
 ---
 
@@ -1059,11 +1059,16 @@ class EpisodeFetchSelectPlayState(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3719** (2026-11-15): **perf(tv): stabilize details backdrop blur kernel**
-  *Symptoms*: ## Summary - Use one decoded backdrop image and a fixed 48dp native Gaussian-blur layer, blended by scroll progress. - Read continuous opacity/dim state during graphics-layer and drawing updates; composition observes only blur-layer visibility. - Cache the horizontal/vertical masks in one draw layer; preserve content mounting, scroll positions, action geometry and focus behavior. - Independent branch from `main`; no navigation #3712, paging-cache or progress-layer changes.  ## Actual-TV evidence The isolated, warmed **production backdrop component** shows a large reduction in long frames. This does **not** establish whole-app 60fps or retail details-page latency.  Device: TCL Smart TV Pro, Android 14/API 34, 32-bit Cortex-A55/Mali-G52, 2 GB RAM. Original 1920×1080 override and density 320 retained; governor/animation scales unchanged. Both paths run in the same non-debuggable instrumentation APK with actual ART `speed` verified from Dexopt metadata. Not an R8 retail APK.  One shared decoded local JPEG, identical crop/bias, viewport, endpoint radius, masks and dim formula. Baseline is the exact original `TvDetailsBackdrop` with a namespace-only rename; candidate calls the production function. Real-clock progress alternates 0→1→0, 450ms per transition plus settling. No network, video decode, cards or unrelated foreground UI in this component scene.  Eight balanced ABBAABBA windows after warming both paths; four measured transitions/window, **16 per implementation**. Table value
+- **Issue #3725** (2026-11-23): **订阅没有删除按钮**
+  *Symptoms*: ### 问题描述  我是新手所以在尝试一些设置，我加了两个没用的订阅 现在这两条一直显示着又没用纯难受  ### 复现步骤  _No response_  ### Ani 版本号  6.4.1  ### 操作系统  Windows  ### 应用日志  ...
+  **Post-Mortem & Fix Analysis**:
+  > 我找到了
 
-- **Issue #3718** (2026-11-15): **perf(tv): isolate watching progress drawing**
-  *Symptoms*: ## Summary - Add independent layer boundaries around the watched-progress fill and the exploration backdrop captured by action buttons. - Keep geometry, clipping, particles, lifecycle gating, focus/navigation and visual loading behavior unchanged. - Independent branch from `main`; no paging-cache, details-blur or navigation #3712 changes.  ## Measurement conclusion — Draft **No meaningful performance gain was observed.** CPU rises about 0.33%, allocation and frame P95 are effectively unchanged. Keeping this Draft to expose the neutral result; there is no evidence here that these additional layers justify their maintenance or rendering cost.  ## Actual-TV A/B TCL Smart TV Pro, Android 14/API 34, 32-bit Cortex-A55/Mali-G52, 2 GB RAM. Original 1920×1080 override and density 320 retained. Baseline and candidate run in the same non-debuggable instrumentation APK, with on-device ART `speed` independently verified. Not an R8 retail APK.  The scene mounts actual production `HomeWatchingProgress` versus its exact namespaced baseline, with the same exploration backdrop, local bitmap, palette, masks, glow, 432dp content width, 3/12 watched and 8/12 aired. The complete scene subtree is remounted per mode. Only the two proposed graphics-layer boundaries vary. This is an idle drawing hot-path benchmark, not the full home screen or network/video playback.  Eight balanced ABBAABBA windows after warming both modes; six measured seconds/window, approximately **24 seconds per implementation**. 
+- **Issue #3721** (2026-11-23): **perf(tv): avoid unused home backdrop capture**
+  *Symptoms*: ## 优化点  主页 Hero 展开进度大于零、且详情操作未被实心聚焦状态覆盖时登记 Haze source。始终保留同一个 remembered `HazeState`；部分展开或非聚焦状态保留采样，完全透明或实心聚焦状态直接绘制背景。  **图片淡出进度不是操作离屏判据。** `scrollProgress` 的分母包含 `RowAnchorInset`，图片透明时操作仍可能部分可见；生产采样条件没有使用 `scrollProgress < 1`。不修改侧边栏 #3712、按键、动画、图片或毛玻璃视觉。#3722 在此之上优化背景合成。  ## 有效实测  TCL Smart TV Pro，API 34，32-bit Cortex-A55 / Mali-G52，2 GB RAM；沿用 1920×1080、320 dpi，不改动画倍率或 CPU 策略。  聚焦 Hero、同包实际 DPAD A/B：CPU **249.58→223.33 ms/次（−10.5%）**，Java 分配 +0.6%，帧 P95 **93.94→92.15 ms**，按帧中性处理。**不把省 CPU 包装成流畅度收益。**  [原始 CPU、内存、聚焦/失焦像素对照和复现源码](https://gist.github.com/myot233/209141f8950bb1e256ebccf8a993a7de)。  ## 已作废的推荐格结果  [完整实验记录](https://gist.github.com/myot233/9b6f38665974b79a98cc1b845efb5f10) 中使用 `scrollProgress < 1` 停止采集的推荐格结果（包括组合 P95 −17.8%）**不作为有效优化证据**：它未证明仍部分可见的操作保留正确采样。该条件已从本分支移除；保留原始数据用于审计，不把不完整绘制算作收益。正确条件下组合复测 P95 146.54→128.86 ms（−12.1%），含 #3722，不能归因于本 PR；纯左右选卡没有明显改善。  ## 验证与边界  - 此安全条件的正常生产 manifest / TV listener：5 个 host tests 通过，完整 `TvExplorationUiTest` **31 通过**。新增回归覆盖真实外部焦点、相同行为节点/边界恢复、快速反向和实际打开当前条目。 - TCL：聚焦→外部失焦→恢复，操作边界 `[116,776,335,856]`；全屏及 64 px 外扩操作区三种稳定状态像素完全一致，已检查原始画面。 - 同一 non-debuggable、自指向测试 APK 内 A/B，检查本地/安装 SHA 和 ART `speed`；实际 DPAD，预热 ABBA、测量 ABBAABBA，独立进程 PSS；回调丢失为 0。 - 温缓存两张真实图片的组件路径，不是 R8 零售整包、冷网络或 native 4K。回调数不是 FPS，绘制回调不是光子延迟。**本 PR 不声称解决卡片卡顿或保证不卡。**  Review：采集条件/稳定 Haze 身份→外部焦点回归→当前采样职责文档。性能开关和 Activity 均在仓库外，生产 manifest 保留原 TV listener；证据图片未提交仓库。  ## CI  当前 head `c882eb907` 的 GitHub checks 为空、合并状态 `BLOCKED`；此前 fork workflow 为 `action_required`，需要
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"7ca1cd54a2f232ddcab1530ac18151f41518f05d","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T15:17:28.904813Z">2026-11-15T15:17:28.904813Z</relative-time> | `7ca1cd5` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Commen
+  > @StageGuard need rereview
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1080,32 +1085,174 @@ class EpisodeFetchSelectPlayState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9064896` (2026-11-18)
-**Commit Message**: fix(desktop): 关闭 HotSpot Base64 intrinsic
+### Incident Patch 1: `da675ddc` (2026-11-23)
+**Commit Message**: perf(tv): avoid unused home backdrop capture (#3721)
 
-桌面端启动参数加上 -XX:-UseBASE64Intrinsics, 让 java.util.Base64 走纯 Java 实现.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `app/desktop/build.gradle.kts` (modified, +1/-0)
+**File**: `app/shared/ui-exploration/src/androidTv/kotlin/ui/exploration/TvExplorationScreen.kt` (modified, +8/-2)
 ```diff
-@@ -102,6 +102,7 @@ compose.desktop {
-             "-XX:+UseZGC",
-             "-XX:+ZGenerational",
-             "-XX:SoftMaxHeapSize=512m",
-+            "-XX:-UseBASE64Intrinsics",
-             "-Dorg.slf4j.simpleLogger.defaultLogLevel=TRACE",
-             "-Dsun.java2d.metal=true",
-             "-Djogamp.debug.JNILibLoader=true", // JCEF 加载 native 库的日志, 方便 debug
+@@ -319,6 +319,7 @@ private fun TvExplorationContent(
+         TvExplorationPageLayout(
+             viewportHeight = maxHeight, columnState = columnState, focus = focus,
+             navigationRailInsets = navigationRailInsets,
++            captureBackdrop = expandProgress > 0f && !(expanded && detailsFocused),
+             anchoredAtHero = { currentArea == TvExplorationArea.Featured || currentArea == TvExplorationArea.ContinueWatching },
+             focusedRow = { currentRows.firstOrNull { it.area == currentArea && it.indexOfSubject(currentSubjectId) >= 0 } },
+             measuredHeroHeight = { measuredHeroHeight },
+@@ -427,6 +428,7 @@ private fun TvExplorationPageLayout(
+     columnState: LazyListState,
+     focus: TvFocusScope,
+     navigationRailInsets: PaddingValues,
++    captureBackdrop: Boolean,
+     anchoredAtHero: () -> Boolean,
+     focusedRow: () -> TvExplorationRow?,
+     measuredHeroHeight: () -> Int,
+@@ -447,8 +449,12 @@ private fun TvExplorationPageLayout(
+             .background(TvExplorationDefaults.Background).tvFocusNavSignal(focus),
+     ) {
+         val actionBackdrop = rememberHazeState()
+-        backdrop(Modifier.fillMaxSize().hazeSource(actionBackdrop))
+-        CompositionLocalProvider(LocalBringIntoViewSpec provides scrollSpec, LocalTvDetailsActionBackdrop provides actionBackdrop) {
++        // Only a visible, non-opaque hero action needs to sample the backdrop.
++        backdrop(Modifier.fillMaxSize().then(if (captureBackdrop) Modifier.hazeSource(actionBackdrop) else Modifier))
++        CompositionLocalProvider(
++            LocalBringIntoViewSpec provides scrollSpec,
++            LocalTvDetailsActionBackdrop provides actionBackdrop.takeIf { captureBackdrop },
++        ) {
+             LazyColumn(
+                 Modifier.fillMaxSize().padding(navigationRailInsets).testTag("tv-exploration-scroll"),
+                 state = columnState, contentPadding = PaddingValues(bottom = viewportHeight),
+```
+
+**File**: `app/shared/ui-exploration/src/androidTvDeviceTest/kotlin/ui/exploration/TvExplorationUiTest.kt` (modified, +63/-0)
+```diff
+@@ -10,10 +10,12 @@ package me.him188.ani.tv.ui.exploration
+ 
+ import android.os.LocaleList
+ import androidx.compose.foundation.background
++import androidx.compose.foundation.focusable
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.PaddingValues
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
+ import androidx.compose.runtime.CompositionLocalProvider
+ import androidx.compose.runtime.DisposableEffect
+ import androidx.compose.runtime.getValue
+@@ -22,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.MotionDurationScale
++import androidx.compose.ui.focus.FocusRequester
++import androidx.compose.ui.focus.focusRequester
+ import androidx.compose.ui.geometry.Rect
+ import androidx.compose.ui.input.key.Key
+ import androidx.compose.ui.platform.LocalDensity
+@@ -34,6 +38,7 @@ import androidx.compose.ui.test.assert
+ import androidx.compose.ui.test.assertContentDescriptionEquals
+ import androidx.compose.ui.test.assertHeightIsEqualTo
+ import androidx.compose.ui.test.assertIsFocused
++import androidx.compose.ui.test.assertIsNotFocused
+ import androidx.compose.ui.test.assertIsSelected
+ import androidx.compose.ui.test.assertTextContains
+ import androidx.compose.ui.test.assertWidthIsEqualTo
+@@ -173,6 +178,7 @@ class TvExplorationUiTest {
+         poster: Boolean = true,
+         shellPadding: PaddingValues = PaddingValues(start = 48.dp),
+         navigationRailInsets: PaddingValues = PaddingValues(0.dp),
++        externalFocusRequester: FocusRequester? = null,
+     ) {
+         mainClock.autoAdvance = false
+         val context = InstrumentationRegistry.getInstrumentation().targetContext
+@@ -224,6 +230,12 @@ class TvExplorationUiTest {
+                                 )
+                             }
+                         }
++                        externalFocusRequester?.let { requester ->
++                            Box(
++                                Modifier.size(1.dp).testTag("tv-exploration-external-focus")
++                                    .focusRequester(requester).focusable(),
++                            )
++                        }
+                     }
+                 }
+             }
+@@ -513,6 +525,57 @@ class TvExplorationUiTest {
+         onNodeWithTag("tv-exploration-preview-airing").assert(hasAnyDescendant(hasText("连载", substring = true)))
+     }
+ 
++    @Test
++    fun expandedHeroKeepsItsActionThroughFocusChangesAndRapidCarousel() = runAniComposeUiTest {
++        val externalFocus = FocusRequester()
++        val intents = mutableListOf<TvExplorationIntent>()
++        mount(onIntent = { intents += it }, externalFocusRequester = externalFocus)
++        val focusTarget = onNodeWithTag("tv-exploration-details").fetchSemanticsNode()
++        val expandedHero = bounds("tv-exploration-hero")
++        fun assertExpandedWithoutFocus() {
++            onNodeWithTag("tv-exploration-external-focus").assertIsFocused()
++            onNodeWithTag("tv-exploration-details").assertIsNotFocused()
++            onNodeWithTag("tv-exploration").assert(
++                SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Featured"),
++            )
++            assertEquals(expandedHero, bounds("tv-exploration-hero"))
++        }
++        fun restoreDetailsFocus() {
++            onNodeWithTag("tv-exploration-details").performSemanticsAction(SemanticsActions.RequestFocus) { it() }
++            awaitFocus("tv-exploration-details")
++            settle(200)
++            assertEquals(focusTarget.id, onNodeWithTag("tv-exploration-details").fetchSemanticsNode().id)
++            assertEquals(focusTarget.boundsInRoot, bounds("tv-exploration-details"))
++        }
++
++        runOnIdle { externalFocus.requestFocus() }
++        settle(200)
++        assertExpandedWithoutFocus()
++        restoreDetailsFocus()
++
++        key(Key.DirectionRight)
++        settle(80)
++        key(Key.DirectionRight)
++        settle(80)
++        key(Key.DirectionLeft)
++        settle(100)
++        onNodeWithTag("tv-exploration-details").assertIsFocused()
++        onNodeWithTag("tv-exploration-dot-1").assertIsSelected()
++        settle(550)
++        onNodeWithTag("tv-exploration-featured-title").assertTextContains(titles[1])
++        assertEquals(focusTarget.id, onNodeWithTag("tv-exploration-details").fetchSemanticsNode().id)
++        assertEquals(focusTarget.boundsInRoot, bounds("tv-exploration-details"))
++        key(Key.DirectionCenter)
++        val opened = intents.filterIsInstance<TvExplorationIntent.OpenSubject>().single()
++        assertEquals(2, opened.subject.subjectId)
++        assertEquals(TvExplorationArea.Featured, opened.area)
++
++        runOnIdle { externalFocus.requestFocus() }
++        settle(200)
++        assertExpandedWithoutFocus()
++        restoreDet
+```
+
+**File**: `docs/contributing/code/android-tv-loading.md` (modified, +4/-0)
+```diff
+@@ -8,6 +8,10 @@ TV 加载占位使用 `TvPlaceholderBlock` 和 `Modifier.tvPlaceholder`，两者
+ 标题、文字或卡片骨架；已有条目刷新时继续显示原内容。上下键跳过正在加载的卡片行，
+ 其他模块完成加载时保留用户当前的焦点。
+ 
++主页操作的背景采样由可见性和焦点共同决定：Hero 展开进度大于零且存在未被实心聚焦状态覆盖的操作时，
++页面登记 Haze source，并向操作提供背景采样状态。Hero 完全透明，或展开区域的详情操作处于实心聚焦状态时，
++背景直接绘制。部分展开期间的非聚焦操作保留毛玻璃；焦点离开和返回时使用同一个 Haze 状态。
++
+ 详情页的开始观看、收藏状态和评分分别读取对应的加载状态。剧集列表的初始页面与部分加载
+ 状态共用 `tvDetailsEpisodePlaceholders`，卡片尺寸和间距与真实剧集一致。用户在剧集加载入口
+ 等待时，加载完成会把焦点交给第一集；用户已移到其他区域时不抢回焦点。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3721** (2026-11-23): perf(tv): avoid unused home backdrop capture (@myot233)
 - **PR #3719** (closed): perf(tv): stabilize details backdrop blur kernel (@myot233)
 - **PR #3718** (closed): perf(tv): isolate watching progress drawing (@myot233)
 - **PR #3717** (closed): perf(tv): cache exploration paging projections (@myot233)
 - **PR #3716** (2026-11-14): fix(subject): 人物详情的参与作品显示配音, 不再只有主题歌演出 (@Him188)
 - **PR #3714** (2026-11-14): fix(player): prevent iOS video enhancement menu crash (@openanibot)
-- **PR #3712** (2026-11-16): perf(tv): reduce navigation rail animation overhead (@myot233)
 
 ---
 
@@ -1125,31 +1272,39 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): 关闭 HotSpot Base64 intrinsic
+## X. tv): avoid unused home backdrop capture
 
 **RULE**:
-When implementing operations in `app/desktop/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/shared/ui-exploration/src/androidTv/kotlin/ui/exploration/TvExplorationScreen.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9064896`: desktop): 关闭 HotSpot Base64 intrinsic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da675ddc`: tv): avoid unused home backdrop capture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/desktop/build.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/ui-exploration/src/androidTv/kotlin/ui/exploration/TvExplorationScreen.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-            "-XX:-UseBASE64Intrinsics",
+            captureBackdrop = expandProgress > 0f && !(expanded && detailsFocused),
+    captureBackdrop: Boolean,
+        // Only a visible, non-opaque hero action needs to sample the backdrop.
+        backdrop(Modifier.fillMaxSize().then(if (captureBackdrop) Modifier.hazeSource(actionBackdrop) else Modifier))
+        CompositionLocalProvider(
+            LocalBringIntoViewSpec provides scrollSpec,
+            LocalTvDetailsActionBackdrop provides actionBackdrop.takeIf { captureBackdrop },
+        ) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        backdrop(Modifier.fillMaxSize().hazeSource(actionBackdrop))
+        CompositionLocalProvider(LocalBringIntoViewSpec provides scrollSpec, LocalTvDetailsActionBackdrop provides actionBackdrop) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9064896` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da675ddc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

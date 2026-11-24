@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T20:12:53.821Z",
+  "last_updated": "2026-11-24T20:30:04.925Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
-      "verified_at": "2026-11-24T14:24:20.385Z",
+      "content_hash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
+      "verified_at": "2026-11-24T20:30:04.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:24:20.385Z"
+      "last_updated": "2026-11-24T20:30:04.925Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "edefedb1733c2d33b402498b0cc0ce9b13299d9c33c02ed2da42d333b7d7cd13",
-      "verified_at": "2026-11-19T21:24:05.649Z",
+      "content_hash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
+      "verified_at": "2026-11-24T20:29:57.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T21:24:05.649Z"
+      "last_updated": "2026-11-24T20:29:57.060Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "c473607f6a796e1ac3213f19736f303a1089361a10dfcf0abd5fba566a025408",
-      "verified_at": "2026-11-19T01:32:41.720Z",
+      "content_hash": "f9f9f3ba570d58762cdd59c6f55e9bc143bbbf773c08f62bf876efe294269f75",
+      "verified_at": "2026-11-24T20:29:54.754Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:32:41.720Z"
+      "last_updated": "2026-11-24T20:29:54.754Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -14646,14 +14646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdflib-rdflib",
-      "content_hash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
-      "verified_at": "2026-11-20T21:25:45.189Z",
+      "content_hash": "940e4d27821801bc0a8c2746ae157be9fe022c7f06c0a53bebbb26871e3c71a5",
+      "verified_at": "2026-11-24T20:29:52.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:25:45.189Z"
+      "last_updated": "2026-11-24T20:29:52.671Z"
     },
     "KartikLabhshetwar/better-shot": {
       "repository": "KartikLabhshetwar/better-shot",

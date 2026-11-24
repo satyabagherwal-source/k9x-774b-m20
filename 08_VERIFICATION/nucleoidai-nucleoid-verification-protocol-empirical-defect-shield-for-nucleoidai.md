@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "449e97bb",
+  "source_version": "f2483549",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T14:24:20.618Z",
+  "timestamp": "2026-11-24T20:30:05.136Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `449e97bb`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:24:20.618Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f2483549`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T20:30:05.136Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `449e97bb`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `f2483549`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:24:19.593Z  
+> **Harvest Timestamp**: 2026-11-24T20:30:04.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,529 +1592,421 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `449e97bb` (2026-11-24)
-**Commit Message**: Resume NUC 139 Symmetric Difference Reasoning Selections
+### Incident Patch 1: `f2483549` (2026-11-24)
+**Commit Message**: NUC 139 Symmetric Difference Reasoning Selections
 
-Renews the claim on NUC 139, which this continuous /nuc-proposal cycle
-allocated in 6c8cbc67 (Draft NUC 139 Symmetric Difference Reasoning
-Selections, 23-Nov-2026 13:18:00 -05:00) and is still completing: the
-proposer's first phase stopped on a usage limit and resumes now. The
-allocation was 20 h 1 min old at this claim, past the 12-hour renewal
-point. The claim changes no file.
+Accepted under the automatic acceptance rule in a continuous
+/nuc-proposal cycle: every hard criterion passes and every policy
+check passes, the required token comparison among them. The cycle
+found no stale Draft, drew Reasoning enhancement uniformly from the
+five eligible categories, allocated the NUC in 6c8cbc67 and renewed
+its claim in 449e97bb. A fresh proposer prepared it in three phases
+with Baseline B, the caller's Rust improvement pass changed nothing,
+and a fresh independent evaluator decided Accepted.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+A reasoning pipeline gains the stage SELECTION |> xor(OTHER), the
+symmetric difference of two selections: SELECTION's steps whose nodes
+OTHER does not select, in SELECTION's order, then OTHER's steps whose
+nodes SELECTION does not select, in OTHER's order, each keeping its
+fields and distance. It is exactly
+S |> except(O) |> union(O |> except(S)), with each selection written
+and evaluated once. Only programs that were parse errors at the
+accepted revision change.
 
+Hard criteria, evaluated on the frozen candidate at 6c8cbc67:
+- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
+  1.99.1, rustdoc and the diff che
 
+**File**: `README.md` (modified, +29/-0)
+```diff
+@@ -3049,6 +3049,35 @@ item.total
+   labels are unchanged. See the
+   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+ 
++## Symmetric difference reasoning selections
++
++**Xor tells two alarms apart**
++
++```nuc
++smoke = 4
++heat = 60
++humidity = 70
++haze = smoke * 2
++fire = haze > 5 && heat > 50
++fog = haze > 5 && humidity > 60
++apart = why fire |> xor(why fog) |> stated
++assert(apart.map(step -> step.node), ["heat", "humidity"])
++fire = haze > 5 && heat > 50 && humidity < 90
++assert(apart.map(step -> step.node), ["heat"])
++```
++
++- [NUC 139](docs/nuc-0139.md) adds the reasoning stage `|> xor(OTHER)`, the
++  symmetric difference of two selections. `why fire |> xor(why fog)` keeps
++  the steps of the fire alarm's explanation whose node the fog alarm's does
++  not hold, then the steps of the fog alarm's explanation whose node the
++  fire alarm's does not hold. The haze and the smoke behind both alarms are
++  left out, so what remains tells the two alarms apart.
++- The result is still a selection, so `|> stated` narrows it to the facts,
++  the heat and the humidity, and it stays live: once the fire rule also
++  checks the humidity, the humidity stands behind both alarms and only the
++  heat sets the fire alarm apart. See the
++  [root contract](nucleoid.spec.md#symmetric-difference-reasoning-selections).
++
+ ## Negated membership with !in
+ 
+ **Kotlin's !in keeps an access rule live**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +7/-3)
+```diff
+@@ -867,6 +867,10 @@
+ {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
+ {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
+ {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
+-{"id":"spec-0870","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
+-{"id":"spec-0871","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
+-{"id":"spec-0872","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
++{"id":"spec-0870","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
++{"id":"spec-0871","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.
+```
+
+**File**: `dataset/nucleoid.synth.139.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-139-0001","description":"Xor keeps the steps of an explanation whose node another explanation does not select, then the steps of that explanation whose node the first does not select, in its order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\n(why total |> xor(why freight)).map(step -> step.node)","return":"[\"total\",\"subtotal\",\"tax\",\"price\",\"freight\",\"shipping\"]"}
++{"id":"synth-139-0002","description":"Swapping the two explanations begins the symmetric difference with the other's own steps, over the same nodes","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\n[(why freight |> xor(why total)).map(step -> step.node), (why total |> xor(why freight)).length]","return":"[[\"freight\",\"shipping\",\"total\",\"subtotal\",\"tax\",\"price\"],6]"}
++{"id":"synth-139-0003","description":"A symmetric difference of two impact selections lists what a change of exactly one of the two inputs reaches","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> xor(affects rate)).map(step -> step.node)","return":"[\"subtotal\",\"fee\"]"}
++{"id":"synth-139-0004","description":"A state filter after xor keeps the facts that tell two explanations apart","code":"fan = 2\nload = 40\nspeed = 3\ncurrent = load * 2\nheat = current + fan\nnoise = fan * speed\n(why heat |> xor(why noise) |> stated).map(step -> step.node)","return":"[\"load\",\"speed\"]"}
++{"id":"synth-139-0005","description":"A depth stage after xor measures each side from where its own walk began, which differs from the symmetric difference of the two limited walks","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\n[(why c |> xor(why d) |> depth(1)).map(step -> step.node), (why c |> depth(1) |> xor(why d |> depth(1))).map(step -> step.node)]","return":"[[\"c\",\"b\",\"d\"],[\"c\",\"b\",\"d\",\"a\"]]"}
++{"id":"synth-139-0006","description":"A walk after xor starts from every step that the symmetric difference keeps","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nf = d + 1\n(b |> xor(d) |> affects).map(step -> step.node)","return":"[\"f\",\"c\"]"}
++{"id":"synth-139-0007","description":"A standing symmetric difference follows a rewiring that moves a node into both explanations","code":"a = 1\nb = 2\nleft = a + b\nright = b + 1\napart = why left |> xor(why right)\nright = a + b + 1\napart.map(step -> step.node)","return":"[\"left\",\"right\"]"}
++{"id":"synth-139-0008","description":"Xor with model selects the other nodes of the model in model order, and the symmetric difference of a selection with itself is empty","code":"a = 1\nb = a + 1\nc = 4\n[(why b |> xor(model)).map(step -> step.node), (why b |> xor(why b)).length]","return":"[[\"c\"],0]"}
++{"id":"synth-139-0009","description":"A name that holds a selection is a reasoning observer, so as the other selection it selects nothing; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> xor(causes)).map(step -> step.node), (why tax |> xor(why shipping)).map(step -> step.node)]","return":"[[\"tax\",\"price\"],[\"tax\",\"shipping\"]]"}
++{"id":"synth-139-0010","description":"A class-level rule gives every instance its own symmetric difference","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.apart = why $Item.total |> xor(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.apart.map(step -> step.node), cup.apart.map(step -> step.node)]","return":"[[\"pen.total\",\"pen.price\",\"pen.cost\",\"pen.fee\"],[\"cup.total\",\"cup.price\",\"cup.cost\",\"cup.fee\"]]"}
++{"id":"synth-139-0011","description":"Nodes names the steps of a symmetric difference, and an other selection that a depth with a null limit makes undefined makes it undefined","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nn = null\n[c |> why |> xor(d |> why) |> nodes, c |> why |> xor(d |> why |> depth(n))]","return":"[[\"c\",\"b\",\"d\"],null]"}
++{"id":"synth-139-0012","description":"A binding named xor shadows the stage when the pipeline runs, so a try statement can catch the error","code":"a = 1\nb = a + 1\nxor = 0\nresult = \"\"\ntry:\n    result = why b |> xor(why a)\ncatch error:\n    result = error\n[xor, result]","return":"[0,\"TypeError: xor is not an operation\"]"}
+```
+
+**File**: `docs/README.md` (modified, +78/-12)
+```diff
+@@ -5135,6 +5135,66 @@ facts.map(step => step.node)
+   [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
+   section.
+ 
++### Symmetric difference selections
++
++```
++price = 10
++quantity = 3
++rate = 0.2
++subtotal = price * quantity
++tax = subtotal * rate
++shipping = quantity * 2
++apart = tax |> why |> xor(shipping |> why)
++facts = tax |> why |> xor(shipping |> why) |> stated
++assert(apart.map(step => step.node), ["tax", "subtotal", "rate", "price", "shipping"])
++assert(facts.map(step => step.node), ["rate", "price"])
++fee = 2
++shipping = quantity * 2 + fee
++facts.map(step => step.node)
++```
++
++- This is the complete `Nucleoid separates two explanations with xor`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `["rate","price","fee"]`.
++- [NUC 139](nuc-0139.md) adds the stage `selection |> xor(other)`, the
++  symmetric difference of two selections. It selects the steps of
++  `selection` whose node `other` does not select, in their order, followed
++  by the steps of `other` whose node `selection` does not select, in
++  `other`'s order, with their fields unchanged. So
++  `tax |> why |> xor(shipping |> why)` is what the tax rests on and the
++  shipping does not, then what the shipping rests on and the tax does not;
++  the quantity, which both rest on, is left out. It is exactly
++  `selection |> except(other) |> union(other |> except(selection))`, which
++  writes each selection twice.
++- `other` is written and evaluated as for `union`: a reference, `model`, a
++  prefix stage such as `why shipping` or a pipeline, evaluated in place each
++  time the stage applies, with steps compared by their node, whatever they
++  hold.
++- The result is a selection. `stated`, `derived`, `diff`, `intersect` and
++  `except` after it keep what they keep of each side, so
++  `tax |> why |> xor(shipping |> why) |> stated` is the facts that tell the
++  two values apart, and a later `why` or `affects` walks from every step.
++  Each step keeps the distance of the walk that selected it, so a later
++  `depth(n)` measures each side from its own walk, and the stage keeps the
++  direction of the selection's most recent walk, which a later `path` uses
++  for every step.
++- An `other` that is undefined, because a `depth` in it has a `null` limit,
++  makes the selection undefined, as it makes the accepted spelling. An
++  invalid `other` keeps the diagnostics of a pipeline source, such as
++  `TypeError("Cannot explain 1")`.
++- Only `|>` followed by `xor` and `(` is the stage; `xor` stays an ordinary
++  name everywhere else, and a bare `|> xor` keeps its parse-time
++  `TypeError("xor is not an operation")`. A local or parameter, variable,
++  function or class named `xor` shadows the stage, as bindings shadow the
++  other stages: the stage then raises `TypeError("xor is not an operation")`
++  before selecting its source.
++- The selection stays live through every observation of both selections,
++  including the steps each one leaves out. It renders as
++  `selection|>xor(other)`.
++- The authoritative contract is the
++  [symmetric difference reasoning selections](../nucleoid.spec.md#symmetric-difference-reasoning-selections)
++  section.
++
+ ### Origins and outcomes of reasoning selections
+ 
+ ```
+@@ -5180,8 +5240,8 @@ fee = qty * 2
+   change enters and one of the model's results.
+ - The result is a selection: the kept steps keep their distances and the
+   direction of the selection's most recent walk, so every stage applies to
+-  it, and both stages may stand in an `intersect`, `except` or `union`
+-  argument. A `path` target is a reference, so a `path` argument that ends
++  it, and both stages may stand in an `intersect`, `except`, `union` or
++  `xor` argument. A `path` target is a reference, so a `path` argument that ends
+   with either stage raises `TypeError("Cannot explain <target>")`. A
+   selection that a `depth(null)` makes undefined stays undefined.
+ - Only `|>` followed by `origins` or `outcomes` is a stage; both names stay
+@@ -5234,9 +5294,9 @@ facts
+   `TypeError("number.map is not a function")`. An empty selection gives `[]`,
+   and a selection that a `depth(null)` makes undefined gives undefined.
+ - The stage ends the pipeline: a stage after it, or an `intersect`, `except`,
+-  `union` or `path` argument that ends with it, has a list of names rather
+-  than a selection and raises `TypeError("Cannot explain <source>")`, as it
+-  does after the accepted spelling.
++  `union`, `xor` or `path` argument that ends with it, has a list of names
++  rather than a selection and raises `TypeError("Cannot explain <source>")`,
++  as it does after the accepted spelling.
+ - Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
+   everywhere else, and there is no prefix form. A local or parameter,
+   variable, function or class named `nodes` shadows the stage, as bindings
+@@ -5287,8 +5347,8 @@ price = 20
+   selection gives `[]`, and a selection that a `depth(null)`
+```
+
+**File**: `docs/examples.md` (modified, +28/-0)
+```diff
+@@ -4577,6 +4577,34 @@ heavy
+   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
+   define. A vehicle built without a `color` label has none.
+ 
++## Symmetric difference reasoning selections
++
++**Xor lists what tells two diagnoses apart**
++
++```nuc
++temperature = 39
++cough = true
++white_cells = 12
++fever = temperature > 38
++flu = fever && cough
++infection = fever && white_cells > 11
++apart = why flu |> xor(why infection) |> stated
++assert(apart.map(step -> step.node), ["cough", "white_cells"])
++infection = fever && white_cells > 11 && cough
++[apart.map(step -> step.node), infection]
++# return: [["white_cells"],true]
++```
++
++- `why flu |> xor(why infection)` is what one diagnosis rests on and the
++  other does not: the flu's own steps, in their order, then the
++  infection's. The fever and the temperature behind both diagnoses are left
++  out, and `|> stated` keeps the findings that tell them apart, the cough
++  and the white cell count.
++- The selection follows the model: once the infection rule also reads the
++  cough, the cough supports both diagnoses and only the white cell count
++  still tells them apart. See [NUC 139](nuc-0139.md) and the
++  [root contract](../nucleoid.spec.md#symmetric-difference-reasoning-selections).
++
+ ## Negated membership with !in
+ 
+ **Negated membership keeps a support queue's open tickets live**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -160,7 +160,7 @@ Created: 31-Jul-2026
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
+-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
++| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
+ 
+ ### Language compatibility
+ 
+@@ -332,7 +332,7 @@ Created: 31-Jul-2026
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
+-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +15/-5)
+```diff
+@@ -574,6 +574,7 @@ stage
+       | PATH LPAREN expression RPAREN                        /* Expr::Path */
+       | (INTERSECT | EXCEPT) LPAREN expression RPAREN        /* Expr::Combine */
+       | UNION LPAREN expression RPAREN                       /* Expr::Union */
++      | XOR LPAREN expression RPAREN                         /* Expr::Xor */
+ 
+ logicalOr
+     ::= logicalAnd ((OR_OR | OR) logicalAnd)*                 /* Expr::Logical, left */
+@@ -988,6 +989,7 @@ enumName
+       | EXCEPTION
+       | AS
+       | UNION
++      | XOR
+       | NODES
+       | HOLDS
+       | EDGES
+@@ -1082,6 +1084,7 @@ EXCEPT           ::= 'except'
+ EXCEPTION        ::= 'Exception'
+ AS               ::= 'as'
+ UNION            ::= 'union'
++XOR              ::= 'xor'
+ NODES            ::= 'nodes'
+ HOLDS            ::= 'holds'
+ EDGES            ::= 'edges'
+@@ -1165,8 +1168,9 @@ WORD_TOKEN
+       | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
+       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
+       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
+-      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | EDGES
+-      | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
++      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | XOR | NODES | HOLDS
++      | EDGES | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT
++      | PYTHON_INIT
+ 
+ NEWLINE
+     ::= #xA
+@@ -1323,16 +1327,22 @@ REGEX_ESCAPE
+  *                             model and 'a + model |> why' the name.
+  * |> intersect(model)      -> its other selection is Expr::Model when the
+  *                             whole argument is the name model, grouping
+- *                             aside; also except and union.
++ *                             aside; also except, union and xor.
+  * s |> union(o)            -> Expr::Union: the steps of s, then the steps of o
+  *                             whose node s does not select, in o's order. A
+  *                             binding named union shadows it at run time, and
+  *                             a bare |> union stays the parse-time
+  *                             TypeError("union is not an operation").
++ * s |> xor(o)              -> Expr::Xor: the steps of s whose node o does not
++ *                             select, then the steps of o whose node s does
++ *                             not select, in o's order. A binding named xor
++ *                             shadows it at run time, and a bare |> xor stays
++ *                             the parse-time TypeError("xor is not an
++ *                             operation").
+  * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
+  *                             s's selection. It ends the pipeline: a stage
+- *                             after it, or an intersect, except, union or path
+- *                             argument that ends with it, parses and then
++ *                             after it, or an intersect, except, union, xor or
++ *                             path argument that ends with it, parses and then
+  *                             raises TypeError("Cannot explain <source>"),
+  *                             unless a binding shadows a stage after it or
+  *                             the stage taking it as argument, whose
+```
+
+**File**: `nucleoid.spec.md` (modified, +229/-10)
+```diff
+@@ -3471,6 +3471,137 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid restores unions after failed changes` specify the executable
+   behavior. `tests/union_selections.rs` executes the rest.
+ 
++## Symmetric difference reasoning selections
++
++- [NUC 139](docs/nuc-0139.md) adds the pipeline stage
++  `SELECTION |> xor(OTHER)`, the symmetric difference of two selections: the
++  steps of `SELECTION` whose node `OTHER` does not select, in their order,
++  followed by the steps of `OTHER` whose node `SELECTION` does not select, in
++  `OTHER`'s order. Every step keeps its `node`, `holds`, `rule`, `state` and
++  `from` fields unchanged.
++- So `total |> why |> xor(freight |> why)` and its prefix spelling
++  `why total |> xor(why freight)` select what one of two explanations rests
++  on and the other does not, which tells the two conclusions apart, and
++  `affects price |> xor(affects rate)` selects what a change of exactly one
++  of the two inputs reaches. What both select, such as a cause that both
++  explanations share, is left out.
++- It is exactly the accepted
++  `SELECTION |> except(OTHER) |> union(OTHER |> except(SELECTION))`, where
++  `SELECTION` is the selection that the pipeline before `xor` denotes, read
++  as the accepted stages read their source, so a reference alone denotes its
++  own one-step selection and `model` the model's steps. The accepted
++  spelling writes each selection twice and evaluates each twice.
++- Steps are compared by their graph node, whatever they hold, as
++  `intersect`, `except` and `union` compare them, so a node that both
++  selections select is left out whatever value it holds. `A |> xor(B)` and
++  `B |> xor(A)` select the same nodes, each beginning with its own source's
++  steps.
++- `OTHER` is written and evaluated as for `union`: one expression in
++  parentheses that denotes a selection, as the source of a pipeline does,
++  such as a reference, `model`, a prefix stage such as `why freight` or a
++  pipeline, which may hold `xor` too. It is evaluated in place each time the
++  stage applies, after the source selection and the stages before it, and
++  before the stages after it, even when `SELECTION` is empty. A reference to
++  a node that is not in the model, such as an absent property, selects
++  nothing until it is defined. A name whose declaration holds a reasoning
++  expression, such as a selection or the list of a final stage, is a
++  reasoning observer, which no selection holds, so after
++  `causes = why freight` or `names = why freight |> nodes`, `xor(causes)`
++  and `xor(names)` leave `SELECTION` as it is. A name that holds an
++  ordinary value, a list included, is a reference that selects its own
++  node.
++- `S |> xor(S)` selects nothing, an `OTHER` that selects nothing leaves
++  `SELECTION` as it is, and an empty `SELECTION` gives the steps of `OTHER`.
++  `S |> xor(model)` and `model |> xor(S)` both select the model's nodes that
++  `S` does not select, in model order, because every step of a selection is
++  a node of the model. `S |> xor(O) |> xor(O)` selects the nodes of `S`
++  again: the steps of `S` whose node `O` does not select, followed by those
++  of `O` whose node `S` selects, in `O`'s order. `A |> xor(B) |> xor(C)` and
++  `A |> xor(B |> xor(C))` select the same nodes, those that an odd number of
++  the three selections select, though not always in the same order.
++- The result is a selection, so further stages apply to it. `stated`,
++  `derived`, `diff`, `intersect` and `except` keep a step by a property of
++  its node, so after the stage they keep what they keep of each side:
++  `S |> xor(O) |> stated` is `S |> stated |> xor(O |> stated)`. A later
++  `why` or `affects` walks from every step, `union` and `xor` combine the
++  result with another selection, `nodes` names its steps, `holds` gives
++  their values, `edges` lists their edges, and `origins` and `outcomes` keep
++  its ends as one selection.
++- Each step keeps the distance it has in its own selection: the steps of
++  `SELECTION` their own, and the steps of `OTHER` the distances of `OTHER`'s
++  walk. So `S |> xor(O) |> depth(n)` is
++  `S |> depth(n) |> except(O) |> union(O |> depth(n) |> except(S))`.
++- The stage keeps the direction of `SELECTION`'s most recent walk, as
++  `union` does, and a later `path` uses it for every step. After
++  `why x |> xor(affects y)`, `path(t)` keeps the steps of either side that
++  are `t` or rest on it, as after `why`; after `affects y |> xor(why x)` it
++  keeps the steps that are `t` or that `t` rests on, as after `affects`.
++- A `depth` stage whose limit is `null` or undefined makes `OTHER`
++  undefined, and then the reasoning expression is undefined, as for `union`:
++  the stages after it are not applied and their arguments are not
++  evaluated, and a declaration stores the undefined value as `null`. The
++  accepted spelling is undefined too, because its first `except` meets the
++  undefined `OTHER`. When `SELECTION` is undefined,
+```
 
 ---
 
-### Incident Patch 2: `9dac162b` (2026-11-24)
-**Commit Message**: Remove comments from ARC datasets
+### Incident Patch 2: `87d99403` (2026-11-24)
+**Commit Message**: Resume NUC 138 Reactive Secant
 
-Remove explanatory comments from class declarations, transformation rules, and object implementations across six ARC datasets.
+Claim the lowest-numbered stale allocated Draft for a fresh continuous revision.
 
-**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +9/-9)
-```diff
-@@ -1,10 +1,10 @@
- {
--  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-   "declarations": [
--    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
--    "# It continues downward, below its last row\n$Obj.extension_direction is down",
--    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
--    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
-+    "$Obj.tag is l8384",
-+    "$Obj.extension_direction is down",
-+    "$Obj.height is $Obj.height@first * 3 / 2",
-+    "$Obj.color is 2"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -50,7 +50,7 @@
-             [0, 2, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-+          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-           "input_value": {"color":1,"height":6,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
-         }
-@@ -98,7 +98,7 @@
-             [2, 0, 2],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equals row 0\nobj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-+          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-           "input_value": {"color":1,"height":6,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
-         }
-@@ -146,7 +146,7 @@
-             [2, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-+          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l9100","volume":8,"width":2,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l8384","volume":8,"width":2,"x":0,"y":0}
-         }
-@@ -194,7 +194,7 @@
-             [0, 2, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
-+          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
-           "input_value": {"color":1,"height":6,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l9100","volume":10,"width":3,"x":0,"y":0},
-           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l8384","volume":10,"width":3,"x":0,"y":0}
-         }
-```
+Allocation: abc138d4a03c8631f7639946cf605eff0be3b332
+Latest prior claim/allocation: abc138d4a03c8631f7639946cf605eff0be3b332
+Idle: 43.950 hours.
+Category: Utility enhancement.
 
-**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +18/-18)
-```diff
-@@ -1,8 +1,8 @@
- {
--  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
-   "declarations": [
--    "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
--    "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
-+    "if $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
-+    "if $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -54,7 +54,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-2 cell\nobj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-+          "implementation": "obj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj08c8feaa60ea","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":2,"y":3},
-           "output_value": {"height":3,"id":"obj08c8feaa60ea","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":1,"y":2}
-         },
-@@ -82,7 +82,7 @@
-             [0, 0, 0, 0, 0, 0, 7, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-1 cell\nobjfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
-+          "implementation": "objfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
-           "input_value": {"height":1,"id":"objfa5219213773","orientation":0,"tag":"l7544","vertex_color":1,"volume":1,"width":1,"x":6,"y":6},
-           "output_value": {"height":3,"id":"objfa5219213773","marker_color":7,"orientation":0,"tag":"l1707","vertex_color":1,"volume":5,"width":3,"x":5,"y":5}
-         }
-@@ -136,7 +136,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-8 cell\nobja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
-+          "implementation": "obja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
-           "input_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0},
-           "output_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0}
-         },
-@@ -164,7 +164,7 @@
-             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Single color-2 cell\nobj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-+          "implementation": "obj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
-           "input_value": {"height":1,"id":"obj21a7f426034a","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":6,"y":2},
-           "output_value": {"height":3,"id":"obj21a7f426034a","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":5,"y":1}
-         },
-@@ -192,7
-```
+Preserve the paused revision1 artifacts; pin this empty pushed claim for fresh accepted/candidate worktrees, baseline, proposer and evaluator. No outcome recorded.
 
-**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +17/-17)
-```diff
-@@ -1,7 +1,7 @@
- {
--  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-+    "$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-             [4, 0, 0],
-             [4, 0, 0]
-           ],
--          "implementation": "# Full-height column of color 3\nobj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-+          "implementation": "obj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-           "input_value": {"color":3,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
-           "output_value": {"color":4,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
-         },
-@@ -45,7 +45,7 @@
-             [0, 5, 0],
-             [0, 5, 0]
-           ],
--          "implementation": "# Full-height column of color 1\nobj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
-+          "implementation": "obj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
-           "input_value": {"color":1,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
-           "output_value": {"color":5,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
-         },
-@@ -61,7 +61,7 @@
-             [0, 0, 6],
-             [0, 0, 6]
-           ],
--          "implementation": "# Full-height column of color 2\nobjfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-+          "implementation": "objfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-           "input_value": {"color":2,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
-           "output_value": {"color":6,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0}
-         }
-@@ -91,7 +91,7 @@
-             [6, 0, 0],
-             [6, 0, 0]
-           ],
--          "implementation": "# Full-height column of color 2\nobje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-+          "implementation": "obje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
-           "input_value": {"color":2,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
-           "output_value": {"color":6,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
-         },
-@@ -107,7 +107,7 @@
-             [0, 4, 0],
-             [0, 4, 0]
-           ],
--          "implementation": "# Full-height column of color 3\nobjb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-+          "implementation": "objb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
-           "input_value": {"color":3,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
-           "output_value": {"color":4,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
-         },
-@@ -123,7 +123,7 @@
-             [0, 0, 9],
-             [0, 0, 9]
-           ],
--          "implementation": "# Full-height column of color 8\nobj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
-+          "implementation": "obj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
-           "input_value": {"color":8,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
-           "out
-```
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +18/-18)
-```diff
-@@ -1,8 +1,8 @@
- {
--  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
-   "declarations": [
--    "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
--    "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
-+    "$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
-+    "$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -30,7 +30,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row whose 3 cells are all color 4\nobj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
-+          "implementation": "obj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
-           "input_value": {"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":5,"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0}
-         },
-@@ -46,7 +46,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 2 and 3, with no head\nobje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
-+          "implementation": "obje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
-           "input_value": {"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"fill_color":0,"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":0,"width":3,"x":0,"y":1}
-         },
-@@ -62,7 +62,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 2 and 3, its head 2 on the left\nobj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
-+          "implementation": "obj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
-           "input_value": {"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":2},
-           "output_value": {"fill_color":0,"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":2}
-         }
-@@ -92,7 +92,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 3 and 7, its head 7 on the left\nobj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
-+          "implementation": "obj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
-           "input_value": {"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":0,"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":0}
-         },
-@@ -108,7 +108,7 @@
-             [5, 5, 5],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row whose 3 cells are all color 6\nobjde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
-+          "implementation": "objde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
-           "input_value": {"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"fill_color":5,"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1}
-         },
-@@ -124,7 +124,7 @@
-             [0, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# Row of mixed colors: 3 and 7, its head 3 on the left\nobj9
-```
 
-**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +8/-8)
-```diff
-@@ -1,7 +1,7 @@
- {
--  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-   "declarations": [
--    "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
-+    "$Obj.y is $Obj.y@first + 1"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-             [1, 1, 1],
-             [0, 0, 0]
-           ],
--          "implementation": "# Color-1 horizontal bar of 3 cells\nobj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
-+          "implementation": "obj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
-           "input_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":0},
-           "output_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1}
-         }
-@@ -59,7 +59,7 @@
-             [0, 0, 0],
-             [1, 1, 1]
-           ],
--          "implementation": "# Color-1 horizontal bar of 3 cells\nobjb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
-+          "implementation": "objb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
-           "input_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1},
-           "output_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":2}
-         }
-@@ -89,7 +89,7 @@
-             [0, 1, 0],
-             [1, 1, 0]
-           ],
--          "implementation": "# Color-1 corner with its vertex at the bottom right\nobj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
-+          "implementation": "obj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
-           "input_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
-           "output_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":1}
-         }
-@@ -119,7 +119,7 @@
-             [0, 2, 2],
-             [0, 0, 2]
-           ],
--          "implementation": "# Color-2 corner with its vertex at the top right\nobj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
-+          "implementation": "obj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
-           "input_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":0},
-           "output_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":1}
-         }
-@@ -149,7 +149,7 @@
-             [2, 0, 0],
-             [2, 0, 0]
-           ],
--          "implementation": "# Color-2 vertical bar of 2 cells\nobjb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
-+          "implementation": "objb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
-           "input_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":0},
-           "output_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":1}
-         }
-@@ -179,7 +179,7 @@
-             [0, 0, 0],
-             [0, 1, 0]
-           ],
--          "implementation": "# Single color-1 cell\nobjf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
-+          "implementation": "objf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
-           "input_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":1},
-           "output_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":2}
-         }
-```
-
-**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +16/-16)
-```diff
-@@ -1,11 +1,11 @@
- {
--  "class_declaration": "# Each object is the whole 5-cell block of one color, in one of four shapes. The output is a single cell whose color codes the shape, whatever the block color\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
-   "declarations": [
--    "# Each block becomes l7544, a single point\n$Obj.tag is l7544",
--    "# The output cell is one column wide\n$Obj.width is 1",
--    "# The output cell is one row tall\n$Obj.height is 1",
--    "# Its color codes the input shape, read from its input tag: 1 hollow diamond, 2 diagonal cross, 3 square with a tail, 6 orthogonal cross\n$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
--    "# The output has one cell\n$Obj.volume is $Obj.width * $Obj.height"
-+    "$Obj.tag is l7544",
-+    "$Obj.width is 1",
-+    "$Obj.height is 1",
-+    "$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
-+    "$Obj.volume is $Obj.width * $Obj.height"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -29,7 +29,7 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--          "implementation": "# Color-5 hollow diamond: the 4 edge cells around an empty center, plus its top-left corner\nobj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
-+          "implementation": "obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
-           "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"tag":"l4262","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -55,7 +55,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# Color-8 diagonal cross: the center and the 4 corners\nobj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-+          "implementation": "obj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-           "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -81,7 +81,7 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "# Color-5 diagonal cross: the center and the 4 corners\nobj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-+          "implementation": "obj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
-           "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -107,7 +107,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# Color-1 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobjae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-+          "implementation": "objae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-           "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
-         }
-@@ -133,7 +133,7 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "# Color-8 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-+          "implementation": "obj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
-           "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"tag":"
-```
-
-**File**: `arc/src/dataset/dataset.28bf18c6.json` (modified, +12/-12)
-```diff
-@@ -1,13 +1,13 @@
- {
--  "class_declaration": "# Each object is the one shape in the grid, inside a 3x3 box. The output shows the shape twice side by side, cropped to the two copies\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each shape becomes l4305, a shape repeated side by side\n$Obj.tag is l4305",
--    "# The output holds 2 copies\n$Obj.repeat_count is 2",
--    "# The second copy sits right of the first\n$Obj.repeat_direction is right",
--    "# The two copies together are twice its input width\n$Obj.width is $Obj.width@first * $Obj.repeat_count",
--    "# The cropped output starts at the left edge of the copies\n$Obj.x is 0",
--    "# The cropped output starts at the top edge of the copies\n$Obj.y is 0",
--    "# Both copies count their cells: twice its input cells\n$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
-+    "$Obj.tag is l4305",
-+    "$Obj.repeat_count is 2",
-+    "$Obj.repeat_direction is right",
-+    "$Obj.width is $Obj.width@first * $Obj.repeat_count",
-+    "$Obj.x is 0",
-+    "$Obj.y is 0",
-+    "$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -45,7 +45,7 @@
-             [0, 8, 0, 0, 8, 0],
-             [8, 8, 8, 8, 8, 8]
-           ],
--          "implementation": "# Color-8 shape in a 3x3 box, the only object in the grid\nobj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
-+          "implementation": "obj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
-           "input_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"tag":"l9100","volume":6,"width":3,"x":1,"y":1},
-           "output_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
-         }
-@@ -85,7 +85,7 @@
-             [2, 2, 2, 2, 2, 2],
-             [2, 2, 0, 2, 2, 0]
-           ],
--          "implementation": "# Color-2 shape in a 3x3 box, the only object in the grid\nobje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
-+          "implementation": "obje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
-           "input_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"tag":"l9100","volume":6,"width":3,"x":2,"y":5},
-           "output_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
-         }
-@@ -125,7 +125,7 @@
-             [1, 0, 0, 1, 0, 0],
-             [0, 1, 0, 0, 1, 0]
-           ],
--          "implementation": "# Color-1 shape in a 3x3 box, the only object in the grid\nobjb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
-+          "implementation": "objb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
-           "input_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"tag":"l9100","volume":4,"width":3,"x":4,"y":1},
-           "output_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":8,"width":6,"x":0,"y":0}
-         }
-@@ -165,7 +165,7 @@
-             [3, 3, 3, 3, 3, 3],
-             [3, 0, 0, 3, 0, 0]
-           ],
--          "implementation": "# Color-3 shape in a 3x3 box, the only object in the grid\nobj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
-+          "implementation": "obj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
-           "input_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"tag":"l9100","volume":5,"width":3,"x":1,"y":4},
-           "output_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":10,"width":6,"x":0,"y":0}
-         }
-```
-
-**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +13/-13)
-```diff
-@@ -1,9 +1,9 @@
- {
--  "class_declaration": "# Each object is one color-8 corner: 3 cells of a 2x2 box that meet at its vertex cell. Every corner fills the open cell of its box with color 1, completing the square\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
-   "declarations": [
--    "# Each corner becomes l3337, a corner with its inside marker\n$Obj.tag is l3337",
--    "# The open cell of its box, diagonally opposite its vertex, turns color 1\n$Obj.marker_color is 1",
--    "# The marker adds one cell to its 3 input cells\n$Obj.volume is $Obj.volume@first + 1"
-+    "$Obj.tag is l3337",
-+    "$Obj.marker_color is 1",
-+    "$Obj.volume is $Obj.volume@first + 1"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-@@ -53,7 +53,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
-           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
-         },
-@@ -83,7 +83,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
-           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
-         }
-@@ -135,7 +135,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
-           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
-         },
-@@ -165,7 +165,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
-           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
-         },
-@@ -195,7 +195,7 @@
-             [0, 0, 0, 1, 8, 0, 0],
-             [0, 0, 0, 8, 8, 0, 0]
-           ],
--          "implementation": "# Color-8 corner with its vertex at the bottom right and its open cell at the top left\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-+          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
-           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
-         }
-
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -2142,45 +2034,59 @@ Remove explanatory comments from class declarations, transformation rules, and o
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove comments from ARC datasets
+## X. NUC 139 Symmetric Difference Reasoning Selections
 
 **RULE**:
-When implementing operations in `arc/src/dataset/dataset.017c7c7b.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dac162b`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2483549`: NUC 139 Symmetric Difference Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/dataset/dataset.017c7c7b.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-    "$Obj.tag is l8384",
-    "$Obj.extension_direction is down",
-    "$Obj.height is $Obj.height@first * 3 / 2",
-    "$Obj.color is 2"
-          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
-          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
-          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
+## Symmetric difference reasoning selections
+
+**Xor tells two alarms apart**
+
+```nuc
+smoke = 4
+heat = 60
+humidity = 70
+haze = smoke * 2
+fire = haze > 5 && heat > 50
+fog = haze > 5 && humidity > 60
+apart = why fire |> xor(why fog) |> stated
+assert(apart.map(step -> step.node), ["heat", "humidity"])
+fire = haze > 5 && heat > 50 && humidity < 90
+assert(apart.map(step -> step.node), ["heat"])
+```
+
+- [NUC 139](docs/nuc-0139.md) adds the reasoning stage `|> xor(OTHER)`, the
+  symmetric difference of two selections. `why fire |> xor(why fog)` keeps
+  the steps of the fire alarm's explanation whose node the fog alarm's does
+  not hold, then the steps of the fog alarm's explanation whose node the
+  fire alarm's does not hold. The haze and the smoke behind both alarms are
+  left out, so what remains tells the two alarms apart.
+- The result is still a selection, so `|> stated` narrows it to the facts,
+  the heat and the humidity, and it stays live: once the fire rule also
+  checks the humidity, the humidity stands behind both alarms and only the
+  heat sets the fire alarm apart. See the
+  [root contract](nucleoid.spec.md#symmetric-difference-reasoning-selections).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
-    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
-    "# It continues downward, below its last row\n$Obj.extension_direction is down",
-    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
-    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
-          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
-          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equa
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dac162b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2483549` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

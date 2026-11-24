@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T21:24:15.886Z",
+  "timestamp": "2026-11-24T20:30:10.861Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflyoss-dragonfly-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflyoss-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T21:24:15.886Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T20:30:10.861Z`  
 > **Learning ID**: `LEARN-EVO-dragonflyoss-dragonfly-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dragonflyoss-dragonfly-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
-> **Source Version**: `d41be195`  
+> **Source Version**: `9e35a9ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T21:24:04.581Z  
+> **Timestamp**: 2026-11-24T20:29:56.084Z  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:24:04.576Z  
+> **Harvest Timestamp**: 2026-11-24T20:29:56.079Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Delivers efficient, stable, and secure data distribution and acceleration powered by P2P technology, with an optional content‑addressable filesystem that accelerates OCI container launch.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3363 stars
+- **Stars / Engagement**: 3367 stars
 
 ---
 
@@ -1182,655 +1182,94 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d41be195` (2026-11-19)
-**Commit Message**: feat(scheduler): add ListPeers and paginate ListPeers and ListHosts (#5126)
+### Incident Patch 1: `9e35a9ba` (2026-11-24)
+**Commit Message**: chore(ci): bump grpc_health_probe to v0.4.63 (#5136)
 
-* feat(scheduler): add ListPeers and paginate ListPeers and ListHosts
+Signed-off-by: Wendell Beckwith <[REDACTED_EMAIL]>
+Co-authored-by: Wendell Beckwith <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-ListPeers lists the peers in the scheduler. It only reads the scheduler,
-no peer is registered and no seed peer is triggered.
-
-If the task id is not specified, all peers are returned in the order of
-the peer id. If the task id is specified, the peers that succeeded to
-download the task are returned, one peer for each host and the peers of
-the seed peers first, so a peer can get the task metadata from them when
-the source is unavailable.
-
-ListPeers and ListHosts support pagination with page_size and page_token.
-If the page size is not specified, all the items are returned as before.
-The page token is the key of the last item in the page, encoded the same
-way as the continue token of Kubernetes.
-
-Related to #5116.
-
-Signed-off-by: Chlins Zhang <[REDACTED_EMAIL]>
-
-* refactor(rpc,scheduler): replace Paginate with grouped Paginator for host/peer listing
-
-Introduce rpc.Paginator, which paginates items in ordered groups and exposes
-ErrInvalidPageToken for malformed or out-of-range tokens, replacing the former
-Paginate helper.
-
-Switch the schedu
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `build/images/manager/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ module d7y.io/dragonfly/v2
- go 1.25.0
+@@ -31,7 +31,7 @@ RUN make build-manager-server && make install-manager
  
- require (
--	d7y.io/api/v2 v2.3.10
-+	d7y.io/api/v2 v2.3.12
- 	d7y.io/hashring v0.3.0
- 	github.com/Showmax/go-fqdn v1.0.0
- 	github.com/VividCortex/mysqlerr v1.0.0
+ FROM ${BASE_IMAGE} AS health
+ 
+-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
++ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
+ 
+ RUN if [ "$(uname -m)" = "ppc64le" ]; then \
+     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-ppc64le; \
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `build/images/scheduler/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -53,8 +53,8 @@ cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0Zeo
- cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
- cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
- cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
--d7y.io/api/v2 v2.3.10 h1:JFC6944ETIURMfLlaH0inH5NnZtzyAGU/mjHFJUkMOk=
--d7y.io/api/v2 v2.3.10/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
-+d7y.io/api/v2 v2.3.12 h1:NNhsmc/kRXs0zu1JS450fZ78jy30obx7LiwhCJKNKXk=
-+d7y.io/api/v2 v2.3.12/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
- d7y.io/hashring v0.3.0 h1:qGIkSNa/g6hSFYV2mBE+mZU16NzzMiCKobti072ACL0=
- d7y.io/hashring v0.3.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
- dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+@@ -16,7 +16,7 @@ RUN make build-scheduler && make install-scheduler
+ 
+ FROM ${BASE_IMAGE} AS health
+ 
+-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
++ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
+ 
+ RUN if [ "$(uname -m)" = "ppc64le" ]; then \
+     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-ppc64le; \
 ```
 
-**File**: `pkg/rpc/paginator.go` (added, +264/-0)
+---
+
+### Incident Patch 2: `9796cba1` (2026-11-24)
+**Commit Message**: chore(deps): bump github/codeql-action/upload-sarif from 4.39.3 to 4.39.4 (#5146)
+
+chore(deps): bump github/codeql-action/upload-sarif
+
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.3 to 4.39.4.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
+
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/docker.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,264 @@
-+/*
-+ *     Copyright 2026 The Dragonfly Authors
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *      http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package rpc
-+
-+import (
-+	"cmp"
-+	"container/heap"
-+	"encoding/base64"
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"slices"
-+	"strings"
-+)
-+
-+const (
-+	// pageTokenVersion is the version of the page token.
-+	pageTokenVersion = "v1"
-+)
-+
-+var (
-+	// ErrInvalidPageToken represents the page token is invalid.
-+	ErrInvalidPageToken = errors.New("invalid page token")
-+)
-+
-+// Tokenizer returns the key of the item. The paginator orders the items in
-+// the group by the key and encodes the key of the last item in the page to the
-+// page token, so the key must be unique in the group and not empty.
-+type Tokenizer[T any] func(item T) string
-+
-+// Paginator pages the items in the order of the groups, and in the order of
-+// the keys in the group, refer to
-+// https://github.com/hashicorp/nomad/blob/main/nomad/state/paginator/paginator.go.
-+type Paginator[T any] struct {
-+	// pageSize is the maximum number of the items in the page, the page has
-+	// all the remaining items if it is zero.
-+	pageSize int32
-+
-+	// group is the index of the group of the last item in the previous page.
-+	group int
-+
-+	// start is the key of the last item in the previous page, the page starts
-+	// after it.
-+	start string
-+
-+	// tokenizer returns the key of the item.
-+	tokenizer Tokenizer[T]
-+}
-+
-+// pageToken is the content of the page token. The page token is opaque to the
-+// caller, so the content can be changed with a new version.
-+type pageToken struct {
-+	// Version is the version of the page token.
-+	Version string `json:"v"`
-+
-+	// Group is the index of the group of the last item in the previous page.
-+	Group int `json:"group"`
-+
-+	// Start is the key of the last item in the previous page, the next page
-+	// starts after it.
-+	Start string `json:"start"`
-+}
-+
-+// keyedItem pairs an item with its group and pre-computed key.
-+type keyedItem[T any] struct {
-+	// group is the index of the group of the item.
-+	group int
-+
-+	// key is the key used to order the item in the group.
-+	key string
-+
-+	// item is the item.
-+	item T
-+}
-+
-+// NewPaginator returns a Paginator instance. The error is caused by the
-+// invalid page token of the caller, so the gRPC handler should return the
-+// invalid argument error.
-+func NewPaginator[T any](pageSize int32, pageToken string, tokenizer Tokenizer[T]) (*Paginator[T], error) {
-+	p := &Paginator[T]{
-+		pageSize:  pageSize,
-+		tokenizer: tokenizer,
-+	}
-+
-+	// Start from the first item if the page token is not specified.
-+	if pageToken == "" {
-+		return p, nil
-+	}
-+
-+	group, start, err := p.decodePageToken(pageToken)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	p.group = group
-+	p.start = start
-+	return p, nil
-+}
-+
-+// Page returns the page of the items, and the token of the next page if there
-+// are more items. The items of a group are before the items of the following
-+// groups, and the items in the group are in the order of the keys.
-+func (p *Paginator[T]) Page(groups ...[]T) ([]T, *string, error) {
-+	var count int
-+	for _, items := range groups {
-+		count += len(items)
-+	}
-+
-+	// Keep one more item than the page size to know if there are more items,
-+	// and keep all the items if the page size is not specified.
-+	limit := count
-+	if p.pageSize > 0 {
-+		limit = min(count, int(p.pageSize)+1)
-+	}
-+
-+	start := keyedItem[T]{group: p.group, key: p.start}
-+	keyedItems := &keyedItemHeap[T]{items: make([]keyedItem[T], 0, limit)}
-+	for group, items := range groups {
-+		for _, item := range items {
-+			// Calculate the key once for each item, and skip the items in the previous pages.
-+			keyed := keyedItem[T]{group: group, key: p.tokenizer(item), item: item}
-+			if keyed.compare(&start) <= 0 {
-+				continue
-+			}
-+
-+			// Build a heap of up to limit items with the last item at the top, so the
-+			// page costs the memory of the page size rather than the count of the items, refer to
-+			// https://github.com/prometheus/prometheus/blob/main/promql/engine.go.
-+			switch {
-+			case p.pageSize == 0:
-+				keyedItems.items = append(keyedItems.items, keyed)
-+			case len(keyedItems.items) < limit:
-+				heap.Push(keyedItems, keyed)
-+			case keyed.compare(&keyedItems.items[0]) < 0:
-+				keyedItems.items[0] = keyed
-+				heap.Fix(keyedItems, 0)
-+			}
-+		}
-+	}
-+
-+	slices.SortFunc(keyedItems.items, func(a, b keyedItem[T]) int {
-+		return a.compare(&b)
-+	})
-+
-+	// Truncate the items to the page si
+@@ -114,7 +114,7 @@ jobs:
+           output: 'trivy-results.sarif'
+ 
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
++        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+         with:
+           sarif_file: 'trivy-results.sarif'
+ 
 ```
 
-**File**: `pkg/rpc/paginator_test.go` (added, +396/-0)
+**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,396 @@
-+/*
-+ *     Copyright 2026 The Dragonfly Authors
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *      http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package rpc
-+
-+import (
-+	"encoding/base64"
-+	"strconv"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"d7y.io/dragonfly/v2/pkg/digest"
-+)
-+
-+var (
-+	mockPageItems  = []string{"d", "b", "e", "a", "c"}
-+	mockPageGroups = [][]string{{"d", "b"}, {"e", "a", "c"}}
-+)
-+
-+func TestNewPaginator(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		pageToken string
-+		expect    func(t *testing.T, paginator *Paginator[string], err error)
-+	}{
-+		{
-+			name: "page token is not specified",
-+			expect: func(t *testing.T, paginator *Paginator[string], err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Zero(paginator.group)
-+				assert.Empty(paginator.start)
-+			},
-+		},
-+		{
-+			name:      "page token is valid",
-+			pageToken: base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":1,"start":"b"}`)),
-+			expect: func(t *testing.T, paginator *Paginator[string], err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal(1, paginator.group)
-+				assert.Equal("b", paginator.start)
-+			},
-+		},
-+		{
-+			name:      "page token is invalid",
-+			pageToken: "foo!",
-+			expect: func(t *testing.T, paginator *Paginator[string], err error) {
-+				assert := assert.New(t)
-+				assert.ErrorIs(err, ErrInvalidPageToken)
-+				assert.Nil(paginator)
-+			},
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			paginator, err := NewPaginator(2, tc.pageToken, func(item string) string {
-+				return item
-+			})
-+			tc.expect(t, paginator, err)
-+		})
-+	}
-+}
-+
-+func TestPaginator_Page(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		groups    [][]string
-+		pageSize  int32
-+		pageToken string
-+		expect    func(t *testing.T, page []string, nextPageToken *string, err error)
-+	}{
-+		{
-+			name:   "page size is not specified",
-+			groups: [][]string{mockPageItems},
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal([]string{"a", "b", "c", "d", "e"}, page)
-+				assert.Nil(nextPageToken)
-+			},
-+		},
-+		{
-+			name:     "page size is less than items",
-+			groups:   [][]string{mockPageItems},
-+			pageSize: 2,
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal([]string{"a", "b"}, page)
-+				if !assert.NotNil(nextPageToken) {
-+					return
-+				}
-+
-+				assert.Equal(base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"b"}`)), *nextPageToken)
-+			},
-+		},
-+		{
-+			name:      "page starts after the key in the page token",
-+			groups:    [][]string{mockPageItems},
-+			pageSize:  2,
-+			pageToken: base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"b"}`)),
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal([]string{"c", "d"}, page)
-+				if !assert.NotNil(nextPageToken) {
-+					return
-+				}
-+
-+				assert.Equal(base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"d"}`)), *nextPageToken)
-+			},
-+		},
-+		{
-+			name:      "page size is equal to remaining items",
-+			groups:    [][]string{mockPageItems},
-+			pageSize:  2,
-+			pageToken: base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"c"}`)),
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal([]string{"d", "e"}, page)
-+				assert.Nil(nextPageToken)
-+			},
-+		},
-+		{
-+			name:      "page size is greater than remaining items",
-+			groups:    [][]string{mockPageItems},
-+			pageSize:  2,
-+			pageToken: base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"d"}`)),
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Equal([]string{"e"}, page)
-+				assert.Nil(nextPageToken)
-+			},
-+		},
-+		{
-+			name:      "page size is not specified with page token",
-+			groups:    [][]string{mockPageItems},
-+			pageToken: base64.RawURLEncoding.EncodeToString([]byte(`{"v":"v1","group":0,"start":"c"}`)),
-+			expect: func(t *testing.T, page []string, nextPageToken *string, err error) {
-+
-```
-
-**File**: `scheduler/metrics/metrics.go` (modified, +14/-0)
-```diff
-@@ -238,6 +238,20 @@ var (
- 		Help:      "Counter of the number of failed of the list hosts.",
- 	})
- 
-+	ListPeersCount = promauto.NewCounter(prometheus.CounterOpts{
-+		Namespace: types.MetricsNamespace,
-+		Subsystem: types.SchedulerMetricsName,
-+		Name:      "list_peers_total",
-+		Help:      "Counter of the number of the list peers.",
-+	})
-+
-+	ListPeersFailureCount = promauto.NewCounter(prometheus.CounterOpts{
-+		Namespace: types.MetricsNamespace,
-+		Subsystem: types.SchedulerMetricsName,
-+		Name:      "list_peers_failure_total",
-+		Help:      "Counter of the number of failed of the list peers.",
-+	})
-+
- 	LeaveHostCount = promauto.NewCounter(prometheus.CounterOpts{
- 		Namespace: types.MetricsNamespace,
- 		Subsystem: types.SchedulerMetricsName,
-```
-
-**File**: `scheduler/resource/standard/task.go` (modified, +8/-6)
-```diff
-@@ -245,8 +245,9 @@ func (t *Task) LoadPeer(key string) (*Peer, bool) {
- 
- // LoadRandomPeers return random peers.
- func (t *Task) LoadRandomPeers(n uint) []*Peer {
--	var peers []*Peer
--	for _, vertex := range t.DAG.GetRandomVertices(n) {
-+	vertices := t.DAG.GetRandomVertices(n)
-+	peers := make([]*Peer, 0, len(vertices))
-+	for _, vertex := range vertices {
- 		peers = append(peers, vertex.Value)
- 	}
- 
-@@ -255,17 +256,18 @@ func (t *Task) LoadRandomPeers(n uint) []*Peer {
- 
- // LoadPeers return all peers.
- func (t *Task) LoadPeers() []*Peer {
--	var peers []*Peer
--	for _, vertex := range t.DAG.GetVertices() {
-+	peers := make([]*Peer, 0, t.PeerCount())
-+	t.DAG.Range(func(_ string, vertex *dag.Vertex[*Peer]) bool {
- 		peers = append(peers, vertex.Value)
--	}
-+		return true
-+	})
- 
- 	return peers
- }
- 
- // LoadFinishedPeers return finished peers.
- func (t *Task) LoadFinishedPeers() []*Peer {
--	var finishedPeers []*Peer
-+	finishedPeers := make([]*Peer, 0, t.PeerCount())
- 	t.DAG.Range(func(_ string, vertex *dag.Vertex[*Peer]) bool {
- 		peer := vertex.Value
- 		switch peer.FSM.Current() {
-```
-
-**File**: `scheduler/rpcserver/scheduler_server_v2.go` (modified, +14/-0)
-```diff
-@@ -154,6 +154,20 @@ func (s *schedulerServerV2) ListHosts(ctx context.Context, req *schedulerv2.List
- 	return resp, nil
- }
- 
-+// ListPeers lists peers in scheduler.
-+func (s *schedulerServerV2) ListPeers(ctx context.Context, req *schedulerv2.ListPeersRequest) (*schedulerv2.ListPeersResponse, error) {
-+	// Collect ListPeersCount metrics.
-+	metrics.ListPeersCount.Inc()
-+	resp, err := s.service.ListPeers(ctx, req)
-+	if err != nil {
-+		// Collect ListPeersFailureCount metrics.
-+		metrics.ListPeersFailureCount.Inc()
-+		return nil, err
-+	}
-+
-+	return resp, nil
-+}
-+
- // DeleteHost releases host in scheduler.
- func (s *schedulerServerV2) DeleteHost(ctx context.Context, req *schedulerv2.DeleteHostRequest) (*emptypb.Empty, error) {
- 	// Collect LeaveHostCount metrics.
-```
-
-**File**: `scheduler/service/service_v2.go` (modified, +224/-30)
-```diff
-@@ -49,6 +49,7 @@ import (
- 	"d7y.io/dragonfly/v2/pkg/idgen"
- 	"d7y.io/dragonfly/v2/pkg/net/http"
- 	nettls "d7y.io/dragonfly/v2/pkg/net/tls"
-+	"d7y.io/dragonfly/v2/pkg/rpc"
- 	pkgtime "d7y.io/dragonfly/v2/pkg/time"
- 	"d7y.io/dragonfly/v2/pkg/types"
- 	"d7y.io/dragonfly/v2/scheduler/config"
-@@ -1100,16 +1101,39 @@ func (v *V2) AnnounceHost(ctx context.Context, req *schedulerv2.AnnounceHostRequ
- 
- // ListHosts lists hosts in scheduler.
- func (v *V2) ListHosts(ctx context.Context, req *schedulerv2.ListHostsRequest) (*schedulerv2.ListHostsResponse, error) {
--	hosts := []*commonv2.Host{}
--	constructHosts := func(value any) bool {
--		host, ok := value.(*standard.Host)
--		if !ok {
--			// Continue to next host.
--			logger.Warnf("invalid host %#v", value)
--			return true
-+	// Load all hosts if no type specified, otherwise filter hosts by type.
-+	var hosts []*standard.Host
-+	if req.Type == nil {
-+		hosts = v.resource.HostManager().LoadAll()
-+	} else {
-+		switch types.HostType(*req.Type) {
-+		case types.HostTypeNormal:
-+			hosts = v.resource.HostManager().LoadAllNormals()
-+		case types.HostTypeSuperSeed:
-+			hosts = v.resource.HostManager().LoadAllSeeds()
- 		}
-+	}
-+
-+	// Paginate hosts in the order of the host id.
-+	paginator, err := rpc.NewPaginator(req.GetPageSize(), req.GetPageToken(), func(host *standard.Host) string {
-+		return host.ID
-+	})
-+	if err != nil {
-+		return nil, status.Error(codes.InvalidArgument, err.Error())
-+	}
- 
--		hosts = append(hosts, &commonv2.Host{
-+	hosts, nextPageToken, err := paginator.Page(hosts)
-+	if err != nil {
-+		return nil, status.Error(codes.Internal, err.Error())
-+	}
-+
-+	resp := &schedulerv2.ListHostsResponse{
-+		Hosts:         make([]*commonv2.Host, 0, len(hosts)),
-+		NextPageToken: nextPageToken,
-+	}
-+
-+	for _, host := range hosts {
-+		resp.Hosts = append(resp.Hosts, &commonv2.Host{
- 			Id:              host.ID,
- 			Type:            uint32(host.Type),
- 			Name:            host.Name,
-@@ -1180,36 +1204,206 @@ func (v *V2) ListHosts(ctx context.Context, req *schedulerv2.ListHostsRequest) (
- 			SchedulerClusterId: host.SchedulerClusterID,
- 			DisableShared:      host.DisableShared,
- 		})
--
--		return true
- 	}
- 
--	// Return all hosts if no type specified.
--	if req.Type == nil {
--		v.resource.HostManager().Range(func(_ any, value any) bool {
--			return constructHosts(value)
-+	return resp, nil
-+}
-+
-+// ListPeers lists peers in scheduler.
-+func (v *V2) ListPeers(ctx context.Context, req *schedulerv2.ListPeersRequest) (*schedulerv2.ListPeersResponse, error) {
-+	var (
-+		seedPeers []*standard.Peer
-+		peers     []*standard.Peer
-+		tokenizer rpc.Tokenizer[*standard.Peer]
-+	)
-+
-+	if req.TaskId == nil {
-+		// List all peers in the order of the peer id if no task id specified.
-+		v.resource.PeerManager().Range(func(_ any, value any) bool {
-+			peer, ok := value.(*standard.Peer)
-+			if !ok {
-+				// Continue to next peer.
-+				logger.Warnf("invalid peer %#v", value)
-+				return true
-+			}
-+
-+			peers = append(peers, peer)
-+			return true
- 		})
- 
--		return &schedulerv2.ListHostsResponse{
--			Hosts: hosts,
--		}, nil
-+		tokenizer = func(peer *standard.Peer) string {
-+			return peer.ID
-+		}
-+	} else {
-+		task, loaded := v.resource.TaskManager().Load(req.GetTaskId())
-+		if !loaded {
-+			return &schedulerv2.ListPeersResponse{}, nil
-+		}
-+
-+		// Filter peers by task id. List the peers that succeeded to download the
-+		// task in the order of the host id, one peer for each host.
-+		taskPeers := task.LoadPeers()
-+		hostIDs := make(map[string]struct{}, len(taskPeers))
-+		peers = make([]*standard.Peer, 0, len(taskPeers))
-+		for _, peer := range taskPeers {
-+			if !peer.FSM.Is(standard.PeerStateSucceeded) {
-+				continue
-+			}
-+
-+			if _, ok := hostIDs[peer.Host.ID]; ok {
-+				continue
-+			}
-+
-+			hostIDs[peer.Host.ID] = struct{}{}
-+			if peer.Host.IsSeedPeer() {
-+				seedPeers = append(seedPeers, peer)
-+			} else {
-+				peers = append(peers, peer)
-+			}
-+		}
-+
-+		tokenizer = func(peer *standard.Peer) string {
-+			return peer.Host.ID
-+		}
- 	}
- 
--	// Filter hosts by type.
--	switch types.HostType(*req.Type) {
--	case types.HostTypeNormal:
--		v.resource.HostManager().RangeNormals(func(_ any, value any) bool {
--			return constructHosts(value)
--		})
--	case types.HostTypeSuperSeed:
--		v.resource.HostManager().RangeSeeds(func(_ any, value any) bool {
--			return constructHosts(value)
--		})
-+	paginator, err := rpc.NewPaginator(req.GetPageSize(), req.GetPageToken(), tokenizer)
-+	if err != nil {
-+		return nil, status.Error(codes.InvalidArgument, err.Error())
- 	}
- 
--	return &schedulerv2.ListHostsResponse{
--		Hosts: hosts,
--	}, nil
-+	// Paginate the peers on the seed peers before the peers on the normal peers.
-+	peers, nextPageToken, err := paginator.Page(seedPeers, peers)
-+	if err != nil {
-+		return nil, status.Error(codes.Internal, err.Error())
-+	}
-+
-+	resp := &schedulerv2.ListPeersResponse{
-+		Peers:         make([]*commonv2.Peer, 0, len(peers)),
-+		NextPageToken: nextPageToken,
-+	}
-+
-+	for _, peer := range peers {
-+		resp
+@@ -64,6 +64,6 @@ jobs:
+       # Upload the results to GitHub's code scanning dashboard (optional).
+       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+       - name: 'Upload to code-scanning'
+-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
++        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+         with:
+           sarif_file: results.sarif
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5126** (2026-11-19): feat(scheduler): add ListPeers and paginate ListPeers and ListHosts (@chlins)
-- **PR #5125** (closed): chore(deps): bump golang.org/x/oauth2 from 0.36.0 to 0.38.0 (@dependabot[bot])
-- **PR #5124** (2026-11-17): chore(deps): bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0 (@dependabot[bot])
-- **PR #5123** (closed): chore(deps): bump golang.org/x/sys from 0.47.0 to 0.50.0 (@dependabot[bot])
-- **PR #5122** (closed): chore(deps): bump azure/setup-helm from 5.0.1 to 5.1.0 (@dependabot[bot])
-- **PR #5121** (closed): chore(deps): bump google.golang.org/api from 0.278.0 to 0.314.0 (@dependabot[bot])
+- **PR #5146** (2026-11-24): chore(deps): bump github/codeql-action/upload-sarif from 4.39.3 to 4.39.4 (@dependabot[bot])
+- **PR #5145** (closed): chore(deps): bump golang.org/x/sync from 0.22.0 to 0.25.0 (@dependabot[bot])
+- **PR #5144** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.4 (@dependabot[bot])
+- **PR #5143** (2026-11-24): chore(deps): bump github.com/bits-and-blooms/bitset from 1.29.0 to 1.30.0 (@dependabot[bot])
+- **PR #5142** (2026-11-24): chore(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0 (@dependabot[bot])
+- **PR #5141** (closed): chore(deps): bump github/codeql-action/autobuild from 4.36.2 to 4.39.4 (@dependabot[bot])
 
 ---
 
@@ -1850,31 +1289,31 @@ Switch the schedu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. scheduler): add ListPeers and paginate ListPeers and ListHosts
+## X. ci): bump grpc_health_probe to v0.4.63
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/images/manager/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d41be195`: scheduler): add ListPeers and paginate ListPeers and ListHosts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e35a9ba`: ci): bump grpc_health_probe to v0.4.63. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/images/manager/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	d7y.io/api/v2 v2.3.12
+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	d7y.io/api/v2 v2.3.10
+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d41be195` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e35a9ba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

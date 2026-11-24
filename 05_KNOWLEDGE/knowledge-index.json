@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T20:13:00.968Z",
+  "last_updated": "2026-11-24T20:30:11.286Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24901,
+  "total_items": 24912,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230445,8 +230445,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "449e97bb",
-      "content_hash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
+      "source_version": "f2483549",
+      "content_hash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230711,7 +230711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:24:20.163Z",
+      "verified_at": "2026-11-24T20:30:04.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230753,10 +230753,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6c8cbc67",
-      "content_hash": "2d3985473e43a1ecb7b2378ad0f9736795fa2e754c565f8f707e4e0458572fe8",
+      "source_version": "f2483549",
+      "content_hash": "b79b145dcf9fb19897845160146cbdb516e992319c99f7912103f10a5e0cc1f0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T18:32:29.500Z"
+      "persisted_at": "2026-11-24T20:30:05.286Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230765,10 +230765,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "449e97bb",
-      "content_hash": "fd7463d0ce468cb2de1ac9e851c1de6df22cc5a2c569ab9012955e1f580c0f3e",
+      "source_version": "f2483549",
+      "content_hash": "c56ef586bc4b370fe495be6bcf36f4236f3a5bac8583c061f45ee28572dbf770",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:24:20.968Z"
+      "persisted_at": "2026-11-24T20:30:05.441Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -237033,8 +237033,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "c9064896",
-      "content_hash": "c473607f6a796e1ac3213f19736f303a1089361a10dfcf0abd5fba566a025408",
+      "source_version": "da675ddc",
+      "content_hash": "f9f9f3ba570d58762cdd59c6f55e9bc143bbbf773c08f62bf876efe294269f75",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -237052,6 +237052,11 @@
           "number": 9319,
           "title": "关闭 HotSpot Base64 intrinsic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10355,
+          "title": "avoid unused home backdrop capture",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237059,7 +237064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:32:41.485Z",
+      "verified_at": "2026-11-24T20:29:54.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237101,10 +237106,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "repository": "open-ani/animeko",
-      "source_version": "c9064896",
-      "content_hash": "9cb75517392f5a01181dc228f75d47cdb93941b75cbdd93fc9f11422202cba3e",
+      "source_version": "da675ddc",
+      "content_hash": "e99780df28c9a10f9ebee7cbc53c1ea9f5828440871b06f3728f7cfa7860baad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:32:42.136Z"
+      "persisted_at": "2026-11-24T20:29:55.121Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko",
@@ -237113,10 +237118,10 @@
       "relative_path": "08_VERIFICATION/open-ani-animeko-verification-protocol-empirical-defect-shield-for-open-ani-anim.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-ani/animeko",
       "repository": "open-ani/animeko",
-      "source_version": "c9064896",
-      "content_hash": "8c8d356e1afe2b84bca1c8e1db0b22043b951c6b2f96daad0009bb83239ce84d",
+      "source_version": "da675ddc",
+      "content_hash": "0bf8b7fbe6133324d09283b844d2e6896d2aff01b14a7dc668c51d48df53199e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:32:42.316Z"
+      "persisted_at": "2026-11-24T20:29:55.280Z"
     },
     "candidate_directive-redundant_clone": {
       "item_id": "candidate_directive-redundant_clone",
@@ -237186,9 +237191,9 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee1fe8f58309bac12065ca7601cfb27d1fbc15173809d0e1d7f88123219a18b5",
+      "content_hash": "d9dff4ebd2663bc5800824fda6d39e162f60b7f5ef66917bfc81ef562e948bfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:32:57.752Z"
+      "persisted_at": "2026-11-24T20:30:10.149Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings",
@@ -237198,9 +237203,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-ani-animeko-learnings",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "a201159223e21695b9d156a2996631c97ee9d66cbd81feeff5ba28a5ed6ea910",
+      "content_hash": "d65250a038d81d957cebc19882cde457ae592ebf6596149cd93da2c067d74fa4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:32:57.934Z"
+      "persisted_at": "2026-11-24T20:30:10.313Z"
     },
     "learn-huggingface-cactus-compute-whistle": {
       "learning_id": "learn-huggingface-cactus-compute-whistle",
@@ -285516,8 +285521,8 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "d41be195",
-      "content_hash": "edefedb1733c2d33b402498b0cc0ce9b13299d9c33c02ed2da42d333b7d7cd13",
+      "source_version": "9e35a9ba",
+      "content_hash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
@@ -285530,6 +285535,11 @@
           "number": 9447,
           "title": "add ListPeers and paginate ListPeers and ListHosts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10356,
+          "title": "bump grpc_health_probe to v0.4.63",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -285537,7 +285547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T21:24:05.420Z",
+      "verified_at": "2026-11-24T20:29:56.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285579,10 +285589,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
       "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
       "repository": "dragonflyoss/dragonfly",
-      "source_version": "d41be195",
-      "content_hash": "60ae1ed2dd47b0339cbdcd664bd30a782dd623029875f6ac0e8c48e971a27ce7",
+      "source_version": "9e35a9ba",
+      "content_hash": "d31a8b3bbc92a83fbef3a9efbb5ebe575f34f18b304fca52d82b0422cb0da991",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T21:24:06.067Z"
+      "persisted_at": "2026-11-24T20:29:57.431Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly",
@@ -285591,10 +285601,10 @@
       "relative_path": "08_VERIFICATION/dragonflyoss-dragonfly-verification-protocol-empirical-defect-shield-for-dragonf.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss/dragonfly",
       "repository": "dragonflyoss/dragonfly",
-      "source_version": "d41be195",
-      "content_hash": "cf0cb5a8f1eee1215422463c9b2a8256d8cbee39b02b4d1e292fa959ecb8dfae",
+      "source_version": "9e35a9ba",
+      "content_hash": "ea19129965b8690c1bc2a5ec4c410957c7e5c730312b6aaa5996c5abdd3c61c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:24:06.222Z"
+      "persisted_at": "2026-11-24T20:29:57.586Z"
     },
     "learn-huggingface-xingchen-agi-xing4-0-29b-a4b": {
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
@@ -285655,9 +285665,9 @@
       "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
       "repository": "dragonflyoss-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a0d60e8efdb3af32f451b58c7c23dc9f742f3a3f2056555de027fc3a38f3060",
+      "content_hash": "896378792b5687be6f08dee40b32999e397f7bb1c342fd951bfd35da14976a81",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T21:24:16.168Z"
+      "persisted_at": "2026-11-24T20:30:11.111Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin",
@@ -285667,9 +285677,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss-dragonfly-learnings",
       "repository": "dragonflyoss-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "87f6fa7856daf3fab01594ea26454a5339ed05b3d15ae736cea4599dd5187438",
+      "content_hash": "d53b944c206133e6b1b5ca95694520a9e54a362034b09fc657a0726f728bb4e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:24:16.321Z"
+      "persisted_at": "2026-11-24T20:30:11.286Z"
     },
     "learn-huggingface-supersoniclabs-julia-1": {
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
@@ -310694,17 +310704,23 @@
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "a0a00f55",
-      "content_hash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
+      "source_version": "90a67c7b",
+      "content_hash": "940e4d27821801bc0a8c2746ae157be9fe022c7f06c0a53bebbb26871e3c71a5",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 10354,
+          "title": "substitute initBindings variables in SPARQL update graph refs and data blocks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T21:25:44.863Z",
+      "verified_at": "2026-11-24T20:29:52.470Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310744,10 +310760,10 @@
       "relative_path": "08_VERIFICATION/rdflib-rdflib-verification-protocol-empirical-defect-shield-for-rdflib-rdflib.md",
       "title": "Verification Protocol: Empirical Defect Shield for RDFLib/rdflib",
       "repository": "RDFLib/rdflib",
-      "source_version": "a0a00f55",
-      "content_hash": "dd67d65b8d98e07f4b4fab30f55a40fe26be49c7def0f2dbbd634b32edcd8d0c",
+      "source_version": "90a67c7b",
+      "content_hash": "7a12bc92787e70ee643bf4b29646b7c33105d0cc55a4ba7aac24f517eee7b33d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:25:45.854Z"
+      "persisted_at": "2026-11-24T20:29:53.222Z"
     },
     "rule-9642": {
       "learning_id": "rule-9642",
@@ -310795,9 +310811,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rdflib-rdflib-learnings",
       "repository": "rdflib-rdflib-learnings",
       "source_version": "HEAD",
-      "content_hash": "67384b4c1b6dd8b7358be7084ba8ece10ed801f7048960d672ead2328e43e3f8",
+      "content_hash": "8e14e4398b03490cedd7f06c9c95451d4e3817c8ead1cbefd0702c8bc98967bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:25:55.958Z"
+      "persisted_at": "2026-11-24T20:30:09.434Z"
     },
     "candidate_directive-webview-add-a-webkitgtk-editor-for-clap-and-vst3-on-linux": {
       "item_id": "candidate_directive-webview-add-a-webkitgtk-editor-for-clap-and-vst3-on-linux",
@@ -340181,6 +340197,144 @@
       "content_hash": "5b430b71d1534df0cdde2daa4636b373533a9f5361027a818805293258ec04ee",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T20:12:59.838Z"
+    },
+    "rule-10354": {
+      "learning_id": "rule-10354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10354,
+      "title": "substitute initBindings variables in SPARQL update graph refs and data blocks",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "90a67c7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:29:52.470Z"
+    },
+    "candidate_directive-substitute-initbindings-variables-in-sparql-update-graph-refs-and-data-blocks": {
+      "item_id": "candidate_directive-substitute-initbindings-variables-in-sparql-update-graph-refs-and-data-blocks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FBHD-substitute-initbindings-variables-in-sparql-update-graph-refs-and-data-blocks.md",
+      "title": "substitute initBindings variables in SPARQL update graph refs and data blocks",
+      "repository": "rdflib-rdflib-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81f5fd461b77a281c8041198e9e0005a67932a249fdb2cb944878f0fa322f2e0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:30:09.127Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rdflib-rdflib-technical-construction-intelligence-rdflib-rdflib-core-invariants.md",
+      "title": "Technical Construction Intelligence: RDFLib/rdflib Core Invariants",
+      "repository": "RDFLib/rdflib",
+      "source_version": "90a67c7b",
+      "content_hash": "0bf48aa7ddf26078ec68bc94e03e5e52dad8a40ea41829be310cf08fba36f8e0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:29:53.049Z"
+    },
+    "rule-10355": {
+      "learning_id": "rule-10355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10355,
+      "title": "avoid unused home backdrop capture",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "da675ddc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:29:54.548Z"
+    },
+    "candidate_directive-avoid-unused-home-backdrop-capture": {
+      "item_id": "candidate_directive-avoid-unused-home-backdrop-capture",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F0K6-avoid-unused-home-backdrop-capture.md",
+      "title": "avoid unused home backdrop capture",
+      "repository": "open-ani/animeko",
+      "source_version": "da675ddc",
+      "content_hash": "8ecdb5a94ea5ca6cd2b6cd053e5375b8305545c55585b01c6b4b51168d43f0af",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:29:54.967Z"
+    },
+    "rule-10356": {
+      "learning_id": "rule-10356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10356,
+      "title": "bump grpc_health_probe to v0.4.63",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "9e35a9ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:29:56.856Z"
+    },
+    "candidate_directive-bump-grpc_health_probe-to-v0-4-63": {
+      "item_id": "candidate_directive-bump-grpc_health_probe-to-v0-4-63",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F2CB-bump-grpc_health_probe-to-v0-4-63.md",
+      "title": "bump grpc_health_probe to v0.4.63",
+      "repository": "dragonflyoss/dragonfly",
+      "source_version": "9e35a9ba",
+      "content_hash": "197e35a3727d36e2f6b70d4b5af34cfd9794ec97c7674d9dd65366f1ea5045d8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T20:29:57.276Z"
+    },
+    "candidate_directive-nuc-139-symmetric-difference-reasoning-selections": {
+      "item_id": "candidate_directive-nuc-139-symmetric-difference-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F8EJ-nuc-139-symmetric-difference-reasoning-selections.md",
+      "title": "NUC 139 Symmetric Difference Reasoning Selections",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "f2483549",
+      "content_hash": "591517e302916db184374f87720ebb10148eb73a6b8b92dffb8abc3fd48efd30",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T20:30:05.137Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rdflib-rdflib-learnings-technical-construction-intelligence-rdflib-rdflib-learni.md",
+      "title": "Technical Construction Intelligence: rdflib-rdflib-learnings Core Invariants",
+      "repository": "rdflib-rdflib-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd8d5411cbee1954989d700556cfc09fff56d8b774dfc3d997b14ab091a3e5fa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:30:09.283Z"
+    },
+    "candidate_directive-tv-avoid-unused-home-backdrop-capture": {
+      "item_id": "candidate_directive-tv-avoid-unused-home-backdrop-capture",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FC5L-tv-avoid-unused-home-backdrop-capture.md",
+      "title": "tv): avoid unused home backdrop capture",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5d6e2a0d7e1a6887c3fc6e83c78664c0dec0f6fb33165ac618b88f4b651bc46",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:30:09.994Z"
+    },
+    "candidate_directive-ci-bump-grpc_health_probe-to-v0-4-63": {
+      "item_id": "candidate_directive-ci-bump-grpc_health_probe-to-v0-4-63",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FCWA-ci-bump-grpc_health_probe-to-v0-4-63.md",
+      "title": "ci): bump grpc_health_probe to v0.4.63",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55faf2af0d7e0ef402b94dc46c53bc995ddaa6ca05b635c0821ae4c74b52fbe2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T20:30:10.955Z"
     }
   },
   "ai-builder-brain": {

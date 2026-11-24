@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-ZWCW",
-    "timestamp": "2026-11-23T05:06:41.936Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-00YP",
-    "timestamp": "2026-11-23T05:06:47.905Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-MN24",
-    "timestamp": "2026-11-23T05:24:22.972Z",
-    "repository": "giancarloerra/SocratiCode",
-    "learningId": "learn-github-giancarloerra-socraticode",
-    "contentHash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-QKPO",
-    "timestamp": "2026-11-23T05:27:26.556Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "f20faf0ade090f30cc522c566c352573001df2f1c3e85a7762cf8db937db6584",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-0RIN",
     "timestamp": "2026-11-23T05:35:21.935Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7492,6 +7432,66 @@
     "contentHash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EYRV",
+    "timestamp": "2026-11-24T20:29:52.651Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "940e4d27821801bc0a8c2746ae157be9fe022c7f06c0a53bebbb26871e3c71a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F0DO",
+    "timestamp": "2026-11-24T20:29:54.732Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "f9f9f3ba570d58762cdd59c6f55e9bc143bbbf773c08f62bf876efe294269f75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F25S",
+    "timestamp": "2026-11-24T20:29:57.040Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-F86W",
+    "timestamp": "2026-11-24T20:30:04.856Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

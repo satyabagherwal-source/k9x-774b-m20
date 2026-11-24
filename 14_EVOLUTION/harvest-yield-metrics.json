@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T20:12:53.809Z",
-  "total_cycles_completed": 12164,
-  "total_learnings_persisted": 12164,
-  "total_rules_promoted": 11220,
+  "last_updated": "2026-11-24T20:30:04.922Z",
+  "total_cycles_completed": 12168,
+  "total_learnings_persisted": 12168,
+  "total_rules_promoted": 11223,
   "history": [
-    {
-      "timestamp": "2026-11-24T04:20:17.695Z",
-      "repository": "BurntSushi/ripgrep",
-      "learningId": "learn-github-burntsushi-ripgrep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T04:20:23.142Z",
-      "repository": "jithin-sabu/purge-app",
-      "learningId": "learn-github-jithin-sabu-purge-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T04:20:31.457Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T04:28:47.179Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T04:37:01.849Z",
       "repository": "MetrolistGroup/Metrolist",
@@ -1403,6 +1375,34 @@
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:29:52.660Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:29:54.743Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:29:57.049Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:30:04.922Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -12803,3 +12803,7 @@
 | `CYCLE-20261124-I6L1` | `2026-11-24T20:04:23.125Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10352` | Yes (`d73e0589...`) |
 | `CYCLE-20261124-T04S` | `2026-11-24T20:12:47.980Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8827` | Yes (`56ffbc37...`) |
 | `CYCLE-20261124-T4MG` | `2026-11-24T20:12:53.800Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10353` | Yes (`6f0108fc...`) |
+| `CYCLE-20261124-EYRV` | `2026-11-24T20:29:52.651Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10354` | Yes (`940e4d27...`) |
+| `CYCLE-20261124-F0DO` | `2026-11-24T20:29:54.732Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10355` | Yes (`f9f9f3ba...`) |
+| `CYCLE-20261124-F25S` | `2026-11-24T20:29:57.040Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10356` | Yes (`a7d67cd7...`) |
+| `CYCLE-20261124-F86W` | `2026-11-24T20:30:04.856Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f1543edc...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T20:13:01.113Z",
+  "last_updated": "2026-11-24T20:30:11.414Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T19:36:19.238Z",
@@ -753,7 +753,7 @@
       "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
-      "processed_at": "2026-11-19T21:24:15.601Z",
+      "processed_at": "2026-11-24T20:30:10.474Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2698,7 +2698,7 @@
       "staged_for_review": 0
     },
     "open-ani-animeko-learnings.md": {
-      "processed_at": "2026-11-19T01:32:57.270Z",
+      "processed_at": "2026-11-24T20:30:09.587Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3628,7 +3628,7 @@
       "staged_for_review": 0
     },
     "rdflib-rdflib-learnings.md": {
-      "processed_at": "2026-11-20T21:25:54.005Z",
+      "processed_at": "2026-11-24T20:30:08.306Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3863,7 +3863,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3915,
+  "total_dossiers_evaluated": 3918,
   "total_canonical_promoted": 517,
-  "total_staged_for_review": 2979
+  "total_staged_for_review": 2982
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T20:13:00.794Z",
-  "total_records": 2573,
+  "last_updated": "2026-11-24T20:30:11.111Z",
+  "total_records": 2575,
   "domains": {
     "A": {
       "total": 22,
@@ -1625,7 +1625,7 @@
       ]
     },
     "H": {
-      "total": 613,
+      "total": 615,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2239,7 +2239,9 @@
         "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants",
         "DOM-H-7BF1A4EC",
         "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants"
       ]
     },
     "I": {
@@ -15652,8 +15654,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "2d3985473e43a1ecb7b2378ad0f9736795fa2e754c565f8f707e4e0458572fe8",
-      "created_at": "2026-11-23T18:32:29.500Z"
+      "content_hash": "b79b145dcf9fb19897845160146cbdb516e992319c99f7912103f10a5e0cc1f0",
+      "created_at": "2026-11-24T20:30:05.286Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17761,8 +17763,8 @@
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "repository": "open-ani/animeko",
-      "content_hash": "9cb75517392f5a01181dc228f75d47cdb93941b75cbdd93fc9f11422202cba3e",
-      "created_at": "2026-11-19T01:32:42.136Z"
+      "content_hash": "e99780df28c9a10f9ebee7cbc53c1ea9f5828440871b06f3728f7cfa7860baad",
+      "created_at": "2026-11-24T20:29:55.121Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
@@ -17830,8 +17832,8 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-learnings-technical-construction-intelligence-open-ani-animeko-.md",
       "repository": "open-ani-animeko-learnings",
-      "content_hash": "ee1fe8f58309bac12065ca7601cfb27d1fbc15173809d0e1d7f88123219a18b5",
-      "created_at": "2026-11-19T01:32:57.752Z"
+      "content_hash": "d9dff4ebd2663bc5800824fda6d39e162f60b7f5ef66917bfc81ef562e948bfe",
+      "created_at": "2026-11-24T20:30:10.149Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
@@ -30093,8 +30095,8 @@
       "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
       "repository": "dragonflyoss/dragonfly",
-      "content_hash": "60ae1ed2dd47b0339cbdcd664bd30a782dd623029875f6ac0e8c48e971a27ce7",
-      "created_at": "2026-11-19T21:24:06.067Z"
+      "content_hash": "d31a8b3bbc92a83fbef3a9efbb5ebe575f34f18b304fca52d82b0422cb0da991",
+      "created_at": "2026-11-24T20:29:57.431Z"
     },
     "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant": {
       "record_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
@@ -30102,8 +30104,8 @@
       "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-learnings-content-information-intelligence-dragonflyoss-d.md",
       "repository": "dragonflyoss-dragonfly-learnings",
-      "content_hash": "0a0d60e8efdb3af32f451b58c7c23dc9f742f3a3f2056555de027fc3a38f3060",
-      "created_at": "2026-11-19T21:24:16.168Z"
+      "content_hash": "896378792b5687be6f08dee40b32999e397f7bb1c342fd951bfd35da14976a81",
+      "created_at": "2026-11-24T20:30:11.111Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
@@ -43224,6 +43226,24 @@
       "repository": "dembrandt-dembrandt-learnings",
       "content_hash": "13df815401ad07869b9ef52b9787b922c482985e4275946a6a40737c85f9a345",
       "created_at": "2026-11-24T20:04:28.163Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: RDFLib/rdflib Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rdflib-rdflib-technical-construction-intelligence-rdflib-rdflib-core-invariants.md",
+      "repository": "RDFLib/rdflib",
+      "content_hash": "0bf48aa7ddf26078ec68bc94e03e5e52dad8a40ea41829be310cf08fba36f8e0",
+      "created_at": "2026-11-24T20:29:53.049Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rdflib-rdflib-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rdflib-rdflib-learnings-technical-construction-intelligence-rdflib-rdflib-learni.md",
+      "repository": "rdflib-rdflib-learnings",
+      "content_hash": "fd8d5411cbee1954989d700556cfc09fff56d8b774dfc3d997b14ab091a3e5fa",
+      "created_at": "2026-11-24T20:30:09.283Z"
     }
   }
 }

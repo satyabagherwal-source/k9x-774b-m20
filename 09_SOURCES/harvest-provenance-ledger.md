@@ -12836,3 +12836,7 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `f7efd90e` | Multi-dimensional audit evidence | 2026-11-24T20:04:23.130Z |
 | `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `6b42d44a` | Multi-dimensional audit evidence | 2026-11-24T20:12:47.985Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `18603d50` | Multi-dimensional audit evidence | 2026-11-24T20:12:53.804Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `90a67c7b` | Multi-dimensional audit evidence | 2026-11-24T20:29:52.655Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `da675ddc` | Multi-dimensional audit evidence | 2026-11-24T20:29:54.738Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `9e35a9ba` | Multi-dimensional audit evidence | 2026-11-24T20:29:57.043Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f2483549` | Multi-dimensional audit evidence | 2026-11-24T20:30:04.860Z |
