@@ -12559,3 +12559,6 @@
 | `CYCLE-20261124-MJNA` | `2026-11-24T01:56:01.654Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10174` | Yes (`aef2a912...`) |
 | `CYCLE-20261124-X17X` | `2026-11-24T02:04:10.989Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10175` | Yes (`1fb62a91...`) |
 | `CYCLE-20261124-X93B` | `2026-11-24T02:04:21.191Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10176` | Yes (`66c16646...`) |
+| `CYCLE-20261124-7WGR` | `2026-11-24T02:12:38.043Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10177` | Yes (`79ad3ec2...`) |
+| `CYCLE-20261124-81CN` | `2026-11-24T02:12:44.375Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10178` | Yes (`d463bbf1...`) |
+| `CYCLE-20261124-8671` | `2026-11-24T02:12:50.653Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10179` | Yes (`9e6e0756...`) |

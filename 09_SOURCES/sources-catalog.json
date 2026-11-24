@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "9445e92f",
+    "sourceVersion": "911e4203",
     "license": "Apache-2.0",
-    "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
-    "lastHarvestedAt": "2026-11-20T20:49:46.115Z",
+    "contentHash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
+    "lastHarvestedAt": "2026-11-24T02:12:50.658Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "559ad18c",
+    "sourceVersion": "cb3ac9aa",
     "license": "Apache-2.0",
-    "contentHash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
-    "lastHarvestedAt": "2026-11-21T03:44:38.914Z",
+    "contentHash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
+    "lastHarvestedAt": "2026-11-24T02:12:44.379Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {
@@ -12683,10 +12683,10 @@
     "repository": "Folkbench/folkbench",
     "platform": "github",
     "sourceUrl": "https://github.com/Folkbench/folkbench",
-    "sourceVersion": "f0856c35",
+    "sourceVersion": "3e93677d",
     "license": "NOASSERTION",
-    "contentHash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
-    "lastHarvestedAt": "2026-11-22T18:52:38.838Z",
+    "contentHash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
+    "lastHarvestedAt": "2026-11-24T02:12:38.048Z",
     "learningId": "learn-github-folkbench-folkbench"
   },
   "hf-ifm-pan2": {

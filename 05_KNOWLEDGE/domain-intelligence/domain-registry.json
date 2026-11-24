@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T02:04:27.514Z",
-  "total_records": 2480,
+  "last_updated": "2026-11-24T02:12:58.021Z",
+  "total_records": 2482,
   "domains": {
     "A": {
       "total": 20,
@@ -2166,7 +2166,7 @@
       ]
     },
     "I": {
-      "total": 142,
+      "total": 144,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2309,7 +2309,9 @@
         "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-microfeed-microfeed-core-invariants",
         "DOM-I-4B3595B4",
-        "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants",
+        "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants"
       ]
     },
     "J": {
@@ -9048,8 +9050,8 @@
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "repository": "makecindy/cindy",
-      "content_hash": "874d0a52e245057fdb213b5b954b660a910d34ccf89cd014c353d90f97836fd3",
-      "created_at": "2026-11-21T03:44:39.258Z"
+      "content_hash": "dd60bf2bf2c3cb55491e930bd045ede03c7150b3d39507042522a1a98f21b604",
+      "created_at": "2026-11-24T02:12:44.803Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
@@ -9117,8 +9119,8 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
       "repository": "makecindy-cindy-learnings",
-      "content_hash": "cef1ce708796a36180e383f22eb0bb4675b6bbdf122e9a4d3b4023755c4b5cdd",
-      "created_at": "2026-11-21T03:44:51.700Z"
+      "content_hash": "a6cf1a3ac138eb68a0022ddea3f1256decfee14462905fdb06755a4e8859c4e7",
+      "created_at": "2026-11-24T02:12:57.218Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -10941,8 +10943,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "116555eecc4e959c3ac7f5a9dbbfbeb9fbd374de5dd8845d82fdecb588e3fdf0",
-      "created_at": "2026-11-20T20:49:46.470Z"
+      "content_hash": "b98473fd9ee6a71393b2009f393280c54849779c55bc19c47aeb6fea9f015da3",
+      "created_at": "2026-11-24T02:12:51.069Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -29022,8 +29024,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "95e7c38572d533dd5314fcbd97f85f26857d40ed55ecf71939b5f1318b5a7407",
-      "created_at": "2026-11-20T20:49:51.456Z"
+      "content_hash": "958e2258cb0da53ac99c6c1fb9ce47d42de4276e9d9c27f03496ab3f51b085da",
+      "created_at": "2026-11-24T02:12:58.021Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
@@ -41591,6 +41593,24 @@
       "repository": "yyjeqhc-webcodex-learnings",
       "content_hash": "291e8d72e772e749e66172c6e71086b8a4dca5edf2435be9d38744d53e3f00b1",
       "created_at": "2026-11-24T01:56:06.451Z"
+    },
+    "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: Folkbench/folkbench Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-folkbench-folkbench-content-information-intelligence-folkbench-folkbench-core-in.md",
+      "repository": "Folkbench/folkbench",
+      "content_hash": "5ab86c0e8e02780118304cd409cb3683c3106067b0405e3584be5b7a3540342b",
+      "created_at": "2026-11-24T02:12:38.507Z"
+    },
+    "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: folkbench-folkbench-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-folkbench-folkbench-learnings-content-information-intelligence-folkbench-folkben.md",
+      "repository": "folkbench-folkbench-learnings",
+      "content_hash": "b81a5969e69f3515298acf22d9343dcb2e6eac94fb4c663aa81f7a238e00e12d",
+      "created_at": "2026-11-24T02:12:56.325Z"
     }
   }
 }

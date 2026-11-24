@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T02:04:24.455Z",
-    "lastVerified": "2026-11-24T02:04:24.455Z",
+    "lastChecked": "2026-11-24T02:12:53.929Z",
+    "lastVerified": "2026-11-24T02:12:53.929Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:38:05.874Z",
-    "lastVerified": "2026-11-24T01:38:05.874Z",
+    "lastChecked": "2026-11-24T02:12:48.243Z",
+    "lastVerified": "2026-11-24T02:12:48.243Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1147,12 +1147,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T21:40:00.543Z",
-    "lastVerified": "2026-11-23T21:40:00.543Z",
+    "lastChecked": "2026-11-24T02:12:43.276Z",
+    "lastVerified": "2026-11-24T02:12:43.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1161,7 +1161,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ae6a5b06"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -1849,22 +1850,21 @@
     "revisionIdentifier": "19c90f91"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j",
+    "name": "langchain4j/langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-23T00:31:24.341Z",
-    "lastVerified": "2026-11-23T00:31:24.341Z",
+    "lastChecked": "2026-11-24T02:12:49.522Z",
+    "lastVerified": "2026-11-24T02:12:49.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
+    "contentHash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9445e92f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "watchexec-watchexec": {
     "name": "watchexec",
@@ -3950,9 +3950,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-23T04:00:06.849Z",
+    "lastChecked": "2026-11-24T02:12:40.838Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-23T04:00:06.849Z"
+    "lastVerified": "2026-11-24T02:12:40.838Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -9128,12 +9128,12 @@
     "officialUrl": "https://github.com/Folkbench/folkbench",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T18:52:37.750Z",
-    "lastVerified": "2026-11-22T18:52:37.750Z",
+    "lastChecked": "2026-11-24T02:12:36.918Z",
+    "lastVerified": "2026-11-24T02:12:36.918Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
+    "contentHash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9258,9 +9258,9 @@
   "serpapi-google-search-results-python": {
     "name": "google-search-results-python",
     "officialUrl": "https://github.com/serpapi/google-search-results-python",
-    "lastChecked": "2026-11-19T22:04:59.036Z",
+    "lastChecked": "2026-11-24T02:12:35.749Z",
     "revisionIdentifier": "345d31a9",
-    "lastVerified": "2026-11-19T22:04:59.036Z"
+    "lastVerified": "2026-11-24T02:12:35.749Z"
   },
   "apppear-chartview": {
     "name": "ChartView",
@@ -12114,14 +12114,14 @@
     "officialUrl": "https://github.com/makecindy/cindy",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T03:44:37.915Z",
-    "lastVerified": "2026-11-21T03:44:37.915Z",
+    "lastChecked": "2026-11-24T02:12:43.170Z",
+    "lastVerified": "2026-11-24T02:12:43.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
+    "contentHash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -12592,3 +12592,6 @@ Every entry in this ledger must capture:
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `062ea35b` | Multi-dimensional audit evidence | 2026-11-24T01:56:01.658Z |
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `0d1e4df6` | Multi-dimensional audit evidence | 2026-11-24T02:04:10.993Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `a26f8abe` | Multi-dimensional audit evidence | 2026-11-24T02:04:21.195Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `3e93677d` | Multi-dimensional audit evidence | 2026-11-24T02:12:38.048Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `cb3ac9aa` | Multi-dimensional audit evidence | 2026-11-24T02:12:44.379Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `911e4203` | Multi-dimensional audit evidence | 2026-11-24T02:12:50.658Z |

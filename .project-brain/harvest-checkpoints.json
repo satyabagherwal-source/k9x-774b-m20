@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T02:04:21.210Z",
+  "last_updated": "2026-11-24T02:12:50.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
-      "verified_at": "2026-11-20T20:49:46.123Z",
+      "content_hash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
+      "verified_at": "2026-11-24T02:12:50.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:49:46.123Z"
+      "last_updated": "2026-11-24T02:12:50.666Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
-      "verified_at": "2026-11-21T03:44:38.921Z",
+      "content_hash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
+      "verified_at": "2026-11-24T02:12:44.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:44:38.921Z"
+      "last_updated": "2026-11-24T02:12:44.388Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
-      "verified_at": "2026-11-22T18:52:38.846Z",
+      "content_hash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
+      "verified_at": "2026-11-24T02:12:38.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:52:38.846Z"
+      "last_updated": "2026-11-24T02:12:38.071Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",

@@ -4,24 +4,24 @@
 {
   "source_repository": "langchain4j/langchain4j",
   "source_url": "https://github.com/langchain4j/langchain4j",
-  "source_version": "9445e92f",
+  "source_version": "911e4203",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T20:49:46.315Z",
+  "timestamp": "2026-11-24T02:12:50.894Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-langchain4j-langchain4j",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `9445e92f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T20:49:46.315Z`  
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `911e4203`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T02:12:50.894Z`  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from langchain4j/langchain4j:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:49:45.112Z  
+> **Harvest Timestamp**: 2026-11-24T02:12:49.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13426 stars
+- **Stars / Engagement**: 13437 stars
 
 ---
 
@@ -852,500 +852,386 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a30ea36b` (2026-11-20)
-**Commit Message**: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (#7192)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [org.apache.httpcomponents.core5:httpcore5-h2](https://hc.apache.org/)
-([source](https://redirect.github.com/apache/httpcomponents-core)) |
-`5.3.6` → `5.4.3` |
-![age](https://developer.mend.io/api/mc/badges/age/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.4.3?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.3.6/5.4.3?slim=true)
-|
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/2069) for more information.
-
----
-
-### Apache HttpComponents Core: HPackDecoder Unlimited Header List Size
-Before SETTINGS ACK
-[CVE-2026-54428](https://nvd.nist.gov/vuln/detail/CVE-2026-54428) /
-[GHSA-v3jc-474w-2wm6](https://redirect.github.com/advisories/GHSA-v3jc-474w-2wm6)
-
-<details>
-<summary>More information</summary>
-
-#### Details
-Allocation of resources without limits or
-
-**File**: `langchain4j-opensearch/pom.xml` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@
-             <dependency>
-                 <groupId>org.apache.httpcomponents.core5</groupId>
-                 <artifactId>httpcore5-h2</artifactId>
--                <version>5.3.6</version>
-+                <version>5.4.3</version>
-             </dependency>
-         </dependencies>
-     </dependencyManagement>
-```
-
----
-
-### Incident Patch 2: `c5f5d093` (2026-11-20)
-**Commit Message**: Infinispan: async support for embedding search and chat memory store (#7195)
-
-<!--
-Thank you so much for your contribution!
-
-Please fill in all the sections below.
-Please open the PR as ready for review (not as a draft), with tests and
-documentation already included.
-Please note that PRs with breaking changes, or without tests and
-documentation, will be rejected.
-
-Please note that PRs will be reviewed based on the priority of the
-issues they address.
-We ask for your patience. We are doing our best to review your PR as
-quickly as possible.
-Please refrain from pinging and asking when it will be reviewed. Thank
-you for understanding!
--->
+### Incident Patch 1: `fc45d349` (2026-11-23)
+**Commit Message**: fix(agentic): support primitive arrays in the parallel mapper (#7162)
 
 ## Issue
-<!-- Please specify the ID of the issue this PR is addressing. For
-example: "Closes #1234" or "Fixes #1234" -->
-Closes #7194
+Closes #7160
 
 ## Change
-<!-- Please describe the changes you made. -->
-Implements the non-blocking methods in the Infinispan module, using the
-asynchronous API of the Hot Rod client:
+A parallel mapper whose items are an array of a primitive type (`int[]`,
+`double[]`, ...) failed with a `ClassCastException`, since
+`ParallelMapperPlanner` cast the array to `Object[]`. Returning an array
+of a primitive type, like `int[]`, failed the same way, since the
+results were copied with `Arrays.copyOf` into a `Class<? extends
+Object[]>`.
 
-- `InfinispanEmbeddingStore.searchAsync`: runs the same vector query as
-`search` with `Query.executeAsync()`. The query building and the result
-mapping are shared with `search`.
-- `InfinispanChatMemoryStore.getMessagesAsync`, `updateMessagesAsync`
-and
+- `ParallelMapperPlanner` now reads the items and builds the result
+array through `java.lang.reflect.Array`, which handles any component
+type and unboxes each result into an array of a primitive type. Arrays
+of objects and collections behave as before.
+- The existing constructor `ParallelMapperPlanner(String, boolean,
+Class<? extends Object[]>)` is kept unchanged (revapi is green), and
+delegates to a new `ParallelMapperPlanner(String, Class<?>)`, whose
+array type may have a primitive component type.
+`ParallelMapperServiceImpl` uses the new one.
 
-**File**: `docs/docs/integrations/embedding-stores/infinispan.md` (modified, +7/-0)
+`ParallelMapperPrimitiveArrayTest` covers `int[]` items mapped to a
+list, an empty `int[]`, `double[]` items converted to the subagent's
+`int` argument, and `int[]` / empty `int[]` results. All 5
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java` (modified, +34/-7)
 ```diff
-@@ -34,6 +34,13 @@ From 15.2 Infinispan Server and above, metadata filtering is supported.
- - `InfinispanEmbeddingStore`
- - `InfinispanChatMemoryStore`
+@@ -1,7 +1,5 @@
+ package dev.langchain4j.agentic.workflow.impl;
  
-+Both classes also implement the non-blocking methods of their interfaces: `searchAsync` on
-+`InfinispanEmbeddingStore`, and `getMessagesAsync`, `updateMessagesAsync` and `deleteMessagesAsync` on
-+`InfinispanChatMemoryStore`. They use the asynchronous API of the Infinispan Hot Rod client, so you can use them
-+in asynchronous and reactive AI Services and RAG without blocking a thread.
-+The returned futures complete on the I/O threads of the Hot Rod client, so do not block in code that you chain to them.
-+See [Non-blocking and Reactive](/tutorials/non-blocking).
-+
- ### InfinispanChatMemoryStore
- 
- A `ChatMemoryStore` backed by an Infinispan cache. Messages are serialized to JSON
-```
-
-**File**: `docs/docs/tutorials/non-blocking.md` (modified, +2/-2)
-```diff
-@@ -414,10 +414,10 @@ interaction fails the call the same way. In practice that means:
- 
- | Component | What it must implement | Bundled implementations |
- |---|---|---|
--| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory` and `InMemoryChatMemoryStore` already do |
-+| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory`, `InMemoryChatMemoryStore` and `InfinispanChatMemoryStore` already do |
- | Guardrails | `validateAsync` | none — a guardrail you write must override it, even if it does no I/O |
- | Content retriever, query router, aggregator | `retrieveAsync`, `routeAsync`, `aggregateAsync` | opt into offloading instead with `offloadBlocking(true)` |
--| Embedding store | `searchAsync` | as above, via the retriever's `offloadBlocking(true)` |
-+| Embedding store | `searchAsync` | `InMemoryEmbeddingStore` and `InfinispanEmbeddingStore` already do; for other stores, use the retriever's `offloadBlocking(true)` |
- | Custom `ToolExecutor` | `executeAsync` | `@Tool`-annotated methods are offloaded for you |
- | Chat model router ([`RoutingChatModel`](/tutorials/model-routing)) | `routeAsync` | `DecisionModelChatModelRouter` does, if its decision model supports `decideAsync` |
- 
-```
-
-**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStore.java` (modified, +24/-4)
-```diff
-@@ -24,6 +24,7 @@
- import java.util.Map;
- import java.util.Objects;
- import java.util.Set;
-+import java.util.concurrent.CompletableFuture;
- import java.util.stream.Collectors;
- import org.infinispan.client.hotrod.RemoteCache;
- import org.infinispan.client.hotrod.RemoteCacheManager;
-@@ -90,7 +91,7 @@ public InfinispanEmbeddingStore(ConfigurationBuilder builder, InfinispanStoreCon
-         // Registers the schema on the client
-         ProtoStreamMarshaller marshaller = new ProtoStreamMarshaller();
-         SerializationContext serializationContext = marshaller.getSerializationContext();
--        String schemaContent = schema.toString();
-+        String schemaContent = schema.getContent();
-         FileDescriptorSource fileDescriptorSource =
-                 FileDescriptorSource.fromString(storeConfiguration.fileName(), schemaContent);
-         serializationContext.registerProtoFiles(fileDescriptorSource);
-@@ -188,6 +189,24 @@ public void removeAll(Collection<String> ids) {
- 
-     @Override
-     public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request) {
-+        Query<Object[]> query = buildVectorQuery(request);
-+        List<Object[]> hits = query.list();
-+        return toSearchResult(hits, request.minScore());
-+    }
-+
-+    @Override
-+    public CompletableFuture<EmbeddingSearchResult<TextSegment>> searchAsync(EmbeddingSearchRequest request) {
-+        try {
-+            Query<Object[]> query = buildVectorQuery(request);
-+            return query.executeAsync()
-+                    .thenApply(queryResult -> toSearchResult(queryResult.list(), request.minScore()))
-+                    .toCompletableFuture();
-+        } catch (Throwable t) {
-+            return CompletableFuture.failedFuture(t);
-+        }
-+    }
-+
-+    private Query<Object[]> buildVectorQuery(EmbeddingSearchRequest request) {
-         InfinispanMetadataFilterMapper.FilterResult filteringQuery =
-                 new InfinispanMetadataFilterMapper().map(request.filter());
-         String joinPart = "";
-@@ -206,14 +225,15 @@ public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request)
-                 + storeConfiguration.distance()
-                 + filteringPart;
- 
--        Query<Object[]> query = remoteCache.query(vectorQuery);
--        List<Object[]> hits = query.maxResults(request.maxResults()).list();
-+        return remoteCache.<Object[]>query(vectorQuery).maxResults(request.maxResults());
-+    }
- 
-+    private EmbeddingSearchResult<TextSegment> toSearchResult(List<Object[]> hits, double minScore) {
-         List<EmbeddingMatch<TextSegment>> matches = hits.stream()
-                 .map(obj -> {
-                     LangChainInfinispanItem item = (LangChainInfinispanItem) obj[0];
-                     Float score = (Float) obj[1];
--                    if (score.doubleValue() < request.minScore()) {
-+                    if (score.doubleValue() < minScore) {
-                         return null;
-                     }
- 
-```
-
-**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStore.java` (modified, +38/-2)
-```diff
-@@ -9,6 +9,7 @@
- import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+-import static java.util.Arrays.copyOf;
+-
+ import dev.langchain4j.agentic.internal.AgentExecutor;
+ import dev.langchain4j.agentic.internal.MapperAgentInvoker;
+ import dev.langchain4j.agentic.planner.Action;
+@@ -10,6 +8,7 @@
+ import dev.langchain4j.agentic.planner.InitPlanningContext;
+ import dev.langchain4j.agentic.planner.Planner;
+ import dev.langchain4j.agentic.planner.PlanningContext;
++import java.lang.reflect.Array;
  import java.util.ArrayList;
+ import java.util.Collection;
  import java.util.List;
-+import java.util.concurrent.CompletableFuture;
- import org.infinispan.client.hotrod.RemoteCache;
- import org.infinispan.client.hotrod.RemoteCacheManager;
- import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-@@ -93,8 +94,7 @@ private static RemoteCache<String, String> getExistingCache(
-     @Override
-     public List<ChatMessage> getMessages(Object memoryId) {
-         ensureNotNull(memoryId, "memoryId");
--        String json = remoteCache.get(memoryId.toString());
--        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
-+        return toMessages(remoteCache.get(memoryId.toString()));
+@@ -19,7 +18,7 @@ public class ParallelMapperPlanner implements Planner {
+ 
+     private final String itemsProvider;
+     private final boolean isArrayResult;
+-    private final Class<? extends Object[]> arrayclass;
++    private final Class<?> arrayClass;
+ 
+     private AgentExecutor subagent;
+     private String mapperAgentId;
+@@ -29,9 +28,18 @@ public class ParallelMapperPlanner implements Planner {
+     private final AtomicInteger completedCount = new AtomicInteger();
+ 
+     public ParallelMapperPlanner(String itemsProvider, boolean isArrayResult, Class<? extends Object[]> arrayclass) {
++        this(itemsProvider, isArrayResult ? arrayclass : null);
++    }
++
++    /**
++     * @param itemsProvider the name of the state holding the items to map
++     * @param arrayClass the type of the array to return the results in, which can be an array of a primitive type,
++     *        like {@code int[]}, or {@code null} to return them in a list
++     */
++    public ParallelMapperPlanner(String itemsProvider, Class<?> arrayClass) {
+         this.itemsProvider = itemsProvider;
+-        this.isArrayResult = isArrayResult;
+-        this.arrayclass = arrayclass;
++        this.isArrayResult = arrayClass != null;
++        this.arrayClass = arrayClass;
      }
  
      @Override
-@@ -111,6 +111,42 @@ public void deleteMessages(Object memoryId) {
-         remoteCache.remove(memoryId.toString());
+@@ -76,7 +84,13 @@ private List<?> collectItems(Object collectionObj) {
+         } else if (collectionObj instanceof Collection<?> collection) {
+             items = new ArrayList<>(collection);
+         } else if (collectionObj.getClass().isArray()) {
+-            items = java.util.Arrays.asList((Object[]) collectionObj);
++            // read through reflection, since an array of a primitive type, like int[], is not an Object[]
++            int length = Array.getLength(collectionObj);
++            List<Object> elements = new ArrayList<>(length);
++            for (int i = 0; i < length; i++) {
++                elements.add(Array.get(collectionObj, i));
++            }
++            items = elements;
+         } else {
+             throw new IllegalArgumentException(
+                     "The value for itemsProvider '" + itemsProvider + "' must be a Collection or array, but was: "
+@@ -100,13 +114,26 @@ public Action nextAction(PlanningContext planningContext) {
      }
  
-+    @Override
-+    public CompletableFuture<List<ChatMessage>> getMessagesAsync(Object memoryId) {
-+        try {
-+            ensureNotNull(memoryId, "memoryId");
-+            return remoteCache.getAsync(memoryId.toString()).thenApply(InfinispanChatMemoryStore::toMessages);
-+        } catch (Throwable t) {
-+            return CompletableFuture.failedFuture(t);
-+        }
-+    }
-+
-+    @Override
-+    public CompletableFuture<Void> updateMessagesAsync(Object memoryId, List<ChatMessage> messages) {
-+        try {
-+            ensureNotNull(memoryId, "memoryId");
-+            ensureNotNull(messages, "messages");
-+            String json = ChatMessageSerializer.messagesToJson(messages);
-+            return remoteCache.putAsync(memoryId.toString(), json).thenApply(ignored -> null);
-+        } catch (Throwable t) {
-+            return CompletableFuture.failedFuture(t);
-+        }
-+    }
-+
-+    @Override
-+    public CompletableFuture<Void> deleteMessagesAsync(Object memoryId) {
-+        try {
-+            ensureNotNull(memoryId, "memoryId");
-+            return remoteCache.removeAsync(memoryId.toString()).thenApply(ignored -> null);
-+        } catch (Throwable t) {
-+            return CompletableFuture.failedFuture(t);
-+        }
-+    }
-+
-+    private static List<ChatMessage> toMessages(String json) {
-+        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
-+    }
-+
-     public static Builder builder() {
-         return new Builder();
+     private Action doneWithResults(PlanningContext planningContext, List<Object> results) {
+-        Object result = isArrayResult ? copyOf(results.toArray(), results.size(), arrayclass) : results;
++        Object result = isArrayResult ? toArray(results) : results;
+         if (outputKey != null && !outputKey.isBlank()) {
+             planningContext.agenticScope().writeState(outputKey, result);
+         }
+         return done(result);
      }
+ 
++    private Object toArray(List<Object> results) {
++        // filled through reflection, which unboxes each result when the array is of a primitive type, like int[]
++        Object array = Array.newInstance(arrayClass.getComponentType(), results.size());
++        for (int i = 0; i < results.size(); i++) {
++            Object result = results.get(i);
++            // a null result keeps the default value of the component type: 0 or false for a primitive, null otherwise
++            if (result != null) {
++                Array.set(array, i, result);
++            }
++        }
++        return array;
++    }
++
+     @Override
+     public AgenticSystemTopology topology() {
+         return AgenticSystemTopology.PARALLEL;
 ```
 
-**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStoreWithFilterIT.java` (modified, +85/-0)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperServiceImpl.java` (modified, +2/-4)
 ```diff
-@@ -1,20 +1,31 @@
- package dev.langchain4j.store.embedding.infinispan;
+@@ -50,10 +50,8 @@ public T build() {
+                     "A parallel mapper service requires exactly one subagent, but " + subagents.size()
+                             + " were provided.");
+         }
+-        boolean isArrayResult = isArrayResult();
+-        Class<? extends Object[]> arrayclass =
+-                isArrayResult ? (Class<? extends Object[]>) agenticMethod.getReturnType() : null;
+-        return build(() -> new ParallelMapperPlanner(itemsProvider(), isArrayResult, arrayclass));
++        Class<?> arrayClass = isArrayResult() ? agenticMethod.getReturnType() : null;
++        return build(() -> new ParallelMapperPlanner(itemsProvider(), arrayClass));
+     }
  
-+import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
+     private String itemsProvider() {
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/ParallelMapperPrimitiveArrayTest.java` (added, +140/-0)
+```diff
+@@ -0,0 +1,140 @@
++package dev.langchain4j.agentic;
++
 +import static org.assertj.core.api.Assertions.assertThat;
- import static org.infinispan.testcontainers.InfinispanContainer.IMAGE_BASENAME;
- 
-+import dev.langchain4j.data.document.Metadata;
-+import dev.langchain4j.data.embedding.Embedding;
- import dev.langchain4j.data.segment.TextSegment;
- import dev.langchain4j.model.embedding.EmbeddingModel;
- import dev.langchain4j.model.embedding.onnx.allminilml6v2q.AllMiniLmL6V2QuantizedEmbeddingModel;
-+import dev.langchain4j.store.embedding.EmbeddingMatch;
-+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
- import dev.langchain4j.store.embedding.EmbeddingStore;
- import dev.langchain4j.store.embedding.EmbeddingStoreWithFilteringIT;
-+import java.time.Duration;
++
++import dev.langchain4j.service.V;
 +import java.util.List;
- import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
- import org.infinispan.commons.util.Version;
- import org.infinispan.testcontainers.InfinispanContainer;
- import org.junit.jupiter.api.AfterAll;
- import org.junit.jupiter.api.BeforeAll;
 +import org.junit.jupiter.api.Test;
- 
- class InfinispanEmbeddingStoreWithFilterIT extends EmbeddingStoreWithFilteringIT {
- 
-+    private static final Duration TIMEOUT = Duration.ofSeconds(30);
 +
-     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
-     EmbeddingModel embeddingModel = new AllMiniLmL6V2QuantizedEmbeddingModel();
-     EmbeddingStore<TextSegment> embeddingStore;
-@@ -54,4 +65,78 @@ protected EmbeddingStore<TextSegment> embeddingStore() {
-     protected EmbeddingModel embeddingModel() {
-         return embeddingModel;
-     }
++/**
++ * A parallel mapper accepts an array of items and can return an array of results, which may be arrays of a primitive
++ * type, like {@code int[]}, rather than of objects.
++ */
++class ParallelMapperPrimitiveArrayTest {
 +
-+    @Test
-+    void should_search_async_with_metadata_filter() {
-+        // given
-+        List<TextSegment> segments = List.of(
-+                TextSegment.from("The sky is blue", new Metadata().put("color", "blue")),
-+                TextSegment.from("The grass is green", new Metadata().put("color", "green")),
-+                TextSegment.from("Roses are red", new Metadata().put("color", "red")));
-+        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
-+        List<String> ids = embeddingStore().addAll(embeddings, segments);
++    public static class Doubler {
 +
-+        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
-+                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
-+                .filter(metadataKey("color").isIn("blue", "green"))
-+                .maxResults(1)
-+                .build();
++        @Agent(description = "Doubles a number", outputKey = "doubled")
++        public int doubleIt(@V("number") int number) {
++            return number * 2;
++        }
++    }
 +
-+        // when-then
-+        assertThat(embeddingStore().searchAsync(request))
-+                .succeedsWithin(TIMEOUT)
-+                .satisfies(result -> {
-+                    assertThat(result.matches())
-+                            .extracting(EmbeddingMatch::embeddingId)
-+                            .containsExactly(ids.get(0));
-+                    assertThat(result.matches()).isEqualTo(embeddingStore().search(request).matches());
-+                });
++    public static class NullForEvenDoubler {
++
++        @Agent(description = "Doubles an odd number", outputKey = "doubled")
++        public Integer doubleIt(@V("number") int number) {
++            return number % 2 == 0 ? null : number * 2;
++        }
++    }
++
++    public static class NullForEvenChecker {
++
++        @Agent(description = "Checks an odd number", outputKey = "checked")
++        public Boolean check(@V("number") int number) {
++            return number % 2 == 0 ? null : true;
++        }
++    }
++
++    public interface IntArrayToListMapper {
++
++        @Agent
++        List<Integer> mapAll(@V("numbers") int[] numbers);
++    }
++
++    public interface IntArrayToIntArrayMapper {
++
++        @Agent
++        int[] mapAll(@V("numbers") int... numbers);
++    }
++
++    public interface IntArrayToBooleanArrayMapper {
++
++        @Agent
++        boolean[] mapAll(@V("numbers") int... numbers);
++    }
++
++    public interface IntArrayToIntegerArrayMapper {
++
++        @Agent
++        Integer[] mapAll(@V("numbers") int... numbers);
++    }
++
++    public interface DoubleArrayToListMapper {
++
++        @Agent
++        List<Integer> mapAll(@V("numbers") double[] numbers);
 +    }
 +
 +    @Test
-+    void should_search_async_with_min_score() {
-+        // given
-+        List<TextSegment> segments =
-+                List.of(TextSegment.from("The sky is blue"), TextSegment.from("Roses are red"));
-+        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
-+        List<String> ids = embeddingStore().addAll(embeddings, segments);
-+
-+        Embedding queryEmbedding = embeddingModel.embed("What color is the sky?").content();
-+        List<EmbeddingMatch<TextSegment>> allMatches = embeddingStore()
-+                .search(EmbeddingSearchRequest.builder()
-+                        .queryEmbedding(queryEmbedding)
-+                        .maxResults(2)
-+                        .build())
-+                .matches();
-+        assertThat(allMatches).extracting(EmbeddingMatch::embeddingId).containsExactly(ids.get(0), ids.get(1));
-+
-+        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
-+                .queryEmbedding(queryEmbedding)
-+                .maxResults(2)
-+                .minScore((allMatches.get(0).score() + allMatches.get(1).score()) / 2)
++    void items_of_a_primitive_array_are_mapped_one_by_one() {
++        IntArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToListMapper.class)
++                .subAgents(new Doubler())
 +                .build();
 +
-+        // when-then
-+        assertThat(embeddingStore().searchAsync(request))
-+                .succeedsWithin(TIMEOUT)
-+                .satisfies(result ->
-+                        assertThat(result.matches()).containsExactly(allMatches.get(0)));
++        assertThat(mapper.mapAll(new int[] {1, 2, 3})).containsExactly(2, 4, 6);
 +    }
 +
 +    @Test
-+    void should_fail_search_async_through_the_future_when_filter_is_not_supported() {
-+        // given
-+        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
-+                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
-+                .filter(metadataKey("color").containsString("blu"))
++    void items_of_an_empty_primitive_array_are_mapped_to_an_empty_list() {
++        IntArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToListMapper.class)
++                .subAgents(new Doubler())
 +                .build();
 +
-+        // when-then
-+        assertThat(embeddingStore().searchAsync(request))
-+                .fail
++        assertThat(mapper.mapAll(new int[0])).isEmpty();
++    }
++
++    @Test
++    void items_of_a_primitive_array_are_converted_to_the_type_of_the_subagent_argument() {
++        DoubleArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(DoubleArrayToListMapper.class)
++                .subAgents(new Doubler())
++                .build();
++
++        assertThat(mapper.mapAll(new double[] {1.0, 2.0})).containsExactly(2, 4);
++    }
++
++    @Test
++    void results_are_returned_as_a_primitive_array() {
++        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
++                .subAgents(new Doubler())
++                .build();
++
++        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, 4, 6);
++    }
++
++    @Test
++    void an_empty_primitive_array_is_mapped_to_an_empty_primitive_array() {
++        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
++                .subAgents(new Doubler())
++                .build();
++
++        assertThat(mapper.mapAll()).isEmpty();
++    }
++
++    @Test
++    void null_result_is_returned_as_zero_in_a_numeric_primitive_array() {
++        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
++                .subAgents(new NullForEvenDoubler())
++                .build();
++
++        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, 0, 6);
++    }
++
++    @Test
++    void null_result_is_returned_as_false_in_a_boolean_array() {
++        IntArrayToBooleanArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToBooleanArrayMapper.class)
++                .subAgents(new NullForEvenChecker())
++                .build();
++
++        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(true, false, true);
++    }
++
++    @Test
++    void null_result_is_returned_as_null_in_an_array_of_objects() {
++        IntArrayToIntegerArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntegerArrayMapper.class)
++                .subAgents(new NullForEvenDoubler())
++                .build();
++
++        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, null, 6);
++    }
++}
 ```
 
-**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java` (modified, +101/-0)
+---
+
+### Incident Patch 2: `1b0551ba` (2026-11-23)
+**Commit Message**: Require all fields in the Gemini POJO ITs' JSON schemas
+
+JsonSchemas.jsonSchemaFrom only marks a field as required when it carries
+@JsonProperty(required = true), so both should_deserialize_to_POJO tests sent
+"required": [] and Gemini could leave a field out. Jackson then filled the
+missing field with its default (age = 0), which made the streaming test flaky.
+
+Mark every record component as required, so the schema requires them and a
+missing field fails with "Missing required creator property" instead of a
+silent default. Also print the streaming response, whose body is not logged.
+
+**File**: `langchain4j-google-ai-gemini/src/test/java/dev/langchain4j/model/googleai/GoogleAiGeminiChatModelIT.java` (modified, +6/-22)
 ```diff
-@@ -13,10 +13,12 @@
- import dev.langchain4j.data.message.TextContent;
- import dev.langchain4j.data.message.ToolExecutionResultMessage;
- import dev.langchain4j.data.message.UserMessage;
-+import java.time.Duration;
- import java.util.List;
- import java.util.Map;
- import org.infinispan.client.hotrod.RemoteCacheManager;
- import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-+import org.infinispan.client.hotrod.exceptions.RemoteCacheManagerNotStartedException;
- import org.infinispan.commons.util.Version;
- import org.infinispan.testcontainers.InfinispanContainer;
- import org.junit.jupiter.api.AfterAll;
-@@ -26,6 +28,8 @@
+@@ -13,7 +13,6 @@
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  
- class InfinispanChatMemoryStoreIT {
- 
-+    private static final Duration TIMEOUT = Duration.ofSeconds(30);
-+
-     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
-     InfinispanChatMemoryStore chatMemoryStore;
- 
-@@ -248,4 +252,101 @@ void should_create_cache_by_default() {
- 
-         assertThat(remoteCacheManager.getCache("cache-created")).isNotNull();
+-import com.fasterxml.jackson.annotation.JsonCreator;
+ import com.fasterxml.jackson.annotation.JsonProperty;
+ import com.fasterxml.jackson.annotation.JsonSubTypes;
+ import com.fasterxml.jackson.annotation.JsonTypeInfo;
+@@ -364,27 +363,12 @@ void should_allow_array_as_response_schema() throws JsonProcessingException {
+         assertThat(diceRolls.length).isEqualTo(3);
      }
+ 
+-    private static class Color {
+-        private String name;
+-        private int red;
+-        private int green;
+-        private int blue;
+-        private boolean muted;
+-
+-        @JsonCreator
+-        public Color(
+-                @JsonProperty("name") String name,
+-                @JsonProperty("red") int red,
+-                @JsonProperty("green") int green,
+-                @JsonProperty("blue") int blue,
+-                @JsonProperty("muted") boolean muted) {
+-            this.name = name;
+-            this.red = red;
+-            this.green = green;
+-            this.blue = blue;
+-            this.muted = muted;
+-        }
+-    }
++    private record Color(
++            @JsonProperty(required = true) String name,
++            @JsonProperty(required = true) int red,
++            @JsonProperty(required = true) int green,
++            @JsonProperty(required = true) int blue,
++            @JsonProperty(required = true) boolean muted) {}
+ 
+     @Test
+     void should_deserialize_to_POJO() throws JsonProcessingException {
+```
+
+**File**: `langchain4j-google-ai-gemini/src/test/java/dev/langchain4j/model/googleai/GoogleAiGeminiStreamingChatModelIT.java` (modified, +4/-1)
+```diff
+@@ -8,6 +8,7 @@
+ import static java.util.concurrent.TimeUnit.SECONDS;
+ import static org.assertj.core.api.Assertions.assertThat;
+ 
++import com.fasterxml.jackson.annotation.JsonProperty;
+ import com.fasterxml.jackson.core.JsonProcessingException;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ import dev.langchain4j.agent.tool.P;
+@@ -339,7 +340,7 @@ void should_allow_array_as_response_schema() throws JsonProcessingException {
+     void should_deserialize_to_POJO() throws Exception {
+ 
+         // given
+-        record Person(String name, int age) {}
++        record Person(@JsonProperty(required = true) String name, @JsonProperty(required = true) int age) {}
+ 
+         GoogleAiGeminiStreamingChatModel gemini = GoogleAiGeminiStreamingChatModel.builder()
+                 .apiKey(GOOGLE_AI_GEMINI_API_KEY)
+@@ -357,6 +358,8 @@ record Person(String name, int age) {}
+         gemini.chat("Klaus is 37 years old", handler);
+         ChatResponse response = handler.get();
+ 
++        System.out.println("response = " + response);
 +
-+    @Test
-+    void should_get_messages_async() {
-+        List<ChatMessage> messages = List.of(UserMessage.from("Hello async"), AiMessage.from("Hi from async!"));
-+
-+        chatMemoryStore.updateMessages("async-get", messages);
-+
-+        assertThat(chatMemoryStore.getMessagesAsync("async-get"))
-+                .succeedsWithin(TIMEOUT)
-+                .isEqualTo(messages);
-+    }
-+
-+    @Test
-+    void should_get_empty_messages_async_for_unknown_id() {
-+        assertThat(chatMemoryStore.getMessagesAsync("unknown-async"))
-+                .succeedsWithin(TIMEOUT)
-+                .isEqualTo(List.of());
-+    }
-+
-+    @Test
-+    void should_update_messages_async() {
-+        List<ChatMessage> messages = List.of(UserMessage.from("Stored async"));
-+
-+        assertThat(chatMemoryStore.updateMessagesAsync("async-update", messages))
-+                .succeedsWithin(TIMEOUT);
-+
-+        assertThat(chatMemoryStore.getMessages("async-update")).isEqualTo(messages);
-+    }
-+
-+    @Test
-+    void should_delete_messages_async() {
-+        chatMemoryStore.updateMessages("async-delete", List.of(UserMessage.from("To be deleted")));
-+
-+        assertThat(chatMemoryStore.deleteMessagesAsync("async-delete")).succeedsWithin(TIMEOUT);
-+
-+        assertThat(chatMemoryStore.getMessages("async-delete")).isEmpty();
-+    }
-+
-+    @Test
-+    void should_fail_async_methods_through_the_future_when_arguments_are_null() {
-+        assertThat(chatMemoryStore.getMessagesAsync(null))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(IllegalArgumentException.class)
-+                .withMessage("memoryId cannot be null");
-+
-+        assertThat(chatMemoryStore.updateMessagesAsync(null, List.of()))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(IllegalArgumentException.class)
-+                .withMessage("memoryId cannot be null");
-+
-+        assertThat(chatMemoryStore.updateMessagesAsync("async-null-messages", null))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(IllegalArgumentException.class)
-+                .withMessage("messages cannot be null");
-+
-+        assertThat(chatMemoryStore.deleteMessagesAsync(null))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(IllegalArgumentException.class)
-+                .withMessage("memoryId cannot be null");
-+    }
-+
-+    @Test
-+    void should_fail_async_methods_through_the_future_when_remote_cache_manager_is_stopped() {
-+        ConfigurationBuilder builder = new ConfigurationBuilder();
-+        builder.uri(infinispan.getConnectionURI());
-+        RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
-+        InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
-+                .remoteCacheManager(remoteCacheManager)
-+                .build();
-+        remoteCacheManager.stop();
-+
-+        assertThat(store.getMessagesAsync("stopped"))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
-+
-+        assertThat(store.updateMessagesAsync("stopped", List.of(UserMessage.from("Hello"))))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
-+
-+        assertThat(store.deleteMessagesAsync("stopped"))
-+                .failsWithin(TIMEOUT)
-+                .withThrowableThat()
-+                .havingCause()
-+                .isExactlyInstanceOf(Rem
+         Person person = new ObjectMapper().readValue(response.aiMessage().text(), Person.class);
+ 
+         // then
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7245** (2026-11-23): Avoid deep regex recursion on long inputs in the prompt injection guardrail and the Azure ACA sessions tool (@dliubarskyi)
+- **PR #7235** (2026-11-23): Update dependency org.apache.httpcomponents.core5:httpcore5 to v5.5 (@renovate[bot])
 - **PR #7219** (2026-11-20): CI: generate images in the Google ITs only in the JDK 21 nightly and when a Google module changes (@dliubarskyi)
-- **PR #7206** (2026-11-20): Testing: add @deprecated tags to requests() and request() of the old model mocks (@dliubarskyi)
-- **PR #7195** (2026-11-20): Infinispan: async support for embedding search and chat memory store (@karesti)
-- **PR #7193** (2026-11-20): Update dependency commons-logging:commons-logging to v1.4.0 (@renovate[bot])
-- **PR #7192** (2026-11-20): Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (@renovate[bot])
-- **PR #7181** (2026-11-19): Update dependency org.opensearch.client:opensearch-java to v2.26.0 (@renovate[bot])
+- **PR #7217** (2026-11-23): Wait for the onError handler in the StreamingTest rethrow test (@edeandrea)
+- **PR #7210** (2026-11-23): Docs: write the testing tutorial and add an evaluation page (@dliubarskyi)
+- **PR #7209** (2026-11-23): Update milvusdb/milvus Docker tag to v3.0.6 (@renovate[bot])
 
 ---
 
@@ -1365,31 +1251,60 @@ and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI
+## X. agentic): support primitive arrays in the parallel mapper
 
 **RULE**:
-When implementing operations in `langchain4j-opensearch/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a30ea36b`: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc45d349`: agentic): support primitive arrays in the parallel mapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-opensearch/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                <version>5.4.3</version>
+import java.lang.reflect.Array;
+    private final Class<?> arrayClass;
+        this(itemsProvider, isArrayResult ? arrayclass : null);
+    }
+
+    /**
+     * @param itemsProvider the name of the state holding the items to map
+     * @param arrayClass the type of the array to return the results in, which can be an array of a primitive type,
+     *        like {@code int[]}, or {@code null} to return them in a list
+     */
+    public ParallelMapperPlanner(String itemsProvider, Class<?> arrayClass) {
+        this.isArrayResult = arrayClass != null;
+        this.arrayClass = arrayClass;
+            // read through reflection, since an array of a primitive type, like int[], is not an Object[]
+            int length = Array.getLength(collectionObj);
+            List<Object> elements = new ArrayList<>(length);
+            for (int i = 0; i < length; i++) {
+                elements.add(Array.get(collectionObj, i));
+            }
+            items = elements;
+        Object result = isArrayResult ? toArray(results) : results;
+    private Object toArray(List<Object> results) {
+        // filled through reflection, which unboxes each result when the array is of a primitive type, like int[]
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-                <version>5.3.6</version>
+import static java.util.Arrays.copyOf;
+
+    private final Class<? extends Object[]> arrayclass;
+        this.isArrayResult = isArrayResult;
+        this.arrayclass = arrayclass;
+            items = java.util.Arrays.asList((Object[]) collectionObj);
+        Object result = isArrayResult ? copyOf(results.toArray(), results.size(), arrayclass) : results;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a30ea36b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc45d349` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

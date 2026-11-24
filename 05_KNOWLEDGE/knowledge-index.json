@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T02:04:27.682Z",
+  "last_updated": "2026-11-24T02:12:58.197Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24356,
+  "total_items": 24365,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113505,10 +113505,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "repository": "makecindy/cindy",
-      "source_version": "559ad18c",
-      "content_hash": "874d0a52e245057fdb213b5b954b660a910d34ccf89cd014c353d90f97836fd3",
+      "source_version": "cb3ac9aa",
+      "content_hash": "dd60bf2bf2c3cb55491e930bd045ede03c7150b3d39507042522a1a98f21b604",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:44:39.258Z"
+      "persisted_at": "2026-11-24T02:12:44.803Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy",
@@ -113517,10 +113517,10 @@
       "relative_path": "08_VERIFICATION/makecindy-cindy-verification-protocol-empirical-defect-shield-for-makecindy-cind.md",
       "title": "Verification Protocol: Empirical Defect Shield for makecindy/cindy",
       "repository": "makecindy/cindy",
-      "source_version": "559ad18c",
-      "content_hash": "a7a93b774e5e4df62ddf87e56de4a42207c56b9de0b16c78bd93dd0f2f6cbf6e",
+      "source_version": "cb3ac9aa",
+      "content_hash": "40570913b281e9607b46af7a55c0d1d6579d50cf38c6db7d95db0a80ed847935",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:44:39.398Z"
+      "persisted_at": "2026-11-24T02:12:44.982Z"
     },
     "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570": {
       "item_id": "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570",
@@ -113578,9 +113578,9 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "cef1ce708796a36180e383f22eb0bb4675b6bbdf122e9a4d3b4023755c4b5cdd",
+      "content_hash": "a6cf1a3ac138eb68a0022ddea3f1256decfee14462905fdb06755a4e8859c4e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:44:51.700Z"
+      "persisted_at": "2026-11-24T02:12:57.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings",
@@ -113590,9 +113590,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for makecindy-cindy-learnings",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb548e1e25b532c580249ca2ab8b269ded838a16f77edc6664f51e2ff76908b9",
+      "content_hash": "389c983141142387126649583975bff3808fea3d5ad7079ca5de4bb8a3e560f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:44:51.863Z"
+      "persisted_at": "2026-11-24T02:12:57.393Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -216145,8 +216145,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "9445e92f",
-      "content_hash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
+      "source_version": "911e4203",
+      "content_hash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -216179,6 +216179,11 @@
           "number": 9638,
           "title": "Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10179,
+          "title": "support primitive arrays in the parallel mapper",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216186,7 +216191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:49:45.918Z",
+      "verified_at": "2026-11-24T02:12:50.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216228,10 +216233,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "9445e92f",
-      "content_hash": "116555eecc4e959c3ac7f5a9dbbfbeb9fbd374de5dd8845d82fdecb588e3fdf0",
+      "source_version": "911e4203",
+      "content_hash": "b98473fd9ee6a71393b2009f393280c54849779c55bc19c47aeb6fea9f015da3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:49:46.470Z"
+      "persisted_at": "2026-11-24T02:12:51.069Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -216240,10 +216245,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "9445e92f",
-      "content_hash": "6b43db114c4af2f8c33a1bc8479fdbf678cf18ea4aa269e0dd7fb876e839e56f",
+      "source_version": "911e4203",
+      "content_hash": "b2edbdae5fe18f879d65e072a559fedf5bd37f2c581b2b7ddf459dbe3cf36a94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:49:46.618Z"
+      "persisted_at": "2026-11-24T02:12:51.246Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -256905,8 +256910,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "f0856c35",
-      "content_hash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
+      "source_version": "3e93677d",
+      "content_hash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -256934,6 +256939,11 @@
           "number": 9974,
           "title": "新增 Folkbench Pelican Database 开源发布博客（12 语种）并修复 Windows 路径校验兼容",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10177,
+          "title": "数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -256941,7 +256951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:52:38.612Z",
+      "verified_at": "2026-11-24T02:12:37.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256995,10 +257005,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "f0856c35",
-      "content_hash": "f8cada8c5c5da57535ff1b6a5f72c130230a160cf6b3d7ef5d20bcf33a92c639",
+      "source_version": "3e93677d",
+      "content_hash": "b97f95e885c3cf5171ac4231747e0697a558c1394c9fdb9d5d10837035e42355",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:52:39.423Z"
+      "persisted_at": "2026-11-24T02:12:38.695Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -257129,9 +257139,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "6828fd43e5807e8c2071c73257580216c9badc9b2e88ec8d076ac02a58a6d391",
+      "content_hash": "bfc8d14dac7155402c57ae6107605b0f9f955ac5900c0402bd04c390bbec6141",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:52:56.613Z"
+      "persisted_at": "2026-11-24T02:12:56.499Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -270078,8 +270088,8 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "559ad18c",
-      "content_hash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
+      "source_version": "cb3ac9aa",
+      "content_hash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
@@ -270092,6 +270102,11 @@
           "number": 9721,
           "title": "resume Passport recovery after transient failure",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10178,
+          "title": "Empirical Invariant Guard in gitSnapshotCoordinator.test.ts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270099,7 +270114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:44:38.718Z",
+      "verified_at": "2026-11-24T02:12:44.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280673,9 +280688,9 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "95e7c38572d533dd5314fcbd97f85f26857d40ed55ecf71939b5f1318b5a7407",
+      "content_hash": "958e2258cb0da53ac99c6c1fb9ce47d42de4276e9d9c27f03496ab3f51b085da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:49:51.456Z"
+      "persisted_at": "2026-11-24T02:12:58.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
@@ -280685,9 +280700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "499ff6e08bcf49cf0cba11293a9e26b7da9b75a510cd6f5f1b03071f1909619d",
+      "content_hash": "d8c263fd5e5a6045ef7cad780484ae0197f0e894175e68f5fadbed46c982f285",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:49:51.618Z"
+      "persisted_at": "2026-11-24T02:12:58.197Z"
     },
     "learn-huggingface-fastvideo-fasth3-omni-comfy": {
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
@@ -332186,6 +332201,120 @@
       "content_hash": "dfc825e23bd2347d6ef0f437b0ee1e84ed9db9790696f35523f8de9ff1798b89",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T02:04:25.800Z"
+    },
+    "rule-10177": {
+      "learning_id": "rule-10177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10177,
+      "title": "数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "3e93677d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T02:12:37.816Z"
+    },
+    "candidate_directive-public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744": {
+      "item_id": "candidate_directive-public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8AFN-public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744.md",
+      "title": "数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "678494b9f980f729c94795c5881bacad7479365e9e8d05492a987095001ef295",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T02:12:56.151Z"
+    },
+    "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-folkbench-folkbench-content-information-intelligence-folkbench-folkbench-core-in.md",
+      "title": "Content & Information Intelligence: Folkbench/folkbench Core Invariants",
+      "repository": "Folkbench/folkbench",
+      "source_version": "3e93677d",
+      "content_hash": "5ab86c0e8e02780118304cd409cb3683c3106067b0405e3584be5b7a3540342b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T02:12:38.507Z"
+    },
+    "rule-10178": {
+      "learning_id": "rule-10178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10178,
+      "title": "Empirical Invariant Guard in gitSnapshotCoordinator.test.ts",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "cb3ac9aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T02:12:44.165Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-gitsnapshotcoordinator-test-ts": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-gitsnapshotcoordinator-test-ts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8B4H-empirical-invariant-guard-in-gitsnapshotcoordinator-test-ts.md",
+      "title": "Empirical Invariant Guard in gitSnapshotCoordinator.test.ts",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68c98def1799d38bd04058e8332545f357c86f8d24b92061dd59232deb3c2e45",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T02:12:57.044Z"
+    },
+    "rule-10179": {
+      "learning_id": "rule-10179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10179,
+      "title": "support primitive arrays in the parallel mapper",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "911e4203",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T02:12:50.441Z"
+    },
+    "candidate_directive-support-primitive-arrays-in-the-parallel-mapper": {
+      "item_id": "candidate_directive-support-primitive-arrays-in-the-parallel-mapper",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-86DQ-support-primitive-arrays-in-the-parallel-mapper.md",
+      "title": "support primitive arrays in the parallel mapper",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "911e4203",
+      "content_hash": "410d04adcefd4a22f400daedf2f60fa105284f95db60020bd84972712dbafec5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T02:12:50.895Z"
+    },
+    "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-folkbench-folkbench-learnings-content-information-intelligence-folkbench-folkben.md",
+      "title": "Content & Information Intelligence: folkbench-folkbench-learnings Core Invariants",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b81a5969e69f3515298acf22d9343dcb2e6eac94fb4c663aa81f7a238e00e12d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T02:12:56.325Z"
+    },
+    "candidate_directive-agentic-support-primitive-arrays-in-the-parallel-mapper": {
+      "item_id": "candidate_directive-agentic-support-primitive-arrays-in-the-parallel-mapper",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8BQV-agentic-support-primitive-arrays-in-the-parallel-mapper.md",
+      "title": "agentic): support primitive arrays in the parallel mapper",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "283efa71c7c9e33d7fca7f2c08c23d87881495b534bbf5b7a9809e36505bccaf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T02:12:57.848Z"
     }
   },
   "ai-builder-brain": {

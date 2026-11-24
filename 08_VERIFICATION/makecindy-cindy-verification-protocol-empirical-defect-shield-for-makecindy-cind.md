@@ -4,22 +4,22 @@
 {
   "source_repository": "makecindy/cindy",
   "source_url": "https://github.com/makecindy/cindy",
-  "source_version": "559ad18c",
+  "source_version": "cb3ac9aa",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T03:44:39.113Z",
+  "timestamp": "2026-11-24T02:12:44.628Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-makecindy-cindy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `559ad18c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:44:39.113Z`  
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `cb3ac9aa`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T02:12:44.628Z`  
 > **Learning ID**: `learn-github-makecindy-cindy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `makecindy/cindy` (Commit: `559ad18c`)
+- **Target Repository**: `makecindy/cindy` (Commit: `cb3ac9aa`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:44:37.915Z  
+> **Harvest Timestamp**: 2026-11-24T02:12:43.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10335 stars
+- **Stars / Engagement**: 10495 stars
 
 ---
 
@@ -1027,13 +1027,13 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11639** (2026-11-20): **定时任务用拆分出来的 OpenAI 订阅来源跑 Codex 时，每次都报 provider identity mismatch**
-  *Symptoms*: **提交人**: Max **客户端版本**: 0.1.141  ---  ## 现象 同一 OpenAI 订阅池里有两个账号：一个留在默认来源 `openai`，另一个用「拿出来作为单独供应商」拆成了独立来源（形如 `openai-sub-xxxx`）。  在定时任务（agent 模式、Codex 引擎）里把模型来源指定为这个拆出来的来源后，每次触发都失败，报错：  `queued heartbeat Codex thread provider identity does not match the current session route`  日志里先出现 `set-model: closed live session for route rebuild`（reason: provider-thread-relink），即使前后来源相同也会重建；随后这一班的消息排在“重建中”的会话后面，被以 `SEND_CANCELLED_BEFORE_DISPATCH (Codex thread provider identity mismatch)` 取消。  ## 复现情况 - 绑定已有会话（heartbeat、persistentSession）：每班失败，换新建定时任务绑同一会话也失败。 - 让定时任务首班自己新建会话：新会话首班也失败。 - 每次新建会话、不持久化的定时任务：同样失败（连续多晚）。 - 同一来源在普通手动任务里可以正常对话。 - 把定时任务来源改回默认 `openai` 后立即恢复正常。 - 会话上的 scheduled model baseline 似乎一直保留建任务时的旧来源，可能与此有关（推测，未证实）。  ## 期望 定时任务可以稳定使用拆分出来的订阅来源，或者在保存时就提示不支持，而不是每班静默失败。  ## 环境 macOS，单台电脑本机运行；Codex 型号 gpt-6.2-sol。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **版本区域**: CN **OS**: darwin arm64 (25.6.0) **Harness**: Claude Code **Model ID**: ` claude-opus-5-5 ` **界面语言**: zh-CN
+- **Issue #12340** (2026-11-23): **ACP 插件引擎冷会话被写入插件库 extraDirs 后发送消息报 Capability 'extraDirs' not supported**
+  *Symptoms*: **提交人**: 匿名 **客户端版本**: 0.1.144  ---  ### 问题描述  使用 ACP 插件引擎（本次复现使用的是 Antigravity 插件引擎）的既有项目任务，在客户端重启或会话未激活（冷会话）状态下被切回聚焦后，再次发送消息会在发送前失败，界面提示「回复未完成」，错误详情为：  ```text Capability 'extraDirs' not supported (reason: not-implemented) ```  失败后消息被退回输入队列头部，后续在该任务中重试发送仍会持续复现，且用户无法通过界面清除相关目录状态。  ### 复现条件与步骤  1. 安装并启用带 `"library": true` 的插件（本次环境中为官方插件 Cindy Chrome / `my-browser`）。 2. 在一个绑定了本地项目的任务中使用 ACP 插件引擎完成至少一轮对话，且该项目在 `project-directories.json` 中存在对应条目（即使值为空数组 `[]`）。 3. 让该任务回到冷会话状态（例如重启 Cindy，使内存中不再持有该会话实例）。 4. 切换到该 ACP 任务使其获得焦点，然后发送任意一条消息。  ### 定位到的原因（两个叠加问题）  1. **冷会话写入插件库 `extra_dirs` 时漏检引擎能力，且激活后清理变成 no-op**    - 聚焦冷会话时，`syncLibraryReadonlyExtraDir` → `applyLibraryReadonlyExtraDir` → `applyDirectoryGrants("extraDirs", ...)` 仅在内存中存在活跃会话实例时检查 `capabilities.extraDirs.supported`。    - 对未激活的冷会话未按数据库中的 `agent_kind` 检查能力，因此将插件的 `cindy-library:<library-path>` 持久化写入了 `sessions.extra_dirs`。    - 当会话随后被懒加载激活后，切走焦点触发清理时反而命中 `capabilities.extraDirs.supported === false` 的 no-op 守卫，导致这条 `cindy-library:` 记录长期滞留在数据库中（且常规目录设置接口会保留 library slot，用户无法在界面清除）。  2. **`beforeTurn` 钩子判断条件使用 `||` 绕过了能力检查**    - 发送消息前，`applyProjectDirectoriesForTurn` 合并了数据库中滞留的 `extra_dirs`（非空）。    - 该函数中调用 `setExtraDirs` 前的守卫写成了 `(extraDirs.length || session.capabilities.extraDirs.supported) && await session.setExtraDirs(...)`（`writableDirs` 存在相同写法）。    - 因为 `extraDirs.length > 0`，`||` 短路绕过了 `capabilities.extraDirs.supported === false` 的检查，强行调用 `setExtraDirs` 并抛出 `Capability 'extraDirs' not supported (reason: not-implemented
   **Post-Mortem & Fix Analysis**:
-  > **判断：** 定时任务应能用拆出来的 OpenAI 订阅账号运行 Codex。#10405 已明确自动任务与手动任务遵守同一账号归属，因此应修复派发行为，而不是在保存时禁选。#11313 记录过绑定已有会话的同类报错；这次 0.1.141 的关键增量是：不复用会话也会在首班失败，而同一拆分来源手动可用。旧线程不是解释全部现象的充分条件。  **行动：** 建议桌面调度／Codex 开发与 #11390 作者先在 `runnerQueuedDispatch.test.ts` 补一个不依赖旧会话的回归：用两个测试账号，一个留在 `openai`，另一个通过「拿出来作为单独供应商」生成来源；定时任务显式选后者和 `gpt-6.2-sol`，从 `runner.fire` 走一次新会话首班。用同一 `runId/sessionId` 串起三处证据：订阅启动包装器选中的账号及引擎来源、`thread/start` 回报的 `codexThreadModelProviderId`、`applyQueuedHeartbeatRouting` 拦截时的当前来源与预期线程身份。用 A/B 代指账号即可；缺少的值在测试入口补采，不需要会话正文或凭据。  在 `main@df6a1090` 静态核对到一个可直接验证的差异：拆分来源在目录中带 `subscriptionPool: 'openai'`；启动时保留所选账号，但传给引擎的是内置 `openai`。派发校验则从外层来源推导凭证类型：若目录只有订阅池标记、没有 `auth.native: 'codex'`，它会把这个独立 ID 当作普通供应商，预期 `cindy_gateway`。这能解释为什么即使来源没换，刚启动的 `cindy_openai` 线程也可能被拒；现场尚无这对身份值。报错检查优先读当前会话来源，不能凭 `scheduledModelBaseline` 仍是旧值认定它导致失败。  - 若首班重现上述身份差异，最小修复是让校验复用已有的 OpenAI 订阅识别规则；只统一线程家族，**不改写独立来源 ID 或账号绑定**。若启动时一致、到重建后才分化，再沿 `provider-thread-relink` 检查重建实际返回的来源是否被旧值覆盖。#11390 尚未合并，针对的是空闲旧线程；不要用反复重建代替身份核对，也不
+  > **判断：** 已有 Antigravity 项目任务应能在重启后继续对话，不依赖 ACP 支持插件库目录。0.1.144 报告的发送错误与 `main@fa4d01ae` 的代码路径吻合：需要修的是宿主在聚焦和发送时对目录能力的判断，不是插件引擎本身。目前未见覆盖此故障的修复 PR；以下是源码核对，尚未独立实机复现。  **行动：** 建议由桌面会话运行时维护者提交带回归用例的最小修复。使用已完成一轮对话的本地 Antigravity 项目任务，保留 `project-directories.json` 中显式的 `[]`。让 `my-browser` 在当前进程中实际打开作品库，再切回尚未激活的目标任务并发送。这里要区分“启用了插件”和“插件已打开库”：已合并的 #3906 明确焦点刷新只复用实际打开库的插件，仅安装启用不能证明是这次聚焦写入了新目录。  - **聚焦时：** `applyDirectoryGrants` 只在有活跃会话实例时检查能力。建议在写入插件库系统项前，对冷任务按持久化的 `agent_kind` 确认能力；对不支持的 ACP 不新增 `cindy-library:`，也不报告 `authorizedReadonly=true`。撤销时允许只移除历史系统项，不应因引擎不支持而提前返回，也不要清空用户自选目录。 - **发送时：** 显式 `[]` 是撤销项目目录，不是缺少配置，轮次开始时仍会合并任务里保存的目录（#11126）。`applyProjectDirectoriesForTurn` 目前按“列表非空 **或** 能力受支持”调用 setter，而 ACP 将 `extraDirs`、`writableDirs` 均声明为 `not-implemented`。应分别按对应能力调用；支持时即使列表为空也要下发，以撤销上一轮的授权。保留原有路径校验，不要通过吞掉 setter 异常解决。  **完成条件：** 在修复构建记录同一任务聚焦前后的系统项状态和发送结果：原本无系统项时不新增；预置旧系统项时，无需用户编辑数据库，原消息能进入下一轮、不再退回队首，切走后只清理系统项。用一个支持目录的会话作对照，确认正常挂载和空列表撤销仍然生效。  <!-- slack-sync type=issue-analysis source-delive
 
-- **Issue #11626** (2026-11-20): **bug(desktop): 收件箱中来自离线电脑的任务隐藏全部操作入口，无法标为已处理**
-  *Symptoms*: ### 问题描述 / What happened  实际行为：收件箱模式下，如果一条任务是在另一台电脑上运行的，而那台电脑当前不在线（或刚冷启动、连接状态仍是 `connecting`），这条任务行悬停前后都没有任何操作入口：「稍后处理」和「完成」都不出现，标题右侧只保留一个表示设备离线的图标。任务只能一直留在「待处理」分区，既不能标为已处理，也不能稍后处理，界面上没有任何文字说明原因，也没有重试或「等那台电脑上线后再处理」的提示。  期望行为：明确告知是执行这台任务的那台电脑离线导致无法操作，并在它上线后恢复入口；或允许在控制端先把任务标为已处理（等设备上线后再对账）。若产品上确实不能在离线时写回被控端，也请说明原因，不要让任务无提示地卡在待处理里。  补充：代码定位（0.1.141，仅供参考）  - `apps/desktop/src/renderer/features/cc-agent/lib/remoteSessionWriteGuard.ts`：`isRemoteSessionWriteBlocked()` 在 `deviceLinkConnectionStatus` 为 `disconnected` / `connecting` 时返回 true。 - `apps/desktop/src/renderer/features/cc-agent/sidebar/SessionCard.tsx`：`canQuickArchive = !navigationOnly && !isArchived && !isEmpty && !remoteWritesBlocked`；收件箱的「稍后处理」用 `canSnooze`，调用处传 `canUnarchive = !remoteWritesBlocked`。两个入口共用同一个开关，离线时一起消失。 - 同一分支下，非收件箱模式的「…」菜单也不会渲染，离线行等于整行只读。 - `docs/product-rules/task-inbox.md` 只规定「归档失败留在原分区并显示错误，不伪造已处理成功」，没有覆盖长期离线这种持续不可写的情况。  关联：#11574（同一区域的待处理堆积与远程状态同步）、#10701 / PR #10695（device-link 远程归档能力）、#11529、#9471（设备被误判离线）。  ### 环境 / Environment  - Cindy 版本或 commit / version or commit: 0.1.141 - 平台与版本 / platform & OS version: Windows x64（10.0.26100） - 安装方式 / install method: Windows 安装包 - 补充：收件箱显示范围包含同账号其它电脑；被控机为同账号 device-link 设备，处于离线状态  ### 复现步骤 / Steps to reproduce  1. 两台同账号电脑登录 Cindy，A 为控制端，B 为被控机。 2. 在 B 上启动一个任务，跑完后出现在 A 的收件箱「待处理」。 3. 关闭 B 的 Cindy（或断开 B 的网络），使 A 上该设备显示离线。 4. 在 A 的收件箱悬停这条任务行。 5. 该行没有任何操作按钮：「稍后处理」和「完成」都不出现，只有设备离线图标。任务无法标为已处理，一直留在待处理。B 重新上线后入口才恢复。  ### 日志与截图 / Logs & screenshots  <img width="260"
+- **Issue #12325** (2026-11-23): **本机 Agent API 的 claude-code 会话未注册 provider 路由，同名模型时 503 provider_route_ambiguous**
+  *Symptoms*: **提交人**: Zhou Zero **客户端版本**: 0.1.144  ---  ## 现象  通过**本机 Agent API**（`local-agent`，`POST /rpc`）用 `claude-code` 引擎发起会话时，如果两个已连接 provider 提供同名模型，Cindy 推理网关返回 503：  ``` HTTP 503  retry-after: 1 {"type":"error","error":{"type":"provider_route_ambiguous",  "code":"provider_route_ambiguous",  "message":"model 'deepseek-v4.1-flash-1017' matches multiple connected Providers;             retry after the session Provider is bound"}} ```  同一个 provider、同一个模型，改用 **pi** 引擎则正常完成（本次实测 4 秒返回）。  ## 复现  1. 配置两个自定义 provider（例如 A 和 B），都提供同名模型 `deepseek-v4.1-flash-1017` 2. 通过本机 Agent API `session/open`，`model` 传 **provider A 对应的 sha256 模型 id**，`toolPolicy: "client-only"` 3. `send` 一条消息 → `events` 轮询最终返回 `turn_end: failed`，错误即为上面的 503  SDK 内部重试 10 次后放弃，总耗时约 170 秒。  ## 关键证据  `startSession` 日志确认 provider 已经传对：  ``` startSession   model      : deepseek-v4.1-flash-1017   providerId : <provider A>        ← provider 正确传入   endpoint   : http://127.0.0.1:57028   scope      : maker/s:local-agent-<uuid>/claude-code ```  `models` 接口也能正确区分两个 provider 的同名模型（`id` = `sha256([providerId, engine, modelId])`，两者不同）。  ## 定位  网关处理 claude-code 请求时，用 `x-claude-code-session-id` 反查会话绑定的 provider：  - **查不到** → 走 `resolveImplicitLocalBridgeRouteResolution(model, "claude-code")` - → `connectedDefaultProviderForModel` 里 `chatEligibleSourcesForModel` 返回 2 个来源 - → `if (engine === "claude-code" && length > 1) return { kind: "ambiguous" }` → 503  问题在于**会话→provider 的内存映射没有被注册**。GUI 路径在 9 处调用了 `hydrateSessionProvider()`，但在 `apps/de
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1050,676 +1050,646 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f9c0a86` (2026-11-20)
-**Commit Message**: fix(auth): resume Passport recovery after transient failure
+### Incident Patch 1: `b2c92e39` (2026-11-24)
+**Commit Message**: Merge pull request #12379 from amanayayatu-tech/fix/10161-snapshot-send-diagnosis
 
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: xuzini-xzn <[REDACTED_EMAIL]>
+fix(desktop): explain when snapshot preparation blocks sending
 
-**File**: `apps/desktop/src/main/__tests__/authColdStartRecovery.test.ts` (modified, +56/-0)
+**File**: `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts` (modified, +7/-2)
 ```diff
-@@ -98,6 +98,7 @@ let refreshPromise = null, sessionInvalidationPromise = null;
- let authRefreshOverride = null, delegatedAuthState = null;
- const refreshBackoff = new AuthRefreshBackoff();
- const uncertainResourceRefreshTokens = new Map();
-+const pendingResourcePassportRecoveries = new Map();
- const passportAccountRefreshFlights = new Map();
- const pendingPassportAccountRotations = new Map();
- let passiveLocalSignOut = false;
-@@ -1094,6 +1095,61 @@ describe('active Passport recovery after an uncertain Resource rotation', () =>
-     expect(h.saved.session?.refreshToken).toBe('test-refresh');
+@@ -1,5 +1,5 @@
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+-import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
++import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
+ 
+ import {
+   GitSnapshotCoordinator,
+@@ -65,7 +65,12 @@ describe('durable snapshot dispatch intent', () => {
+     const deps = makeDeps({ snapshotTimeoutMs: 50, recordTurnAttempt: () => pending.promise });
+     const coordinator = new GitSnapshotCoordinator(deps);
+     const result = coordinator.onTurnStart('s1');
+-    const rejected = expect(result).rejects.toThrow('deadline');
++    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
++    // deadline. The display error must name the send failure and keep its retry type.
++    const rejected = Promise.all([
++      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
++      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
++    ]);
+     await vi.advanceTimersByTimeAsync(50);
+     await rejected;
+     expect(coordinator.hasPendingTurnStart('s1')).toBe(false);
+```
+
+**File**: `apps/desktop/src/main/git-snapshot/gitSnapshotCoordinator.ts` (modified, +12/-1)
+```diff
+@@ -6,7 +6,13 @@
+  */
+ 
+ import type { AgentKind } from '@cindy/maker-core';
+-import { OperationBudget, operationCheckpoint, operationWait } from '../utils/operationBudget';
++import {
++  OperationBudget,
++  operationCheckpoint,
++  operationWait,
++  SnapshotDispatchIntentDeadlineError,
++  SnapshotOperationDeadlineError,
++} from '../utils/operationBudget';
+ 
+ import { createAfterEditLabel } from './gitSnapshotLabeler';
+ import { enqueueGitRepoWrite } from './gitRepoWriteQueue';
+@@ -166,6 +172,11 @@ export class GitSnapshotCoordinator {
+       const index = queue?.indexOf(record) ?? -1;
+       if (index >= 0) queue!.splice(index, 1);
+       if (queue?.length === 0) this.turnStartQueues.delete(sessionId);
++      if (error instanceof SnapshotOperationDeadlineError) {
++        // This rejection is before intent confirmation. Keep the local deadline
++        // type for the scheduler's existing guarded retry, and identify it in history.
++        throw new SnapshotDispatchIntentDeadlineError(error);
++      }
+       throw error;
+     }
+   }
+```
+
+**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerQueuedDispatch.test.ts` (modified, +8/-2)
+```diff
+@@ -546,7 +546,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+   // scheduler must settle from the queued failure callback, not its later poll.
+   // Only the real typed snapshot deadline is handed to #10834's backoff recovery;
+   // its resend and exhaustion are covered by the persisted-recovery tests below.
+-  it.each(['deadline', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
++  // #10161 / unit: with recovery disabled, the same stalled journal receipt
++  // must reach the run's failure details as an unsent message.
++  it.each(['deadline', 'deadline-without-recovery', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
+     'settles pre-accept snapshot preparation through the real queue: %s', async (outcome) => {
+     vi.useFakeTimers();
+     const h = createSessionHarness(async () => ({ accepted: true }));
+@@ -582,7 +584,8 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+       beforeDispatchUserTurn: (sid, item, signal) => prepareQueuedPromptSnapshot(snapshots, watchers, sid, item, signal),
+       onAcceptedQueuedMessage: async () => { watchers.delete('snapshot-run-input'); await accepted?.(); },
+       onPersistedSendRejected: (sid, message, item, recovering) => queue.onPersistedSendRejected(sid, message, item, recovering),
+-      isResumableTurnErrorCandidate: signals => signals.reason === 'scheduler-snapshot-preparation',
++      isResumableTurnErrorCandidate: signals => outcome !== 'deadline-without-recovery'
++        && signals.reason === 'scheduler-snapshot-preparation',
+       onResumableTurnError: takeOver,
+       onDiscardedQueuedMessage: (_sid, item) => { watchers.get(item.clientId)?.onDiscarded(); watchers.delete(item.clientId); },
+       steerToAgent: async () => {}, abortSession: async () => {}, isTurnRunning: () => false,
+@@ -634,6 +637,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+       expect(vendorSend).toHaveBeenCalledTimes(outcome === 'unknown-send' ? 1 : 0);
+       expect(result.error).toBeInstanceOf(Error);
+       if (outcome === 'permission') expect(result.error.message).toBe('permission denied');
++      if (outcome === 'deadline-without-recovery') {
++        expect(result.error.message).toMatch(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
++      }
+       expect(persisted).toHaveBeenCalledOnce();
+       releaseIntent({ attemptId: 'late' });
+       await vi.advanceTimersByTimeAsync(0);
+```
+
+**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerSendOutcome.test.ts` (modified, +39/-0)
+```diff
+@@ -59,6 +59,7 @@ import { RemoteAgentRemoteError } from '../../remote-agent/controller/runClient'
+ import { MakerScheduleRunner } from '../runner.desktop';
+ import { ScheduledModelSelectionBusyError } from '../../maker-ipc/scheduledModelSelection';
+ import { isHeadlessGhostSetupTurn } from '../../mcp-integrations/ghostSetupInteractionSurface';
++import { GitSnapshotCoordinator } from '../../git-snapshot/gitSnapshotCoordinator.js';
+ 
+ type SessionSendOptions = Parameters<Session['send']>[1];
+ type SendImpl = (
+@@ -692,6 +693,44 @@ describe('MakerScheduleRunner send outcome policy', () => {
+     expect(ctx.removeAbortListener).toHaveBeenCalledTimes(1);
    });
  
-+  it.each(['runtime', 'cold-start'] as const)('resumes pending Passport recovery without replaying a dead Resource (%s)', async phase => {
-+    const { h } = recoverySetup();
-+    const fresh = phase === 'runtime' ? h : setup();
-+    if (phase === 'cold-start') {
-+      fresh.vault.resources[ORIGINAL_KEY].metadata = h.vault.resources[ORIGINAL_KEY].metadata;
-+      fresh.vault.passports = h.vault.passports;
-+    }
-+    fresh.deps.refreshPassportSessionSingleFlight.mockRejectedValueOnce(
-+      new AuthApiError('AUTH_REQUEST_FAILED', 503, 'busy', Date.now() + 180_000),
-+    );
-+    if (phase === 'runtime') await rejectAfterLoss(fresh);
-+    else {
-+      void fresh.start();
-+      await vi.advanceTimersByTimeAsync(1);
-+      fresh.request.mockResolvedValue({ ok: false, status: 401,
-+        data: { error: { code: 'INVALID_REFRESH_TOKEN' } } });
-+      await vi.advanceTimersByTimeAsync(61_250);
-+    }
-+    expect(fresh.deps.refreshPassportSessionSingleFlight).toHaveBeenCalledTimes(1);
-+    const resourceRequests = fresh.request.mock.calls.length;
-+    // A redundant refresh would now hit a transport outage and postpone Passport.
-+    fresh.request.mockResolvedValue({ ok: false, status: 0, data: null });
-+    await vi.advanceTimersByTimeAsync(122_500);
-+    expect(fresh.deps.refreshPassportSessionSingleFlight).toHaveBeenCalledTimes(2);
-+    expect(fresh.request).toHaveBeenCalledTimes(resourceRequests);
-+    expect(fresh.state()).toMatchObject({ isAuthenticated: true, user: { id: 'original' } });
-+    expect(fresh.saved.session?.refreshToken).toBe('test-rotated');
-+  });
-+
-+  it.each(['newer', 'cleared'] as const)('checks the current Resource before resuming Passport (%s)', async state => {
-+    const { h } = recoverySetup();
-+    h.deps.refreshPassportSessionSingleFlight.mockRejectedValueOnce(
-+      new AuthApiError('AUTH_REQUEST_FAILED', 429, 'busy', Date.now() + 180_000),
-+    );
-+    await rejectAfterLoss(h);
-+    const count = h.request.mock.calls.length;
-+    if (state === 'newer') {
-+      h.saved.session.refreshToken = 'test-newer-resource';
-+      h.request.mockResolvedValue(h.ok);
-+    } else {
-+      h.clearRuntimeAuth();
-+      h.request.mockResolvedValue({ ok: false, status: 0, data: null });
-+    }
-+    await vi.advanceTimersByTimeAsync(122_500);
-+    expect(h.deps.refreshPassportSessionSingleFlight).toHaveBeenCalledTimes(1);
-+    if (state === 'newer') {
-+      expect(h.request).toHaveBeenCalledTimes(count + 1);
-+      expect(h.request).toHaveBeenLastCalledWith('test-newer-resource', 'global');
-+      expect(h.state().isAuthenticated).toBe(true);
-+    } else {
-+      expect(h.request).toHaveBeenCalledTimes(count);
-+      expect(h.state().isAuthenticated).toBe(false);
++  // #10161 / unit: the idle scheduler goes straight through this runner.
++  // Its generic error sanitization used to erase the safe, typed send diagnosis.
++  it('keeps the dispatch intent diagnosis in an idle scheduled run', async () => {
++    vi.useFakeTimers();
++    const receipt = Promise.withResolvers<{ attemptId: string }>();
++    const entered = Promise.withResolvers<void>();
++    const snapshots = new GitSnapshotCoordinator({
++      snapshotTimeoutMs: 50,
++      recordTurnAttempt: () => { entered.resolve(); return receipt.promise; },
++      readAutoSnapshotEnabled: () => true,
++      getSessionContext: vi.fn(), detectRepoRoot: vi.fn(),
++      createShadowSavepoint: vi.fn(), createShadowMarker: vi.fn(),
++      oneShot: vi.fn(), logger: createLogger(),
++    });
++    const dispatch = vi.fn();
++    const h = createSessionHarness(async (_message, opts) => {
++      await opts?.onAccepted?.();
++      dispatch();
++      return { accepted: true };
++    });
++    const { runner, notifier } = createRunnerHarness(h.session, {
++      beforeDispatchUserTurn: (id, signal) => snapshots.onTurnStart(id, signal),
++    });
++    try {
++      const result = runner.fire(baseSchedule(), createFireContext()).catch(error => error);
++      await entered.promise;
++      await vi.advanceTimersByTimeAsync(50);
++      const errorMsg = expect.stringMatching(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
++      expect(await result).toMatchObject({ message: errorMsg });
++      expect(latestNotifiedRun(notifier)).toMatchObject({ status: 'failed', errorMsg });
++      expect(mocks.createMessage).toHaveBeenCalledOnce();
++      expect(dispatch).not.toHaveBeenCalled();
++    } finally {
++      receipt.resolve({ attemptId: 'late' });
++      vi.useRealTimers();
 +    }
 +  });
 +
-   it.each([['passport', 503], ['exchange', 429]] as const)(
-     'keeps the server cooldown when cancellation supersedes %s with status %s',
-     async (stage, status) => {
+   // Unit regression for the idle shared reconnect: after acceptance, a confirmed
+   // startup failure still closes out this occurrence through the normal runner.
+   // The allocator/runtime suite drives the real reconnect and token delivery.
 ```
 
-**File**: `apps/desktop/src/main/authManager.ts` (modified, +45/-2)
+**File**: `apps/desktop/src/main/scheduler-host/runner.ts` (modified, +5/-1)
 ```diff
-@@ -3495,6 +3495,11 @@ function clearReplacementIntegrationReloadTimers(): void {
- // A successful response may also fail to save locally, so retain its consumed generation
- // until a later request advances it. Logout/switch admission is always rechecked in the vault.
- const uncertainResourceRefreshTokens = new Map<AuthRegion, string>();
-+const pendingResourcePassportRecoveries = new Map<AuthRegion, {
-+  refreshToken: string;
-+  accountKey: string;
-+  rejectedTokens: readonly string[];
-+}>();
+@@ -103,6 +103,7 @@ import { isPluginEngineKind } from '../../shared/agentKindConversion.js';
+ import { ensureDialogueWorkspaceDir } from '../localDb/dialogueWorkspace';
+ import { AcceptedCallbackDispatchCancelled } from '../maker-ipc/acceptedCallbackRunner.js';
+ import { schedulerFailureDetail } from '../maker-ipc/schedulerQueueBridge.js';
++import { SnapshotDispatchIntentDeadlineError } from '../utils/operationBudget.js';
  
- /** Recover only the still-active, same-account Resource using its saved Passport. */
- async function recoverActiveResourceSession(
-@@ -3586,8 +3591,28 @@ async function runAuthRefreshWithReplacementRetry(
- }> {
-   let expectedVaultRefreshToken: string | null | undefined;
-   let expectedActiveVaultAccountKey = opts.expectedActiveVaultAccountKey;
-+  let pendingRecovery = pendingResourcePassportRecoveries.get(opts.realm);
-+  if (pendingRecovery) {
-+    const vault = readAuthAccountVault();
-+    if (vault.activeAccountKey === pendingRecovery.accountKey &&
-+      vault.resources[pendingRecovery.accountKey]?.realm === opts.realm &&
-+      vault.resources[pendingRecovery.accountKey]?.refreshToken === pendingRecovery.refreshToken &&
-+      typeof vault.signedOutAt !== 'number' && !isLoggedOutVaultAccount(vault, pendingRecovery.accountKey) &&
-+      uncertainResourceRefreshTokens.get(opts.realm) === pendingRecovery.refreshToken) {
-+      initialRefreshToken = pendingRecovery.refreshToken;
-+      if (opts.phase === 'cold-start') expectedActiveVaultAccountKey ??= pendingRecovery.accountKey;
-+    } else {
-+      pendingResourcePassportRecoveries.delete(opts.realm);
-+      pendingRecovery = undefined;
-+    }
-+  }
-   const run = await runRefreshWithReplacementRetry(initialRefreshToken, {
-     doRefresh: async (refreshToken) => {
-+      // This generation was already rejected. Re-enter replacement discovery
-+      // without another network request, then resume Passport if none is newer.
-+      if (pendingRecovery?.refreshToken === refreshToken) {
-+        return { ok: false, status: 401, data: { error: { code: 'INVALID_REFRESH_TOKEN' } } };
-+      }
-       const vault = readAuthAccountVault();
-       const vaultTokens = new Map(
-         Object.entries(vault.resources).map(
-@@ -3612,6 +3637,7 @@ async function runAuthRefreshWithReplacementRetry(
-         uncertainResourceRefreshTokens.set(opts.realm, refreshToken);
+ 
+ import { prependHandoffToUserMessage } from '../maker-ipc/agentHandoff.js';
+@@ -2644,7 +2645,10 @@ export class MakerScheduleRunner implements ScheduleRunner {
+         ctx.signal.removeEventListener('abort', onAbort);
+         return this.deferFire(schedule, session.id, 'session-running');
        }
-       if (result.ok) {
-+        pendingResourcePassportRecoveries.delete(opts.realm);
-         const pair = result.data as RefreshResponse;
-         expectedVaultRefreshToken =
-           vaultTokens.get(accountVaultKey(opts.realm, pair.membership.id)) ?? null;
-@@ -3626,7 +3652,8 @@ async function runAuthRefreshWithReplacementRetry(
-       // Keep every source: a rollback build may rotate only its compatibility
-       // record. Reject known stale generations, not the source that held them.
-       return readStoredRefreshTokenCandidates(opts.realm).filter(
--        (token) => !token || !opts.rejectedRefreshTokens?.has(token),
-+        (token) => !token || (!opts.rejectedRefreshTokens?.has(token) &&
-+          !pendingRecovery?.rejectedTokens.includes(token)),
-       );
-     },
-     transientRetry: opts.withTransientRetry
-@@ -3668,6 +3695,7 @@ async function runAuthRefreshWithReplacementRetry(
-       const pair = await recoverActiveResourceSession(
-         opts.realm, uncertainRefreshToken, expectedActiveVaultAccountKey,
-       );
-+      pendingResourcePassportRecoveries.delete(opts.realm);
-       if (pair)
-         return {
-           ...run,
-@@ -3679,6 +3707,18 @@ async function runAuthRefreshWithReplacementRetry(
-         };
-     } catch (error) {
-       if (!(error instanceof AuthApiError)) throw error;
-+      const vault = readAuthAccountVault();
-+      const key = vault.activeAccountKey;
-+      if (!isDefinitiveRefreshError(error) && key &&
-+        vault.resources[key]?.realm === opts.realm && vault.resources[key]?.refreshToken === uncertainRefreshToken &&
-+        typeof vault.signedOutAt !== 'number' && !isLoggedOutVaultAccount(vault, key)) {
-+        pendingResourcePassportRecoveries.set(opts.realm, {
-+          refreshToken: uncertainRefreshToken, accountKey: key,
-+          rejectedTokens: [...new Set([...pendingRecovery?.rejectedTokens ?? [], ...run.rejectedTokens])],
-+        });
-+      } else {
-+        pendingResourcePassportRecoveries.delete(opts.realm);
-+      }
-       return {
-         ...run,
-         requestedToken: uncertainRefreshToken,
-@@ -4007,7 +4047,10 @@ function clearAuth(
-     // when no refresh guard ran between that action and a sibling window timeout.
-     coldStartTimeoutFallbacks.clear();
-     coldStartRetryWait?.(true);
--    if (!opts.preserveResourceRefreshUncertainty) uncertainResourceRefreshTokens.clear();
-+    if (!opts.preserveResourceRefreshUncertainty) {
-+      uncertainResourceRefreshTokens.clear();
-+      pendingResourcePassportRecoveries.clear();
-+    }
+-      sendError = formatSchedulerSendError(sendContext, normalized.reason);
++      // The host supplies a fixed diagnostic for this proven pre-dispatch failure.
++      sendError = err instanceof SnapshotDispatchIntentDeadlineError
++        ? err.message
++        : formatSchedulerSendError(sendContext, normalized.reason);
+       this.deps.logger.warn?.('[runner] session send failed before dispatch', {
+         ...sendLogBase,
+         source: normalized.source,
+```
+
+**File**: `apps/desktop/src/main/utils/operationBudget.ts` (modified, +12/-2)
+```diff
+@@ -21,12 +21,22 @@ export function assertGitDirectoryReady(dir: string): void {
+ 
+ /** Typed locally: error text from a provider must never authorize a retry. */
+ export class SnapshotOperationDeadlineError extends Error {
+-  constructor() {
+-    super('Snapshot operation deadline exceeded');
++  constructor(message = 'Snapshot operation deadline exceeded', options?: ErrorOptions) {
++    super(message, options);
+     this.name = 'SnapshotOperationDeadlineError';
    }
-   
+ }
+ 
++/** The deadline expired before the host could confirm durable dispatch intent. */
++export class SnapshotDispatchIntentDeadlineError extends SnapshotOperationDeadlineError {
++  constructor(cause: SnapshotOperationDeadlineError) {
++    super(
++      '[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] Snapshot operation deadline exceeded before confirming the send record. The message was not sent.',
++      { cause },
++    );
++  }
++}
++
+ export class OperationBudget {
+   readonly controller = new AbortController();
+   readonly signal = this.controller.signal;
+```
+
+**File**: `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx` (modified, +23/-0)
+```diff
+@@ -91,6 +91,29 @@ it.each(['live', 'history'] as const)('reports a clean Codex transport exit as a
+   }
+ });
+ 
++// #10161 / unit: a stalled local dispatch record used to look like a model
++// reply failure. Both error surfaces use real localized copy after the host
++// identifies that boundary. An unclassified timeout still has generic copy.
++it.each(['live', 'history', 'unclassified'] as const)('attributes a send preparation deadline in %s', async surface => {
++  const i18n = createInstance();
++  await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
++  const raw = 'Snapshot operation deadline exceeded';
++  const message = surface === 'unclassified'
++    ? raw
++    : `[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] ${raw} before confirming the send record. The message was not sent.`;
++  const retry = vi.fn();
++  render(<I18nextProvider i18n={i18n}>{surface === 'history'
++    ? <ErrorMessageCard message={message} />
++    : <ErrorBanner error={message} agentKind="codex" retryText="原消息" onRetry={retry} />}</I18nextProvider>);
++  expect(screen.getByText(surface === 'unclassified'
++    ? zhCN.chat.errorBanner.replyFailed
++    : '未发送消息，Cindy 未能及时确认安全记录')).toBeTruthy();
++  if (surface === 'live') {
++    fireEvent.click(screen.getByRole('button', { name: zhCN.chat.errorBanner.retry }));
++    expect(retry).toHaveBeenCalledWith('原消息');
++  }
++});
++
+ // #10854, unit: production live reducer + banner/tail/history must retain the
+ // actual cause for diagnosis while legacy reason-only errors use neutral copy.
+ it.each(['live', 'tail', 'history'] as const)('keeps silent-stop %s copy neutral and preserves cause details', async surface => {
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/de/common.json` (modified, +1/-0)
+```diff
+@@ -16160,6 +16160,7 @@
+       "CONTEXT_COMPACTION_MODEL_UNAVAILABLE": "Der Kontext konnte beim Modellwechsel nicht komprimiert werden, da das vorherige Modell über diese Verbindung nicht verfügbar ist.",
+       "MODEL_SELECTION_UNAVAILABLE": "Das ausgewählte Modell ist bei seinem Anbieter nicht mehr verfügbar. Prüfe die Verbindung in den Einstellungen oder wähle ein anderes verfügbares Modell.",
+       "MODEL_CATALOG_UNCONFIRMED": "Die Modellliste konnte nicht bestätigt werden. Das ausgewählte Modell wurde beibehalten. Aktualisiere die Modellliste und versuche es erneut.",
++      "SNAPSHOT_DISPATCH_INTENT_TIMEOUT": "Nachricht nicht gesendet. Cindy konnte den Sicherheitseintrag nicht rechtzeitig bestätigen.",
+       "HARNESS_SWITCH_NOT_READY": "Der Harness-Wechsel ist noch nicht bereit. Prüfe die Fehlerdetails und versuche es erneut, sobald der Harness bereit ist.",
+       "DEVICE_LINK_BUSY": "Der Remotecomputer ist ausgelastet. Versuche es in Kürze erneut.",
+       "REMOTE_DAEMON_CLOSED": "Die Remote-Verbindung wurde unterbrochen, möglicherweise während eines Updates. Diese Runde wurde beendet. Sende die Nachricht erneut.",
 ```
 
 ---
 
-### Incident Patch 2: `0614396c` (2026-11-21)
-**Commit Message**: Merge pull request #11856 from makecindy/fix/agent-net-idle-dead
+### Incident Patch 2: `c76b9df5` (2026-11-23)
+**Commit Message**: fix(desktop): explain when snapshot preparation blocks sending
 
-fix(agent-net-core): 空闲的连接探测不到对端也判死
+Refs #10161
 
-**File**: `docs/agent-net-session-plan.md` (modified, +1/-0)
-```diff
-@@ -632,6 +632,7 @@ v2-3 里远程任务上传先做了两步、不改协议（2026-11-19）：上
- | 单台对端连接断开 | 只重建这一台的会话，补发结果、重新订阅主题 | 补发和续订沿用原级别，不挤占 P0、P1；有界 |
- | 中转上行断开 | 只重连中转上行 | 已直连的对端不经过中转 |
- | 单台对端连接断开、目录里它还在线 | 拨号一端（设备号小的）1 秒后重拨，失败加倍到 30 秒 | 只拨这一台；对方离线、被拦、本机关闭时不拨；连接活过 30 秒才重新从 1 秒算 |
-+| 对端没了（被强杀、休眠、断网），连接正空闲 | 核心探测满 30 秒没有回音就判这条连接断了，之后照「单台对端连接断开」处理 | 只断这一条；对端只是没东西要发时每 15 秒有一来一回，不会被判；本机自己停了很久刚醒来时先探测 3 次 |
- | 该对方拨、对方的拨号不来（它还抱着本机已经没有的旧连接） | 不拨号的一方（设备号大的）1 秒后自己拨，失败加倍到 30 秒 | 只拨这一台，条件同上；对方按时拨来时一次也不拨；对方的旧连接不足 10 秒时这次拨号被它丢掉，只触发下一次退避 |
- | 这台电脑换了网络 | 中转连接各 ping 一次，15 秒没回才换；对端连接从新地址发包 | 一次换网每条中转连接只探一次；探测期间照常收发，不先断开 |
- | 会话断开时有写请求在途 | 会话回来时走原有重开循环重开链路，在途的写用原请求号再发一次 | 只在请求自己的时限内等；对方去重记忆变了（重启、清空）就不再发；只续本机还在控制的对端，重开循环每次尝试前复查授权 |
-```
+Assisted-by: Cindy
+Signed-off-by: Nepha Peachy <[REDACTED_EMAIL]>
 
-**File**: `docs/dev-rules/remote-and-mobile-adaptation.md` (modified, +5/-3)
-```diff
-@@ -537,9 +537,11 @@ Device Link 上有活着的链路时照旧走 Device Link，那上面已确认
-   - 唤醒、换网后取不到中转信息时沿用这个服务上次的 UDP 地址；服务明确回答没有 UDP 时清掉。
-   - 连接断了、目录里对方还在线：拨号一端自己按退避重拨（`portableSocket.ts` 的 `REDIAL_FIRST_MS`）；原来只等下一次调用或目录更新，这期间对方显示离线。
-   - 该对方拨、对方的拨号却迟迟不来：不拨号的一方（设备号大的）等 `LATE_DIAL_MS` 后自己拨过去，之后按同样的退避（2026-11-21）。
--    对方不拨是因为它还抱着一条本机已经没有的连接：本机被强杀或重建时关闭通知没送到，而空闲的连接不会被判死
--    （核心只在有数据发不出去满 `dead_after_us` 时判死）。它收到这次拨号后，旧连接超过 `REDIAL_TAKEOVER_MS` 就换用新的，
--    没超过就丢掉，本机按退避再拨。真机：手机被强杀后重启，设备号比手机小、只能经中转的电脑原来在手机上离线 20 秒到 15 分钟，
-+    对方不拨是因为它还抱着一条本机已经没有的连接：本机被强杀或重建时关闭通知没送到，而当时的核心不判空闲的连接死
-+    （只在有数据发不出去满 `dead_after_us` 时判）。它收到这次拨号后，旧连接超过 `REDIAL_TAKEOVER_MS` 就换用新的，
-+    没超过就丢掉，本机按退避再拨。同日核心补上了空闲判死（`secure.rs` 的 `silent_past_deadline`）：探测满 `dead_after_us`
-+    没有回音就断，对方 30 秒内自己发现、照常重拨；自己停了很久刚醒来的一端先接连探测几次再下结论。
-+    对方是旧版本时仍然靠这次后拨。真机：手机被强杀后重启，设备号比手机小、只能经中转的电脑原来在手机上离线 20 秒到 15 分钟，
-     改后约 1.2 秒；设备号比手机大的电脑由手机拨，一直不受影响。
-   - Node Host 回复「支持后台链路」、连接前等读本机身份（最多 2 秒）改成只在开着 Agent-Net 时生效，关着时和主干一样。
-   - 主干的部分目录（只读到一条腿时并回上次完整目录）也按 Device Link 设备列表过滤；Agent-Net 后台读设备列表走主干的共享限流账（`officialDeviceListFetch`）。
-```
-
-**File**: `packages/agent-net-core/README.md` (modified, +2/-1)
-```diff
-@@ -956,5 +956,6 @@ KCP 跑官方资料和 kcptun 的 12 种配置，见 `sim/src/kcp.rs` 文件头
- - Node 驱动的加解密、收发和核心都在 Node 的一个线程上，局域网满速时 CPU 会先到顶，还没测；Electron 里要放进 `utilityProcess`，也还没跑过。
- - 路径只按代价选，不比往返和丢包：直连明显比中转差时也走直连，直到它断了。端口预测没做，对称型对端口受限锥形只能走中转。
- - 什么时候重新验证候选地址由上层决定，核心不重试。NAT 映射靠空闲时每 15 秒一来一回保活，映射更快过期的网络空闲后会退回中转。
--- 关闭时发两个关闭包，对端马上知道（2026-11-06）。进程被强行结束时发不出来，这一端仍要等判死（有数据在途时 30 秒，空闲时靠 15 秒一次的探测）；
-+- 关闭时发两个关闭包，对端马上知道（2026-11-06）。进程被强行结束时发不出来，这一端仍要等判死（有数据在途时 30 秒；空闲时探测 30 秒没有回音，2026-11-21 起，
-+  之前空闲的连接探测不到对端也一直不判死，见 [`sim/results/2026-11-21-idle-dead`](sim/results/2026-11-21-idle-dead/README.md)）；
-   对端重启以后也认不出旧连接的包，没有类似 QUIC 无状态重置的机制。
-```
-
-**File**: `packages/agent-net-core/prebuilt/manifest.json` (modified, +2/-2)
+**File**: `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts` (modified, +7/-2)
 ```diff
 @@ -1,5 +1,5 @@
- {
-   "version": 1,
--  "sourceDigest": "ad70ceb815af36394e50d8de26c4b59c7581b0ea082450660c675c341d77dbb9",
--  "binaryDigest": "0a3bb1623555732973ed638b4de9278fb6630a2d9b5a029ccccf62cd5ea663df"
-+  "sourceDigest": "18108b5455eb126e340603688e6382564e5ce07cf03d5ed88c2748f3ad8e9c06",
-+  "binaryDigest": "f25ac4b39a7f7dcb393d0a0b18632fabea27ecd238594d0ec58e478f59276ced"
- }
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+-import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
++import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
+ 
+ import {
+   GitSnapshotCoordinator,
+@@ -65,7 +65,12 @@ describe('durable snapshot dispatch intent', () => {
+     const deps = makeDeps({ snapshotTimeoutMs: 50, recordTurnAttempt: () => pending.promise });
+     const coordinator = new GitSnapshotCoordinator(deps);
+     const result = coordinator.onTurnStart('s1');
+-    const rejected = expect(result).rejects.toThrow('deadline');
++    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
++    // deadline. The display error must name the send failure and keep its retry type.
++    const rejected = Promise.all([
++      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
++      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
++    ]);
+     await vi.advanceTimersByTimeAsync(50);
+     await rejected;
+     expect(coordinator.hasPendingTurnStart('s1')).toBe(false);
 ```
 
-**File**: `packages/agent-net-core/sim/mutants.py` (modified, +8/-0)
+**File**: `apps/desktop/src/main/git-snapshot/gitSnapshotCoordinator.ts` (modified, +12/-1)
 ```diff
-@@ -134,6 +134,14 @@
-      "let mut state = RecvStream::new(Self::initial_window(&self.config) as u64);", "let mut state = RecvStream::new(self.config.recv_window as u64);"),
-     ("窗口互通：开头按自己的窗口算", "src/connection.rs",
-      "config.recv_window.min(LEGACY_WINDOW)", "config.recv_window"),
-+    ("安静探测：空闲判死，探测没有回音也不判死", "src/secure.rs",
-+     "        if self.silent_past_deadline(now_us) {\n            self.dead = true;\n            return;\n        }\n", ""),
-+    ("安静探测：空闲判死，到时限不醒来", "src/secure.rs",
-+     "                    consider(self.silence_deadline(self.connection.last_heard()));\n", ""),
-+    ("安静探测：空闲判死，停之前的探测照算", "src/secure.rs",
-+     "            self.silence_sent_at = None;\n", ""),
-+    ("安静探测：空闲判死，刚醒来不等探测发够", "src/secure.rs",
-+     "            && now_us >= self.silence_deadline(heard)\n", ""),
-     ("包长：收包按发包上限截", "src/secure.rs",
-      "packet.len() > self.config.max_packet_size {", "packet.len() > self.config.send_limit() {"),
-     ("包长：收到的分片按发的上限查", "src/connection.rs",
-```
-
-**File**: `packages/agent-net-core/sim/results/2026-11-21-idle-dead/README.md` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+# 空闲的连接也判死（2026-11-21）
-+
-+核心指纹 `815d083b7cfe`（算法同前几轮：`src/*.rs` 按 LF 逐个 SHA-256，按 `sha256sum` 的格式排好再取 SHA-1），逐文件见
-+[`source-sha256.json`](source-sha256.json)。与主干 `6639c854cc` 的核心相比只改了 `src/secure.rs`、`sim/tests/migration.rs`、
-+`sim/mutants.py` 和 `README.md`，`prebuilt/core.wasm` 与 `prebuilt/manifest.json` 按新源码重编（367810 → 368255 字节，
-+导出的函数和参数不变）。核心 `[dependencies]` 仍为空，线格式不变，两端不需要同时更新。
-+
-+## 起因
-+
-+真机（2026-11-21）：手机 App 被强杀后重启，设备号比手机小、只能经中转的那台电脑在手机上离线 20 秒到 15 分钟。
-+那台电脑的日志显示它一直抱着和手机旧进程之间的那条连接。
-+
-+原因在核心：可靠层只在「有数据没确认、又 `dead_after_us`（30 秒）没听到对端」时判死（`connection.rs` 的 `tick`）。
-+两端都没事做的时候对端没了（进程被强行结束、电脑休眠、断网），这一端每秒探测一次，探测满 30 秒就不再探测，
-+但连接一直不判死：上层显示对端在线、也不再重拨，直到哪天有数据要发、又等满 30 秒。模块说明和 README 写的是
-+「空闲时靠 15 秒一次的探测」发现，代码里探测发了，结论没下。
-+
-+## 改了什么
-+
-+`secure.rs`：探测过、到判死时限对端仍然没有任何回音，就判这条连接断了（`silent_past_deadline`）。
-+
-+- 对端只是没东西要发时，每 15 秒有一来一回（`silence_ping_at` 的 `answered`），不会被判。
-+- 判死前那次探测丢了的话，之后每秒一次，到时限前还有十几次机会。
-+- 这一端自己停过（手机进程被冻结、电脑休眠）再醒来时，离上次听到对端可能早就超过判死时限，但那段时间这一端没有在听。
-+  所以还要求眼下这一串探测是一次接一次发的、已经发够 `SILENCE_PROBE_INTERVALS`（3）个间隔：隔了两个间隔以上才再探测，
-+  算新的一串；这一串没发够之前，过了时限也接着探测。醒来后对端还在，一个往返就有回音；真没了，约 3 秒后判死。
-+- 停之前已经发过探测、还没等到回音的情形也一样：两次处理计时器之间隔了两个探测间隔以上（探测没有回音时本来每个间隔都要醒一次），
-+  说明这一端停过，停之前的探测不算数，醒来从头探测（`tick_established`；PR #11856 审阅指出最初的写法会拿停之前那次探测当场判死）。
-+- 到判死的时刻要醒来判一次（`next_wake`），否则探测停了以后没有任何计时器。
-+
-+不改的：有数据在途时的判死、探测的间隔和包、关闭通知、换路径的逻辑。
-+
-+## 验证
-+
-+**模拟器（虚拟时间）**，`cargo test`（`sim/`）全部通过：migration 15、reliability 47（1 个原本就忽略）、secure 28、
-+streams 15、sharing 24、bursts 5、traversal 6、udp 2，共 143 项。新增两项（`sim/tests/migration.rs`）：
-+
-+| 用例 | 断言 |
-+|---|---|
-+| `an_idle_connection_whose_peer_is_gone_is_declared_dead` | 两端空闲、对端一直回探测时 90 秒不判死；一个方向的包从此送不到，另一端在 14–31 秒内判死（最后一次听到对端最多是 15 秒前），判死前线上不超过 40 个包；它停了以后这一端也在 31 秒内判死；没有空转 |
-+| `waking_after_a_long_stop_probes_before_giving_up` | 时钟一次跳过 60 秒（两端都没运行），停之前探测有回音、或正好有三次以上探测没等到回音，共四种组合：对端还在时两端都不判死；对端没了时醒来 2–5 秒后判死；跳过去之后不空转 |
-+
-+`idle_connections_only_keep_alive`（空闲一分钟线上不超过 12 个包、不判死）和换网随机矩阵（`random_moves_deliver_intact_streams`，
-+6 个固定种子加 100 个随机种子）不变。
-+
-+**变异检验**（`python sim/mutants.py 空闲判死`，四个都被抓到）：
-+
-+| 变异 | 抓到它的用例 |
-+|---|---|
-+| 探测没有回音也不判死 | 两个新用例 |
-+| 到判死的时刻不醒来 | `an_idle_connection_whose_peer_is_gone_is_declared_dead` |
-+| 停之前的探测照算 | `waking_after_a_long_stop_probes_before_giving_up` |
-+| 刚醒来不等探测发够 | `waking_after_a_long_stop_probes_before_giving_up` |
-+
-+**回环 UDP 加真实时钟**（手机用的原生引擎 `agent-net-native`，两个引擎走本机真实 UDP，临时测试，未提交）：
-+两端空闲 40 秒，谁也不判死；之后一端不再运行，另一端 22.1 秒后报告连接已断（在补上「停之前的探测不算数」之前的版本上跑的，
-+这条规则只在本端自己停过时起作用，这个测试里没有）。
-+
-+**电脑端**：`packages/agent-net` 在重编的 WASM 上 `vitest run`，140 通过、5 跳过。
-+
-+**真机**（小米 Android 17，带新核心的测试包；对端是没有这次改动的电脑：局域网直连 5 台，经官方中转 2 台，其中一台是正式版 0.1.143）：
-+App 在前台空闲 6 分钟，7 条连接没有一条断开重连（同样是补上那条规则之前的版本）。
-+
-+## 没测的
-+
-+- 公网上「对端真没了」的判死没有在真机上造出来：对端电脑没有这次改动，手机一侧要断网才能造，而断网本身会触发 App 的换网处理。
-+  这条只有模拟器和回环真实时钟的结果。
-+- 电脑端（WASM）没有在两台真电脑之间实测空闲判死，只跑了 `packages/agent-net` 的单测。
-+- `netperf` 的本机与公网对比没有重跑：它测的是不带加密层的可靠传输，这次没有碰。
-+- iOS 没有测。
-```
-
-**File**: `packages/agent-net-core/sim/results/2026-11-21-idle-dead/source-sha256.json` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+{
-+  "sim/mutants.py": "3f2a49c1f80e0a9d323595b78895468c3fd8e9af89251c385836a459ec22a67f",
-+  "sim/src/crypto.rs": "3d919c1223d326c7f717fb012fd9f671718bce152781858c9f66aa64628ec72c",
-+  "sim/src/fec.rs": "792e920b04310d7f14dccf52fda58abafdefedd1ac3bd36e6c7dfd197ffdff07",
-+  "sim/src/kcp.rs": "975cc4fb0fa4ad2d57f0082b0f3b6aa6512c4cb72b592ee5da4db8b4624324aa",
-+  "sim/src/lib.rs": "c0e547e355ff92e3297c5389603430ed713a501ab331bc1860a01f550e2e1891",
-+  "sim/src/migration.rs": "fadea62430773f692cb0fbb3d00baa372d6951929767df0368bc4f36f035713a",
-+  "sim/src/share.rs": "65c1d8b0761d1b27be7afc028e6fdaac6357c7d943b13f5ddd07296e08a3fad1",
-+  "sim/src/traversal.rs": "7bd9d6a159e16e27dca92ee59f2b138bc20beb81cb6a65817927e881da03c546",
-+  "sim/tests/bursts.rs": "2000a280e4063c349f453cf91d6f2e28b86d45646882497d6dcddea411f5a990",
-+  "sim/tests/migration.rs": "19daab2620d2ff3bef823fd00bdb5f1817aec18987237924a16f1ccf49dc29f9",
-+  "sim/tests/reliability.rs": "ecd6819ae5467b3e933d2345b53a3417b81fc022ebcd4f419681209ee449db31",
-+  "sim/tests/secure.rs": "bf78c8e21471dea1282c3f9df5ea36cbeb8e5430c4a953b3536e931185bb3056",
-+  "sim/tests/sharing.rs": "6c77c69205883ad1146d97ede1953935602335bb68495900f13f9785ed3af22b",
-+  "sim/tests/streams.rs": "d746b5bfca18c261584b5098a68480240378650ff4f64a9d12be74554f087330",
-+  "sim/tests/traversal.rs": "248291bee81a5f041476950a30bf5dba4f3eeccbe491d83a3838e358d68fd1e8",
-+  "sim/tests/udp.rs": "9edeaff86a10e5c268c889f2677ca0bd8732ed15cb90b3257a803961c774053f",
-+  "src/admission.rs": "a17b6e85c78895b2ba1875c7c651a937e7d790ab58a5c1e204a300bef171035c",
-+  "src/congestion.rs": "35ae123d025bf9c3e07e62f32e0ef3a5f819916d220f31f8a66ee3e63a143225",
-+  "src/connection.rs": "1296417442eebe1107c88e3bc1778d5efdf06a93d4f75aed6d0b43ba7dd9b7b4",
-+  "src/crypto.rs": "dffcfdcac3b995a74142f57b1181873d9112ee558bb2293f2b1cc1eb46f80af6",
-+  "src/endpoint.rs": "4264f9eee1c4320d1ad9501ecc2899ddffe4d169d2875a01c382d13afd94ec7f",
-+  "src/ids.rs": "747b2f5ac0900d19b36cac4df09bc27864d83a6eaf26685fc7bc2bfb2650bb57",
-+  "src/lib.rs": "4fa8514d40c7829cb3d36e1b3458db97ff8edbd22c33a05c5e987170969d8aef",
-+  "src/noise.rs": "2b4fb7941b739d1544eaf430eacdb0c7e93f76a30cd009bfda19703949cae32d",
-+  "src/parity.rs": "578c0dc3e57f7f5dadc1e2fc349fb968cd30e5035d613728fcdc6a35fcd25b23",
-+  "src/rtt.rs": "082b476b9b98223bf29b22ceb0ce47c9b5366d06d98648e2a50b18446bb6455e",
-+  "src/secure.rs": "accf9fd8b4870609e588a793963336a7b9b108703ea8e068fee4f5686b3468c1",
-+  "src/stream.rs": "121f9c7bb4101aa79311fded96370a73ec1bfb0f2babf625f30f21bcdbd5d70b",
-+  "src/wire.rs": "def567ccd502dece36b87192e8ca8f46e5107bbc777492f0c66b8584d82d5916"
-+}
-```
-
-**File**: `packages/agent-net-core/sim/tests/migration.rs` (modified, +66/-0)
-```diff
-@@ -422,6 +422,72 @@ fn idle_connections_only_keep_alive() {
-     assert_eq!(duo.spurious_wakes, 0);
- }
+@@ -6,7 +6,13 @@
+  */
  
-+/// 测试价值：公开 SecureConnection 收发与计时入口上，两端都没事做时对端没了（被强行结束、休眠、断网）。
-+/// 探测一直没有回音，到判死时限这条连接要断：否则上层一直显示对端在线、也不再重拨（2026-11-21 真机，
-+/// 手机被强杀以后电脑抱着连接 44 秒到 15 分钟）。`idle_connections_only_keep_alive` 只覆盖对端一直回探测的情形；
-+/// 可靠层的判死（`outages_recover_or_give_up_within_the_deadline`）都有数据在途。
-+/// 最小输入：一条传完数据、已经空闲的连接，之后一个方向的包全部送不到。Rust integration，虚拟时间。
-+#[test]
-+fn an_idle_connection_whose_peer_is_gone_is_declared_dead() {
-+    let mut duo = Duo::new();
-+    duo.upload(&[1; 20_000]);
-+    assert!(duo.run_until(duo.now + 5_000_000, &|duo| duo.in_flight.is_empty()));
-+    // 对端只是没东西要发：一来一回的探测一直有回音，过多久都不判死。
-+    assert!(!duo.run_until(duo.now + 90_000_000, &|duo| duo.client.is_dead() || duo.server.is_dead()));
-+    // 客户端的包从此送不到服务端：服务端最后一次听到客户端最多是 15 秒前（空闲时的探测间隔）。
-+    duo.uplink = false;
-+    let (gone, packets) = (duo.now, duo.wire.len());
-+    assert!(duo.run_until(gone + 60_000_000, &|duo| duo.server.is_dead()), "the server never gave up");
-+    let waited = duo.now - gone;
-+    assert!((14_000_000..=31_000_000).contains(&waited), "gave up after {waited} us");
-+    // 判死前每秒探测一次，不退避也不加码。
-+    let probes = duo.wire[packets..].iter().filter(|(to_server, _, _)| !*to_server).count();
-+    assert!(probes <= 40, "{probes} packets to a peer that is gone");
-+    // 服务端停了以后客户端也再听不到任何包，同样在判死时限内放弃。
-+    let quiet = duo.now;
-+    assert!(duo.run_until(quiet + 60_000_000, &|duo| duo.client.is_dead()), "the client never gave up");
-+    assert!(duo.now - quiet <= 31_000_000, "the client gave up after {} us", duo.now - quiet);
-+    assert_eq!(duo.spurious_wakes, 0);
-+}
-+
-+/// 测试价值：同一入口上，这一端自己停了很久（手机进程被冻结、电脑休眠）再醒来。离上次听到对端早就超过判死时限，
-+/// 但那段时间这一端没有在听：对端还在时醒来探测一次就有回音，连接不能断；对端真没了，要接连探测几次都没有回音才判死。
-+/// 停之前已经有一次探测没等到回音时也一样（PR #11856 审阅：那次探测丢了、这一端随后停了，醒来的第一个计时器
-+/// 不能拿它判死）。没有这两条时 `an_idle_connection_whose_peer_is_gone_is_declared_dead` 的规则会把好连接判死。
-+/// 最小输入：一条空闲的连接，停之前探测有回音或正好丢了，时钟一次跳过两个判死时限，跳完以后对端在或不在。
-+/// Rust integration，虚拟时间。
-+#[test]
-+fn waking_after_a_long_stop_probes_before_giving_up() {
-+    for (probe_lost_before, peer_alive) in [(false, true), (false, false), (true, true), (true, false)] {
-+        let label = format!("probe lost before the stop: {probe_lost_before}, peer alive: {peer_alive}");
-+        let mut duo = Duo::new();
-+        duo.upload(&[1; 20_000]);
-+        assert!(duo.run_until(duo.now + 20_000_000, &|duo| duo.in_flight.is_empty()), "{label}");
-+        if probe_lost_before {
-+            // 服务端下一次探测（最多 15 秒后）等不到回音，之后每秒一次，这样过了几秒才停。
-+            let probes = duo.server.security_stats().silence_pings;
-+            duo.uplink = false;
-+            assert!(duo.run_until(duo.now + 20_000_000, &|duo| duo.server.security_stats().silence_pings >= probes + 3), "{label}");
-+            assert!(!duo.server.is_dead(), "{label}");
-+        }
-+        // 两端都停了一分钟：谁也没有运行，线上也没有包。
-+        duo.in_flight.clear();
-+        duo.now += 60_000_000;
-+        duo.uplink = peer_alive;
-+        let woke = duo.now;
-+        let died = duo.run_until(woke + 20_000_000, &|duo| duo.server.is_dead());
-+        assert_eq!(died, !peer_alive, "{label}");
-+        if peer_alive {
-+            assert!(!duo.client.is_dead() && duo.client.is_established() && duo.server.is_established(), "{label}");
-+        } else {
-+            let waited = duo.now - woke;
-+            assert!((2_000_000..=5_000_000).contains(&waited), "{label}: gave up {waited} us after waking");
-+        }
-+        // 时钟跳过去的那一下，两端到期的计时器各算一次；之后不能再空转。
-+        assert!(duo.spurious_wakes <= 2, "{label}: {} spurious wakes", duo.spurious_wakes);
-+    }
-+}
-+
- /// 抓到过真实 bug 的种子，每次都跑：5314、9232 换网后几轮几乎没送到数据，降速阶段的节奏被压成 0，除以 0 崩溃；
- /// 900360 真换了网络时抢先复制的包把要验证的地址顶掉，真的新地址一直验证不完；901894 对端回过一次探测就再也不探测，
- /// 之后悄悄换了地址就失联；921733 换网后只在下载、新网络上行丢三成还成段丢包，唯一送到的探测又被抢先复制，
-```
-
----
-
-### Incident Patch 3: `70b3fd50` (2026-11-21)
-**Commit Message**: fix(agent-net-core): 停之前没等到回音的探测不算数
-
-PR #11856 审阅：本端发出空闲探测、还没等到回音时停了（进程被冻结、休眠），
-醒来的第一个计时器会拿停之前那次探测直接判死，走不到重新开始探测的那一步，
-对端还在也没有机会回应。
-
-两次处理计时器之间隔了两个探测间隔以上，说明这一端停过（探测没有回音时本来
-每个间隔都要醒一次）：停之前的探测作废，醒来从头探测。唤醒用例补上「停之前
-已有三次以上探测没等到回音」的两种情形，变异体加一个；WASM 重编。
-
-Signed-off-by: MagicLizi <[REDACTED_EMAIL]>
-
-**File**: `packages/agent-net-core/prebuilt/manifest.json` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "version": 1,
--  "sourceDigest": "b8c93b28e6ed4b0c4c21cd36ba02a933248016707cc4b2329857da2ebe57d72d",
--  "binaryDigest": "82a38e6f19ba3926864c709d70e95f6a1982fd160280be1d0273ffbc41d4720b"
-+  "sourceDigest": "18108b5455eb126e340603688e6382564e5ce07cf03d5ed88c2748f3ad8e9c06",
-+  "binaryDigest": "f25ac4b39a7f7dcb393d0a0b18632fabea27ecd238594d0ec58e478f59276ced"
- }
-```
-
-**File**: `packages/agent-net-core/sim/mutants.py` (modified, +2/-0)
-```diff
-@@ -138,6 +138,8 @@
-      "        if self.silent_past_deadline(now_us) {\n            self.dead = true;\n            return;\n        }\n", ""),
-     ("安静探测：空闲判死，到时限不醒来", "src/secure.rs",
-      "                    consider(self.silence_deadline(self.connection.last_heard()));\n", ""),
-+    ("安静探测：空闲判死，停之前的探测照算", "src/secure.rs",
-+     "            self.silence_sent_at = None;\n", ""),
-     ("安静探测：空闲判死，刚醒来不等探测发够", "src/secure.rs",
-      "            && now_us >= self.silence_deadline(heard)\n", ""),
-     ("包长：收包按发包上限截", "src/secure.rs",
-```
-
-**File**: `packages/agent-net-core/sim/results/2026-11-21-idle-dead/README.md` (modified, +10/-6)
-```diff
-@@ -1,8 +1,8 @@
- # 空闲的连接也判死（2026-11-21）
+ import type { AgentKind } from '@cindy/maker-core';
+-import { OperationBudget, operationCheckpoint, operationWait } from '../utils/operationBudget';
++import {
++  OperationBudget,
++  operationCheckpoint,
++  operationWait,
++  SnapshotDispatchIntentDeadlineError,
++  SnapshotOperationDeadlineError,
++} from '../utils/operationBudget';
  
--核心指纹 `0d0df395c3f6`（算法同前几轮：`src/*.rs` 按 LF 逐个 SHA-256，按 `sha256sum` 的格式排好再取 SHA-1），逐文件见
-+核心指纹 `815d083b7cfe`（算法同前几轮：`src/*.rs` 按 LF 逐个 SHA-256，按 `sha256sum` 的格式排好再取 SHA-1），逐文件见
- [`source-sha256.json`](source-sha256.json)。与主干 `6639c854cc` 的核心相比只改了 `src/secure.rs`、`sim/tests/migration.rs`、
--`sim/mutants.py` 和 `README.md`，`prebuilt/core.wasm` 与 `prebuilt/manifest.json` 按新源码重编（367810 → 368186 字节，
-+`sim/mutants.py` 和 `README.md`，`prebuilt/core.wasm` 与 `prebuilt/manifest.json` 按新源码重编（367810 → 368255 字节，
- 导出的函数和参数不变）。核心 `[dependencies]` 仍为空，线格式不变，两端不需要同时更新。
- 
- ## 起因
-@@ -24,6 +24,8 @@
- - 这一端自己停过（手机进程被冻结、电脑休眠）再醒来时，离上次听到对端可能早就超过判死时限，但那段时间这一端没有在听。
-   所以还要求眼下这一串探测是一次接一次发的、已经发够 `SILENCE_PROBE_INTERVALS`（3）个间隔：隔了两个间隔以上才再探测，
-   算新的一串；这一串没发够之前，过了时限也接着探测。醒来后对端还在，一个往返就有回音；真没了，约 3 秒后判死。
-+- 停之前已经发过探测、还没等到回音的情形也一样：两次处理计时器之间隔了两个探测间隔以上（探测没有回音时本来每个间隔都要醒一次），
-+  说明这一端停过，停之前的探测不算数，醒来从头探测（`tick_established`；PR #11856 审阅指出最初的写法会拿停之前那次探测当场判死）。
- - 到判死的时刻要醒来判一次（`next_wake`），否则探测停了以后没有任何计时器。
- 
- 不改的：有数据在途时的判死、探测的间隔和包、关闭通知、换路径的逻辑。
-@@ -36,26 +38,28 @@ streams 15、sharing 24、bursts 5、traversal 6、udp 2，共 143 项。新增
- | 用例 | 断言 |
- |---|---|
- | `an_idle_connection_whose_peer_is_gone_is_declared_dead` | 两端空闲、对端一直回探测时 90 秒不判死；一个方向的包从此送不到，另一端在 14–31 秒内判死（最后一次听到对端最多是 15 秒前），判死前线上不超过 40 个包；它停了以后这一端也在 31 秒内判死；没有空转 |
--| `waking_after_a_long_stop_probes_before_giving_up` | 时钟一次跳过 60 秒（两端都没运行）：对端还在时两端都不判死；对端没了时醒来 2–5 秒后判死 |
-+| `waking_after_a_long_stop_probes_before_giving_up` | 时钟一次跳过 60 秒（两端都没运行），停之前探测有回音、或正好有三次以上探测没等到回音，共四种组合：对端还在时两端都不判死；对端没了时醒来 2–5 秒后判死；跳过去之后不空转 |
- 
- `idle_connections_only_keep_alive`（空闲一分钟线上不超过 12 个包、不判死）和换网随机矩阵（`random_moves_deliver_intact_streams`，
- 6 个固定种子加 100 个随机种子）不变。
- 
--**变异检验**（`python sim/mutants.py 空闲判死`，三个都被抓到）：
-+**变异检验**（`python sim/mutants.py 空闲判死`，四个都被抓到）：
- 
- | 变异 | 抓到它的用例 |
- |---|---|
- | 探测没有回音也不判死 | 两个新用例 |
- | 到判死的时刻不醒来 | `an_idle_connection_whose_peer_is_gone_is_declared_dead` |
-+| 停之前的探测照算 | `waking_after_a_long_stop_probes_before_giving_up` |
- | 刚醒来不等探测发够 | `waking_after_a_long_stop_probes_before_giving_up` |
- 
- **回环 UDP 加真实时钟**（手机用的原生引擎 `agent-net-native`，两个引擎走本机真实 UDP，临时测试，未提交）：
--两端空闲 40 秒，谁也不判死；之后一端不再运行，另一端 22.1 秒后报告连接已断。
-+两端空闲 40 秒，谁也不判死；之后一端不再运行，另一端 22.1 秒后报告连接已断（在补上「停之前的探测不算数」之前的版本上跑的，
-+这条规则只在本端自己停过时起作用，这个测试里没有）。
- 
- **电脑端**：`packages/agent-net` 在重编的 WASM 上 `vitest run`，140 通过、5 跳过。
- 
- **真机**（小米 Android 17，带新核心的测试包；对端是没有这次改动的电脑：局域网直连 5 台，经官方中转 2 台，其中一台是正式版 0.1.143）：
--App 在前台空闲 6 分钟，7 条连接没有一条断开重连。
-+App 在前台空闲 6 分钟，7 条连接没有一条断开重连（同样是补上那条规则之前的版本）。
- 
- ## 没测的
- 
-```
-
-**File**: `packages/agent-net-core/sim/results/2026-11-21-idle-dead/source-sha256.json` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "sim/mutants.py": "cedb19cb00cf7eab088a8a94421a9d673c31017aa372666b8366be1dd086592f",
-+  "sim/mutants.py": "3f2a49c1f80e0a9d323595b78895468c3fd8e9af89251c385836a459ec22a67f",
-   "sim/src/crypto.rs": "3d919c1223d326c7f717fb012fd9f671718bce152781858c9f66aa64628ec72c",
-   "sim/src/fec.rs": "792e920b04310d7f14dccf52fda58abafdefedd1ac3bd36e6c7dfd197ffdff07",
-   "sim/src/kcp.rs": "975cc4fb0fa4ad2d57f0082b0f3b6aa6512c4cb72b592ee5da4db8b4624324aa",
-@@ -8,7 +8,7 @@
-   "sim/src/share.rs": "65c1d8b0761d1b27be7afc028e6fdaac6357c7d943b13f5ddd07296e08a3fad1",
-   "sim/src/traversal.rs": "7bd9d6a159e16e27dca92ee59f2b138bc20beb81cb6a65817927e881da03c546",
-   "sim/tests/bursts.rs": "2000a280e4063c349f453cf91d6f2e28b86d45646882497d6dcddea411f5a990",
--  "sim/tests/migration.rs": "972dce68d73e3eb2a0f2ff55fd1787953e15c87a06ced7d39fa8d61477e0abaf",
-+  "sim/tests/migration.rs": "19daab2620d2ff3bef823fd00bdb5f1817aec18987237924a16f1ccf49dc29f9",
-   "sim/tests/reliability.rs": "ecd6819ae5467b3e933d2345b53a3417b81fc022ebcd4f419681209ee449db31",
-   "sim/tests/secure.rs": "bf78c8e21471dea1282c3f9df5ea36cbeb8e5430c4a953b3536e931185bb3056",
-   "sim/tests/sharing.rs": "6c77c69205883ad1146d97ede1953935602335bb68495900f13f9785ed3af22b",
-@@ -25,7 +25,7 @@
-   "src/noise.rs": "2b4fb7941b739d1544eaf430eacdb0c7e93f76a30cd009bfda19703949cae32d",
-   "src/parity.rs": "578c0dc3e57f7f5dadc1e2fc349fb968cd30e5035d613728fcdc6a35fcd25b23",
-   "src/rtt.rs": "082b476b9b98223bf29b22ceb0ce47c9b5366d06d98648e2a50b18446bb6455e",
--  "src/secure.rs": "3fb39508b514abf64f79edf20c56c100be2b67a9f4a74333b1d707aa7d3650a3",
-+  "src/secure.rs": "accf9fd8b4870609e588a793963336a7b9b108703ea8e068fee4f5686b3468c1",
-   "src/stream.rs": "121f9c7bb4101aa79311fded96370a73ec1bfb0f2babf625f30f21bcdbd5d70b",
-   "src/wire.rs": "def567ccd502dece36b87192e8ca8f46e5107bbc777492f0c66b8584d82d5916"
- }
-```
-
-**File**: `packages/agent-net-core/sim/tests/migration.rs` (modified, +19/-7)
-```diff
-@@ -452,27 +452,39 @@ fn an_idle_connection_whose_peer_is_gone_is_declared_dead() {
- 
- /// 测试价值：同一入口上，这一端自己停了很久（手机进程被冻结、电脑休眠）再醒来。离上次听到对端早就超过判死时限，
- /// 但那段时间这一端没有在听：对端还在时醒来探测一次就有回音，连接不能断；对端真没了，要接连探测几次都没有回音才判死。
--/// 没有这条时 `an_idle_connection_whose_peer_is_gone_is_declared_dead` 的规则会在醒来的第一个计时器上把好连接判死。
--/// 最小输入：一条空闲的连接，时钟一次跳过两个判死时限，跳完以后对端在或不在。Rust integration，虚拟时间。
-+/// 停之前已经有一次探测没等到回音时也一样（PR #11856 审阅：那次探测丢了、这一端随后停了，醒来的第一个计时器
-+/// 不能拿它判死）。没有这两条时 `an_idle_connection_whose_peer_is_gone_is_declared_dead` 的规则会把好连接判死。
-+/// 最小输入：一条空闲的连接，停之前探测有回音或正好丢了，时钟一次跳过两个判死时限，跳完以后对端在或不在。
-+/// Rust integration，虚拟时间。
- #[test]
- fn waking_after_a_long_stop_probes_before_giving_up() {
--    for peer_alive in [true, false] {
-+    for (probe_lost_before, peer_alive) in [(false, true), (false, false), (true, true), (true, false)] {
-+        let label = format!("probe lost before the stop: {probe_lost_before}, peer alive: {peer_alive}");
-         let mut duo = Duo::new();
-         duo.upload(&[1; 20_000]);
--        assert!(duo.run_until(duo.now + 20_000_000, &|duo| duo.in_flight.is_empty()));
-+        assert!(duo.run_until(duo.now + 20_000_000, &|duo| duo.in_flight.is_empty()), "{label}");
-+        if probe_lost_before {
-+            // 服务端下一次探测（最多 15 秒后）等不到回音，之后每秒一次，这样过了几秒才停。
-+            let probes = duo.server.security_stats().silence_pings;
-+            duo.uplink = false;
-+            assert!(duo.run_until(duo.now + 20_000_000, &|duo| duo.server.security_stats().silence_pings >= probes + 3), "{label}");
-+            assert!(!duo.server.is_dead(), "{label}");
-+        }
-         // 两端都停了一分钟：谁也没有运行，线上也没有包。
-         duo.in_flight.clear();
-         duo.now += 60_000_000;
-         duo.uplink = peer_alive;
-         let woke = duo.now;
-         let died = duo.run_until(woke + 20_000_000, &|duo| duo.server.is_dead());
--        assert_eq!(died, !peer_alive, "peer alive: {peer_alive}");
-+        assert_eq!(died, !peer_alive, "{label}");
-         if peer_alive {
--            assert!(!duo.client.is_dead() && duo.client.is_established() && duo.server.is_established());
-+            assert!(!duo.client.is_dead() && duo.client.is_established() && duo.server.is_established(), "{label}");
-         } else {
-             let waited = duo.now - woke;
--            assert!((2_000_000..=5_000_000).contains(&waited), "gave up {waited} us after waking");
-+            assert!((2_000_000..=5_000_000).contains(&waited), "{label}: gave up {waited} us after waking");
-         }
-+        // 时钟跳过去的那一下，两端到期的计时器各算一次；之后不能再空转。
-+        assert!(duo.spurious_wakes <= 2, "{label}: {} spurious wakes", duo.spurious_wakes);
+ import { createAfterEditLabel } from './gitSnapshotLabeler';
+ import { enqueueGitRepoWrite } from './gitRepoWriteQueue';
+@@ -166,6 +172,11 @@ export class GitSnapshotCoordinator {
+       const index = queue?.indexOf(record) ?? -1;
+       if (index >= 0) queue!.splice(index, 1);
+       if (queue?.length === 0) this.turnStartQueues.delete(sessionId);
++      if (error instanceof SnapshotOperationDeadlineError) {
++        // This rejection is before intent confirmation. Keep the local deadline
++        // type for the scheduler's existing guarded retry, and identify it in history.
++        throw new SnapshotDispatchIntentDeadlineError(error);
++      }
+       throw error;
      }
- }
- 
+   }
 ```
 
-**File**: `packages/agent-net-core/src/secure.rs` (modified, +11/-0)
+**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerQueuedDispatch.test.ts` (modified, +8/-2)
 ```diff
-@@ -814,6 +814,8 @@ pub struct SecureConnection<C: Crypto> {
-     silence_sent_at: Option<u64>,
-     /// 眼下这一串一次接一次的探测是从什么时候开始的：对端回了、或者隔了很久才再探测，都重新算。
-     silence_started_at: u64,
-+    /// 上一次处理计时器的时间：隔得太久说明这一端停过，见 `tick_established`。
-+    ticked_at: u64,
-     /// 最近一次因为这一端换了网络而从头量的时间。
-     moved_at: Option<u64>,
-     /// 最近一次路径验证通过、数据换到新路径的时间。
-@@ -852,6 +854,7 @@ impl<C: Crypto> SecureConnection<C> {
-             silence_heard: 0,
-             silence_sent_at: None,
-             silence_started_at: 0,
-+            ticked_at: 0,
-             moved_at: None,
-             switched_at: None,
-             last_id_challenge: None,
-@@ -1561,6 +1564,14 @@ impl<C: Crypto> SecureConnection<C> {
-         self.stats.path_failures += self.paths.expire(now_us);
-         self.retain_connection_id_paths();
-         self.connection.tick(now_us);
-+        // 这一端停过（两次处理计时器之间隔了两个探测间隔以上，探测还没有回音时本来每个间隔都要醒一次）：
-+        // 停之前发的探测不算数，那段时间这一端没有在听，醒来从头探测（`SILENCE_PROBE_INTERVALS`）。
-+        if now_us.saturating_sub(self.ticked_at) > 2 * self.silence_interval()
-+            && self.silence_sent_at.is_some_and(|sent| sent >= self.connection.last_heard())
-+        {
-+            self.silence_sent_at = None;
-+        }
-+        self.ticked_at = now_us;
-         if self.silent_past_deadline(now_us) {
-             self.dead = true;
-             return;
+@@ -546,7 +546,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+   // scheduler must settle from the queued failure callback, not its later poll.
+   // Only the real typed snapshot deadline is handed to #10834's backoff recovery;
+   // its resend and exhaustion are covered by the persisted-recovery tests below.
+-  it.each(['deadline', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
++  // #10161 / unit: with recovery disabled, the same stalled journal receipt
++  // must reach the run's failure details as an unsent message.
++  it.each(['deadline', 'deadline-without-recovery', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
+     'settles pre-accept snapshot preparation through the real queue: %s', async (outcome) => {
+     vi.useFakeTimers();
+     const h = createSessionHarness(async () => ({ accepted: true }));
+@@ -582,7 +584,8 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+       beforeDispatchUserTurn: (sid, item, signal) => prepareQueuedPromptSnapshot(snapshots, watchers, sid, item, signal),
+       onAcceptedQueuedMessage: async () => { watchers.delete('snapshot-run-input'); await accepted?.(); },
+       onPersistedSendRejected: (sid, message, item, recovering) => queue.onPersistedSendRejected(sid, message, item, recovering),
+-      isResumableTurnErrorCandidate: signals => signals.reason === 'scheduler-snapshot-preparation',
++      isResumableTurnErrorCandidate: signals => outcome !== 'deadline-without-recovery'
++        && signals.reason === 'scheduler-snapshot-preparation',
+       onResumableTurnError: takeOver,
+       onDiscardedQueuedMessage: (_sid, item) => { watchers.get(item.clientId)?.onDiscarded(); watchers.delete(item.clientId); },
+       steerToAgent: async () => {}, abortSession: async () => {}, isTurnRunning: () => false,
+@@ -634,6 +637,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
+       expect(vendorSend).toHaveBeenCalledTimes(outcome === 'unknown-send' ? 1 : 0);
+       expect(result.error).toBeInstanceOf(Error);
+       if (outcome === 'permission') expect(result.error.message).toBe('permission denied');
++      if (outcome === 'deadline-without-recovery') {
++        expect(result.error.message).toMatch(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
++      }
+       expect(persisted).toHaveBeenCalledOnce();
+       releaseIntent({ attemptId: 'late' });
+       await vi.advanceTimersByTimeAsync(0);
+```
+
+**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerSendOutcome.test.ts` (modified, +39/-0)
+```diff
+@@ -59,6 +59,7 @@ import { RemoteAgentRemoteError } from '../../remote-agent/controller/runClient'
+ import { MakerScheduleRunner } from '../runner.desktop';
+ import { ScheduledModelSelectionBusyError } from '../../maker-ipc/scheduledModelSelection';
+ import { isHeadlessGhostSetupTurn } from '../../mcp-integrations/ghostSetupInteractionSurface';
++import { GitSnapshotCoordinator } from '../../git-snapshot/gitSnapshotCoordinator.js';
+ 
+ type SessionSendOptions = Parameters<Session['send']>[1];
+ type SendImpl = (
+@@ -692,6 +693,44 @@ describe('MakerScheduleRunner send outcome policy', () => {
+     expect(ctx.removeAbortListener).toHaveBeenCalledTimes(1);
+   });
+ 
++  // #10161 / unit: the idle scheduler goes straight through this runner.
++  // Its generic error sanitization used to erase the safe, typed send diagnosis.
++  it('keeps the dispatch intent diagnosis in an idle scheduled run', async () => {
++    vi.useFakeTimers();
++    const receipt = Promise.withResolvers<{ attemptId: string }>();
++    const entered = Promise.withResolvers<void>();
++    const snapshots = new GitSnapshotCoordinator({
++      snapshotTimeoutMs: 50,
++      recordTurnAttempt: () => { entered.resolve(); return receipt.promise; },
++      readAutoSnapshotEnabled: () => true,
++      getSessionContext: vi.fn(), detectRepoRoot: vi.fn(),
++      createShadowSavepoint: vi.fn(), createShadowMarker: vi.fn(),
++      oneShot: vi.fn(), logger: createLogger(),
++    });
++    const dispatch = vi.fn();
++    const h = createSessionHarness(async (_message, opts) => {
++      await opts?.onAccepted?.();
++      dispatch();
++      return { accepted: true };
++    });
++    const { runner, notifier } = createRunnerHarness(h.session, {
++      beforeDispatchUserTurn: (id, signal) => snapshots.onTurnStart(id, signal),
++    });
++    try {
++      const result = runner.fire(baseSchedule(), createFireContext()).catch(error => error);
++      await entered.promise;
++      await vi.advanceTimersByTimeAsync(50);
++      const errorMsg = expect.stringMatching(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
++      expect(await result).toMatchObject({ message: errorMsg });
++      expect(latestNotifiedRun(notifier)).toMatchObject({ status: 'failed', errorMsg });
++      expect(mocks.createMessage).toHaveBeenCalledOnce();
++      expect(dispatch).not.toHaveBeenCalled();
++    } finally {
++      receipt.resolve({ attemptId: 'late' });
++      vi.useRealTimers();
++    }
++  });
++
+   // Unit regression for the idle shared reconnect: after acceptance, a confirmed
+   // startup failure still closes out this occurrence through the normal runner.
+   // The allocator/runtime suite drives the real reconnect and token delivery.
+```
+
+**File**: `apps/desktop/src/main/scheduler-host/runner.ts` (modified, +5/-1)
+```diff
+@@ -103,6 +103,7 @@ import { isPluginEngineKind } from '../../shared/agentKindConversion.js';
+ import { ensureDialogueWorkspaceDir } from '../localDb/dialogueWorkspace';
+ import { AcceptedCallbackDispatchCancelled } from '../maker-ipc/acceptedCallbackRunner.js';
+ import { schedulerFailureDetail } from '../maker-ipc/schedulerQueueBridge.js';
++import { SnapshotDispatchIntentDeadlineError } from '../utils/operationBudget.js';
+ 
+ 
+ import { prependHandoffToUserMessage } from '../maker-ipc/agentHandoff.js';
+@@ -2644,7 +2645,10 @@ export class MakerScheduleRunner implements ScheduleRunner {
+         ctx.signal.removeEventListener('abort', onAbort);
+         return this.deferFire(schedule, session.id, 'session-running');
+       }
+-      sendError = formatSchedulerSendError(sendContext, normalized.reason);
++      // The host supplies a fixed diagnostic for this proven pre-dispatch failure.
++      sendError = err instanceof SnapshotDispatchIntentDeadlineError
++        ? err.message
++        : formatSchedulerSendError(sendContext, normalized.reason);
+       this.deps.logger.warn?.('[runner] session send failed before dispatch', {
+         ...sendLogBase,
+         source: normalized.source,
+```
+
+**File**: `apps/desktop/src/main/utils/operationBudget.ts` (modified, +12/-2)
+```diff
+@@ -21,12 +21,22 @@ export function assertGitDirectoryReady(dir: string): void {
+ 
+ /** Typed locally: error text from a provider must never authorize a retry. */
+ export class SnapshotOperationDeadlineError extends Error {
+-  constructor() {
+-    super('Snapshot operation deadline exceeded');
++  constructor(message = 'Snapshot operation deadline exceeded', options?: ErrorOptions) {
++    super(message, options);
+     this.name = 'SnapshotOperationDeadlineError';
+   }
+ }
+ 
++/** The deadline expired before the host could confirm durable dispatch intent. */
++export class SnapshotDispatchIntentDeadlineError extends SnapshotOperationDeadlineError {
++  constructor(cause: SnapshotOperationDeadlineError) {
++    super(
++      '[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] Snapshot operation deadline exceeded before confirming the send record. The message was not sent.',
++      { cause },
++    );
++  }
++}
++
+ export class OperationBudget {
+   readonly controller = new AbortController();
+   readonly signal = this.controller.signal;
+```
+
+**File**: `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx` (modified, +23/-0)
+```diff
+@@ -73,6 +73,29 @@ it.each(['live', 'history'] as const)('reports a clean Codex transport exit as a
+   }
+ });
+ 
++// #10161 / unit: a stalled local dispatch record used to look like a model
++// reply failure. Both error surfaces use real localized copy after the host
++// identifies that boundary. An unclassified timeout still has generic copy.
++it.each(['live', 'history', 'unclassified'] as const)('attributes a send preparation deadline in %s', async surface => {
++  const i18n = createInstance();
++  await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
++  const raw = 'Snapshot operation deadline exceeded';
++  const message = surface === 'unclassified'
++    ? raw
++    : `[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] ${raw} before confirming the send record. The message was not sent.`;
++  const retry = vi.fn();
++  render(<I18nextProvider i18n={i18n}>{surface === 'history'
++    ? <ErrorMessageCard message={message} />
++    : <ErrorBanner error={message} agentKind="codex" retryText="原消息" onRetry={retry} />}</I18nextProvider>);
++  expect(screen.getByText(surface === 'unclassified'
++    ? zhCN.chat.errorBanner.replyFailed
++    : '未发送消息，Cindy 未能及时确认安全记录')).toBeTruthy();
++  if (surface === 'live') {
++    fireEvent.click(screen.getByRole('button', { name: zhCN.chat.errorBanner.retry }));
++    expect(retry).toHaveBeenCalledWith('原消息');
++  }
++});
++
+ // #10854, unit: production live reducer + banner/tail/history must retain the
+ // actual cause for diagnosis while legacy reason-only errors use neutral copy.
+ it.each(['live', 'tail', 'history'] as const)('keeps silent-stop %s copy neutral and preserves cause details', async surface => {
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/de/common.json` (modified, +1/-0)
+```diff
+@@ -16157,6 +16157,7 @@
+       "CONTEXT_COMPACTION_MODEL_UNAVAILABLE": "Der Kontext konnte beim Modellwechsel nicht komprimiert werden, da das vorherige Modell über diese Verbindung nicht verfügbar ist.",
+       "MODEL_SELECTION_UNAVAILABLE": "Das ausgewählte Modell ist bei seinem Anbieter nicht mehr verfügbar. Prüfe die Verbindung in den Einstellungen oder wähle ein anderes verfügbares Modell.",
+       "MODEL_CATALOG_UNCONFIRMED": "Die Modellliste konnte nicht bestätigt werden. Das ausgewählte Modell wurde beibehalten. Aktualisiere die Modellliste und versuche es erneut.",
++      "SNAPSHOT_DISPATCH_INTENT_TIMEOUT": "Nachricht nicht gesendet. Cindy konnte den Sicherheitseintrag nicht rechtzeitig bestätigen.",
+       "HARNESS_SWITCH_NOT_READY": "Der Harness-Wechsel ist noch nicht bereit. Prüfe die Fehlerdetails und versuche es erneut, sobald der Harness bereit ist.",
+       "DEVICE_LINK_BUSY": "Der Remotecomputer ist ausgelastet. Versuche es in Kürze erneut.",
+       "REMOTE_DAEMON_CLOSED": "Die Remote-Verbindung wurde unterbrochen, möglicherweise während eines Updates. Diese Runde wurde beendet. Sende die Nachricht erneut.",
+```
+
+---
+
+### Incident Patch 3: `9a60a19e` (2026-11-23)
+**Commit Message**: ci(host): build the tag the release workflow runs on
+
+Code scanning flagged the ref input: a manual run executes in the default branch's context, so checking out and running a ref named by the caller could poison the caches other workflows restore.
+
+Drop the ref and version inputs. A release is built by running the workflow from its tag, which builds that commit and takes the version from the tag name; a run from a branch builds an unversioned package. The job no longer uses a dependency cache.
+
+Also drop the disk cleanup step: the first run showed 103 GB free on the hosted runner, and the step took two and a half minutes.
+
+Assisted-by: Cindy (https://cindy.app)
+Signed-off-by: Dash <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/host-release.yml` (modified, +13/-33)
+```diff
+@@ -1,21 +1,16 @@
+ name: Host release (Linux)
+-run-name: ${{ github.event_name == 'workflow_dispatch' && format('Host release {0}', inputs.ref) || github.event.pull_request.title }}
++run-name: ${{ github.event_name == 'workflow_dispatch' && format('Host release {0}', github.ref_name) || github.event.pull_request.title }}
+ 
+ # Builds the standalone Cindy Host for Linux from one commit, as both editions, and keeps the
+ # result as a workflow artifact. Nothing is published: no GitHub Release, CDN or registry write.
+ # Whoever needs the package (for example the cloud image recipes) downloads the artifact of the
+ # run and pins the digests from its summary. See docs/host/README.md, "Linux 发布包".
+ on:
++  # Run it from the release tag to build ("Use workflow from" in the Actions page, or
++  # `gh workflow run host-release.yml --ref v<version>`). The job builds the commit it runs on and
++  # takes the version from the tag; there is no input naming another ref, so it never checks out
++  # code other than its own. Run from a branch, it builds an unversioned package.
+   workflow_dispatch:
+-    inputs:
+-      ref:
+-        description: Tag or commit to build, for example v0.1.144
+-        required: true
+-        type: string
+-      version:
+-        description: Release version. Leave empty when ref is a v<version> tag
+-        required: false
+-        type: string
+   # Changes to the builder or to this workflow build an unversioned package, so a broken release
+   # build is found in review instead of at the next release.
+   pull_request:
+@@ -29,7 +24,7 @@ permissions:
+   contents: read
+ 
+ concurrency:
+-  group: host-release-${{ github.event.pull_request.number || inputs.ref }}
++  group: host-release-${{ github.event.pull_request.number || github.ref }}
+   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+ 
+ jobs:
+@@ -51,36 +46,22 @@ jobs:
+       XDT_SKIP_AGENT_BIN_INSTALL: '1'
+       HOST_ARCH: ${{ matrix.target.arch }}
+     steps:
+-      # Dependencies, two unpacked releases (about 2 GB each) and their archives do not fit
+-      # beside the toolchains a hosted runner preinstalls; this job uses neither of these two.
+-      - name: Free runner disk space
+-        run: |
+-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+-          df -h /
+-
+       - name: Checkout client
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          ref: ${{ inputs.ref }}
+           lfs: true
+ 
+       - name: Resolve the release version
+         env:
+           EVENT_NAME: ${{ github.event_name }}
+-          INPUT_REF: ${{ inputs.ref }}
+-          INPUT_VERSION: ${{ inputs.version }}
++          REF_TYPE: ${{ github.ref_type }}
++          REF_NAME: ${{ github.ref_name }}
+         run: |
+           set -euo pipefail
+-          if [ "$EVENT_NAME" = workflow_dispatch ]; then
+-            version="$INPUT_VERSION"
+-            if [ -z "$version" ]; then
+-              case "$INPUT_REF" in
+-                v[0-9]*) version="${INPUT_REF#v}" ;;
+-                *) echo "::error::Give a version when ref is not a v<version> tag"; exit 1 ;;
+-              esac
+-            fi
+-            if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+-              echo "::error::Not a release version: $version"; exit 1
++          if [ "$EVENT_NAME" = workflow_dispatch ] && [ "$REF_TYPE" = tag ]; then
++            version="${REF_NAME#v}"
++            if [ "$version" = "$REF_NAME" ] || ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
++              echo "::error::Not a release tag: $REF_NAME (expected v<version>)"; exit 1
+             fi
+             # The Host and the web client read the version from the desktop manifest, as the
+             # desktop packaging does (writePackageVersion). This checkout is discarded afterwards.
+@@ -107,12 +88,11 @@ jobs:
+           run_install: false
+ 
+       # The release bundles the Node that builds it, so use the version the repository pins.
++      # No dependency cache: a release is installed from the lockfile alone.
+       - name: Setup Node.js
+         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+         with:
+           node-version-file: .nvmrc
+-          cache: pnpm
+-          cache-dependency-path: pnpm-lock.yaml
+ 
+       - name: Install dependencies
+         run: pnpm install --frozen-lockfile
+```
+
+**File**: `docs/host/README.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ CINDY_HOST_API=http://127.0.0.1:3456 pnpm --filter desktop dev
+ 
+ ## Linux 发布包
+ 
+-无图形 Linux 用的 Host 发布包由工作流 [Host release (Linux)](../../.github/workflows/host-release.yml) 构建。在 Actions 页手动运行，`ref` 填要构建的发布标签（例如 `v0.1.144`），版本号取自标签；`ref` 不是 `v<版本>` 标签时另填 `version`。
++无图形 Linux 用的 Host 发布包由工作流 [Host release (Linux)](../../.github/workflows/host-release.yml) 构建。在 Actions 页手动运行，「Use workflow from」选要构建的发布标签，或用 `gh workflow run host-release.yml --ref v<版本>`。工作流构建它所在的那个提交，版本号取自标签，所以只能构建已经包含这条工作流的标签。从分支运行得到不带版本号的包。
+ 
+ - 每次运行在 Ubuntu 24.04 x64 上从同一个提交构建国内版和国际版，各自装入对应区域的网页客户端，内含 Node、Agent 运行时和 Chromium。两份都要先通过打包验收（`apps/host/scripts/release-region.e2e.mjs`）才会归档。
+ - 产物是 `cindy-host-<版本>-linux-x64-<cn|global>.tar.gz`，作为该次运行的 artifact 保留 90 天，用 `gh run download <运行编号>` 取回。工作流只读仓库，不写 GitHub Release 和 CDN；对外发布是另一步。
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11856** (2026-11-21): fix(agent-net-core): 空闲的连接探测不到对端也判死 (@MagicLizi)
-- **PR #11854** (2026-11-21): fix(desktop): 交接重放保留用户消息里的图片与附件引用 (@fmfsaisai)
-- **PR #11853** (2026-11-21): fix(desktop): 远程新建任务时复用已选模型、项目列表和图标 (@dashhuang)
-- **PR #11852** (2026-11-21): perf(agent-net): 对方不拨号时自己拨过去，手机建连接少等两处 (@MagicLizi)
-- **PR #11840** (2026-11-21): fix(pr-card): 同步已合并 PR 的图标和状态颜色 (@dashhuang)
-- **PR #11835** (2026-11-20): fix(subscription): 说明当前模型无可用订阅账号的原因 (@dashhuang)
+- **PR #12383** (2026-11-24): fix(mobile): show relay join errors before an invite arrives (@amanayayatu-tech)
+- **PR #12381** (2026-11-24): test(remote-agent): await guest host disposal (@amanayayatu-tech)
+- **PR #12380** (2026-11-24): fix(codex): clarify hosted built-in model refusal (@amanayayatu-tech)
+- **PR #12379** (2026-11-24): fix(desktop): explain when snapshot preparation blocks sending (@amanayayatu-tech)
+- **PR #12377** (2026-11-24): ci(host): 新增 Linux Host 发布包的构建工作流 (@dashhuang)
+- **PR #12374** (2026-11-24): test(codex): make MCP readiness retry deterministic (@amanayayatu-tech)
 
 ---
 
@@ -1739,53 +1709,38 @@ Signed-off-by: MagicLizi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. auth): resume Passport recovery after transient failure
+## X. Empirical Invariant Guard in gitSnapshotCoordinator.test.ts
 
 **RULE**:
-When implementing operations in `apps/desktop/src/main/__tests__/authColdStartRecovery.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f9c0a86`: auth): resume Passport recovery after transient failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2c92e39`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/__tests__/authColdStartRecovery.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const pendingResourcePassportRecoveries = new Map();
-  it.each(['runtime', 'cold-start'] as const)('resumes pending Passport recovery without replaying a dead Resource (%s)', async phase => {
-    const { h } = recoverySetup();
-    const fresh = phase === 'runtime' ? h : setup();
-    if (phase === 'cold-start') {
-      fresh.vault.resources[ORIGINAL_KEY].metadata = h.vault.resources[ORIGINAL_KEY].metadata;
-      fresh.vault.passports = h.vault.passports;
-    }
-    fresh.deps.refreshPassportSessionSingleFlight.mockRejectedValueOnce(
-      new AuthApiError('AUTH_REQUEST_FAILED', 503, 'busy', Date.now() + 180_000),
-    );
-    if (phase === 'runtime') await rejectAfterLoss(fresh);
-    else {
-      void fresh.start();
-      await vi.advanceTimersByTimeAsync(1);
-      fresh.request.mockResolvedValue({ ok: false, status: 401,
-        data: { error: { code: 'INVALID_REFRESH_TOKEN' } } });
-      await vi.advanceTimersByTimeAsync(61_250);
-    }
-    expect(fresh.deps.refreshPassportSessionSingleFlight).toHaveBeenCalledTimes(1);
-    const resourceRequests = fresh.request.mock.calls.length;
-    // A redundant refresh would now hit a transport outage and postpone Passport.
-    fresh.request.mockR
+import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
+    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
+    // deadline. The display error must name the send failure and keep its retry type.
+    const rejected = Promise.all([
+      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
+      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
+    ]);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
+    const rejected = expect(result).rejects.toThrow('deadline');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f9c0a86` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2c92e39` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
