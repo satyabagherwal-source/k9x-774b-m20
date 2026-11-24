@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:54:06.974Z",
-  "total_cycles_completed": 12044,
-  "total_learnings_persisted": 12044,
-  "total_rules_promoted": 11116,
+  "last_updated": "2026-11-24T13:04:14.111Z",
+  "total_cycles_completed": 12045,
+  "total_learnings_persisted": 12045,
+  "total_rules_promoted": 11117,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:38:55.589Z",
-      "repository": "go-kratos/kratos",
-      "learningId": "learn-github-go-kratos-kratos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:38:57.463Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T12:54:06.974Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:04:14.111Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

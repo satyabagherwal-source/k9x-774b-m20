@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:54:06.986Z",
+  "last_updated": "2026-11-24T13:04:14.124Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
-      "verified_at": "2026-11-23T17:29:41.026Z",
+      "content_hash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
+      "verified_at": "2026-11-24T13:04:14.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:29:41.026Z"
+      "last_updated": "2026-11-24T13:04:14.123Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",

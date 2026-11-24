@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T12:54:44.128Z",
+  "last_updated": "2026-11-24T13:04:21.794Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24626,
+  "total_items": 24630,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "298e47948e80af7381dbaccda2f2f7fe8d026e9e4eb074e4a20125afe9faefaa",
+      "content_hash": "7d65bfc38ce50f84c1d5e2e7d1070fa35b6e8764f97bb4632d0bb6e84f2ca730",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T12:05:20.130Z"
+      "persisted_at": "2026-11-24T13:04:21.581Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0c42c0e5c14560088fe21b01458fc525cc5a9b9963f154169284626b2d466c3",
+      "content_hash": "02b87c4fcaea169f1cd42dbe2535539bae7cdbe355b17416c033d81e93fafdbc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:05:20.305Z"
+      "persisted_at": "2026-11-24T13:04:21.794Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e560b59fb1bff1571ce4344aba1454d452728e55d318222cf06bff7e1e6ba351",
+      "content_hash": "361d7ad3f8e1e9bdd5df79de8f33ef90f7acf35172ca28efe2ed03c19ee52f29",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T12:19:03.870Z"
+      "persisted_at": "2026-11-24T13:04:20.418Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b90a621cf629c2b5279840904031e15f74d2ad8dd3bc32cbd44f9867513e900",
+      "content_hash": "4028380a51e999da7ecdd908de3519e9a77213cab581786a0a1de1fc81413bc1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:19:04.072Z"
+      "persisted_at": "2026-11-24T13:04:20.632Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216525,8 +216525,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "b5039cf8",
-      "content_hash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
+      "source_version": "b9f8b6b0",
+      "content_hash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -216549,6 +216549,11 @@
           "number": 10083,
           "title": "Add SpatiumDDI to ADOPTERS.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10262,
+          "title": "Avoid panic in ArgValue when a matching arg has no value",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216556,7 +216561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:29:40.735Z",
+      "verified_at": "2026-11-24T13:04:13.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216610,10 +216615,10 @@
       "relative_path": "08_VERIFICATION/k3s-io-k3s-verification-protocol-empirical-defect-shield-for-k3s-io-k3s.md",
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io/k3s",
       "repository": "k3s-io/k3s",
-      "source_version": "b5039cf8",
-      "content_hash": "12febd7c3d16d1e2d353cb5cac32489e097dce4b11361001d6c454aad735092c",
+      "source_version": "b9f8b6b0",
+      "content_hash": "3a1333282ac51ce47dcefb52732cac8d0f3c6621de860dd97ca7df8ce1141f1a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:29:41.802Z"
+      "persisted_at": "2026-11-24T13:04:14.844Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
@@ -216695,9 +216700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io-k3s-learnings",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "b93c99ffda2de70c898a9c7f8aa297d9e6babfa13b48eb91e5bc80872ec8114e",
+      "content_hash": "b847375fc078b2bb2c45c709f9dee5a7b16981224ed794f0c228e29b140165b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T10:44:23.183Z"
+      "persisted_at": "2026-11-24T13:04:19.588Z"
     },
     "learn-huggingface-baai-bge-m3": {
       "learning_id": "learn-huggingface-baai-bge-m3",
@@ -319993,13 +319998,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VRSE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HZVQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4565c9f4f8865100a8c80151f8be76acb4220cf926237bc3d4d6e3b50bf9fe2f",
+      "content_hash": "da2cbfd289f57901709869fc8e6c5193e84c39626eaa0a1e30a707f77533d8b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:19:03.672Z"
+      "persisted_at": "2026-11-24T13:04:20.202Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334977,13 +334982,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E47N-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I0S1-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "14a9cfab04c3084257e6fda9be8b01e5ae10994b4f336032da31a477c3677172",
+      "content_hash": "3a4b9f672696ebe779daa846ed815e1c4bf3b2d43490117e564b33d69e8762c3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T12:05:19.958Z"
+      "persisted_at": "2026-11-24T13:04:21.364Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -336121,6 +336126,56 @@
       "content_hash": "d0f5c37de9925649e8345caad0ae01e31edce80da02f80e02df9ea791e391335",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T12:54:42.349Z"
+    },
+    "rule-10262": {
+      "learning_id": "rule-10262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10262,
+      "title": "Avoid panic in ArgValue when a matching arg has no value",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "b9f8b6b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:04:13.780Z"
+    },
+    "candidate_directive-avoid-panic-in-argvalue-when-a-matching-arg-has-no-value": {
+      "item_id": "candidate_directive-avoid-panic-in-argvalue-when-a-matching-arg-has-no-value",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HZ2D-avoid-panic-in-argvalue-when-a-matching-arg-has-no-value.md",
+      "title": "Avoid panic in ArgValue when a matching arg has no value",
+      "repository": "k3s-io-k3s-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4604228c9d0e5d6a72c45210a7caefe5e972323af43085799882469a2c476051",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:04:19.143Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-k3s-io-k3s-technical-construction-intelligence-k3s-io-k3s-core-invariants.md",
+      "title": "Technical Construction Intelligence: k3s-io/k3s Core Invariants",
+      "repository": "k3s-io/k3s",
+      "source_version": "b9f8b6b0",
+      "content_hash": "814623fe1b1b9e1a0006ec3bee178f2e52c48109f4f767d43c7f95c2e3ce58cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:04:14.622Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-k3s-io-k3s-learnings-technical-construction-intelligence-k3s-io-k3s-learnings-co.md",
+      "title": "Technical Construction Intelligence: k3s-io-k3s-learnings Core Invariants",
+      "repository": "k3s-io-k3s-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f17dd3243ab364a7663d1d9d399d80da23bc6de73499bc4abf08d164140e021",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:04:19.365Z"
     }
   },
   "ai-builder-brain": {

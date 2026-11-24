@@ -12672,3 +12672,4 @@
 | `CYCLE-20261124-4RNK` | `2026-11-24T12:54:03.008Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10260` | Yes (`155cbc2c...`) |
 | `CYCLE-20261124-4UPG` | `2026-11-24T12:54:06.964Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10261` | Yes (`301791ea...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T12:54:40.835Z` | `software-mansion-react-native-reanimated` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E38FCD3B` [Domain H] | Yes (`eee72ba0...`) |
+| `CYCLE-20261124-HV6B` | `2026-11-24T13:04:14.099Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10262` | Yes (`4f6bb903...`) |

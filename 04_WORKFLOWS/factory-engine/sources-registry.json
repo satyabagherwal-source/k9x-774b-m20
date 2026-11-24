@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T12:54:10.262Z",
-    "lastVerified": "2026-11-24T12:54:10.262Z",
+    "lastChecked": "2026-11-24T13:04:17.574Z",
+    "lastVerified": "2026-11-24T13:04:17.574Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -274,9 +274,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T12:27:30.187Z",
+    "lastChecked": "2026-11-24T13:04:09.286Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T12:27:30.187Z"
+    "lastVerified": "2026-11-24T13:04:09.286Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -909,9 +909,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-24T06:55:09.424Z",
+    "lastChecked": "2026-11-24T13:04:04.406Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-24T06:55:09.424Z"
+    "lastVerified": "2026-11-24T13:04:04.406Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -3076,9 +3076,9 @@
   "akveo-react-native-ui-kitten": {
     "name": "react-native-ui-kitten",
     "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
-    "lastChecked": "2026-11-21T20:36:28.798Z",
+    "lastChecked": "2026-11-24T13:03:59.398Z",
     "revisionIdentifier": "e73dce62",
-    "lastVerified": "2026-11-21T20:36:28.798Z"
+    "lastVerified": "2026-11-24T13:03:59.398Z"
   },
   "beclab-olares": {
     "name": "beclab/Olares",
@@ -4046,12 +4046,12 @@
     "lastVerified": "2026-11-24T08:48:22.713Z"
   },
   "fujiapple852-trippy": {
-    "name": "fujiapple852/trippy",
+    "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T05:59:44.355Z",
-    "lastVerified": "2026-11-23T05:59:44.355Z",
+    "lastChecked": "2026-11-24T13:03:54.415Z",
+    "lastVerified": "2026-11-24T13:03:54.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fujiapple852-trippy",
@@ -4060,7 +4060,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "938605ba"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -5247,9 +5248,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-23T16:37:04.987Z",
+    "lastChecked": "2026-11-24T13:04:06.825Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-23T16:37:04.987Z"
+    "lastVerified": "2026-11-24T13:04:06.825Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -7166,14 +7167,14 @@
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T17:29:39.629Z",
-    "lastVerified": "2026-11-23T17:29:39.629Z",
+    "lastChecked": "2026-11-24T13:04:11.630Z",
+    "lastVerified": "2026-11-24T13:04:11.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
+    "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10249,9 +10250,9 @@
   "gatenlp-ultimate-sitemap-parser": {
     "name": "ultimate-sitemap-parser",
     "officialUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
-    "lastChecked": "2026-11-20T08:28:23.528Z",
+    "lastChecked": "2026-11-24T13:03:56.809Z",
     "revisionIdentifier": "6ab7704f",
-    "lastVerified": "2026-11-20T08:28:23.528Z"
+    "lastVerified": "2026-11-24T13:03:56.809Z"
   },
   "realm-realm-kotlin": {
     "name": "realm-kotlin",

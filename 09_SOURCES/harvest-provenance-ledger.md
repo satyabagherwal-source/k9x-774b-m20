@@ -12705,3 +12705,4 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `22cbff88` | Multi-dimensional audit evidence | 2026-11-24T12:54:03.013Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `ef0e49cf` | Multi-dimensional audit evidence | 2026-11-24T12:54:06.968Z |
 | `learn-dom-h-e38fcd3b` | `project://software-mansion-react-native-reanimated` | `22cbff88` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md` | 2026-11-24T12:54:40.835Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b9f8b6b0` | Multi-dimensional audit evidence | 2026-11-24T13:04:14.104Z |

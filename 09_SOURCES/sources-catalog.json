@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "b5039cf8",
+    "sourceVersion": "b9f8b6b0",
     "license": "Apache-2.0",
-    "contentHash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
-    "lastHarvestedAt": "2026-11-23T17:29:41.014Z",
+    "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
+    "lastHarvestedAt": "2026-11-24T13:04:14.104Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {

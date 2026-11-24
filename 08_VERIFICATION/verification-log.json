@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-71JL",
-    "timestamp": "2026-11-22T18:00:24.465Z",
-    "repository": "darrylmorley/whatcable",
-    "learningId": "learn-github-darrylmorley-whatcable",
-    "contentHash": "702bb03d3a7965d838b5973518fc235812e1007b22be4c682518b5e882735e38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-751N",
     "timestamp": "2026-11-22T18:00:29.003Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7475,21 @@
     "repository": "envoyproxy/envoy",
     "learningId": "learn-github-envoyproxy-envoy",
     "contentHash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HV6B",
+    "timestamp": "2026-11-24T13:04:14.099Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
