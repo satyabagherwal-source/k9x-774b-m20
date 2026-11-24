@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T01:47:04.337Z",
+  "last_updated": "2026-11-24T01:56:08.678Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24344,
+  "total_items": 24351,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113253,10 +113253,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "eaa9be2c",
-      "content_hash": "75a206bd6d02f9c90ba748b77bd0a77c1181897354128149e86b200de09669f4",
+      "source_version": "062ea35b",
+      "content_hash": "1aa1a7e062e159bc7c39e0b2ad90da252c4cfa30bb419eb861006da8bcb91e8f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T03:28:41.987Z"
+      "persisted_at": "2026-11-24T01:56:02.122Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball",
@@ -113265,10 +113265,10 @@
       "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-verification-protocol-empirical-defect-shield-for-gau.md",
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette/highball",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "eaa9be2c",
-      "content_hash": "a1425b1ddccac0f9ad479bcb975f584abf8825333a46cd80d8a662dd3a06f91a",
+      "source_version": "062ea35b",
+      "content_hash": "b2f59ada8d9544208c93b23be73c637196f26df719aca95c996e6c47025ec53b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:28:42.138Z"
+      "persisted_at": "2026-11-24T01:56:02.308Z"
     },
     "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733": {
       "item_id": "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733",
@@ -113338,9 +113338,9 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "053e4be6fab60fb6707197788e981b0bc04daef6b6f9417f33d5560b6a1042df",
+      "content_hash": "0d7783377c599c8bea4a9dfa203262cec0954a7a4dc4f7194f06144e9bcc9967",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T03:28:55.447Z"
+      "persisted_at": "2026-11-24T01:56:07.627Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea",
@@ -113350,9 +113350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette-highball-learnings",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "a881ef906c8ca9477067c3a61d4483af289bc51392166e157e96a1d2bba16de3",
+      "content_hash": "45bde330898345b4ca425fda48b5eb59b4867135030496900be5db614b162a2b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:28:55.600Z"
+      "persisted_at": "2026-11-24T01:56:07.815Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -219106,13 +219106,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZJIF-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MOS7-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d12f83ab736f080801628e57d8856a410ad0a3ce38e9be92ce4cf952ffb736b2",
+      "content_hash": "8d3e406e8ea7e4800e7252692ba482e771a5e5e510dbf137e0f68ac662c65a2a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:38:08.391Z"
+      "persisted_at": "2026-11-24T01:56:08.312Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219122,9 +219122,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "415052f36b47664005eab7beb7fc542461f05c262c8fe59d04c2dd28414a43d7",
+      "content_hash": "c6b27328e5e37cd9c3e597b703d19630247811134b679e70984cc0b14cdf691f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:38:08.574Z"
+      "persisted_at": "2026-11-24T01:56:08.496Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219134,9 +219134,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0eb731ddd5b0ca5c8558aabb0b3d6f8bbabe6f1f49fbc55735ea20bfd47888e",
+      "content_hash": "a0a3d7a43d379405d484769fb6fb85a2b500f6d95be1a6e53068daac59c02ea6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:38:08.755Z"
+      "persisted_at": "2026-11-24T01:56:08.678Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -257888,8 +257888,8 @@
       "slug": "yyjeqhc-webcodex",
       "platform": "github",
       "source_url": "https://github.com/yyjeqhc/webcodex",
-      "source_version": "8779794b",
-      "content_hash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
+      "source_version": "026413dc",
+      "content_hash": "d5800c97d65a87fb2c5b0b74264738d3f11bffbd1796739f0dade5e0484f25a6",
       "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "promoted_rules": [
@@ -257907,6 +257907,11 @@
           "number": 9972,
           "title": "unify structured error diagnostics, state-error lifecycle, and safe re",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10173,
+          "title": "accelerate Windows status checks and acknowledge lifecycle actions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257914,7 +257919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:35:17.987Z",
+      "verified_at": "2026-11-24T01:55:59.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257968,10 +257973,10 @@
       "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-verification-protocol-empirical-defect-shield-for-yyjeqhc-webco.md",
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc/webcodex",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "8779794b",
-      "content_hash": "cca0cc8615c42343c45562ef2c58c839f2e7009ca8671d80c87c4eb3d8579366",
+      "source_version": "026413dc",
+      "content_hash": "f526f0188f3af7f034474beabb688b97b118699e1797594eae3163b7c59e5434",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:35:18.775Z"
+      "persisted_at": "2026-11-24T01:56:00.250Z"
     },
     "rule-8722": {
       "learning_id": "rule-8722",
@@ -258019,9 +258024,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc-webcodex-learnings",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c6d5a9b63998b271202cee0fb49ef4b0f909be558bda3f3a06c47978af8d7e8",
+      "content_hash": "8e8a0d4b05fe725dcce3f40df0862e3294d7853f2c9c0af9c942333932f22bdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:35:29.571Z"
+      "persisted_at": "2026-11-24T01:56:06.695Z"
     },
     "rule-8723": {
       "learning_id": "rule-8723",
@@ -269694,8 +269699,8 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "eaa9be2c",
-      "content_hash": "30797122f5e9ecf36563b50587dd0256251206c8944d826c66bddd82f6a75d92",
+      "source_version": "062ea35b",
+      "content_hash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
@@ -269708,6 +269713,11 @@
           "number": 9714,
           "title": "Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10174,
+          "title": "highball play --wait follows Mac builds, Steam for Mac's included, and the libra",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269715,7 +269725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:28:41.424Z",
+      "verified_at": "2026-11-24T01:56:01.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -332014,6 +332024,94 @@
       "content_hash": "9bd3f30a4e72edecab065836f2928b72ccc11b0e0e9ee0fba0272e6b0c8045cd",
       "domain_letter": "D",
       "persisted_at": "2026-11-24T01:47:03.049Z"
+    },
+    "rule-10173": {
+      "learning_id": "rule-10173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10173,
+      "title": "accelerate Windows status checks and acknowledge lifecycle actions",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "026413dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:55:59.324Z"
+    },
+    "candidate_directive-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions": {
+      "item_id": "candidate_directive-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MI8B-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions.md",
+      "title": "accelerate Windows status checks and acknowledge lifecycle actions",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "026413dc",
+      "content_hash": "89029b3735a44112be6b13306dac3191c80b2eb94e938f746ab22cdd7d271708",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:55:59.825Z"
+    },
+    "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yyjeqhc-webcodex-architecture-intelligence-yyjeqhc-webcodex-core-invariants.md",
+      "title": "Architecture Intelligence: yyjeqhc/webcodex Core Invariants",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "026413dc",
+      "content_hash": "6a4adf0a2b51241327898f00cab3241ab699bd41e681ddf4a2b77760deeed62e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:56:00.025Z"
+    },
+    "rule-10174": {
+      "learning_id": "rule-10174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10174,
+      "title": "highball play --wait follows Mac builds, Steam for Mac's included, and the libra",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "062ea35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:56:01.405Z"
+    },
+    "candidate_directive-highball-play-wait-follows-mac-builds-steam-for-mac-s-included-and-the-libra": {
+      "item_id": "candidate_directive-highball-play-wait-follows-mac-builds-steam-for-mac-s-included-and-the-libra",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MO3D-highball-play-wait-follows-mac-builds-steam-for-mac-s-included-and-the-libra.md",
+      "title": "highball play --wait follows Mac builds, Steam for Mac's included, and the libra",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ef087b414009b2beb8745201dad33c2e84d09c056de166e390b3160f5c67cd8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:56:07.422Z"
+    },
+    "candidate_directive-desktop-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions": {
+      "item_id": "candidate_directive-desktop-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MN79-desktop-accelerate-windows-status-checks-and-acknowledge-lifecycle-actions.md",
+      "title": "desktop): accelerate Windows status checks and acknowledge lifecycle actions",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b03b56087f531852d3ef7986e1dcd2d3a1b673e469b8bc909996cbde9740414",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:56:06.267Z"
+    },
+    "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yyjeqhc-webcodex-learnings-architecture-intelligence-yyjeqhc-webcodex-learnings-.md",
+      "title": "Architecture Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "291e8d72e772e749e66172c6e71086b8a4dca5edf2435be9d38744d53e3f00b1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:56:06.451Z"
     }
   },
   "ai-builder-brain": {

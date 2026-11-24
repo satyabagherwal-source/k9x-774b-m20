@@ -4,22 +4,22 @@
 {
   "source_repository": "yyjeqhc/webcodex",
   "source_url": "https://github.com/yyjeqhc/webcodex",
-  "source_version": "8779794b",
+  "source_version": "026413dc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T18:35:18.422Z",
+  "timestamp": "2026-11-24T01:55:59.824Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yyjeqhc-webcodex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `8779794b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T18:35:18.422Z`  
+> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `026413dc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:55:59.824Z`  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `yyjeqhc/webcodex` (Commit: `8779794b`)
+- **Target Repository**: `yyjeqhc/webcodex` (Commit: `026413dc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:35:17.159Z  
+> **Harvest Timestamp**: 2026-11-24T01:55:58.187Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2518 stars
+- **Stars / Engagement**: 2519 stars
 
 ---
 
@@ -725,7 +725,9 @@ mod tests {
 mod cloudflare_connections;
 mod coding_agents;
 mod connections;
-pub use cloudflare_connections::{CloudflareConnectionRequest, CloudflareConnectionResponse};
+pub use cloudflare_connections::{
+    CloudflareConnectionRequest, CloudflareConnectionResponse, GeminiConnectionRequest,
+};
 mod diagnostics;
 mod environment;
 mod environment_invitation;
@@ -805,10 +807,12 @@ static NEXT_STATE_TEMP_ID: AtomicU64 = AtomicU64::new(1);
 
 type SharedSupervisor = Arc<Mutex<ProcessSupervisor>>;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 struct ChatGptActivityProbe {
     identity: ProjectRuntimeIdentity,
-    webcodex: PathBuf,
+    adapter: WebCodexAdapter,
+    runtime_source: crate::runtime_selection::RuntimeSource,
+    runtime_selection_revision: u64,
 }
 
 pub struct AppState {
@@ -1086,6 +1090,9 @@ use super::*;
 use serde::{Deserialize, Serialize, Serializer};
 use webcodex_environment::{Secret, TunnelProvider};
 
+mod gemini;
+pub use gemini::GeminiConnectionRequest;
+
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum CloudflareConnectionRequest {
@@ -1096,6 +1103,8 @@ pub enum CloudflareConnectionRequest {
         profile_id: String,
         server_instance_id: String,
         expected_revision: u64,
+        expected_generation: u64,
+        expected_configuration_id: String,
     },
     Stop {
         profile_id: String,
@@ -1134,6 +1143,7 @@ impl CloudflareConnectionRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CloudflareConnectionStatus {
+    pub configuration_id: String,
     pub profile_id: String,
     pub server_instance_id: String,
     pub process_generation: u64,
@@ -1250,6 +1260,15 @@ impl AppState {
         }
         let profile = webcodex_environment::cloudflare_tunnel_profile(&store, request.profile_id())
             .map_err(environment::desktop_error)?;
+        if let CloudflareConnectionRequest::Start {
+            expected_configuration_id,
+            ..
+        } = &request
+        {
+            if *expected_configuration_id != profile.configuration_id {
+                return Err(stale_revision(request.stage(), &profile.profile_id));
+            }
+        }
         if profile.provider == TunnelProvider::Openai {
             return Err(unavailable());
         }
@@ -1257,6 +1276,7 @@ impl AppState {
         validate_control_origin(&profile.local_server_url)?;
         let client = reqwest::Client::builder()
             .no_proxy()
+            .retry(reqwest::retry::never())
             .redirect(reqwest::redirect::Policy::none())
             .timeout(Duration::from_secs(5))
             .build()
@@ -1271,12 +1291,13 @@ impl AppState {
                     CloudflareConnectionRequest::Start {
                         server_instance_id,
                         expected_revision,
+                        expected_generation,
                         ..
                     } => Some((
                         webcodex_environment::ServiceOperation::Start,
                         server_instance_id.as_str(),
                         Some(*expected_revision),
-                        None,
+                        Some(*expected_generation),
                     )),
                     CloudflareConnectionRequest::Stop {
                         server_instance_id,
@@ -1315,7 +1336,8 @@ impl AppState {
                             Some("invalid_response"),
                         )
                     })?;
-                if observed.profile_id != profile.profile_id
+                if observed.configuration_id != profile.configuration_id
+                    || observed.profile_id != profile.profile_id
                     || observed.server_instance_id != expected_instance
                     || expected_revision.is_some_and(|revision| {
                         revision != observed.configured_revision || revision != profile.revision
@@ -1328,22 +1350,246 @@ impl AppState {
                 // A standalone service is durable Environment startup intent. Its
                 // new run performs its own fenced Server prepare handshake; Desktop
                 // never restarts the shared Server to control that service.
-                webcodex_environment::NativeEnvironment::new()
-                    .map_err(environment::desktop_error)?
-                    .control_cloudflare_tunnel(&store, expected_environment, &profile, action)
-                    .await
-                    .map_err(environment::desktop_error)?;
-                control_response(
-                    &client,
-                    &endpoint,
-                    &profile.bootstrap_token,
-                    &status_request,
-                )
-                .await?
-            } else {
-                control_response(&client, &endpoint, &profile.bootstrap_token, &request).await?
+
+```
+
+### Core Architecture Module: `apps/desktop/src-tauri/src/state/cloudflare_connections/gemini.rs`
+```
+//! Interactive Desktop intent. Core owns the catalog and Server owns the process,
+//! forwarding and OAuth discovery. Never infer success from saving the profile.
+use super::*;
+use webcodex_environment::{
+    CloudflareProfileTarget, CloudflareTunnelProfileRequest, EnvironmentStore, NativeEnvironment,
+    TunnelHostMode, TunnelProfileSnapshot,
+};
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GeminiConnectionRequest {
+    environment_id: String,
+    profile: Option<SelectedProfile>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SelectedProfile {
+    id: String,
+    configuration_id: String,
+    revision: u64,
+}
+
+impl AppState {
+    pub async fn connect_gemini(
+        &self,
+        request: GeminiConnectionRequest,
+    ) -> DesktopResult<DesktopStateSnapshot> {
+        let (operation, cancel, mut core, baseline) = self
+            .begin_operation(DesktopOperationKind::TunnelConfigUpdate, false)
+            .await?;
+        let result = async {
+            cancel.check()?;
+            if core.config.persistent_environment.as_deref() != Some(&request.environment_id)
+                || !core.config.topology.as_ref().is_some_and(|t| {
+                    t.experience == Experience::Full
+                        && matches!(t.server, ServerTopology::Local)
+                        && matches!(t.runner, RunnerTopology::Local)
+                })
+            {
+                return Err(requires_environment());
+            }
+            let store = environment::store()?;
+            core.tunnel_config
+                .ensure_persistent_catalog_compatible(&store)?;
+            if !core.snapshot.readiness.runtime_ready {
+                core.resume_environment(&cancel).await?;
+            }
+            cancel.check()?;
+            let profile = prepare_profile(&store, &request).await?;
+            core.publish_snapshot();
+            let id = &profile.profile_id;
+            let observed = self
+                .cloudflare_connection(CloudflareConnectionRequest::Status {
+                    profile_id: id.clone(),
+                })
+                .await?;
+            let CloudflareConnectionResponse::Status(status) = observed else {
+                return Err(unavailable());
             };
-        if matc
+            if status.configured_revision != profile.revision
+                || profile.configuration_id.as_deref() != Some(status.configuration_id.as_str())
+            {
+                return Err(stale_revision("cloudflare_start", id));
+            }
+            if matches!(status.lifecycle.as_str(), "stopped" | "error") {
+                cancel.check()?;
+                // A user-scoped standalone host has the same per-user cache.
+                // Boot and system accounts continue to use installed tools only.
+                if profile.host_mode == TunnelHostMode::Standalone && profile.autostart {
+                    let record = store
+                        .load_environment()
+                        .map_err(environment::desktop_error)?
+                        .ok_or_else(requires_environment)?;
+                    if record.environment_id != request.environment_id {
+                        return Err(requires_environment());
+                    }
+                    if record.request.service_scope
+                        == webcodex_environment::service::ServiceScope::User
+                    {
+                        if webcodex_environment::current_account()
+                            .map_err(environment::desktop_error)?
+                            .identity
+                            != record.request.account.identity
+                        {
+                            return Err(requires_environment());
+                        }
+                        prepare_standalone_component(&core.adapter.binaries()?.webcodex, &cancel)
+                            .await?;
+                    }
+                }
+                // One mutation from a current observation; response loss never
+                // causes a retry. The card subsequently polls only Status.
+                self.cloudflare_connection(CloudflareConnectionRequest::Start {
+                    profile_id: id.clone(),
+                    server_instance_id: status.server_instance_id,
+                    expected_revision: profile.revision,
+                    expected_generation: status.process_generation,
+                    expected_configuration_id: profile
+                        .configuration_id
+                        .clone()
+                        .ok_or_else(requires_environment)?,
+                })
+                .await?;
+            }
+            core.get_state().await
+        }
+        .await;
+        self.finish_operation(operation, cancel, core, baseline, result)
+            .await
+    }
+}
+
+async fn prepare_profile(
+    store: &EnvironmentStore,
+    request: &GeminiConnectionRequest,
+) -> DesktopResult<TunnelProfileSnapshot> {
+    let record = store
+        .load_environment()
+        .map_err(environment::desktop_error)?
+        .ok_or_else(requires_environment)?;
+    if record.environment_id != request.environment_id
+        || !record.request.local_server()
+        || !record.request.local_runner()
+    {
+        return Err(requires_environment());
+    }
+    let catalog = webcodex_environment::tunnel_profile_snapshots(store)
+        .map_err(environment::desktop_error)?;
+    let existing = match &request.profile {
+        Some(target) => Some(
+            catalog
+                .iter()
+                .find(|p| {
+                    p.profile_id == target.id
+                        && p.provider != TunnelProvider::Openai
+                        && p.configuration_id.as_deref() == Some(&target.configuration_id)
+                        && p.revision == target.revision
+                })
+                .ok_or_else(|| stale_revision("cloudflare_start", &target.id))?,
+        ),
+        None => None,
+    };
+    if let Some(profile) = existing {
+        if profile.oauth_dynamic_registration_enabled {
+            return Ok(profile.clone());
+        }
+    }
+    let target = CloudflareProfileTarget {
+        environment_id: request.environment_id.clone(),
+        configuration_id: existing.and_then(|p| p.configuration_id.clone()),
+    };
+    // Create-only identity for the wizard default. Two concurrent first-time
+    // connects cannot create two Quick profiles or adopt an intervening record.
+    let id = existing.map_or("gemini-quick", |p| p.profile_id.as_str());
+    let native = NativeEnvironment::new().map_err(environment::desktop_error)?;
+    let result = native
+        .configure_cloudflare_tunnel_profile(
+            store,
+            &CloudflareTunnelProfileRequest {
+                profile_id: id,
+                expected_target: Some(&target),
+                expected_revision: existing.map(|p| p.revision),
+                name: Some(existing.map_or("Gemini", |p| p.name.as_str())),
+                provider: existing.map_or(TunnelProvider::CloudflareQuick, |p| p.provider.clone()),
+                host_mode: existing.map_or(TunnelHostMode::Embedded, |p| p.host_mode),
+                autostart: existing.map_or_else(
+                    || {
+                        !catalog
+                            .iter()
+                            .any(|p| p.provider != TunnelProvider::Openai && p.autostart)
+                    },
+                    |p| p.autostart,
+                ),
+                oauth_dynamic_registration_enabled: Some(true),
+                token: None,
+                ingress_port: None,
+            },
+        )
+        .await
+        .map_err(environment::desktop_error)?;
+    Ok(result.profile)
+}
+
+async fn prepare_standalone_component(
+    cli: &std::path::Path,
+    cancel: &CancellationContext,
+) -> DesktopResult<()> {
+    use crate::webcodex::cli::{run_json_until, CliCommandContext};
+    let prepared: bool = run_json_until(
+        cli,
+        &[
+            "environment".into(),
+            "prepare-cloudflared".into(),
+            "--json".into(),
+        ],
+        None,
+        false,
+        CliCommandContext::new("cloudflare_start", "prepare-cloudflared"),
+        cancel,
+        Deadline::after(std::time::Duration::from_secs(170)),
+    )
+    .await
+    .map_err(|error| {
+        let reason = error
+            .diagnostic_ref()
+            .and_then(|d| d.reason_code.as_deref());
+        if let Some(
+            code @ ("cloudflare_network_unavailable"
+            | "cloudflare_download_failed"
+            | "cloudflare_proxy_invalid"
+            | "cloudflare_storage_unavailable"
+            | "cloudflare_version_unsupported"
+            | "cloudflare_platform_unsupported"
+            | "cloudflare_verification_failed"
+            | "cloudflare_extraction_failed"
+            | "cloudflare_binary_unavailable"),
+        ) = reason
+        {
+            DesktopError::new(
+                code,
+                "The Cloudflare component could not be prepared",
+                "Review the component diagnostic and reconnect.",
+            )
+            .with_stage("cloudflare_start")
+        } else {
+            error
+        }
+    })?;
+    if !prepared {
+        return Err(unavailable());
+    }
+    Ok(())
+}
+
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/coding_agents.rs`
@@ -1921,243 +2167,6 @@ impl DesktopCore {
   
 ```
 
-### Core Architecture Module: `apps/desktop/src-tauri/src/state/desktop_core.rs`
-```
-pub struct DesktopCore {
-    data_dir: PathBuf,
-    config_path: PathBuf,
-    config: StoredDesktopConfig,
-    configuration_issue: Option<String>,
-    runtime_candidate: Option<crate::runtime_selection::RuntimeCandidate>,
-    runtime_candidate_context: Option<String>,
-    runtime_selected_probe: Option<crate::runtime_selection::RuntimeCandidate>,
-    runtime_last_switch: Option<crate::runtime_selection::RuntimeSwitchResult>,
-    tunnel_config: TunnelConfig,
-    mcp_providers: crate::mcp_providers::McpProviderStore,
-    mcp_applied_revision: Option<u64>,
-    coding_agents: crate::coding_agents::CodingAgentStore,
-    coding_agents_applied_revision: Option<u64>,
-    connections: ConnectionRuntimes,
-    snapshot: DesktopStateSnapshot,
-    inventory_persistence_pending: bool,
-    adapter: WebCodexAdapter,
-    supervisor: SharedSupervisor,
-    activity: ActivityLog,
-    published: Arc<RwLock<DesktopStateSnapshot>>,
-}
-
-impl DesktopCore {
-    fn new(data_dir: PathBuf, resource_dir: PathBuf) -> DesktopResult<Self> {
-        let activity = ActivityLog::with_lifecycle(&data_dir);
-        let config_path = data_dir.join("desktop-state.json");
-        // Keep Diagnostics usable if migration fails; admission below prevents
-        // replacing the operator's files with a default configuration.
-        let (mut config, configuration_issue) = match load_config(&config_path, &activity) {
-            Ok(config) => (config, None),
-            Err(error) => (StoredDesktopConfig::default(), Some(error.code)),
-        };
-        if configuration_issue.is_none() {
-            environment::adopt_saved_environment(&mut config);
-            if config.persistent_environment.is_none() && environment::migration_in_progress() {
-                config.runtime_autostart = Some(false);
-            }
-        }
-        let tunnel_config = TunnelConfig::load(
-            &data_dir.join("secrets").join("tunnel-config.json"),
-            config.preferred_connection == Some(RegularConnectionPreference::OpenAiTunnel),
-        );
-        let mut snapshot = DesktopStateSnapshot::default();
-        snapshot.configuration_issue = configuration_issue.clone();
-        snapshot.topology = config.topology.clone();
-        snapshot.project = project_snapshot(&config);
-        if config.topology.is_some() && config.runtime_autostart == Some(false) {
-            snapshot.readiness = aggregate_readiness(
-                ServerReadiness::Stopped,
-                RunnerReadiness::Stopped,
-                ExposureReadiness::Disabled,
-                if config.project.is_some() {
-                    ProjectReadiness::Configured
-                } else {
-                    ProjectReadiness::None
-                },
-            );
-        }
-        apply_openai_tunnel_configuration(
-            &mut snapshot,
-            &tunnel_config,
-            config.persistent_environment.is_some(),
-        );
-        snapshot.regular_tunnel_available = true;
-        snapshot.powershell_runtime = crate::platform::powershell_runtime_snapshot();
-        apply_config_projection(&mut snapshot, &config);
-        snapshot.connections = crate::connections::ConnectionsSnapshot {
-            profiles: tunnel_config
-                .profiles()
-                .into_iter()
-                .map(|config| crate::connections::TunnelConnectionSnapshot {
-                    config,
-                    runtime: Default::default(),
-                })
-                .collect(),
-            config_error: tunnel_config.is_invalid(),
-            ..Default::default()
-        };
-        let mcp_providers = crate::mcp_providers::McpProviderStore::load(&data_dir);
-        snapshot.mcp_providers = mcp_providers.snapshot(None);
-        let coding_agents = crate::coding_agents::CodingAgentStore::load(&data_dir);
-        snapshot.coding_agents = coding_agents.snapshot(None);
-        let published = Arc::new(RwLock::new(snapshot.clone()));
-        let supervisor = Arc::new(Mutex::new(ProcessSupervisor::new(activity.clone())));
-        let runtime_directory = std::env::current_exe()
-            .ok()
-            .and_then(|executable| {
-                webcodex_environment::installed_desktop_runtime_directory(&executable)
-            })
-            .unwrap_or_else(|| resource_dir.join("webcodex-runtime"));
-        let mut adapter = WebCodexAdapter::new(Some(runtime_directory));
-        adapter.set_runtime_source(config.runtime_binary_source.clone());
-        let mut core = Self {
-            data_dir,
-            config_path,
-            config,
-            configuration_issue,
-            runtime_candidate: None,
-            runtime_candidate_context: None,
-            runtime_selected_probe: None,
-            runtime_last_switch: None,
-            tunnel_config,
-            mcp_providers,
-            mcp_applied_revision: None,
-            coding_agents,
-            coding_agents_applied_revision: None,
-            connections: ConnectionRuntimes::default(),
-            snapshot,
-            inventory_persistence_pending: false,
-            adapter,
-            supervisor,
-            activity,
-            published,
-        };
-        core.publish_snapshot();
-        Ok(core)
-    }
-
-    pub async fn get_state(&mut self) -> DesktopResult<DesktopStateSnapshot> {
-        Ok(self.publish_snapshot())
-    }
-
-    fn chatgpt_activity_probe(&self) -> Option<ChatGptActivityProbe> {
-        if !self.snapshot.readiness.runtime_ready {
-            return None;
-        }
-        let identity = identity_from_config(&self.config)?;
-        let webcodex = self.adapter.binaries().ok()?.webcodex.clone();
-        Some(ChatGptActivityProbe { identity, webcodex })
-    }
-
-    fn apply_chatgpt_activity_observation(
-        &mut self,
-        expected_identity: &ProjectRuntimeIdentity,
-        last_meaningful_activity_at_ms: Option<i64>,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        if !self.snapshot.readiness.runtime_ready
-            || identity_from_config(&self.config).as_ref() != Some(expected_identity)
-        {
-            return Ok(self.publish_snapshot());
-        }
-        let last_meaningful_activity_at_ms = last_meaningful_activity_at_ms.max(
-            self.snapshot
-                .chatgpt_activity
-                .as_ref()
-                .and_then(|activity| activity.last_meaningful_activity_at_ms),
-        );
-        self.snapshot.chatgpt_activity = Some(ChatGptActivitySnapshot {
-            observed: last_meaningful_activity_at_ms.is_some(),
-            last_meaningful_activity_at_ms,
-        });
-        Ok(self.publish_snapshot())
-    }
-
-    fn stage_project_scope(&mut self, project: ProjectSelection) {
-        self.snapshot.project = Some(project);
-        // ChatGPT activity is evidence for one exact runtime Project. Never carry
-        // an observation from the previously displayed Project into a new setup
-        // or Quick Share scope; the new Project must earn its own observation.
-        self.snapshot.chatgpt_activity = None;
-    }
-
-    pub async fn refresh_runtime_status(
-        &mut self,
-        cancellation: &CancellationContext,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        cancellation.check()?;
-        if self.config.persistent_environment.is_some() {
-            return self.refresh_environment_status(cancellation).await;
-        }
-        if self.snapshot.quick_share.is_some() {
-            self.snapshot.chatgpt_activity = None;
-            let active = self
-                .process_snapshot(ProcessKey::QuickShare)
-                .await
-                .is_some_and(|process| {
-                    matches!(
-                        process.phase,
-                        ProcessPhase::Starting | ProcessPhase::Running
-                    )
-                });
-            if !active {
-                self.snapshot.readiness = aggregate_readiness(
-                    ServerReadiness::Stopped,
-                    RunnerReadiness::Stopped,
-                    ExposureReadiness::Error,
-                    ProjectReadiness::Configured,
-                );
-                self.snapshot.readiness.summary_kind = ReadinessSummaryKind::QuickShareStopped;
-                self.snapshot.readiness.next_action_kind =
-                    Some(ReadinessNextActionKind::RestartQuickShare);
-                self.snapshot.readiness.summary = "Quick Share stopped".to_string();
-                self.snapshot.readiness.next_action = Some("Start Quick Share again.".to_string());
-            }
-            return self.get_state().await;
-        }
-
-        let Some(identity) = runner_identity_from_config(&self.config) else {
-            self.snapshot.chatgpt_activity = None;
-            self.snapshot.topology = self.config.topology.clone();
-            self.snapshot.project = project_snapshot(&self.config);
-            return self.get_state().await;
-        };
-        self.adapter.ensure_binaries(cancellation).await.ok();
-        cancellation.check()?;
-        if let Ok(binaries) = self.adapter.binaries() {
-            self.snapshot.binaries = Some(binaries.info());
-        }
-        let server = match self
-            .adapter
-            .server_status(
-                Some(&identity.server_url),
-                self.config
-                    .runtime
-                    .as_ref()
-                    .and_then(|runtime| runtime.server_env_file.as_deref()),
-                Some(&identity.user_token_file),
-                cancellation,
-            )
-            .await
-        {
-            Ok(status) if status.http_reachable => ServerReadiness::Ready,
-            Ok(_) => ServerReadiness::Error,
-            Err(_) => ServerReadiness::Unknown,
-        };
-        cancellation.check()?;
-        // A saved user stop remains stopped across refresh, while a reachable
-        // external service is still observed normally.
-        if !runtime_autostart(&self.config) && server != ServerReadiness::Ready {
-            self.snapshot.chatgpt_activity = None;
-            self.snapshot.readiness = aggregate_readiness(
-   
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2185,509 +2194,643 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a8c3b28` (2026-11-22)
-**Commit Message**: fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (#1434)
+### Incident Patch 1: `026413dc` (2026-11-23)
+**Commit Message**: perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (#1437)
 
-**File**: `apps/desktop/src-tauri/src/diagnostics.rs` (modified, +13/-2)
+Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/App.test.tsx` (modified, +7/-3)
 ```diff
-@@ -498,7 +498,16 @@ pub fn report(
-         );
-     }
-     let safe_activity:Vec<_>=activity.iter().rev().take(25).map(|entry| json!({"sequence":entry.sequence,"timestamp_ms":entry.timestamp_ms,"level":entry.level,"event_kind":entry.event_kind})).collect();
--    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
-+    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
-+    let active_error = snapshot
-+        .runtime_error
-+        .as_ref()
-+        .map(DesktopError::safe_summary_value);
-+    let component_errors: serde_json::Map<String, Value> = snapshot
-+        .component_errors
-+        .iter()
-+        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
-+        .collect();
-     let mut desktop = webcodex_build_info::machine_build_info("webcodex-desktop");
-     desktop.version = env!("CARGO_PKG_VERSION").into();
-     json!({"schema_version":1,"desktop":safe_build(&desktop),
-@@ -509,11 +518,13 @@ pub fn report(
-             "build_alignment":selected.map(|s|s.build_alignment),"runner_build_alignment":runner.and_then(|r|bounded_code(r.get("build_alignment")))},
-         "runtime_health":{"server":snapshot.readiness.server,"runner":snapshot.readiness.runner,"project":snapshot.readiness.project,
-             "connection":snapshot.readiness.exposure,"runtime_ready":snapshot.readiness.runtime_ready,
-+            "state_generation":snapshot.state_generation,
-             "connections_running":snapshot.connections.running,"connections_needing_attention":snapshot.connections.needs_attention,
-             "connections":connection_health,"last_observed_chatgpt_activity_at_ms":snapshot.chatgpt_activity.as_ref().and_then(|a|a.last_meaningful_activity_at_ms)},
-         "diagnostics":{"trace_mode":trace.configured_mode,"effective_trace_mode":trace.effective_mode,"restart_required":trace.restart_required,
-             "current_operation":snapshot.current_operation.as_ref().map(|o|o.kind),
--            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
-+            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
-+            "active_error":active_error,"component_errors":component_errors},
-         "computer_use":{"desktop_permissions":permissions,"runner_advertised_capabilities":cu},
-         "last_webcodex_call":last_call,"activity":safe_activity,
-         "excluded":["credentials","environment contents","Runner config contents","project files","tool input/result payloads","clipboard","raw stdout/stderr"]})
+@@ -680,7 +680,8 @@ beforeEach(() => {
+ 
+     renderApp();
+     await screen.findByRole("heading", { level: 1, name: "概览" });
+-    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
++    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
++    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+     fireEvent.click(screen.getByRole("button", { name: "项目" }));
+     expect(screen.queryByRole("button", { name: /添加项目|切换项目|Use project|Select project/ })).not.toBeInTheDocument();
+     expect(api.activateLocalProject).not.toHaveBeenCalled();
+@@ -774,8 +775,11 @@ beforeEach(() => {
+   it("does not equate an unmanaged Desktop tunnel with ChatGPT being disconnected", async () => {
+     api.getState.mockResolvedValue(readyState); renderApp();
+     await screen.findByRole("heading", { level: 1, name: "概览" });
+-    expect(screen.getByText(/尚未检查 ChatGPT 活动/)).toBeInTheDocument();
+-    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
++    // Activity observation may enter Pending before this assertion: neither state means the Tunnel is disconnected.
++    expect(screen.getByRole("button", { name: /ChatGPT/ }))
++      .toHaveTextContent(/(尚未检查|正在检查|尚未观察到) ChatGPT 活动/);
++    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
++    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+     expect(screen.queryByText(/ChatGPT 未连接|等待 ChatGPT|不代表 ChatGPT/)).not.toBeInTheDocument();
+   });
+ 
 ```
 
-**File**: `apps/desktop/src-tauri/src/diagnostics/tests.rs` (modified, +61/-0)
+**File**: `apps/desktop/src/components/Sidebar.tsx` (modified, +1/-1)
 ```diff
-@@ -219,6 +219,67 @@ fn report_and_bundle_include_only_explicit_safe_projections() {
-     );
+@@ -31,7 +31,7 @@ export function Sidebar({ state, navigation, setNavigation }: { state: DesktopSt
+   useShortcutHints();
+   return (
+       <aside className="sidebar">
+-        <div className="brand"><BrandMark /><div><strong>WebCodex</strong><span>Desktop</span></div></div>
++        <div className="brand"><BrandMark /><div><strong>WebCodex</strong></div></div>
+         <nav ref={selectionRef} aria-label={t("nav.main")}>
+           {NAVIGATION_GROUPS.map((group) => (
+             <section className="nav-group" key={group.label} aria-label={t(group.label)}>
+```
+
+**File**: `apps/desktop/src/features/ConnectionsTools.test.tsx` (modified, +29/-0)
+```diff
+@@ -42,6 +42,35 @@ beforeEach(() => {
+ });
+ 
+ describe("Connections + Tools control surfaces", () => {
++
++  it("reports Stop immediately while the Tunnel control request is pending", async () => {
++    const initial = { ...state(), persistent_environment: "local" };
++    let finish!: (snapshot: DesktopState) => void;
++    api.tunnelProfileAction.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
++    render(<Harness mode="connections" initial={initial} />);
++    const stop = screen.getByRole("button", { name: "Stop ChatGPT Personal" });
++    fireEvent.click(stop);
++    expect(api.tunnelProfileAction).toHaveBeenCalledExactlyOnceWith("personal", "stop");
++    expect(screen.getByText(connectionsToolsText("en-US", "stopping"))).toBeInTheDocument();
++    expect(stop).toBeDisabled();
++    await act(async () => finish(initial));
++    expect(screen.queryByText(connectionsToolsText("en-US", "stopping"))).toBeNull();
++  });
++
++  it("acknowledges a Server restart before waiting for the native refresh", async () => {
++    const profile = connectionFixture({ id: "server-owned", host_mode: "embedded", autostart: true, server_restart_required: true });
++    const initial = { ...state(), persistent_environment: "local", connections: connectionSnapshot(profile) };
++    let finish!: (snapshot: DesktopState) => void;
++    api.environmentServiceAction.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
++    render(<Harness mode="connections" initial={initial} />);
++    const restart = screen.getByRole("button", { name: connectionsToolsText("en-US", "restartServer") });
++    fireEvent.click(restart);
++    expect(api.environmentServiceAction).toHaveBeenCalledExactlyOnceWith({ environmentId: "local", component: "server", action: "restart" });
++    expect(screen.getByText(connectionsToolsText("en-US", "restarting"))).toBeInTheDocument();
++    expect(restart).toBeDisabled();
++    await act(async () => finish(initial));
++    expect(screen.queryByText(connectionsToolsText("en-US", "restarting"))).toBeNull();
++  });
+   it("prepares one embedded Gemini Quick connection, starts the verified public ingress and hands off the current URL", async () => {
+     const initial = { ...state(), persistent_environment: "local", connections: connectionSnapshot() };
+     const quick = connectionFixture({ id: "q", configuration_id: "new", name: "Gemini", provider: {kind: "cloudflare_quick"},
+```
+
+**File**: `apps/desktop/src/features/connection/ConnectionCard.test.tsx` (modified, +23/-0)
+```diff
+@@ -13,6 +13,29 @@ beforeEach(() => {
+ });
+ 
+ describe("Connection advanced details", () => {
++
++  it.each(PRODUCT_LOCALES)("acknowledges a requested stop or restart immediately in %s", (locale) => {
++    localStorage.setItem("webcodex.desktop.locale", locale);
++    const profile = connectionFixture({ lifecycle: "running", ready: true });
++    const props = { profile, canStart: true, busy: true, copied: false,
++      onAction: () => undefined, onEdit: () => undefined, onDelete: () => undefined,
++      onCopy: () => undefined, onSettings: () => undefined };
++    const { container, rerender } = render(
++      <LocaleProvider><ConnectionCard {...props} pendingAction="stop" /></LocaleProvider>,
++    );
++    const card = container.querySelector("article.connection-profile")!;
++    const status = card.querySelector('[role="status"]')!;
++    expect(card).toHaveAttribute("aria-busy", "true");
++    expect(status).toHaveTextContent(connectionsToolsText(locale, "stopping"));
++    expect(status.querySelector(".status-dot")).not.toHaveClass("ready");
++
++    rerender(<LocaleProvider><ConnectionCard {...props} pendingAction="restart" /></LocaleProvider>);
++    expect(status).toHaveTextContent(connectionsToolsText(locale, "restarting"));
++    expect(card).toHaveAttribute("aria-busy", "true");
++
++    rerender(<LocaleProvider><ConnectionCard {...props} busy={false} pendingAction={null} /></LocaleProvider>);
++    expect(card).toHaveAttribute("aria-busy", "false");
++  });
+   it.each(PRODUCT_LOCALES)("keeps the two-column metadata and translated labels in %s", (locale) => {
+     localStorage.setItem("webcodex.desktop.locale", locale);
+     const profile = connectionFixture({
+```
+
+**File**: `apps/desktop/src/features/connection/ConnectionCard.tsx` (modified, +8/-4)
+```diff
+@@ -34,10 +34,11 @@ function recoveryFor(profile: TunnelConnection): Recovery {
+   }
  }
  
-+#[test]
-+fn report_includes_safe_failed_stage_and_http_status_without_raw_message_secrets() {
-+    let mut snapshot = crate::models::DesktopStateSnapshot::default();
-+    let active = DesktopError::new(
-+        "server_request_failed",
-+        "Local user creation failed: Bearer wc_pat_canary_in_message (HTTP 400)",
-+        "Check inputs at C:\\private\\secret",
-+    )
-+    .with_stage("user_create")
-+    .with_http_status(400)
-+    .with_operation_context(Some("desktop-operation-7"), Some(3), None, Some(12));
-+    snapshot
-+        .component_errors
-+        .insert(active.component(), active.clone());
-+    snapshot.runtime_error = Some(active);
-+    let runtime = RuntimeSettings {
-+        source: Default::default(),
-+        selection_revision: 0,
-+        desktop_contract: webcodex_core::desktop_runtime_contract::DESKTOP_RUNTIME_CONTRACT,
-+        selected: None,
-+        candidate: None,
-+        previous_source: None,
-+        last_switch: None,
-+        unavailable_code: None,
-+        active_jobs: None,
-+        can_switch: false,
-+        switch_unavailable_reason: None,
-+    };
-+    let trace = TraceSettings {
-+        configured_mode: Some(TraceMode::Off),
-+        effective_mode: None,
-+        revision: "fence".into(),
-+        can_edit: true,
-+        restart_required: false,
-+        can_restart: false,
-+        error_code: None,
-+    };
-+    let value = report(
-+        &snapshot,
-+        &runtime,
-+        None,
-+        None,
-+        &trace,
-+        &[],
-+        json!({"supported":false}),
-+    );
-+    assert_eq!(
-+        value["diagnostics"]["active_error"]["code"],
-+        "server_request_failed"
-+    );
-+    assert_eq!(value["diagnostics"]["active_error"]["stage"], "user_create");
-+    assert_eq!(value["diagnostics"]["active_error"]["http_status"], 400);
-+    assert_eq!(
-+        value["diagnostics"]["active_error"]["operation_id"],
-+        "desktop-operation-7"
-+    );
-+    let encoded = serde_json::to_string(&value).unwrap();
-+    assert!(!encoded.contains("wc_pat_canary_in_message"));
-+    assert!(!encoded.contains("C:\\private\\secret"));
-+}
-+
- #[test]
- fn support_export_never_overwrites_existing_files() {
-     let path = env_fixture("original").with_file_name("report.zip");
+-export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEdit, onDelete, onCopy, onSettings }: {
++export function ConnectionCard({ profile, canStart, busy, pendingAction, copied, onAction, onEdit, onDelete, onCopy, onSettings }: {
+   profile: TunnelConnection;
+   canStart: boolean;
+   busy: boolean;
++  pendingAction?: TunnelProfileAction | null;
+   copied: boolean;
+   onAction: (action: TunnelProfileAction) => void;
+   onEdit: () => void;
+@@ -58,7 +59,10 @@ export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEd
+   const failed = !profile.ready && Boolean(profile.last_error || profile.lifecycle === "error");
+   const recovery = recoveryFor(profile);
+   const healthStale = profile.last_error === "health_stale";
+-  const status = profile.server_restart_required
++  const status = pendingAction === "stop" ? c("stopping")
++    : pendingAction === "restart" ? c("restarting")
++    : pendingAction === "start" ? p("starting")
++    : profile.server_restart_required
+     ? c("pendingServerRestart")
+     : profile.ready
+       ? p("running")
+@@ -109,8 +113,8 @@ export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEd
+   if (profile.reason_code) detailRows.push({ label: "reasonCode", value: <code>{profile.reason_code}</code> });
+   if (profile.local_mcp_url) detailRows.push({ label: "mcpAddress", value: <code>{profile.local_mcp_url}</code>, path: true });
+   if (profile.runtime_directory) detailRows.push({ label: "runtimeDirectory", value: <code>{profile.runtime_directory}</code>, path: true });
+-  return <article className="connection-profile" aria-labelledby={`connection-${profile.id}`} data-tunnel-profile-id={profile.id}>
+-    <header className="workspace-section-heading"><div><h2 id={`connection-${profile.id}`}>{profile.name}</h2></div><span className={`connection-state ${profile.ready ? "ready" : ""}`} role="status"><i className={`status-dot ${profile.ready ? "ready" : failed ? "error" : "unknown"}`} aria-hidden="true" />{status}</span></header>
++  return <article className="connection-profile" aria-busy={Boolean(pendingAction)} aria-labelledby={`connection-${profile.id}`} data-tunnel-profile-id={profile.id}>
++    <header className="workspace-section-heading"><div><h2 id={`connection-${profile.id}`}>{profile.name}</h2></div><span className={`connection-state ${profile.ready && !pendingAction ? "ready" : ""}`} role="status"><i className={`status-dot ${pendingAction ? "unknown" : profile.ready ? "ready" : failed ? "error" : "unknown"}`} aria-hidden="true" />{status}</span></header>
+     <div className="connection-id"><span>{c("tunnelId")}</span><code>{profile.tunnel_id || "—"}</code>{profile.tunnel_id && <button type="button" className="text-button" aria-label={`${c("copyId")} ${profile.name}`} onClick={onCopy}>{copied ? p("copied") : c("copyId")}</button>}</div>
+     {profile.server_restart_required && <div className="connection-apply-note" role="status"><strong>{c("pendingServerRestart")}</strong><span>{c("profileRestartHelp")}</span></div>}
+     {failed && <div className="connection-recovery" role="status"><strong>{c(recovery.title)}</strong><p>{c(recovery.action)}</p>{autoProxyRecovery && <p>{c("autoProxyHint")}</p>}
 ```
 
-**File**: `apps/desktop/src-tauri/src/error.rs` (modified, +782/-2)
+**File**: `apps/desktop/src/features/connection/ConnectionPanel.tsx` (modified, +8/-1)
 ```diff
-@@ -1,14 +1,475 @@
- use serde::{Deserialize, Serialize};
--use serde_json::Value;
-+use serde_json::{json, Value};
- use std::fmt::{Display, Formatter};
- 
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
-+#[serde(rename_all = "snake_case")]
-+pub enum ErrorComponent {
-+    Runtime,
-+    Server,
-+    Runner,
-+    Service,
-+    Tunnel,
-+    Auth,
-+    Project,
-+    Environment,
-+    Migration,
-+    Config,
-+    Desktop,
-+    Unknown,
-+}
-+
-+impl ErrorComponent {
-+    pub fn as_str(self) -> &'static str {
-+        match self {
-+            Self::Runtime => "runtime",
-+            Self::Server => "server",
-+            Self::Runner => "runner",
-+            Self::Service => "service",
-+            Self::Tunnel => "tunnel",
-+            Self::Auth => "auth",
-+            Self::Project => "project",
-+            Self::Environment => "environment",
-+            Self::Migration => "migration",
-+            Self::Config => "config",
-+            Self::Desktop => "desktop",
-+            Self::Unknown => "unknown",
-+        }
-+    }
-+
-+    pub fn parse_safe(value: &str) -> Option<Self> {
-+        match value.trim().to_ascii_lowercase().as_str() {
-+            "runtime" => Some(Self::Runtime),
-+            "server" => Some(Self::Server),
-+            "runner" => Some(Self::Runner),
-+            "service" => Some(Self::Service),
-+            "tunnel" => Some(Self::Tunnel),
-+            "auth" => Some(Self::Auth),
-+            "project" => Some(Self::Project),
-+            "environment" => Some(Self::Environment),
-+            "migration" => Some(Self::Migration),
-+            "config" => Some(Self::Config),
-+            "desktop" => Some(Self::Desktop),
-+            "unknown" => Some(Self::Unknown),
-+            _ => None,
-+        }
-+    }
-+}
-+
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-+#[serde(rename_all = "snake_case")]
-+pub enum RecoveryKind {
-+    AutoRecovering,
-+    UserAction,
-+    ManualCheck,
-+    ConfirmationRequired,
-+}
-+
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-+#[serde(rename_all = "snake_case")]
-+#[allow(dead_code)]
-+pub enum SafeRecoveryAction {
-+    WaitAutoRecovery,
-+    Retry,
-+    RefreshState,
-+    StartRuntime,
-+    StartServer,
-+    RestartServer,
-+    StartRunner,
-+    RestartRunner,
-+    RepairRunnerCredential,
-+    RepairUserCredential,
-+    CheckConnection,
-+    OpenNetworkSettings,
-+    OpenRuntimeSettings,
-+    OpenDiagnostics,
-+    OpenActivity,
-+    OpenProjects,
-+    OpenSetup,
-+    InspectServiceOwnership,
-+    ResolveMigration,
-+    ObserveBeforeRetry,
-+    RestoreConfiguration,
-+    ManageProviders,
-+    #[serde(rename = "none")]
-+    NoAction,
-+}
-+
-+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-+pub struct ErrorDiagnostic {
-+    pub component: ErrorComponent,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub stage: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub reason_code: Option<String>,
-+    pub recovery_kind: RecoveryKind,
-+    pub safe_action: SafeRecoveryAction,
-+    pub retry_allowed: bool,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub http_status: Option<u16>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub exit_code: Option<i32>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub operation_id: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub generation: Option<u64>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub resource_id: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub activity_sequence: Option<u64>,
-+}
-+
-+impl ErrorDiagnostic {
-+    pub fn classify(code: &str) -> Self {
-+        use ErrorComponent::*;
-+        use RecoveryKind::*;
-+        use SafeRecoveryAction::*;
-+
-+        let (component, recovery_kind, safe_action, retry_allowed) = match code {
-+            // 1. Environment & runtime dependency missing / incompatible
-+            "binaries_missing"
-+            | "binary_missing"
-+            | "runtime_unavailable"
-+            | "runtime_incompatible"
-+            | "runtime_missing"
-+            | "runtime_binary_missing"
-+            | "runtime_binary_invalid"
-+            | "runtime_binary_unexecutable"
-+            | "runtime_directory_invalid"
-+            | "runtime_directory_missing"
-+            | "runtime_probe_failed"
-+            | "runtime_protocol_incompatible"
-+            | "selected_runtime_not_active"
-+            | "webcodex_command_start_failed"
-+            | "service_missingprerequisite"
-+            | "upgrade_package_flavor"
-+            | "installer_package_target"
-+            | "upgrade_package_ownership" => (Runtime, UserAction, OpenRuntimeSettings, false),
-+
-+            // 2 & 3. Server start failure, exit, unreachable, port occupied
-+            "server_port_in_use"
-+            | "
-```
-
-**File**: `apps/desktop/src-tauri/src/models.rs` (modified, +7/-0)
-```diff
-@@ -427,6 +427,11 @@ pub struct DesktopStateSnapshot {
-     pub readiness: ReadinessSnapshot,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub runtime_error: Option<crate::error::DesktopError>,
-+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
-+    pub component_errors:
-+        std::collections::BTreeMap<crate::error::ErrorComponent, crate::error::DesktopError>,
-+    #[serde(default)]
-+    pub state_generation: u64,
-     pub project: Option<ProjectSelection>,
-     pub binaries: Option<BinaryInfo>,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-@@ -463,6 +468,8 @@ impl Default for DesktopStateSnapshot {
-             topology: None,
-             readiness: ReadinessSnapshot::default(),
-             runtime_error: None,
-+            component_errors: std::collections::BTreeMap::new(),
-+            state_generation: 0,
-             project: None,
-             binaries: None,
-             powershell_runtime: None,
-```
-
-**File**: `apps/desktop/src-tauri/src/process/startup.rs` (modified, +24/-3)
-```diff
-@@ -1,4 +1,4 @@
--use crate::error::DesktopError;
-+use crate::error::{DesktopError, ErrorComponent, RecoveryKind, SafeRecoveryAction};
- use std::collections::VecDeque;
- use std::net::SocketAddr;
- use std::sync::{Arc, Mutex};
-@@ -13,6 +13,7 @@ pub(crate) fn server_start_error(
-     if let Some(code) = exit_code {
-         message.push_str(&format!(" (exit code {code})"));
+@@ -34,6 +34,8 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+   const [editor, setEditor] = useState<{ profile: TunnelConnection | null; geminiNamed?: boolean; chatgptPreset?: boolean } | null>(null);
+   const [deleting, setDeleting] = useState<TunnelConnection | null>(null);
+   const [busyId, setBusyId] = useState<string | null>(null);
++  const [tunnelAction, setTunnelAction] = useState<TunnelProfileAction | null>(null);
++  const [serverAction, setServerAction] = useState<"start" | "restart" | null>(null);
+   const [failed, setFailed] = useState<DesktopError | null>(null);
+   useEffect(() => {
+     setFailed(previous => previous && isErrorStaleForState(previous, state) ? null : previous);
+@@ -112,6 +114,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+     if (submitting.current || state.current_operation) return;
+     submitting.current = true;
+     setBusyId(id);
++    setTunnelAction(action);
+     setFailed(null);
+     setSaved(false);
+     try {
+@@ -122,12 +125,14 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+     } finally {
+       submitting.current = false;
+       setBusyId(null);
++      setTunnelAction(null);
      }
-+    let mut listener_bind_failed = false;
-     if let Some(diagnostics) = diagnostics {
-         let logs = diagnostics
-             .0
-@@ -22,15 +23,35 @@ pub(crate) fn server_start_error(
-         // after the activity log's prefix-based redaction. Only reconstruct the
-         // known listener failure from a validated socket address and OS code.
-         if let Some(summary) = logs.iter().rev().find_map(|line| listener_failure(line)) {
-+            listener_bind_failed = true;
-             message.push_str(". ");
-             message.push_str(&summary);
-         }
+   };
+   const runServer = async (action: "start" | "restart") => {
+     if (!environmentId || submitting.current || state.current_operation) return;
+     submitting.current = true;
+     setBusyId("__server__");
++    setServerAction(action);
+     setFailed(null);
+     setSaved(false);
+     try {
+@@ -137,6 +142,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+     } finally {
+       submitting.current = false;
+       setBusyId(null);
++      setServerAction(null);
      }
--    DesktopError::new(
-+    let mut error = DesktopError::new(
-         "server_start_failed",
-         message,
--        "Review the error details and Activity, then retry.",
-+        if listener_bind_failed {
-+            "Check whether another program is already using the local Server port, then retry."
-+        } else {
-+            "Review the error details and Activity, then retry."
-+        },
-     )
-+    .with_component(ErrorComponent::Server)
-+    .with_stage("server_start");
-+    if let Some(code) = exit_code {
-+        error = error.with_exit_code(code);
-+    }
-+    if listener_bind_failed {
-+        error = error
-+            .with_reason_code("local_port_unavailable")
-+            .with_recovery(
-+                RecoveryKind::UserAction,
-+                SafeRecoveryAction::OpenDiagnostics,
-+                false,
-+            );
-+    }
-+    error
- }
+   };
+   const diagnostics = () => onSettings("diagnostics");
+@@ -159,6 +165,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+   }
+   return <section className="page-section workspace-page" aria-labelledby="connection-title" data-webcodex-page="connection">
+     <header className="page-heading-row"><h1 id="connection-title">{c("connections")}</h1></header>
++    {serverAction && <p role="status" className="workspace-notice">{serverAction === "restart" ? c("restarting") : p("starting")}</p>}
+     {local && state.topology?.runner.kind === "local" && <p className="lede">{c("sharedRuntimeHelp")}</p>}
+     {state.topology?.server.kind === "remote" && <p className="workspace-notice"><code>{state.topology.server.url}</code></p>}
+     {presentation.externalConnectionUnobserved && <p className="workspace-notice">{c("externalConnectionUnobserved")}</p>}
+@@ -201,7 +208,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
+           <button type="button" className="secondary-button" disabled={disabled} onClick={() => void desktopApi.resumeSavedRuntime().then(onState).catch(value => setFailed(normalizeDesktopError(value)))}>{p("start")} WebCodex</button></div>}
+       {openaiProfiles.some(profile => profile.ready) && <p className="field-help">{c("chatgptNextStep")}</p>}
+       {(openaiProfiles.length > 0 || state.chatgpt_activity?.observed) && <ChatgptObservation state={state} queryStatus={chatgptActivityQueryStatus} />}
+-      <div className="connection-list">{openaiProfiles.map(profile => <ConnectionCard key={profile.id} profile={profile} canStart={local && state.readiness.runtime_ready} busy={disabled || !canManageConnections} copied={copiedId === profile.id}
++      <div className="connection-list">{openaiProfiles.map(profile => <ConnectionCard key={profile.id} profile={profile} canStart={local && state.readiness.runtime_ready} busy={disabled || !canManageConnections} pendingAction={busyId === profile.id ? tunnelAction : null} copied={copiedId === profile.id}
+         onAction={action => void run(profile.id, action)} onSettings={onSettings}
+         onEdit={() => { setSaved(false); setEditor({ profile }); }} onDelete={() => { setFailed(null); setDeleting(profile); }}
+         onCopy={() => { if (profile.tunnel_id) void writeText(profile.tunnel_id).then(() => setCopiedId(profile.id)).catch(value => setFailed(normalizeDesktopError(value))); }} />)}</div>
+```
+
+**File**: `apps/desktop/src/features/dashboard/Dashboard.tsx` (modified, +0/-1)
+```diff
+@@ -47,7 +47,6 @@ export function Dashboard({ state, chatgptActivityQueryStatus, activity, refresh
+   return <section className="page-section workspace-page dashboard-page" aria-labelledby="home-title" data-webcodex-page="home">
+     <header className="page-heading-row">
+       <div><h1 id="home-title">{p("overview")}</h1>
+-        {state.readiness.runtime_ready && <p role="status"><i className="status-dot ready" aria-hidden="true" /> WebCodex · {p("running")}</p>}
+       </div>
+       <Button variant="default" className="secondary-button" disabled={Boolean(state.current_operation) || refreshing} onClick={() => void onRefresh()}>{p("refresh")}</Button>
+     </header>
+```
+
+**File**: `apps/desktop/src/i18n/connections-tools.ts` (modified, +1/-0)
+```diff
+@@ -149,6 +149,7 @@ export const CONNECTIONS_TOOLS_MESSAGES = {
+   operationFailed: ["Could not apply the change. Refresh and check the saved settings before retrying.", "未能应用更改。请刷新并检查已保存的配置后重试。", "Änderung fehlgeschlagen. Aktualisieren und gespeicherte Einstellungen prüfen.", "Modification impossible. Actualisez et vérifiez les paramètres enregistrés.", "変更を適用できませんでした。更新して保存された設定を確認してください。", "변경을 적용하지 못했습니다. 새로 고침 후 저장된 설정을 확인하세요.", "未能應用更改。請重新整理並檢查已儲存的設定後重試。"],
+   configError: ["Saved configuration is unavailable. The original file has not been replaced.", "无法读取配置，原始文件未被覆盖。", "Konfiguration nicht verfügbar. Originaldatei wurde nicht ersetzt.", "Configuration indisponible. Le fichier d’origine n’a pas été remplacé.", "設定を読み込めません。元のファイルは変更していません。", "설정을 읽을 수 없습니다. 원본 파일은 교체되지 않았습니다.", "無法讀取設定，原始檔案未被覆蓋。"],
+   stopping: ["Stopping", "停止中", "Wird beendet", "Arrêt en cours", "停止処理中", "중지 중", "停止中"],
++  restarting: ["Restarting…", "正在重启…", "Neustart läuft…", "Redémarrage en cours…", "再起動中…", "다시 시작하는 중…", "正在重新啟動…"],
+   logs: ["Connection events", "连接事件", "Verbindungsereignisse", "Événements de connexion", "接続イベント", "연결 이벤트", "連線事件"],
+   mcpProviders: ["MCP servers", "MCP 工具服务", "MCP-Server", "Serveurs MCP", "MCP サーバー", "MCP 서버", "MCP 工具服務"],
+   addMcpProvider: ["Add MCP server", "添加 MCP 服务", "MCP-Server hinzufügen", "Ajouter un serveur MCP", "MCP サーバーを追加", "MCP 서버 추가", "新增 MCP 服務"],
+```
+
+---
+
+### Incident Patch 2: `33f8c508` (2026-11-23)
+**Commit Message**: chore: bump WebCodex and Desktop versions to 0.5.1 (#1436)
+
+Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +22/-22)
+```diff
+@@ -5477,7 +5477,7 @@ dependencies = [
  
- fn listener_failure(line: &str) -> Option<String> {
-```
-
-**File**: `apps/desktop/src-tauri/src/process/tests/startup.rs` (modified, +6/-0)
-```diff
-@@ -18,6 +18,12 @@ fn startup_failure_preserves_final_unterminated_bind_error() {
-     assert!(error
-         .message
-         .contains("failed to bind HTTP listener 127.0.0.1:54611 (os error 10013)"));
-+    let diag = error.diagnostic_ref().unwrap();
-+    assert_eq!(diag.component, crate::error::ErrorComponent::Server);
-+    assert_eq!(diag.stage.as_deref(), Some("server_start"));
-+    assert_eq!(diag.reason_code.as_deref(), Some("local_port_unavailable"));
-+    assert_eq!(diag.exit_code, Some(1));
-+    assert!(!diag.retry_allowed);
- }
+ [[package]]
+ name = "webcodex"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "anyhow",
+  "base64",
+@@ -5528,7 +5528,7 @@ dependencies = [
  
- #[test]
+ [[package]]
+ name = "webcodex-admin"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "reqwest 0.12.28",
+  "serde_json",
+@@ -5538,7 +5538,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-browser"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64",
+  "fs2",
+@@ -5559,14 +5559,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-build-info"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "webcodex-core",
+ ]
+ 
+ [[package]]
+ name = "webcodex-cli"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "chrono",
+  "crossterm",
+@@ -5600,7 +5600,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-code-mode"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "deno_core_icudata",
+  "serde",
+@@ -5611,7 +5611,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-computer"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64",
+  "block2",
+@@ -5635,7 +5635,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-computer-control"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -5646,7 +5646,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-core"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64",
+  "getrandom 0.3.4",
+@@ -5660,7 +5660,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-environment"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "dirs",
+  "fs2",
+@@ -5686,7 +5686,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-lsp"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "serde_json",
+@@ -5720,7 +5720,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-persistent-shell"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64",
+  "libc",
+@@ -5732,7 +5732,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-process"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "tempfile",
+@@ -5741,7 +5741,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-runner"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "agent-client-protocol-schema",
+  "base64",
+@@ -5785,7 +5785,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-runner-config"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "serde",
+  "toml 0.8.23",
+@@ -5794,7 +5794,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-runner-registry"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "chrono",
+  "serde",
+@@ -5808,7 +5808,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-store"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "anyhow",
+  "chrono",
+@@ -5826,7 +5826,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-tool-contracts"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "regex",
+  "schemars 1.2.2",
+@@ -5838,7 +5838,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-tool-runtime-contracts"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -5850,7 +5850,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-validation"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "serde",
+@@ -5867,7 +5867,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-workflow-session"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64",
+  "chrono",
+@@ -5885,7 +5885,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-workspace"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "glob",
+  "serde",
 ```
 
-**File**: `apps/desktop/src-tauri/src/state.rs` (modified, +1/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -96,6 +96,7 @@ pub struct AppState {
-     supervisor: SharedSupervisor,
-     activity: ActivityLog,
-     operations: OperationController,
-+    refresh_lock: tokio::sync::Mutex<()>,
-     shutdown_signal: CancellationSignal,
-     shutdown_started: AtomicBool,
-     shutdown_complete: CancellationSignal,
+@@ -26,7 +26,7 @@ members = [
+ resolver = "2"
+ 
+ [workspace.package]
+-version = "0.5.0"
++version = "0.5.1"
+ license = "Apache-2.0"
+ edition = "2021"
+ 
 ```
 
-**File**: `apps/desktop/src-tauri/src/state/app_state.rs` (modified, +278/-11)
+**File**: `apps/desktop/package-lock.json` (modified, +2/-2)
 ```diff
-@@ -32,6 +32,7 @@ impl AppState {
-             supervisor,
-             connections,
-             operations: OperationController::new(activity.clone()),
-+            refresh_lock: tokio::sync::Mutex::new(()),
-             activity,
-             shutdown_signal: CancellationSignal::new(),
-             shutdown_started: AtomicBool::new(false),
-@@ -141,12 +142,271 @@ impl AppState {
+@@ -1,12 +1,12 @@
+ {
+   "name": "@webcodex/desktop",
+-  "version": "0.5.0",
++  "version": "0.5.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@webcodex/desktop",
+-      "version": "0.5.0",
++      "version": "0.5.1",
+       "dependencies": {
+         "@mantine/core": "^9.6.2",
+         "@mantine/hooks": "^9.6.2",
+```
+
+**File**: `apps/desktop/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "@webcodex/desktop",
+   "private": true,
+-  "version": "0.5.0",
++  "version": "0.5.1",
+   "type": "module",
+   "scripts": {
+     "dev": "vite --host 127.0.0.1 --port 1420",
+```
+
+**File**: `apps/desktop/src-tauri/Cargo.lock` (modified, +7/-7)
+```diff
+@@ -5035,14 +5035,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-build-info"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "webcodex-core",
+ ]
+ 
+ [[package]]
+ name = "webcodex-computer-control"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -5053,7 +5053,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-core"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "base64 0.22.1",
+  "getrandom 0.3.4",
+@@ -5067,7 +5067,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-desktop"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "reqwest 0.12.28",
+@@ -5099,7 +5099,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-environment"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "dirs 6.0.0",
+  "fs2",
+@@ -5141,15 +5141,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "webcodex-process"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+ name = "webcodex-runner-config"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "serde",
+  "toml 0.8.2",
+```
+
+**File**: `apps/desktop/src-tauri/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "webcodex-desktop"
+-version = "0.5.0"
++version = "0.5.1"
+ description = "WebCodex Desktop runtime and setup control surface"
+ edition = "2021"
+ publish = false
+```
+
+**File**: `apps/desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+   "$schema": "https://schema.tauri.app/config/2",
+   "productName": "WebCodex Desktop",
+   "mainBinaryName": "WebCodex",
+-  "version": "0.5.0",
++  "version": "0.5.1",
+   "identifier": "dev.webcodex.desktop",
+   "build": {
+     "beforeDevCommand": "npm run dev",
+```
+
+**File**: `npm/webcodex/manifest.example.json` (modified, +7/-7)
+```diff
+@@ -1,29 +1,29 @@
+ {
+-  "version": "0.5.0",
++  "version": "0.5.1",
+   "binaries": ["webcodex", "webcodex-server", "webcodex-runner"],
+   "artifacts": {
+     "linux-x64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-x64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-x64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
+     },
+     "linux-arm64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-arm64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-arm64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
+     },
+     "darwin-x64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-x64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-x64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
+     },
+     "darwin-arm64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-arm64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-arm64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
+     },
+     "win32-x64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-x64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-x64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
+     },
+     "win32-arm64": {
+-      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-arm64.tar.gz",
++      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-arm64.tar.gz",
+       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
      }
- 
-     pub async fn refresh_runtime_status(&self) -> DesktopResult<DesktopStateSnapshot> {
--        let (operation, cancellation, mut core, baseline) = self
--            .begin_operation(DesktopOperationKind::RuntimeRefresh, true)
--            .await?;
--        let result = core.refresh_runtime_status(&cancellation).await;
--        self.finish_operation(operation, cancellation, core, baseline, result)
--            .await
-+        if self.shutdown_signal.is_cancelled() {
-+            return Err(cancelled_error());
-+        }
-+        if let Some(current) = self.operations.current() {
-+            return Err(DesktopError::new(
-+                "desktop_operation_busy",
-+                "Another Desktop operation is still running",
-+                "Wait for the current operation to finish or stop it before starting another one.",
-+            )
-+            .with_details(serde_json::json!({
-+                "operation_id": current.id,
-+                "operation_kind": current.kind.as_str(),
-+            }))
-+            .with_operation_context(Some(&current.id), None, None, None));
-+        }
-+        if self.get_state().configuration_issue.is_some() {
-+            return Err(DesktopError::new(
-+                "configuration_migration_failed",
-+                "Configuration could not be migrated",
-+                "Open Diagnostics or explicitly restore the previous known-good configuration.",
-+            ));
-+        }
-+
-+        let before_generation = self.get_state().state_generation;
-+        let _refresh_guard = self.refresh_lock.lock().await;
-+        if self.shutdown_signal.is_cancelled() {
-+            return Err(cancelled_error());
-+        }
-+        if let Some(current) = self.operations.current() {
-+            return Err(DesktopError::new(
-+                "desktop_operation_busy",
-+                "Another Desktop operation is still running",
-+                "Wait for the current operation to finish or stop it before starting another one.",
-+            )
-+            .with_details(serde_json::json!({
-+                "operation_id": current.id,
-+                "operation_kind": current.kind.as_str(),
-+            }))
-+            .with_operation_context(Some(&current.id), None, None, None));
-+        }
-+        // Coalesce overlapping background refreshes: if another refresh already
-+        // published a fresher snapshot while we waited, return it directly.
-+        if self.get_state().state_generation != before_generation {
-+            return Ok(self.get_state());
-+        }
-+
-+        let cancellation =
-+            CancellationContext::new(CancellationSignal::new(), self.shutdown_signal.clone());
-+        let start_op_generation = self.operations.generation();
-+
-+        enum RefreshPlan {
-+            Persistent {
-+                environment_id: String,
-+            },
-+            QuickShare,
-+            Unconfigured,
-+            NonPersistent {
-+                adapter: WebCodexAdapter,
-+                identity: RunnerRuntimeIdentity,
-+                server_env_file: Option<PathBuf>,
-+                project_identity: Option<ProjectRuntimeIdentity>,
-+                has_project: bool,
-+                autostart: bool,
-+            },
-+        }
-+
-+        let plan = {
-+            let slot = self.core.lock().await;
-+            let Some(core) = slot.as_ref() else {
-+                return Err(DesktopError::new(
-+                    "desktop_operation_busy",
-+                    "Desktop mutation state is already in use",
-+                    "Wait for the current operation to finish.",
-+                ));
-+            };
-+            if let Some(environment_id) = core.config.persistent_environment.clone() {
-+                RefreshPlan::Persistent { environment_id }
-+            } else if core.snapshot.quick_share.is_some() {
-+                RefreshPlan::QuickShare
-+            } else if let Some(identity) = runner_identity_from_config(&core.config) {
-+                RefreshPlan::NonPersistent {
-+                    adapter: core.adapter.clone(),
-+                    identity,
-+                    server_env_file: core
-+                        .config
-+                        .runtime
-+                        .as_ref()
-+                        .and_then(|runtime| runtime.server_env_file.clone()),
-+                    project_identity: identity_from_config(&core.config),
-+                    has_project: core.config.project.is_some(),
-+                    autostart: runtime_autostart(&core.config),
-+                }
-+            } else {
-+                RefreshPlan::Unconfigured
-+      
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1437** (2026-11-23): perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (@swjnxyf)
+- **PR #1436** (2026-11-23): chore: bump WebCodex and Desktop versions to 0.5.1 (@swjnxyf)
+- **PR #1435** (2026-11-23): Desktop 一键准备本机环境、Windows 无控制台任务和 Gemini 连接 (@yyjeqhc)
 - **PR #1434** (2026-11-22): fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (@yyjeqhc)
 - **PR #1433** (2026-11-22): Prepare Gemini web connections from WebCodex Desktop (@yyjeqhc)
 - **PR #1432** (2026-11-22): Support OAuth dynamic registration on Desktop Cloudflare ingress (@yyjeqhc)
-- **PR #1431** (2026-11-21): Adapt MCP tool result text per Gemini request (@yyjeqhc)
-- **PR #1430** (2026-11-21): Support OAuth dynamic client registration for Gemini web and other MCP hosts (@yyjeqhc)
-- **PR #1427** (closed): feat(service): configurable macOS service logs, private log files, lower metric noise (@tongsh6)
 
 ---
 
@@ -2707,44 +2850,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): unify structured error diagnostics, state-error lifecycle, and safe re
+## X. desktop): accelerate Windows status checks and acknowledge lifecycle actions
 
 **RULE**:
-When implementing operations in `apps/desktop/src-tauri/src/diagnostics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/App.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a8c3b28`: desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `026413dc`: desktop): accelerate Windows status checks and acknowledge lifecycle actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src-tauri/src/diagnostics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
-    let active_error = snapshot
-        .runtime_error
-        .as_ref()
-        .map(DesktopError::safe_summary_value);
-    let component_errors: serde_json::Map<String, Value> = snapshot
-        .component_errors
-        .iter()
-        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
-        .collect();
-            "state_generation":snapshot.state_generation,
-            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
-            "active_error":active_error,"component_errors":component_errors},
+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    // Activity observation may enter Pending before this assertion: neither state means the Tunnel is disconnected.
+    expect(screen.getByRole("button", { name: /ChatGPT/ }))
+      .toHaveTextContent(/(尚未检查|正在检查|尚未观察到) ChatGPT 活动/);
+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
-            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
+    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.getByText(/尚未检查 ChatGPT 活动/)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a8c3b28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `026413dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

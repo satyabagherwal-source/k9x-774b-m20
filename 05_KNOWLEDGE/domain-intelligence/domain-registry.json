@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T01:47:04.108Z",
-  "total_records": 2478,
+  "last_updated": "2026-11-24T01:56:08.496Z",
+  "total_records": 2480,
   "domains": {
     "A": {
       "total": 20,
@@ -1135,7 +1135,7 @@
       ]
     },
     "G": {
-      "total": 434,
+      "total": 436,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1570,7 +1570,9 @@
         "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants",
         "domain_intelligence-architecture-intelligence-kumahq-kuma-core-invariants",
-        "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants",
+        "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8863,8 +8865,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "repository": "gauthierpiarrette/highball",
-      "content_hash": "75a206bd6d02f9c90ba748b77bd0a77c1181897354128149e86b200de09669f4",
-      "created_at": "2026-11-21T03:28:41.987Z"
+      "content_hash": "1aa1a7e062e159bc7c39e0b2ad90da252c4cfa30bb419eb861006da8bcb91e8f",
+      "created_at": "2026-11-24T01:56:02.122Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
@@ -8941,8 +8943,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
       "repository": "gauthierpiarrette-highball-learnings",
-      "content_hash": "053e4be6fab60fb6707197788e981b0bc04daef6b6f9417f33d5560b6a1042df",
-      "created_at": "2026-11-21T03:28:55.447Z"
+      "content_hash": "0d7783377c599c8bea4a9dfa203262cec0954a7a4dc4f7194f06144e9bcc9967",
+      "created_at": "2026-11-24T01:56:07.627Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -11869,8 +11871,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "415052f36b47664005eab7beb7fc542461f05c262c8fe59d04c2dd28414a43d7",
-      "created_at": "2026-11-24T01:38:08.574Z"
+      "content_hash": "c6b27328e5e37cd9c3e597b703d19630247811134b679e70984cc0b14cdf691f",
+      "created_at": "2026-11-24T01:56:08.496Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -41571,6 +41573,24 @@
       "repository": "saffsanity-sill-learnings",
       "content_hash": "7224b777e55a47baefa3446adbaa03df23f2513e3d9efa96a8836e06e8b43a9b",
       "created_at": "2026-11-24T01:47:01.735Z"
+    },
+    "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yyjeqhc/webcodex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yyjeqhc-webcodex-architecture-intelligence-yyjeqhc-webcodex-core-invariants.md",
+      "repository": "yyjeqhc/webcodex",
+      "content_hash": "6a4adf0a2b51241327898f00cab3241ab699bd41e681ddf4a2b77760deeed62e",
+      "created_at": "2026-11-24T01:56:00.025Z"
+    },
+    "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yyjeqhc-webcodex-learnings-architecture-intelligence-yyjeqhc-webcodex-learnings-.md",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "content_hash": "291e8d72e772e749e66172c6e71086b8a4dca5edf2435be9d38744d53e3f00b1",
+      "created_at": "2026-11-24T01:56:06.451Z"
     }
   }
 }

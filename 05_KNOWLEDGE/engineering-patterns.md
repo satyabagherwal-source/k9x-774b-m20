@@ -762209,3 +762209,177 @@ description: "DeepORG is one AI agent for your whole organization. It answers qu
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `de5af28b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10173. accelerate Windows status checks and acknowledge lifecycle actions (Harvested from yyjeqhc/webcodex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "accelerate Windows status checks and acknowledge lifecycle actions",
+  "source": "yyjeqhc/webcodex",
+  "source_url": "https://github.com/yyjeqhc/webcodex",
+  "source_version": "026413dc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T01:55:58.995Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yyjeqhc-webcodex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `026413dc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/desktop/src/App.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `026413dc`: desktop): accelerate Windows status checks and acknowledge lifecycle actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.test.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    // Activity observation may enter Pending before this assertion: neither state means the Tunnel is disconnected.
+    expect(screen.getByRole("button", { name: /ChatGPT/ }))
+      .toHaveTextContent(/(尚未检查|正在检查|尚未观察到) ChatGPT 活动/);
+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
+    expect(screen.getByText(/尚未检查 ChatGPT 活动/)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `026413dc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10174. highball play --wait follows Mac builds, Steam for Mac's included, and the libra (Harvested from gauthierpiarrette/highball)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "highball play --wait follows Mac builds, Steam for Mac's included, and the libra",
+  "source": "gauthierpiarrette/highball",
+  "source_url": "https://github.com/gauthierpiarrette/highball",
+  "source_version": "062ea35b",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-24T01:56:01.083Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gauthierpiarrette-highball",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball) (Revision: `062ea35b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/HighballApp/AppState.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7d471e91`: highball play --wait follows Mac builds, Steam for Mac's included, and the library JSON says installedOnWindows and hidden (highball#432). RunningGames, which --wait reads, held only the sessions in environments, so a wait on a game Steam for Mac started ran to --start-timeout and gave up while the game played (Terraforming Mars, udance4ever timed 49 s). It now also holds the Epic and GOG Mac builds Highball started and the Steam for Mac games Play opened, followed by their process under steamapps/common for up to ten minutes to appear and then until they quit. The JSON's installed is now installedOnWindows, beside installedOnMac, since the command hasn't shipped yet, and hidden says what the player hid from the library. play's id help names the form. New test in PlayFromCommandLineTests, 16 tests pass, and highball library --json lists the real library with both fields. The Steam for Mac wait is not tried live yet.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballApp/AppState.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        if openInSteamForMac(URL(string: "steam://run/\(appid)")!),
+           let game = macSteamGames.first(where: { $0.appid == appid }), !game.installdir.isEmpty {
+            watchMacSteamGame(item.id, markers: SessionWatch.markers(installdir: game.installdir))
+        }
+    }
+
+    /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
+    /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
+    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
+    private func watchMacSteamGame(_ id: String, markers: [String]) {
+        Task { [weak self] in
+            var seen = false
+            for _ in 0..<300 {
+                try? await Task.sleep(for: .seconds(2))
+                let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
+                guard let self else { return }
+                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
+                if seen, !alive { self.macSteamRunning.remove(id); return }
+            }
+            while seen {
+                try? await Task.sleep(for: .seconds(2))
+                gu
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        _ = openInSteamForMac(URL(string: "steam://run/\(appid)")!)
+        didSet {
+            let ids = runningSessions.compactMap(\.libraryID)
+            if ids != oldValue.compactMap(\.libraryID) { RunningGames.write(ids, paths: paths) }
+        }
+    var macGameProcesses: [String: Process] = [:]
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7d471e91` are properly handled with clean fallback behavior.

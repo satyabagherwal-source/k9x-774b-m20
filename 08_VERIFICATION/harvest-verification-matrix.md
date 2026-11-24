@@ -12555,3 +12555,5 @@
 | `CYCLE-20261124-ZCDQ` | `2026-11-24T01:37:59.150Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10170` | Yes (`27880143...`) |
 | `CYCLE-20261124-AR9S` | `2026-11-24T01:46:51.665Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10171` | Yes (`d599c677...`) |
 | `CYCLE-20261124-AUAV` | `2026-11-24T01:46:55.591Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10172` | Yes (`15aacb48...`) |
+| `CYCLE-20261124-MI0O` | `2026-11-24T01:55:59.544Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10173` | Yes (`d5800c97...`) |
+| `CYCLE-20261124-MJNA` | `2026-11-24T01:56:01.654Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10174` | Yes (`aef2a912...`) |

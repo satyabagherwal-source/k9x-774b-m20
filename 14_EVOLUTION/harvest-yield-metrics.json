@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:46:55.602Z",
-  "total_cycles_completed": 11937,
-  "total_learnings_persisted": 11937,
-  "total_rules_promoted": 11019,
+  "last_updated": "2026-11-24T01:56:01.664Z",
+  "total_cycles_completed": 11939,
+  "total_learnings_persisted": 11939,
+  "total_rules_promoted": 11021,
   "history": [
-    {
-      "timestamp": "2026-11-23T15:04:35.792Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T15:12:31.444Z",
-      "repository": "TenStrip/10Eros-Max",
-      "learningId": "learn-huggingface-tenstrip-10eros-max",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T15:12:33.945Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T01:46:55.602Z",
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:55:59.554Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:56:01.664Z",
+      "repository": "gauthierpiarrette/highball",
+      "learningId": "learn-github-gauthierpiarrette-highball",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

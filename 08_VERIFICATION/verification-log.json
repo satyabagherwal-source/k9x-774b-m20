@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-G1ZO",
-    "timestamp": "2026-11-22T06:27:34.548Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-R99J",
-    "timestamp": "2026-11-22T06:36:17.191Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XHIZ",
     "timestamp": "2026-11-22T06:41:07.835Z",
     "repository": "Cactus-Compute/mirage",
@@ -7490,6 +7460,36 @@
     "repository": "dosco/deeporg",
     "learningId": "learn-github-dosco-deeporg",
     "contentHash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-MI0O",
+    "timestamp": "2026-11-24T01:55:59.544Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "d5800c97d65a87fb2c5b0b74264738d3f11bffbd1796739f0dade5e0484f25a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-MJNA",
+    "timestamp": "2026-11-24T01:56:01.654Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

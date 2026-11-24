@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T03:28:55.170Z",
+  "timestamp": "2026-11-24T01:56:07.287Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gauthierpiarrette-highball-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gauthierpiarrette-highball-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T03:28:55.170Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T01:56:07.287Z`  
 > **Learning ID**: `LEARN-EVO-gauthierpiarrette-highball-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gauthierpiarrette-highball-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `eaa9be2c`  
+> **Source Version**: `062ea35b`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:28:40.600Z  
+> **Timestamp**: 2026-11-24T01:56:00.485Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:28:40.594Z  
+> **Harvest Timestamp**: 2026-11-24T01:56:00.479Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2304 stars
+- **Stars / Engagement**: 2332 stars
 
 ---
 
@@ -106,6 +106,15 @@ final class AppState {
     /// before opening the window; the TabView binds its selection to it.
     var settingsTab: SettingsTab = .environments
     var gamesByBottle: [String: [SteamGame]] = [:]
+    /// The library can look empty while its first store scans are still running. Keep the
+    /// connect/install empty state out of view until those scans have had a chance to populate it.
+    private(set) var steamOwnedLibraryLoaded = false
+    private(set) var epicLibraryLoaded = false
+    private(set) var gogLibraryLoaded = false
+    private(set) var gogMacLibraryLoaded = false
+    var libraryLoading: Bool {
+        !steamOwnedLibraryLoaded || !epicLibraryLoaded || !gogLibraryLoaded || !gogMacLibraryLoaded || epicLoading || gogLoading
+    }
     /// What Battle.net installed in each bottle, from its own records (BattleNetLibrary, highball#417).
     var battleNetByBottle: [String: [BattleNetGame]] = [:]
     /// The Steam account's games per bottle, installed or not (SteamOwnedLibrary, highball#199).
@@ -250,16 +259,7 @@ final class AppState {
         let name = uuid.flatMap { u in Monitor.connected().first { $0.id == u }?.name }
         appendLog(uuid == nil ? "\(item.id): display back to the main one" : "\(item.id): display set to \(name ?? "a disconnected display")")
     }
-    func setRendererOverride(_ renderer: Renderer?, for id: String) {
-        libraryStore.setRendererOverride(renderer, for: id)
-        libraryOverrides = libraryStore.rendererOverrides()
-        appendLog(renderer.map { "\(id): graphics mode set to \($0.rawValue) for this game" } ?? "\(id): graphics mode back to the environment's")
-    }
-
-    /// A game whose last run asked Windows for a fullscreen size this Mac never switched to.
-    /// One click tells Wine to pretend the switch happened and scale the game to the screen.
-    struct ModesetTrial {
-
+    fu
 ```
 
 ### Core Architecture Module: `Sources/HighballApp/EngineAsk.swift`
@@ -567,10 +567,12 @@ public enum EngineChannels {
         }
     }
 
-    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game.
+    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game, and the
+    /// later revisions of its line. A player who took r4 for Forza Horizon 6 never saw r5, which carried the sound fix
+    /// the game needed: the environment's Engine picker listed r4 alone and so stayed hidden (highball#672).
     public static func visible(_ manifest: EngineManifest, beta: Bool, preview: Bool, optedIn: Set<String>) -> Bool {
         visible(channel: manifest.channel, beta: beta, preview: preview)
-            || (manifest.channel == Self.preview && optedIn.contains(manifest.id))
+            || (manifest.channel == Self.preview && optedIn.contains { EngineManifest.isAtOrAfter(current: manifest.id, wanted: $0) })
     }
 
     /// Whether a recipe's engine pin names a bundled engine this install may not see. Such a recipe
@@ -907,6 +909,85 @@ let package = Package(
 
 ```
 
+### Core Architecture Module: `Scripts/audit-localization.py`
+```
+#!/usr/bin/env python3
+"""Static localization inventory. Candidates require review; they are not coverage claims."""
+import argparse
+import collections
+import json
+from pathlib import Path
+import re
+
+ROOT = Path(__file__).resolve().parent.parent
+PAIR = re.compile(r'^\s*"((?:[^"\\]|\\.)*)"\s*:\s*"((?:[^"\\]|\\.)*)"', re.M)
+CALL = re.compile(r'\b(?:L|L10n\.translate|L10n\.format|format)\(\s*"((?:[^"\\]|\\.)*)"')
+TOKEN = re.compile(r'%(?:\d+\$)?(?:[-+0#]*\d*(?:\.\d+)?)(?:ll|l|z)?[@diufgs]|%%')
+
+def signature(text):
+    """Argument index/type pairs allow positional reordering but reject changed types."""
+    result = []; sequential = 0
+    for token in TOKEN.findall(text):
+        if token == '%%':
+            result.append((0, '%%')); continue
+        match = re.match(r'%(\d+)\$', token)
+        if match:
+            index = int(match.group(1)); spec = '%' + token[match.end():]
+        else:
+            sequential += 1; index = sequential; spec = token
+        result.append((index, spec))
+    return sorted(result)
+
+def audit():
+    dictionaries = {}
+    duplicates = {}; mismatches = {}; newlines = {}
+    for lang, name in [('zh-Hans', 'Chinese'), ('fr', 'French')]:
+        pairs = PAIR.findall((ROOT / f'Sources/HighballKit/L10n{name}.swift').read_text())
+        counts = collections.Counter(k for k, _ in pairs)
+        duplicates[lang] = [k for k, n in counts.items() if n > 1]
+        dictionaries[lang] = dict(pairs)
+        mismatches[lang] = [k for k, v in pairs if signature(k) != signature(v)]
+        newlines[lang] = [k for k, v in pairs if k.count('\\n') != v.count('\\n')]
+    used = set(); candidates = []; dynamic = []
+    # Include the complete app and kit: runtime diagnostics and external data are intentionally
+    # reported as candidates, never blindly rewritten as display text.
+    for path in sorted((ROOT / 'Sources').rglob('*.swift')):
+        if path.name in {'L10n.swift', 'L10nChinese.swift', 'L10nFrench.swift'}: continue
+        text = path.read_text()
+        used.update(CALL.findall(text))
+        for number, line in enumerate(text.splitlines(), 1):
+            stripped = line.lstrip()
+            if stripped.startswith('//'): continue
+            if '"' not in line: continue
+            loc = {'file': str(path.relative_to(ROOT)), 'line': number, 'source': stripped}
+            if '\\(' in line and re.search(r'\b(Text|headline|meaning|detail|runBusy|stage|return)\b', line):
+                dynamic.append(loc)
+            if re.search(r'\b(?:Text|Button|Label|Toggle|Picker|Section|TextField)\(\s*"|\.(?:help|navigationTitle|accessibilityLabel)\(\s*"|\b(?:return|headline:|meaning:|detail:|stage\s*=|busyTitle\s*=)\s*"', line):
+                candidates.append(loc)
+    return {
+        'entries': {k: len(v) for k,v in dictionaries.items()},
+        'localized_keys': len(used),
+        'missing': {lang: sorted(used-set(d)) for lang,d in dictionaries.items()},
+        'duplicates': duplicates, 'placeholder_mismatches': mismatches, 'newline_mismatches': newlines,
+        'unreferenced_or_dynamic_keys': {lang: sorted(set(d)-used) for lang,d in dictionaries.items()},
+        'potentially_untranslated_source_lines': candidates,
+        'dynamic_source_lines_to_review': dynamic,
+        'limitations': 'Static candidates include technical identifiers, CLI diagnostics, numbers, external database text and nested localization calls. Unreferenced keys may be runtime values; do not delete automatically.'
+    }
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path)
+    args = parser.parse_args(); report = audit()
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
+    print(json.dumps({k:v for k,v in report.items() if k in ['entries','localized_keys','duplicates','placeholder_mismatches','newline_mismatches']}, ensure_ascii=False, indent=2))
+    for lang, missing in report['missing'].items(): print(f'{lang}: {len(missing)} missing keys (English fallback)')
+    # Preserve upstream's warning-only policy for incomplete translations.
+    raise SystemExit(1 if any(report['duplicates'].values()) or report['placeholder_mismatches']['zh-Hans'] or report['newline_mismatches']['zh-Hans'] else 0)
+
+```
+
 ### Core Architecture Module: `Scripts/make-dmg-background.swift`
 ```
 // Renders the background of the Highball disk-image window: warm cream ground, wordmark, and
@@ -1041,34 +1122,22 @@ writePNG(render(scale: 2), args[2], scale: 2)
 
 ```
 
-### Core Architecture Module: `Scripts/mark-builtin.py`
-```
-# Stamp Wine's builtin marker into a PE DLL so the loader accepts it from a WINEDLLPATH dir.
-import sys, struct
-for path in sys.argv[1:]:
-    b = bytearray(open(path, 'rb').read())
-    assert b[:2] == b'MZ', path
-    e_lfanew = struct.unpack_from('<I', b, 0x3C)[0]
-    assert e_lfanew >= 0x40 + 17, (path, e_lfanew)
-    b[0x40:0x40 + 17] = b'Wine builtin DLL\0'
-    open(path, 'wb').write(b); print('  marked', path.split('/')[-1], 'e_lfanew=0x%x' % e_lfanew)
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #748** (2026-11-18): **Pirated games not working**
-  *Symptoms*: ### What happened  So I pirate quite a few games and consistently what I've been seeing is when the game is an online pirated version, it often just does not work. Showing an error on steam saying, "license not found" I am unsure if this is due to it being ran on mac as the site does not report any issues regarding the games functionality.   As far as I am aware the way the pirated online features work is by convincing steam its running a game called spacewar, which is what is shown on your steam status or running page. However, something through highball is causing this not to work.  Game launch logs attached.   ### Chip and macOS  macOS 14.6, M1 pro  ### Highball version  0.3.1  ### Log  # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine /Users/veeb/Desktop/games/CRACK/CRACK/CRACK.exe # sync=none (bottle asks msync) winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=/Users/veeb/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:/Users/veeb/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d;winhttp=n,b # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False # note: the environment's Windows services keep the stack they started with (it runs with sync none and the game w
-
-- **Issue #740** (2026-11-17): **both main & demo game show up in Highball library**
-  *Symptoms*: ### What happened  per implementation in #432 of not returning demo if main game is in library in `highball library`  I'm tracking this separately as the implementation is not strictly CLI but also shows up in the GUI:  <img width="932" height="724" alt="Screenshot 2026-11-17 at 12 16 20 AM" src="https://github.com/user-attachments/assets/1f1ee000-e7ea-43af-8e1a-abba7459cb4b" />  The intent is to match the Steam client behavior which is to hide the demo if the main game has been purchased:  <img width="1010" height="777" alt="Screenshot 2026-11-17 at 12 30 23 AM" src="https://github.com/user-attachments/assets/bd010255-c3f0-4346-ba31-e79da824d828" />  I wonder if it has to do with the fact that the demo was Windows only and the main game has a macOS build?  Just a hypothesis.  ### Chip and macOS  M1, macOS 27.2.1  ### Highball version  0.10.28  ### Log  _No response_
+- **Issue #770** (2026-11-21): **Plant zoo 2 don't start**
+  *Symptoms*: ### What happened  Plant zoo 2 do not start on the Mac mini m4 24 GB  ### Chip and macOS  Apple M4, macOS 27.2.1  ### Highball version  0.10.26  ### Log  ~/Library/Application Support/Highball/logs/2026-11-21T142132Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=d3dmetal # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 3219030 # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/d3dmetal-tsshim/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d3dmetal/wine:~/Library/Application S… ( 184 chars) # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # HB_D3D12_REAL=Z:\Users\steindouma\Library\Application Support\Highball\engines\x64-sikarugir10.0_6-r28\renderers\d3dmetal-tsshim\wine\x86_64-windows\apd12.dll # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False … 17 lines … 0160:err:environ:init_peb starting L"C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe" in experimental wow64 mode 016c:err:sync:RtlpWaitForCriticalSection section 00006FFFFFFB2440 "/Users/gcenx/Documents/GitHub/wine-private/dlls/ntdll/loader.c: loader_section" wait timed out in thread 016c, blocked by 01
   **Post-Mortem & Fix Analysis**:
-  > closing this issue - Highball eventually updated:  <img width="932" height="724" alt="Screenshot 2026-11-17 at 1 20 29 AM" src="https://github.com/user-attachments/assets/c3e6037e-97af-40f2-a24a-5991f63613ea" />  when is this update triggered?  I could have sworn I quit Highball and relaunched it but maybe I didn't.  false alarm!
-  > Glad it sorted itself out. Installed games are watched all the time, but the full list of what you own, where a demo gets matched to its game, is read when Highball starts and again after things like an install finishing. So a relaunch does it. If you see it again right after a real relaunch, tell me.
+  > Thanks for the report. The log ends the way Planet Zoo 2 always does here, with error c0000409. The game's anti tamper needs hardware debug registers, which Rosetta doesn't have, so it loops without a window and exits. Nothing in the settings works around it on the current engines. [The database issue](https://github.com/gauthierpiarrette/highball-db/issues/537) has the full analysis and is where updates go, so I'm closing this one in favour of it.
+
+- **Issue #753** (2026-11-24): **Move to... bottle picklist disappeared on pinned programs**
+  *Symptoms*: ### What happened  You can move a Steam/Epic/GOG game to another bottle but there is no way to move pins to another bottle right now.  I recall in an earlier build, there was a picklist to move a pin to another bottle - it seems to have disappeared:  <img width="932" height="803" alt="Screenshot 2026-11-18 at 8 52 27 PM" src="https://github.com/user-attachments/assets/9b5f0b04-14ff-4037-9aab-a9fb277113ac" />  NOTE: I do feel using a picklist across Steam/Epic/GOG/pinned games is cleaner UX-wise in case it simplifies implementation and eliminates multiple rows of "Also installed in"  ### Workaround  edit `bottle.json` in both bottles and manually cut & paste the pins you want to move (if there is a better way to do this, please let me know!)  ### Chip and macOS  macOS 27.2.1  ### Highball version  0.10.28  ### Log  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the report. As far as I can tell programs never had that menu, the one on the game page was only for Epic games, which move their folder along. #759 adds Move to… for programs too, next to Environment on the game page. It shows for programs that live outside the environment, like a game on another drive, since one installed inside an environment has its files there. The program keeps its name, cover, mode, arguments and display, and a Mac app made for it keeps working.
+  > This shipped in Highball 0.10.29 (https://github.com/gauthierpiarrette/highball/releases/tag/v0.10.29). Programs that live outside their environment have Move to on their page now. Thanks for the idea! If something about it doesn't work, comment here and I'll reopen it.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,324 +1154,361 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39e06d01` (2026-11-17)
-**Commit Message**: Wine 11 engines r34 and r35 for Diablo II: Resurrected (#371): r32 and r33 with one rebuilt Wine, highball-engine release engine-wine-11.0-20261114T185735Z-fiber-mirror-switch (run 43624249972, PR #38, sha256 ee1609f0, public download checked). Its patch 0031 lets a game's recipe turn the fiber mirror off with HB_FIBER_MIRROR=0: D3DMetal calls macOS code straight from the game's fiber threads, and D2R exited with SIGILL before any window while the mirror put a fiber pointer in the QoS slot. Without the variable nothing changes, so Guardians of the Galaxy and Metaphor keep it. A recipe's variable can now name a file of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does, since D2R also needs CX_APPLEGPTK_LIBD3DSHARED_PATH set to its engine's libd3dshared.dylib (AlexPako played 35 minutes with both, sync off and MSync, M5 Pro, macOS 27.2.1). Every other archive is the base's, so only the Wine downloads. 875 tests pass.
+### Incident Patch 1: `7d471e91` (2026-11-23)
+**Commit Message**: highball play --wait follows Mac builds, Steam for Mac's included, and the library JSON says installedOnWindows and hidden (highball#432). RunningGames, which --wait reads, held only the sessions in environments, so a wait on a game Steam for Mac started ran to --start-timeout and gave up while the game played (Terraforming Mars, udance4ever timed 49 s). It now also holds the Epic and GOG Mac builds Highball started and the Steam for Mac games Play opened, followed by their process under steamapps/common for up to ten minutes to appear and then until they quit. The JSON's installed is now installedOnWindows, beside installedOnMac, since the command hasn't shipped yet, and hidden says what the player hid from the library. play's id help names the form. New test in PlayFromCommandLineTests, 16 tests pass, and highball library --json lists the real library with both fields. The Steam for Mac wait is not tried live yet.
 
-**File**: `Sources/HighballKit/Bottle.swift` (modified, +10/-2)
+**File**: `Sources/HighballApp/AppState.swift` (modified, +45/-6)
 ```diff
-@@ -932,8 +932,16 @@ public struct Bottle: Sendable {
-             env["ROSETTA_X87_PATH"] = sidecar.path
-         }
-         // A recipe's value can depend on this Mac (a video memory budget from its memory), and an engine's or a recipe's
--        // on this environment (a driver's shader cache kept inside it, and gone with it).
--        return env.mapValues { MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path) }
-+        // on this environment (a driver's shader cache kept inside it, and gone with it). A recipe can also name a file
-+        // of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does: Diablo II:
-+        // Resurrected needs Wine to load D3DMetal's libd3dshared.dylib (highball#371), which sits in each engine's own
-+        // folder.
-+        let frameworks = engine.frameworksDir.path, renderers = engine.renderersDir.path
-+        return env.mapValues {
-+            MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path)
-+                .replacingOccurrences(of: "${frameworks}", with: frameworks)
-+                .replacingOccurrences(of: "${renderers}", with: renderers)
+@@ -511,7 +511,31 @@ final class AppState {
+         if item.source == .epic { epicPlayMac(item); return }
+         guard let appid = item.steamAppID else { return }
+         recordPlay(item)
+-        _ = openInSteamForMac(URL(string: "steam://run/\(appid)")!)
++        if openInSteamForMac(URL(string: "steam://run/\(appid)")!),
++           let game = macSteamGames.first(where: { $0.appid == appid }), !game.installdir.isEmpty {
++            watchMacSteamGame(item.id, markers: SessionWatch.markers(installdir: game.installdir))
 +        }
-     }
- 
-     /// The renderer-specific bridge files that make the DLSS switch actionable in this engine.
-```
-
-**File**: `Tests/HighballKitTests/BundledEngineTests.swift` (modified, +30/-5)
-```diff
-@@ -101,20 +101,20 @@ final class BundledEngineTests: XCTestCase {
-         }
-         XCTAssertEqual(try one("x64-crossover26.3-r20").components["wine"]?.sha256, try one("x64-crossover26.3-r21").components["wine"]?.sha256,
-                        "one Wine build behind both, downloaded once")
--        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r33 since
--        // the D3DMetal 4 line moved to r32, below), never a D3DMetal 4 one.
-+        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r35 since
-+        // the D3DMetal 4 line moved to r34, below), never a D3DMetal 4 one.
-         for pin in ["x64-crossover26.3-r5", "x64-crossover26.3-r7", "x64-crossover26.3-r8", "x64-crossover26.3-r9", "x64-crossover26.3-r15", "x64-crossover26.3-r19",
-                     "x64-crossover26.3-r21", "x64-crossover26.3-r23", "x64-crossover26.3-r25", "x64-crossover26.3-r27",
--                    "x64-crossover26.3-r29", "x64-crossover26.3-r31"] {
-+                    "x64-crossover26.3-r29", "x64-crossover26.3-r31", "x64-crossover26.3-r33"] {
-             let wanted = try one(pin)
-             let offered = all.filter { EngineManifest.satisfies(current: $0, wanted: wanted) && $0.runs(onMacOS: "27.0") }
-                 .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
--            XCTAssertEqual(offered?.id, "x64-crossover26.3-r33", "a pin on \(pin) must get the newest D3DMetal 3 revision")
-+            XCTAssertEqual(offered?.id, "x64-crossover26.3-r35", "a pin on \(pin) must get the newest D3DMetal 3 revision")
-         }
-         let forzaPin = try one("x64-crossover26.3-r18")
-         let forOffer = all.filter { EngineManifest.satisfies(current: $0, wanted: forzaPin) && $0.runs(onMacOS: "27.0") }
-             .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
--        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r32", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
-+        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r34", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
-         XCTAssertFalse(EngineManifest.satisfies(current: try one("x64-crossover26.3-r21"), wanted: forzaPin), "r21 lacks D3DMetal 4")
-     }
- 
-@@ -284,6 +284,31 @@ final class BundledEngineTests: XCTestCase {
-         XCTAssertFalse(EngineManifest.satisfies(current: r33, wanted: try one("x64-crossover26.3-r18")), "r33 lacks D3DMetal 4")
-     }
- 
-+    /// r34 and r35 are r32 and r33 with one rebuilt Wine: patch 0031, which lets a game's recipe keep the macOS QoS
-+    /// value in %gs:0x20 with HB_FIBER_MIRROR=0 instead of the fiber mirror (Diablo II: Resurrected, highball#371).
-+    /// Every other archive is the base's, so only Wine downloads.
-+    func testR34AndR35AreR32AndR33WithTheFiberSwitchWine() throws {
-+        let all = try manifests()
-+        func one(_ id: String) throws -> EngineManifest { try XCTUnwrap(all.first { $0.id == id }, "\(id) missing") }
-+        for (old, new) in [("x64-crossover26.3-r32", "x64-crossover26.3-r34"), ("x64-crossover26.3-r33", "x64-crossover26.3-r35")] {
-+            let o = try one(old), n = try one(new)
-+            XCTAssertEqual(Set(n.components.keys), Set(o.components.keys), "\(new) has \(old)'s components")
-+            for (name, c) in o.components where name != "wine" {
-+                XCTAssertEqual(n.components[name]?.sha256, c.sha256, "\(new)/\(name) must be \(old)'s, only Wine is rebuilt")
++    }
++
++    /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
++    /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
++    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
++    private func watchMacSteamGame(_ id: String, markers: [String]) {
++        Task { [weak self] in
++            var seen = false
++            for _ in 0..<300 {
++                try? await Task.sleep(for: .seconds(2))
++                let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
++                guard let self else { return }
++                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
++                if seen, !alive { self.macSteamRunning.remove(id); return }
 +            }
-+            XCTAssertNotEqual(n.components["wine"]?.sha256, o.components["wine"]?.sha256, "\(new) carries the rebuilt Wine")
-+            XCTAssertEqual(n.components["wine"]?.url.absoluteString,
-+                           "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-wine-11.0-20261114T185735Z-fiber-mirror-switch/engine-wine-11.0-20261114T185735Z-fiber-mirror-switch.tar.gz")
-+            XCTAssertEqual(n.minMacOS, o.minMacOS)
-+            XCTAssertEqual(n.baseEnv, o.baseEnv)
-+            XCTAssertEqual(n.displayName, o.displayName.replacingOccurrences(of: String(old.suffix(3)), with: String(new.suffix(3))))
++            while seen {
++                try? await Task.sleep(for: .seconds(2))
++                guard let self else { return }
++                if !SessionWatch.isAlive(markers: markers, ps: await Self.processList()) { self.macSteamRunning.remove(id); return }
++            }
 +        }
-+        let r34 = try one("x64-crossover26.3-r34"), r35 = try one("x64-crossover26.3-r35")
-+        XCTAssertEqual(r34.components["wine"]?.sha256, r35.components["wine"]?.sha256, "one Wine build behind both, downloaded once")
-+        XCTAssertTrue(EngineManifest.satisfies(current: r34, wanted: try one("x64-crossover26.3-r18")), "r34 carries D3DMetal 4")
-+        XCTAssertFalse(EngineManifest.satisfies(current: r35, wanted: try one("x64-crossover26.3-r18")), "r35 lacks D3DMetal 4")
-+    }
-+
-     /// Frame generation left Highball on 2026-09-27 at its author's request (itsOwen's lsfg-metal,
-     /// highball#171): no engine may ship the component any more. The revisions since are their
-     /// bases (r5 on the main line, r6 on the GPTK 4 line) with DXMT swapped 
-```
-
-**File**: `Tests/HighballKitTests/RendererAvailabilityTests.swift` (modified, +13/-0)
-```diff
-@@ -177,6 +177,19 @@ final class RendererAvailabilityTests: XCTestCase {
-         XCTAssertNil(try stale.environment(engine: e)["ROSETTA_X87_PATH"], "only the switch sets it")
      }
  
-+    /// A recipe names a file of the environment's own engine with ${frameworks} or ${renderers}, as an engine
-+    /// manifest's baseEnv does (Diablo II: Resurrected's CX_APPLEGPTK_LIBD3DSHARED_PATH, highball#371).
-+    func testARecipeVariableCanNameAFileOfTheEnvironmentsEngine() throws {
-+        let e = try engine(accepted: false)
-+        var b = bottle(renderer: .dxmt)
-+        b.settings.environment = ["CX_APPLEGPTK_LIBD3DSHARED_PATH": "${frameworks}/renderer/d3dmetal/external/libd3dshared.dylib",
-+                                  "HB_SOME_RENDERER_FILE": "${renderers}/dxmt/wine"]
-+        let env = try b.environment(engine: e)
-+        XCTAssertEqual(env["CX_APPLEGPTK_LIBD3DSHARED_PATH"], e.frameworksDir.path + "/renderer/d3dmetal/external/libd3dshared.dylib")
-+        XCTAssertEqual(env["HB_SOME_RENDERER_FILE"], e.renderersDir.path + "/dxmt/wine")
-+        XCTAssertFalse(env.values.contains { $0.contains("${frameworks}") || $0.contains("${renderers}") })
+     /// Hands the game to Steam for Mac, whose own dialog asks where to put it; without it, the
+@@ -2769,10 +2793,23 @@ final class AppState {
+     /// nothing here blocks the app while a game runs. Kept in the home as well (RunningGames), so
+     /// `highball play --wait` returns when its game quits (highball#432).
+     var runningSessions: [GameSession] = [] {
+-        didSet {
+-            let ids = runningSessions.compactMap(\.libraryID)
+-            if ids != oldValue.compactMap(\.libraryID) { RunningGames.write(ids, paths: paths) }
+-        }
++        didSet { writeRunningGames() }
++    }
++    /// Steam for Mac games started from Highball and running now, by library id, seen by their
++    /// process (watchMacSteamGame). Steam for Mac starts them, so there is no process of ours.
++    var macSteamRunning: Set<String> = [] {
++        didSet { writeRunningGames() }
++    }
++    @ObservationIgnored private var runningGamesWritten: Set<String>?
++    /// What RunningGames holds for `highball play --wait`: the sessions in environments, the Mac
++    /// builds Highball started (Epic and GOG ones by their process, Steam for Mac ones by watching).
++    /// Before, only sessions counted, so a wait on a Mac game ended at --start-timeout
++    /// (highball#432, Terraforming Mars through Steam for Mac).
++    private func writeRunningGames() {
++        let ids = Set(runningSessions.compactMap(\.libraryID)).union(macGameProcesses.keys).union(macSteamRunning)
++        guard ids != runningGamesWritten else { return }
++        runningGamesWritten = ids
++        RunningGames.write(ids.sorted(), paths: paths)
+     }
+     /// The last session that ended, for the post-play prompt to come.
+     var lastEndedSession: SessionRecord?
+@@ -4689,7 +4726,9 @@ final class AppState {
+ 
+     /// Mac builds running now, by library id: their process, for the achievement card's
+     /// placement and so Play cannot start a second copy.
+-    var macGameProcesses: [String: Process] = [:]
++    var macGameProcesses: [String: Process] = [:] {
++        didSet { writeRunningGames() }
++    }
+ 
+     /// Whether a game runs now, either build: changing or removing a build then would pull its
+     /// files from under it.
+```
+
+**File**: `Sources/HighballKit/Library.swift` (modified, +8/-4)
+```diff
+@@ -455,21 +455,25 @@ public enum LibraryListing {
+         public let title: String
+         public let source: String
+         public let environment: String?
+-        public let installed: Bool
++        /// Installed in a Highball environment. Named for what it is beside installedOnMac: a plain
++        /// "installed" read as "installed anywhere" (highball#432).
++        public let installedOnWindows: Bool
+         public let installedOnMac: Bool
++        /// Hidden from the library by the player, so a frontend can leave it out too (highball#432).
++        public let hidden: Bool
+     }
+ 
+     /// `title` is the name shown in the app: a custom one (NameStore) or the store's.
+-    public static func entry(_ item: LibraryItem, title: String) -> Entry {
++    public static func entry(_ item: LibraryItem, title: String, hidden: Bool = false) -> Entry {
+         Entry(id: item.id, title: title, source: item.source.rawValue, environment: item.bottleName,
+-              installed: item.installed, installedOnMac: item.installedOnMac)
++              installedOnWindows: item.installed, installedOnMac: item.installedOnMac, hidden: hidden)
+     }
+ 
+     public static func line(_ entry: Entry) -> String {
+         func field(_ text: String) -> String {
+             text.replacingOccurrences(of: "[\t\r\n]+", with: " ", options: .regularExpression)
+         }
+-        let state = entry.installed ? "installed" : entry.installedOnMac ? "installed on Mac" : "not installed"
++        let state = entry.installedOnWindows ? "installed" : entry.installedOnMac ? "installed on Mac" : "not installed"
+         return [entry.id, field(entry.title), field(entry.environment ?? "-"), state].joined(separator: "\t")
+     }
+ }
+```
+
+**File**: `Sources/highball/main.swift` (modified, +5/-3)
+```diff
+@@ -976,9 +976,11 @@ struct LibraryCommand: AsyncParsableCommand {
+     func run() async throws {
+         let paths = HighballPaths()
+         let names = NameStore(paths: paths).names()
++        let hiddenIDs = LibraryStore(paths: paths).hiddenIDs()
+         let entries = currentLibrary(paths: paths, epic: true)
+             .filter { !installed || $0.installedAnywhere }
+-            .map { LibraryListing.entry($0, title: NameStore.name(for: $0.id, in: names) ?? $0.title) }
++            .map { LibraryListing.entry($0, title: NameStore.name(for: $0.id, in: names) ?? $0.title,
++                                        hidden: LibraryStore.isHidden($0.id, in: hiddenIDs)) }
+             .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+         if json {
+             let enc = JSONEncoder(); enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+@@ -999,9 +1001,9 @@ struct Play: AsyncParsableCommand {
+             With --wait the command returns once the game has quit, for frontends such as ES-DE, \
+             and Highball and Steam keep running. A game that isn't installed fails the command at once, \
+             with or without --wait, after Highball shows what it can do with it. It follows the games Highball runs in its \
+-            environments, so a game Steam for Mac starts ends the wait only at --start-timeout.
++            environments and the Mac builds it starts, Steam for Mac's included.
+             """)
+-    @Argument(help: "The game's library id.") var id: String
++    @Argument(help: "The game's library id, as `highball library` lists it (for example steam:620).") var id: String
+     @Flag(help: "Return only once the game has quit.") var wait = false
+     @Option(help: "With --wait, how many seconds the game has to start before the command gives up.") var startTimeout: Int = 600
+ 
+```
+
+**File**: `Tests/HighballKitTests/PlayFromCommandLineTests.swift` (modified, +12/-0)
+```diff
+@@ -50,6 +50,18 @@ final class PlayFromCommandLineTests: XCTestCase {
+         XCTAssertEqual(LibraryListing.line(LibraryListing.entry(game, title: "Portal Deux")), "steam:620\tPortal Deux\tGames\tinstalled")
+     }
+ 
++    /// The JSON names the Windows install for what it is and says what the player hid (highball#432).
++    func testTheJSONSaysWhereAGameIsInstalledAndWhetherItIsHidden() throws {
++        let pin = HighballKit.LibraryItem(source: .pin, id: "pin:EA:FBB214D7-6752-4D99-AADE-4913311A953D", title: "regedit", bottleName: "EA", installed: true)
++        let entry = LibraryListing.entry(pin, title: "regedit (EA)", hidden: true)
++        let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: JSONEncoder().encode(entry)) as? [String: Any])
++        XCTAssertEqual(json["installedOnWindows"] as? Bool, true)
++        XCTAssertEqual(json["installedOnMac"] as? Bool, false)
++        XCTAssertEqual(json["hidden"] as? Bool, true)
++        XCTAssertNil(json["installed"], "renamed before the command ships")
++        XCTAssertEqual(LibraryListing.entry(pin, title: "regedit").hidden, false)
 +    }
 +
-     func testEnvironmentFollowsTheDegradedRendererInsteadOfThrowing() throws {
-         let e = try engine(accepted: false)
-         let env = try bottle(renderer: .d3dmetal).environment(engine: e)
-```
-
-**File**: `spike/engines/x64-crossover26.3-r34.json` (added, +201/-0)
-```diff
-@@ -0,0 +1,201 @@
-+{
-+  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "arch": "x86_64",
-+  "baseEnv": {
-+    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
-+    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
-+    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
-+    "WINEDEBUG": "fixme-all",
-+    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1",
-+    "D3DM_MTL4": "0"
-+  },
-+  "components": {
-+    "d3dmetal-tsshim": {
-+      "extract": {
-+        "into": "renderers/d3dmetal-tsshim/wine",
-+        "subpath": "renderers/d3dmetal-tsshim/wine"
-+      },
-+      "kind": "renderer",
-+      "layout": [
-+        "x86_64-windows/d3d12.dll"
-+      ],
-+      "license": "MIT",
-+      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry the ordinals D3DMetal 4.0 beta 3 uses (D3D12CreateDevice at 101, D3D12GetInterface at 109, the two Serialize calls at 110 and 111), so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Input layouts that place elements with D3D12_APPEND_ALIGNED_ELEMENT reach D3DMetal with those offsets written out, which D3DMetal 4.0 beta 2 and beta 3 get wrong (HB_TSSHIM_APPEND_OFFSETS=0 passes them through). D3D12GetInterface is passed through, and a device factory it returns gets its CreateDevice wrapped so those devices are patched too. Built for beta 3 only: older D3DMetal numbers the Serialize calls 109 and 110. Source: spike/tsshim, Scripts/build-tsshim.sh.",
-+      "order": 1,
-+      "sha256": "30fccd4ea8f88ad55d44e46b2ac943ad633b2c90fd6a56774294573062ae1259",
-+      "size": 52852,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261020/d3dmetal-tsshim-20261020.tar.xz",
-+      "version": "20261020"
-+    },
-+    "dxmt": {
-+      "extract": {
-+        "into": "renderers/dxmt/wine",
-+        "subpath": "highball"
-+      },
-+      "kind": "renderer",
-+      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
-+      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
-+      "size": 18923969,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
-+      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
-+    },
-+    "moltenvk": {
-+      "extract": {
-+        "into": "frameworks/libMoltenVK.dylib",
-+        "subpath": "libMoltenVK.dylib"
-+      },
-+      "kind": "runtime",
-+      "license": "Apache-2.0",
-+      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into 
-```
-
-**File**: `spike/engines/x64-crossover26.3-r35.json` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+{
-+  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "arch": "x86_64",
-+  "baseEnv": {
-+    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
-+    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
-+    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
-+    "WINEDEBUG": "fixme-all",
-+    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1"
-+  },
-+  "components": {
-+    "d3dmetal-tsshim": {
-+      "extract": {
-+        "into": "renderers/d3dmetal-tsshim/wine",
-+        "subpath": "renderers/d3dmetal-tsshim/wine"
-+      },
-+      "kind": "renderer",
-+      "layout": [
-+        "x86_64-windows/d3d12.dll"
-+      ],
-+      "license": "MIT",
-+      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry Microsoft's d3d12 ordinals (D3D12CreateDevice at 101), which D3DMetal mirrors, so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Source: spike/tsshim, Scripts/build-tsshim.sh.",
-+      "order": 1,
-+      "sha256": "5906fd46813e0cbe5e59909f77fd86344768ea8c07babe60cf4d8bbad1d0d00a",
-+      "size": 50532,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261014/d3dmetal-tsshim-20261014.tar.xz",
-+      "version": "20261014"
-+    },
-+    "dxmt": {
-+      "extract": {
-+        "into": "renderers/dxmt/wine",
-+        "subpath": "highball"
-+      },
-+      "kind": "renderer",
-+      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
-+      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
-+      "size": 18923969,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
-+      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
-+    },
-+    "moltenvk": {
-+      "extract": {
-+        "into": "frameworks/libMoltenVK.dylib",
-+        "subpath": "libMoltenVK.dylib"
-+      },
-+      "kind": "runtime",
-+      "license": "Apache-2.0",
-+      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into shadowed memory back to the game's pages when a submission completes, so a 32-bit game's readbacks under MVK_SHADOW_IMPORT=1 stop being stale (The Sims' thumbnails); without the variable it does nothing. Since r30 and r31 also: device-memory-cap (HB_MVK_DEVICE_MEMORY_PERCENT caps the heap and its budget, highball#398) and two changes from DiAvisoo's MoltenVK-Detroit (cache-drawid-present, lenient-interfaces, highball#125), CI build run 41367170976.",
-+      "order": 1,
-+      "sha256": "662d7c06
+     func testRunningGamesRoundTripAndAGoneAppReadsAsNothingKnown() throws {
+         let home = FileManager.default.temporaryDirectory.appending(path: "hb-running-\(UUID().uuidString)")
+         defer { try? FileManager.default.removeItem(at: home) }
 ```
 
 ---
 
-### Incident Patch 2: `055c1909` (2026-11-18)
-**Commit Message**: A bottles folder that is a symlink to another disk is listed again (#750). contentsOfDirectory(at:) refuses a symlinked folder on macOS 27 ("The file “bottles” couldn’t be opened", reproduced with the CLI in a throwaway home), so the app showed no environments at all. Listing goes through the path call, which follows the link, and each entry's URL stays under bottles/, so get(), delete()'s containment check and everything that compares bottle URLs see the same paths as before. A test lists two bottles through a linked folder and deletes one, which removes its folder on the other disk and keeps the link. 130 tests in the bottle, home and regression suites pass.
+### Incident Patch 2: `7c512cbd` (2026-11-23)
+**Commit Message**: DXMT counts as unavailable below macOS 15, so a new environment on macOS 14 starts on DXVK, an environment set to DXMT falls back with a note, and Play says why. Every DXMT build Highball has shipped, from the Wine 10 r19 engine to Wine 11 r35, carries a built-in shader library compiled for macOS 15 (air64-apple-macosx15.0.0 next to the macOS 14 one, measured in winemetal.so of r19, r28, r30, r31 and r33), and on macOS 14 Metal refuses those shaders ('Function cs_clear_buffer_uint is using language version 3.2 which is incompatible with this OS', highball#584: Palia drew only its cursor on an M2 Pro on macOS 14.8.5). Renderer.minimumMacOS holds the floor, availability returns needsMacOS(15) where the engine has DXMT but macOS is older, the reason says to update macOS or pick another mode, and the CLI's engine list shows it. Only 3 of 1,286 database reports come from macOS 14, none on DXMT. New test in RendererAvailabilityTests, 42 renderer tests pass. Not tried on a macOS 14 Mac.
 
-**File**: `Sources/HighballKit/BottleStore.swift` (modified, +10/-2)
+**File**: `Sources/HighballApp/AppState.swift` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ public struct BottleStore: Sendable {
- 
-     public func list() throws -> [Bottle] {
-         guard FileManager.default.fileExists(atPath: paths.bottles.path) else { return [] }
--        return try FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)
-+        return try Self.entries(of: paths.bottles)
-             .compactMap { url -> Bottle? in
-                 guard var b = try? Bottle.load(url) else { return nil }
-                 // The folder is the bottle's identity (get/delete resolve by folder). A copied
-@@ -26,6 +26,14 @@ public struct BottleStore: Sendable {
-             .sorted { $0.name < $1.name }
-     }
- 
-+    /// The entries of `bottles/`, each as a URL under `bottles/` itself. A player can make the folder a
-+    /// symlink to another disk (highball#750), and contentsOfDirectory(at:) refuses a symlinked folder
-+    /// ("couldn't be opened", measured on macOS 27) where the path call follows it. The URLs stay under
-+    /// the link, so they match what bottleURL builds and its containment check.
-+    static func entries(of dir: URL) throws -> [URL] {
-+        try FileManager.default.contentsOfDirectory(atPath: dir.path).map { dir.appending(path: $0) }
-+    }
-+
-     public func get(_ name: String) throws -> Bottle {
-         // Every subcommand resolves through here, so the name guard belongs here too rather than
-         // only on the destructive calls.
-@@ -399,7 +407,7 @@ public struct BottleStore: Sendable {
-     /// can never be invisible again — being invisible is what stranded the reporter of #38.
-     public func damaged() throws -> [DamagedBottle] {
-         guard FileManager.default.fileExists(atPath: paths.bottles.path) else { return [] }
--        return try FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)
-+        return try Self.entries(of: paths.bottles)
-             .compactMap { url -> DamagedBottle? in
-                 let name = url.lastPathComponent
-                 if name.hasPrefix(".") { return nil }
+@@ -747,7 +747,7 @@ final class AppState {
+             case .needsLicence:
+                 pendingD3DMetal = (item, bottle, engine)
+                 return
+-            case .notShipped:
++            case .notShipped, .needsMacOS:
+                 // The mode the game's recipe names comes first: the per-game mode a player chose on another route
+                 // follows the game to an engine that lacks it (D3DMetal, on the native arm64 line).
+                 let named = fixRecipe(for: item)?.renderer.flatMap { $0.availability(in: engine) == .available ? $0 : nil }
 ```
 
-**File**: `Sources/HighballKit/Paths.swift` (modified, +1/-1)
+**File**: `Sources/HighballKit/Bottle.swift` (modified, +27/-8)
 ```diff
-@@ -317,7 +317,7 @@ public enum BugReport {
-     /// started by a launcher client that Highball did not spawn.
-     static func logDirectories(_ paths: HighballPaths) -> [URL] {
-         var dirs = [paths.logs]
--        let bottles = (try? FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)) ?? []
-+        let bottles = (try? BottleStore.entries(of: paths.bottles)) ?? []
-         dirs += bottles.map { $0.appending(path: "drive_c/highball/logs") }
-         return dirs.filter { FileManager.default.fileExists(atPath: $0.path) }
-     }
-```
-
-**File**: `Tests/HighballKitTests/BottleDeleteTests.swift` (modified, +24/-0)
-```diff
-@@ -347,6 +347,30 @@ final class BottleDeleteTests: XCTestCase {
-         XCTAssertTrue(try store.damaged().isEmpty)
+@@ -183,20 +183,39 @@ public enum Renderer: String, Codable, CaseIterable, Sendable {
+         case available
+         case needsLicence(String)
+         case notShipped
++        /// The engine has it, but this Mac's macOS is older than the mode needs.
++        case needsMacOS(Int)
      }
  
-+    /// A player can move bottles/ to another disk and leave a symlink (highball#750). Listing used to fail
-+    /// outright ("couldn't be opened"), so the app showed no environments. Entries stay under bottles/,
-+    /// and deleting one removes the folder on the other disk and keeps the link.
-+    func testABottlesFolderThatIsASymlinkIsListedAndDeletable() throws {
-+        let elsewhere = home.appending(path: "elsewhere")
-+        try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
-+        try FileManager.default.removeItem(at: paths.bottles)
-+        try FileManager.default.createSymbolicLink(atPath: paths.bottles.path, withDestinationPath: elsewhere.path)
-+        try makeBottle("play")
-+        try makeBottle("Games")
+-    public func availability(in engine: InstalledEngine) -> Availability {
++    /// The macOS major version a mode needs, where it needs more than Highball itself (macOS 14).
++    /// Every DXMT build Highball has shipped, from the Wine 10 r19 engine to Wine 11 r35, carries a
++    /// built-in shader library compiled for macOS 15 (Metal language 3.2) next to its macOS 14 one,
++    /// and on macOS 14 Metal refuses those shaders ("language version 3.2 which is incompatible with
++    /// this OS", cs_clear_buffer_uint), so games drew nothing but the cursor (highball#584, Palia on
++    /// an M2 Pro). Below it DXMT counts as unavailable, so a new environment starts on DXVK, a
++    /// setting falls back with a note, and Play says why.
++    public static let minimumMacOS: [Renderer: Int] = [.dxmt: 15]
 +
-+        let listed = try store.list()
-+        XCTAssertEqual(listed.map(\.name), ["Games", "play"])
-+        XCTAssertTrue(listed.allSatisfy { $0.url.path.hasPrefix(paths.bottles.path) }, "entries stay under bottles/")
-+        XCTAssertTrue(try store.damaged().isEmpty)
++    /// This Mac's macOS major version.
++    public static var hostMacOSMajor: Int { ProcessInfo.processInfo.operatingSystemVersion.majorVersion }
 +
-+        XCTAssertNoThrow(try store.delete("play"))
-+        XCTAssertEqual(try store.list().map(\.name), ["Games"])
-+        XCTAssertFalse(FileManager.default.fileExists(atPath: elsewhere.appending(path: "play").path))
-+        var st = stat()
-+        XCTAssertEqual(lstat(paths.bottles.path, &st), 0)
-+        XCTAssertEqual(st.st_mode & S_IFMT, S_IFLNK, "the link itself stays")
++    public func availability(in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Availability {
+         if self == .wined3d { return .available }
+-        if engine.rendererDir(rawValue) != nil { return .available }
++        if engine.rendererDir(rawValue) != nil {
++            if let floor = Self.minimumMacOS[self], macOSMajor < floor { return .needsMacOS(floor) }
++            return .available
++        }
+         if let gate = EngineManifest.gatedRenderers[rawValue], engine.ships(rawValue) { return .needsLicence(gate) }
+         return .notShipped
+     }
+ 
+     /// One sentence for a person: what stops this renderer in `engine` and what to do. Nil when it runs.
+-    public func unavailableReason(in engine: InstalledEngine) -> String? {
++    public func unavailableReason(in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> String? {
+         let name = Self.displayName(self)
+-        switch availability(in: engine) {
++        switch availability(in: engine, macOSMajor: macOSMajor) {
+         case .available: return nil
++        case let .needsMacOS(floor):
++            return "\(name) needs macOS \(floor) or later, and this Mac runs macOS \(macOSMajor). Update macOS, or choose another graphics mode."
+         case .needsLicence:
+             return "\(name) is in engine \(engine.id), but Apple's licence has not been accepted for that engine. Accept it in the environment's settings (Graphics → Review licence…), or choose another graphics mode."
+         case .notShipped:
+@@ -209,15 +228,15 @@ public enum Renderer: String, Codable, CaseIterable, Sendable {
+     public static let fallbackOrder: [Renderer] = [.dxmt, .dxvk, .wined3d]
+ 
+     /// The best renderer `engine` can run in place of `wanted`. Never `wanted` itself.
+-    public static func fallback(for wanted: Renderer, in engine: InstalledEngine) -> Renderer {
+-        fallbackOrder.first { $0 != wanted && $0.availability(in: engine) == .available } ?? .wined3d
++    public static func fallback(for wanted: Renderer, in engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Renderer {
++        fallbackOrder.first { $0 != wanted && $0.availability(in: engine, macOSMajor: macOSMajor) == .available } ?? .wined3d
+     }
+ 
+     /// The mode a new environment starts on: the first in `fallbackOrder` this engine can run.
+     /// DXMT on every Intel engine, as before; DXVK on an engine without DXMT (the arm64 line),
+     /// rather than a DXMT setting that would degrade at every launch.
+-    public static func defaultMode(for engine: InstalledEngine) -> Renderer {
+-        fallbackOrder.first { $0.availability(in: engine) == .available } ?? .wined3d
++    public static func defaultMode(for engine: InstalledEngine, macOSMajor: Int = Renderer.hostMacOSMajor) -> Renderer {
++        fallbackOrder.first { $0.availability(in: engine, macOSMajor: macOSMajor) == .available } ?? .wined3d
+     }
+ 
+     public static func displayName(_ r: Renderer) -> String {
+```
+
+**File**: `Sources/highball/main.swift` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ struct Engine: AsyncParsableCommand {
+                     switch r.availability(in: e) {
+                     case .available: return r.rawValue
+                     case .needsLicence: return "\(r.rawValue) (licence not accepted)"
++                    case let .needsMacOS(v): return "\(r.rawValue) (needs macOS \(v))"
+                     case .notShipped: return nil
+                     }
+                 }.joined(separator: ",")
+```
+
+**File**: `Tests/HighballKitTests/RendererAvailabilityTests.swift` (modified, +17/-0)
+```diff
+@@ -55,6 +55,23 @@ final class RendererAvailabilityTests: EnglishCopyTestCase {
+         XCTAssertEqual(Renderer.defaultMode(for: try engine(ships: [], accepted: false)), .wined3d)
+     }
+ 
++    /// DXMT's built-in shaders need macOS 15 (highball#584: Palia drew only its cursor on macOS 14.8
++    /// on an M2 Pro). Below it DXMT is unavailable, so nothing picks it on its own.
++    func testDXMTNeedsMacOS15() throws {
++        let e = try engine(accepted: false)
++        XCTAssertEqual(Renderer.dxmt.availability(in: e, macOSMajor: 14), .needsMacOS(15))
++        XCTAssertEqual(Renderer.dxmt.availability(in: e, macOSMajor: 15), .available)
++        XCTAssertEqual(Renderer.dxvk.availability(in: e, macOSMajor: 14), .available, "DXVK has no such floor")
++        XCTAssertEqual(Renderer.defaultMode(for: e, macOSMajor: 14), .dxvk, "a new environment on macOS 14 starts on DXVK")
++        XCTAssertEqual(Renderer.defaultMode(for: e, macOSMajor: 27), .dxmt)
++        XCTAssertEqual(Renderer.fallback(for: .dxmt, in: e, macOSMajor: 14), .dxvk)
++        let why = try XCTUnwrap(Renderer.dxmt.unavailableReason(in: e, macOSMajor: 14))
++        XCTAssertTrue(why.contains("macOS 15"), why)
++        XCTAssertNil(Renderer.dxmt.unavailableReason(in: e, macOSMajor: 26))
++        // An engine without DXMT says so, whatever the macOS.
++        XCTAssertEqual(Renderer.dxmt.availability(in: try engine(ships: ["dxvk"], accepted: false), macOSMajor: 14), .notShipped)
 +    }
 +
-     /// A dangling symlink used to slip past create()'s fileExists guard, which follows links, so
-     /// creation failed later with a raw Foundation error on a name nothing would show.
-     func testCreateRefusesANameHeldByADanglingSymlink() throws {
+     // MARK: Direct3D 12-only programs (highball#139)
+ 
+     func testADirect3D12OnlyProgramGetsAModeThatHasIt() throws {
+```
+
+---
+
+### Incident Patch 3: `f7dd70ce` (2026-11-21)
+**Commit Message**: A preview engine a player took for a game also shows its line's later revisions. hsuanice took arm64 r4 from Play for Forza Horizon 6, and r5, which carried the 7.1.4 sound fix the game needed, never appeared: the opt-in counted r4 alone, so the environment's Engine picker listed one arm64 engine and stayed hidden, and only a defaults write showed r5 (highball#672). EngineChannels.visible now counts an opt-in for the same engine and every later revision of its line, never earlier ones or another line, the same rule Play already follows when it moves an environment to the revision a recipe pins (EngineChannels.runsLine). A recipe pinning a later revision is no longer hidden for such a player, and Play then offers the move once, as before. The old test's other engine is now on another line.
+
+**File**: `Sources/HighballKit/EngineChannels.swift` (modified, +4/-2)
+```diff
+@@ -23,10 +23,12 @@ public enum EngineChannels {
+         }
+     }
+ 
+-    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game.
++    /// The same rule for one engine, counting the player's opt-ins: a preview engine they took for a game, and the
++    /// later revisions of its line. A player who took r4 for Forza Horizon 6 never saw r5, which carried the sound fix
++    /// the game needed: the environment's Engine picker listed r4 alone and so stayed hidden (highball#672).
+     public static func visible(_ manifest: EngineManifest, beta: Bool, preview: Bool, optedIn: Set<String>) -> Bool {
+         visible(channel: manifest.channel, beta: beta, preview: preview)
+-            || (manifest.channel == Self.preview && optedIn.contains(manifest.id))
++            || (manifest.channel == Self.preview && optedIn.contains { EngineManifest.isAtOrAfter(current: manifest.id, wanted: $0) })
+     }
+ 
+     /// Whether a recipe's engine pin names a bundled engine this install may not see. Such a recipe
+```
+
+**File**: `Tests/HighballKitTests/EngineChannelsTests.swift` (modified, +14/-1)
+```diff
+@@ -46,7 +46,7 @@ final class EngineChannelsTests: XCTestCase {
+ 
+     func testAPreviewEngineTakenForAGameIsSeenAndNoOtherIs() throws {
+         let line = try manifest(id: "arm64-line-r1", channel: "preview")
+-        let other = try manifest(id: "arm64-line-r2", channel: "preview")
++        let other = try manifest(id: "arm64-other-r2", channel: "preview")
+         let betaLine = try manifest(id: "x64-beta-r1", channel: "beta")
+         XCTAssertTrue(EngineChannels.visible(line, beta: false, preview: false, optedIn: ["arm64-line-r1"]))
+         XCTAssertFalse(EngineChannels.visible(other, beta: false, preview: false, optedIn: ["arm64-line-r1"]))
+@@ -56,6 +56,19 @@ final class EngineChannelsTests: XCTestCase {
+         XCTAssertTrue(EngineChannels.hidesPin("arm64-line-r1", bundled: [line], beta: false, preview: false, optedIn: []))
+     }
+ 
++    func testAPreviewOptInAlsoShowsTheLaterRevisionsOfItsLine() throws {
++        let r3 = try manifest(id: "arm64-line-r3", channel: "preview")
++        let r4 = try manifest(id: "arm64-line-r4", channel: "preview")
++        let r5 = try manifest(id: "arm64-line-r5", channel: "preview")
++        let other = try manifest(id: "arm64-other-r5", channel: "preview")
++        let opted: Set<String> = ["arm64-line-r4"]
++        XCTAssertTrue(EngineChannels.visible(r5, beta: false, preview: false, optedIn: opted), "the revision after the one taken")
++        XCTAssertTrue(EngineChannels.visible(r4, beta: false, preview: false, optedIn: opted))
++        XCTAssertFalse(EngineChannels.visible(r3, beta: false, preview: false, optedIn: opted), "not the ones before it")
++        XCTAssertFalse(EngineChannels.visible(other, beta: false, preview: false, optedIn: opted), "not another line")
++        XCTAssertFalse(EngineChannels.hidesPin("arm64-line-r5", bundled: [r4, r5], beta: false, preview: false, optedIn: opted))
++    }
++
+     func testPlayOffersAHiddenPreviewPinAndNothingElse() throws {
+         let bundled = [try manifest(id: "arm64-line-r1", channel: "preview"), try manifest(id: "x64-line-r9", channel: nil),
+                        try manifest(id: "x64-beta-r1", channel: "beta")]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #751** (2026-11-20): List environments when the bottles folder is a symlink (@gauthierpiarrette)
-- **PR #742** (2026-11-20): highball play fails for a game that isn't installed, also without --wait (@gauthierpiarrette)
-- **PR #741** (2026-11-20): Wine 11 r34 and r35, and engine paths in recipe variables, for Diablo II: Resurrected (@gauthierpiarrette)
-- **PR #731** (2026-11-17): Display setting: say where a fullscreen game opens (@gauthierpiarrette)
-- **PR #727** (2026-11-14): Wine 10 r30 and r31 carry the new audio library (microphones, real time audio clock, output follow) (@gauthierpiarrette)
-- **PR #726** (2026-11-14): Demos of owned games stay out, play --wait returns for games that aren't installed (#432) (@gauthierpiarrette)
+- **PR #783** (2026-11-24): CLI: --wait follows Mac builds, JSON gets installedOnWindows and hidden (@gauthierpiarrette)
+- **PR #782** (2026-11-24): DXMT needs macOS 15: macOS 14 environments use DXVK instead (@gauthierpiarrette)
+- **PR #774** (2026-11-22): Two Chinese lines from #759 in the translator's wording (@gauthierpiarrette)
+- **PR #769** (2026-11-22): A preview engine opt-in also shows the later revisions of its line (@gauthierpiarrette)
+- **PR #762** (2026-11-24): Show progress while games load (@aswanth6000)
+- **PR #759** (2026-11-21): Move a program to another environment, and pick the environment when running a program (@gauthierpiarrette)
 
 ---
 
@@ -1422,41 +1528,57 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb
+## X. highball play --wait follows Mac builds, Steam for Mac's included, and the libra
 
 **RULE**:
-When implementing operations in `Sources/HighballKit/Bottle.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/HighballApp/AppState.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39e06d01`: Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one rebuilt Wine, highball-engine release engine-wine-11.0-20261114T185735Z-fiber-mirror-switch (run 43624249972,, sha256 ee1609f0, public download checked). Its patch 0031 lets a game's recipe turn the fiber mirror off with HB_FIBER_MIRROR=0: D3DMetal calls macOS code straight from the game's fiber threads, and D2R exited with SIGILL before any window while the mirror put a fiber pointer in the QoS slot. Without the variable nothing changes, so Guardians of the Galaxy and Metaphor keep it. A recipe's variable can now name a file of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does, since D2R also needs CX_APPLEGPTK_LIBD3DSHARED_PATH set to its engine's libd3dshared.dylib (AlexPako played 35 minutes with both, sync off and MSync, M5 Pro, macOS 27.2.1). Every other archive is the base's, so only the Wine downloads. 875 tests pass.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d471e91`: highball play --wait follows Mac builds, Steam for Mac's included, and the library JSON says installedOnWindows and hidden (highball#432). RunningGames, which --wait reads, held only the sessions in environments, so a wait on a game Steam for Mac started ran to --start-timeout and gave up while the game played (Terraforming Mars, udance4ever timed 49 s). It now also holds the Epic and GOG Mac builds Highball started and the Steam for Mac games Play opened, followed by their process under steamapps/common for up to ten minutes to appear and then until they quit. The JSON's installed is now installedOnWindows, beside installedOnMac, since the command hasn't shipped yet, and hidden says what the player hid from the library. play's id help names the form. New test in PlayFromCommandLineTests, 16 tests pass, and highball library --json lists the real library with both fields. The Steam for Mac wait is not tried live yet.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/Bottle.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballApp/AppState.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // on this environment (a driver's shader cache kept inside it, and gone with it). A recipe can also name a file
-        // of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does: Diablo II:
-        // Resurrected needs Wine to load D3DMetal's libd3dshared.dylib (highball#371), which sits in each engine's own
-        // folder.
-        let frameworks = engine.frameworksDir.path, renderers = engine.renderersDir.path
-        return env.mapValues {
-            MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path)
-                .replacingOccurrences(of: "${frameworks}", with: frameworks)
-                .replacingOccurrences(of: "${renderers}", with: renderers)
+        if openInSteamForMac(URL(string: "steam://run/\(appid)")!),
+           let game = macSteamGames.first(where: { $0.appid == appid }), !game.installdir.isEmpty {
+            watchMacSteamGame(item.id, markers: SessionWatch.markers(installdir: game.installdir))
         }
+    }
+
+    /// Follows a game Steam for Mac started for Highball by its process, whose path runs through
+    /// its steamapps/common folder: up to ten minutes for it to appear (Steam may update it first),
+    /// then until it quits. Only `highball play --wait` reads it (writeRunningGames).
+    private func watchMacSteamGame(_ id: String, markers: [String]) {
+        Task { [weak self] in
+            var seen = false
+            for _ in 0..<300 {
+                try? await Task.sleep(for: .seconds(2))
+                let alive = SessionWatch.isAlive(markers: markers, ps: await Self.processList())
+                guard let self else { return }
+                if alive, !seen { seen = true; self.macSteamRunning.insert(id) }
+                if seen, !alive { self.macSteamRunning.remove(id); return }
+            }
+            while seen {
+                try? await Task.sleep(for: .seconds(2))
+                gu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        // on this environment (a driver's shader cache kept inside it, and gone with it).
-        return env.mapValues { MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path) }
+        _ = openInSteamForMac(URL(string: "steam://run/\(appid)")!)
+        didSet {
+            let ids = runningSessions.compactMap(\.libraryID)
+            if ids != oldValue.compactMap(\.libraryID) { RunningGames.write(ids, paths: paths) }
+        }
+    var macGameProcesses: [String: Process] = [:]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39e06d01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d471e91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

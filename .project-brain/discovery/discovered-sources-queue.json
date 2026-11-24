@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T01:47:01.175Z",
+  "updated_at": "2026-11-24T01:56:07.149Z",
   "stats": {
-    "total_discovered": 8217,
-    "approved_pending_harvest": 7784,
+    "total_discovered": 8233,
+    "approved_pending_harvest": 7800,
     "harvested_count": 0,
     "rejected_count": 433,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7765,
+      "COMMUNITY_AND_EXPERT": 7781,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -177766,6 +177766,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
         "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-3DEFDA96D71A": {
+      "id": "SRC-3DEFDA96D71A",
+      "url": "https://schema.tauri.app/config/2",
+      "title": "https://schema.tauri.app/config/2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-27678B725E23": {
+      "id": "SRC-27678B725E23",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-FC0F0B8E133E": {
+      "id": "SRC-FC0F0B8E133E",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.420Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-8F727054764A": {
+      "id": "SRC-8F727054764A",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.477Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-410DE5ED1E34": {
+      "id": "SRC-410DE5ED1E34",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.535Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-5F1883150760": {
+      "id": "SRC-5F1883150760",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-8BB7720832B5": {
+      "id": "SRC-8BB7720832B5",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-181C34DE5CD0": {
+      "id": "SRC-181C34DE5CD0",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-0E60D7E99D91": {
+      "id": "SRC-0E60D7E99D91",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.764Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-DE6D630192EE": {
+      "id": "SRC-DE6D630192EE",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-5D99EC21DE0A": {
+      "id": "SRC-5D99EC21DE0A",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-x64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-AF7B0FA58FFF": {
+      "id": "SRC-AF7B0FA58FFF",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-7048B6930EAB": {
+      "id": "SRC-7048B6930EAB",
+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-arm64.tar.gz",
+      "title": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-arm64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:05.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-96504647E65A": {
+      "id": "SRC-96504647E65A",
+      "url": "https://github.com/gauthierpiarrette/highball-db/issues/537",
+      "title": "https://github.com/gauthierpiarrette/highball-db/issues/537",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:07.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
+        "fileName": "gauthierpiarrette-highball-learnings.md"
+      }
+    },
+    "SRC-8B8F80A8456D": {
+      "id": "SRC-8B8F80A8456D",
+      "url": "https://github.com/user-attachments/assets/9b5f0b04-14ff-4037-9aab-a9fb277113ac",
+      "title": "https://github.com/user-attachments/assets/9b5f0b04-14ff-4037-9aab-a9fb277113ac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:07.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
+        "fileName": "gauthierpiarrette-highball-learnings.md"
+      }
+    },
+    "SRC-BDDE9F55044D": {
+      "id": "SRC-BDDE9F55044D",
+      "url": "https://github.com/gauthierpiarrette/highball/releases/tag/v0.10.29",
+      "title": "https://github.com/gauthierpiarrette/highball/releases/tag/v0.10.29",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:56:07.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
+        "fileName": "gauthierpiarrette-highball-learnings.md"
       }
     }
   }

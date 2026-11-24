@@ -12588,3 +12588,5 @@ Every entry in this ledger must capture:
 | `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `ce2ddf07` | Multi-dimensional audit evidence | 2026-11-24T01:37:59.154Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `5d062a3c` | Multi-dimensional audit evidence | 2026-11-24T01:46:51.669Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `48344754` | Multi-dimensional audit evidence | 2026-11-24T01:46:55.595Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `026413dc` | Multi-dimensional audit evidence | 2026-11-24T01:55:59.548Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `062ea35b` | Multi-dimensional audit evidence | 2026-11-24T01:56:01.658Z |
