@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:45:52.736Z",
+  "last_updated": "2026-11-24T12:54:43.546Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-I8E5",
+      "id": "CD-5MX8",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-I8E5-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5MX8-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -54658,6 +54658,59 @@
       "source_repo": "gluesql-gluesql",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F98260-push-down-ifnull-coalesce-and-nullif-in-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-4RUG",
+      "directive_title": "stop reading React's shadow node wrapper on the UI thread",
+      "source_repo": "software-mansion/react-native-reanimated",
+      "source_commit": "22cbff88",
+      "staged_file": "11_INBOX/candidate-directives/CD-4RUG-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4UW8",
+      "directive_title": "add WorkerUtilizationTracker for event-loop utilization",
+      "source_repo": "envoyproxy/envoy",
+      "source_commit": "ef0e49cf",
+      "staged_file": "11_INBOX/candidate-directives/CD-4UW8-add-workerutilizationtracker-for-event-loop-utilization.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5L9G",
+      "directive_title": "Reanimated): stop reading React's shadow node wrapper on the UI thread",
+      "source_repo": "software-mansion-react-native-reanimated-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5L9G-reanimated-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5M0C",
+      "directive_title": "resource_monitors: add WorkerUtilizationTracker for event-loop utilization",
+      "source_repo": "envoyproxy-envoy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5M0C-resource_monitors-add-workerutilizationtracker-for-event-loop-utilization.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-B17C79",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B17C79-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-24"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T20:25:10.590Z",
+  "timestamp": "2026-11-24T12:54:41.250Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-software-mansion-react-native-reanimated-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-reanimated-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T20:25:10.590Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:54:41.250Z`  
 > **Learning ID**: `LEARN-EVO-software-mansion-react-native-reanimated-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `2d283998`  
+> **Source Version**: `22cbff88`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T20:24:56.801Z  
+> **Timestamp**: 2026-11-24T12:54:01.842Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:24:56.794Z  
+> **Harvest Timestamp**: 2026-11-24T12:54:01.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11089 stars
+- **Stars / Engagement**: 11094 stars
 
 ---
 
@@ -923,815 +923,791 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `816d62ba` (2026-11-20)
-**Commit Message**: fix(Worklets): preserve UI scheduler order (#11439)
-
-> [!NOTE]
-> This pull request was authored by AI on behalf of @tjzel.
-
-## Human track
-
-### Why
-
-Fixes #11429.
-
-`IOSUIScheduler::scheduleOnUI` and its Android counterpart run a job
-inline when called from the UI thread. This lets the new job overtake
-older jobs already queued from another thread. A synchronous React event
-can therefore unregister a frame callback before its earlier
-registration reaches the UI runtime. The same ordering problem can
-affect mapper and shared-value setup.
-
-### How
-
-Every UI job now enters the shared FIFO queue before the platform
-scheduler decides how to trigger it:
-
-```text
-background caller ─┐
-                   ├─> FIFO queue ─> guarded drain on UI thread
-UI-thread caller ──┘
-```
-
-A drain guard prevents a job that schedules another UI job from
-recursively draining the queue. Explicit exception handling resets the
-state and rethrows if a queued job fails.
-
-Follow-up PR #11457 adds a separate Reanimated defense against unknown
-frame callback IDs.
-
-### Testing
-
-Added a Bundle Mode runtime regression that holds an active UI job while
-a worker queues older work, then verifies that the older work runs
-fi
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx` (modified, +48/-1)
-```diff
-@@ -1,11 +1,13 @@
- import {
--  scheduleOnRuntime,
-+  createSynchronizable,
-   scheduleOnRN,
-+  scheduleOnRuntime,
-   scheduleOnUI,
- } from 'react-native-worklets';
- 
- import {
-   beforeEach,
-+  createOrderConstraint,
-   describe,
-   expect,
-   getWorkletRuntimesFromPool,
-@@ -48,6 +50,51 @@ describe('scheduleOnUI', () => {
-   });
- 
-   if (globalThis._WORKLETS_BUNDLE_MODE_ENABLED) {
-+    test('preserves queued UI work before a UI caller', async () => {
-+      const [confirmedOrder, order] = createOrderConstraint();
-+      const uiActive = createSynchronizable(false);
-+      const queued = createSynchronizable(false);
-+      const [first, second] = ['first', 'second'];
-+
-+      scheduleOnRuntime(workletRuntime, () => {
-+        'worklet';
-+        const deadline = performance.now() + 1000;
-+        while (!uiActive.getBlocking() && performance.now() < deadline) {
-+          uiActive.getBlocking();
-+        }
-+        if (!uiActive.getBlocking()) {
-+          throw new Error('UI job did not start.');
-+        }
-+        scheduleOnUI(() => {
-+          'worklet';
-+          order(1, first);
-+        });
-+        queueMicrotask(() => {
-+          queued.setBlocking(true);
-+        });
-+      });
-+
-+      scheduleOnUI(() => {
-+        'worklet';
-+        uiActive.setBlocking(true);
-+        const deadline = performance.now() + 1000;
-+        while (!queued.getBlocking() && performance.now() < deadline) {
-+          queued.getBlocking();
-+        }
-+        if (!queued.getBlocking()) {
-+          throw new Error('Worker did not enqueue the UI job.');
-+        }
-+        scheduleOnUI(() => {
-+          'worklet';
-+          order(2, second);
-+        });
-+      });
-+
-+      await waitForNotification(first);
-+      await waitForNotification(second);
-+      expect(confirmedOrder.value).toBe(2);
-+    });
-+
-     test('schedules on UI Runtime to UI Runtime', async () => {
-       scheduleOnUI(() => {
-         'worklet';
-```
-
-**File**: `packages/react-native-worklets/Common/cpp/worklets/Tools/UIScheduler.cpp` (modified, +14/-4)
-```diff
-@@ -12,11 +12,21 @@ void UIScheduler::scheduleOnUI(std::function<void()> job) {
- }
- 
- void UIScheduler::triggerUI() {
--  scheduledOnUI_ = false;
--  while (!uiJobs_.empty()) {
--    const auto job = uiJobs_.pop();
--    job();
-+  if (drainingUI_) {
-+    return;
-   }
-+  drainingUI_ = true;
-+  try {
-+    scheduledOnUI_ = false;
-+    while (!uiJobs_.empty()) {
-+      const auto job = uiJobs_.pop();
-+      job();
-+    }
-+  } catch (...) {
-+    drainingUI_ = false;
-+    throw;
-+  }
-+  drainingUI_ = false;
- }
- 
- bool UIScheduler::isOnUIThread() const {
-```
-
-**File**: `packages/react-native-worklets/Common/cpp/worklets/Tools/UIScheduler.h` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@ class UIScheduler {
-  protected:
-   virtual bool queryIsOnUIThread() const = 0;
- 
-+  bool drainingUI_{false};
-   std::atomic<bool> scheduledOnUI_{false};
-   ThreadSafeQueue<std::function<void()>> uiJobs_;
- };
-```
-
-**File**: `packages/react-native-worklets/android/src/main/cpp/worklets/android/AndroidUIScheduler.cpp` (modified, +2/-2)
-```diff
-@@ -25,11 +25,11 @@ class UISchedulerWrapper : public UIScheduler {
-   }
- 
-   void scheduleOnUI(std::function<void()> job) override {
-+    UIScheduler::scheduleOnUI(std::move(job));
-     if (isOnUIThread()) {
--      job();
-+      triggerUI();
-       return;
-     }
--    UIScheduler::scheduleOnUI(job);
-     if (!scheduledOnUI_) {
-       scheduledOnUI_ = true;
-       static const auto method = androidUiScheduler_->getClass()->getMethod<void()>("scheduleTriggerOnUI");
-```
-
-**File**: `packages/react-native-worklets/apple/worklets/apple/IOSUIScheduler.mm` (modified, +3/-3)
-```diff
-@@ -1,5 +1,6 @@
- #import <Foundation/Foundation.h>
- #import <dispatch/dispatch.h>
-+#import <utility>
- 
- #import <worklets/apple/IOSUIScheduler.h>
- 
-@@ -15,13 +16,12 @@
- 
- void IOSUIScheduler::scheduleOnUI(std::function<void()> job)
- {
-+  UIScheduler::scheduleOnUI(std::move(job));
-   if (isOnUIThread()) {
--    job();
-+    triggerUI();
-     return;
-   }
- 
--  UIScheduler::scheduleOnUI(job);
--
-   if (!scheduledOnUI_) {
-     dispatch_async(dispatch_get_main_queue(), [weakThis = weak_from_this()] {
-       // Before triggering the UI, we check if the weak pointer is still valid to avoid possible dangling pointer
-```
-
-**File**: `packages/react-native-worklets/changelog/preserve-ui-scheduler-order.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Preserve UI job order when scheduling work from the UI thread.
-```
-
----
-
-### Incident Patch 2: `861c4ac0` (2026-11-19)
-**Commit Message**: fix(Worklets): run the microtasks of synchronous calls when the outermost call returns (#11410)
+### Incident Patch 1: `cec3cdc5` (2026-11-24)
+**Commit Message**: fix(Reanimated): stop reading React's shadow node wrapper on the UI thread (#11464)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @tjzel.
 
 ## Summary
 
-Stacked on #11421 and #11377. Needed by #11372. Refs #10845.
-
-## Human track
-
 ### Why
 
-A synchronous call into a Worklet Runtime (`runOnUISync`,
-`runOnRuntimeSync`, and the calls Reanimated makes for events, sensors
-and layout animations) did not run a microtask checkpoint. Microtasks
-queued in such a call waited for a later task. On the UI runtime that
-task was the next frame of the frame loop, which always runs today.
-#11372 makes the frame loop run on demand, so there may be no next
-frame, and a promise reaction queued in an event handler or in
-`runOnUISync` would then never run.
+The ThreadSanitizer nightly reports a data race in every run since #120
+(2026-11-17), for example
+[#123](https://github.com/software-mansion/react-native-reanimated/actions/runs/44677618659).
+The same race is reported in #11232, and #11449 proposed the same fix
+before it was closed in favor of this PR.
+
+Reanimated hands React Native's own shadow node wrappers to the UI
+thread, through animated styles and `useAnimatedRef`. React Native
+updates the node a wrapper points to on the JS thread whenever it clones
+that node itself, for example when a child is appended. The UI thread
+can read the same pointer at the same time. That is undefined behavior
+and can lead to a use-after-free.
+
+### What
+
+The UI thread no longer reads React Native's wrappers. It gets its own
+detached copy of each wrapper, which points at the same node and which
+React Native never updates. Nothing changes in the public API.
 
 ### How
 
 ```
-before: sync call -> returns, microtasks stay queued -> a later task or frame drains them
-after:  sync call -> requests a checkpoint -> the outermost call into the runtime drains when it returns
-```
+JS thread:  React Native's wrapper ──copy──▶ detached wrapper (same node, not known to React Native)
+UI th
 
-- The checkpoint is still a policy of each call. A call that requests it
-marks the request on the runtime. The outermost call runs the checkpoint
-when it returns, if a request was made by it or by a call nested in it
-
-**File**: `apps/common-app/runtime-tests/worklets/suites.ts` (modified, +1/-0)
+**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +10/-2)
 ```diff
-@@ -54,6 +54,7 @@ export const WORKLETS_TEST_SUITES: RuntimeTestSuite[] = [
-       require('./tests/runtimes/runOnRuntimeSyncWithId.test');
-       require('./tests/runtimes/scheduleOnRuntimeWithId.test');
-       require('./tests/runtimes/microtaskDrains.test');
-+      require('./tests/runtimes/reentrantModuleLoad.test');
-       require('./tests/runtimes/microtaskErrors.test');
-       require('./tests/runtimes/weakRef.test');
-       require('./tests/runtimes/performanceNow.test');
-```
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskDrains.test.tsx` (modified, +149/-31)
-```diff
-@@ -1,6 +1,7 @@
- import type { Synchronizable } from 'react-native-worklets';
- import {
-   createSynchronizable,
-+  isBundleModeEnabled,
-   runOnRuntimeAsync,
-   runOnRuntimeAsyncWithId,
-   runOnRuntimeSync,
-@@ -25,23 +26,24 @@ import {
-   waitForNotifications,
- } from '../../../ReJest/RuntimeTestsApi';
- 
--const DONE_NOTIFICATION = 'DONE';
--
- type OrderSetter = ReturnType<typeof createOrderConstraint>[1];
- 
--describe('microtask draining', () => {
--  const [workletRuntime] = getWorkletRuntimesFromPool(1);
-+const MICROTASK_NOT_RUN = 0;
-+const MICROTASK_RAN_IN_SAME_CALL = 1;
-+const MICROTASK_RAN_IN_LATER_CALL = 2;
-+const NESTED_CALL_RESULT = 42;
- 
--  const notifyDone = () => {
--    notify(DONE_NOTIFICATION);
--  };
-+type RootTaskIdGlobal = typeof globalThis & {
-+  __getRootTaskId: () => number;
-+};
- 
--  const flushProbe = () => {
--    'worklet';
--    queueMicrotask(() => {
--      scheduleOnRN(notifyDone);
--    });
--  };
-+function getRootTaskId() {
-+  'worklet';
-+  return (globalThis as RootTaskIdGlobal).__getRootTaskId();
-+}
-+
-+describe('microtask draining', () => {
-+  const [workletRuntime] = getWorkletRuntimesFromPool(1);
- 
-   const checkpointProbe = (order: OrderSetter) => {
-     'worklet';
-@@ -51,10 +53,15 @@ describe('microtask draining', () => {
-     order(1, 'task');
-   };
- 
--  const pendingMicrotaskProbe = (flag: Synchronizable<boolean>) => {
-+  const pendingMicrotaskProbe = (state: Synchronizable<number>) => {
-     'worklet';
-+    const rootTaskId = getRootTaskId();
-     queueMicrotask(() => {
--      flag.setBlocking(true);
-+      state.setBlocking(
-+        getRootTaskId() === rootTaskId
-+          ? MICROTASK_RAN_IN_SAME_CALL
-+          : MICROTASK_RAN_IN_LATER_CALL
-+      );
-     });
-   };
- 
-@@ -123,31 +130,26 @@ describe('microtask draining', () => {
-     });
-   });
- 
--  const noCheckpointCases: {
-+  const syncCases: {
-     name: string;
--    runtimeId: number;
--    invoke: (flag: Synchronizable<boolean>) => void;
-+    invoke: (state: Synchronizable<number>) => void;
-   }[] = [
-     {
-       name: 'runOnUISync',
--      runtimeId: UIRuntimeId,
-       invoke: (flag) => runOnUISync(pendingMicrotaskProbe, flag),
+@@ -52,6 +52,7 @@ const SUITES: RuntimeTestSuite[] = [
+     importTest: () => {
+       require('./tests/core/useAnimatedRef.test');
+       require('./tests/core/useAnimatedRefRetention.test');
++      require('./tests/core/useAnimatedRefNewestClone.test');
+       require('./tests/core/getAnimatableRef.test');
+       // TODO: update expected values
+       // require('./tests/core/cancelAnimation.test');
+@@ -78,6 +79,12 @@ const SUITES: RuntimeTestSuite[] = [
+       // require('./tests/core/onLayout.test');
      },
-     {
-       name: 'runOnRuntimeSync',
--      runtimeId: workletRuntime.runtimeId,
-       invoke: (flag) =>
-         runOnRuntimeSync(workletRuntime, pendingMicrotaskProbe, flag),
-     },
-     {
-       name: 'runOnRuntimeSyncWithId, UI Runtime',
--      runtimeId: UIRuntimeId,
-       invoke: (flag) =>
-         runOnRuntimeSyncWithId(UIRuntimeId, pendingMicrotaskProbe, flag),
-     },
-     {
-       name: 'runOnRuntimeSyncWithId, Worker Runtime',
--      runtimeId: workletRuntime.runtimeId,
-       invoke: (flag) =>
-         runOnRuntimeSyncWithId(
-           workletRuntime.runtimeId,
-@@ -157,20 +159,136 @@ describe('microtask draining', () => {
-     },
-   ];
- 
--  noCheckpointCases.forEach(({ name, runtimeId, invoke }) => {
-+  syncCases.forEach(({ name, invoke }) => {
-     describe(name, () => {
--      test('defers queued microtasks past the synchronous call', async () => {
--        const flag = createSynchronizable(false);
-+      test('runs queued microtasks at the end of the synchronous call', () => {
-+        const state = createSynchronizable(MICROTASK_NOT_RUN);
- 
--        invoke(flag);
-+        invoke(state);
- 
--        expect(flag.getBlocking()).toBe(false);
-+        expect(state.getBlocking()).toBe(MICROTASK_RAN_IN_SAME_CALL);
-+      });
-+    });
-+  });
- 
--        scheduleOnRuntimeWithId(runtimeId, flushProbe);
--        await waitForNotification(DONE_NOTIFICATION);
-+  const NESTED_NOTIFICATION = 'NESTED_SYNC_CALL';
-+  const NESTED_MICROTASK_NOTIFICATION = 'NESTED_SYNC_CALL_MICROTASK';
-+  const nestedResults = new Map<number, boolean>();
- 
--        expect(flag.getBlocking()).toBe(true);
--      });
-+  const nestedCallsExecuted = new Map<number, boolean>();
-+
-+  const onNestedResult = (
-+    token: number,
-+    ranDuringTask: boolean,
-+    nestedCallExecuted: boolean
-+  ) => {
-+    nestedResults.set(token, ranDuringTask);
-+    nestedCallsExecuted.set(token, nestedCallExecuted);
-+    notify(`${NESTED_NOTIFICATION}_${token}`);
-+  };
-+
-+  const nestedMicrotaskRanInOuterTask = new Map<number, boolean>();
-+
-+  const onNestedMicrotask = (token: number, ranInOuterTask: boolean) => {
-+    nestedMicrotaskRanInOuterTask.set(token, ranInOuterTask);
-+    notify(`${NESTED_MICROTASK_NOTIFICATION}_${token}`);
-+  };
-+
-+  const nestedSyncCallProbe = (runtimeId: number, token: number) => {
-+    'worklet';
-+    const rootTaskId = getRootTaskId();
-+    let microtaskRan = false;
-+    queueMicrotask(() => {
-+      microtaskRan = true;
-+      scheduleOnRN(onNestedMicrotask, token, getRootTaskId() === rootTaskId);
-+    });
-+    const nestedCallResult = runOnRuntimeSyncWithId(runtimeId, () => {
-+      'worklet';
-+      return NESTED_CALL_RESULT;
-+    });
-+    scheduleOnRN(
-+      onNestedResult,
-+      token,
-+      microtaskRan,
-+      nestedCallResult === NESTED_CALL_RESULT
-+    );
-+  };
-+
-+  const nestedSyncC
-```
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskErrors.test.tsx` (modified, +24/-0)
-```diff
-@@ -1,4 +1,5 @@
- import {
-+  runOnUISync,
-   scheduleOnRN,
-   scheduleOnRuntime,
-   scheduleOnUI,
-@@ -15,6 +16,7 @@ import {
- 
- const UI_ERROR = 'microtask error on the UI Runtime';
- const WORKER_ERROR = 'microtask error on a Worker Runtime';
-+const SYNC_CALL_ERROR = 'microtask error in a synchronous call';
- const ALIVE_NOTIFICATION = 'RUNTIME_ALIVE_AFTER_MICROTASK_ERROR';
- 
- describe('errors thrown by microtasks', () => {
-@@ -47,6 +49,28 @@ describe('errors thrown by microtasks', () => {
-     }
-   );
- 
-+  debugTest(
-+    'reports an error thrown at the checkpoint of a synchronous call into the UI Runtime',
-+    async () => {
-+      await expect(() => {
-+        runOnUISync(() => {
-+          'worklet';
-+          queueMicrotask(() => {
-+            throw new Error(SYNC_CALL_ERROR);
-+          });
-+        });
-+      }).toThrow(SYNC_CALL_ERROR);
-+
-+      scheduleOnUI(() => {
-+        'worklet';
-+        queueMicrotask(() => {
-+          scheduleOnRN(onAlive);
-+        });
-+      });
-+      await waitForNotification(ALIVE_NOTIFICATION);
-+    }
-+  );
-+
-   debugTest(
-     'reports an error thrown at the checkpoint of a worklet scheduled on a Worker Runtime',
-     async () => {
-```
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModule.ts` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+import {
-+  getRuntimeKind,
-+  runOnRuntimeSyncWithId,
-+  RuntimeKind,
-+} from 'react-native-worklets';
-+
-+type ReentrantModuleGlobal = typeof globalThis & {
-+  __reentrantModuleRuntimeId?: number;
-+};
-+
-+export const evaluationLog: string[] = [];
-+
-+const runtimeId = (globalThis as ReentrantModuleGlobal)
-+  .__reentrantModuleRuntimeId;
-+
-+if (getRuntimeKind() === RuntimeKind.Worker && runtimeId !== undefined) {
-+  evaluationLog.push('module begins');
-+  queueMicrotask(() => {
-+    evaluationLog.push('microtask');
-+  });
-+  runOnRuntimeSyncWithId(runtimeId, () => {
-+    'worklet';
-+  });
-+  evaluationLog.push('module ends');
-+}
-```
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModuleLoad.test.tsx` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+import {
-+  createWorkletRuntime,
-+  isBundleModeEnabled,
-+  runOnRuntimeSync,
-+} from 'react-native-worklets';
-+
-+import { describe, expect, test } from '../../../ReJest/RuntimeTestsApi';
-+import { evaluationLog } from './reentrantModule';
-+
-+type ReentrantModuleGlobal = typeof globalThis & {
-+  __reentrantModuleRuntimeId?: number;
-+};
-+
-+describe('module loaded while a worklet is unpacked', () => {
-+  const reentrantModuleTest = isBundleModeEnabled() ? test : test.skip;
-+
-+  reentrantModuleTest(
-+    'runs microtasks queued by the module after the worklet',
-+    () => {
-+      const runtime = createWorkletRuntime({
-+        name: 'reentrant module load',
-+      });
-+      runOnRuntimeSync(
-+        runtime,
-+        (runtimeId: number) => {
-+          'worklet';
-+          (globalThis as ReentrantModuleGlobal).__reentrantModuleRuntimeId =
-+            runtimeId;
-+        },
-+        runtime.runtimeId
-+      );
-+
-+      runOnRuntimeSync(runtime, () => {
-+        'worklet';
-+        evaluationLog.push('worklet body');
-+      });
-+      const log = runOnRuntimeSync(runtime, () => {
-+        'worklet';
-+        return evaluationLog.join(', ');
-+      });
-+
-+      expect(log).toBe('module begins, module ends, worklet body, microtask');
-+    }
-+  );
-+});
-```
-
-**File**: `apps/fabric-example/babel.config.js` (modified, +3/-0)
-```diff
-@@ -6,6 +6,9 @@ const workletsPluginOptions = {
-   getHBCBinary,
-   importForwarding: {
-     moduleNames: ['axios'],
-+    relativePaths: [
-+      'runtime-tests/worklets/tests/runtimes/reentrantModuleLoad.test.tsx',
-+    ],
    },
- };
- 
-```
-
-**File**: `apps/fabric-example/metro.config.js` (modified, +17/-0)
-```diff
-@@ -24,6 +24,23 @@ const appsRoot = path.resolve(monorepoRoot, 'apps');
- let config = {
-   projectRoot: __dirname,
-   watchFolders: [monorepoRoot, appsRoot],
-+  transformer: {
-+    getTransformOptions: async () => ({
-+      transform: {
-+        experimentalImportSupport: false,
-+        inlineRequires: true,
-+        nonInlinedRequires: [
-+          'React',
-+          'react',
-+          'react/jsx-dev-runtime',
-+          'react/jsx-runtime',
-+          'react-compiler-runtime',
-+          'react-native',
-+          '../../../apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModule',
-+        ],
-+      },
-+    }),
++  {
++    testSuiteName: 'shadow node wrapper race',
++    importTest: () => require('./tests/core/shadowNodeWrapperRace.test'),
++    // A stress test for TSan, which runs in the nightly full runs.
++    fullRunOnly: true,
 +  },
-   resolver: {
-     blockList,
-     extraNodeModules,
+   {
+     testSuiteName: 'event handlers',
+     importTest: () => {
+@@ -310,7 +317,8 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = SUITES.map(
+   (suite) => ({
+     ...suite,
+     fullRunOnly:
+-      !isBundleModeEnabled() &&
+-      !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName),
++      suite.fullRunOnly ||
++      (!isBundleModeEnabled() &&
++        !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName)),
+   })
+ );
 ```
 
-**File**: `packages/react-native-worklets/Common/cpp/worklets/Compat/StableApi.cpp` (modified, +6/-5)
+**File**: `apps/common-app/runtime-tests/reanimated/tests/core/shadowNodeWrapperRace.test.tsx` (added, +196/-0)
 ```diff
-@@ -117,33 +117,34 @@ std::shared_ptr<Serializable> extractSerializable(
- void runSyncOnRuntime(
-     const std::shared_ptr<WorkletRuntime> &workletRuntime,
-     const std::shared_ptr<Serializable> &worklet) {
--  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet));
-+  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(std::static_pointer_cast<SerializableWorklet>(worklet));
- }
- 
- void runSyncOnRuntime(
-     const std::shared_ptr<WorkletRuntime> &workletRuntime,
-     const std::shared_ptr<Serializable> &worklet,
-     const facebook::jsi::Value &arg0) {
--  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet), arg0);
-+  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(std::static_pointer_cast<SerializableWorklet>(worklet), arg0);
- }
- 
- void runSyncOnRuntime(
-     const std::shared_ptr<WorkletRuntime> &workletRuntime,
-     const std::shared_ptr<Serializable> &worklet,
-     const facebook::jsi::Value &arg0,
-     const facebook::jsi::Value &arg1) {
--  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet), arg0, arg1);
-+  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(
-+      std::static_pointer_cast<SerializableWorklet>(worklet), arg0, arg1);
- }
- 
- void runSyncOnRuntime(const std::shared_ptr<WorkletRuntime> &workletRuntime, const facebook::jsi::Function &function) {
--  workletRuntime->runSyncAndDiscard(function);
-+  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(function);
- }
- 
- void runSyncOnRuntime(
-     const std::shared_ptr<WorkletRuntime> &workletRuntime,
-     const facebook::jsi::Function &function,
-     const facebook::jsi::Value &arg0) {
--  workletRuntime->runSyncAndDiscard(function, arg0);
-+  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(function, arg0);
- }
- 
- std::shared_ptr<WorkletRuntime> getWorkletRuntimeFromHolder(
-```
-
----
-
-### Incident Patch 3: `6c644f09` (2026-11-19)
-**Commit Message**: fix(Worklets): report an error thrown by a microtask at a task checkpoint (#11421)
-
-> [!NOTE]
-> This pull request was authored by AI on behalf of @tjzel.
-
-## Summary
-
-Stacked on #11377. #11410 is stacked on this PR.
-
-## Human track
-
-### Why
-
-Bug fix. A microtask that throws at the checkpoint of a scheduled
-worklet crashes the app in a debug build:
-
-```ts
-scheduleOnUI(() => {
-  'worklet';
-  queueMicrotask(() => {
-    throw new Error('boom');
-  });
-});
-```
-
-An error thrown by the worklet itself is caught and reported to the RN
-runtime. The checkpoint that runs after the worklet has no such
-handling, so the exception leaves the scheduled task as an uncaught C++
-exception.
-
-#11410 makes more calls run a checkpoint (`runOnUISync`,
-`runOnRuntimeSync`, the calls Reanimated makes for events), so the gap
-is closed first.
-
-### How
-
-In debug builds, the checkpoint catches the error of a microtask and
-reports it with the same function that reports worklet errors. Release
-builds are unchanged: there, neither a worklet error nor a microtask
-error is caught.
-
-After the error is reported, the runtime keeps working. The microtasks
-that were queued after the throwing one stay queued and run at the n
-
-**File**: `apps/common-app/runtime-tests/worklets/suites.ts` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ export const WORKLETS_TEST_SUITES: RuntimeTestSuite[] = [
-       require('./tests/runtimes/runOnRuntimeSyncWithId.test');
-       require('./tests/runtimes/scheduleOnRuntimeWithId.test');
-       require('./tests/runtimes/microtaskDrains.test');
-+      require('./tests/runtimes/microtaskErrors.test');
-       require('./tests/runtimes/weakRef.test');
-       require('./tests/runtimes/performanceNow.test');
-     },
-```
-
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskErrors.test.tsx` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+import {
-+  scheduleOnRN,
-+  scheduleOnRuntime,
-+  scheduleOnUI,
-+} from 'react-native-worklets';
+@@ -0,0 +1,196 @@
++import type { ReactNode } from 'react';
++import { memo, useEffect, useState } from 'react';
++import { ScrollView, StyleSheet, Text, View } from 'react-native';
++import type { AnimatedRef, SharedValue } from 'react-native-reanimated';
++import Animated, {
++  measure,
++  scrollTo,
++  useAnimatedRef,
++  useAnimatedStyle,
++  useFrameCallback,
++  useSharedValue,
++  withRepeat,
++  withTiming,
++} from 'react-native-reanimated';
 +
 +import {
 +  describe,
 +  expect,
-+  getWorkletRuntimesFromPool,
-+  notify,
++  render,
 +  test,
++  wait,
++} from '../../../ReJest/RuntimeTestsApi';
++
++// Run under TSan. React Native writes shadow node wrappers on the JS thread,
++// these tests read them on the UI thread (#11232).
++
++const STRESS_DURATION_MS = 8000;
++const BOX_COUNT = 24;
++const SCROLL_BOX_COUNT = 12;
++
++function useJSCommitEveryFrame() {
++  const [tick, setTick] = useState(0);
++  useEffect(() => {
++    let frame = requestAnimationFrame(function loop() {
++      setTick((value) => value + 1);
++      frame = requestAnimationFrame(loop);
++    });
++    return () => cancelAnimationFrame(frame);
++  }, []);
++  return tick;
++}
++
++// Each React commit relayouts the boxes while the UI thread measures them.
++const MeasuredBox = memo(function MeasuredBox({
++  index,
++  onRef,
++}: {
++  index: number;
++  onRef: (index: number, ref: AnimatedRef<View>) => void;
++}) {
++  const ref = useAnimatedRef<View>();
++  useEffect(() => {
++    onRef(index, ref);
++  }, [index, onRef, ref]);
++  return <View ref={ref} style={styles.measuredBox} />;
++});
++
++function MeasureStress({ framesOnUI }: { framesOnUI: SharedValue<number> }) {
++  const tick = useJSCommitEveryFrame();
++  const [refs] = useState<AnimatedRef<View>[]>(() => []);
++  const [onRef] = useState(
++    () => (index: number, ref: AnimatedRef<View>) => (refs[index] = ref)
++  );
++  const [boxRefs, setBoxRefs] = useState<AnimatedRef<View>[]>([]);
++
++  useEffect(() => {
++    // The refs are registered in child effects, which run first.
++    setBoxRefs([...refs]);
++  }, [refs]);
++
++  useFrameCallback(() => {
++    for (const ref of boxRefs) {
++      measure(ref);
++    }
++    framesOnUI.value += 1;
++  });
++
++  return (
++    <View style={styles.container}>
++      <View style={{ height: 10 + (tick % 2) * 10 }} />
++      {Array.from({ length: BOX_COUNT }, (_, index) => (
++        <MeasuredBox key={index} index={index} onRef={onRef} />
++      ))}
++    </View>
++  );
++}
++
++// Scrolling updates the ScrollView state, so each React commit clones the
++// animated box while the UI thread updates its props.
++const ScrollBox = memo(function ScrollBox({
++  framesOnUI,
++}: {
++  framesOnUI: SharedValue<number>;
++}) {
++  const scrollRef = useAnimatedRef<ScrollView>();
++  const opacity = useSharedValue(1);
++
++  useEffect(() => {
++    opacity.value = withRepeat(withTiming(0.5, { duration: 200 }), -1, true);
++  }, [opacity]);
++
++  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
++
++  useFrameCallback((frameInfo) => {
++    scrollTo(scrollRef, (frameInfo.timeSinceFirstFrame / 4) % 200, 0, false);
++    framesOnUI.value += 1;
++  });
++
++  return (
++    <Animated.View style={[styles.scrollBox, animatedStyle]}>
++      <Animated.ScrollView ref={scrollRef} horizontal>
++        <View style={styles.scrollContent}>
++          <Text>scroll</Text>
++        </View>
++      </Animated.ScrollView>
++    </Animated.View>
++  );
++});
++
++function ScrollStress({ framesOnUI }: { framesOnUI: SharedValue<number> }) {
++  const tick = useJSCommitEveryFrame();
++  return (
++    <View style={styles.container}>
++      <View style={{ height: 10 + (tick % 2) * 10 }} />
++      {Array.from({ length: SCROLL_BOX_COUNT }, (_, index) => (
++        <ScrollBox key={index} framesOnUI={framesOnUI} />
++      ))}
++    </View>
++  );
++}
++
++function FramesCounter({
++  children,
++  onFramesOnUI,
++}: {
++  children: (framesOnUI: SharedValue<number>) => ReactNode;
++  onFramesOnUI: (framesOnUI: SharedValue<number>) => void;
++}) {
++  const framesOnUI = useSharedValue(0);
++  useEffect(() => {
++    onFramesOnUI(framesOnUI);
++  }, [framesOnUI, onFramesOnUI]);
++  return <>{children(framesOnUI)}</>;
++}
++
++async function runStress(
++  build: (framesOnUI: SharedValue<number>) => ReactNode
++) {
++  let framesOnUI: SharedValue<number> | null = null;
++  await render(
++    <FramesCounter onFramesOnUI={(value) => (framesOnUI = value)}>
++      {build}
++    </FramesCounter>
++  );
++  await wait(STRESS_DURATION_MS);
++  const frames = framesOnUI!.value;
++  await render(null);
++  return frames;
++}
++
++describe('shadow node wrapper race (#11232)', () => {
++  test('measure on the UI thread while React relayouts the views', async () => {
++    const frames = await runStress((framesOnUI) => (
++      <MeasureStress framesOnUI={framesOnUI} />
++    ));
++    expect(frames > 0).toBe(true);
++  });
++
++  test('animated style and scrollTo on the UI thread while React progresses state', async () => {
++    const frames = await runStress((framesOnUI) => (
++      <ScrollStress framesOnUI={framesOnUI} />
++   
+```
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/core/useAnimatedRefNewestClone.test.tsx` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++import React from 'react';
++import { findNodeHandle, TextInput, View } from 'react-native';
++import type { AnimatedRef, MeasuredDimensions } from 'react-native-reanimated';
++import Animated, {
++  dispatchCommand,
++  measure,
++  setNativeProps,
++  useAnimatedRef,
++} from 'react-native-reanimated';
++import { runOnRuntimeAsyncWithId, UIRuntimeId } from 'react-native-worklets';
++
++import {
++  describe,
++  expect,
++  notify,
++  render,
++  test,
++  waitForFrames,
 +  waitForNotification,
 +} from '../../../ReJest/RuntimeTestsApi';
 +
-+const UI_ERROR = 'microtask error on the UI Runtime';
-+const WORKER_ERROR = 'microtask error on a Worker Runtime';
-+const ALIVE_NOTIFICATION = 'RUNTIME_ALIVE_AFTER_MICROTASK_ERROR';
++const WIDTHS = [10, 20, 30, 40, 50];
++const SET_NATIVE_PROPS_OPACITY = 0.5;
++const FOCUSED = 'NEWEST_CLONE_INPUT_FOCUSED';
++const BLURRED = 'NEWEST_CLONE_INPUT_BLURRED';
 +
-+describe('errors thrown by microtasks', () => {
-+  const [workletRuntime] = getWorkletRuntimesFromPool(1);
-+  const debugTest = __DEV__ ? test : test.skip;
++let viewRef: AnimatedRef<Animated.View> | undefined;
++let inputRef: AnimatedRef<TextInput> | undefined;
 +
-+  const onAlive = () => {
-+    notify(ALIVE_NOTIFICATION);
-+  };
-+
-+  debugTest(
-+    'reports an error thrown at the checkpoint of a worklet scheduled on the UI Runtime',
-+    async () => {
-+      await expect(() => {
-+        scheduleOnUI(() => {
-+          'worklet';
-+          queueMicrotask(() => {
-+            throw new Error(UI_ERROR);
-+          });
-+        });
-+      }).toThrow(UI_ERROR);
-+
-+      scheduleOnUI(() => {
-+        'worklet';
-+        queueMicrotask(() => {
-+          scheduleOnRN(onAlive);
-+        });
-+      });
-+      await waitForNotification(ALIVE_NOTIFICATION);
-+    }
++function ResizedView({ width }: { width: number }) {
++  const animatedRef = useAnimatedRef<Animated.View>();
++  viewRef = animatedRef;
++  return (
++    <View>
++      <Animated.View
++        ref={animatedRef}
++        style={{ width, height: 10, backgroundColor: 'red' }}
++      />
++    </View>
 +  );
++}
 +
-+  debugTest(
-+    'reports an error thrown at the checkpoint of a worklet scheduled on a Worker Runtime',
-+    async () => {
-+      await expect(() => {
-+        scheduleOnRuntime(workletRuntime, () => {
-+          'worklet';
-+          queueMicrotask(() => {
-+            throw new Error(WORKER_ERROR);
-+          });
-+        });
-+      }).toThrow(WORKER_ERROR);
-+
-+      scheduleOnRuntime(workletRuntime, () => {
-+        'worklet';
-+        queueMicrotask(() => {
-+          scheduleOnRN(onAlive);
-+        });
-+      });
-+      await waitForNotification(ALIVE_NOTIFICATION);
-+    }
++function ResizedInput({ width }: { width: number }) {
++  const animatedRef = useAnimatedRef<TextInput>();
++  inputRef = animatedRef;
++  return (
++    <View style={{ marginTop: 100 }}>
++      <TextInput
++        ref={animatedRef}
++        style={{ width, height: 40, borderWidth: 1 }}
++        onFocus={() => notify(FOCUSED)}
++        onBlur={() => notify(BLURRED)}
++      />
++    </View>
 +  );
++}
++
++function measureOnUI(animatedRef: AnimatedRef<Animated.View>) {
++  return runOnRuntimeAsyncWithId(UIRuntimeId, () => {
++    'worklet';
++    return measure(animatedRef);
++  }) as Promise<MeasuredDimensions | null>;
++}
++
++async function renderEveryWidth(renderWidth: (width: number) => Promise<void>) {
++  for (const width of WIDTHS) {
++    await renderWidth(width);
++    await waitForFrames(2);
++  }
++}
++
++describe('useAnimatedRef on the UI runtime after React clones the view', () => {
++  test('measure returns the layout of the newest clone', async () => {
++    await renderEveryWidth((width) => render(<ResizedView width={width} />));
++    await waitForFrames(3);
++
++    const measured = await measureOnUI(viewRef!);
++    expect(measured?.width).toBe(WIDTHS[WIDTHS.length - 1]);
++
++    await render(null);
++  });
++
++  test('setNativeProps updates the newest clone', async () => {
++    await renderEveryWidth((width) => render(<ResizedView width={width} />));
++    await waitForFrames(3);
++    const animatedRef = viewRef!;
++    const tag = findNodeHandle(animatedRef.current) ?? -1;
++
++    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
++      'worklet';
++      setNativeProps(animatedRef, { opacity: SET_NATIVE_PROPS_OPACITY });
++      global._maybeFlushUIUpdatesQueue();
++    });
++    await waitForFrames(3);
++
++    const mounted = await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
++      'worklet';
++      return global._obtainMountedViewProps(tag, false);
++    });
++    expect(mounted?.opacity).toBe(SET_NATIVE_PROPS_OPACITY);
++    expect(mounted?.width).toBe(WIDTHS[WIDTHS.length - 1]);
++
++    await render(null);
++  });
++
++  test('dispatchCommand reaches the native view of the newest clone', async () => {
++    await renderEveryWidth((width) =>
++      render(<ResizedInput width={width * 4} />)
++    );
++    await waitForFrames(3);
++    const animatedRef = inputRef!;
++
++    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
++      'worklet';
++      dispatchCommand(animatedRef, 'focus');
++    });
++    await waitForNotification(FOCUSED);
++
++    await runOnRuntimeAsyncWithId(UIRuntimeId, () => {
++      'worklet';
++      dispatchCommand(animatedRef, 'blur');
++    });
++    await waitForNotification(BLURRED);
++
++    await render(null);
++  });
 +});
 ```
 
-**File**: `packages/react-native-worklets/Common/cpp/worklets/WorkletRuntime/WorkletRuntime.h` (modified, +10/-1)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/NativeModules/ReanimatedModuleProxy.cpp` (modified, +5/-0)
 ```diff
-@@ -419,7 +419,16 @@ class WorkletRuntime : public jsi::HostObject, public std::enable_shared_from_th
-       }
-       if constexpr (TCheckpoint == MicrotaskCheckpoint::Run) {
-         if (microtaskQueueEnabled_) {
--          getJSIRuntime().drainMicrotasks();
-+          jsi::Runtime &rt = getJSIRuntime();
-+#ifndef NDEBUG
-+          try {
-+            rt.drainMicrotasks();
-+          } catch (jsi::JSError &e) {
-+            JSLogger::handleJSError(jsScheduler_, rt, name_, e, std::nullopt);
-+          }
-+#else
-+          rt.drainMicrotasks();
-+#endif // NDEBUG
-         }
-       }
-       rootTaskRunning_ = false;
+@@ -1676,6 +1676,11 @@ jsi::Object ReanimatedModuleProxy::toOptimizedObject(jsi::Runtime &rt) {
+         strongThis->setViewStyle(rt, at<0>(args), at<1>(args));
+       });
+ 
++  addMethod<1>(
++      rt, obj, "createDetachedShadowNodeWrapper", [](jsi::Runtime &rt, const jsi::Value &, const jsi::Value(&args)[1]) {
++        return Bridging<std::shared_ptr<const ShadowNode>>::toJs(rt, shadowNodeFromValue(rt, at<0>(args)));
++      });
++
+   addMethod<1>(
+       rt,
+       obj,
 ```
 
-**File**: `packages/react-native-worklets/changelog/report-microtask-errors.fix.md` (added, +1/-0)
+**File**: `packages/react-native-reanimated/changelog/reanimated-ui-shadow-node-wrapper-race.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Report an error thrown by a microtask at the checkpoint of a scheduled worklet the same way as an error thrown by the worklet, instead of crashing the app in debug builds.
++Fix a data race between the UI thread reading a view and the JS thread cloning it, which could crash an app that animates a view while React re-renders it.
+```
+
+**File**: `packages/react-native-reanimated/src/ReanimatedModule/NativeReanimated.ts` (modified, +6/-0)
+```diff
+@@ -184,6 +184,12 @@ See https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooti
+     this.#reanimatedModuleProxy.setCSSEventHandler(handler);
+   }
+ 
++  createDetachedShadowNodeWrapper(shadowNodeWrapper: ShadowNodeWrapper) {
++    return this.#reanimatedModuleProxy.createDetachedShadowNodeWrapper(
++      shadowNodeWrapper
++    );
++  }
++
+   markNodeAsRemovable(shadowNodeWrapper: ShadowNodeWrapper) {
+     this.#reanimatedModuleProxy.markNodeAsRemovable(shadowNodeWrapper);
+   }
+```
+
+**File**: `packages/react-native-reanimated/src/ReanimatedModule/js-reanimated/JSReanimated.ts` (modified, +6/-0)
+```diff
+@@ -274,6 +274,12 @@ class JSReanimated implements IReanimatedModule {
+     );
+   }
+ 
++  createDetachedShadowNodeWrapper(
++    shadowNodeWrapper: ShadowNodeWrapper
++  ): ShadowNodeWrapper {
++    return shadowNodeWrapper;
++  }
++
+   markNodeAsRemovable(_shadowNodeWrapper: ShadowNodeWrapper): void {
+     throw new Error(
+       '[Reanimated] markNodeAsRemovable is not available in JSReanimated.'
+```
+
+**File**: `packages/react-native-reanimated/src/ReanimatedModule/reanimatedModuleProxy.ts` (modified, +4/-0)
+```diff
+@@ -68,6 +68,10 @@ export interface ReanimatedModuleProxy {
+   /** Registers the single handler receiving every CSS event batch. */
+   setCSSEventHandler(handler: CSSEventHandler): void;
+ 
++  createDetachedShadowNodeWrapper(
++    shadowNodeWrapper: ShadowNodeWrapper
++  ): ShadowNodeWrapper;
++
+   markNodeAsRemovable(shadowNodeWrapper: ShadowNodeWrapper): void;
+   unmarkNodeAsRemovable(viewTag: number): void;
+ 
+```
+
+---
+
+### Incident Patch 2: `aa4506c7` (2026-11-23)
+**Commit Message**: fix: stabilize Synchronizable benchmark resources (#11492)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @tjzel.
+
+## Human track
+
+### Why
+
+The Synchronizable performance example recreated both Synchronizable
+objects and its Worker Runtime on every React rerender. Retaining those
+resources makes repeated measurements comparable. Overlapping button
+presses could also reset and share the same counter while a run was
+active.
+
+This change was split from pull request
+[#11491](https://github.com/software-mansion/react-native-reanimated/pull/11491)
+following review feedback.
+
+### How
+
+The example now creates its two Synchronizable objects and Worker
+Runtime once per mount, resets the selected counter before each run, and
+rejects overlapping runs until all three runtimes finish. Benchmark
+buttons are disabled while a run is active.
+
+### Testing
+
+A focused native Jest regression verifies that 30 rerenders still create
+exactly two Synchronizable objects and one Worker Runtime. Another
+regression verifies that rapid repeated presses schedule only one run.
+The common-app native type check and focused formatting checks pass
+locally.
+
+### Performance
+
+Across 30 controlled rerende
+
+**File**: `apps/common-app/src/apps/worklets/examples/SynchronizableExample.tsx` (modified, +29/-13)
+```diff
+@@ -39,18 +39,18 @@ export default function SynchronizablePerformanceExample() {
+   const [selectedVariant, setSelectedVariant] =
+     React.useState<VariantKey>('dynamic');
+   const [runningRuntimes, setRunningRuntimes] = React.useState(0);
+-
+-  const fixedSynchronizable: FixedSynchronizable<number> = createSynchronizable(
+-    initialValue,
+-    { fixedType: true }
+-  );
+-
+-  const synchronizables: Record<VariantKey, Synchronizable<number>> = {
++  const runInProgress = React.useRef(false);
++  const [synchronizables] = React.useState<
++    Record<VariantKey, Synchronizable<number>>
++  >(() => ({
+     dynamic: createSynchronizable(initialValue),
+-    fixed: fixedSynchronizable,
+-  };
+-
+-  const runtime = createWorkletRuntime({ name: 'SynchronizableExample' });
++    fixed: createSynchronizable(initialValue, { fixedType: true }),
++  }));
++  const fixedSynchronizable =
++    synchronizables.fixed as FixedSynchronizable<number>;
++  const [runtime] = React.useState(() =>
++    createWorkletRuntime({ name: 'SynchronizableExample' })
++  );
+ 
+   function setResult(
+     variant: VariantKey,
+@@ -64,7 +64,14 @@ export default function SynchronizablePerformanceExample() {
+     }));
+   }
+ 
+-  const decrementRuntimes = () => setRunningRuntimes((prev) => prev - 1);
++  const decrementRuntimes = () =>
++    setRunningRuntimes((prev) => {
++      const next = prev - 1;
++      if (next === 0) {
++        runInProgress.current = false;
++      }
++      return next;
++    });
+ 
+   function setValueAndDuration(
+     variant: VariantKey,
+@@ -159,7 +166,12 @@ export default function SynchronizablePerformanceExample() {
+   }
+ 
+   function runBenchmark(benchmark: (variant: VariantKey) => void) {
++    if (runInProgress.current) {
++      return;
++    }
++    runInProgress.current = true;
+     const variant = selectedVariant;
++    synchronizables[variant].setBlocking(initialValue);
+     resetVariant(variant);
+     setRunningRuntimes(3);
+ 
+@@ -212,23 +224,27 @@ export default function SynchronizablePerformanceExample() {
+         title={`Selected variant: ${selectedVariant}`}
+       />
+       <Button
++        disabled={runningRuntimes > 0}
+         onPress={() => runBenchmark(getDirtySetBlocking)}
+         title=".getDirty() & .setBlocking() on two threads"
+       />
+       <Button
++        disabled={runningRuntimes > 0}
+         onPress={() => runBenchmark(getBlockingSetBlocking)}
+         title=".getBlocking() & .setBlocking() on two threads"
+       />
+       <Button
++        disabled={runningRuntimes > 0}
+         onPress={() => runBenchmark(setBlockingSetBlockingTransaction)}
+         title=".setBlocking() with setter on two threads - transaction"
+       />
+       <Button
+-        disabled={selectedVariant !== 'fixed'}
++        disabled={selectedVariant !== 'fixed' || runningRuntimes > 0}
+         onPress={() => runBenchmark(getDirtySetDirty)}
+         title=".getDirty() & .setDirty() on two threads - fixed only"
+       />
+       <Button
++        disabled={runningRuntimes > 0}
+         onPress={() => runBenchmark(imperativeLocking)}
+         title="Imperative locking"
+       />
+```
+
+**File**: `packages/react-native-reanimated/__tests__/synchronizableExample.test.tsx` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++import { act, fireEvent, render, screen } from '@testing-library/react-native';
++import {
++  createSynchronizable,
++  createWorkletRuntime,
++  scheduleOnRuntime,
++  scheduleOnUI,
++} from 'react-native-worklets';
++
++import SynchronizablePerformanceExample from '../../../apps/common-app/src/apps/worklets/examples/SynchronizableExample';
++
++jest.mock('react-native-worklets', () => ({
++  createSynchronizable: jest.fn(() => ({
++    getBlocking: jest.fn(),
++    getDirty: jest.fn(),
++    lock: jest.fn(),
++    setBlocking: jest.fn(),
++    setDirty: jest.fn(),
++    unlock: jest.fn(),
++  })),
++  createWorkletRuntime: jest.fn(() => ({ runtimeId: 3 })),
++  scheduleOnRN: jest.fn(),
++  scheduleOnRuntime: jest.fn(),
++  scheduleOnUI: jest.fn(),
++}));
++
++test('retains benchmark resources across React rerenders', () => {
++  render(<SynchronizablePerformanceExample />);
++
++  expect(createSynchronizable).toHaveBeenCalledTimes(2);
++  expect(createWorkletRuntime).toHaveBeenCalledTimes(1);
++
++  for (let i = 0; i < 30; i++) {
++    fireEvent.press(
++      screen.getByText(`Selected variant: ${i % 2 === 0 ? 'dynamic' : 'fixed'}`)
++    );
++  }
++
++  expect(createSynchronizable).toHaveBeenCalledTimes(2);
++  expect(createWorkletRuntime).toHaveBeenCalledTimes(1);
++  expect(screen.getByText('Selected variant: dynamic')).toBeOnTheScreen();
++});
++
++test('does not start overlapping benchmark runs', () => {
++  jest.useFakeTimers();
++  render(<SynchronizablePerformanceExample />);
++
++  const benchmarkButton = screen.getByText(
++    '.getDirty() & .setBlocking() on two threads'
++  );
++  fireEvent.press(benchmarkButton);
++  fireEvent.press(benchmarkButton);
++  act(() => jest.advanceTimersByTime(50));
++
++  expect(scheduleOnUI).toHaveBeenCalledTimes(1);
++  expect(scheduleOnRuntime).toHaveBeenCalledTimes(1);
++  jest.useRealTimers();
++});
+```
+
+**File**: `packages/react-native-reanimated/changelog/stable-synchronizable-benchmark.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Stabilize the Synchronizable performance example resources and prevent overlapping benchmark runs.
+```
+
+---
+
+### Incident Patch 3: `a896ab65` (2026-11-23)
+**Commit Message**: ci: run the Android nightlies on JDK 17 to fix the JVM crash on ubuntu-26.04 (#11461)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @tjzel.
+
+## Summary
+
+### Why
+
+The React Native nightly fails every night. Runs #1001 and #1002 crashed
+in Gradle with `java.lang.ExceptionInInitializerError` / `Cannot invoke
+"jdk.internal.platform.CgroupInfo.getMountPoint()" because
+"anyController" is null`. Both ran on the new `ubuntu-26.04` image
+behind `ubuntu-latest`, with Zulu Java 18, which no longer receives
+updates.
+
+### How
+
+The three workflows that pinned Java 18
+(`react-native-nightly-reanimated-build-check-nightly.yml`,
+`reanimated-compatibility-check-nightly.yml`,
+`reanimated-worklets-compatibility-check.yml`) now use Java 17, like the
+Android runtime tests and the Windows build check. The Android
+compatibility result cache is keyed by the Java version, so the matrix
+runs again with the new JDK.
+
+The testimonial avatar fix for the URL validation nightly moved to
+#11467.
+
+### Performance
+
+Not applicable.
+
+### Alternatives
+
+- Pin `runs-on: ubuntu-24.04` for these jobs: hides the JVM problem
+until that image is retired.
+
+## Test plan
+
+The React Native nightly dispatched on t
+
+**File**: `.github/workflows/react-native-nightly-reanimated-build-check-nightly.yml` (modified, +2/-2)
+```diff
+@@ -43,12 +43,12 @@ jobs:
+         # Sometimes `npx @react-native-community/cli init` fails at random.
+         # Pre-installing it with Yarn seems to improve stability.
+         run: corepack enable && yarn init
+-      - name: Set up JDK 18
++      - name: Set up JDK 17
+         if: ${{ matrix.platform == 'Android' }}
+         uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62
+         with:
+           distribution: 'zulu'
+-          java-version: '18'
++          java-version: '17'
+       - name: Load "next" tag if available
+         run: |
+           if npm view react-native dist-tags | grep -q 'next:' ; then
+```
+
+**File**: `.github/workflows/reanimated-compatibility-check-nightly.yml` (modified, +2/-2)
+```diff
+@@ -56,12 +56,12 @@ jobs:
+     steps:
+       - name: Checkout
+         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+-      - name: Set up JDK 18
++      - name: Set up JDK 17
+         if: ${{ matrix.platform == 'Android' }}
+         uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62
+         with:
+           distribution: 'zulu'
+-          java-version: '18'
++          java-version: '17'
+       - name: Setup Node
+         uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610
+         with:
+```
+
+**File**: `.github/workflows/reanimated-worklets-compatibility-check.yml` (modified, +5/-4)
+```diff
+@@ -65,6 +65,7 @@ jobs:
+       APP_NAME: app
+       CACHE_KEY: ${{ matrix.reactNativeVersion }}-${{ matrix.reanimatedVersion }}-${{ matrix.workletsVersion }}
+       BUILD_MARKER_DIR: .compatibility-build-markers
++      JAVA_VERSION: '17'
+     steps:
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+ 
+@@ -73,18 +74,18 @@ jobs:
+         with:
+           node-version-file: '.nvmrc'
+ 
+-      - name: Set up JDK 18
++      - name: Set up JDK 17
+         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+         with:
+           distribution: 'zulu'
+-          java-version: '18'
++          java-version: ${{ env.JAVA_VERSION }}
+ 
+       - name: Restore result cache
+         id: result-cache
+         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+         with:
+           path: ${{ env.BUILD_MARKER_DIR }}/${{ env.CACHE_KEY }}.success
+-          key: reanimated-worklets-compat-android-${{ env.CACHE_KEY }}
++          key: reanimated-worklets-compat-android-jdk${{ env.JAVA_VERSION }}-${{ env.CACHE_KEY }}
+ 
+       - name: Skip already validated combination
+         if: steps.result-cache.outputs.cache-hit == 'true'
+@@ -122,7 +123,7 @@ jobs:
+         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+         with:
+           path: ${{ env.BUILD_MARKER_DIR }}/${{ env.CACHE_KEY }}.success
+-          key: reanimated-worklets-compat-android-${{ env.CACHE_KEY }}
++          key: reanimated-worklets-compat-android-jdk${{ env.JAVA_VERSION }}-${{ env.CACHE_KEY }}
+ 
+   reanimated-worklets-compatibility-check-ios:
+     if: github.repository == 'software-mansion/react-native-reanimated'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11522** (2026-11-24): chore: upgrade React Native to 0.89.0-rc.3 (@pawicao)
+- **PR #11515** (2026-11-24): docs(Worklets): turn off both Expo preset plugins in every Bundle Mode setup (@tshmieldev)
+- **PR #11513** (2026-11-24): docs(Worklets): turn off the Expo preset's plugin in the Bundle Mode setup (@tshmieldev)
+- **PR #11500** (2026-11-23): Fix Worklets sidebar scrollbar color (@tjzel)
+- **PR #11492** (2026-11-23): fix: stabilize Synchronizable benchmark resources (@tjzel)
 - **PR #11467** (2026-11-20): docs(Reanimated): serve testimonial avatars from the docs site (@tjzel)
-- **PR #11463** (2026-11-20): release(Worklets): 0.12.3 (@tjzel)
-- **PR #11462** (2026-11-20): test(Reanimated): step the held clock in the all-rows Animated.Text test (@tjzel)
-- **PR #11460** (2026-11-20): docs(Worklets): remove the serialization TODO from the returning results tutorial (@tjzel)
-- **PR #11459** (2026-11-20): docs(Worklets): redirect getting-started to the About page (@tjzel)
-- **PR #11457** (2026-11-20): fix(Reanimated): ignore unknown frame callbacks (@tjzel)
 
 ---
 
@@ -1751,66 +1727,41 @@ that were queued after the throwing one stay queued and run at the n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Worklets): preserve UI scheduler order
+## X. Reanimated): stop reading React's shadow node wrapper on the UI thread
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/common-app/runtime-tests/reanimated/suites.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `816d62ba`: Worklets): preserve UI scheduler order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cec3cdc5`: Reanimated): stop reading React's shadow node wrapper on the UI thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/suites.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  createSynchronizable,
-  scheduleOnRuntime,
-  createOrderConstraint,
-    test('preserves queued UI work before a UI caller', async () => {
-      const [confirmedOrder, order] = createOrderConstraint();
-      const uiActive = createSynchronizable(false);
-      const queued = createSynchronizable(false);
-      const [first, second] = ['first', 'second'];
-
-      scheduleOnRuntime(workletRuntime, () => {
-        'worklet';
-        const deadline = performance.now() + 1000;
-        while (!uiActive.getBlocking() && performance.now() < deadline) {
-          uiActive.getBlocking();
-        }
-        if (!uiActive.getBlocking()) {
-          throw new Error('UI job did not start.');
-        }
-        scheduleOnUI(() => {
-          'worklet';
-          order(1, first);
-        });
-        queueMicrotask(() => {
-          queued.setBlocking(true);
-        });
-      });
-
-      scheduleOnUI(() => {
-        'worklet';
-        uiActive.setBlocking(true);
-        const deadline = performance.now() + 1000;
-        while (!queued.getBlocking() && performance.now() < deadline) {
-          queued.getBlocking();
-        }
-        if (!queued.getBlocking()) {
-          throw new Error('Worker did not e
+      require('./tests/core/useAnimatedRefNewestClone.test');
+  {
+    testSuiteName: 'shadow node wrapper race',
+    importTest: () => require('./tests/core/shadowNodeWrapperRace.test'),
+    // A stress test for TSan, which runs in the nightly full runs.
+    fullRunOnly: true,
+  },
+      suite.fullRunOnly ||
+      (!isBundleModeEnabled() &&
+        !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName)),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  scheduleOnRuntime,
+      !isBundleModeEnabled() &&
+      !LEGACY_EVAL_SHORT_RUN_SUITES.includes(suite.testSuiteName),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `816d62ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cec3cdc5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

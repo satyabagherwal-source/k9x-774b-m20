@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T12:45:52.963Z",
-  "total_records": 2521,
+  "last_updated": "2026-11-24T12:54:43.749Z",
+  "total_records": 2522,
   "domains": {
     "A": {
       "total": 22,
@@ -1597,7 +1597,7 @@
       ]
     },
     "H": {
-      "total": 599,
+      "total": 600,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2197,7 +2197,8 @@
         "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants",
         "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar",
+        "DOM-H-E38FCD3B"
       ]
     },
     "I": {
@@ -10973,8 +10974,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "bc30ef4c7fd5700cc8f312e452f5cc866c6dada27ce738ebb004508ce181b134",
-      "created_at": "2026-11-23T17:20:46.642Z"
+      "content_hash": "302ef008f0adc43a10929247b26a381fc049b789c0fab10fcb5c41e9305de250",
+      "created_at": "2026-11-24T12:54:07.394Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -11093,8 +11094,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "b4af178a3552a76c272d16e09923ed4f02a55edd0e0f7e38f0fd775baead9e49",
-      "created_at": "2026-11-23T17:20:57.956Z"
+      "content_hash": "a1f1cf694050267c81139e247b5354ed3b1346dcc0779b1b4cc380bdad4561ba",
+      "created_at": "2026-11-24T12:54:42.556Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -23692,8 +23693,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "879eb251ede9832c7ec1953759bd16cdb8fd90172a59db87c33b7ee4c4a54774",
-      "created_at": "2026-11-24T12:36:31.790Z"
+      "content_hash": "c412d6dbfdad1cd02c2f22c64e9fc0448231f25081cd2161e3ef794ec74be246",
+      "created_at": "2026-11-24T12:54:43.749Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -28339,8 +28340,8 @@
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "repository": "software-mansion/react-native-reanimated",
-      "content_hash": "9c533a9ca4d63b443dfb532213623c3c90b9587092e88d263576d821d83bf107",
-      "created_at": "2026-11-21T20:24:58.488Z"
+      "content_hash": "125e96299645eaf49fe470dea42d0da7ddbf70618133e23a32e0b64de7a55cf9",
+      "created_at": "2026-11-24T12:54:03.437Z"
     },
     "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
@@ -28366,8 +28367,8 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-learnings-technical-construction-intell.md",
       "repository": "software-mansion-react-native-reanimated-learnings",
-      "content_hash": "4279905f3f658f370d6708ad09eca0c05a663b90bcbe6dbfee47d3aa6325423e",
-      "created_at": "2026-11-21T20:25:10.939Z"
+      "content_hash": "3dc9901fa5ed8895f667f83c971b36357786be5b667f405557c5efde8551a345",
+      "created_at": "2026-11-24T12:54:41.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
@@ -42290,6 +42291,54 @@
       "repository": "gluesql-gluesql-learnings",
       "content_hash": "4cbe08efa105db07c5ec565ae197edeae9a2830d0c51b8c6cf86273fcff07270",
       "created_at": "2026-11-24T12:45:52.963Z"
+    },
+    "DOM-H-E38FCD3B": {
+      "record_id": "DOM-H-E38FCD3B",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        },
+        {
+          "letter": "F",
+          "id": "design",
+          "name": "Design Intelligence"
+        }
+      ],
+      "title": "Reanimated): stop reading React's shadow node wrapper on the UI thread",
+      "content": "When implementing operations in `apps/common-app/runtime-tests/reanimated/suites.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "eee72ba0cb9226d1e7d81557bcffc5daf4be88cfda9a22511aee7372e4e8443d",
+      "summary": "Prevents defects observed in production commit `cec3cdc5`: Reanimated): stop reading React's shadow node wrapper on the UI thread. Unvalidat -> When implementing operations in `apps/common-app/runtime-tests/reanimated/suites.ts`, engineers MUST enforce rigorous boundary validation, s",
+      "provenance": {
+        "source_uri": "project://software-mansion-react-native-reanimated/software-mansion-react-native-reanimated-learnings.md",
+        "source_version": "22cbff88",
+        "observed_at": "2026-11-24T12:54:01.842Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (software-mansion-react-native-reanimated)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of software-mansion-react-native-reanimated"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G",
+          "F"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.71,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T12:54:40.796Z"
     }
   }
 }

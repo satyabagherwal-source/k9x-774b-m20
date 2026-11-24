@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:45:45.771Z",
+  "last_updated": "2026-11-24T12:54:06.986Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
-      "verified_at": "2026-11-21T20:24:58.044Z",
+      "content_hash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
+      "verified_at": "2026-11-24T12:54:03.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:24:58.044Z"
+      "last_updated": "2026-11-24T12:54:03.030Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "b311b454a7e142277995993fb17c908c1fda20dbaa331423d228167deb4be8ab",
-      "verified_at": "2026-11-23T17:20:46.112Z",
+      "content_hash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
+      "verified_at": "2026-11-24T12:54:06.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:20:46.112Z"
+      "last_updated": "2026-11-24T12:54:06.985Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",

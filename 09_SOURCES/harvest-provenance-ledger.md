@@ -12702,3 +12702,6 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `4197dfdd` | Multi-dimensional audit evidence | 2026-11-24T12:45:42.405Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `7d232424` | Multi-dimensional audit evidence | 2026-11-24T12:45:44.067Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `c91cbdd6` | Multi-dimensional audit evidence | 2026-11-24T12:45:45.750Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `22cbff88` | Multi-dimensional audit evidence | 2026-11-24T12:54:03.013Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `ef0e49cf` | Multi-dimensional audit evidence | 2026-11-24T12:54:06.968Z |
+| `learn-dom-h-e38fcd3b` | `project://software-mansion-react-native-reanimated` | `22cbff88` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md` | 2026-11-24T12:54:40.835Z |

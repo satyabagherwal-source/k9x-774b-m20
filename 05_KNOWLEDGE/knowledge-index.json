@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T12:45:53.197Z",
+  "last_updated": "2026-11-24T12:54:44.128Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24620,
+  "total_items": 24626,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "82569a8ef687660e55aa1c3e6334712a2e5fb91746c620a1f88afdfd299e574f",
+      "content_hash": "ee1c580c2d20e0f372a703b1105f007066b99d6c664fc7b319714433d3476af9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:36:31.986Z"
+      "persisted_at": "2026-11-24T12:54:43.960Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6185844b93614cdb9ce0479f53e1cd243743bca2ce335e62c40e8b900d769598",
+      "content_hash": "035b5ba93e722a975c01e80c60392cd46840911ec3dfb9f31f9be2fca409de78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:36:32.137Z"
+      "persisted_at": "2026-11-24T12:54:44.128Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -215918,8 +215918,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "15487f34",
-      "content_hash": "b311b454a7e142277995993fb17c908c1fda20dbaa331423d228167deb4be8ab",
+      "source_version": "ef0e49cf",
+      "content_hash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -215962,6 +215962,11 @@
           "number": 10080,
           "title": "changes to let the upstream drain gracefully",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10261,
+          "title": "add WorkerUtilizationTracker for event-loop utilization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215969,7 +215974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:20:45.848Z",
+      "verified_at": "2026-11-24T12:54:06.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216011,10 +216016,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "15487f34",
-      "content_hash": "bc30ef4c7fd5700cc8f312e452f5cc866c6dada27ce738ebb004508ce181b134",
+      "source_version": "ef0e49cf",
+      "content_hash": "302ef008f0adc43a10929247b26a381fc049b789c0fab10fcb5c41e9305de250",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:20:46.642Z"
+      "persisted_at": "2026-11-24T12:54:07.394Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -216023,10 +216028,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "15487f34",
-      "content_hash": "3b8d224c117f973c634a2115dcd0737193d0d5cbe6b9b3009adf2f4f3586ac0f",
+      "source_version": "ef0e49cf",
+      "content_hash": "6c9a7c5521eb1eafbe8e788986c423f5789da3e39f8d87015c0e34008e490d8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:20:46.882Z"
+      "persisted_at": "2026-11-24T12:54:07.578Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216342,9 +216347,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4af178a3552a76c272d16e09923ed4f02a55edd0e0f7e38f0fd775baead9e49",
+      "content_hash": "a1f1cf694050267c81139e247b5354ed3b1346dcc0779b1b4cc380bdad4561ba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:20:57.956Z"
+      "persisted_at": "2026-11-24T12:54:42.556Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216354,9 +216359,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "58fd7ec92100a18f603096e8bd979c24af1ef76879d195628c32671eb80c3e23",
+      "content_hash": "841fcea39ffedd0348a0a0785197c6109a7eac927e0fbf5184a6bcc17e2058d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:20:58.173Z"
+      "persisted_at": "2026-11-24T12:54:42.764Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -221601,8 +221606,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "2d283998",
-      "content_hash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
+      "source_version": "22cbff88",
+      "content_hash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -221625,6 +221630,11 @@
           "number": 9833,
           "title": "preserve UI scheduler order",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10260,
+          "title": "stop reading React's shadow node wrapper on the UI thread",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221632,7 +221642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:24:57.791Z",
+      "verified_at": "2026-11-24T12:54:02.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221683,13 +221693,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
-      "repository": "software-mansion-react-native-screens-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
+      "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "d141f65ee5427b94a2b211c231c30376cc24dc00717173e973ff5df06cfe2d6d",
+      "content_hash": "61b58e83d01f2e05a80b6dec35889a85ef0a4eccb528e278e6b7ea6678260f0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:57:33.563Z"
+      "persisted_at": "2026-11-24T12:54:41.802Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -256120,9 +256130,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "879eb251ede9832c7ec1953759bd16cdb8fd90172a59db87c33b7ee4c4a54774",
+      "content_hash": "c412d6dbfdad1cd02c2f22c64e9fc0448231f25081cd2161e3ef794ec74be246",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:36:31.790Z"
+      "persisted_at": "2026-11-24T12:54:43.749Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -277625,10 +277635,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "repository": "software-mansion/react-native-reanimated",
-      "source_version": "2d283998",
-      "content_hash": "9c533a9ca4d63b443dfb532213623c3c90b9587092e88d263576d821d83bf107",
+      "source_version": "22cbff88",
+      "content_hash": "125e96299645eaf49fe470dea42d0da7ddbf70618133e23a32e0b64de7a55cf9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T20:24:58.488Z"
+      "persisted_at": "2026-11-24T12:54:03.437Z"
     },
     "rule-8990": {
       "learning_id": "rule-8990",
@@ -277712,9 +277722,9 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "4279905f3f658f370d6708ad09eca0c05a663b90bcbe6dbfee47d3aa6325423e",
+      "content_hash": "3dc9901fa5ed8895f667f83c971b36357786be5b667f405557c5efde8551a345",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T20:25:10.939Z"
+      "persisted_at": "2026-11-24T12:54:41.593Z"
     },
     "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd": {
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
@@ -330007,13 +330017,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-I8E5-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5MX8-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a7be8af118e421b1ba6122d6d2f4310ff3dd7e726fa5da4d5efb6bc85417b1c",
+      "content_hash": "9b8f3fd6c52db8f43f61828556f442ecbae9b32179b1304aa75f62f647c4bd16",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:36:31.616Z"
+      "persisted_at": "2026-11-24T12:54:43.546Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -336035,6 +336045,82 @@
       "content_hash": "4cbe08efa105db07c5ec565ae197edeae9a2830d0c51b8c6cf86273fcff07270",
       "domain_letter": "D",
       "persisted_at": "2026-11-24T12:45:52.963Z"
+    },
+    "rule-10260": {
+      "learning_id": "rule-10260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10260,
+      "title": "stop reading React's shadow node wrapper on the UI thread",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "22cbff88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:54:02.784Z"
+    },
+    "candidate_directive-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread": {
+      "item_id": "candidate_directive-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4RUG-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread.md",
+      "title": "stop reading React's shadow node wrapper on the UI thread",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "22cbff88",
+      "content_hash": "daed9a6c6d8ed35acef04e3e55d05da455ade017ea745159bcd9739906e79829",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:54:03.257Z"
+    },
+    "rule-10261": {
+      "learning_id": "rule-10261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10261,
+      "title": "add WorkerUtilizationTracker for event-loop utilization",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "ef0e49cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:54:06.741Z"
+    },
+    "candidate_directive-add-workerutilizationtracker-for-event-loop-utilization": {
+      "item_id": "candidate_directive-add-workerutilizationtracker-for-event-loop-utilization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4UW8-add-workerutilizationtracker-for-event-loop-utilization.md",
+      "title": "add WorkerUtilizationTracker for event-loop utilization",
+      "repository": "envoyproxy/envoy",
+      "source_version": "ef0e49cf",
+      "content_hash": "e5911da056724167147b5073562f0cf2eeeea5b103a706d9d8bc694085f33f9b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:54:07.211Z"
+    },
+    "candidate_directive-reanimated-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread": {
+      "item_id": "candidate_directive-reanimated-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5L9G-reanimated-stop-reading-react-s-shadow-node-wrapper-on-the-ui-thread.md",
+      "title": "Reanimated): stop reading React's shadow node wrapper on the UI thread",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3217f6f4f8cce845699e0ef5009ed73c6982334c8f69a060c641dfa16b722e08",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:54:41.381Z"
+    },
+    "candidate_directive-resource_monitors-add-workerutilizationtracker-for-event-loop-utilization": {
+      "item_id": "candidate_directive-resource_monitors-add-workerutilizationtracker-for-event-loop-utilization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5M0C-resource_monitors-add-workerutilizationtracker-for-event-loop-utilization.md",
+      "title": "resource_monitors: add WorkerUtilizationTracker for event-loop utilization",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0f5c37de9925649e8345caad0ae01e31edce80da02f80e02df9ea791e391335",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:54:42.349Z"
     }
   },
   "ai-builder-brain": {

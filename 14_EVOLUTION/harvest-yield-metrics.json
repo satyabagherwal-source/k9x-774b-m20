@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:45:45.757Z",
-  "total_cycles_completed": 12042,
-  "total_learnings_persisted": 12042,
-  "total_rules_promoted": 11114,
+  "last_updated": "2026-11-24T12:54:06.974Z",
+  "total_cycles_completed": 12044,
+  "total_learnings_persisted": 12044,
+  "total_rules_promoted": 11116,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:38:45.235Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:38:52.433Z",
-      "repository": "iziz/libPhoneNumber-iOS",
-      "learningId": "learn-github-iziz-libphonenumber-ios",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:38:55.589Z",
       "repository": "go-kratos/kratos",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T12:45:45.757Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:54:03.019Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:54:06.974Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

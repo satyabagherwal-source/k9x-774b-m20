@@ -4,22 +4,22 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "15487f34",
+  "source_version": "ef0e49cf",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T17:20:46.424Z",
+  "timestamp": "2026-11-24T12:54:07.211Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `15487f34`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:20:46.424Z`  
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `ef0e49cf`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T12:54:07.211Z`  
 > **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `envoyproxy/envoy` (Commit: `15487f34`)
+- **Target Repository**: `envoyproxy/envoy` (Commit: `ef0e49cf`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:20:44.831Z  
+> **Harvest Timestamp**: 2026-11-24T12:54:05.812Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29284 stars
+- **Stars / Engagement**: 29287 stars
 
 ---
 
@@ -1058,528 +1058,859 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `331b8ca6` (2026-11-22)
-**Commit Message**: reverse_tunnels: changes to let the upstream drain gracefully (#49458)
+### Incident Patch 1: `d0dfd6b3` (2026-11-23)
+**Commit Message**: resource_monitors: add WorkerUtilizationTracker for event-loop utilization (#49399)
 
-## Commit Message 
-reverse_tunnel: changes to let the upstream drain gracefully
+Introduces `WorkerUtilizationTrackerInterface` and
+`WorkerUtilizationTracker`, a single-threaded `Event::Evwatch::Observer`
+that measures a worker thread's event-loop utilization (`[0.0, 1.0]`):
+- Records completed `epoll_wait` idle durations (`onPrepare` to
+`onCheck`), capping intentional sleep at `*timeout` when a finite poll
+timeout was requested so late-wakeup scheduler delays count as busy
+time.
+- Because `sampleUtilization(now)` always executes inside a callback on
+its own dispatcher thread (outside `epoll_wait`), computes `1.0 - idle /
+delta_wall` directly over completed idle intervals up to the
+caller-supplied snapshot timestamp `now` and resets accumulated idle
+time without cross-window carry-over.
 
-## Additional Description
-As described in: https://github.com/envoyproxy/envoy/pull/47717 this PR
-makes the changes to let the upstream side drain gracefully.
-We hook in the changes for the upstream drain and the downstream to open
-a new tunnel via the connection metadata hooks added.
+Additional Description:
+Part 2 of a 4-PR series introducing the
+`envoy.resource_monitors.adaptive_worker_capacity` synchronous-feedback
+resource monitor (#49325, building on #47607 and #46101):
+1. `DynamicTokenBucket` (#49323, merged)
+2. **This PR**: `WorkerUtilizationTracker`
+3. `RefillRateController` (log-linear refill-rate adaptation, plus
+passing a shared snapshot `MonotonicTime` across col
 
-Fixes commit #45874
-Replaces the drain-start GOAWAY (which never reached the wire under
-nghttp2/oghttp2) with a stream-0 METADATA frame.
-Also gets rid of the double counter for the goaway_sent as the cluster
-directly counted the same.
-
-## Risk level
-Low
-
-## Testing
-Added unit, integ tests.
-
----------
-
-Signed-off-by: aakugan <[REDACTED_EMAIL]>
-
-**File**: `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto` (modified, +6/-3)
+**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD` (modified, +12/-0)
 ```diff
-@@ -37,10 +37,13 @@ message DrainAwareHttpConnectionManager {
-   // The underlying HCM configuration to apply.
-   http_connection_manager.v3.HttpConnectionManager hcm_config = 1;
- 
--  // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
-+  // When true, a peer-initiated GOAWAY or connection-level METADATA frame carrying
-+  // ``envoy.reverse_tunnel.drain: true`` on a reverse tunnel makes the initiator drop the draining
-   // tunnel and dial a replacement, so capacity is restored before the old tunnel closes while its
--  // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
--  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
-+  // in-flight streams finish. Receiving the METADATA frame requires
-+  // ``hcm_config.http2_protocol_options.allow_metadata`` to be true. Default false, so the
-+  // behavior is opt-in and unconfigured listeners are unaffected. Required by ``metadata_delay``
-+  // and ``shutdown_notice_delay``.
-   bool enable_drain_with_goaway = 2;
- 
-   // Delay from the start of a reverse tunnel drain until a METADATA frame carrying
-```
-
-**File**: `api/envoy/extensions/upstreams/http/reverse_tunnel/v3/reverse_tunnel_codec.proto` (modified, +13/-5)
-```diff
-@@ -20,10 +20,18 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
- 
- // Configuration for the drain-aware reverse-tunnel upstream codec.
- message ReverseTunnelUpstreamCodecOptions {
--  // When true, the upstream HTTP/2 client codec emits a GOAWAY when the reverse tunnel begins
--  // draining. Defaults to false, in which case the stock HTTP/2 client codec is used unchanged.
--  // When true, a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
--  // also notifies the reverse tunnel reporter; this requires the cluster's
--  // ``http2_protocol_options.allow_metadata``.
-+  // When true, the upstream HTTP/2 client codec becomes drain-aware: it observes peer GOAWAY and
-+  // drain METADATA frames to notify the reverse tunnel reporter, and on an upstream-initiated
-+  // graceful drain (via ``/reverse_tunnel/drain_clusters``) it immediately emits a
-+  // connection-level (stream 0) METADATA frame carrying ``envoy.reverse_tunnel.drain: true`` so
-+  // the peer can dial a replacement tunnel, then emits a final GOAWAY after the drain window and
-+  // drains the pool connection. Emitting and observing drain METADATA frames requires the
-+  // cluster's ``http2_protocol_options.allow_metadata`` to be true (otherwise the HTTP/2 codec
-+  // drops the outgoing METADATA frame and increments ``http2.metadata_dropped``). Because the
-+  // replacement tunnel overlaps the draining tunnel for the entire drain window, if
-+  // ``enable_connection_limit`` is enabled, ``max_connections_per_node`` must leave room for the
-+  // replacement connection; otherwise a worker already at the limit rejects it with HTTP 429 and
-+  // each refusal lengthens the initiator's backoff. Defaults to false, in which case the stock
-+  // HTTP/2 client codec is used unchanged.
-   bool enable_drain_with_goaway = 1;
- }
-```
-
-**File**: `changelogs/current/minor_behavior_changes/reverse_tunnel__upstream-connection-metadata-drain.rst` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+Updated the reverse-tunnel upstream HTTP/2 codec so when :ref:`enable_drain_with_goaway
-+<envoy_v3_api_field_extensions.upstreams.http.reverse_tunnel.v3.ReverseTunnelUpstreamCodecOptions.enable_drain_with_goaway>`
-+is enabled, upstream-initiated graceful drains (such as via ``/reverse_tunnel/drain_clusters``)
-+emit a connection-level (stream 0) METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
-+before the final GOAWAY, replacing the previous drain-start client GOAWAY (which never reached the
-+wire because nghttp2 rejects client GOAWAYs with an odd last stream ID and oghttp2 drops client
-+GOAWAYs, yet ``reverse_tunnel_upstream_codec.goaway_sent`` counted it). Replaced
-+``reverse_tunnel_upstream_codec.goaway_sent`` with ``reverse_tunnel_upstream_codec.drain_started``
-+to count each drain start, while the cluster's ``http2.goaway_sent`` stat tracks the final GOAWAY
-+sent after the drain window. The server-side drain-aware HTTP connection manager now observes that
-+METADATA frame when :ref:`enable_drain_with_goaway
-+<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.enable_drain_with_goaway>`
-+is enabled and dials a replacement tunnel before the final GOAWAY arrives. Emitting and observing
-+the drain METADATA frame requires ``http2_protocol_options.allow_metadata`` on both sides.
-```
-
-**File**: `contrib/reverse_tunnel_reporter/test/clients/grpc_client_integration_test.cc` (modified, +84/-0)
-```diff
-@@ -702,6 +702,90 @@ TEST_P(GrpcClientIntegrationTest, ListenerDrainMetadataThreePhase) {
-   completeReq(std::chrono::milliseconds((inFlightRequestDelay.count() + 1) * 1000), in_flight_resp);
- }
- 
-+// Upstream-initiated drain: the admin endpoint /reverse_tunnel/drain_clusters triggers the upstream
-+// (client) codec's startGracefulDrain, which sends a stream-0 METADATA frame immediately (drain
-+// key -> the downstream redials a replacement tunnel) and a final GOAWAY after drain_time (pool
-+// drain, old tunnel closes). The downstream listener uses a long max_connection_duration so it does
-+// NOT self-drain during the test; the only drain is the upstream admin trigger. Validated as a
-+// gradual cutover:
-+//   (1) tunnel established (established_total==1), nothing closed, traffic flows;
-+//   (2) admin drain -> upstream sends METADATA -> downstream redials (established_total==2),
-+//       no GOAWAY yet (goaway_sent==0), no close yet (reverse_tunnel_closed==0), traffic flows;
-+//   (3) after drain_time -> upstream sends final GOAWAY (goaway_sent==1), the pool drains the
-+//       old connection, the old tunnel closes (reverse_tunnel_closed==1), traffic flows on the
-+//       replacement.
-+TEST_P(GrpcClientIntegrationTest, UpstreamAdminDrainMetadata) {
-+  enable_drain_metadata_ = true;
-+  initialize();
-+  makeNewServer();
+@@ -19,3 +19,15 @@ envoy_cc_library(
+         "@abseil-cpp//absl/time",
+     ],
+ )
 +
-+  // Long max_connection_duration so the downstream does not self-drain during the test; the only
-+  // drain is the upstream admin trigger. drain_time_ms=5000 -> METADATA now, final GOAWAY ~5s.
-+  // The in-flight /slow request started before the drain must outlive the final GOAWAY at ~5s.
-+  constexpr std::chrono::seconds inFlightRequestDelay{10};
-+  addListenerLds(getDownstreamListenerWithMetadata(
-+      "node-1", 1, std::chrono::seconds(120), std::chrono::milliseconds(1000),
-+      std::chrono::milliseconds(5000), std::chrono::seconds(10), inFlightRequestDelay));
-+  waitForActiveTunnels(1);
-+  validateEqual(std::chrono::milliseconds(sendInterval * 3), getConns({"node-1"}));
++envoy_cc_library(
++    name = "worker_utilization_tracker_lib",
++    srcs = ["worker_utilization_tracker.cc"],
++    hdrs = ["worker_utilization_tracker.h"],
++    deps = [
++        "//envoy/common:time_interface",
++        "//envoy/event:dispatcher_interface",
++        "//envoy/event:evwatch_interface",
++        "//source/common/common:assert_lib",
++    ],
++)
+```
+
+**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.cc` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++#include "source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h"
 +
-+  auto sendDirectRequest = [&]() {
-+    auto client = makeHttpConnection(egressPort);
-+    auto resp = makeClientRequest("/direct", client);
-+    completeReq(std::chrono::milliseconds(1000), resp);
++#include <algorithm>
++#include <chrono>
++#include <optional>
++#include <utility>
++
++#include "envoy/common/time.h"
++#include "envoy/event/dispatcher.h"
++
++#include "source/common/common/assert.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace ResourceMonitors {
++namespace AdaptiveWorkerCapacity {
++
++WorkerUtilizationTracker::WorkerUtilizationTracker(Event::Dispatcher& dispatcher)
++    : dispatcher_(dispatcher), last_sample_time_(dispatcher_.timeSource().monotonicTime()) {
++  ASSERT(dispatcher_.isThreadSafe());
++  dispatcher_.registerEvwatchObserver(*this);
++}
++
++WorkerUtilizationTracker::~WorkerUtilizationTracker() {
++  ASSERT(dispatcher_.isThreadSafe());
++  dispatcher_.unregisterEvwatchObserver(*this);
++}
++
++void WorkerUtilizationTracker::onPrepare(MonotonicTime prepare_time,
++                                         std::optional<MonotonicTime::duration> timeout) {
++  ASSERT(dispatcher_.isThreadSafe());
++  pending_poll_ = PendingPoll{prepare_time, timeout};
++}
++
++void WorkerUtilizationTracker::onCheck(MonotonicTime check_time) {
++  ASSERT(dispatcher_.isThreadSafe());
++  if (pending_poll_.has_value()) {
++    if (check_time > pending_poll_->prepare_time) {
++      MonotonicTime::duration idle_time = check_time - pending_poll_->prepare_time;
++      if (pending_poll_->timeout.has_value()) {
++        idle_time =
++            std::min(idle_time, std::max(MonotonicTime::duration::zero(), *pending_poll_->timeout));
++      }
++      accumulated_idle_time_ += idle_time;
++    }
++    pending_poll_.reset();
++  }
++}
++
++double WorkerUtilizationTracker::sampleUtilization(MonotonicTime now) {
++  ASSERT(dispatcher_.isThreadSafe());
++  ASSERT(!pending_poll_.has_value());
++  if (now <= last_sample_time_) {
++    return 0.0;
++  }
++  const MonotonicTime::duration delta_wall = now - last_sample_time_;
++  last_sample_time_ = now;
++
++  const MonotonicTime::duration idle_time =
++      std::exchange(accumulated_idle_time_, MonotonicTime::duration::zero());
++  const double idle_fraction = std::chrono::duration<double>(idle_time).count() /
++                               std::chrono::duration<double>(delta_wall).count();
++  return std::clamp(1.0 - idle_fraction, 0.0, 1.0);
++}
++
++} // namespace AdaptiveWorkerCapacity
++} // namespace ResourceMonitors
++} // namespace Extensions
++} // namespace Envoy
+```
+
+**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++#pragma once
++
++#include <optional>
++
++#include "envoy/common/time.h"
++#include "envoy/event/dispatcher.h"
++#include "envoy/event/evwatch.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace ResourceMonitors {
++namespace AdaptiveWorkerCapacity {
++
++// WorkerUtilizationTrackerInterface defines the interface for measuring a worker thread's
++// event-loop utilization. All methods must be called on the worker's dispatcher thread.
++class WorkerUtilizationTrackerInterface {
++public:
++  virtual ~WorkerUtilizationTrackerInterface() = default;
++
++  // Calculates thread utilization in [0.0, 1.0] over the window ending at now (a monotonic
++  // timestamp obtained from the worker dispatcher's TimeSource) since the previous sample.
++  virtual double sampleUtilization(MonotonicTime now) = 0;
++};
++
++// WorkerUtilizationTracker measures event-loop utilization on a persistent blocking worker event
++// loop (RunType::Block or RunType::RunUntilExit).
++//
++// Because sampleUtilization(now) is always invoked from a callback on dispatcher's thread (between
++// onCheck and onPrepare, never while blocked inside epoll_wait), every idle sleep interval since
++// last_sample_time_ has already completed by the time sampleUtilization(now) runs using the
++// caller-provided snapshot timestamp now.
++//
++// Not thread-safe; dispatcher must outlive WorkerUtilizationTracker, and construction,
++// destruction, and all method calls must occur on dispatcher's thread.
++class WorkerUtilizationTracker final : public WorkerUtilizationTrackerInterface,
++                                       public Event::Evwatch::Observer {
++public:
++  explicit WorkerUtilizationTracker(Event::Dispatcher& dispatcher);
++  WorkerUtilizationTracker(const WorkerUtilizationTracker&) = delete;
++  WorkerUtilizationTracker& operator=(const WorkerUtilizationTracker&) = delete;
++  ~WorkerUtilizationTracker() override;
++
++  // Event::Evwatch::Observer
++  void onPrepare(MonotonicTime prepare_time,
++                 std::optional<MonotonicTime::duration> timeout) override;
++  void onCheck(MonotonicTime check_time) override;
++
++  // WorkerUtilizationTrackerInterface
++  double sampleUtilization(MonotonicTime now) override;
++
++private:
++  struct PendingPoll {
++    MonotonicTime prepare_time;
++    std::optional<MonotonicTime::duration> timeout;
 +  };
 +
-+  // Convenience aliases for the long stat names.
-+  const std::string closed_total =
-+      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
-+      "reverse_tunnel_closed_total";
-+  const std::string established_total =
-+      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
-+      "reverse_tunnel_established_total";
-+  const std::string drain_started = "reverse_tunnel_upstream_codec.drain_started";
-+  const std::string goaway_sent = "cluster.reverse_connection_cluster.http2.goaway_sent";
++  Event::Dispatcher& dispatcher_;
++  std::optional<PendingPoll> pending_poll_;
++  MonotonicTime::duration accumulated_idle_time_{0};
++  MonotonicTime last_sample_time_;
++};
 +
-+  // (1) Tunnel established, nothing closed yet. Baseline: the tunnel is routable.
-+  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
-+  EXPECT_EQ(0, test_server_->counter(drain_started)->value());
-+  sendDirectRequest();
-+  ASSERT_NE(nullptr, test_server_->counter(goaway_sent));
-+  EXPECT_EQ(0, test_server_->counter(goaway_sent)->value());
-+
-+  // Hold a /slow stream open on the old tunnel before starting the drain so we verify in-flight
-+  // requests survive both the drain METADATA and the final GOAWAY + pool drain.
-+  auto in_flight_client = makeHttpConnection(egressPort);
-+  auto in_flight_resp = makeClientRequest("/slow", in_flight_client);
-+
-+  // (2) Trigger the upstream-initiated drain. The upstream sends METADATA now -> the downstream
-+  // redials a replacement (established_total==2). No GOAWAY yet (goaway_sent==0) and no close yet
-+  // (reverse_tunnel_closed==0); traffic still flows on the old tunnel.
-+  BufferingStreamDecoderPtr admin_response = IntegrationUtil::makeSingleRequest(
-+      test_server_->adminAddress(), "POST", "/reverse_tunnel/drain_clusters?drain_time_ms=5000", "",
-+      Http::CodecType::HTTP1);
-+  ASSERT_TRUE(admin_response != nullptr);
-+  ASSERT_TRUE(admin_response->complete());
-+  EXPECT_EQ("200", admin_response->headers().Status()->value().getStringView());
-+  test_server_->waitForCounter(drain_started, testing::Eq(1));
-+
-+  // The downstream redials as soon as it receives the drain METADATA (sent immediately on the admin
-+  // trigger), so established_total==2 follows within ~1-2s; ~10s is a tight CI-safe bound.
-+  test_server_->waitForCounter(established_total, testing::Eq(2), std::chrono::milliseconds(10000));
-+  EXPECT_EQ(0, test_server_->counter(goaway_sent)->value());
-+  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
-+  sendDirectRequest();
-+
-+  // (3) After drain_time (~5s) the upstream sends the final GOAWAY (goaway_sent==1) and drains the
-+  // old pool connection. New traffic routes to the replacement while the in-flight /slow request
-+  // finishes cleanly on the old tunnel, after which the old tunnel closes
-+  // (reverse_tunnel_closed==1).
-+  test_server_->wai
++} // namespace AdaptiveWorkerCapacity
++} // namespace ResourceMonitors
++} // namespace Extensions
++} // namespace Envoy
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/common/BUILD` (modified, +1/-0)
+**File**: `test/extensions/resource_monitors/adaptive_worker_capacity/BUILD` (modified, +10/-0)
 ```diff
-@@ -16,6 +16,7 @@ envoy_cc_extension(
-     deps = [
-         "//envoy/buffer:buffer_interface",
-         "//envoy/common:random_generator_interface",
-+        "//envoy/http:metadata_interface",
-         "//envoy/network:connection_interface",
-         "//source/common/buffer:buffer_lib",
-         "//source/common/common:logger_lib",
+@@ -17,3 +17,13 @@ envoy_cc_test(
+         "@abseil-cpp//absl/time",
+     ],
+ )
++
++envoy_cc_test(
++    name = "worker_utilization_tracker_test",
++    srcs = ["worker_utilization_tracker_test.cc"],
++    deps = [
++        "//source/extensions/resource_monitors/adaptive_worker_capacity:worker_utilization_tracker_lib",
++        "//test/mocks/event:event_mocks",
++        "//test/test_common:simulated_time_system_lib",
++    ],
++)
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.cc` (modified, +22/-0)
+**File**: `test/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker_test.cc` (added, +287/-0)
 ```diff
-@@ -173,6 +173,28 @@ uint64_t ReverseConnectionUtility::diffMs(const Envoy::MonotonicTime& start,
-   return ms.count();
- }
- 
-+Http::MetadataMapVector ReverseConnectionUtility::createDrainMetadata() {
-+  Http::MetadataMap metadata_map;
-+  metadata_map.emplace(DRAIN_METADATA_KEY, DRAIN_METADATA_VALUE);
-+  Http::MetadataMapVector metadata_map_vector;
-+  metadata_map_vector.push_back(std::make_unique<Http::MetadataMap>(std::move(metadata_map)));
+@@ -0,0 +1,287 @@
++#include <chrono>
++#include <memory>
++#include <optional>
++#include <type_traits>
 +
-+  return metadata_map_vector;
++#include "source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h"
++
++#include "test/mocks/event/mocks.h"
++#include "test/test_common/simulated_time_system.h"
++
++#include "gmock/gmock.h"
++#include "gtest/gtest.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace ResourceMonitors {
++namespace AdaptiveWorkerCapacity {
++namespace {
++
++static_assert(!std::is_copy_constructible_v<WorkerUtilizationTracker>);
++static_assert(!std::is_copy_assignable_v<WorkerUtilizationTracker>);
++static_assert(!std::is_move_constructible_v<WorkerUtilizationTracker>);
++static_assert(!std::is_move_assignable_v<WorkerUtilizationTracker>);
++
++using testing::NiceMock;
++
++TEST(WorkerUtilizationTrackerTest, CalculatesUtilizationCorrectly) {
++  Event::SimulatedTimeSystem time_system;
++  NiceMock<Event::MockDispatcher> dispatcher;
++
++  WorkerUtilizationTracker tracker(dispatcher);
++
++  // Initial active callback work for 5ms before the first onPrepare.
++  time_system.advanceTimeWait(std::chrono::milliseconds(5));
++  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
++
++  // Epoll wait for 75ms.
++  time_system.advanceTimeWait(std::chrono::milliseconds(75));
++  tracker.onCheck(time_system.monotonicTime());
++
++  // Active event processing for 20ms.
++  time_system.advanceTimeWait(std::chrono::milliseconds(20));
++
++  // Polling at T0 + 100ms: idle = 75ms, wall = 100ms -> utilization = 1.0 - 75 / 100 = 0.25.
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.25);
 +}
 +
-+bool ReverseConnectionUtility::eraseDrainMetadata(Http::MetadataMap& metadata_map) {
-+  auto it = metadata_map.find(DRAIN_METADATA_KEY);
-+  if (it == metadata_map.end()) {
-+    return false;
-+  }
-+  if (it->second != DRAIN_METADATA_VALUE) {
-+    return false;
-+  }
++TEST(WorkerUtilizationTrackerTest, IncludesWakeupDelayInUtilization) {
++  Event::SimulatedTimeSystem time_system;
++  NiceMock<Event::MockDispatcher> dispatcher;
 +
-+  metadata_map.erase(it);
-+  return true;
++  WorkerUtilizationTracker tracker(dispatcher);
++
++  // onPrepare sets timeout of 10ms at T0.
++  tracker.onPrepare(time_system.monotonicTime(), std::chrono::milliseconds(10));
++
++  // System experiences CPU starvation/delay: epoll wakes up at T0 + 30ms (only 10ms idle; the 20ms
++  // wakeup delay counts as busy).
++  time_system.advanceTimeWait(std::chrono::milliseconds(30));
++  tracker.onCheck(time_system.monotonicTime());
++
++  // Active event processing for 20ms until T0 + 50ms: idle = 10ms, wall = 50ms -> 0.80.
++  time_system.advanceTimeWait(std::chrono::milliseconds(20));
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.80);
 +}
 +
- } // namespace ReverseConnection
- } // namespace Bootstrap
- } // namespace Extensions
-```
-
-**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h` (modified, +8/-0)
-```diff
-@@ -5,6 +5,7 @@
- 
- #include "envoy/buffer/buffer.h"
- #include "envoy/common/random_generator.h"
-+#include "envoy/http/metadata_interface.h"
- #include "envoy/network/connection.h"
- 
- #include "source/common/buffer/buffer_impl.h"
-@@ -94,6 +95,13 @@ class ReverseConnectionUtility : public Logger::Loggable<Logger::Id::connection>
- 
-   static uint64_t diffMs(const Envoy::MonotonicTime& start, const Envoy::MonotonicTime& end);
- 
-+  // Creates a single-entry MetadataMapVector carrying the reverse-tunnel drain marker.
-+  static Http::MetadataMapVector createDrainMetadata();
++TEST(WorkerUtilizationTrackerTest, HandlesContinuousActiveExecutionAcrossMultipleSamples) {
++  Event::SimulatedTimeSystem time_system;
++  NiceMock<Event::MockDispatcher> dispatcher;
 +
-+  // If `metadata_map` contains the reverse-tunnel drain marker with its expected value, removes
-+  // that entry and returns true; otherwise leaves `metadata_map` unchanged and returns false.
-+  static bool eraseDrainMetadata(Http::MetadataMap& metadata_map);
++  WorkerUtilizationTracker tracker(dispatcher);
 +
- private:
-   ReverseConnectionUtility() = delete;
- };
-```
-
-**File**: `source/extensions/filters/network/reverse_tunnel/drain_aware_hcm/BUILD` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ envoy_cc_extension(
-         "//source/common/network:drain_close_util_lib",
-         "//source/common/protobuf:utility_lib",
-         "//source/common/runtime:runtime_features_lib",
--        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_includes",
-+        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
-         "//source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface:reverse_connection_io_handle_lib",
-         "//source/extensions/filters/network:well_known_names",
-         "//source/extensions/filters/network/common:factory_base_lib",
++  // Sleep 50ms, then wake up at T0 + 50ms and execute active callbacks through T0 + 350ms.
++  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
++  time_system.advanceTimeWait(std::chrono::milliseconds(50));
++  tracker.onCheck(time_system.monotonicTime());
++
++  // Poll 1 at T0 + 100ms: idle = 50ms, wall = 100ms -> utilization = 0.50.
++  time_system.advanceTimeWait(std::chrono::milliseconds(50));
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.50);
++
++  // Poll 2 at T0 + 200ms: idle = 0ms, wall = 100ms -> utilization = 1.00.
++  time_system.advanceTimeWait(std::chrono::milliseconds(100));
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 1.00);
++
++  // Poll 3 at T0 + 300ms: idle = 0ms, wall = 100ms -> utilization = 1.00.
++  time_system.advanceTimeWait(std::chrono::milliseconds(100));
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 1.00);
++
++  // T0 + 350ms: active callbacks finish and dispatcher sleeps 50ms until T0 + 400ms.
++  time_system.advanceTimeWait(std::chrono::milliseconds(50));
++  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
++  time_system.advanceTimeWait(std::chrono::milliseconds(50));
++  tracker.onCheck(time_system.monotonicTime());
++
++  // Poll 4 at T0 + 400ms: idle = 50ms, wall = 100ms -> utilization = 0.50.
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.50);
++
++  // Poll 5 at T0 + 500ms: pure idle 400ms -> 500ms, wall = 100ms -> utilization = 0.00.
++  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
++  time_system.advanceTimeWait(std::chrono::milliseconds(100));
++  tracker.onCheck(time_system.monotonicTime());
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.00);
++}
++
++TEST(WorkerUtilizationTrackerTest, ReturnsZeroUtilizationWhenDeltaWallIsZero) {
++  Event::SimulatedTimeSystem time_system;
++  time_system.advanceTimeWait(std::chrono::milliseconds(50));
++  NiceMock<Event::MockDispatcher> dispatcher;
++
++  WorkerUtilizationTracker tracker(dispatcher);
++  const auto t0 = time_system.monotonicTime();
++
++  // Zero elapsed time since construction returns 0.0.
++  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(t0), 0.0);
++
++  // Accumulate 50ms of idle time and sample at t
 ```
 
 ---
 
-### Incident Patch 2: `61423525` (2026-11-23)
-**Commit Message**: cache: key cache maps by serialized keys and fix cache_v2 session expiry (#49276)
+### Incident Patch 2: `c17e0d33` (2026-11-23)
+**Commit Message**: http: fix decoder filter local reply abort lifecycle in FilterManager. (#49102)
+
+Commit Message: http: fix decoder filter local reply abort lifecycle in
+FilterManager.
+Additional Description: This is the first pull request in the chain that
+makes local replies from upstream HTTP filters retriable.
+
+When a decoder filter aborts the chain with sendLocalReply,
+FilterManager::decodeHeaders ran the prepared local reply before
+finishing that filter's bookkeeping (processed_headers_,
+commonHandleAfterHeadersCallback(), and decodeComplete()), and
+FilterManager::decodeTrailers ran it before
+commonHandleAfterTrailersCallback(). Running the prepared local reply
+can complete the stream synchronously and destroy the filters, so
+decodeHeaders could call decodeComplete() on a filter after onDestroy().
+The downstream HCM hits this today: a filter local reply in
+decodeHeaders(end_stream=true) that ends the stream got decodeComplete()
+after onDestroy(). HttpConnectionManagerImplTest.FilterHeadReply encoded
+that order and is updated.
+
+Each filter's bookkeeping now finishes before
+executeLocalReplyIfPrepared() runs, and iteration returns right after
+it:
+
+* decodeData and decodeTrailers now clear filte
+
+**File**: `source/common/http/filter_manager.cc` (modified, +40/-8)
+```diff
+@@ -806,11 +806,24 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
+       state_.filter_call_state_ &= ~FilterCallState::EndOfStream;
+     }
+     if (state_.decoder_filter_chain_aborted_) {
+-      executeLocalReplyIfPrepared();
+       ENVOY_STREAM_LOG(trace,
+                        "decodeHeaders filter iteration aborted due to local reply: filter={}",
+                        *this, (*entry)->filter_context_.config_name);
++      // Finish this filter's bookkeeping, including decodeComplete(), before running the prepared
++      // local reply. Running the local reply encodes the response and may complete or reset the
++      // stream synchronously, destroying the filters.
+       status = FilterHeadersStatus::StopIteration;
++      (*entry)->processed_headers_ = true;
++      (*entry)->commonHandleAfterHeadersCallback(status, end_stream);
++      if ((*entry)->end_stream_ && !state_.destroyed_) {
++        (*entry)->handle_->decodeComplete();
++      }
++      executeLocalReplyIfPrepared();
++      if (end_stream && !state_.destroyed_ &&
++          !filter_manager_callbacks_.responseHeaders().has_value()) {
++        disarmRequestTimeout();
++      }
++      return;
+     }
+ 
+     ASSERT(!(status == FilterHeadersStatus::ContinueAndDontEndStream && !(*entry)->end_stream_),
+@@ -834,13 +847,12 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
+                   (*entry)->filter_context_.config_name));
+ 
+     // If this filter ended the stream, decodeComplete() should be called for it.
+-    if ((*entry)->end_stream_) {
++    if ((*entry)->end_stream_ && !state_.destroyed_) {
+       (*entry)->handle_->decodeComplete();
+     }
+ 
+     // Skip processing metadata after sending local reply
+     if (stopDecoderFilterChain() && std::next(entry) != decoder_filters_.end()) {
+-      maybeContinueDecoding(continue_data_entry);
+       return;
+     }
+ 
+@@ -881,6 +893,9 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
+   }
+ 
+   maybeContinueDecoding(continue_data_entry);
++  if (state_.destroyed_) {
++    return;
++  }
+ 
+   if (end_stream) {
+     disarmRequestTimeout();
+@@ -968,7 +983,8 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
+     // is replayed to it with end_stream false, and that delivery must not retract the marker.
+     (*entry)->observed_end_stream_ |= (*entry)->end_stream_;
+     FilterDataStatus status = (*entry)->handle_->decodeData(data, (*entry)->end_stream_);
+-    if ((*entry)->end_stream_) {
++    // Run decodeComplete() inside the call state so an abort it triggers stops the iteration.
++    if ((*entry)->end_stream_ && !state_.destroyed_) {
+       (*entry)->handle_->decodeComplete();
+     }
+     state_.filter_call_state_ &= ~FilterCallState::DecodeData;
+@@ -978,9 +994,13 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
+     ENVOY_STREAM_LOG(trace, "decode data called: filter={} status={}", *this,
+                      (*entry)->filter_context_.config_name, static_cast<uint64_t>(status));
+     if (state_.decoder_filter_chain_aborted_) {
+-      executeLocalReplyIfPrepared();
+       ENVOY_STREAM_LOG(trace, "decodeData filter iteration aborted due to local reply: filter={}",
+                        *this, (*entry)->filter_context_.config_name);
++      executeLocalReplyIfPrepared();
++      if (end_stream && !state_.destroyed_ &&
++          !filter_manager_callbacks_.responseHeaders().has_value()) {
++        disarmRequestTimeout();
++      }
+       return;
+     }
+ 
+@@ -1010,6 +1030,10 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
+     }
+   }
+ 
++  if (state_.destroyed_) {
++    return;
++  }
++
+   if (forward_held_trailers_) {
+     // Trailers added in this pass follow the data from the filter holding them, if it iterates.
+     forwardRequestTrailers();
+@@ -1092,17 +1116,25 @@ void FilterManager::decodeTrailers(ActiveStreamDecoderFilter* filter, RequestTra
+     state_.filter_call_state_ |= FilterCallState::DecodeTrailers;
+     FilterTrailersStatus status = (*entry)->handle_->decodeTrailers(trailers);
+     request_trailers_state_.processed_ = true;
+-    (*entry)->handle_->decodeComplete();
+     (*entry)->end_stream_ = true;
++    // Run decodeComplete() inside the call state so an abort it triggers stops the iteration.
++    if (!state_.destroyed_) {
++      (*entry)->handle_->decodeComplete();
++    }
+     state_.filter_call_state_ &= ~FilterCallState::DecodeTrailers;
+     ENVOY_STREAM_LOG(trace, "decode trailers called: filter={} status={}", *this,
+                      (*entry)->filter_context_.config_name, static_cast<uint64_t>(status));
+     if (state_.decoder_filter_chain_aborted_) {
+-      executeLocalReplyIfPrepared();
++      status = FilterTrailersStatus::StopIteration;
+       ENVOY_STREAM_LOG(trace,
+                        "decodeTrailers filter iteration aborted due to local reply: filter={}",
+                       
+```
+
+**File**: `test/common/http/conn_manager_impl_test_2.cc` (modified, +2/-1)
+```diff
+@@ -2088,6 +2088,8 @@ TEST_F(HttpConnectionManagerImplTest, FilterHeadReply) {
+   });
+ 
+   EXPECT_CALL(response_encoder_, streamErrorOnInvalidHttpMessage()).WillOnce(Return(true));
++  // decodeComplete() runs before the local reply is encoded, which ends and destroys the stream.
++  EXPECT_CALL(*decoder_filters_[0], decodeComplete());
+   EXPECT_CALL(*encoder_filters_[0], encodeHeaders(_, true))
+       .WillOnce([&](ResponseHeaderMap& headers, bool) -> FilterHeadersStatus {
+         EXPECT_EQ("11", headers.getContentLengthValue());
+@@ -2099,7 +2101,6 @@ TEST_F(HttpConnectionManagerImplTest, FilterHeadReply) {
+         response_encoder_.stream_.codec_callbacks_->onCodecEncodeComplete();
+       });
+   expectOnDestroy();
+-  EXPECT_CALL(*decoder_filters_[0], decodeComplete());
+   // Kick off the incoming data.
+   Buffer::OwnedImpl fake_input("1234");
+   EXPECT_CALL(filter_callbacks_.connection_.stream_info_, protocol(Envoy::Http::Protocol::Http11));
+```
+
+**File**: `test/common/http/filter_manager_test.cc` (modified, +436/-0)
+```diff
+@@ -2295,6 +2295,411 @@ TEST_F(FilterManagerTest, ResponseBufferDrainedAfterTooLargeReleasesNothing) {
+   filter_manager_->destroyFilters();
+ }
+ 
++class FilterManagerDecodeLifecycleTest : public FilterManagerTest {
++public:
++  enum class DecodePhase { Headers, Data, Trailers };
++
++  using StrictDecoderFilterPtr = std::shared_ptr<StrictMock<MockStreamDecoderFilter>>;
++
++  StrictDecoderFilterPtr setupSingleDecoderFilter() {
++    initialize();
++    auto filter = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
++    EXPECT_CALL(*filter, setDecoderFilterCallbacks(_));
++    EXPECT_CALL(filter_factory_, createFilterChain(_))
++        .WillOnce([&](FilterChainFactoryCallbacks& callbacks) -> bool {
++          callbacks.setFilterConfigName("configName1");
++          createDecoderFilterFactoryCb(filter)(callbacks);
++          return true;
++        });
++    initHeaders();
++    return filter;
++  }
++
++  std::pair<StrictDecoderFilterPtr, StrictDecoderFilterPtr> setupTwoDecoderFilters() {
++    initialize();
++    auto filter_1 = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
++    auto filter_2 = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
++    EXPECT_CALL(*filter_1, setDecoderFilterCallbacks(_));
++    EXPECT_CALL(*filter_2, setDecoderFilterCallbacks(_));
++    EXPECT_CALL(filter_factory_, createFilterChain(_))
++        .WillOnce([&](FilterChainFactoryCallbacks& callbacks) -> bool {
++          callbacks.setFilterConfigName("configName1");
++          createDecoderFilterFactoryCb(filter_1)(callbacks);
++          callbacks.setFilterConfigName("configName2");
++          createDecoderFilterFactoryCb(filter_2)(callbacks);
++          return true;
++        });
++    initHeaders();
++    return {filter_1, filter_2};
++  }
++
++  void initHeaders() {
++    filter_manager_->createDownstreamFilterChain();
++    ON_CALL(filter_manager_callbacks_, requestHeaders())
++        .WillByDefault(Return(makeOptRef(*headers_)));
++    ON_CALL(filter_manager_callbacks_, requestTrailers())
++        .WillByDefault(
++            [this]() -> RequestTrailerMapOptRef { return makeOptRefFromPtr(trailers_.get()); });
++    filter_manager_->requestHeadersInitialized();
++  }
++
++  void sendData(absl::string_view data, bool end_stream) {
++    Buffer::OwnedImpl body(data);
++    filter_manager_->decodeData(body, end_stream);
++  }
++
++  void sendTrailers() {
++    trailers_ = std::make_unique<TestRequestTrailerMapImpl>(
++        TestRequestTrailerMapImpl{{"trailer", "value"}});
++    filter_manager_->decodeTrailers(*trailers_);
++  }
++
++  void applyStopIterationActionInPhase(StrictMock<MockStreamDecoderFilter>& filter,
++                                       DecodePhase phase, bool end_stream,
++                                       std::function<void()> abort_action) {
++    switch (phase) {
++    case DecodePhase::Headers:
++      EXPECT_CALL(filter, decodeHeaders(_, end_stream))
++          .WillOnce([abort_action](RequestHeaderMap&, bool) {
++            abort_action();
++            return FilterHeadersStatus::StopIteration;
++          });
++      return;
++    case DecodePhase::Data:
++      EXPECT_CALL(filter, decodeHeaders(_, false)).WillOnce(Return(FilterHeadersStatus::Continue));
++      EXPECT_CALL(filter, decodeData(_, end_stream))
++          .WillOnce([abort_action](Buffer::Instance&, bool) {
++            abort_action();
++            return FilterDataStatus::StopIterationNoBuffer;
++          });
++      return;
++    case DecodePhase::Trailers:
++      ASSERT(end_stream);
++      EXPECT_CALL(filter, decodeHeaders(_, false)).WillOnce(Return(FilterHeadersStatus::Continue));
++      EXPECT_CALL(filter, decodeTrailers(_)).WillOnce([abort_action](RequestTrailerMap&) {
++        abort_action();
++        return FilterTrailersStatus::StopIteration;
++      });
++      return;
++    }
++  }
++
++  // Runs phases up to and including `phase`
++  void driveThroughPhase(DecodePhase phase, bool end_stream) {
++    switch (phase) {
++    case DecodePhase::Headers:
++      filter_manager_->decodeHeaders(*headers_, end_stream);
++      return;
++    case DecodePhase::Data:
++      filter_manager_->decodeHeaders(*headers_, false);
++      sendData("body", end_stream);
++      return;
++    case DecodePhase::Trailers:
++      filter_manager_->decodeHeaders(*headers_, false);
++      sendTrailers();
++      return;
++    }
++  }
++
++  void runLocalReplyOnEndStreamTest(DecodePhase end_stream_phase) {
++    auto filter = setupSingleDecoderFilter();
++    EXPECT_CALL(*filter, decodeMetadata(_)).Times(0);
++
++    InSequence s;
++    applyStopIterationActionInPhase(*filter, end_stream_phase, /*end_stream=*/true, [&]() {
++      if (end_stream_phase == DecodePhase::Headers) {
++        MetadataMap metadata_map = {{"a", "b"}};
++        filter->callbacks_->addDecodedMetadata().emplace_back(
++            std::make_unique<MetadataMap>(metadata_map));
++      }
++      filter->callbacks_->sendLocalReply(Code::InternalServerError, "err", nullptr, std::nullopt,
++                                         "err");
+
+```
+
+---
+
+### Incident Patch 3: `26032923` (2026-11-24)
+**Commit Message**: dynamic_modules: add memory limits to the Rust SDK (#49549)
 
 ## Description
 
-This PR keys the in-memory maps of the HTTP cache filters and their
-caches by `SerializedKey`, the deterministic serialization of the cache
-key, instead of hashing and comparing the key with reflection. In a
-local microbenchmark built with `-c opt`, a lookup of a key with a
-30-byte path in a map of 1000 entries goes from about **430 ns** to
-about **75 ns**. The gain shrinks as the path grows, since serializing
-copies it. With a 1 KiB path a lookup is two to three times faster, with
-an 8 KiB path it is slightly faster, and with a path near the default 60
-KiB header limit a lookup is about 40% slower.
-
-Each map call serializes the key it is given, so a request can serialize
-its key again when it opens a `cache_v2` session, misses or revalidates.
-
-It also fixes the expiry of idle sessions in the `cache_v2` filter. Each
-lookup is meant to check the session after the one it uses and remove it
-if it has expired. The Abseil version Envoy pins returns an iterator
-from an insert that always advances to the end, even when the key
-already exists. So each lookup checked only the first session in 
-
-**File**: `changelogs/current/bug_fixes/cache__cache-v2-session-expiry.rst` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+Fixed the ``cache_v2`` filter so that idle cache sessions expire. Each lookup checked only the first
-+session in the table, so idle sessions and the ``cache_sessions_entries`` gauge could grow while
-+that session stayed in use.
-```
-
-**File**: `source/extensions/filters/http/cache/BUILD` (modified, +1/-0)
-```diff
-@@ -110,6 +110,7 @@ envoy_cc_library(
-         "//source/common/http:header_utility_lib",
-         "//source/common/http:headers_lib",
-         "//source/common/protobuf:deterministic_hash_lib",
-+        "//source/common/protobuf:utility_lib",
-         "@envoy_api//envoy/extensions/filters/http/cache/v3:pkg_cc_proto",
-     ],
- )
-```
-
-**File**: `source/extensions/filters/http/cache/http_cache.cc` (modified, +3/-0)
-```diff
-@@ -11,6 +11,7 @@
- #include "source/common/http/headers.h"
- #include "source/common/http/utility.h"
- #include "source/common/protobuf/deterministic_hash.h"
-+#include "source/common/protobuf/utility.h"
- #include "source/extensions/filters/http/cache/cache_custom_headers.h"
- #include "source/extensions/filters/http/cache/cache_headers_utils.h"
- 
-@@ -59,6 +60,8 @@ LookupRequest::LookupRequest(const Http::RequestHeaderMap& request_headers, Syst
- // flush.
- size_t stableHashKey(const Key& key) { return DeterministicProtoHash::hash(key); }
- 
-+SerializedKey serializeKey(const Key& key) { return MessageUtil::serializeDeterministically(key); }
-+
- void LookupRequest::initializeRequestCacheControl(const Http::RequestHeaderMap& request_headers) {
-   const absl::string_view cache_control =
-       request_headers.getInlineValue(CacheCustomHeaders::requestCacheControl());
-```
-
-**File**: `source/extensions/filters/http/cache/http_cache.h` (modified, +7/-2)
-```diff
-@@ -63,13 +63,18 @@ using LookupResultPtr = std::unique_ptr<LookupResult>;
- // leaves alpha, any improvements to stableHashKey that would change its output
- // for existing callers is a breaking change.
- //
--// For non-persistent storage, use MessageUtil, which has no long-term stability
--// guarantees.
-+// For non-persistent storage, key by serializeKey(), whose bytes are stable
-+// only within one binary.
- //
- // When providing a cached response, Caches must ensure that the keys (and not
- // just their hashes) match.
- size_t stableHashKey(const Key& key);
- 
-+// The deterministic serialization of a Key, which in-memory maps and sets of
-+// Keys use as their key.
-+using SerializedKey = std::string;
-+SerializedKey serializeKey(const Key& key);
-+
- // LookupRequest holds everything about a request that's needed to look for a
- // response in a cache, to evaluate whether an entry from a cache is usable, and
- // to determine what ranges are needed.
-```
-
-**File**: `source/extensions/filters/http/cache_v2/BUILD` (modified, +1/-0)
-```diff
-@@ -172,6 +172,7 @@ envoy_cc_library(
-         "//source/common/http:header_utility_lib",
-         "//source/common/http:headers_lib",
-         "//source/common/protobuf:deterministic_hash_lib",
-+        "//source/common/protobuf:utility_lib",
-         "@envoy_api//envoy/extensions/filters/http/cache_v2/v3:pkg_cc_proto",
-     ],
- )
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.cc` (modified, +5/-2)
-```diff
-@@ -963,8 +963,9 @@ void CacheSession::performValidation() {
- std::shared_ptr<CacheSession> CacheSessionsImpl::getEntry(const Key& key) {
-   const SystemTime now = time_source_.systemTime();
-   cache().touch(key, now);
-+  SerializedKey serialized_key = serializeKey(key);
-   absl::MutexLock lock(mu_);
--  auto [it, is_new] = entries_.try_emplace(key);
-+  auto [it, is_new] = entries_.try_emplace(std::move(serialized_key));
-   if (is_new) {
-     stats().incCacheSessionsEntries();
-   }
-@@ -978,7 +979,9 @@ std::shared_ptr<CacheSession> CacheSessionsImpl::getEntry(const Key& key) {
-   // if the adjacent entry hasn't been touched in a while.
-   // This should do a decent job of expiring them simply, with a low cost, and
-   // without taking any long-lived locks as would be required for periodic
--  // scanning.
-+  // scanning. Advancing the iterator that try_emplace() returns always yields end(),
-+  // so look the entry up again.
-+  it = entries_.find(it->first);
-   if (++it == entries_.end()) {
-     it = entries_.begin();
-   }
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.h` (modified, +1/-2)
-```diff
-@@ -304,8 +304,7 @@ class CacheSessionsImpl : public CacheSessions,
-   // their own mutex. Since it's only held for a short time and is related to
-   // async operations, it seems unlikely that mutex contention would be a
-   // significant bottleneck.
--  absl::flat_hash_map<Key, std::shared_ptr<CacheSession>, MessageUtil, MessageUtil>
--      entries_ ABSL_GUARDED_BY(mu_);
-+  absl::flat_hash_map<SerializedKey, std::shared_ptr<CacheSession>> entries_ ABSL_GUARDED_BY(mu_);
- 
-   friend class CacheSession;
- };
-```
-
-**File**: `source/extensions/filters/http/cache_v2/http_cache.cc` (modified, +3/-0)
-```diff
-@@ -11,6 +11,7 @@
- #include "source/common/http/headers.h"
- #include "source/common/http/utility.h"
- #include "source/common/protobuf/deterministic_hash.h"
-+#include "source/common/protobuf/utility.h"
- #include "source/extensions/filters/http/cache_v2/cache_custom_headers.h"
- #include "source/extensions/filters/http/cache_v2/cache_headers_utils.h"
- 
-@@ -25,6 +26,8 @@ namespace CacheV2 {
- 
- size_t stableHashKey(const Key& key) { return DeterministicProtoHash::hash(key); }
- 
-+SerializedKey serializeKey(const Key& key) { return MessageUtil::serializeDeterministically(key); }
-+
- LookupRequest::LookupRequest(Key&& key, Event::Dispatcher& dispatcher)
-     : dispatcher_(dispatcher), key_(key) {}
- 
-```
+This PR adds a hard memory limit to the tracking allocator of the Rust
+SDK. A module can set and remove the limit, for example from the
+configuration of its resource monitor, and the allocator refuses any
+allocation that would exceed it.
 
 ---
 
-### Incident Patch 3: `4d8080cd` (2026-11-23)
-**Commit Message**: ext_authz: document error_response status requirement (#49093)
+**Commit Message:** dynamic_modules: add memory limits to the Rust SDK
+**Risk Level:** Low
+**Testing:** Added Tests
+**Docs Changes:** Added
+**Release Notes:** Added
 
-Commit Message: ext_authz: document error_response status requirement
+---------
 
-Additional Description:
-The CheckResponse documentation previously implied that a populated
-error_response was sufficient for the response to be handled as an
-authorization-service error. The gRPC ext_authz client evaluates the
-top-level status first, so an OK or omitted status allows the request
-and ignores error_response.
+Signed-off-by: Rohit Agrawal <[REDACTED_EMAIL]>
 
-Clarify the existing contract in the API documentation and UDP session
-filter documentation. This follows review feedback and does not change
-runtime behavior.
-
-Risk Level: Low
-
-Testing:
-- git diff --check
-- Full Envoy format, proto, and documentation checks could not be run
-locally because Bazel is unavailable; CI will run them.
-
-Docs Changes:
-- Clarified the top-level status requirement for
-CheckResponse.error_response.
-- Updated the UDP ext_authz session outcome documentation.
-
-Release Notes: N/A
-
-Platform Specific Features: N/A
-Runtime guard: N/A
-
-AI assistance: OpenAI Codex assisted with investigation, documentation
-changes, and validation. The submitter reviewed and understands the
-complete change.
-
-Fixes #49041
-
-Signed-of
-
-**File**: `api/envoy/service/auth/v3/external_auth.proto` (modified, +7/-4)
+**File**: `changelogs/current/new_features/dynamic_modules__rust-sdk-memory-tracking.rst` (modified, +4/-1)
 ```diff
-@@ -158,14 +158,17 @@ message CheckResponse {
-     // Supplies http attributes for an ok response.
-     OkHttpResponse ok_response = 3;
- 
--    // Supplies http attributes for an error response. This is used when the authorization
-+    // Supplies HTTP attributes for an error response. This is used when the authorization
-     // service encounters an internal error and wants to return custom headers and body to the
--    // downstream client. When ``error_response`` is set, the ext_authz filter increments the
--    // ``ext_authz_error`` stat and respects the :ref:`failure_mode_allow
-+    // downstream client. The top-level :ref:`status
-+    // <envoy_v3_api_field_service.auth.v3.CheckResponse.status>` must be non-``OK`` for this field
-+    // to be processed. If ``status`` is ``OK`` or omitted, the request is allowed and this field
-+    // is ignored. When processed, the ext_authz filter increments the ``ext_authz_error`` stat and
-+    // respects the :ref:`failure_mode_allow
-     // <envoy_v3_api_field_extensions.filters.http.ext_authz.v3.ExtAuthz.failure_mode_allow>`
-     // configuration. The HTTP status code, headers, and body are taken from the
-     // :ref:`DeniedHttpResponse <envoy_v3_api_msg_service.auth.v3.DeniedHttpResponse>` message.
--    // If the status field is not set, Envoy sends the status code configured via
-+    // If ``error_response.status`` is not set, Envoy sends the status code configured via
-     // :ref:`status_on_error <envoy_v3_api_field_extensions.filters.http.ext_authz.v3.ExtAuthz.status_on_error>`,
-     // which defaults to ``403 Forbidden``.
-     DeniedHttpResponse error_response = 5;
+@@ -3,4 +3,7 @@ as its global allocator counts the memory that it allocates through that allocat
+ ``TrackingAllocator::allocated_bytes`` returns. ``MemoryResourceMonitor`` reports this memory as the
+ pressure of a dynamic modules resource monitor (``envoy.resource_monitors.dynamic_modules``), so
+ that the overload manager can act when the module exceeds its budget. On Linux, a module that uses
+-the allocator stays loaded, so a new build of the module needs a new path.
++the allocator stays loaded, so a new build of the module needs a new path. The allocator can also
++refuse the allocations beyond a limit that ``TrackingAllocator::set_limit`` sets and
++``TrackingAllocator::remove_limit`` removes. A refused allocation aborts Envoy unless the module
++makes it with a fallible API such as ``Vec::try_reserve``.
 ```
 
-**File**: `docs/root/configuration/listeners/udp_filters/session_filters/ext_authz.rst` (modified, +2/-2)
+**File**: `docs/root/configuration/operations/overload_manager/overload_manager.rst` (modified, +5/-1)
 ```diff
-@@ -49,8 +49,8 @@ The session outcome is taken from the
+@@ -129,7 +129,11 @@ resource monitor must load the same shared object as the filters of the module,
+ local file name, since a module loaded from another file is a separate instance with an allocator of
+ its own. A module whose global allocator is another one reports failed updates, which the
+ ``failed_updates`` statistic of the resource counts. On Linux, a module that uses the allocator
+-stays loaded, so a new build of the module needs a new path.
++stays loaded, so a new build of the module needs a new path. The module can also give its allocator
++a hard limit, for example from the configuration of its resource monitor. A refused allocation
++aborts Envoy unless the module makes it with a fallible API such as ``Vec::try_reserve``, so the
++hard limit should leave room above the budget of the resource monitor for the overload manager to
++act first.
  
- * an ``OK`` status allows the session.
- * a denied response (non-``OK`` status, no ``error_response``) drops the session.
--* an error (a gRPC failure or timeout, or a response carrying an ``error_response``) drops the
--  session unless :ref:`failure_mode_allow
-+* an error (a gRPC failure or timeout, or a non-``OK`` status with an ``error_response``) drops
-+  the session unless :ref:`failure_mode_allow
-   <envoy_v3_api_field_extensions.filters.udp.udp_proxy.session.ext_authz.v3.FilterConfig.failure_mode_allow>`
-   is set.
+ The following configuration reports the pressure of the module ``my_module`` in the
+ ``overload.my_module_memory.pressure`` gauge, for a module whose ``memory`` resource monitor takes
+```
+
+**File**: `source/extensions/dynamic_modules/sdk/rust/src/memory.rs` (modified, +607/-34)
+```diff
+@@ -1,9 +1,10 @@
+ //! Tracking of the heap memory allocated by a dynamic module.
+ //!
+ //! A module that declares a [`TrackingAllocator`] as its global allocator counts the bytes that it
+-//! allocates through it. A [`MemoryResourceMonitor`] reports these bytes to the overload manager
+-//! through the dynamic module resource monitor, so that overload actions and load shed points can
+-//! act when the module exceeds its budget.
++//! allocates through it, and can refuse the allocations beyond a memory limit. A
++//! [`MemoryResourceMonitor`] reports these bytes to the overload manager through the dynamic module
++//! resource monitor, so that overload actions and load shed points can act when the module exceeds
++//! its budget.
+ //!
+ //! Only a module built as a shared object of its own can use the allocator, since all the Rust
+ //! code linked into Envoy has a single global allocator.
+@@ -45,20 +46,25 @@
+ use crate::resource_monitor::{ResourceMonitor, ResourceMonitorUpdate};
+ use std::alloc::{GlobalAlloc, Layout, System};
+ use std::cell::Cell;
++use std::fmt::Write;
+ use std::num::NonZeroU64;
+ use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
++use std::sync::{Mutex, MutexGuard, PoisonError};
  
+ /// The largest allocation that the allocator forwards, which keeps the arithmetic of the counters
+ /// within `i64`. No allocator can provide this much memory.
+ const MAX_ALLOCATION_BYTES: usize = 1 << 62;
+ 
++/// The largest memory limit, which keeps the arithmetic of the counters within `i64`.
++const MAX_LIMIT_BYTES: u64 = 1 << 62;
++
+ /// The number of threads that count their allocations in a slot of their own. A thread that finds
+ /// every slot taken counts in the pool instead.
+ const THREAD_SLOTS: usize = 256;
+ const UNASSIGNED_SLOT: usize = usize::MAX;
+ const NO_SLOT: usize = usize::MAX - 1;
+ 
+-/// The credit that a slot reserves from the pool at once.
++/// The largest credit that a slot reserves from the pool at once.
+ const CREDIT_BATCH: i64 = 64 << 10;
+ 
+ /// A counter on a cache line of its own, so that threads counting in different slots never contend.
+@@ -71,6 +77,10 @@ impl Counter {
+   }
+ }
+ 
++/// A lock on a cache line of its own, so that the refusals that take it do not slow down counting.
++#[repr(align(128))]
++struct LimitUpdateLock(Mutex<()>);
++
+ static SLOT_IN_USE: [AtomicBool; THREAD_SLOTS] = [const { AtomicBool::new(false) }; THREAD_SLOTS];
+ 
+ thread_local! {
+@@ -124,15 +134,31 @@ impl Drop for ThreadSlotReleaser {
+   }
+ }
+ 
+-/// A global allocator that counts the bytes allocated through it and not yet freed.
++/// The credit that a slot reserves at once under the given limit, a small fraction of the limit so
++/// that the credit idle in the slots matters little, between 1 KiB and [`CREDIT_BATCH`].
++fn credit_batch(limit_bytes: i64) -> i64 {
++  (limit_bytes / 8192).clamp(1 << 10, CREDIT_BATCH)
++}
++
++/// A global allocator that counts the bytes allocated through it and not yet freed, and refuses an
++/// allocation that would exceed its memory limit.
+ ///
+-/// Every thread reserves credit for its allocations from a shared pool in batches of 64 KiB and
+-/// spends it in a slot that only it writes, with a plain load and store, so counting costs no
++/// Every thread reserves credit for its allocations from a shared pool in batches of up to 64 KiB
++/// and spends it in a slot that only it writes, with a plain load and store, so counting costs no
+ /// atomic read-modify-write in the common case. A slot holds at most two batches of credit, which
+ /// keeps the count accurate when memory is freed by a thread other than the one that allocated it.
+ /// Up to 256 threads hold a slot at a time. A thread that exits hands its slot over to the next
+ /// thread, and a thread that finds every slot taken counts every allocation in the pool.
+ ///
++/// Credit is only reserved within the limit, so the bytes allocated never exceed it, but the credit
++/// that other threads hold can make the allocator refuse an allocation below the limit, by up to
++/// two batches per slot. Under a limit, a batch is 1/8192 of the limit, between 1 KiB and 64 KiB.
++/// Threads other than the one that sets a limit keep the credit that they hold until they next free
++/// memory. A refused allocation behaves like running out of memory, which aborts the process unless
++/// the module allocates with a fallible API such as `Vec::try_reserve`. On Unix, the first
++/// allocation that a limit refuses is reported on the standard error, once in the life of the
++/// allocator.
++///
+ /// Only the allocations made through this allocator are counted, by the size that they request.
+ /// Memory that the module allocates directly from the C allocator, for example in a library written
+ /// in C, is not counted. A module that needs another global allocator wraps it, since a module has
+@@ -143,22 +169,32 @@ impl Drop for ThreadSlotReleaser {
+ /// then reuses the loaded module, even if the file changed.
+ pub struct TrackingAllocator<A: GlobalAlloc = System
+```
+
+**File**: `test/extensions/dynamic_modules/test_data/rust/memory_tracking_integration_test.rs` (modified, +22/-4)
+```diff
+@@ -22,7 +22,9 @@ fn init() -> bool {
+ }
+ 
+ /// Creates a monitor that reports the memory of the module against the heap size in bytes that the
+-/// configuration holds.
++/// configuration holds. A second number in the configuration sets a hard limit in bytes, which the
++/// allocator enforces. Without it, the monitor removes the limit that an earlier monitor set, since
++/// the module stays loaded between the tests of a test binary.
+ fn new_resource_monitor_fn(
+   name: &str,
+   config: &[u8],
+@@ -31,7 +33,16 @@ fn new_resource_monitor_fn(
+   if name != "memory" {
+     return None;
+   }
+-  let max_heap_size_bytes: NonZeroU64 = std::str::from_utf8(config).ok()?.parse().ok()?;
++  let mut sizes = std::str::from_utf8(config).ok()?.split_whitespace();
++  let max_heap_size_bytes: NonZeroU64 = sizes.next()?.parse().ok()?;
++  match sizes.next() {
++    Some(hard_limit_bytes) => {
++      if !ALLOCATOR.set_limit(hard_limit_bytes.parse().ok()?) {
++        return None;
++      }
++    },
++    None => ALLOCATOR.remove_limit(),
++  }
+   Some(Box::new(MemoryResourceMonitor::new(
+     &ALLOCATOR,
+     max_heap_size_bytes,
+@@ -61,7 +72,8 @@ impl<EHF: EnvoyHttpFilter> HttpFilterConfig<EHF> for MemoryFilterConfig {
+ }
+ 
+ /// Retains the number of bytes in the `x-retain-bytes` request header, releases all the retained
+-/// memory when the `x-release` request header is present, and replies without an upstream.
++/// memory when the `x-release` request header is present, and replies without an upstream. A
++/// retention that the memory limit refuses is replied to with a 507.
+ struct MemoryFilter {}
+ 
+ impl<EHF: EnvoyHttpFilter> HttpFilter<EHF> for MemoryFilter {
+@@ -79,7 +91,13 @@ impl<EHF: EnvoyHttpFilter> HttpFilter<EHF> for MemoryFilter {
+           .ok()
+       });
+     if let Some(bytes) = retain_bytes {
+-      RETAINED.lock().unwrap().push(vec![1; bytes]);
++      let mut memory = Vec::new();
++      if memory.try_reserve_exact(bytes).is_err() {
++        envoy_filter.send_response(507, &[], None, None);
++        return envoy_dynamic_module_type_on_http_filter_request_headers_status::StopIteration;
++      }
++      memory.resize(bytes, 1);
++      RETAINED.lock().unwrap().push(memory);
+     }
+     if envoy_filter.get_request_header_value("x-release").is_some() {
+       // Replacing the vector frees its buffer as well, which would otherwise outlive the module.
+```
+
+**File**: `test/extensions/resource_monitors/dynamic_modules/integration_test.cc` (modified, +12/-0)
+```diff
+@@ -206,5 +206,17 @@ TEST_P(DynamicModuleResourceMonitorIntegrationTest, ReportsMemoryRetainedByFilte
+   test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Lt(10));
+ }
+ 
++TEST_P(DynamicModuleResourceMonitorIntegrationTest, RefusesMemoryBeyondHardLimit) {
++  initializeMemoryMonitor("memory_tracking_integration_test", "1048576 2097152");
++
++  // The budget does not refuse allocations, so the module can retain more than it.
++  expectReply("x-retain-bytes", "1572864", "200");
++  test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Eq(100));
++
++  expectReply("x-retain-bytes", "1048576", "507");
++  expectReply("x-release", "true", "200");
++  test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Lt(10));
++}
++
+ } // namespace
+ } // namespace Envoy
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49532** (2026-11-23): reverse_tunnel: keep the idle count within one extension and report a missing entry (@skpulipaka26)
-- **PR #49516** (2026-11-21): [bp/1.37] mcp: fix an issue and use the watermark to buffer (#43173) (@derekargueta)
-- **PR #49508** (2026-11-20): [bp/1.37] test/ext_proc: Fix spinning loop (and hang) in serverReceiveBodyDuplexStreamed (#44583) (@phlax)
-- **PR #49507** (2026-11-20): deps: Bump `bazel-registry` -> d72a252 (+envoy-examples) (@dependency-envoy[bot])
-- **PR #49505** (2026-11-21): docs: fix propogated typo in headers and flow control docs (@sundeep8967)
-- **PR #49503** (2026-11-23): tls: add max_send_fragment to cap the TLS record size (@devnarula)
+- **PR #49563** (2026-11-24): network: fail listener filter buffer drain beyond buffered data (@basundhara-c)
+- **PR #49559** (2026-11-24): dynamic_modules: support for runtime key of string type (@mathetake)
+- **PR #49556** (2026-11-24): router: support refreshRouteCluster in HeaderClusterSpecifierPlugin (@paul-r-gall)
+- **PR #49555** (2026-11-23): [async_files] Fix gcc warning (@ravenblackx)
+- **PR #49551** (2026-11-23): mobile/ci: Consolidate the workflows into android, ios and checks suites (@phlax)
+- **PR #49550** (2026-11-23): resource_monitors: pass snapshot MonotonicTime to DynamicTokenBucket cold path (@antoniovleonti)
 
 ---
 
@@ -1599,38 +1930,42 @@ Signed-of
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reverse_tunnels: changes to let the upstream drain gracefully
+## X. resource_monitors: add WorkerUtilizationTracker for event-loop utilization
 
 **RULE**:
-When implementing operations in `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `331b8ca6`: reverse_tunnels: changes to let the upstream drain gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0dfd6b3`: resource_monitors: add WorkerUtilizationTracker for event-loop utilization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // When true, a peer-initiated GOAWAY or connection-level METADATA frame carrying
-  // ``envoy.reverse_tunnel.drain: true`` on a reverse tunnel makes the initiator drop the draining
-  // in-flight streams finish. Receiving the METADATA frame requires
-  // ``hcm_config.http2_protocol_options.allow_metadata`` to be true. Default false, so the
-  // behavior is opt-in and unconfigured listeners are unaffected. Required by ``metadata_delay``
-  // and ``shutdown_notice_delay``.
+
+envoy_cc_library(
+    name = "worker_utilization_tracker_lib",
+    srcs = ["worker_utilization_tracker.cc"],
+    hdrs = ["worker_utilization_tracker.h"],
+    deps = [
+        "//envoy/common:time_interface",
+        "//envoy/event:dispatcher_interface",
+        "//envoy/event:evwatch_interface",
+        "//source/common/common:assert_lib",
+    ],
+)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
-  // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
-  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `331b8ca6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0dfd6b3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

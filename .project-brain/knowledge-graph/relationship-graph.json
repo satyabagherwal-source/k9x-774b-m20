@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T12:19:01.480Z",
+  "updated_at": "2026-11-24T12:54:40.832Z",
   "statistics": {
-    "total_nodes": 503,
-    "total_edges": 206,
+    "total_nodes": 504,
+    "total_edges": 208,
     "domain_distribution": {
       "D": 305,
       "M": 1,
-      "H": 91,
+      "H": 92,
       "J": 22,
       "K": 30,
       "L": 8,
@@ -20,9 +20,9 @@
       "I": 12
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 203,
+      "CONSTRAINED_BY_ARCHITECTURE": 204,
       "VERIFIED_BY_TEST": 2,
-      "STYLED_BY_DESIGN": 1
+      "STYLED_BY_DESIGN": 2
     }
   },
   "nodes": {
@@ -11234,6 +11234,30 @@
       ],
       "created_at": "2026-11-24T12:19:01.480Z",
       "updated_at": "2026-11-24T12:19:01.480Z"
+    },
+    "DOM-H-E38FCD3B": {
+      "id": "DOM-H-E38FCD3B",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Reanimated): stop reading React's shadow node wrapper on the UI thread",
+      "summary": "Prevents defects observed in production commit `cec3cdc5`: Reanimated): stop reading React's shadow node wrapper on the UI thread. Unvalidat -> When implementing operations in `apps/common-app/runtime-tests/reanimated/suites.ts`, engineers MUST enforce rigorous boundary validation, s",
+      "confidence": 0.71,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://software-mansion-react-native-reanimated/software-mansion-react-native-reanimated-learnings.md",
+        "source_version": "22cbff88",
+        "observed_at": "2026-11-24T12:54:01.842Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (software-mansion-react-native-reanimated)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G",
+        "F"
+      ],
+      "created_at": "2026-11-24T12:54:40.832Z",
+      "updated_at": "2026-11-24T12:54:40.832Z"
     }
   },
   "edges": [
@@ -13296,6 +13320,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-4A125361 [D] with Domain M",
       "created_at": "2026-11-24T11:31:00.448Z"
+    },
+    {
+      "id": "EDGE-9C1860474296",
+      "sourceId": "DOM-H-E38FCD3B",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-E38FCD3B [H] with Domain G",
+      "created_at": "2026-11-24T12:54:40.832Z"
+    },
+    {
+      "id": "EDGE-2121BC414D74",
+      "sourceId": "DOM-H-E38FCD3B",
+      "targetId": "NODE-F-domain-bridge-f",
+      "relationType": "STYLED_BY_DESIGN",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-E38FCD3B [H] with Domain F",
+      "created_at": "2026-11-24T12:54:40.832Z"
     }
   ]
 }

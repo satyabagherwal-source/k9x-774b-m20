@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:45:53.414Z",
+  "last_updated": "2026-11-24T12:54:44.294Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T12:05:19.551Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T12:36:31.140Z",
+      "processed_at": "2026-11-24T12:54:42.963Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -228,7 +228,7 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-23T17:20:57.367Z",
+      "processed_at": "2026-11-24T12:54:42.000Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2303,9 +2303,9 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-reanimated-learnings.md": {
-      "processed_at": "2026-11-21T20:25:10.400Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-24T12:54:40.835Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "zeromicro-go-zero-learnings.md": {
       "processed_at": "2026-11-19T13:35:29.819Z",
@@ -3823,7 +3823,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3765,
-  "total_canonical_promoted": 505,
-  "total_staged_for_review": 2849
+  "total_dossiers_evaluated": 3768,
+  "total_canonical_promoted": 506,
+  "total_staged_for_review": 2851
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-6T82",
-    "timestamp": "2026-11-22T18:00:13.682Z",
-    "repository": "BaaRai/ARTEX",
-    "learningId": "learn-github-baarai-artex",
-    "contentHash": "8c22086c9cc29a3156a278aac7548c783d97f140e71d9027a754c222e5be46d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-6W9D",
-    "timestamp": "2026-11-22T18:00:17.617Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "584a00c2e588eb4d0a2724ba8f770f4b392dd4b031c7f3eb6ce4c627b328f698",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-71JL",
     "timestamp": "2026-11-22T18:00:24.465Z",
     "repository": "darrylmorley/whatcable",
@@ -7490,6 +7460,36 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-4RNK",
+    "timestamp": "2026-11-24T12:54:03.008Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "155cbc2c514a49a94a78e857617cc5ed0366ec1e28023144cad9cfff01027e67",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-4UPG",
+    "timestamp": "2026-11-24T12:54:06.964Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

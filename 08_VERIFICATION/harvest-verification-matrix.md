@@ -12669,3 +12669,6 @@
 | `CYCLE-20261124-U1DS` | `2026-11-24T12:45:42.400Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10257` | Yes (`430caead...`) |
 | `CYCLE-20261124-U2NY` | `2026-11-24T12:45:44.062Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10258` | Yes (`fb75b763...`) |
 | `CYCLE-20261124-U3YP` | `2026-11-24T12:45:45.745Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10259` | Yes (`0330b749...`) |
+| `CYCLE-20261124-4RNK` | `2026-11-24T12:54:03.008Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10260` | Yes (`155cbc2c...`) |
+| `CYCLE-20261124-4UPG` | `2026-11-24T12:54:06.964Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10261` | Yes (`301791ea...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T12:54:40.835Z` | `software-mansion-react-native-reanimated` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E38FCD3B` [Domain H] | Yes (`eee72ba0...`) |
