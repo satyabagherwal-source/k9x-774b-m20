@@ -12735,3 +12735,6 @@ Every entry in this ledger must capture:
 | `learn-github-nihildigit-piko` | `https://github.com/NihilDigit/piko` | `638367bd` | Multi-dimensional audit evidence | 2026-11-24T14:33:18.028Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `87059b9d` | Multi-dimensional audit evidence | 2026-11-24T14:33:22.800Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `1ade9d06` | Multi-dimensional audit evidence | 2026-11-24T14:33:27.360Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `531bc329` | Multi-dimensional audit evidence | 2026-11-24T14:41:50.166Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `f69505a5` | Multi-dimensional audit evidence | 2026-11-24T14:41:57.444Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `3a78aa0d` | Multi-dimensional audit evidence | 2026-11-24T14:41:58.786Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:33:34.055Z",
-  "total_records": 2534,
+  "last_updated": "2026-11-24T14:42:05.196Z",
+  "total_records": 2536,
   "domains": {
     "A": {
       "total": 22,
@@ -1602,7 +1602,7 @@
       ]
     },
     "H": {
-      "total": 603,
+      "total": 605,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2206,7 +2206,9 @@
         "DOM-H-E38FCD3B",
         "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-core-invariants",
         "domain_intelligence-technical-construction-intelligence-k3s-io-k3s-learnings-core-invariants",
-        "DOM-H-23B9B1A9"
+        "DOM-H-23B9B1A9",
+        "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants"
       ]
     },
     "I": {
@@ -24296,8 +24298,8 @@
       "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
       "repository": "scrapy/scrapy",
-      "content_hash": "d085be08c4cfcf21d8069bb5fa574cac4ec7719a678e88cc7bb9c1cb3d00e502",
-      "created_at": "2026-11-20T12:50:18.238Z"
+      "content_hash": "8c401326dac5054b9e97f2963aefeacf428ab02ebfdc76cfd055723fe730047c",
+      "created_at": "2026-11-24T14:41:50.596Z"
     },
     "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
@@ -24305,8 +24307,8 @@
       "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-learnings-technical-construction-intelligence-scrapy-scrapy-learni.md",
       "repository": "scrapy-scrapy-learnings",
-      "content_hash": "9b14734ca6c2eb73580ef19c55ddec1dc5851e15b4e59556d016619c68ff7c06",
-      "created_at": "2026-11-20T12:50:32.673Z"
+      "content_hash": "f6206af0444b1098b397260477ad187a86069411cee76ef2f5f10e94610869a0",
+      "created_at": "2026-11-24T14:42:02.918Z"
     },
     "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
@@ -25320,8 +25322,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "6b9b1f7beb125d93ee44ebffa173a00f38588d25e419dd99d64a1a244ce65734",
-      "created_at": "2026-11-22T21:57:08.280Z"
+      "content_hash": "732c29fc00a0cd88262ed50699833b29efa674abcdf7f3b0a1a40b4f9a2e23c5",
+      "created_at": "2026-11-24T14:41:57.869Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -25338,8 +25340,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "7af0a3c55d815288453de56d285f4701851b88b856ca96f85528187c22a9234f",
-      "created_at": "2026-11-22T21:57:12.207Z"
+      "content_hash": "74a61cfc5c79b3724c07634e971c40f7e03634bb020ddc7d43b731a0a904de3f",
+      "created_at": "2026-11-24T14:42:04.443Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -42570,6 +42572,24 @@
       "repository": "nihildigit-piko-learnings",
       "content_hash": "32ae1a4a98c9405951ebc6fdfac5693a5735fbe1afdcff59fecfc5820bcd949d",
       "created_at": "2026-11-24T14:33:31.884Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: citusdata/citus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-citusdata-citus-technical-construction-intelligence-citusdata-citus-core-invaria.md",
+      "repository": "citusdata/citus",
+      "content_hash": "e590dc171055cbde7df63a1f75e24251f7bbbd360ca11eb7126d525255aed77a",
+      "created_at": "2026-11-24T14:41:59.187Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: citusdata-citus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-citusdata-citus-learnings-technical-construction-intelligence-citusdata-citus-le.md",
+      "repository": "citusdata-citus-learnings",
+      "content_hash": "1e2d4ad02382de93a124907707a3ea3ebf1e7bba881ee84d2b26a5b410edc362",
+      "created_at": "2026-11-24T14:42:05.196Z"
     }
   }
 }

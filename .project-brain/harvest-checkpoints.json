@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:33:27.381Z",
+  "last_updated": "2026-11-24T14:41:58.802Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
-      "verified_at": "2026-11-22T21:57:07.903Z",
+      "content_hash": "2cca6be8668d8c2e38c6dc89401d085db9d4691f9d3251627783c84cf0c9b2e2",
+      "verified_at": "2026-11-24T14:41:57.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:57:07.903Z"
+      "last_updated": "2026-11-24T14:41:57.459Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
-      "verified_at": "2026-11-19T00:49:54.944Z",
+      "content_hash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
+      "verified_at": "2026-11-24T14:41:58.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:49:54.944Z"
+      "last_updated": "2026-11-24T14:41:58.801Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",
@@ -13671,14 +13671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-scrapy",
-      "content_hash": "d38a8d4ecd879da9fb60d3bd29f9aff35327d68915ee786a2497a85c595b1acb",
-      "verified_at": "2026-11-20T12:50:17.902Z",
+      "content_hash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
+      "verified_at": "2026-11-24T14:41:50.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:50:17.902Z"
+      "last_updated": "2026-11-24T14:41:50.182Z"
     },
     "krzysztofzablocki/Inject": {
       "repository": "krzysztofzablocki/Inject",

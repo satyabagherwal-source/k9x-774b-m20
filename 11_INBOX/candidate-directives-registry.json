@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:33:33.805Z",
+  "last_updated": "2026-11-24T14:42:05.028Z",
   "directives": [
     {
       "id": "CD-001",
@@ -55209,6 +55209,68 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-ZNGD",
+      "directive_title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
+      "source_repo": "scrapy-scrapy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZNGD-close-the-reactorless-loop-of-asynccrawlerprocess-instances-never-started.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ZJJN",
+      "directive_title": "bump the actions group across 1 directory with 8 updates",
+      "source_repo": "sigstore/cosign",
+      "source_commit": "f69505a5",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZJJN-bump-the-actions-group-across-1-directory-with-8-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-ZP7L",
+      "directive_title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
+      "source_repo": "citusdata-citus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZP7L-add-manual-addresssanitizer-builds-for-postgresql-and-citus.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-A78F09",
+      "directive_title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "scrapy-scrapy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A78F09-close-the-reactorless-loop-of-asynccrawl.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-ZOMO",
+      "directive_title": "deps): bump the actions group across 1 directory with 8 updates",
+      "source_repo": "sigstore-cosign-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZOMO-deps-bump-the-actions-group-across-1-directory-with-8-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-1D70AC",
+      "directive_title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "citusdata-citus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1D70AC-add-manual-addresssanitizer-builds-for-p.md",
+      "staged_date": "2026-11-24"
     }
   ]
 }

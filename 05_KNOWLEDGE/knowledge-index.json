@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:33:34.282Z",
+  "last_updated": "2026-11-24T14:42:05.361Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24686,
+  "total_items": 24694,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -259161,8 +259161,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "00acf3f3",
-      "content_hash": "d38a8d4ecd879da9fb60d3bd29f9aff35327d68915ee786a2497a85c595b1acb",
+      "source_version": "531bc329",
+      "content_hash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -259175,6 +259175,11 @@
           "number": 9569,
           "title": "Use a private loop in the reactorless mode.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10282,
+          "title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259182,7 +259187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T12:50:17.695Z",
+      "verified_at": "2026-11-24T14:41:49.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259224,10 +259229,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
       "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
       "repository": "scrapy/scrapy",
-      "source_version": "00acf3f3",
-      "content_hash": "d085be08c4cfcf21d8069bb5fa574cac4ec7719a678e88cc7bb9c1cb3d00e502",
+      "source_version": "531bc329",
+      "content_hash": "8c401326dac5054b9e97f2963aefeacf428ab02ebfdc76cfd055723fe730047c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T12:50:18.238Z"
+      "persisted_at": "2026-11-24T14:41:50.596Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy",
@@ -259236,10 +259241,10 @@
       "relative_path": "08_VERIFICATION/scrapy-scrapy-verification-protocol-empirical-defect-shield-for-scrapy-scrapy.md",
       "title": "Verification Protocol: Empirical Defect Shield for scrapy/scrapy",
       "repository": "scrapy/scrapy",
-      "source_version": "00acf3f3",
-      "content_hash": "5ccb5ef45bfebf64c3ef0a308f5d1e59098401ddc299e05a833bd4793accffdc",
+      "source_version": "531bc329",
+      "content_hash": "665078de4238929f441976597e0e1ba9d6b09d6c3d2507a8e195cb18be8b1f58",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:50:18.393Z"
+      "persisted_at": "2026-11-24T14:41:50.779Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings",
@@ -259261,9 +259266,9 @@
       "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
       "repository": "scrapy-scrapy-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b14734ca6c2eb73580ef19c55ddec1dc5851e15b4e59556d016619c68ff7c06",
+      "content_hash": "f6206af0444b1098b397260477ad187a86069411cee76ef2f5f10e94610869a0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T12:50:32.673Z"
+      "persisted_at": "2026-11-24T14:42:02.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings",
@@ -259273,9 +259278,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for scrapy-scrapy-learnings",
       "repository": "scrapy-scrapy-learnings",
       "source_version": "HEAD",
-      "content_hash": "9954e5ff32592bb11f8a6b1f97821887ccc00aabd1915bc1264be212fc3f063e",
+      "content_hash": "a59a898611e81d456f718fae4183914984e8a691a51edce17c5d9a5bf074511e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:50:32.823Z"
+      "persisted_at": "2026-11-24T14:42:03.085Z"
     },
     "rule-8738": {
       "learning_id": "rule-8738",
@@ -264906,8 +264911,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "19c90f91",
-      "content_hash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
+      "source_version": "f69505a5",
+      "content_hash": "2cca6be8668d8c2e38c6dc89401d085db9d4691f9d3251627783c84cf0c9b2e2",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -264937,6 +264942,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 9571,
+          "title": "bump the actions group across 1 directory with 8 updates",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 9623,
           "title": "Replace --use-signing-config with --no-signing-config",
           "status": "PROMOTED_AND_VERIFIED"
@@ -264952,7 +264962,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:57:07.689Z",
+      "verified_at": "2026-11-24T14:41:57.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264994,10 +265004,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "19c90f91",
-      "content_hash": "6b9b1f7beb125d93ee44ebffa173a00f38588d25e419dd99d64a1a244ce65734",
+      "source_version": "f69505a5",
+      "content_hash": "732c29fc00a0cd88262ed50699833b29efa674abcdf7f3b0a1a40b4f9a2e23c5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T21:57:08.280Z"
+      "persisted_at": "2026-11-24T14:41:57.869Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -265006,10 +265016,10 @@
       "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
       "repository": "sigstore/cosign",
-      "source_version": "19c90f91",
-      "content_hash": "4a0468da29c4875fda710573e458761b0297ceec58cbdfc3d351c64ace9d129a",
+      "source_version": "f69505a5",
+      "content_hash": "cf47c050f79be540a3b0f33334747a0f6cec9490089dd1cf25f74fe226da0328",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:57:08.449Z"
+      "persisted_at": "2026-11-24T14:41:58.046Z"
     },
     "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
       "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
@@ -265055,9 +265065,9 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "7af0a3c55d815288453de56d285f4701851b88b856ca96f85528187c22a9234f",
+      "content_hash": "74a61cfc5c79b3724c07634e971c40f7e03634bb020ddc7d43b731a0a904de3f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T21:57:12.207Z"
+      "persisted_at": "2026-11-24T14:42:04.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
@@ -265067,9 +265077,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sigstore-cosign-learnings",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "e340c833d30719106e8426087a39b3f83094269356c3bd793a8633d6bed92141",
+      "content_hash": "ec71ee78cb12c6012f1bebb3fb7fe22826c9477ed8356a32a8dba19fcaffb221",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:57:12.382Z"
+      "persisted_at": "2026-11-24T14:42:04.612Z"
     },
     "rule-8811": {
       "learning_id": "rule-8811",
@@ -274365,8 +274375,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "a5635dec",
-      "content_hash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
+      "source_version": "3a78aa0d",
+      "content_hash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -274379,6 +274389,11 @@
           "number": 9313,
           "title": "Pin GitHub Actions Ubuntu runners to 24.04",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10283,
+          "title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274386,7 +274401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:49:54.747Z",
+      "verified_at": "2026-11-24T14:41:58.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274440,10 +274455,10 @@
       "relative_path": "08_VERIFICATION/citusdata-citus-verification-protocol-empirical-defect-shield-for-citusdata-citu.md",
       "title": "Verification Protocol: Empirical Defect Shield for citusdata/citus",
       "repository": "citusdata/citus",
-      "source_version": "a5635dec",
-      "content_hash": "cd9bb0b6e6ff10d1bc5c29a802691f9cc07dc8e1177f8702bcfafb3d043de5d2",
+      "source_version": "3a78aa0d",
+      "content_hash": "63bdf87c2809e8d088eb7ca2b90ec9c96f958a77c12d0bd61313457ba28eb6ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:49:55.419Z"
+      "persisted_at": "2026-11-24T14:41:59.373Z"
     },
     "rule-8944": {
       "learning_id": "rule-8944",
@@ -307040,27 +307055,27 @@
       "learning_id": "rule-9571",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9571,
-      "title": "Bump the actions group across 1 directory with 8 updates",
-      "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "b27dac72",
+      "title": "bump the actions group across 1 directory with 8 updates",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "f69505a5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T13:08:24.828Z"
+      "verified_at": "2026-11-24T14:41:57.235Z"
     },
     "candidate_directive-bump-the-actions-group-across-1-directory-with-8-updates": {
       "item_id": "candidate_directive-bump-the-actions-group-across-1-directory-with-8-updates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-28LP-bump-the-actions-group-across-1-directory-with-8-updates.md",
-      "title": "Bump the actions group across 1 directory with 8 updates",
-      "repository": "actions-actions-runner-controller-learnings",
-      "source_version": "HEAD",
-      "content_hash": "6558e05e24f338db1f26ae34f412b8ba529281b1abaf9b1bbdc4d1e23f1cf480",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:13:23.726Z"
+      "relative_path": "11_INBOX/candidate-directives/CD-ZJJN-bump-the-actions-group-across-1-directory-with-8-updates.md",
+      "title": "bump the actions group across 1 directory with 8 updates",
+      "repository": "sigstore/cosign",
+      "source_version": "f69505a5",
+      "content_hash": "d21e90c9c434cfbec99b658ccfe7f3f36ff66414909335ba3cd75aafb63062fd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T14:41:57.686Z"
     },
     "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-core-invariants",
@@ -336997,6 +337012,106 @@
       "content_hash": "aa63bae360534d10db4cb20d8510cc26bf7cc26e497f57f993c6602927510793",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T14:33:33.805Z"
+    },
+    "rule-10282": {
+      "learning_id": "rule-10282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10282,
+      "title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "531bc329",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:41:49.946Z"
+    },
+    "candidate_directive-close-the-reactorless-loop-of-asynccrawlerprocess-instances-never-started": {
+      "item_id": "candidate_directive-close-the-reactorless-loop-of-asynccrawlerprocess-instances-never-started",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZNGD-close-the-reactorless-loop-of-asynccrawlerprocess-instances-never-started.md",
+      "title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
+      "repository": "scrapy-scrapy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e7ea92a7988be2ed6ca2e7cce97681559044a5eee162ce83f83c8c642e58676d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:42:02.753Z"
+    },
+    "rule-10283": {
+      "learning_id": "rule-10283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10283,
+      "title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "3a78aa0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:41:58.580Z"
+    },
+    "candidate_directive-add-manual-addresssanitizer-builds-for-postgresql-and-citus": {
+      "item_id": "candidate_directive-add-manual-addresssanitizer-builds-for-postgresql-and-citus",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZP7L-add-manual-addresssanitizer-builds-for-postgresql-and-citus.md",
+      "title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
+      "repository": "citusdata-citus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce9e5b727e06394fa6baf9c4d3a23af0a8c267f58d190045cdc9d4c561524a59",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T14:42:05.028Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-citusdata-citus-technical-construction-intelligence-citusdata-citus-core-invaria.md",
+      "title": "Technical Construction Intelligence: citusdata/citus Core Invariants",
+      "repository": "citusdata/citus",
+      "source_version": "3a78aa0d",
+      "content_hash": "e590dc171055cbde7df63a1f75e24251f7bbbd360ca11eb7126d525255aed77a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:41:59.187Z"
+    },
+    "candidate_directive-deps-bump-the-actions-group-across-1-directory-with-8-updates": {
+      "item_id": "candidate_directive-deps-bump-the-actions-group-across-1-directory-with-8-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZOMO-deps-bump-the-actions-group-across-1-directory-with-8-updates.md",
+      "title": "deps): bump the actions group across 1 directory with 8 updates",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ffdd80e8970113e35d34bb5fc60b5ad7d3ccca6479c04cf24c9bea1dcaa76f67",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T14:42:04.274Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-citusdata-citus-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-citusdata-citus-learnings-technical-construction-intelligence-citusdata-citus-le.md",
+      "title": "Technical Construction Intelligence: citusdata-citus-learnings Core Invariants",
+      "repository": "citusdata-citus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e2d4ad02382de93a124907707a3ea3ebf1e7bba881ee84d2b26a5b410edc362",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:42:05.196Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/citusdata-citus-learnings-verification-protocol-empirical-defect-shield-for-citu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for citusdata-citus-learnings",
+      "repository": "citusdata-citus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f2e213a3d1fce252c6af4e66513d3f31a8b8f227c60703c26d9745b8588b77f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T14:42:05.361Z"
     }
   },
   "ai-builder-brain": {

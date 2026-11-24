@@ -4,24 +4,24 @@
 {
   "source_repository": "scrapy/scrapy",
   "source_url": "https://github.com/scrapy/scrapy",
-  "source_version": "00acf3f3",
+  "source_version": "531bc329",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-20T12:50:18.085Z",
+  "timestamp": "2026-11-24T14:41:50.422Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-scrapy-scrapy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `00acf3f3`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T12:50:18.085Z`  
+> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `531bc329`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-24T14:41:50.422Z`  
 > **Learning ID**: `learn-github-scrapy-scrapy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from scrapy/scrapy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:50:16.866Z  
+> **Harvest Timestamp**: 2026-11-24T14:41:48.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65508 stars
+- **Stars / Engagement**: 65560 stars
 
 ---
 
@@ -1947,296 +1947,116 @@ class DownloaderMiddlewareManager(MiddlewareManager):  # pylint: disable=abstrac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6609a421` (2026-11-18)
-**Commit Message**: Use a private loop in the reactorless mode. (#8510)
+### Incident Patch 1: `531bc329` (2026-11-23)
+**Commit Message**: Close the reactorless loop of AsyncCrawlerProcess instances never started (#8528)
 
-**File**: `docs/topics/settings.rst` (modified, +5/-5)
+**File**: `scrapy/crawler.py` (modified, +17/-7)
 ```diff
-@@ -509,11 +509,11 @@ class to be used.
+@@ -6,6 +6,7 @@
+ import pprint
+ import signal
+ import warnings
++import weakref
+ from abc import ABC, abstractmethod
+ from functools import partial
+ from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+@@ -1069,6 +1070,14 @@ def start(
+         reactor.run(installSignalHandlers=install_signal_handlers)  # blocking call
  
- Note that the event loop class must inherit from :class:`asyncio.AbstractEventLoop`.
  
--.. caution:: Please be aware that, when using a non-default event loop
--    (either defined via :setting:`ASYNCIO_EVENT_LOOP` or installed with
--    :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will call
--    :func:`asyncio.set_event_loop`, which will set the specified event loop
--    as the current loop for the current OS thread.
-+.. caution:: Please be aware that, when using a Twisted reactor with a
-+    non-default event loop (either defined via :setting:`ASYNCIO_EVENT_LOOP` or
-+    installed with :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will
-+    call :func:`asyncio.set_event_loop`, which will set the specified event
-+    loop as the current loop for the current OS thread.
- 
- .. note:: This is a :ref:`reactor setting <reactor-settings>`.
- 
-```
-
-**File**: `scrapy/crawler.py` (modified, +18/-8)
-```diff
-@@ -40,7 +40,6 @@
-     _is_asyncio_reactor_installed,
-     install_reactor,
-     is_reactor_installed,
--    set_asyncio_event_loop,
-     verify_installed_asyncio_event_loop,
-     verify_installed_reactor,
- )
-@@ -1088,7 +1087,7 @@ class AsyncCrawlerProcess(CrawlerProcessBase, AsyncCrawlerRunner):
- 
-     When the :setting:`TWISTED_REACTOR_ENABLED` setting is set to ``True``,
-     this class installs a reactor and uses it, otherwise it requires a reactor
--    to not be installed but installs an asyncio event loop and uses it.
-+    to not be installed and creates its own asyncio event loop.
- 
-     :param install_root_handler: whether to install root logging handler
-         (default: the :setting:`LOG_INSTALL_ROOT_HANDLER` setting)
-@@ -1111,9 +1110,8 @@ def __init__(
++def _close_reactorless(
++    loop: asyncio.AbstractEventLoop, hook: ReactorImportHook
++) -> None:
++    # loop.close() can raise, so we uninstall the hook first
++    uninstall_reactor_import_hook(hook)
++    loop.close()
++
++
+ class AsyncCrawlerProcess(CrawlerProcessBase, AsyncCrawlerRunner):
+     """
+     A class to run multiple scrapy crawlers in a process simultaneously.
+@@ -1109,7 +1118,6 @@ def __init__(
+         super().__init__(settings, install_root_handler)
          logger.debug("Using AsyncCrawlerProcess")
          self._reactorless_loop: asyncio.AbstractEventLoop | None = None
-         self._reactor_import_hook: ReactorImportHook | None = None
--        # We want the asyncio event loop to be installed early, so that it's
--        # always the correct one. And as we do that, we can also install the
--        # reactor here.
-+        # The event loop, or the reactor with its event loop, is set up here
-+        # and not in start(), because crawl() needs it to create tasks.
+-        self._reactor_import_hook: ReactorImportHook | None = None
+         # The event loop, or the reactor with its event loop, is set up here
+         # and not in start(), because crawl() needs it to create tasks.
          # The ASYNCIO_EVENT_LOOP setting cannot be overridden by add-ons and
-         # spiders when using AsyncCrawlerProcess.
-         loop_path = self.settings["ASYNCIO_EVENT_LOOP"]
-@@ -1122,7 +1120,13 @@ def __init__(
-                 raise RuntimeError(
-                     "TWISTED_REACTOR_ENABLED is False but a Twisted reactor is installed."
-                 )
--            self._reactorless_loop = set_asyncio_event_loop(loop_path)
-+            # This loop is not set as the current loop of the thread, so that
-+            # it doesn't affect other code, and each AsyncCrawlerProcess
-+            # instance has its own loop. User code will still receive it from
-+            # get_running_loop().
-+            self._reactorless_loop = (
-+                load_object(loop_path)() if loop_path else asyncio.new_event_loop()
+@@ -1127,7 +1135,13 @@ def __init__(
+             self._reactorless_loop = (
+                 load_object(loop_path)() if loop_path else asyncio.new_event_loop()
+             )
+-            self._reactor_import_hook = install_reactor_import_hook()
++            # Also covers instances that are never started.
++            self._close_reactorless = weakref.finalize(
++                self,
++                _close_reactorless,
++                self._reactorless_loop,
++                install_reactor_import_hook(),
 +            )
-             self._reactor_import_hook = install_reactor_import_hook()
          elif is_reactor_installed():
              # The user could install a reactor before this class is instantiated.
-@@ -1137,7 +1141,7 @@ def __init__(
-         self._reactorless_main_task: asyncio.Future[None] | None = None
- 
-     def _get_event_loop(self) -> asyncio.AbstractEventLoop:
--        # crawl() can be called before start() runs the loop installed by
-+        # crawl() can be called before start() runs the loop created by
-         # __init__().
-         if self._reactorless_loop is not None:
-             return self._reactorless_loop
-@@ -1240,6 +1244,13 @@ def _start_asyncio(
-         # 7. _close_loop() cancels all pending tasks (including
-         #    _shutdown_graceful_reactorless()), does finalization and calls loop.close()
- 
-+        if _has_running_loop():
-+            raise RuntimeError(
-+                "AsyncCrawlerProcess.start() cannot be called while an asyncio"
-+                " event loop is running in the same thread. You can use"
-+                " AsyncCrawlerRunner to run spiders in that loop."
-+            )
-+
-         loop = self._reactorless_loop
-         assert loop
- 
-@@ -1278,7 +1289,6 @@ def _close_loop(self) -> None:
-                 uninstall_reactor_import_hook(self._reactor_import_hook)
-                 self._reactor_import_hook = None
+             # We need to make sure the reactor is the correct one and the loop
+@@ -1284,13 +1298,9 @@ def _close_loop(self) -> None:
+             loop.run_until_complete(loop.shutdown_asyncgens())
+             loop.run_until_complete(loop.shutdown_default_executor())
+         finally:
+-            # loop.close() can raise, so we uninstall the hook first
+-            if self._reactor_import_hook:  # pragma: no branch
+-                uninstall_reactor_import_hook(self._reactor_import_hook)
+-                self._reactor_import_hook = None
              self._reactorless_main_task = None
--            asyncio.set_event_loop(None)
-             loop.close()
+-            loop.close()
              self._reactorless_loop = None
++            self._close_reactorless()
  
+     @staticmethod
+     def _cancel_all_tasks(loop: asyncio.AbstractEventLoop) -> None:
 ```
 
-**File**: `scrapy/shell.py` (modified, +3/-3)
+**File**: `tests/test_crawler.py` (modified, +17/-0)
 ```diff
-@@ -74,9 +74,9 @@
- #
- # Other architecture problems:
- # * scrapy.cmdline.execute() creates an AsyncCrawlerProcess instance which
--#   immediately installs a reactor (which is maybe not thread-specific?) or an
--#   event loop (which *is* thread-specific, so the main thread will always have
--#   a (not running) loop installed.
-+#   immediately installs a reactor (which is maybe not thread-specific?) or
-+#   creates an event loop, which is not set as the current loop of any thread
-+#   and only runs in the secondary thread.
- # * The shell uses several private members of Crawler (_create_engine(),
- #   _create_spider()) and of AsyncCrawlerProcess (_reactorless_loop).
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
  
-```
-
-**File**: `tests/AsyncCrawlerProcess/reactorless_current_loop.py` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+import asyncio
-+import logging
-+
-+import scrapy
-+from scrapy.crawler import AsyncCrawlerProcess
-+
-+logger = logging.getLogger(__name__)
-+
-+
-+class NoRequestsSpider(scrapy.Spider):
-+    name = "no_request"
-+
-+    async def start(self):
-+        self.logger.info(
-+            f"Running in the current loop: {asyncio.get_running_loop() is loop}"
-+        )
-+        return
-+        yield
-+
-+
-+loop = asyncio.new_event_loop()
-+asyncio.set_event_loop(loop)
-+process = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
-+process.crawl(NoRequestsSpider)
-+process.start()
-+logger.info(f"Current loop kept: {asyncio.get_event_loop() is loop}")
-+logger.info(f"Current loop closed: {loop.is_closed()}")
-+loop.close()
-```
-
-**File**: `tests/AsyncCrawlerProcess/reactorless_custom_loop.py` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+import asyncio
-+
-+import scrapy
-+from scrapy.crawler import AsyncCrawlerProcess
-+from scrapy.utils.python import global_object_name
-+
-+
-+class NoRequestsSpider(scrapy.Spider):
-+    name = "no_request"
-+
-+    async def start(self):
-+        loop_class = type(asyncio.get_running_loop())
-+        self.logger.info(f"Running loop: {global_object_name(loop_class)}")
-+        return
-+        yield
-+
-+
-+process = AsyncCrawlerProcess(
-+    settings={"TWISTED_REACTOR_ENABLED": False, "ASYNCIO_EVENT_LOOP": "uvloop.Loop"}
-+)
-+process.crawl(NoRequestsSpider)
-+process.start()
-```
-
-**File**: `tests/AsyncCrawlerProcess/reactorless_start_running_loop.py` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+import asyncio
-+import logging
-+
-+import scrapy
-+from scrapy.crawler import AsyncCrawlerProcess
-+
-+logger = logging.getLogger(__name__)
-+
-+
-+class NoRequestsSpider(scrapy.Spider):
-+    name = "no_request"
-+
-+    async def start(self):
-+        return
-+        yield
-+
-+
-+async def main() -> AsyncCrawlerProcess:
-+    process = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
-+    process.crawl(NoRequestsSpider)
-+    try:
-+        process.start()
-+    except RuntimeError as e:
-+        logger.info(f"start() failed: {e}")
-+    await asyncio.sleep(0)
-+    logger.info("The running loop still works")
-+    return process
-+
-+
-+process = asyncio.run(main())
-+process.start()
-```
-
-**File**: `tests/AsyncCrawlerProcess/reactorless_two_processes.py` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+import scrapy
-+from scrapy.crawler import AsyncCrawlerProcess
-+
-+
-+class NoRequestsSpider(scrapy.Spider):
-+    name = "no_request"
-+
-+    async def start(self):
-+        return
-+        yield
-+
-+
-+process1 = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
-+process2 = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
-+process1.crawl(NoRequestsSpider)
-+process2.crawl(NoRequestsSpider)
-+process1.start()
-+process2.start()
-```
-
-**File**: `tests/test_crawler_subprocess.py` (modified, +33/-0)
-```diff
-@@ -503,6 +503,39 @@ def test_reactorless_then_reactor(self) -> None:
-         assert "ImportError" not in log
-         assert "ERROR: " not in log
+ import asyncio
++import gc
+ import logging
+ import re
+ import signal
+@@ -1086,6 +1087,22 @@ async def test_async_crawler_process_force_stop_reactorless_without_loop(
+     await crawler.stop_async(mode="force")
  
-+    def test_reactorless_start_running_loop(self) -> None:
-+        """start() raises inside a running event loop without breaking that
-+        loop or the process, which can still be started later."""
-+        log = self.run_script("reactorless_start_running_loop.py")
-+        assert (
-+            "start() failed: AsyncCrawlerProcess.start() cannot be called while"
-+            " an asyncio event loop is running in the same thread."
-+        ) in log
-+        assert "The running loop still works" in log
-+        assert "Spider closed (finished)" in log
-+        assert "Traceback" not in log
+ 
++def test_async_crawler_process_unstarted_reactorless_loop_closed(
++    reactor_pytest: str,
++) -> None:
++    if reactor_pytest != "none":
++        pytest.skip("This test is only for --reactor=none")
 +
-+    def test_reactorless_two_processes(self) -> None:
-+        """Processes created before either of them starts use separate event
-+        loops."""
-+        log = self.run_script("reactorless_two_processes.py")
-+        assert log.count("Spider closed (finished)") == 2
-+        assert "Traceback" not in log
++    crawler_process = AsyncCrawlerProcess(
++        {"TWISTED_REACTOR_ENABLED": False, "LOG_INSTALL_ROOT_HANDLER": False},
++    )
++    loop = crawler_process._reactorless_loop
++    assert loop is not None
++    del crawler_process
++    gc.collect()
++    assert loop.is_closed()
 +
-+    def test_reactorless_current_loop(self) -> None:
-+        """The process doesn't use or change the current event loop of the
-+        thread."""
-+        log = self.run_script("reactorless_current_loop.py")
-+        assert "Running in the current loop: False" in log
-+        assert "Current loop kept: True" in log
-+        assert "Current loop closed: False" in log
 +
-+    @pytest.mark.requires_uvloop
-+    def test_reactorless_custom_loop(self) -> None:
-+        log = self.run_script("reactorless_custom_loop.py")
-+        assert "Running loop: uvloop.Loop" in log
-+        assert "Spider closed (finished)" in log
-+
-     def test_reactorless_telnetconsole_default(self) -> None:
-         """By default TWISTED_REACTOR_ENABLED=False silently sets TELNETCONSOLE_ENABLED=False."""
-         log = self.run_script("reactorless_simple.py")  # no need for a separate script
+ @pytest.mark.only_asyncio
+ @coroutine_test
+ async def test_async_crawler_process_force_stop_reactorless_with_task(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8519** (2026-11-19): Return exceptions instead of Failures from send_catch_log(). (@wRAR)
-- **PR #8517** (closed): Serialise replacement data with the replacement dumps_kwargs (@Raed2180416)
-- **PR #8516** (closed): Preserve async signal receiver results on cancellation (@charan-rathore)
-- **PR #8515** (2026-11-18): Keep CSV columns aligned when include_headers_line is False (@hygorcluz)
-- **PR #8514** (2026-11-18): Match allowed_domains case-insensitively in OffsiteMiddleware (@hygorcluz)
-- **PR #8513** (closed): Fix the NSS key log format link (@farisbasha)
+- **PR #8534** (closed): Fix typos in SEP-007 (@annihilatorofgod-commits)
+- **PR #8533** (closed): Use replacement dumps_kwargs when serializing data in JsonRequest.replace() (@seragAhmed)
+- **PR #8531** (closed): fix(sitemap): handle whitespace and comment-only sitemaps gracefully (#8525) (@MilindChatrabhuji)
+- **PR #8530** (closed): fix(sitemap): ignore bodies with no root element (@MeGaurav4)
+- **PR #8529** (closed): Count a feed that cannot be opened as failed instead of losing the error (@qianeric-backup)
+- **PR #8528** (2026-11-23): Close the reactorless loop of AsyncCrawlerProcess instances never started (@AdrianAtZyte)
 
 ---
 
@@ -2256,39 +2076,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use a private loop in the reactorless mode.
+## X. Close the reactorless loop of AsyncCrawlerProcess instances never started
 
 **RULE**:
-When implementing operations in `docs/topics/settings.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scrapy/crawler.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6609a421`: Use a private loop in the reactorless mode.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `531bc329`: Close the reactorless loop of AsyncCrawlerProcess instances never started. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/settings.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scrapy/crawler.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-.. caution:: Please be aware that, when using a Twisted reactor with a
-    non-default event loop (either defined via :setting:`ASYNCIO_EVENT_LOOP` or
-    installed with :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will
-    call :func:`asyncio.set_event_loop`, which will set the specified event
-    loop as the current loop for the current OS thread.
+import weakref
+def _close_reactorless(
+    loop: asyncio.AbstractEventLoop, hook: ReactorImportHook
+) -> None:
+    # loop.close() can raise, so we uninstall the hook first
+    uninstall_reactor_import_hook(hook)
+    loop.close()
+
+
+            # Also covers instances that are never started.
+            self._close_reactorless = weakref.finalize(
+                self,
+                _close_reactorless,
+                self._reactorless_loop,
+                install_reactor_import_hook(),
+            )
+            self._close_reactorless()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-.. caution:: Please be aware that, when using a non-default event loop
-    (either defined via :setting:`ASYNCIO_EVENT_LOOP` or installed with
-    :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will call
-    :func:`asyncio.set_event_loop`, which will set the specified event loop
-    as the current loop for the current OS thread.
+        self._reactor_import_hook: ReactorImportHook | None = None
+            self._reactor_import_hook = install_reactor_import_hook()
+            # loop.close() can raise, so we uninstall the hook first
+            if self._reactor_import_hook:  # pragma: no branch
+                uninstall_reactor_import_hook(self._reactor_import_hook)
+                self._reactor_import_hook = None
+            loop.close()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6609a421` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `531bc329` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-VBN3",
-    "timestamp": "2026-11-22T19:43:16.143Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-VK7R",
-    "timestamp": "2026-11-22T19:43:27.255Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-VKS7",
-    "timestamp": "2026-11-22T19:43:27.991Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-6SB1",
     "timestamp": "2026-11-22T19:52:10.957Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7445,51 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZDQQ",
+    "timestamp": "2026-11-24T14:41:50.162Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZJCV",
+    "timestamp": "2026-11-24T14:41:57.439Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "2cca6be8668d8c2e38c6dc89401d085db9d4691f9d3251627783c84cf0c9b2e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZKE6",
+    "timestamp": "2026-11-24T14:41:58.782Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

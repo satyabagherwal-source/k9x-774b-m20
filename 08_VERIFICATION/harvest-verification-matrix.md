@@ -12702,3 +12702,6 @@
 | `CYCLE-20261124-OEKN` | `2026-11-24T14:33:18.023Z` | `NihilDigit/piko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10279` | Yes (`38de4353...`) |
 | `CYCLE-20261124-OI97` | `2026-11-24T14:33:22.795Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10280` | Yes (`f80a285d...`) |
 | `CYCLE-20261124-OLRV` | `2026-11-24T14:33:27.355Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10281` | Yes (`bd787176...`) |
+| `CYCLE-20261124-ZDQQ` | `2026-11-24T14:41:50.162Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10282` | Yes (`d80755e5...`) |
+| `CYCLE-20261124-ZJCV` | `2026-11-24T14:41:57.439Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9571` | Yes (`2cca6be8...`) |
+| `CYCLE-20261124-ZKE6` | `2026-11-24T14:41:58.782Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10283` | Yes (`a627c424...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T14:33:31.250Z",
+  "updated_at": "2026-11-24T14:42:04.795Z",
   "stats": {
-    "total_discovered": 8666,
-    "approved_pending_harvest": 8206,
+    "total_discovered": 8677,
+    "approved_pending_harvest": 8217,
     "harvested_count": 0,
     "rejected_count": 460,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8208,
+      "COMMUNITY_AND_EXPERT": 8219,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 125,
       "ENGINEERING_BLOGS": 7,
@@ -187455,6 +187455,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
         "fileName": "nihildigit-piko-learnings.md"
+      }
+    },
+    "SRC-72D3687EB9CC": {
+      "id": "SRC-72D3687EB9CC",
+      "url": "https://github.com/chainguard-dev/actions",
+      "title": "https://github.com/chainguard-dev/actions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-E7158B336204": {
+      "id": "SRC-E7158B336204",
+      "url": "https://github.com/mikefarah/yq",
+      "title": "https://github.com/mikefarah/yq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.509Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-7CB2345ABD83": {
+      "id": "SRC-7CB2345ABD83",
+      "url": "https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644",
+      "title": "https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-2E363D7218B8": {
+      "id": "SRC-2E363D7218B8",
+      "url": "https://github.com/go-openapi/runtime",
+      "title": "https://github.com/go-openapi/runtime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-2CEABE6851BA": {
+      "id": "SRC-2CEABE6851BA",
+      "url": "https://github.com/sigstore/timestamp-authority",
+      "title": "https://github.com/sigstore/timestamp-authority",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.740Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-C76CAC8C10BA": {
+      "id": "SRC-C76CAC8C10BA",
+      "url": "https://github.com/go-openapi/runtime/releases",
+      "title": "https://github.com/go-openapi/runtime/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-7722AC2CBFB6": {
+      "id": "SRC-7722AC2CBFB6",
+      "url": "https://github.com/go-openapi/runtime/compare/v0.33.4...v0.33.5",
+      "title": "https://github.com/go-openapi/runtime/compare/v0.33.4...v0.33.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-719AE03341E6": {
+      "id": "SRC-719AE03341E6",
+      "url": "https://github.com/sigstore/timestamp-authority/releases",
+      "title": "https://github.com/sigstore/timestamp-authority/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-54C1F963ACD8": {
+      "id": "SRC-54C1F963ACD8",
+      "url": "https://github.com/sigstore/timestamp-authority/blob/main/CHANGELOG.md",
+      "title": "https://github.com/sigstore/timestamp-authority/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:03.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-3F1010CCC7C3": {
+      "id": "SRC-3F1010CCC7C3",
+      "url": "https://github.com/sigstore/timestamp-authority/compare/v2.2.0...v2.2.1",
+      "title": "https://github.com/sigstore/timestamp-authority/compare/v2.2.0...v2.2.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:04.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-17184DBBC343": {
+      "id": "SRC-17184DBBC343",
+      "url": "https://github.com/citusdata/citus",
+      "title": "https://github.com/citusdata/citus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:42:04.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/citusdata-citus-learnings.md",
+        "fileName": "citusdata-citus-learnings.md"
       }
     }
   }
