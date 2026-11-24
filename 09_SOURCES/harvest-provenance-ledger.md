@@ -12564,3 +12564,8 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `83f1675f` | Multi-dimensional audit evidence | 2026-11-24T00:31:38.659Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `11b271ee` | Multi-dimensional audit evidence | 2026-11-24T00:31:44.619Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5852883d` | Multi-dimensional audit evidence | 2026-11-24T00:31:51.194Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-24T00:39:58.176Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `cb434829` | Multi-dimensional audit evidence | 2026-11-24T00:40:00.984Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `ca29be61` | Multi-dimensional audit evidence | 2026-11-24T00:40:05.678Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `24d967b5` | Multi-dimensional audit evidence | 2026-11-24T00:40:16.265Z |
+| `learn-dom-h-ab1b4707` | `project://wcandillon-react-native-skia` | `ca29be61` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-24T00:40:50.554Z |

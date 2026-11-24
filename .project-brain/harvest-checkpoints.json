@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T00:31:51.203Z",
+  "last_updated": "2026-11-24T00:40:16.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2706,14 +2706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
-      "content_hash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
-      "verified_at": "2026-11-19T19:11:53.414Z",
+      "content_hash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
+      "verified_at": "2026-11-24T00:39:58.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:11:53.414Z"
+      "last_updated": "2026-11-24T00:39:58.192Z"
     },
     "chrisryugj/kordoc": {
       "repository": "chrisryugj/kordoc",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
-      "verified_at": "2026-11-23T17:03:44.751Z",
+      "content_hash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
+      "verified_at": "2026-11-24T00:40:16.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:03:44.751Z"
+      "last_updated": "2026-11-24T00:40:16.273Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
-      "verified_at": "2026-11-21T23:39:44.391Z",
+      "content_hash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
+      "verified_at": "2026-11-24T00:40:05.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:39:44.391Z"
+      "last_updated": "2026-11-24T00:40:05.720Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "b08ca115fc52349a66cba80b853e2a7cf885e2fe9ea8e8dfbf81651a6fcae5e3",
-      "verified_at": "2026-11-22T16:57:25.055Z",
+      "content_hash": "d58eb388585ff27d27593ac6536ea68b18b1ddeb659a85c5f21273a9ab2b4a9f",
+      "verified_at": "2026-11-24T00:40:00.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:57:25.055Z"
+      "last_updated": "2026-11-24T00:40:00.992Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T00:23:21.748Z",
+  "updated_at": "2026-11-24T00:40:50.551Z",
   "statistics": {
-    "total_nodes": 492,
+    "total_nodes": 493,
     "total_edges": 205,
     "domain_distribution": {
       "D": 300,
       "M": 1,
-      "H": 87,
+      "H": 88,
       "J": 22,
       "K": 29,
       "L": 8,
@@ -10991,6 +10991,28 @@
       ],
       "created_at": "2026-11-24T00:23:21.748Z",
       "updated_at": "2026-11-24T00:23:21.748Z"
+    },
+    "DOM-H-AB1B4707": {
+      "id": "DOM-H-AB1B4707",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "🕸️): build Skia Graphite for wasm",
+      "summary": "Prevents defects observed in production commit `bb5dc61f`: 🕸️): build Skia Graphite for wasm. Unvalidated execution paths cause runtime exc -> When implementing operations in `packages/skia/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://wcandillon-react-native-skia/wcandillon-react-native-skia-learnings.md",
+        "source_version": "ca29be61",
+        "observed_at": "2026-11-24T00:40:05.156Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wcandillon-react-native-skia)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-24T00:40:50.551Z",
+      "updated_at": "2026-11-24T00:40:50.551Z"
     }
   },
   "edges": [

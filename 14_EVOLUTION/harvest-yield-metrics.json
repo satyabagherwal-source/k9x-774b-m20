@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T00:31:51.200Z",
-  "total_cycles_completed": 11915,
-  "total_learnings_persisted": 11915,
-  "total_rules_promoted": 11000,
+  "last_updated": "2026-11-24T00:40:16.270Z",
+  "total_cycles_completed": 11919,
+  "total_learnings_persisted": 11919,
+  "total_rules_promoted": 11002,
   "history": [
-    {
-      "timestamp": "2026-11-23T13:24:22.829Z",
-      "repository": "inclusionAI/LingSante-3.1-flash",
-      "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T13:49:48.291Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T13:50:04.444Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T13:54:35.625Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:12:38.612Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T00:31:51.200Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:39:58.182Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:40:00.989Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:40:05.717Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T00:40:16.270Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

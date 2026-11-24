@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/datalab-to/indra-ocr",
   "source_version": "hf-datalab-to-indra-ocr",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T19:11:53.598Z",
+  "timestamp": "2026-11-24T00:39:58.388Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-datalab-to-indra-ocr",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr) (Revision: `hf-datalab`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T19:11:53.598Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T00:39:58.388Z`  
 > **Learning ID**: `learn-huggingface-datalab-to-indra-ocr`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:11:52.816Z  
+> **Harvest Timestamp**: 2026-11-24T00:39:57.512Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6455 downloads | 538 likes
+- **Stars / Engagement**: 6023 downloads | 541 likes
 
 ---
 

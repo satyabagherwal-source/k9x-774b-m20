@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T00:31:56.583Z",
+  "last_updated": "2026-11-24T00:40:51.731Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24296,
+  "total_items": 24302,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "c4528161",
-      "content_hash": "482d379ff00554b0d6604ededd78119b6c13452d7dd388207105696f5ac50692",
+      "source_version": "24d967b5",
+      "content_hash": "8af5715ba34e792e16d7d75c2306d20a3e79522ae7a4ad7eb2ef45d48d923b13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:03:45.497Z"
+      "persisted_at": "2026-11-24T00:40:16.848Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -220084,8 +220084,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c4528161",
-      "content_hash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
+      "source_version": "24d967b5",
+      "content_hash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220273,6 +220273,11 @@
           "number": 10076,
           "title": "refuse numbers too close to 0 for .xpt; keep them in .por",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10156,
+          "title": "validate,stats): add --quote, --escape and --no-quoting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220280,7 +220285,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:03:44.464Z",
+      "verified_at": "2026-11-24T00:40:16.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221317,10 +221322,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "c4528161",
-      "content_hash": "9c4fe8f76a9098099bfb978cce5351b288674dda595f219874406b0cb2d5394e",
+      "source_version": "24d967b5",
+      "content_hash": "d787e5571aff39b333654d692de33d9c236795e4ac817b5e90a1d33776402cda",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:03:45.273Z"
+      "persisted_at": "2026-11-24T00:40:16.674Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -226978,13 +226983,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "badcc586",
-      "content_hash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "ca29be61",
+      "content_hash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 8346,
@@ -227012,7 +227017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:39:44.164Z",
+      "verified_at": "2026-11-24T00:40:05.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227051,25 +227056,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "badcc586",
-      "content_hash": "33286a83a73f073f3fb6547168dfc270431007696c910d01b60f9b3e908cdf32",
+      "source_version": "ca29be61",
+      "content_hash": "16bff7eefedd83944ab9ecdccb09e6caf8e9d3a89601df0ad616c7662e31c9da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T23:39:44.781Z"
+      "persisted_at": "2026-11-24T00:40:06.114Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
+      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-verification-protocol-empirical-defect-shield-for-w.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "badcc586",
-      "content_hash": "8a17ee527cf53ff444c05c1770813696af1dbdfc23dd43ce07242f1989dc2500",
+      "source_version": "ca29be61",
+      "content_hash": "8224e1fb2d2db9cd95e7525e6ad74b76efc36fa4dfea601b5970a26dfe48127e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:39:44.954Z"
+      "persisted_at": "2026-11-24T00:40:06.305Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -235705,8 +235710,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "80a37645",
-      "content_hash": "b08ca115fc52349a66cba80b853e2a7cf885e2fe9ea8e8dfbf81651a6fcae5e3",
+      "source_version": "cb434829",
+      "content_hash": "d58eb388585ff27d27593ac6536ea68b18b1ddeb659a85c5f21273a9ab2b4a9f",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -235739,6 +235744,11 @@
           "number": 9957,
           "title": "[Docs] Fix spelling in documentation and comments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10155,
+          "title": "[C++][Parquet] Minor optimize level counting with CountLevels",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235746,7 +235756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:57:24.828Z",
+      "verified_at": "2026-11-24T00:40:00.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235788,10 +235798,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "repository": "apache/arrow",
-      "source_version": "80a37645",
-      "content_hash": "c4641fbc33698a6053a57f715724212e93e06a57cfce4d16240210cdaf83788e",
+      "source_version": "cb434829",
+      "content_hash": "6d41880b411d21a408e511b2a468bb01573d6e2435d8db0cae7d17e9daf9ce34",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T16:57:25.493Z"
+      "persisted_at": "2026-11-24T00:40:01.384Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow",
@@ -235800,10 +235810,10 @@
       "relative_path": "08_VERIFICATION/apache-arrow-verification-protocol-empirical-defect-shield-for-apache-arrow.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/arrow",
       "repository": "apache/arrow",
-      "source_version": "80a37645",
-      "content_hash": "7864dc6754a1157f3b9cbd1c8e38e42949205249318145c57b623edcf0d33fd2",
+      "source_version": "cb434829",
+      "content_hash": "18f23ca708f7d42c8b6f5f6bb2c9dbe60ad2a1b3b85d416ded2484cd5b074feb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:57:25.676Z"
+      "persisted_at": "2026-11-24T00:40:01.556Z"
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -235933,9 +235943,9 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e3b3b051a52740285a94b5f2f7c57fe4fe659fe5870e292aae491c9dd5d342e",
+      "content_hash": "fa9f4641c0fc842a54266ef40f9d55b1de47a12f8f7a75e416a712b0a834201e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T16:57:43.934Z"
+      "persisted_at": "2026-11-24T00:40:20.510Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings",
@@ -235945,9 +235955,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-arrow-learnings",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdf84ae5318f469c0418b04c8b77bb4a4f29e6a7953fdd0e81b81b28f3fcc2a3",
+      "content_hash": "0a9417d0047654a2c4297dd45d1dc9e23f86b3b43142df6d4efb5fe4e2de4b05",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:57:44.116Z"
+      "persisted_at": "2026-11-24T00:40:20.685Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
@@ -245416,7 +245426,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
+      "content_hash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [],
@@ -245425,7 +245435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:11:53.195Z",
+      "verified_at": "2026-11-24T00:39:57.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245442,9 +245452,9 @@
       "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
       "repository": "datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "cf3693028c963e9aa5a91a0b74b34561d2d71bac5c32d660b782d858d59cfe8e",
+      "content_hash": "d001045cebf360f9df0304ed250cd9f8008c6f7e35fedf38225b3b3009cd665c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T19:11:53.598Z"
+      "persisted_at": "2026-11-24T00:39:58.388Z"
     },
     "rule-8583": {
       "learning_id": "rule-8583",
@@ -245506,9 +245516,9 @@
       "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
       "repository": "hf-datalab-to-indra-ocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc0e9ea7dd642c8b9b589169c4226f12f46e3730c3e3cb3d9f235369b11ab229",
+      "content_hash": "a0f9712fe40beb932b32fe17b13278aa7c6bb85dc240a4836cf1285405041576",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T19:12:13.263Z"
+      "persisted_at": "2026-11-24T00:40:21.046Z"
     },
     "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks": {
       "item_id": "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks",
@@ -268020,9 +268030,9 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c47165a1347716e6f23ea264ab0cc76454e0e16a5811365c3a0700d47d32e0d",
+      "content_hash": "509c9eb1d77d9fcd6e0e96986539b51526a7895abca11ef771ccf990a4a3314e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:35:34.574Z"
+      "persisted_at": "2026-11-24T00:40:51.523Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l",
@@ -268032,9 +268042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon-react-native-skia-learnings",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "864d85c2866235262b14357a3c8a1c93446e12561d30d7234a129e9372c5f8c4",
+      "content_hash": "c90bd115c7e4abceba8672b7f7ec086b0115514ce1d2909d58dec3a5475130cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:35:34.779Z"
+      "persisted_at": "2026-11-24T00:40:51.731Z"
     },
     "learn-github-mfontanini-presenterm": {
       "learning_id": "learn-github-mfontanini-presenterm",
@@ -331312,6 +331322,82 @@
       "content_hash": "002082ff20d95c5c8755636e08c26d1585c561ca35df0c9170a8a85c136b9c8e",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T00:31:56.405Z"
+    },
+    "rule-10155": {
+      "learning_id": "rule-10155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10155,
+      "title": "[C++][Parquet] Minor optimize level counting with CountLevels",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "cb434829",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T00:40:00.764Z"
+    },
+    "candidate_directive-c-parquet-minor-optimize-level-counting-with-countlevels": {
+      "item_id": "candidate_directive-c-parquet-minor-optimize-level-counting-with-countlevels",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WSSA-c-parquet-minor-optimize-level-counting-with-countlevels.md",
+      "title": "[C++][Parquet] Minor optimize level counting with CountLevels",
+      "repository": "apache/arrow",
+      "source_version": "cb434829",
+      "content_hash": "aeb25d8d6a48ebc47a49ce174e286c0ef2e0f3b2ad981140d0c1c65df616d2ef",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T00:40:01.211Z"
+    },
+    "candidate_directive-build-skia-graphite-for-wasm": {
+      "item_id": "candidate_directive-build-skia-graphite-for-wasm",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XVFO-build-skia-graphite-for-wasm.md",
+      "title": "🕸️): build Skia Graphite for wasm",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae62f9dc1f10261de1c5f865e90211b09a7ed45955a408a9068118494ffc7062",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T00:40:51.312Z"
+    },
+    "rule-10156": {
+      "learning_id": "rule-10156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10156,
+      "title": "validate,stats): add --quote, --escape and --no-quoting",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "24d967b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T00:40:16.046Z"
+    },
+    "candidate_directive-validate-stats-add-quote-escape-and-no-quoting": {
+      "item_id": "candidate_directive-validate-stats-add-quote-escape-and-no-quoting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X4KZ-validate-stats-add-quote-escape-and-no-quoting.md",
+      "title": "validate,stats): add --quote, --escape and --no-quoting",
+      "repository": "dathere/qsv",
+      "source_version": "24d967b5",
+      "content_hash": "4d90cd7c9608598da8794a16d7b852f9e9482cbb3c285bf3c84424bdff225a58",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T00:40:16.502Z"
+    },
+    "candidate_directive-gh-55399-c-parquet-minor-optimize-level-counting-with-countlevels": {
+      "item_id": "candidate_directive-gh-55399-c-parquet-minor-optimize-level-counting-with-countlevels",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X7JA-gh-55399-c-parquet-minor-optimize-level-counting-with-countlevels.md",
+      "title": "GH-55399: [C++][Parquet] Minor optimize level counting with CountLevels",
+      "repository": "apache-arrow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c4303c66950c9f2f6ee0bf8ab504f91997a88a8536603b747b7a8572edfff10a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T00:40:20.329Z"
     }
   },
   "ai-builder-brain": {

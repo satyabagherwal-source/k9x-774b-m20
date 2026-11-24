@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:31:56.405Z",
-  "total_records": 2472,
+  "last_updated": "2026-11-24T00:40:51.523Z",
+  "total_records": 2473,
   "domains": {
     "A": {
       "total": 20,
@@ -1569,7 +1569,7 @@
       ]
     },
     "H": {
-      "total": 584,
+      "total": 585,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2154,7 +2154,8 @@
         "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
         "DOM-H-F2F7DD53",
         "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants",
+        "DOM-H-AB1B4707"
       ]
     },
     "I": {
@@ -12529,8 +12530,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "9c4fe8f76a9098099bfb978cce5351b288674dda595f219874406b0cb2d5394e",
-      "created_at": "2026-11-23T17:03:45.273Z"
+      "content_hash": "d787e5571aff39b333654d692de33d9c236795e4ac817b5e90a1d33776402cda",
+      "created_at": "2026-11-24T00:40:16.674Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -14388,10 +14389,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "33286a83a73f073f3fb6547168dfc270431007696c910d01b60f9b3e908cdf32",
-      "created_at": "2026-11-21T23:39:44.781Z"
+      "content_hash": "16bff7eefedd83944ab9ecdccb09e6caf8e9d3a89601df0ad616c7662e31c9da",
+      "created_at": "2026-11-24T00:40:06.114Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -17450,8 +17451,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "c4641fbc33698a6053a57f715724212e93e06a57cfce4d16240210cdaf83788e",
-      "created_at": "2026-11-22T16:57:25.493Z"
+      "content_hash": "6d41880b411d21a408e511b2a468bb01573d6e2435d8db0cae7d17e9daf9ce34",
+      "created_at": "2026-11-24T00:40:01.384Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -17468,8 +17469,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "6e3b3b051a52740285a94b5f2f7c57fe4fe659fe5870e292aae491c9dd5d342e",
-      "created_at": "2026-11-22T16:57:43.934Z"
+      "content_hash": "fa9f4641c0fc842a54266ef40f9d55b1de47a12f8f7a75e416a712b0a834201e",
+      "created_at": "2026-11-24T00:40:20.510Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",
@@ -20499,8 +20500,8 @@
       "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-research-knowledge-intelligence-datalab-to-indra-ocr-cor.md",
       "repository": "datalab-to/indra-ocr",
-      "content_hash": "cf3693028c963e9aa5a91a0b74b34561d2d71bac5c32d660b782d858d59cfe8e",
-      "created_at": "2026-11-19T19:11:53.598Z"
+      "content_hash": "d001045cebf360f9df0304ed250cd9f8008c6f7e35fedf38225b3b3009cd665c",
+      "created_at": "2026-11-24T00:39:58.388Z"
     },
     "DOM-D-1138A8F2": {
       "record_id": "DOM-D-1138A8F2",
@@ -20550,8 +20551,8 @@
       "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-learnings-research-knowledge-intelligence-hf-datalab-to-.md",
       "repository": "hf-datalab-to-indra-ocr-learnings",
-      "content_hash": "fc0e9ea7dd642c8b9b589169c4226f12f46e3730c3e3cb3d9f235369b11ab229",
-      "created_at": "2026-11-19T19:12:13.263Z"
+      "content_hash": "a0f9712fe40beb932b32fe17b13278aa7c6bb85dc240a4836cf1285405041576",
+      "created_at": "2026-11-24T00:40:21.046Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",
@@ -26025,8 +26026,8 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
       "repository": "wcandillon-react-native-skia-learnings",
-      "content_hash": "0c47165a1347716e6f23ea264ab0cc76454e0e16a5811365c3a0700d47d32e0d",
-      "created_at": "2026-11-21T01:35:34.574Z"
+      "content_hash": "509c9eb1d77d9fcd6e0e96986539b51526a7895abca11ef771ccf990a4a3314e",
+      "created_at": "2026-11-24T00:40:51.523Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
@@ -41453,6 +41454,48 @@
       "repository": "sweetpad-dev-sweetpad-learnings",
       "content_hash": "002082ff20d95c5c8755636e08c26d1585c561ca35df0c9170a8a85c136b9c8e",
       "created_at": "2026-11-24T00:31:56.405Z"
+    },
+    "DOM-H-AB1B4707": {
+      "record_id": "DOM-H-AB1B4707",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "🕸️): build Skia Graphite for wasm",
+      "content": "When implementing operations in `packages/skia/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "2ffd344b6015eddff55f393fd03fb0bf50557a993c84390b0305019fdb6d5d6b",
+      "summary": "Prevents defects observed in production commit `bb5dc61f`: 🕸️): build Skia Graphite for wasm. Unvalidated execution paths cause runtime exc -> When implementing operations in `packages/skia/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions",
+      "provenance": {
+        "source_uri": "project://wcandillon-react-native-skia/wcandillon-react-native-skia-learnings.md",
+        "source_version": "ca29be61",
+        "observed_at": "2026-11-24T00:40:05.156Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wcandillon-react-native-skia)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of wcandillon-react-native-skia"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T00:40:50.516Z"
     }
   }
 }

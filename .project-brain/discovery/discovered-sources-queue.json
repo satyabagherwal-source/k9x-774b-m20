@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T00:31:56.041Z",
+  "updated_at": "2026-11-24T00:40:50.988Z",
   "stats": {
-    "total_discovered": 8146,
-    "approved_pending_harvest": 7714,
+    "total_discovered": 8154,
+    "approved_pending_harvest": 7722,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7695,
+      "COMMUNITY_AND_EXPERT": 7703,
       "OFFICIAL_DOCUMENTATION": 265,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -176211,6 +176211,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
         "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-B2F573791BCD": {
+      "id": "SRC-B2F573791BCD",
+      "url": "https://github.com/boostorg/boost/issues/1162",
+      "title": "https://github.com/boostorg/boost/issues/1162",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:19.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-3DA56CA70BF3": {
+      "id": "SRC-3DA56CA70BF3",
+      "url": "https://github.com/apache/arrow/actions/runs/45088349844/job/137412030347",
+      "title": "https://github.com/apache/arrow/actions/runs/45088349844/job/137412030347",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:19.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-51646521817C": {
+      "id": "SRC-51646521817C",
+      "url": "https://github.com/apache/arrow/pull/55647",
+      "title": "https://github.com/apache/arrow/pull/55647",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:19.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-39C1610CAC78": {
+      "id": "SRC-39C1610CAC78",
+      "url": "https://godbolt.org/z/Gqc7fxe55",
+      "title": "https://godbolt.org/z/Gqc7fxe55",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:19.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-EBF992531539": {
+      "id": "SRC-EBF992531539",
+      "url": "https://godbolt.org/z/sGhG8crYa",
+      "title": "https://godbolt.org/z/sGhG8crYa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:20.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-A20D56F81A89": {
+      "id": "SRC-A20D56F81A89",
+      "url": "https://godbolt.org/z/rvobWjrfa",
+      "title": "https://godbolt.org/z/rvobWjrfa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:20.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-29BD66742C81": {
+      "id": "SRC-29BD66742C81",
+      "url": "https://github.com/wcandillon/skia-wasm",
+      "title": "https://github.com/wcandillon/skia-wasm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:50.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+        "fileName": "wcandillon-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-911A59705032": {
+      "id": "SRC-911A59705032",
+      "url": "https://groups.google.com/g/skia-discuss/c/BYyB-TwA8ow",
+      "title": "https://groups.google.com/g/skia-discuss/c/BYyB-TwA8ow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:40:50.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+        "fileName": "wcandillon-react-native-skia-learnings.md"
       }
     }
   }

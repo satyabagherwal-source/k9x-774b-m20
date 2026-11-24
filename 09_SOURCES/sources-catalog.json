@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
-    "lastHarvestedAt": "2026-11-19T19:11:53.406Z",
+    "contentHash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
+    "lastHarvestedAt": "2026-11-24T00:39:58.176Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "c4528161",
+    "sourceVersion": "24d967b5",
     "license": "NOASSERTION",
-    "contentHash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
-    "lastHarvestedAt": "2026-11-23T17:03:44.741Z",
+    "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
+    "lastHarvestedAt": "2026-11-24T00:40:16.265Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "80a37645",
+    "sourceVersion": "cb434829",
     "license": "Apache-2.0",
-    "contentHash": "b08ca115fc52349a66cba80b853e2a7cf885e2fe9ea8e8dfbf81651a6fcae5e3",
-    "lastHarvestedAt": "2026-11-22T16:57:25.046Z",
+    "contentHash": "d58eb388585ff27d27593ac6536ea68b18b1ddeb659a85c5f21273a9ab2b4a9f",
+    "lastHarvestedAt": "2026-11-24T00:40:00.984Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "7b38b7d5",
+    "sourceVersion": "ca29be61",
     "license": "MIT",
-    "contentHash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
-    "lastHarvestedAt": "2026-11-21T01:33:43.877Z",
+    "contentHash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
+    "lastHarvestedAt": "2026-11-24T00:40:05.678Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

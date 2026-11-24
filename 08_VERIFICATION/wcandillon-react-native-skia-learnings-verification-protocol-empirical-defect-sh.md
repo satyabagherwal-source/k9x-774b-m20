@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T01:35:34.230Z",
+  "timestamp": "2026-11-24T00:40:51.155Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-wcandillon-react-native-skia-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [wcandillon-react-native-skia-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T01:35:34.230Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T00:40:51.155Z`  
 > **Learning ID**: `LEARN-EVO-wcandillon-react-native-skia-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
-> **Source Version**: `7b38b7d5`  
+> **Source Version**: `ca29be61`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:33:43.028Z  
+> **Timestamp**: 2026-11-24T00:40:05.156Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:33:41.306Z  
+> **Harvest Timestamp**: 2026-11-24T00:40:05.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8783 stars
+- **Stars / Engagement**: 8788 stars
 
 ---
 
@@ -1715,152 +1715,862 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72ed90d0` (2026-11-18)
-**Commit Message**: fix(🍏): present at full rate on macOS 14+ ProMotion devices (#4481)
+### Incident Patch 1: `bb5dc61f` (2026-11-23)
+**Commit Message**: chore(🕸️): build Skia Graphite for wasm (#4509)
 
-* fix(🍏): present at the display's full rate on macOS ProMotion devices
+* chore(🕸️): Skia Graphite wasm archives and skia-wasm smoke test
 
-* fix(🍏): remove obsolete macOS display-link fallback
+Adds a WebAssembly target to the regular Skia build and a package that
+consumes it.
 
-* fix(🍏): create the display link lazily outside macOS
+- `yarn build-skia wasm` builds Skia Graphite (Dawn backend, no Ganesh) with
+  Skia's pinned Emscripten into static archives, with the Skia headers, an
+  emdawnwebgpu package generated from the pinned Dawn, and a metadata.json
+  recording the Emscripten version, flags and defines a consumer must match.
+- Three Skia patches: the Graphite Dawn backend ported to emdawnwebgpu, a GN
+  argument to depend on the emdawnwebgpu package instead of building Dawn,
+  and optional pthreads for the wasm toolchain.
+- `yarn package-skia-wasm` zips the result as skia-graphite-wasm.zip and
+  prints the entry to pin.
+- packages/skia-wasm (private) links every archive into one module and draws
+  a tile with each (shapes, runtime effect, image, SVG, Skottie, Paragraph)
+  on the browser's WebGPU device, checked in headless Chromium through
+  Playwright. It uses a local build when there is one and otherwise the
+  archive pinned in its binaries.json, verified by SHA-256.
 
-Make the display link lazily again outside macOS: a canvas that never animates has no link, and a mounted view is not held by one. macOS keeps making its view-bound link at the enter, since AppKit makes it on the main thread only.
+* chore(🕸️): move the wasm smoke te
 
-Install the macOS link in the task that lets frame requests through, which drops an extra present-thread post and a nil check that could never fail, and update the comments on the link's lifecycle.
+**File**: `packages/skia/CONTRIBUTING.md` (modified, +6/-0)
+```diff
+@@ -58,6 +58,12 @@ Both builders accept `android` to build all ABIs. For one architecture, use a Sk
+ 
+ Skia writes `.a` libraries to `libs/android/<abi>`. Dawn writes `libwebgpu_dawn.so` to `libs/dawn/android/<abi>`. Local Android libraries take precedence over downloaded binaries.
+ 
++#### WebAssembly (experimental)
++
++`yarn build-skia wasm` builds Skia Graphite for the browser's WebGPU with the Emscripten release Skia pins (installed in the Skia checkout on first use). There is no Dawn build: the browser implements WebGPU, and the WebGPU headers and JavaScript glue are generated from the pinned Dawn checkout.
++
++Skia writes `.a` libraries to `libs/wasm/lib`, next to the headers (`skia/`), the WebGPU package (`emdawnwebgpu/`) and `metadata.json`, which records the Emscripten version, flags and defines a consumer has to match. These archives are not a module: the [skia-wasm](https://github.com/wcandillon/skia-wasm) repository links them into one. `yarn package-skia-wasm` zips them. The Build and release Skia wasm workflow (`.github/workflows/build-skia-wasm.yml`) does both and publishes the archive as the GitHub release `skia-wasm-<version>`, which skia-wasm pins.
++
+ #### Apple
+ 
+ Both Apple builders accept SDK groups (`iphoneos`, `iphonesimulator`, `maccatalyst`, `appletvos`, `appletvsimulator`, `macos`) and individual targets such as `iphonesimulator-arm64` or `iphonesimulator-x86_64`. A group builds its configured architectures and produces lipo'd universal libraries when it has multiple architectures; a single target keeps only that architecture. Single-architecture SDKs copy their libraries directly.
+```
 
----------
+**File**: `packages/skia/eslint.config.mjs` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ import wcandillon from "eslint-config-react-native-wcandillon";
+ 
+ export default [
+   {
+-    ignores: ["lib/**", "dist/**", "android/build/**", "node_modules/**", "*.config.js", "jest.config.js", "*.mjs"]
++    ignores: ["lib/**", "libs/**", "dist/**", "android/build/**", "node_modules/**", "*.config.js", "jest.config.js", "*.mjs"]
+   },
+   ...wcandillon,
+   {
+```
 
+**File**: `packages/skia/package.json` (modified, +1/-0)
+```diff
+@@ -52,6 +52,7 @@
+     "build-skia": "tsx ./scripts/build-skia.ts",
+     "build-dawn": "tsx ./scripts/build-dawn.ts",
+     "package-binaries": "tsx ./scripts/package-binaries.ts",
++    "package-skia-wasm": "tsx ./scripts/package-skia-wasm.ts",
+     "prepare-dawn-headers": "tsx ./scripts/prepare-dawn-headers.ts",
+     "copy-skia-headers": "tsx ./scripts/copy-skia-headers.ts",
+     "clang-format": "yarn clang-format-ios && yarn clang-format-android && yarn clang-format-common",
+```
+
+**File**: `packages/skia/scripts/apple-configuration.ts` (modified, +5/-2)
+```diff
+@@ -86,7 +86,10 @@ export const selectBuildTargets = (specs: string[], targets: string[]) => {
+   const selected = new Set<string>();
+   for (const spec of specs) {
+     // Only catalogued groups expand; partial names must not select other SDKs.
+-    const isGroup = spec === "android" || appleSDKs.includes(spec as AppleSDK);
++    const isGroup =
++      spec === "android" ||
++      spec === "wasm" ||
++      appleSDKs.includes(spec as AppleSDK);
+     let matches: string[] = [];
+     if (targets.includes(spec)) {
+       matches = [spec];
+@@ -97,7 +100,7 @@ export const selectBuildTargets = (specs: string[], targets: string[]) => {
+       throw new Error(
+         `Unknown target '${spec}'. Valid targets: ${targets.join(
+           ", "
+-        )}; groups: android, ${appleSDKs.join(", ")}`
++        )}; groups: android, wasm, ${appleSDKs.join(", ")}`
+       );
+     }
+     matches.forEach((target) => selected.add(target));
+```
+
+**File**: `packages/skia/scripts/build-skia.ts` (modified, +61/-7)
+```diff
+@@ -21,9 +21,16 @@ import {
+   PackageRoot,
+   ProjectRoot,
+   SkiaSrc,
++  WasmLibs,
+ } from "./skia-configuration";
+ import { applyDawnPatches } from "./dawn-configuration";
+-import { $, runAsync } from "./utils";
++import {
++  activateEmsdk,
++  buildEmdawnwebgpuPackage,
++  wasmArchiveSource,
++  writeWasmMetadata,
++} from "./wasm-configuration";
++import { $, fileOps, runAsync } from "./utils";
+ 
+ /**
+  * Locate GN intermediates, separately from distributable libraries under libs/.
+@@ -109,17 +116,27 @@ export const buildPlatform = async (
+   // We need to include the path to our custom python2 -> python3 mapping script
+   // to make sure we can run all scripts that uses #!/usr/bin/env python as shebang
+   // https://groups.google.com/g/skia-discuss/c/BYyB-TwA8ow
++  // wasm builds its archives by name: the default target would also compile
++  // the Dawn and Tint that the emdawnwebgpu package replaces.
++  const ninjaTargets =
++    platform === "wasm"
++      ? configurations.wasm.outputNames
++          .map((library) => ` ${path.basename(wasmArchiveSource(library))}`)
++          .join("")
++      : "";
+   const command = `PATH=${process.cwd()}/../bin:$PATH ninja -C ${getOutDir(
+     platform,
+     targetName
+-  )}`;
++  )}${ninjaTargets}`;
+   // Apple CPU names overlap across SDKs; identify both in compiler output.
+-  const label =
+-    platform === "android"
+-      ? `🤖 ${targetName}`
+-      : `🍏 ${platform}-${targetName}`;
++  let label = `🍏 ${platform}-${targetName}`;
++  if (platform === "android") {
++    label = `🤖 ${targetName}`;
++  } else if (platform === "wasm") {
++    label = `🕸️ ${targetName}`;
++  }
+   await runAsync(command, label);
+-  if (platform !== "android") {
++  if (platform !== "android" && platform !== "wasm") {
+     // Fail this target before staging or compiling the next architecture.
+     for (const library of configurations[platform].outputNames) {
+       validateAppleArchive(
+@@ -195,12 +212,15 @@ export const copyLib = (
+  *   yarn build-skia iphonesimulator              # lipo'd universal simulator libraries
+  *   yarn build-skia iphonesimulator-arm64        # one simulator architecture
+  *   yarn build-skia iphoneos iphonesimulator     # multiple SDK groups
++ *   yarn build-skia wasm                         # Graphite on WebGPU, for the web
+  *
+  * Apple static libraries are staged under libs/apple/<sdk>-<arch>/
+  * (e.g. libs/apple/iphonesimulator-arm64/), then assembled under libs/apple/<sdk>/
+  * (e.g. libs/apple/iphonesimulator/). Staging directories are removed on successful
+  * SDK assembly; GN intermediates remain. Android uses libs/android/<abi>/
+  * (e.g. libs/android/arm64-v8a/). package-binaries assembles npm XCFrameworks.
++ * wasm uses libs/wasm/ with its own headers and emdawnwebgpu package next to
++ * the archives; see wasm-configuration.ts.
+  *
+  * See apple-configuration.ts for SDK groups/architectures and
+  * skia-configuration.ts (skiaTargets) for the full target list.
+@@ -254,6 +274,17 @@ export const copyLib = (
+     $(`rm -rf ${PackageRoot}/${configurations.android.outputRoot}`);
+   }
+ 
++  // GN compiles Graphite against the emdawnwebgpu headers, so the package
++  // comes first; it needs Emscripten for the struct layouts.
++  const hasWasm = selectedTargets.some(
++    (name) => skiaTargets[name].platform === "wasm"
++  );
++  if (hasWasm) {
++    fileOps.rm(WasmLibs);
++    activateEmsdk();
++    buildEmdawnwebgpuPackage();
++  }
++
+   for (const name of selectedTargets) {
+     const { platform, architecture } = skiaTargets[name];
+     const configuration = configurations[platform];
+@@ -272,6 +303,15 @@ export const copyLib = (
+         configurations.android.targets[architecture].output,
+         configuration.outputNames
+       );
++    } else if (platform === "wasm") {
++      const destination = skiaTargetOutputDir(name);
++      fs.mkdirSync(destination, { recursive: true });
++      for (const library of configuration.outputNames) {
++        fs.copyFileSync(
++          wasmArchiveSource(library),
++          path.join(destination, library)
++        );
++      }
+     } else {
+       // Stage each SDK/architecture separately before combining its libraries.
+       const destination = skiaTargetOutputDir(name);
+@@ -293,6 +333,20 @@ export const copyLib = (
+     selectedTargets
+   );
+   await copyHeaders();
++  if (hasWasm) {
++    // The asset carries its headers: a consumer of the published archives has
++    // no Skia checkout to copy them from.
++    fileOps.cp(
++      path.join(PackageRoot, "cpp", "skia"),
++      path.join(WasmLibs, "skia")
++    );
++    fs.copyFileSync(
++      path.join(SkiaSrc, "LICENSE"),
++      path.join(WasmLibs, "LICENSE")
++    );
++    writeWasmMetadata();
++    console.log(`✅ wasm libraries in ${WasmLibs}`);
++  }
+ })().catch((error) => {
+   console.error(`❌ ${error.message}`);
+   exit(1);
+```
+
+**File**: `packages/skia/scripts/package-skia-wasm.ts` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++/**
++ * Archives the output of `yarn build-skia wasm` (libs/wasm) as
++ * skia-graphite-wasm.zip and prints its checksum.
++ *
++ * The archive is not part of the binaries release: the build-skia-wasm.yml
++ * workflow publishes it as the GitHub release skia-wasm-<version>. The skia-wasm
++ * repository (https://github.com/wcandillon/skia-wasm) pins it, with the
++ * printed entry, in its binaries.json and downloads it from there.
++ *
++ * Usage:
++ *   yarn package-skia-wasm [--output=<dir>]     (default: build/wasm)
++ */
++import { execFileSync } from "child_process";
++import crypto from "crypto";
++import fs from "fs";
++import path from "path";
++
++import { PackageRoot, WasmLibs } from "./skia-configuration";
++
++const AssetName = "skia-graphite-wasm.zip";
++// The layout wasm-configuration.ts documents, at the root of the archive.
++const Entries = ["lib", "skia", "emdawnwebgpu", "metadata.json", "LICENSE"];
++
++const output =
++  process.argv
++    .slice(2)
++    .find((arg) => arg.startsWith("--output="))
++    ?.slice("--output=".length) ?? path.join(PackageRoot, "build", "wasm");
++
++for (const entry of Entries) {
++  if (!fs.existsSync(path.join(WasmLibs, entry))) {
++    console.error(
++      `❌ ${path.join(WasmLibs, entry)} is missing: run \`yarn build-skia wasm\` first.`
++    );
++    process.exit(1);
++  }
++}
++
++const archive = path.resolve(output, AssetName);
++fs.mkdirSync(path.dirname(archive), { recursive: true });
++// zip adds to an archive that exists already.
++fs.rmSync(archive, { force: true });
++execFileSync(
++  "zip",
++  // -X: no uid/gid nor extended timestamps; -y: a symlink stays a symlink.
++  ["-q", "-r", "-X", "-y", archive, ...Entries, "-x", "*.DS_Store"],
++  { cwd: WasmLibs, stdio: "inherit" }
++);
++
++const sha256 = crypto
++  .createHash("sha256")
++  .update(fs.readFileSync(archive))
++  .digest("hex");
++const { size } = fs.statSync(archive);
++
++console.log(`✅ ${archive} (${(size / (1 << 20)).toFixed(1)} MB)`);
++console.log("");
++console.log(
++  "Once uploaded, pin it in binaries.json of the skia-wasm repository:"
++);
++console.log(
++  JSON.stringify(
++    { [AssetName]: { url: "<where it was uploaded>", sha256, size } },
++    null,
++    2
++  )
++);
+```
+
+**File**: `packages/skia/scripts/skia-configuration.ts` (modified, +60/-9)
+```diff
+@@ -19,6 +19,12 @@ export const SkiaPatches = path.join(__dirname, "skia-patches");
+ /** Applies the Skia patches, skipping those already in the pinned checkout. */
+ export const applySkiaPatches = () => applyPatches(SkiaSrc, SkiaPatches);
+ 
++// The wasm build output, which is also the layout of the release asset:
++// lib/ (archives), skia/ (headers), emdawnwebgpu/ and metadata.json.
++export const WasmLibs = path.join(PackageRoot, "libs", "wasm");
++// Stands in for Dawn on wasm: see skia-patches/wasm-emdawnwebgpu-dependency.patch.
++export const EmdawnwebgpuDir = path.join(WasmLibs, "emdawnwebgpu");
++
+ const NdkDir = process.env.ANDROID_NDK ?? "";
+ 
+ /** Minimum Android API used by both Skia's GN and Dawn's CMake builds. */
+@@ -95,9 +101,9 @@ export const commonArgs = [
+   ["skia_use_partition_alloc", false],
+ ];
+ 
+-// Build groups identify Android or one Apple SDK, independently of library format.
+-// GN keeps its own CPU/platform spellings.
+-export type PlatformName = "android" | AppleSDK;
++// Build groups identify Android, wasm or one Apple SDK, independently of library
++// format. GN keeps its own CPU/platform spellings.
++export type PlatformName = "android" | "wasm" | AppleSDK;
+ 
+ type Arg = (string | boolean | number)[];
+ export type Target = {
+@@ -185,10 +191,23 @@ const apple = (sdk: AppleSDK): Platform => {
+   };
+ };
+ 
+-export const configurations: { android: Platform<AndroidTarget> } & Record<
+-  AppleSDK,
+-  Platform
+-> = {
++// The module libraries a wasm consumer links, in addition to libskia.a. GN
++// names them lib<name>.wasm.a; they are staged without the infix.
++export const wasmOutputNames = [
++  "libskia.a",
++  "libskshaper.a",
++  "libsvg.a",
++  "libskottie.a",
++  "libsksg.a",
++  "libskresources.a",
++  "libjsonreader.a",
++  ...ParagraphApple,
++];
++
++export const configurations: {
++  android: Platform<AndroidTarget>;
++  wasm: Platform;
++} & Record<AppleSDK, Platform> = {
+   android: {
+     targets: {
+       arm: {
+@@ -241,6 +260,35 @@ export const configurations: { android: Platform<AndroidTarget> } & Record<
+       ...ParagraphOutputsAndroid,
+     ],
+   },
++  // Graphite on the browser's WebGPU. Built with Emscripten from the emsdk
++  // Skia pins; see wasm-configuration.ts for the toolchain and for what a
++  // consumer of these archives has to match.
++  wasm: {
++    targets: {
++      wasm32: {
++        platform: "wasm",
++        cpu: "wasm",
++      },
++    },
++    args: [
++      // Graphite only. The WebGL (Ganesh) backend would be a separate build.
++      ["skia_enable_ganesh", false],
++      ["skia_use_webgl", false],
++      // The browser implements WebGPU: Dawn is neither built nor linked.
++      ["skia_emdawnwebgpu_dir", `"${EmdawnwebgpuDir}"`],
++      // A module with threads needs a shared memory, which browsers only give
++      // to cross-origin isolated pages.
++      ["skia_wasm_enable_pthreads", false],
++      // No system fonts on the web: FreeType with fonts supplied as data.
++      ["skia_use_freetype", true],
++      ["skia_use_system_freetype2", false],
++      ["skia_enable_fontmgr_custom_directory", false],
++      // Same text stack as the Apple targets: no ICU data to ship.
++      ...ParagraphArgsApple,
++    ],
++    outputRoot: "libs/wasm",
++    outputNames: wasmOutputNames,
++  },
+   ...(Object.fromEntries(appleSDKs.map((sdk) => [sdk, apple(sdk)])) as Record<
+     AppleSDK,
+     Platform
+@@ -259,12 +307,15 @@ export const skiaTargets = Object.fromEntries(
+ 
+ /** GN intermediates are separate from the SDK libraries uploaded by CI. */
+ export const skiaBuildDir = (platform: PlatformName, architecture: string) =>
+-  platform === "android"
+-    ? path.join(OutFolder, "android", architecture)
++  platform === "android" || platform === "wasm"
++    ? path.join(OutFolder, platform, architecture)
+     : path.join(OutFolder, "apple", `${platform}-${architecture}`);
+ 
+ export const skiaTargetOutputDir = (name: string) => {
+   const { platform, architecture } = skiaTargets[name];
++  if (platform === "wasm") {
++    return path.join(WasmLibs, "lib");
++  }
+   return platform === "android"
+     ? path.join(
+         PackageRoot,
+```
+
+**File**: `packages/skia/scripts/skia-patches/graphite-emdawnwebgpu.patch` (added, +359/-0)
+```diff
+@@ -0,0 +1,359 @@
++[graphite] Build the Dawn backend for wasm against emdawnwebgpu
++
++The __EMSCRIPTEN__ branches were written for Emscripten's built-in WebGPU
++bindings (-sUSE_WEBGPU), which Emscripten no longer maintains: they still use
++its callback signatures and old names, while the shared code already needs
++enums those headers do not have. Neither header set compiles.
++
++Target emdawnwebgpu, Dawn's Emscripten bindings generated from the same
++dawn.json as the native headers: use the current names everywhere, pass a
++wgpu::CallbackMode to the callbacks, and keep signaling completion through
++DawnAsyncWait because a wgpu::Future can only be waited on with Asyncify or
++JSPI. A context without a tick function cannot wait for a shader module's
++compilation info, so it skips that check instead of reading the result before
++the callback ran.
++
++Dawn native takes the same code paths as before.
++
++Not sent upstream yet.
++
++---
++diff --git a/src/gpu/graphite/dawn/DawnBuffer.cpp b/src/gpu/graphite/dawn/DawnBuffer.cpp
++--- a/src/gpu/graphite/dawn/DawnBuffer.cpp
+++++ b/src/gpu/graphite/dawn/DawnBuffer.cpp
++@@ -15,51 +15,6 @@
++ 
++ namespace skgpu::graphite {
++ namespace {
++-#if defined(__EMSCRIPTEN__)
++-bool is_map_succeeded(WGPUBufferMapAsyncStatus status) {
++-    return status == WGPUBufferMapAsyncStatus_Success;
++-}
++-
++-[[maybe_unused]]
++-void log_map_error(WGPUBufferMapAsyncStatus status, const char*) {
++-    const char* statusStr;
++-    SkLogPriority priority = SkLogPriority::kError;
++-    switch (status) {
++-        case WGPUBufferMapAsyncStatus_ValidationError:
++-            statusStr = "ValidationError";
++-            break;
++-        case WGPUBufferMapAsyncStatus_Unknown:
++-            statusStr = "Unknown";
++-            break;
++-        case WGPUBufferMapAsyncStatus_DeviceLost:
++-            statusStr = "DeviceLost";
++-            break;
++-        case WGPUBufferMapAsyncStatus_DestroyedBeforeCallback:
++-            statusStr = "DestroyedBeforeCallback";
++-            priority = SkLogPriority::kDebug;
++-            break;
++-        case WGPUBufferMapAsyncStatus_UnmappedBeforeCallback:
++-            statusStr = "UnmappedBeforeCallback";
++-            priority = SkLogPriority::kDebug;
++-            break;
++-        case WGPUBufferMapAsyncStatus_MappingAlreadyPending:
++-            statusStr = "MappingAlreadyPending";
++-            break;
++-        case WGPUBufferMapAsyncStatus_OffsetOutOfRange:
++-            statusStr = "OffsetOutOfRange";
++-            break;
++-        case WGPUBufferMapAsyncStatus_SizeOutOfRange:
++-            statusStr = "SizeOutOfRange";
++-            break;
++-        default:
++-            statusStr = "<other>";
++-            break;
++-    }
++-    SKIA_LOG(priority, "Buffer async map failed with status %s.", statusStr);
++-}
++-
++-#else
++-
++ bool is_map_succeeded(wgpu::MapAsyncStatus status) {
++     return status == wgpu::MapAsyncStatus::Success;
++ }
++@@ -86,7 +41,6 @@ void log_map_error(wgpu::MapAsyncStatus status, wgpu::StringView message) {
++               static_cast<int>(message.length),
++               message.data);
++ }
++-#endif  // defined(__EMSCRIPTEN__)
++ }  // namespace
++ 
++ sk_sp<DawnBuffer> DawnBuffer::Make(const DawnSharedContext* sharedContext,
++@@ -241,17 +195,6 @@ void DawnBuffer::onAsyncMap(GpuFinishedProc proc, GpuFinishedContext ctx) {
++     bool isWrite = fBuffer.GetUsage() & wgpu::BufferUsage::MapWrite;
++     auto buffer = sk_ref_sp(this);
++ 
++-#if defined(__EMSCRIPTEN__)
++-    fBuffer.MapAsync(
++-            isWrite ? wgpu::MapMode::Write : wgpu::MapMode::Read,
++-            0,
++-            fBuffer.GetSize(),
++-            [](WGPUBufferMapAsyncStatus s, void* userData) {
++-                sk_sp<DawnBuffer> buffer(static_cast<DawnBuffer*>(userData));
++-                buffer->mapCallback(s, /*message=*/nullptr);
++-            },
++-            buffer.release());
++-#else
++     // Map with AllowSpontaneous so that if Dawn can trigger the callback immediately
++     // if possible,
++     fBuffer.MapAsync(
++@@ -262,7 +205,6 @@ void DawnBuffer::onAsyncMap(GpuFinishedProc proc, GpuFinishedContext ctx) {
++             [buffer](wgpu::MapAsyncStatus s, wgpu::StringView m) {
++                 buffer->mapCallback(s, m);
++             });
++-#endif
++ }
++ 
++ void DawnBuffer::onMap() {
++diff --git a/src/gpu/graphite/dawn/DawnCaps.cpp b/src/gpu/graphite/dawn/DawnCaps.cpp
++--- a/src/gpu/graphite/dawn/DawnCaps.cpp
+++++ b/src/gpu/graphite/dawn/DawnCaps.cpp
++@@ -295,10 +295,9 @@ void DawnCaps::initCaps(const DawnBackendContext& backendContext, const ContextO
++ #endif // defined(__EMSCRIPTEN__)
++ 
++ #if defined(__EMSCRIPTEN__)
++-    wgpu::SupportedLimits supportedLimits;
++-    [[maybe_unused]] wgpu::Status status = backendContext.fDevice.GetLimits(&supportedLimits);
+++    wgpu::Limits limits;
+++    [[maybe_unused]] wgpu::Status status = backendContext.fDevice.GetLimits(&limits);
++     SkASSERT(status == wgpu::Status::Success);
++-    wgpu::Limits& limits = supportedLimits.limits;
++ #else
+```
+
+---
+
+### Incident Patch 2: `ca29be61` (2026-11-23)
+**Commit Message**: fix(🤖): load a remote source over one connection and close it (#4513)
+
+Co-authored-by: Tayyeb Aslam <[REDACTED_EMAIL]>
 Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
-**File**: `packages/skia/apple/SkiaView.mm` (modified, +90/-116)
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PlatformContext.java` (modified, +2/-22)
 ```diff
-@@ -14,7 +14,6 @@
+@@ -13,16 +13,11 @@
+ import com.facebook.react.bridge.ReactContext;
+ import com.facebook.react.common.LifecycleState;
  
- #import <QuartzCore/CAMetalLayer.h>
+-import java.io.BufferedInputStream;
+-import java.io.ByteArrayOutputStream;
+ import java.io.File;
+ import java.io.IOException;
+-import java.io.InputStream;
+ import java.net.MalformedURLException;
+ import java.net.URI;
+ import java.net.URISyntaxException;
+-import java.net.URL;
+-import java.net.URLConnection;
  
--#include <algorithm>
- #include <atomic>
- #include <cmath>
- #include <memory>
-@@ -138,24 +137,19 @@ @implementation SkiaView {
-   // set and cleared there, by tasks posted in order with those that present
-   // (see enterPresentThread and leavePresentThread).
-   std::shared_ptr<RNSkia::RNSkView> _presentView;
--#if !TARGET_OS_OSX
--  // Present thread.
-+  // Present thread. Created as the view enters a superview on macOS, where
-+  // the link is bound to the view and follows its display, and on the first
-+  // animation frame elsewhere, so that a canvas that never animates has none.
-   CADisplayLink *_displayLink;
--  // Whether the display link asked for the display's full rate yet (see
--  // requestFullFrameRate). Present thread.
--  bool _fullFrameRateRequested;
-+
-+  // The screen maximum used for the last frame-rate request. Present thread.
-+  // This belongs to the current link: a recycled view's new link must ask
-+  // again. Comparing rates also picks up a new display rate (see
-+  // updateMaximumFramesPerSecond).
-+  float _requestedFramesPerSecond;
-   // The display's rate, read on the main thread as the view enters a window
--  // (UIKit), 0 until then.
-+  // or changes screens, 0 until then.
-   std::atomic<float> _maximumFramesPerSecond;
--#else
--  // Whether a tick is scheduled, when the last one ran (see
--  // presentAgainLater), and which ticks are still wanted: the leave moves
--  // the count on, and a tick scheduled before it does nothing. Present
--  // thread.
--  bool _presentAgainScheduled;
--  CFTimeInterval _lastTick;
--  uint64_t _tickGeneration;
--#endif
- }
- 
- - (instancetype)initWithFrame:(CGRect)frame {
-@@ -168,14 +162,8 @@ - (instancetype)initWithFrame:(CGRect)frame {
-     _windowAttached = false;
-     _attachedWidth = 0;
-     _attachedHeight = 0;
--#if TARGET_OS_OSX
--    _presentAgainScheduled = false;
--    _lastTick = 0;
--    _tickGeneration = 0;
--#else
--    _fullFrameRateRequested = false;
-+    _requestedFramesPerSecond = 0;
-     _maximumFramesPerSecond = 0;
--#endif
-     static const auto defaultProps = std::make_shared<const SkiaViewProps>();
-     _props = defaultProps;
-     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-@@ -197,7 +185,7 @@ - (instancetype)initWithFrame:(CGRect)frame {
-                selector:@selector(appWillEnterForeground:)
-                    name:NSApplicationDidUnhideNotification
-                  object:nil];
--#endif
-+#endif // !TARGET_OS_OSX
-   }
-   return self;
- }
-@@ -327,11 +315,27 @@ - (void)enterPresentThread {
-   __weak SkiaView *weakSelf = self;
-   auto view = _view;
-   auto presenting = _presenting;
-+
-+#if TARGET_OS_OSX
-+  // AppKit binds the link to the view, which follows it between displays,
-+  // and makes it on the main thread only: it is made paused here and joins
-+  // the present thread's run loop in the same task that lets frame requests
-+  // through. The link holds the view as its target until the leave task
-+  // invalidates it, so the task finds the view.
-+  CADisplayLink *displayLink = [self displayLinkWithTarget:self
-+                                                  selector:@selector(onFrame:)];
-+  displayLink.paused = YES;
-+#endif // TARGET_OS_OSX
-   RNSkia::presentThread().post([=]() {
-     *presenting = true;
-     SkiaView *strongSelf = weakSelf;
-     if (strongSelf != nil) {
-       strongSelf->_presentView = view;
-+#if TARGET_OS_OSX
-+      strongSelf->_displayLink = displayLink;
-+      [displayLink addToRunLoop:[NSRunLoop currentRunLoop]
-+                        forMode:NSRunLoopCommonModes];
-+#endif // TARGET_OS_OSX
+ public class PlatformContext implements LifecycleEventListener {
+     @DoNotStrip
+@@ -106,16 +101,6 @@ private static synchronized void listenForMainThreadTasks() {
+         sMainThreadWakeup = wakeup;
      }
-   });
- }
-@@ -342,9 +346,10 @@ - (void)enterPresentThread {
- // Only this layer's window: the view may be back with a new one by then. The
- // task holds the layer, which so outlives the Dawn surface over it, and whose
- // address cannot come back as the new layer's meanwhile. The display link
--// goes in the same task: an animation frame asked for between two would make a
--// new one that outlives the leave (see requestAnimationFrame). The view goes on
--// the main thread, where UIKit expects it to, as this task owns the last
-+// goes in the same task: on iOS, an animation frame asked for between two
-+// would make a new one that outlives the leave (see requestAnimationFrame);
-+// on macOS, the link made at the enter holds the view until then. The view goes
-+// on the main thread, where UIKit expects it to, as this task owns the last
- // reference to it once Fabric let go of it (see invalidate). A strong capture
- // cannot promise that: the block would let go on the present thread, racing the
- // main thread for the last release. So the reference is taken here, by hand,
-@@ -368,17 +373,10 @@ - (void)leavePresentThread {
-       if (view->_presentView != nullptr) {
-         view->_presentView->cancelFrames();
-       }
--#if !TARGET_OS_OSX
-       [view->_displayLink invalidate];
-       view->_displayLink = nil;
--      // The request belonge
+ 
+-    private byte[] getStreamAsBytes(InputStream is) throws IOException {
+-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+-        int nRead;
+-        byte[] data = new byte[4 * 0x400];
+-        while ((nRead = is.read(data, 0, data.length)) != -1) {
+-            buffer.write(data, 0, nRead);
+-        }
+-        return buffer.toByteArray();
+-    }
+-
+     @DoNotStrip
+     public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
+         // First try loading the input as a resource directly
+@@ -128,7 +113,7 @@ public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
+ 
+         if (resourceId != 0) {
+             // We can just return the input stream directly
+-            return getStreamAsBytes(mContext.getResources().openRawResource(resourceId));
++            return SourceBytes.read(mContext.getResources().openRawResource(resourceId));
+         }
+ 
+         // We should try to open a connection and return a stream to download this
+@@ -144,12 +129,7 @@ public byte[] getJniStreamFromSource(String sourceUri) throws IOException {
+ 
+             // TODO: Base64??
+ 
+-            URL url = uri.toURL();
+-            URLConnection connection = url.openConnection();
+-            connection.connect();
+-
+-            BufferedInputStream b = new BufferedInputStream(url.openStream(), 8192);
+-            return getStreamAsBytes(b);
++            return SourceBytes.fromUrl(uri.toURL());
+ 
+         } catch (URISyntaxException e) {
+             e.printStackTrace();
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SourceBytes.java` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++package com.reactnative.skia;
++
++import java.io.BufferedInputStream;
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.net.URL;
++import java.net.URLConnection;
++
++/** Reads the bytes of an image, font or data source. */
++final class SourceBytes {
++    private SourceBytes() {
++    }
++
++    static byte[] read(InputStream is) throws IOException {
++        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
++        int nRead;
++        byte[] data = new byte[4 * 0x400];
++        while ((nRead = is.read(data, 0, data.length)) != -1) {
++            buffer.write(data, 0, nRead);
++        }
++        return buffer.toByteArray();
++    }
++
++    // One request per load: the body is read from the connection that was
++    // opened, and that connection's stream is closed once it is read.
++    static byte[] fromUrl(URL url) throws IOException {
++        URLConnection connection = url.openConnection();
++        try (InputStream is = new BufferedInputStream(connection.getInputStream(), 8192)) {
++            return read(is);
++        }
++    }
++}
+```
+
+**File**: `packages/skia/android/src/test/java/com/reactnative/skia/SourceBytesTest.java` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++package com.reactnative.skia;
++
++import static org.junit.Assert.assertArrayEquals;
++import static org.junit.Assert.assertEquals;
++
++import java.io.ByteArrayInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.OutputStream;
++import java.net.InetAddress;
++import java.net.ServerSocket;
++import java.net.Socket;
++import java.net.URL;
++import java.nio.charset.StandardCharsets;
++import java.util.Arrays;
++import java.util.concurrent.atomic.AtomicInteger;
++
++import org.junit.Test;
++
++public class SourceBytesTest {
++    @Test
++    public void aStreamIsReadToTheEnd() throws IOException {
++        byte[] bytes = new byte[10000];
++        Arrays.fill(bytes, (byte) 7);
++        assertArrayEquals(bytes, SourceBytes.read(new ByteArrayInputStream(bytes)));
++    }
++
++    @Test
++    public void aUrlIsLoadedOverOneConnection() throws Exception {
++        byte[] body = "not really a png".getBytes(StandardCharsets.US_ASCII);
++        AtomicInteger connections = new AtomicInteger();
++        try (ServerSocket server = new ServerSocket(0, 50, InetAddress.getLoopbackAddress())) {
++            Thread acceptor = new Thread(() -> {
++                while (!server.isClosed()) {
++                    try {
++                        Socket socket = server.accept();
++                        connections.incrementAndGet();
++                        Thread handler = new Thread(() -> respond(socket, body));
++                        handler.setDaemon(true);
++                        handler.start();
++                    } catch (IOException e) {
++                        return;
++                    }
++                }
++            });
++            acceptor.setDaemon(true);
++            acceptor.start();
++
++            URL url = new URL("http://127.0.0.1:" + server.getLocalPort() + "/cat.png");
++            assertArrayEquals(body, SourceBytes.fromUrl(url));
++            assertEquals(1, connections.get());
++        }
++    }
++
++    private static void respond(Socket socket, byte[] body) {
++        try (Socket s = socket) {
++            InputStream in = s.getInputStream();
++            int matched = 0;
++            int c;
++            while (matched < 4 && (c = in.read()) != -1) {
++                matched = (c == "\r\n\r\n".charAt(matched)) ? matched + 1 : (c == '\r' ? 1 : 0);
++            }
++            if (matched < 4) {
++                return;
++            }
++            OutputStream out = s.getOutputStream();
++            out.write(("HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: " + body.length
++                    + "\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.US_ASCII));
++            out.write(body);
++            out.flush();
++        } catch (IOException e) {
++            // the client went away
++        }
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `f59ee717` (2026-11-23)
+**Commit Message**: chore(🐙): add workflow to build and release Skia wasm (#4515)
+
+This workflow builds and releases Skia Graphite for WebGPU, packaging it as a zip file. It includes options for dry runs and custom Skia branches.
+
+**File**: `.github/workflows/build-skia-wasm.yml‎` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++name: Build and release Skia wasm
++# Builds Skia Graphite for the browser's WebGPU (`yarn build-skia wasm`) and
++# archives it as skia-graphite-wasm.zip (`yarn package-skia-wasm`): the
++# archives, the Skia headers, the emdawnwebgpu package and metadata.json.
++# The archive is the asset of the GitHub release skia-wasm-<version>, which
++# the skia-wasm repository (https://github.com/wcandillon/skia-wasm) pins in
++# its binaries.json and downloads from. A dry run (the default) uploads the
++# archive as a workflow artifact instead of releasing it.
++#
++# Separate from build-binaries.yml: the wasm archives are not part of the npm
++# packages and are released on their own schedule.
++#
++# The version is the Skia branch the submodule commit is on, as in
++# build-binaries.yml (m154, or m154_8037_58 for a release branch), plus the
++# re-spin letter for another build of the same branch.
++on:
++  workflow_dispatch:
++    inputs:
++      skia_branch:
++        description: 'Skia branch to build (e.g. chrome/m154). Leave empty to build the checked-in submodule commit.'
++        required: false
++        default: ''
++      respin:
++        description: 'Re-spin letter for another build of the same Skia branch: "a" releases skia-wasm-m154a. Leave empty for skia-wasm-m154.'
++        required: false
++        default: ''
++      dry_run:
++        description: 'Dry run: build and package, upload the archive as a workflow artifact, skip the GitHub release'
++        required: false
++        type: boolean
++        default: true
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  prepare:
++    runs-on: ubuntu-latest
++    outputs:
++      version: ${{ steps.version.outputs.version }}
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5.0.0
++        with:
++          submodules: recursive
++          fetch-depth: 0
++
++      - name: Checkout custom Skia branch
++        if: ${{ inputs.skia_branch != '' }}
++        working-directory: externals/skia
++        run: |
++          git fetch origin "$SKIA_BRANCH"
++          git checkout FETCH_HEAD
++          echo "Skia commit: $(git rev-parse HEAD)"
++        env:
++          SKIA_BRANCH: ${{ inputs.skia_branch }}
++
++      # The same derivation as the prepare job of build-binaries.yml.
++      - name: Determine the version
++        id: version
++        run: |
++          set -eo pipefail
++          if [ -n "$INPUT_SKIA_BRANCH" ]; then
++            branch="$INPUT_SKIA_BRANCH"
++          else
++            branch=$(git -C externals/skia branch --show-current || true)
++            if [ -z "$branch" ]; then
++              branch=$(git -C externals/skia describe --all --exact-match 2>/dev/null || true)
++            fi
++            if [ -z "$branch" ]; then
++              branch=$(git -C externals/skia branch -r --contains HEAD --list 'origin/chrome/m*' | sed 's/^[* ]*//' | sort | head -n 1)
++            fi
++          fi
++          branch=${branch#remotes/origin/chrome/}
++          branch=${branch#origin/chrome/}
++          branch=${branch#chrome/}
++          if [ -z "$branch" ]; then
++            echo "::error::Could not determine the Skia branch of externals/skia"
++            exit 1
++          fi
++          version="${branch//\//-}${RESPIN}"
++          echo "Skia $branch → skia-wasm-$version"
++          echo "version=$version" >> "$GITHUB_OUTPUT"
++        env:
++          INPUT_SKIA_BRANCH: ${{ inputs.skia_branch }}
++          RESPIN: ${{ inputs.respin }}
++
++      # skia-wasm pins the archive by checksum, so a published release is
++      # never replaced: fail before the build rather than after it. A dry run
++      # only warns: it is how a released version is rebuilt for inspection.
++      - name: Check the release does not exist
++        run: |
++          state=$(gh release view "skia-wasm-$VERSION" --json isDraft --jq .isDraft 2>/dev/null || echo missing)
++          if [ "$state" = "false" ]; then
++            if [ "$DRY_RUN" != "true" ]; then
++              echo "::error::skia-wasm-$VERSION is already released. Set a re-spin letter to release another build."
++              exit 1
++            fi
++            echo "::warning::skia-wasm-$VERSION is already released; this dry run rebuilds it."
++          fi
++        env:
++          GH_TOKEN: ${{ github.token }}
++          GH_REPO: ${{ github.repository }}
++          VERSION: ${{ steps.version.outputs.version }}
++          DRY_RUN: ${{ inputs.dry_run }}
++
++  # The wasm build has only been run on macOS so far, so it runs on the
++  # self-hosted Mac like the Apple targets of build-binaries.yml: free, and
++  # faster than the hosted runners. The standard macos-latest runner, free
++  # for this public repository too, is the fallback if the machine is
++  # unavailable.
++  build:
++    needs: prepare
++    runs-on: [self-hosted, macOS]
++    timeout-minutes: 120
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4496** (2026-11-20): chore(🐙): unify Skia and Dawn patch handling (#4489) (@wcandillon)
-- **PR #4492** (2026-11-18): chore(🐙): update Readme (@wcandillon)
-- **PR #4489** (2026-11-20): chore(🐙): unify Skia and Dawn patch handling (@theeket)
-- **PR #4487** (2026-11-18): chore(🍏): raise minimum supported macOS to 14.0 (@theeket)
-- **PR #4486** (2026-11-16): chore(🐙): refactor Android CI build (@wcandillon)
-- **PR #4485** (2026-11-16): chore(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.275 (@dependabot[bot])
+- **PR #4516** (2026-11-23): chore(🐙): remove bogus char (@wcandillon)
+- **PR #4515** (2026-11-23): chore(🐙): add workflow to build and release Skia wasm (@wcandillon)
+- **PR #4514** (closed): chore(📚): export a Skottie animation to a video with createVideoWriter (@andreialecu)
+- **PR #4513** (2026-11-23): fix(🤖): load a remote source over one connection and close it (@Tayyeb-max)
+- **PR #4512** (2026-11-23): chore(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.284 (@dependabot[bot])
+- **PR #4511** (2026-11-23): chore(deps): bump actions/setup-java from 6.2.0 to 6.3.0 (@dependabot[bot])
 
 ---
 
@@ -1880,82 +2590,36 @@ Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🍏): present at full rate on macOS 14+ ProMotion devices
+## X. 🕸️): build Skia Graphite for wasm
 
 **RULE**:
-When implementing operations in `packages/skia/apple/SkiaView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72ed90d0`: 🍏): present at full rate on macOS 14+ ProMotion devices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb5dc61f`: 🕸️): build Skia Graphite for wasm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/apple/SkiaView.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // Present thread. Created as the view enters a superview on macOS, where
-  // the link is bound to the view and follows its display, and on the first
-  // animation frame elsewhere, so that a canvas that never animates has none.
+#### WebAssembly (experimental)
 
-  // The screen maximum used for the last frame-rate request. Present thread.
-  // This belongs to the current link: a recycled view's new link must ask
-  // again. Comparing rates also picks up a new display rate (see
-  // updateMaximumFramesPerSecond).
-  float _requestedFramesPerSecond;
-  // or changes screens, 0 until then.
-    _requestedFramesPerSecond = 0;
-#endif // !TARGET_OS_OSX
+`yarn build-skia wasm` builds Skia Graphite for the browser's WebGPU with the Emscripten release Skia pins (installed in the Skia checkout on first use). There is no Dawn build: the browser implements WebGPU, and the WebGPU headers and JavaScript glue are generated from the pinned Dawn checkout.
 
-#if TARGET_OS_OSX
-  // AppKit binds the link to the view, which follows it between displays,
-  // and makes it on the main thread only: it is made paused here and joins
-  // the present thread's run loop in the same task that lets frame requests
-  // through. The link holds the view as its target until the leave task
-  // invalidates it, so the task finds the view.
-  CADisplayLink *displayLink = [self displayLinkWithTarget:self
-                                                  selector:@selector(onFrame:)];
-  displayLink.paused = YES;
-#endif // TARGET_OS_OSX
-#if TARGET_O
+Skia writes `.a` libraries to `libs/wasm/lib`, next to the headers (`skia/`), the WebGPU package (`emdawnwebgpu/`) and `metadata.json`, which records the Emscripten version, flags and defines a consumer has to match. These archives are not a module: the [skia-wasm](https://github.com/wcandillon/skia-wasm) repository links them into one. `yarn package-skia-wasm` zips them. The Build and release Skia wasm workflow (`.github/workflows/build-skia-wasm.yml`) does both and publishes the archive as the GitHub release `skia-wasm-<version>`, which skia-wasm pins.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-#include <algorithm>
-#if !TARGET_OS_OSX
-  // Present thread.
-  // Whether the display link asked for the display's full rate yet (see
-  // requestFullFrameRate). Present thread.
-  bool _fullFrameRateRequested;
-  // (UIKit), 0 until then.
-#else
-  // Whether a tick is scheduled, when the last one ran (see
-  // presentAgainLater), and which ticks are still wanted: the leave moves
-  // the count on, and a tick scheduled before it does nothing. Present
-  // thread.
-  bool _presentAgainScheduled;
-  CFTimeInterval _lastTick;
-  uint64_t _tickGeneration;
-#endif
-#if TARGET_OS_OSX
-    _presentAgainScheduled = false;
-    _lastTick = 0;
-    _tickGeneration = 0;
-#else
-    _fullFrameRateRequested = false;
-#endif
-#endif
-// goes in the same task: an animation frame asked for between two would make a
-// new one that outlives the leave (see requestAnimationFrame). The view goes on
-// the main thread, where UIKit expects it to, as this task owns the last
-#if !TARGET_OS_OSX
-      // The request belonge
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72ed90d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb5dc61f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

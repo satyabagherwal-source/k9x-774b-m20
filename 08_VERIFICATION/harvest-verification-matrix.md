@@ -12531,3 +12531,8 @@
 | `CYCLE-20261124-M10F` | `2026-11-24T00:31:38.655Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10152` | Yes (`56240142...`) |
 | `CYCLE-20261124-M5LZ` | `2026-11-24T00:31:44.615Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10153` | Yes (`975a8dc9...`) |
 | `CYCLE-20261124-MAOL` | `2026-11-24T00:31:51.190Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10154` | Yes (`70fcfd9c...`) |
+| `CYCLE-20261124-WQFW` | `2026-11-24T00:39:58.172Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`83e51aa5...`) |
+| `CYCLE-20261124-WSLV` | `2026-11-24T00:40:00.979Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10155` | Yes (`d58eb388...`) |
+| `CYCLE-20261124-WW89` | `2026-11-24T00:40:05.673Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | Yes (`5f965187...`) |
+| `CYCLE-20261124-X4EC` | `2026-11-24T00:40:16.260Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10156` | Yes (`1dffe4bb...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:40:50.554Z` | `wcandillon-react-native-skia` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-AB1B4707` [Domain H] | Yes (`2ffd344b...`) |

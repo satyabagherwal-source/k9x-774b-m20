@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-7N6O",
-    "timestamp": "2026-11-22T04:29:03.648Z",
-    "repository": "nezhahq/nezha",
-    "learningId": "learn-github-nezhahq-nezha",
-    "contentHash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-KD4Z",
-    "timestamp": "2026-11-22T04:38:57.155Z",
-    "repository": "PrunaAI/P-Image-OSS",
-    "learningId": "learn-huggingface-prunaai-p-h3-image",
-    "contentHash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-KIZW",
-    "timestamp": "2026-11-22T04:39:04.748Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-0D4U",
-    "timestamp": "2026-11-22T04:51:23.646Z",
-    "repository": "dosco/deeporg",
-    "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "9584104f386e2e76172099a413f8d3dc787cbc527bde57069a09700467968f91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-0FAQ",
     "timestamp": "2026-11-22T04:51:26.450Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7430,66 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-WQFW",
+    "timestamp": "2026-11-24T00:39:58.172Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-WSLV",
+    "timestamp": "2026-11-24T00:40:00.979Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "d58eb388585ff27d27593ac6536ea68b18b1ddeb659a85c5f21273a9ab2b4a9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-WW89",
+    "timestamp": "2026-11-24T00:40:05.673Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-X4EC",
+    "timestamp": "2026-11-24T00:40:16.260Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
