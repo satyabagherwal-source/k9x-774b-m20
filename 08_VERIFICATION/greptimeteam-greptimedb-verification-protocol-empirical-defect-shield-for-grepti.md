@@ -4,22 +4,22 @@
 {
   "source_repository": "GreptimeTeam/greptimedb",
   "source_url": "https://github.com/GreptimeTeam/greptimedb",
-  "source_version": "b26b87f9",
+  "source_version": "81e60511",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T18:50:50.046Z",
+  "timestamp": "2026-11-24T15:17:30.770Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-greptimeteam-greptimedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `b26b87f9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T18:50:50.046Z`  
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `81e60511`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T15:17:30.770Z`  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `GreptimeTeam/greptimedb` (Commit: `b26b87f9`)
+- **Target Repository**: `GreptimeTeam/greptimedb` (Commit: `81e60511`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:50:48.403Z  
+> **Harvest Timestamp**: 2026-11-24T15:17:29.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6825 stars
+- **Stars / Engagement**: 6828 stars
 
 ---
 
@@ -1753,14 +1753,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10582** (2026-11-23): **mito2: persisted primary key bounds are located by parquet leaf name, and are now consumed as a correctness premise**
-  *Symptoms*: ### Summary  `FileMeta.primary_key_min/max` is produced by `extract_primary_key_range`, which finds the primary key column by **parquet leaf column name**:  ```rust // src/mito2/src/sst/parquet/metadata.rs:124-137 let pk_column_idx = parquet_meta     .file_metadata()     .schema_descr()     .columns()     .iter()     .position(|column| column.name() == PRIMARY_KEY_COLUMN_NAME)?; ```  `SchemaDescr::columns()` returns the flattened leaves, and user columns come *before* the internal ones, which `internal_fields()` appends last (`src/mito2/src/sst.rs:300-336`). A JSON2 field can be concretized into an Arrow `Struct` (`src/datatypes/src/types/json_type.rs:139-145`), so if a JSON layout contains a child key literally named `__primary_key`, that leaf is found first and the recorded bounds describe the JSON strings rather than the primary key.  Until now that was a statistics problem. #10564 and #10561 are the first consumers to treat the bounds as a **correctness premise**: #10564 prunes a whole file by them, #10561 splits a sequential scan into ranges that are deduplicated independently. A wrong bound therefore drops rows or splits the versions of one key.  Neither consumer re-checks the bounds against the file's footer; `FileHandle::primary_key_range` returns whatever the manifest recorded (`src/mito2/src/sst/file.rs:856-863`).  ### Suggested fix  1. Locate the column by field id (`PRIMARY_KEY_PARQUET_FIELD_ID`, already attached in `internal_fields()`) or by the top-level field r
+- **Issue #10605** (2026-11-24): **fix(datatypes): bounds-check Vector::get and get_ref [Backport release/v1.3]**
+  *Symptoms*: Backport of #10594 to release/v1.3.  --- Original PR: #10594 Merged by: @evenyag
 
-- **Issue #10564** (2026-11-23): **perf(mito2): prune files by their primary key range before reading footers**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  Manifest-level file pruning runs before any footer read, but `FileLevelPruningStats` only exposes the time index range. Every file whose time range overlaps the query has its footer fetched, and files that hold none of the requested keys are dropped only later, by row group statistics of the first tag.  `FileLevelPruningStats` now also exposes min and max of the first primary key column, decoded from `FileMeta.primary_key_min/max` with `decode_leftmost`, the same way row group pruning decodes `first_tag_values`. With the dense encoding this is the first tag; with the sparse encoding of the metric engine it is `__table_id`, so a logical table scan skips files that hold no rows of that table. Files without a recorded key range keep the old behavior.  The key range is decoded only when pruning asks for the first primary key column, so predicates on the time index or fields pay nothing extra. Pruning 20,000 files with such predicates costs 3.0–3.3 µs per file on both main and this PR; decoding eagerly would add about 0.5 µs per file.  `files_time_range_pruned` now also counts files pruned by key range.  Benchmark: k8s metrics (metric engine, 29.3M samples) with compaction outputs split at 8 MB, 11 files per window; base `8787551393`, Apple M4 Max, MinIO behind a proxy that a
+- **Issue #10604** (2026-11-24): **fix(meta): persist segmented procedure checkpoints atomically on RDS**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Refs #10597.  ## What's changed and what's your intention?  A procedure checkpoint can span several metadata keys. Writing each segment independently lets an interrupted write leave a partially committed checkpoint. PostgreSQL and MySQL now receive all segments in one batch_put call. If a later SQL statement fails, the transaction rolls back the earlier writes and preserves the last committed checkpoint.  KvBackend exposes an atomic_batch_put guarantee, and TxnService exposes explicit transaction support and its operation limit. MySQL reads max_allowed_packet when the backend opens and sizes prepared statements using both the packet budget and the existing row and bind limits. All chunks of a batch share the same transaction.  Tests exercise failure on a new checkpoint, failed replacement of an existing checkpoint, retry, and byte-for-byte recovery through an independent connection. The persisted keys and values keep their existing format. Recovery from previously corrupted checkpoints remains a separate issue.  ## PR Checklist  Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [x
   **Post-Mortem & Fix Analysis**:
-  > <!-- pr-open-limit --> > [!WARNING] > @killme2008 has **6** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 10235: perf\(mito2\)\: box file range streams to reduce state copies](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10235) - [PR 10516: docs\: add RFC for time\-slice aggregate cache](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10516) - [PR 10528: perf\(mito2\)\: bound row group bytes and skip statistics for large field values](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10528) - [PR 10556: fix\(sql\)\: keep column options in ALTER TABLE ADD COLUMN](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10556) - [PR 10561: perf\(mito2\)\: split seq scan ranges of files with disjoint primary keys](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10561)  [View your open pull requests](https://githu
-  > On #10582: the leaf-name lookup is real. `extract_primary_key_range` and `ParquetReader::build_primary_key` both match `__primary_key` by leaf name, so a nested child with that name is found first. I am fixing both in #10561 to match the top-level column only, since that PR also relies on the bounds.
+  > Changed the PR description to `Refs #10597`. The issue stays open to track recovery of unrelated procedures when a stored checkpoint already has a missing segment.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1777,516 +1776,624 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `946e599d` (2026-11-23)
-**Commit Message**: fix: catch up a writable region that still awaits its Leader lease (#10559)
+### Incident Patch 1: `883ae6ea` (2026-11-24)
+**Commit Message**: fix(promql): answer a named selector over a missing table with the empty vector (#10472)
 
-* feat(store-api): ask an engine whether a region is a confirmed leader
+A selector that names a metric whose table does not exist made the native route decline the whole
+statement, so the existing planner answered it. The route already has that answer when the selector
+names no metric: a nameless selector that matches no table is planned as the typed empty input and
+answers the empty vector. `setup_context` reports a missing table by returning the `EmptyMetric`
+plan, which a native tree cannot bind, and the named path read that as "cannot plan" rather than as
+"no rows".
 
-Add RegionEngine::is_confirmed_leader. It answers None for a region the
-engine does not find, Some(false) for a follower or, on a node that
-requires leases to confirm its leaders, for a leader that a catchup
-promoted and that no Leader or StagingLeader lease has confirmed since,
-and Some(true) otherwise. The default answers from the role alone, with
-the mapping RegionServer::is_region_leader uses.
+The named path now pushes the same typed empty input the zero-match nameless path pushes, so
+Prometheus' answers follow from the ordinary empty-input handling: a bare selector answers no rows,
+`rate`/`sum`/`count`/`topk`/`sum by (__name__)` answer no rows (`sum` of nothing is empty, not 0),
+`absent` answers one row holding 1 with a null name, `absent` over equality matchers carries those
+labels, `absent_over_time` answers the same, and `or`, `and` and `unless` keep, drop or ignore what
+the other side holds. A `__field__` matcher still declines, exactly as it does over a table that
+exists: the matc
 
-Document that set_region_role_with_lease also returns false while a
-catchup runs on the region or it waits for a reload, and that a catchup
-also applies to a leader that is not confirmed.
+**File**: `src/query/src/promql/planner/native.rs` (modified, +86/-43)
+```diff
+@@ -728,29 +728,8 @@ impl PromPlanner {
+             let Some(values) = native_root_fields(tree.root()) else {
+                 return Ok(None);
+             };
+-            // A label named `time` is the one collision the default time column can have: the
+-            // value columns are named after the expression, so they never take that name. The
+-            // time column is this route's own synthetic name - no label or value is renamed - so
+-            // a statement whose output already holds a `time` column publishes its grid under the
+-            // first free `native_time_N` instead of dropping or renaming the label.
+             let value_names = expression_field_names(&expression, &values);
+-            let time_index = if value_names
+-                .iter()
+-                .chain(&output_tags)
+-                .any(|name| name == DEFAULT_TIME_INDEX_COLUMN)
+-            {
+-                (0usize..)
+-                    .map(|index| format!("native_time_{index}"))
+-                    .find(|candidate| {
+-                        !value_names
+-                            .iter()
+-                            .chain(&output_tags)
+-                            .any(|name| name == candidate)
+-                    })
+-                    .expect("the time column candidate sequence is unbounded")
+-            } else {
+-                DEFAULT_TIME_INDEX_COLUMN.to_string()
+-            };
++            let time_index = free_time_index(DEFAULT_TIME_INDEX_COLUMN, &value_names, &output_tags);
+             // The metadata a consumer of a frame operand reads: the evaluated layout this tree's
+             // root declares on the statement grid, and the labels a `vector(s)` reports.
+             let metadata = match format {
+@@ -909,11 +888,9 @@ impl PromPlanner {
+                         //
+                         // An empty raw series frame is an ordinary input to the node; multi-input placement
+                         // and partition normalization are decided after compilation. A `__field__` matcher
+-                        // is declined for a scan this route can read, and the same refusal keeps the empty
+-                        // input from claiming a field layout the matcher would have decided.
+-                        if self.ctx.field_column_matcher.is_some() {
+-                            return Ok(None);
+-                        }
++                        // narrows the field set of a scan this route can read, and a selector that matched
++                        // no table has no scan to narrow: the answer is the empty vector either way, exactly
++                        // as the named branch below answers a missing table.
+                         prepared.push(empty_discovered_input(
+                             self.ctx
+                                 .time_index_column
+@@ -1047,7 +1024,25 @@ impl PromPlanner {
+                         Err(_) => return Ok(None),
+                     };
+                 if self.setup_context().await?.is_some() {
+-                    return Ok(None);
++                    // The selector names a metric whose table does not exist, so the query still has an
++                    // answer: the empty vector, planned from the same typed empty input a nameless selector
++                    // that matched no table is. Planning it here keeps `TableNameNotFound` out of the
++                    // existing planner, which has no table to bind.
++                    //
++                    // A `__field__` matcher does not decline here, though one over a scan this route can
++                    // read does: it narrows the field set of the table its selector reads, and this table has
++                    // no field set to narrow, so every field selection over it is empty. The existing planner
++                    // answers the same way, because a missing table is planned as `EmptyMetric` before the
++                    // projection a `__field__` matcher builds (`setup_context` returns it, and
++                    // `selector_to_series_normalize_plan` never runs). The empty input's own placeholder
++                    // field is internal to the tree; no answer publishes it.
++                    prepared.push(empty_discovered_input(
++                        self.ctx
++                            .time_index_column
++                            .clone()
++                            .unwrap_or_else(|| DEFAULT_TIME_INDEX_COLUMN.to_string()),
++                    )?);
++                    continue;
+                 }
+                 let Some(one) = self
+                     .prepare_one_scan(
+@@ -1130,6 +1125,9 @@ impl PromPlanner {
+             prepared[index].1 = Arc::clone(&schema);
+         }
+         // A real input names the output's time index and, on one table, binds every scan.
++        let named_by_a_real_input = prepared
++            .iter()
++            .any(|(scan, ..)| !is_empty_discovered_input(scan));
+         let Some((_, _, metric, time, tags, _, _)) = p
+```
+
+**File**: `src/query/src/promql/planner/test.rs` (modified, +500/-0)
+```diff
+@@ -2490,6 +2490,455 @@ async fn native_zero_match_discovery_with_real_selector_binds_both_inputs() {
+     }
+ }
+ 
++/// A fixture whose `x` and `exists` tables exist, so any other metric a selector names has no table
++/// to bind.
++async fn named_missing_table_provider() -> DfTableSourceProvider {
++    build_test_table_provider_with_options(
++        &[
++            (DEFAULT_SCHEMA_NAME.to_string(), "x".to_string()),
++            (DEFAULT_SCHEMA_NAME.to_string(), "exists".to_string()),
++        ],
++        1,
++        1,
++        vec![],
++        ConcreteDataType::timestamp_millisecond_datatype(),
++        false,
++        ConcreteDataType::float64_datatype(),
++        NATIVE_ENGINE,
++    )
++    .await
++}
++
++/// Whether `plan` holds the typed empty input a selector that read no table is planned as.
++fn contains_typed_empty_input(plan: &LogicalPlan) -> bool {
++    super::native::is_empty_discovered_input(plan)
++        || plan
++            .inputs()
++            .iter()
++            .any(|child| contains_typed_empty_input(child))
++}
++
++/// A selector that names a metric whose table does not exist is planned natively, as the typed
++/// empty input a nameless selector that matches nothing is.
++///
++/// Prometheus answers each statement below over an empty input, so handing the statement back to
++/// the existing planner - which has no table to bind and raises `TableNameNotFound` - is not an
++/// answer. `x` and `exists` do exist, and the statements reading them keep the plan they had: an
++/// existing table is read through its scan whether or not it holds rows.
++#[tokio::test]
++async fn native_named_selector_over_a_missing_table_plans_as_an_empty_input() {
++    // `(query, reads an existing table)`.
++    for (query, reads_existing) in [
++        // The selection itself.
++        ("nonexistent_metric", false),
++        ("nonexistent_metric @ 300", false),
++        ("nonexistent offset 5m", false),
++        // An operator over the empty input keeps its own answer for zero series.
++        ("rate(nonexistent[5m])", false),
++        ("sum(nonexistent)", false),
++        ("count(nonexistent)", false),
++        ("topk(3, nonexistent)", false),
++        ("sum by (__name__) (nonexistent)", false),
++        // The two shapes whose answer over zero series is a row rather than none.
++        ("absent(nonexistent_metric)", false),
++        (r#"absent(nonexistent_metric{job="x"})"#, false),
++        (r#"absent_over_time(nonexistent{job="x"}[5m])"#, false),
++        // A set operation pairs the empty input with a real one, on either side and in either
++        // position, and a statement whose selectors are all missing has no real side at all.
++        ("nonexistent or exists", true),
++        ("nonexistent and exists", true),
++        ("nonexistent unless exists", true),
++        ("exists or nonexistent", true),
++        ("a1 or a2", false),
++        // A table that exists is read through its scan, with and without rows.
++        ("x", true),
++        ("sum(x)", true),
++        ("x or nonexistent", true),
++    ] {
++        let plan = build_native_fused_plan_with_provider(
++            query,
++            true,
++            named_missing_table_provider().await,
++        )
++        .await;
++        assert!(
++            find_fused_series(&plan).is_some(),
++            "`{query}` did not take the native route: {plan:?}"
++        );
++        let display = plan.display_indent().to_string();
++        if reads_existing {
++            assert!(display.contains("TableScan"), "{query}: {display}");
++        } else {
++            assert!(
++                contains_typed_empty_input(&plan),
++                "`{query}` is not planned over the typed empty input: {plan:?}"
++            );
++            assert!(
++                !display.contains("TableScan"),
++                "`{query}` reads a table it has none of: {display}"
++            );
++        }
++    }
++
++    // A `__field__` matcher still declines over a table this route can read: the matcher narrows the
++    // field set of the scan below the node, and the raw series scan reports every field the scan
++    // carries. That refusal is about the scan, not about the table existing - a missing table has no
++    // field set to narrow and is admitted as the empty input, which
++    // `native_missing_table_with_a_field_matcher_answers_the_empty_vector` asserts beside its rows.
++    let query = r#"x{__field__="field_0"}"#;
++    let plan =
++        build_native_fused_plan_with_provider(query, true, named_missing_table_provider().await)
++            .await;
++    assert!(
++        find_fused_series(&plan).is_none(),
++        "`{query}` claimed a field layout its scan does not report: {plan:?}"
++    );
++}
++
++/// The same statements plan natively when the engine plans distributed statements.
++///
++/// Such a planner reads every input above the regions, so each occurrence is source-backed and the
++/// typed empty input is the one input that stays itself. The route is the same one the statements
+```
+
+---
+
+### Incident Patch 2: `f51d01b1` (2026-11-24)
+**Commit Message**: fix(datatypes): bounds-check Vector::get and get_ref (#10594)
+
+The indexed accessors checked is_valid() and then called
+value_unchecked(), but is_valid() is not a bounds check: it returns true
+for any index when the array has no null buffer. An out-of-range index
+read past the array buffers instead of panicking.
+
+Use the bounds-checked value() accessors. This also covers
+DictionaryVector, whose lookups go through the item vector's get().
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+**File**: `src/datatypes/src/vectors.rs` (modified, +2/-4)
+```diff
+@@ -260,8 +260,7 @@ macro_rules! impl_validity_for_vector {
+ macro_rules! impl_get_for_vector {
+     ($array: expr, $index: ident) => {
+         if $array.is_valid($index) {
+-            // Safety: The index have been checked by `is_valid()`.
+-            unsafe { $array.value_unchecked($index).into() }
++            $array.value($index).into()
+         } else {
+             Value::Null
+         }
+@@ -271,8 +270,7 @@ macro_rules! impl_get_for_vector {
+ macro_rules! impl_get_ref_for_vector {
+     ($array: expr, $index: ident) => {
+         if $array.is_valid($index) {
+-            // Safety: The index have been checked by `is_valid()`.
+-            unsafe { $array.value_unchecked($index).into() }
++            $array.value($index).into()
+         } else {
+             ValueRef::Null
+         }
+```
+
+**File**: `src/datatypes/src/vectors/decimal.rs` (modified, +1/-2)
+```diff
+@@ -138,8 +138,7 @@ impl Decimal128Vector {
+     /// Get decimal128 Value from array by index.
+     fn get_decimal128_value_from_array(&self, index: usize) -> Option<Decimal128> {
+         if self.array.is_valid(index) {
+-            // Safety: The index have been checked by `is_valid()`.
+-            let value = unsafe { self.array.value_unchecked(index) };
++            let value = self.array.value(index);
+             // Safety: The precision and scale have been checked by Vector.
+             Some(Decimal128::new(value, self.precision(), self.scale()))
+         } else {
+```
+
+**File**: `src/datatypes/src/vectors/primitive.rs` (modified, +9/-4)
+```diff
+@@ -164,8 +164,7 @@ impl<T: LogicalPrimitiveType> Vector for PrimitiveVector<T> {
+ 
+     fn get(&self, index: usize) -> Value {
+         if self.array.is_valid(index) {
+-            // Safety: The index have been checked by `is_valid()`.
+-            let wrapper = unsafe { T::Wrapper::from_native(self.array.value_unchecked(index)) };
++            let wrapper = T::Wrapper::from_native(self.array.value(index));
+             wrapper.into()
+         } else {
+             Value::Null
+@@ -174,8 +173,7 @@ impl<T: LogicalPrimitiveType> Vector for PrimitiveVector<T> {
+ 
+     fn get_ref(&self, index: usize) -> ValueRef<'_> {
+         if self.array.is_valid(index) {
+-            // Safety: The index have been checked by `is_valid()`.
+-            let wrapper = unsafe { T::Wrapper::from_native(self.array.value_unchecked(index)) };
++            let wrapper = T::Wrapper::from_native(self.array.value(index));
+             wrapper.into()
+         } else {
+             ValueRef::Null
+@@ -416,6 +414,13 @@ mod tests {
+         assert_eq!(&ArrowDataType::Int32, arrow_arr.data_type());
+     }
+ 
++    #[test]
++    #[should_panic(expected = "Trying to access an element at index")]
++    fn test_get_out_of_bounds_without_nulls_panics() {
++        let vector = Int32Vector::from_slice([1]);
++        vector.get(1);
++    }
++
+     #[test]
+     fn test_from_values() {
+         let v = Int32Vector::from_values(vec![1, 2, 3, 4]);
+```
+
+**File**: `src/datatypes/src/vectors/string.rs` (modified, +7/-0)
+```diff
+@@ -523,6 +523,13 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[test]
++    #[should_panic(expected = "Trying to access an element at index")]
++    fn test_get_ref_out_of_bounds_without_nulls_panics() {
++        let vector = StringVector::from(vec!["a"]);
++        vector.get_ref(1);
++    }
++
+     #[test]
+     fn test_string_vector_build_get() {
+         let mut builder = StringVectorBuilder::with_capacity(4);
+```
+
+---
+
+### Incident Patch 3: `82bdd7fd` (2026-11-24)
+**Commit Message**: fix(mito2): keep a caught-up region writable on candidate leases (#10590)
+
+* fix(mito2): keep a caught-up region writable on candidate leases
+
+A region that a catchup made writable waits for its Leader lease until the
+route switch. Meanwhile the metasrv keeps granting it Follower leases that
+carry a candidate_lease_id, and each of them demoted the region, so the next
+upgrade attempt had to catch it up again.
+
+A Follower lease that carries a candidate_lease_id now leaves a region that
+awaits its Leader lease alone. It checks the wait under the promotion fence,
+so a concurrent catchup promotion is either seen or happens after the
+demotion. Other Follower leases, and candidate leases to a region that does
+not wait, demote it as before.
+
+The store-api contract now says an engine may use the presence of the id
+this way; it still must not interpret its value.
 
 Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
-* fix(mito2): catch a writable region awaiting its Leader lease up again
+* docs(mito2): clarify the candidate lease wait and its tests
 
-A migration that rolls back after its catchup can leave the target
-region writable but waiting for a Leader lease that never comes, while
-the source keeps acknowledging writes. A later upgrade must catch it up
-again instead of treating it as ready.
+Describe the condition demote_candidate checks, name both lease kinds that
+end the wait in the store-api contract, and check that a candidate lease
+keeps a waiting physical region a leader that is not confirmed.
 
-- MitoEngine::is_confirmed_leader reads the role and the lease wait of
-  one instance toget
+Signed-off-by
 
-**File**: `src/datanode/src/heartbeat/handler/upgrade_region.rs` (modified, +40/-3)
+**File**: `src/meta-srv/src/region/lease_keeper.rs` (modified, +83/-7)
 ```diff
-@@ -101,7 +101,9 @@ impl UpgradeRegionsHandler {
-         let mut timeout = None;
+@@ -20,7 +20,7 @@ use common_meta::key::TableMetadataManagerRef;
+ use common_meta::key::table_route::TableRouteValue;
+ use common_meta::region_keeper::{MemoryRegionKeeperRef, OperatingRegion};
+ use common_meta::rpc::router::RegionRoute;
+-use common_telemetry::{info, warn};
++use common_telemetry::{debug, info, warn};
+ use snafu::ResultExt;
+ use store_api::region_engine::{GrantedRegion, RegionRole};
+ use store_api::storage::{RegionId, TableId};
+@@ -97,10 +97,20 @@ fn renew_region_lease_via_operating_regions(
+             region_lease_info.candidate_lease_id = operating_region.candidate_lease_id;
+         }
+         if role != reported_role {
+-            info!(
+-                "The region {} on datanode {} is operating with role {:?}, but reported as {:?}",
+-                region_id, datanode_id, role, reported_role
+-            );
++            // A candidate lease id with a reported Leader means a migration target that a catchup
++            // promoted before the route switch, which is expected until the switch.
++            if region_lease_info.candidate_lease_id.is_some() && reported_role == RegionRole::Leader
++            {
++                debug!(
++                    "The candidate region {} on datanode {} is operating with role {:?}, but reported as {:?}",
++                    region_id, datanode_id, role, reported_role
++                );
++            } else {
++                info!(
++                    "The region {} on datanode {} is operating with role {:?}, but reported as {:?}",
++                    region_id, datanode_id, role, reported_role
++                );
++            }
+         }
+         return Some(region_lease_info);
+     }
+@@ -291,7 +301,7 @@ impl RegionLeaseKeeper {
+ #[cfg(test)]
+ mod tests {
+     use std::collections::{HashMap, HashSet};
+-    use std::sync::Arc;
++    use std::sync::{Arc, Mutex};
  
-         for upgrade_region in upgrade_regions {
--            let Some(writable) = ctx.region_server.is_region_leader(upgrade_region.region_id)
-+            let Some(confirmed) = ctx
-+                .region_server
-+                .is_confirmed_leader(upgrade_region.region_id)
-             else {
-                 // Region is not found.
-                 debug!("Region {} is not found", upgrade_region.region_id);
-@@ -114,8 +116,10 @@ impl UpgradeRegionsHandler {
-                 continue;
-             };
- 
--            // Ignores the catchup requests for writable regions.
--            if writable {
-+            // Ignores the catchup requests for writable regions, except those a catchup made
-+            // writable with no Leader lease since: they may lack what the leader has written
-+            // since, and the engine catches them up again.
-+            if confirmed {
-                 warn!(
-                     "Region {} is writable, ignores the catchup request",
-                     upgrade_region.region_id
-@@ -226,6 +230,7 @@ mod tests {
-     use common_meta::kv_backend::memory::MemoryKvBackend;
-     use mito2::engine::MITO_ENGINE_NAME;
-     use store_api::region_engine::RegionRole;
-+    use store_api::region_request::RegionRequest;
+     use common_meta::DatanodeId;
+     use common_meta::key::TableMetadataManager;
+@@ -305,7 +315,10 @@ mod tests {
      use store_api::storage::RegionId;
+     use table::metadata::TableInfo;
  
-     use crate::error;
-@@ -361,6 +366,38 @@ mod tests {
-         }
+-    use super::{RegionLeaseKeeper, renew_region_lease_via_region_route};
++    use super::{
++        RegionLeaseKeeper, renew_region_lease_via_operating_regions,
++        renew_region_lease_via_region_route,
++    };
+     use crate::region::lease_keeper::{RegionLeaseInfo, RenewRegionLeasesResponse};
+ 
+     fn new_test_keeper() -> RegionLeaseKeeper {
+@@ -317,6 +330,69 @@ mod tests {
+         RegionLeaseKeeper::new(table_metadata_manager, opening_region_keeper)
      }
  
-+    #[tokio::test]
-+    async fn test_writable_region_awaiting_leader_lease_catches_up() {
-+        let mock_region_server = mock_region_server();
-+        let region_id = RegionId::new(1024, 1);
++    #[derive(Clone, Default)]
++    struct LevelCapture(Arc<Mutex<Vec<tracing::Level>>>);
 +
-+        let (mock_engine, mut requests) =
-+            MockRegionEngine::with_custom_apply_fn(MITO_ENGINE_NAME, |region_engine| {
-+                region_engine.mock_role = Some(Some(RegionRole::Leader));
-+                region_engine.mock_confirmed_leader = Some(false);
-+            });
-+        mock_region_server.register_test_region(region_id, mock_engine);
-+        let kv_backend = Arc::new(MemoryKvBackend::new());
-+        let handler_context = HandlerContext::new_for_test(mock_region_server, kv_backend);
-+        let reply = UpgradeRegionsHandler::new_test()
-+            .handle(
-+                &handler_context,
-+                vec![UpgradeRegion {
-+                    region_id,
-+                    replay_timeout: Duration::from_secs(1),
-+                    ..Default::default()
-+                }],
-+            )
-+            .await;
-+
-+        let reply = &reply.unwrap().expect_upgrade_regions_reply()[0];
-+        assert!(reply.ready);
-+        assert!(reply.error.is_none());
-+        let (caught_up, request) = requests.try_recv().unwrap();
-+        assert_eq!(caught_up, region_id);
-+        assert!(matches!(request, RegionRequest::Catchup(_)));
-+    }
-+
-     #[tokio::test]
-     async fn test_region_not_ready() {
-         let mock_region_server = mock_region_server();
-```
-
-**File**: `src/datanode/src/region_server.rs` (modified, +10/-1)
-```diff
-@@ -478,6 +478,14 @@ impl RegionServer {
-         })
-     }
- 
-+    /// See [`RegionEngine::is_confirmed_leader`](store_api::region_engine::RegionEngine::is_confirmed_leader).
-+    pub fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
-+        self.inner
-+            .region_map
-+            .get(&region_id)
-+            .and_then(|engine| engine.is_confirmed_leader(region_id))
-+    }
-+
-     pub fn set_region_role(&self, region_id: RegionId, role: RegionRole) -> Result<()> {
-         let engine = self
-             .inner
-@@ -491,7 +499,8 @@ impl RegionServer {
- 
-     /// Sets the role of a region from a lease the metasrv grants until `deadline`, in reply to a
-     /// heartbeat sent at `sent_at`. Returns false if the engine ignores a Leader lease because the
--    /// region was downgraded or (re)opened after `sent_at`.
-+    /// region was downgraded or (re)opened after `sent_at`, a catchup runs on it, or it waits for a
-+    /// reload.
-     pub fn set_region_role_with_lease(
-         &self,
-         region_id: RegionId,
-```
-
-**File**: `src/datanode/src/tests.rs` (modified, +12/-0)
-```diff
-@@ -135,6 +135,7 @@ pub struct MockRegionEngine {
-     pub(crate) handle_sync_region_mock_fn: Option<MockSyncRegionHandler>,
-     pub(crate) handle_stop_mock_fn: Option<MockStopHandler>,
-     pub(crate) mock_role: Option<Option<RegionRole>>,
-+    pub(crate) mock_confirmed_leader: Option<bool>,
-     /// The candidate lease ids of the leases the engine received.
-     pub(crate) candidate_lease_ids: Mutex<Vec<Option<u64>>>,
-     engine: String,
-@@ -154,6 +155,7 @@ impl MockRegionEngine {
-                 handle_sync_region_mock_fn: None,
-                 handle_stop_mock_fn: None,
-                 mock_role: None,
-+                mock_confirmed_leader: None,
-                 candidate_lease_ids: Mutex::default(),
-                 engine: engine.to_string(),
-             }),
-@@ -177,6 +179,7 @@ impl MockRegionEngine {
-                 handle_sync_region_mock_fn: None,
-                 handle_stop_mock_fn: None,
-                 mock_role: None,
-+                mock_confirmed_leader: None,
-                 candidate_lease_ids: Mutex::default(),
-                 engine: engine.to_string(),
-             }),
-@@ -200,6 +203,7 @@ impl MockRegionEngine {
-                 handle_sync_region_mock_fn: None,
-                 handle_stop_mock_fn: None,
-                 mock_role: None,
-+                mock_confirmed_leader: None,
-                 candidate_lease_ids: Mutex::default(),
-                 engine: engine.to_string(),
-             }),
-@@ -224,6 +228,7 @@ impl MockRegionEngine {
-             handle_sync_region_mock_fn: None,
-             handle_stop_mock_fn: None,
-             mock_role: None,
-+            mock_confirmed_leader: None,
-             candidate_lease_ids: Mutex::default(),
-             engine: engine.to_string(),
-         };
-@@ -330,6 +335,13 @@ impl RegionEngine for MockRegionEngine {
-         Some(RegionRole::Leader)
-     }
- 
-+    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
-+        self.role(region_id).map(|role| {
-+            self.mock_confirmed_leader
-+                .unwrap_or(role != RegionRole::Follower)
-+        })
-+    }
-+
-     async fn sync_region(
-         &self,
-         region_id: RegionId,
-```
-
-**File**: `src/metric-engine/src/engine.rs` (modified, +146/-7)
-```diff
-@@ -421,14 +421,12 @@ impl RegionEngine for MetricEngine {
-                 Ok(true) => {}
-                 Ok(false) => {
-                     // If the metadata region ignored the grant, the data region is not handed it, so
--                    // record it for the data region. If the data region ignored it, the data region
--                    // has already recorded it.
-+                    // record it and extend the deadline for the data region, as an ignored Leader
-+                    // lease does. If the data region ignored it, the data region has done both.
-                     if x == metadata_region_id {
--                        self.inner.mito.record_granted_lease(
--                            data_region_id,
--                            sent_at,
--                            candidate_lease_id,
--                        );
-+                        let mito = &self.inner.mito;
-+                        mito.record_granted_lease(data_region_id, sent_at, candidate_lease_id);
-+                        mito.extend_leader_deadline(data_region_id, deadline);
-                     }
-                     return Ok(false);
-                 }
-@@ -539,6 +537,18 @@ impl RegionEngine for MetricEngine {
-         }
-     }
- 
-+    /// A physical region is a confirmed leader only if both regions of the pair are, since one
-+    /// may have been promoted without the other.
-+    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
-+        if !self.inner.is_physical_region(region_id) {
-+            return None;
++    impl<S: tracing::Subscriber> tracing_subscriber::Layer<S> for LevelCapture {
++        fn on_event(
++            &self,
++            event: &tracing::Event<'_>,
++            _: tracing_subscriber::layer::Context<'_, S>,
++        ) {
++            self.0.lock().unwrap().push(*event.metadata().level());
 +        }
-+        let mito = &self.inner.mito;
-+        let metadata = mito.is_confirmed_leader(utils::to_metadata_region_id(region_id))?;
-+        let data = mito.is_confirmed_leader(utils::to_data_region_id(region_id))?;
-+        Some(metadata && data)
 +    }
 +
-     fn as_any(&self) -> &dyn Any {
-         self
-     }
-@@ -1126,6 +1136,135 @@ mod test {
-         assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
++    /// The expected mismatch of a migration target that a catchup promoted logs at debug; every
++    /// other mismatch logs at info, and a matching role logs nothing.
++    #[test]
++    fn test_role_mismatch_log_level_of_operating_region() {
++        use tracing::Level;
++        use tracing_subscriber::layer::SubscriberExt;
++
++        let region_id = RegionId::new(1024, 1);
++        let log_levels = |role, candidate_lease_id, reported_role, table_route_exists| {
++            let capture = LevelCapture::default();
++            let subscriber = tracing_subscriber::registry().with(capture.clone());
++            let operating_regions = HashMap::from([(
++                region_id,
++                OperatingRegion {
++                    role,
++                    candidate_lease_id,
++                },
++            )]);
++            tracing::subscriber::with_default(subscriber, || {
++                renew_region_lease_via_operating_regions(
++                    &operating_regions,
++                    1,
++                    region_id,
++                    reported_role,
++                    table_route_exists,
++                )
++                .unwrap();
++            });
++            capture.0.lock().unwrap().clone()
++        };
++        let follower = RegionRole::Follower;
++        let leader = RegionRole::Leader;
++
++        assert_eq!(
++            log_levels(follower, Some(7), leader, true),
++            vec![Level::DEBUG]
++        );
++        assert_eq!(log_levels(follower, None, leader, true), vec![Level::INFO]);
++        assert_eq!(
++            log_levels(follower, Some(7), leader, false),
++            vec![Level::INFO]
++        );
++        assert_eq!(
++            log_levels(follower, Some(7), RegionRole::DowngradingLeader, true),
++            vec![Level::INFO]
++        );
++        assert!(log_levels(follower, Some(7), follower, true).is_empty());
++        assert!(log_levels(leader, Some(7), leader, true).is_empty());
++    }
++
+     #[test]
+     fn test_renew_region_lease_via_region_route() {
+         let region_id =
+```
+
+**File**: `src/metric-engine/src/engine.rs` (modified, +24/-2)
+```diff
+@@ -1137,7 +1137,7 @@ mod test {
      }
  
-+    #[tokio::test]
-+    async fn test_physical_region_is_confirmed_leader_only_with_both_regions() {
-+        let env = TestEnv::new().await;
-+        env.init_metric_region().await;
-+        let (engine, mito) = (env.metric(), env.mito());
-+        mito.require_write_lease();
-+        mito.renew_node_lease(Instant::now() + LEASE);
-+        let physical_region_id = env.default_physical_region_id();
-+        let metadata_region_id = utils::to_metadata_region_id(physical_region_id);
-+        // A logical region has no role of its own.
-+        assert_eq!(
-+            engine.is_confirmed_leader(env.default_logical_region_id()),
-+            None
+     #[tokio::test]
+-    async fn test_physical_region_is_confirmed_leader_only_with_both_regions() {
++    async fn test_physical_region_is_confirmed_leader_only_after_both_leader_leases() {
+         let env = TestEnv::new().await;
+         env.init_metric_region().await;
+         let (engine, mito) = (env.metric(), env.mito());
+@@ -1173,8 +1173,30 @@ mod test {
+         assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
+         assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
+ 
+-        // The data region still waits after the metadata region received its lease.
++        // A candidate lease leaves both waiting regions writable, and the physical region
++        // unconfirmed, so an upgrade still catches it up.
+         let sent_at = Instant::now();
++        assert!(
++            engine
++                .set_region_role_with_lease(
++                    physical_region_id,
++                    RegionRole::Follower,
++                    sent_at,
++                    sent_at + LEASE,
++                    Some(7),
++                )
++                .unwrap()
 +        );
 +        for region_id in [
 +            metadata_region_id,
 +            utils::to_data_region_id(physical_region_id),
 +        ] {
-+            mito.set_region_role_state_gracefully(region_id, SettableRegionRoleState::Follower)
-+                .await
-+                .unwrap();
++            assert_eq!(mito.role(region_id), Some(RegionRole::Leader));
 +        }
-+        let catchup = RegionCatchupRequest {
-+            set_writable: true,
-+            ..Default::default()
-+        };
-+        engine
-+            .handle_batch_catchup_requests(1, vec![(physical_region_id, catchup)])
-+            .await
-+            .unwrap()
-+            .into_iter()
-+            .for_each(|(_, result)| {
-+                result.unwrap();
-+            });
 +        assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
 +        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
 +
 +        // The data region still waits after the metadata region received its lease.
-+        let sent_at = Instant::now();
-+        mito.set_region_role_with_lease(
-+            metadata_region_id,
-+            RegionRole::Leader,
-+            sent_at,
-+            sent_at + LEASE,
-+            None,
-+        )
-+        .unwrap();
-+        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
-+
-+        engine
-+            .set_region_role_with_lease(
-+                physical_region_id,
-+                RegionRole::Leader,
-+                sent_at,
-+                sent_at + LEASE,
-+                None,
-+            )
-+            .unwrap();
-+        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(true));
-+
-+        // A confirmed data region alone does not make the physical region confirmed.
-+        mito.set_region_role(metadata_region_id, RegionRole::Follower)
-+            .unwrap();
-+        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
-+    }
-+
-+    /// A physical Leader lease that the metadata region ignores is still recorded for the data
-+    /// region and extends its deadline.
-+    #[tokio::test]
-+    async fn test_lease_ignored_by_metadata_region_extends_data_deadline() {
-+        let env = TestEnv::new().await;
-+        env.init_metric_region().await;
-+        let (engine, mito) = (env.metric(), env.mito());
-+        let physical_region_id = env.default_physical_region_id();
-+        let metadata_region_i
+         mito.set_region_role_with_lease(
+             metadata_region_id,
+             RegionRole::Leader,
 ```
 
-**File**: `src/mito2/AGENTS.md` (modified, +8/-1)
+**File**: `src/mito2/AGENTS.md` (modified, +2/-1)
 ```diff
-@@ -218,7 +218,14 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
-   a downgrade's flush. The lease that ends the wait wakes the worker
-   (`handle_leader_lease_wait_ended`) to schedule the flushes the wait deferred and, only if the
-   region is then a writable leader, start a compaction, build missing indexes, re-issue the
--  index build retries the wait refused and persist backfilled metadata.
-+  index build retries the wait refused and persist backfilled metadata. A catchup of a waiting
-+  region catches it up again into an unregistered replacement while the region stays registered,
-+  demoted unless it is in a transient leader state. The replacement replaces it only if the replay
-+  succeeds and the region took no write and made no commit meanwhile; otherwise the region keeps
-+  its memtable for the next Leader lease (`catch_up_again`, `handle_caught_up_again`); the datanode
-+  upgrade handler sends that catchup unless `RegionEngine::is_confirmed_leader` is true, so an
-+  engine wrapping mito must implement that method from mito's answers (the metric engine requires
-+  both regions of the pair).
+@@ -241,7 +241,8 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+   its memtable for the next Leader lease (`catch_up_again`, `handle_caught_up_again`); the datanode
+   upgrade handler sends that catchup unless `RegionEngine::is_confirmed_leader` is true, so an
+   engine wrapping mito must implement that method from mito's answers (the metric engine requires
+-  both regions of the pair).
++  both regions of the pair). A Follower lease that carries a `candidate_lease_id` leaves a waiting
++  region alone (`ManifestContext::demote_candidate`); other Follower leases demote it.
  - The latest lease each region received (`GrantedLeases` in `lease.rs`) lives outside the
    region instance, so a reopen during catchup keeps it. Every path that removes a region from
    a worker's region map must also remove its record and its kept index build retries:
 ```
 
-**File**: `src/mito2/src/engine.rs` (modified, +19/-4)
+**File**: `src/mito2/src/engine.rs` (modified, +9/-1)
 ```diff
-@@ -375,6 +375,15 @@ impl MitoEngine {
-             });
-     }
- 
-+    /// Extends the Leader deadline of a region as a Leader or StagingLeader lease that the region
-+    /// ignores does. Like [Self::record_granted_lease], it serves a region of a group that received
-+    /// the lease as a whole. Does nothing if the region is not open.
-+    pub fn extend_leader_deadline(&self, region_id: RegionId, deadline: Instant) {
-+        if let Ok(region) = self.inner.find_region(region_id) {
-+            region.manifest_ctx.leader_deadline.extend(deadline);
-+        }
-+    }
-+
-     /// Freezes the clock of the lease checks at `at`.
-     #[cfg(any(test, feature = "test"))]
-     pub fn freeze_lease_clock(&self, at: Instant) {
-@@ -1398,7 +1407,8 @@ impl EngineInner {
-     }
- 
-     /// Converts the [`RegionRole`]. Unlike lease and catchup promotions, a conversion to Leader
--    /// does not check whether the region waits for a reload.
-+    /// does not check whether the region waits for a reload, and unlike a lease it is not held
-+    /// back while a catchup runs on the region.
-     fn set_region_role(&self, region_id: RegionId, role: RegionRole) -> Result<()> {
-         let region = self.find_region(region_id)?;
-         let was_leader = region.region_role() == RegionRole::Leader;
-@@ -1809,10 +1819,10 @@ impl RegionEngine for MitoEngine {
-                 .notify_if_leader_lease_wait_ended(&region, promotion.ended_wait);
-             return Ok(promotion.promoted);
-         }
--        // The metasrv grants it to the leader of a region whose route is in staging, and it ends
--        // the wait for a Leader lease too.
-+        // The metasrv grants it to the leader of a region whose route is in staging, and unless a
-+        // catchup runs on the region it ends the wait for a Leader lease too.
-         if role == RegionRole::StagingLeader && region.manifest_ctx.awaits_leader_lease() {
--            let ended_wait = region.manifest_ctx.record_leader_lease(sent_at);
-+            let ended_wait = region.manifest_ctx.record_staging_leader_lease(sent_at);
+@@ -1823,7 +1823,15 @@ impl RegionEngine for MitoEngine {
              self.inner
                  .notify_if_leader_lease_wait_ended(&region, ended_wait);
          }
-@@ -1870,6 +1880,11 @@ impl RegionEngine for MitoEngine {
-         self.inner.role(region_id)
-     }
- 
-+    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
-+        self.find_region(region_id)
-+            .map(|region| region.is_confirmed_leader())
-+    }
-+
-     fn as_any(&self) -> &dyn Any {
-         self
+-        let previous = region.set_role(role);
++        // A Follower lease carrying a candidate lease id goes to a migration's target. It leaves
++        // the state of a region that awaits its Leader lease unchanged instead of demoting it, and
++        // still counts as applied. Keep this out of `MitoRegion::set_role`, whose other callers
++        // must demote such a region.
++        let previous = if role == RegionRole::Follower && candidate_lease_id.is_some() {
++            region.manifest_ctx.demote_candidate(region_id)
++        } else {
++            region.set_role(role)
++        };
+         self.inner.notify_if_can_no_longer_replay(&region, previous);
+         Ok(true)
      }
 ```
 
-**File**: `src/mito2/src/engine/catchup_test.rs` (modified, +20/-4)
+**File**: `src/mito2/src/engine/lease_test.rs` (modified, +45/-0)
 ```diff
-@@ -32,6 +32,7 @@ use store_api::storage::{RegionId, ScanRequest};
- 
- use crate::config::MitoConfig;
- use crate::engine::MitoEngine;
-+use crate::engine::lease_test::promote_to_await_leader_lease;
- use crate::error::Error;
- use crate::manifest::action::RegionEdit;
- use crate::test_util::{
-@@ -962,8 +963,13 @@ async fn test_catchup_not_exist_with_format(flat_format: bool) {
-     assert_matches!(err.status_code(), StatusCode::RegionNotFound);
+@@ -894,6 +894,51 @@ async fn test_catchup_again_drops_unflushed_rows_under_local_wal() {
+     assert_eq!(count_rows(&engine).await, 0);
  }
  
-+/// With `awaiting_leader_lease`, a catchup made the region writable and it awaits its Leader
-+/// lease: a catchup refused as busy leaves it as it is, so the catchup in progress keeps it.
++/// A candidate lease leaves a region that awaits its Leader lease writable, also the replacement a
++/// catchup again swapped in; other Follower leases, and candidate leases after the Leader lease,
++/// demote it.
 +#[rstest]
-+#[case::follower(false)]
-+#[case::awaiting_leader_lease(true)]
- #[tokio::test]
--async fn test_catchup_region_busy() {
-+async fn test_catchup_region_busy(#[case] awaiting_leader_lease: bool) {
-     common_telemetry::init_default_ut_logging();
-     let mut env = TestEnv::new().await;
-     let engine = env.create_engine(MitoConfig::default()).await;
-@@ -973,9 +979,14 @@ async fn test_catchup_region_busy() {
-         .handle_request(region_id, RegionRequest::Create(request))
-         .await
-         .unwrap();
--    engine
--        .set_region_role(region_id, RegionRole::Follower)
--        .unwrap();
-+    if awaiting_leader_lease {
-+        engine.require_write_lease();
-+        promote_to_await_leader_lease(&engine, region_id).await;
-+    } else {
-+        engine
-+            .set_region_role(region_id, RegionRole::Follower)
-+            .unwrap();
-+    }
-     let worker = engine.inner.workers.worker(region_id);
-     let catchup_regions = worker.catchup_regions();
-     catchup_regions.insert_region(region_id);
-@@ -990,4 +1001,9 @@ async fn test_catchup_region_busy() {
-         .await
-         .unwrap_err();
-     assert_matches!(err.status_code(), StatusCode::RegionBusy);
-+    if awaiting_leader_lease {
-+        let region = engine.get_region(region_id).unwrap();
-+        assert!(region.is_writable());
-+        assert!(region.manifest_ctx.awaits_leader_lease());
-+    }
- }
-```
-
-**File**: `src/mito2/src/engine/lease_test.rs` (modified, +55/-1)
-```diff
-@@ -46,7 +46,8 @@ use crate::engine::MitoEngine;
- use crate::engine::basic_test::build_bulk_insert_request;
- use crate::engine::index_build_test::async_build_mode_config;
- use crate::engine::listener::{
--    CountingStallListener, EventListener, EventListenerRef, WriteWalListener,
-+    CountingStallListener, EventListener, EventListenerRef, FlushCancellationListener,
-+    WriteWalListener,
- };
- use crate::engine::object_store_wal_test::wait_until;
- use crate::engine::open_test::open_region_with_backfilled_partition_expr;
-@@ -840,6 +841,59 @@ async fn test_downgrade_flushes_region_awaiting_leader_lease() {
-     assert_eq!(manifest_files(&engine).await, vec![3]);
- }
- 
-+/// A catchup again keeps a region whose flush is in flight, as the flush of a downgrade of a
-+/// region that awaits its Leader lease can be, and answers busy.
++#[case::awaiting_leader_lease(false, false)]
++#[case::caught_up_again(false, true)]
++#[case::leader_lease_received(true, false)]
 +#[tokio::test]
-+async fn test_catchup_again_keeps_region_with_flush_in_flight() {
++async fn test_candidate_lease_after_catchup(
++    #[case] leader_lease_received: bool,
++    #[case] catch_up_again: bool,
++) {
 +    common_telemetry::init_default_ut_logging();
-+    let mut env = TestEnv::with_prefix("catchup-again-flush-in-flight").await;
-+    let listener = Arc::new(FlushCancellationListener::default());
-+    let (engine, schema) =
-+        create_region_with_config(&mut env, None, MitoConfig::default(), listener.clone()).await;
++    let mut env = TestEnv::with_prefix("candidate-lease-after-catchup").await;
++    let (_listener, engine, _schema) = create_region(&mut env, None).await;
 +    promote_to_await_leader_lease(&engine, REGION_ID).await;
-+    engine
-+        .handle_request(REGION_ID, put_request(&schema, 0))
-+        .await
-+        .unwrap();
-+    engine
-+        .set_region_role_state_gracefully(REGION_ID, SettableRegionRoleState::DowngradingLeader)
-+        .await
-+        .unwrap();
++    if catch_up_again {
++        let region = engine.get_region(REGION_ID).unwrap();
++        catchup(&engine).await.unwrap();
++        assert!(!Arc::ptr_eq(
++            &region,
++            &engine.get_region(REGION_ID).unwrap()
++        ));
++    }
++    if leader_lease_received {
++        grant_at(&engine, RegionRole::Leader, Instant::now(), None);
++    }
 +    let region = engine.get_region(REGION_ID).unwrap();
-+    let flush = {
-+        let engine = engine.clone();
-+        tokio::spawn(async move { flush(&engine).await })
-+    };
-+    listener.wait_flush_started().await;
 +
-+    let error = catchup(&engine).await.unwrap_err();
-+    assert_eq!(StatusCode::RegionBusy, error.status_code(), "{error:?}");
-+    assert!(Arc::ptr_eq(&region, &engine.get_region(REGION_ID).unwrap()));
-+    listener.resume_flush();
-+    flush.await.unwrap().unwrap();
-+    assert_eq!(count_rows(&engine).await, 3);
-+}
-+
-+/// Under a local WAL, which replays nothing, a successful catchup again drops the region's
-+/// unflushed rows.
-+#[tokio::test]
-+async fn test_catchup_again_drops_unflushed_rows_under_local_wal() {
-+    common_telemetry::init_default_ut_logging();
-+    let mut env = TestEnv::with_prefix("catchup-again-local-wal").await;
-+    let (_listener, engine, schema) = create_region(&mut env, None).await;
-+    promote_to_await_leader_lease(&engine, REGION_ID).await;
-+    put(&engine, REGION_ID, &schema, 0).await.unwrap().unwrap();
-+    let region = engine.get_region(REGION_ID).unwrap();
-+    assert_eq!(count_rows(&engine).await, 3);
-+
-+    catchup(&engine).await.unwrap();
-+    assert!(!Arc::ptr_eq(
-+        &region,
-+        &engine.get_region(REGION_ID).unwrap()
++    assert!(grant_at(
++        &engine,
++        RegionRole::Follower,
++        Instant::now(),
++        Some(7)
 +    ));
-+    assert_eq!(count_rows(&engine).await, 0);
++    assert_eq!(region.is_writable(), !leader_lease_received);
++    assert_eq!(
++        region.manifest_ctx.awaits_leader_lease(),
++        !leader_lease_received
++    );
++
++    grant_at(&engine, RegionRole::Follower, Instant::now(), None);
++    assert!(region.is_follower());
 +}
 +
  /// Opens a region whose opener filled in the partition expression its manifest lacks and makes
@@ -2294,951 +2401,107 @@ again instead of treating it as ready.
  /// expression.
 ```
 
----
-
-### Incident Patch 2: `517a1376` (2026-11-23)
-**Commit Message**: fix(otlp): reject malformed cumulative histogram points (#10552)
-
-* fix(otlp): reject malformed cumulative histogram points
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* refactor(otlp): check bucket sum overflow once
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-**File**: `src/servers/src/otlp/metrics.rs` (modified, +82/-77)
+**File**: `src/mito2/src/region.rs` (modified, +45/-0)
 ```diff
-@@ -578,13 +578,11 @@ fn encode_exponential_histogram(
-         .context(error::InternalSnafu {
-             err_msg: "missing native histogram schema",
-         })?;
--    for (index, data_point) in histogram.data_points.iter().enumerate() {
-+    for data_point in &histogram.data_points {
-         let (value, timestamp_nanos) = match exponential_histogram_value(data_point, temporality) {
-             Ok(value) => value,
-             Err(reason) => {
--                reject_data_points(outcome, 1, || {
--                    format!("metric `{name}` data point {index}: {reason}")
--                })?;
-+                reject_data_points(outcome, 1, || format!("metric `{name}`: {reason}"))?;
-                 OTLP_EXPONENTIAL_HISTOGRAM_REJECTED_DATA_POINTS
-                     .with_label_values(&["invalid_data_point"])
-                     .inc();
-@@ -1175,11 +1173,9 @@ fn encode_histogram(
-         Ok(AggregationTemporality::Delta)
-     );
-     let stale_value = f64::from_bits(PROMETHEUS_STALE_NAN_BITS);
--    for (index, data_point) in hist.data_points.iter().enumerate() {
--        if let Some(reason) = histogram_data_point_rejection(data_point, is_delta) {
--            reject_data_points(outcome, 1, || {
--                format!("metric `{name}` data point {index}: {reason}")
--            })?;
-+    for data_point in &hist.data_points {
-+        if let Some(reason) = histogram_data_point_rejection(data_point) {
-+            reject_data_points(outcome, 1, || format!("metric `{name}`: {reason}"))?;
-             continue;
-         }
- 
-@@ -1206,22 +1202,15 @@ fn encode_histogram(
-         } else {
-             let mut accumulated_count = 0u64;
-             let mut values = Vec::with_capacity(data_point.bucket_counts.len());
--            for (idx, count) in data_point.bucket_counts.iter().enumerate() {
--                accumulated_count = accumulated_count.checked_add(*count).ok_or_else(|| {
--                    error::InvalidParameterSnafu {
--                        reason: format!(
--                            "metric `{name}` data point {index}: bucket prefix overflows u64"
--                        ),
--                    }
--                    .build()
--                })?;
--                let bound =
--                    data_point.explicit_bounds.get(idx).copied().or_else(|| {
--                        (idx == data_point.explicit_bounds.len()).then_some(f64::INFINITY)
--                    });
--                if let Some(bound) = bound {
--                    values.push((bound, accumulated_count as f64));
--                }
-+            for (bound, count) in data_point
-+                .explicit_bounds
-+                .iter()
-+                .copied()
-+                .chain(std::iter::once(f64::INFINITY))
-+                .zip(&data_point.bucket_counts)
-+            {
-+                accumulated_count += *count;
-+                values.push((bound, accumulated_count as f64));
-             }
-             values
-         };
-@@ -1331,39 +1320,36 @@ fn encode_histogram(
-     Ok(())
- }
- 
--pub(crate) fn histogram_data_point_rejection(
--    data_point: &HistogramDataPoint,
--    is_delta: bool,
--) -> Option<String> {
-+pub(crate) fn histogram_data_point_rejection(data_point: &HistogramDataPoint) -> Option<String> {
-     if has_no_recorded_value(data_point.flags) {
-         return None;
+@@ -2299,6 +2299,21 @@ impl ManifestContext {
+         self.record_leader_lease(issued_at)
      }
  
--    if is_delta {
--        let valid_empty_layout =
--            data_point.bucket_counts.is_empty() && data_point.explicit_bounds.is_empty();
--        let expected_buckets = data_point.explicit_bounds.len().checked_add(1);
--        if !valid_empty_layout && expected_buckets != Some(data_point.bucket_counts.len()) {
--            return Some(format!(
--                "bucket_counts length {} must equal explicit_bounds length {} plus one",
--                data_point.bucket_counts.len(),
--                data_point.explicit_bounds.len()
--            ));
--        }
--        if data_point
-+    let valid_empty_layout =
-+        data_point.bucket_counts.is_empty() && data_point.explicit_bounds.is_empty();
-+    let expected_buckets = data_point.explicit_bounds.len().checked_add(1);
-+    if !valid_empty_layout && expected_buckets != Some(data_point.bucket_counts.len()) {
-+        return Some(format!(
-+            "bucket_counts length {} must equal explicit_bounds length {} plus one",
-+            data_point.bucket_counts.len(),
-+            data_point.explicit_bounds.len()
-+        ));
++    /// Demotes the region to a follower for a lease the metasrv granted to it as the candidate of
++    /// a migration, unless the region [awaits its Leader lease](Self::awaits_leader_lease) (a
++    /// catchup of the migration promoted it, and the route switch that follows grants that lease).
++    /// Returns the state this call replaced, None if it left the state unchanged.
++    ///
++    /// It holds the lock of [Self::promote_after_catchup], so a promotion is either seen or
++    /// happens after the demotion.
++    pub(crate) fn demote_candidate(&self, region_id: RegionId) -> Option<RegionRoleState> {
++        let _fence = self.promotion_fence.lock().unwrap();
++        if self.awaits_leader_lease() {
++            return None;
++        }
++        self.set_role(RegionRole::Follower, region_id)
 +    }
-+    // OTLP requires strictly increasing explicit_bounds; GreptimeDB also requires finite
-+    // bounds so an explicit +Inf cannot duplicate the le="inf" bucket appended above.
-+    if data_point
-+        .explicit_bounds
-+        .iter()
-+        .any(|bound| !bound.is_finite())
-+        || data_point
-             .explicit_bounds
--            .iter()
--            .any(|bound| !bound.is_finite())
--            || data_point
--                .explicit_bounds
--                .windows(2)
--                .any(|bounds| bounds[0] >= bounds[1])
-```
-
-**File**: `src/servers/src/otlp/metrics/tests/delta.rs` (modified, +187/-0)
-```diff
-@@ -1031,3 +1031,190 @@ fn test_shared_physical_conflicts_and_independent_backings() {
-         }
++
+     /// Ends a catchup that does not promote the region, so the next Leader lease promotes it.
+     pub(crate) fn end_catchup(&self) {
+         self.promotion_fence.lock().unwrap().catching_up = false;
+@@ -3429,6 +3444,36 @@ mod tests {
+         assert!(region.manifest_ctx.awaits_leader_lease());
      }
- }
-+
-+#[test]
-+fn test_cumulative_and_unspecified_histogram_validation() {
-+    for temporality in [
-+        AggregationTemporality::Cumulative,
-+        AggregationTemporality::Unspecified,
-+    ] {
-+        let convert = |data_points| {
-+            let metric = Metric {
-+                name: "latency".to_string(),
-+                data: Some(metric::Data::Histogram(Histogram {
-+                    data_points,
-+                    aggregation_temporality: temporality as i32,
-+                })),
-+                ..Default::default()
-+            };
-+            to_grpc_insert_requests(metrics_request(vec![metric]), &mut OtlpMetricCtx::default())
-+                .unwrap()
-+        };
-+
-+        // 1. Reported layout mismatch (missing +Inf bucket).
-+        // 2. Extra buckets beyond explicit_bounds.len() + 1.
-+        // 3. Isolated bucket count total mismatch with valid layout length.
-+        for (point, expected_err) in [
-+            (
-+                HistogramDataPoint {
-+                    explicit_bounds: vec![0.0, 1.0],
-+                    bucket_counts: vec![1, 2],
-+                    count: 8,
-+                    sum: Some(10.0),
-+                    ..Default::default()
-+                },
-+                "bucket_counts length",
-+            ),
-+            (
-+                HistogramDataPoint {
-+                    explicit_bounds: vec![0.0],
-+                    bucket_counts: vec![1, 2, 3],
-+                    count: 6,
-+                    ..Default::default()
-+                },
-+                "bucket_counts length",
-+            ),
-+            (
-+                HistogramDataPoint {
-+                    explicit_bounds: vec![0.0, 1.0],
-+                    bucket_counts: vec![1, 2, 4],
-+                    count: 8,
-+                    sum: Some(10.0),
-+                    ..Default::default()
-+                },
-+                "buckets contain 7 observations, declared count is 8",
-+            ),
-+        ] {
-+            let conversion = convert(vec![point]);
-+            assert_eq!(
-+                0, conversion.outcome.accepted_data_points,
-+                "{temporality:?}"
-+            );
-+            assert_eq!(
-+                1, conversion.outcome.rejected_data_points,
-+                "{temporality:?}"
-+            );
-+            assert!(
-+                conversion
-+                    .outcome
-+                    .error_message
-+                    .as_deref()
-+                    .unwrap()
-+                    .contains(expected_err),
-+                "{temporality:?}: {:?}",
-+                conversion.outcome.error_message
-+            );
-+            assert!(conversion.requests.inserts.is_empty());
-+        }
-+
-+        // 4. Bounds checks: non-finite or non-strictly-increasing explicit_bounds.
-+        for bounds in [
-+            vec![0.0, f64::INFINITY],
-+            vec![f64::NEG_INFINITY, 1.0],
-+            vec![f64::NAN],
-+            vec![1.0, 1.0],
-+            vec![2.0, 1.0],
-+        ] {
-+            let bucket_len = bounds.len() + 1;
-+            let point = HistogramDataPoint {
-+                explicit_bounds: bounds,
-+                bucket_counts: vec![1; bucket_len],
-+                count: bucket_len as u64,
-+                ..Default::default()
-+            };
-+            let conversion = convert(vec![point]);
-+            assert_eq!(
-+                0, conversion.outcome.accepted_data_points,
-+                "{temporality:?}"
-+            );
-+            assert_eq!(
-+                1, conversion.outcome.rejected_data_points,
-+                "{temporality:?}"
-+            );
-+            assert!(
-+                conversion
-+                    .outcome
-+                    .error_message
-+                    .as_deref()
-+                    .unwrap()
-+                    .contains("explicit_bounds must be finite and strictly increasing"),
-+                "{temporality:?}: {:?}",
-+                conversion.outcome.error_message
-+            );
-+        }
-+
-+        // 5. Zero-count sum check.
-+        for bad_sum in [Some(1.0), Some(f64::NAN)] {
-+            let conversion = convert(vec![HistogramDataPoint {
-+                count: 0,
-+                sum: bad_sum,
-+                ..Default::default()
-+            }]);
-+            assert_eq!(
-+                0, conversion.outcome.accepted_data_points,
-+                "{temporality:?}"
-+            );
-+            assert_eq!(
-+                1, conversion.outcome.rejected_data_points,
-+                "{temporality:?}"
-+            );
-+            assert!(
-+                conversion
-+                    .outcome
-+                    .error_message
-+                    .as_deref()
-+                    .unwrap()
-+                    .contains("sum must be absent or zero when count is zero"),
-+                "{temporality:?}: {:?}",
-+                conversion.outcome.er
-```
-
-**File**: `tests-integration/tests/http.rs` (modified, +210/-1)
-```diff
-@@ -12954,9 +12954,215 @@ pub async fn test_otlp_metrics_new(store_type: StorageType) {
-     )
-     .await;
  
-+    test_otlp_cumulative_histogram_validation(&client).await;
-+
-     guard.remove_all().await;
- }
- 
-+async fn test_otlp_cumulative_histogram_validation(client: &TestClient) {
-+    use opentelemetry_proto::tonic::common::v1::{AnyValue, KeyValue, any_value};
-+    use opentelemetry_proto::tonic::metrics::v1::{
-+        self as otel_metrics, AggregationTemporality, Exemplar, HistogramDataPoint, Metric,
-+        ResourceMetrics, ScopeMetrics, exemplar, metric,
-+    };
-+
-+    const TS_NANOS: u64 = 1_753_780_559_000_000_000;
-+    const TS_SECS: i64 = 1_753_780_559;
-+
-+    let series_attr = |value: &str| KeyValue {
-+        key: "series".to_string(),
-+        value: Some(AnyValue {
-+            value: Some(any_value::Value::StringValue(value.to_string())),
-+        }),
-+        ..Default::default()
-+    };
-+    let exemplar_point = |val: f64| Exemplar {
-+        time_unix_nano: TS_NANOS,
-+        value: Some(exemplar::Value::AsDouble(val)),
-+        ..Default::default()
-+    };
-+    let cumulative_request =
-+        |name: &str, data_points: Vec<HistogramDataPoint>| ExportMetricsServiceRequest {
-+            resource_metrics: vec![ResourceMetrics {
-+                scope_metrics: vec![ScopeMetrics {
-+                    metrics: vec![Metric {
-+                        name: name.to_string(),
-+                        data: Some(metric::Data::Histogram(otel_metrics::Histogram {
-+                            data_points,
-+                            aggregation_temporality: AggregationTemporality::Cumulative as i32,
-+                        })),
-+                        ..Default::default()
-+                    }],
-+                    ..Default::default()
-+                }],
-+                ..Default::default()
-+            }],
-+        };
-+    let send_otlp_metrics = |req: ExportMetricsServiceRequest| {
-+        send_req(
-+            client,
-+            vec![(
-+                HeaderName::from_static("content-type"),
-+                HeaderValue::from_static("application/x-protobuf"),
-+            )],
-+            "/v1/otlp/v1/metrics",
-+            req.encode_to_vec(),
-+            false,
-+        )
-+    };
-+
-+    // All-rejected cases: reported layout mismatch and isolated count-total mismatch.
-+    for (name, bad_counts, expected_err) in [
-+        ("malformed_cum_len_hist", vec![1, 2], "bucket_counts length"),
-+        (
-+            "malformed_cum_count_hist",
-+            vec![1, 2, 4],
-+            "buckets contain 7 observations, declared count is 8",
-+        ),
-+    ] {
-+        let req = cumulative_request(
-+            name,
-+            vec![HistogramDataPoint {
-+                time_unix_nano: TS_NANOS,
-+                count: 8,
-+                sum: Some(10.0),
-+                explicit_bounds: vec![0.0, 1.0],
-+                bucket_counts: bad_counts,
-+                exemplars: vec![exemplar_point(0.75)],
-+                ..Default::default()
-+            }],
++    /// A candidate lease reads the wait for a Leader lease under the fence lock, so it does not
++    /// demote a region that a catchup promotes meanwhile.
++    #[tokio::test]
++    async fn test_candidate_demotion_sees_catchup_promotion_under_fence() {
++        let env = SchedulerEnv::new().await;
++        let region = Arc::new(build_test_region(&env).await);
++        region.manifest_ctx.node_lease.enable();
++        // A writable leader, so a demotion that misses the fence returns Some and fails below.
++        assert!(region.is_writable());
++        assert!(!region.manifest_ctx.awaits_leader_lease());
++        let demoted = run_blocked_on_fence(
++            &region,
++            |r| r.manifest_ctx.demote_candidate(r.region_id),
++            // What a catchup's promotion does under the lock.
++            |fence| {
++                assert!(region.manifest_ctx.promote_unless_reload_pending(
++                    fence,
++                    region.region_id,
++                    true
++                ))
++            },
 +        );
-+        let res = send_otlp_metrics(req).await;
-+        assert_eq!(StatusCode::BAD_REQUEST, res.status(), "{name}");
-+        let status = GoogleRpcStatus::decode(res.bytes().await.as_ref()).unwrap();
-+        assert_eq!(tonic::Code::InvalidArgument as i32, status.code, "{name}");
-+        assert!(
-+            status.message.contains(expected_err),
-+            "{name}: {}",
-+            status.message
++        assert_eq!(demoted, None);
++        assert!(region.manifest_ctx.awaits_leader_lease());
++        assert_eq!(
++            region.state(),
++            RegionRoleState::Leader(RegionLeaderState::Writable)
 +        );
-+        validate_data(
-+            name,
-+            client,
-+            &format!(
-+                "select count(*) from information_schema.tables where table_name in \
-+                 ('{name}_bucket', '{name}_sum', '{name}_count', 'greptime_metrics_exemplars');"
-+            ),
-+            "[[0]]",
-+        )
-+        .await;
 +    }
 +
-+    // Mixed valid control + malformed sibling: only the valid sibling writes rows/exemplars.
-+    for (name, bad_counts, expected_err) in [
-+        (
-+            "mixed_cum_len_hist",
-+            vec![1, 2],
-+            "bucket_counts length 2 must equal explicit_bounds length 2 plus one",
-+        ),
-+        (
-+            "mixed_cum_count_hist",
-+            vec![1, 2, 4],
-+            "buckets contain 7 observations, declared count is 8",
-+        ),
-+    ] {
-+        let valid = HistogramDataPoint {
-+            attributes: vec![series_attr("valid")],
-+            time_unix_nano: TS_NANOS,
-+            count: 4,
-+            sum: Some(2.0),
-+            explicit_bounds: vec![0.0, 1.0],
-+            bucket_counts: vec![1, 2, 1],
-+            exemplars: vec![exemplar_point(0.25)],
-+            ..Default::default()
-+        };
-+        let malformed = HistogramDataPoint {
-+            attributes: vec![series_attr("malformed")],
-+            time_unix_nano: TS_NANOS,
-+            count: 8,
-+            sum: Some(10.0),
-+            explicit_bounds: vec![0.0, 1.0],
-+            bucket_counts: bad_counts,
-+            exemplars: vec![exemplar_point(0.75)],
-+    
+     /// The readiness of an upgrade reads the role and the wait for a Leader lease under the fence
+     /// lock, so it sees a change of both made under that lock as a whole.
+     #[tokio::test]
 ```
 
----
-
-### Incident Patch 3: `b948fb78` (2026-11-23)
-**Commit Message**: fix(promql): plan absent_over_time over a nameless multi-metric selector (#10512)
-
-`absent_over_time({job="x"}[20m])` was declined by the native route, and the plan it fell back to
-answers with an error, so the shape produced no answer at all: the existing planner needs one
-`__name__` equality matcher to read a table from (`Expect a metric matcher, but not found`).
-
-The guard that declined it assumed that a nameless selector's tree declares `__name__` while binding
-no metric name, and that the fused node refuses such a tree. That is not the shape: a discovered
-selector's prepared input is the `Union` of one `RawSeriesSource` per metric, so the node is handed
-explicit-label frames, and only its bare-region-scan arm reads the binding's name - an arm a nameless
-selector never reaches, because a successful scan always binds one metric. A statement such as
-`sum by (__name__) ({tag_0="x"})` over discovered metrics already builds and runs exactly this
-combination.
-
-The guard now declines only a nameless input that is not already sourced, which keeps the bare-scan
-arm closed if that invariant ever regresses. The presence fold keeps the metric name, so two metrics
-sharing ordinary labels st
-
-**File**: `src/promql/src/extension_plan/fused_series.rs` (modified, +6/-3)
+**File**: `src/store-api/src/region_engine.rs` (modified, +9/-4)
 ```diff
-@@ -150,9 +150,12 @@ pub struct FusedSeriesBinding {
-     pub grid: Arc<EvalGrid>,
-     /// The metric name every input series is bound to, when the input reads one named metric.
+@@ -185,9 +185,12 @@ impl SetRegionRoleStateResponse {
+ pub struct GrantedRegion {
+     pub region_id: RegionId,
+     pub region_role: RegionRole,
+-    /// An opaque non-zero id the metadata plane attaches to some leases, `None` for a lease
+-    /// without one. It reaches the engine through [`RegionEngine::set_region_role_with_lease`];
+-    /// engines may keep it with the lease and must not interpret it.
++    /// A non-zero id the metadata plane attaches to the Follower leases of a region migration's
++    /// target before the route names that target, `None` for a lease without one. It reaches the
++    /// engine through [`RegionEngine::set_region_role_with_lease`]. An engine may keep it with the
++    /// lease, and may use its presence to keep such a lease from demoting a region that the
++    /// migration's catchup made writable and that still awaits a Leader or StagingLeader lease.
++    /// Engines must not interpret its value.
+     pub candidate_lease_id: Option<u64>,
+     pub extensions: HashMap<String, Vec<u8>>,
+ }
+@@ -1536,7 +1539,9 @@ pub trait RegionEngine: Send + Sync {
+     /// deadline of its latest Leader or StagingLeader lease. Leases of other roles do not extend
+     /// that deadline.
      ///
--    /// The logical node requires it when [`tags`](Self::tags) declares [`METRIC_NAME`]: a reader of
--    /// the output has to be able to tell that a range function dropped the name, which needs a name
--    /// to drop. The physical node takes the names from the frames, which carry each series' own.
-+    /// The requirement that a binding naming [`METRIC_NAME`] among [`tags`](Self::tags) also declares
-+    /// this name belongs to the bare-scan arm of `plan_fused_series`, not to this node: a child that
-+    /// is a region scan is asked for the series of this one metric, while a child that already
-+    /// produces raw frames - a discovered selector's `RawSeriesSource`, or the union of them - names
-+    /// each series in its own labels and is accepted with `None` here. A reader of the output still
-+    /// sees which range functions dropped the name, which needs no binding.
-     pub metric_name: Option<Arc<str>>,
-     /// The output column holding the grid timestamps.
-     pub time_index: String,
-```
-
-**File**: `src/promql/src/extension_plan/planner.rs` (modified, +186/-1)
-```diff
-@@ -327,18 +327,36 @@ fn explicit_label_frame_ordering(schema: &Schema) -> Option<SeriesOrdering> {
- 
- #[cfg(test)]
- mod tests {
-+    use std::fmt::{self, Formatter};
-     use std::sync::Arc;
- 
-+    use common_error::ext::BoxedError;
-     use common_query::series_frame::{
-         raw_series_frame_schema_with_ordering, series_frame_ordering,
-     };
-+    use common_recordbatch::{EmptyRecordBatchStream, SendableRecordBatchStream};
-+    use datafusion::common::DFSchema;
-+    use datafusion::logical_expr::{EmptyRelation, LogicalPlan};
-     use datafusion::physical_plan::ExecutionPlan;
-     use datafusion::physical_plan::empty::EmptyExec;
-+    use datafusion::physical_plan::metrics::ExecutionPlanMetricsSet;
-     use datafusion::physical_plan::union::UnionExec;
-+    use datafusion::physical_plan::{DisplayAs, DisplayFormatType};
-+    use datatypes::prelude::ConcreteDataType;
-+    use datatypes::schema::{ColumnSchema, SchemaRef as DatatypesSchemaRef};
-     use datatypes::series::SeriesOrdering;
-     use datatypes::series::samples::{FieldSpec, SeriesSchema};
-+    use datatypes::series::time::{EvalGrid, GridSpec};
-+    use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder, RegionMetadataRef};
-+    use store_api::region_engine::{
-+        PrepareRequest, QueryScanContext, RegionScanner, ScannerProperties,
-+    };
-+    use store_api::storage::{RegionId, ScanRequest};
-+    use table::table::scan::RegionScanExec;
- 
--    use super::normalize_raw_union;
-+    use super::{METRIC_NAME, normalize_raw_union, plan_fused_series};
-+    use crate::extension_plan::{FusedSeries, FusedSeriesBinding};
-+    use crate::native::plan::{BoundInput, NativeExpr, NativeNode, NativeTree, NativeType};
- 
-     fn raw_frame(ordering: SeriesOrdering) -> Arc<datafusion::arrow::datatypes::Schema> {
-         let series = SeriesSchema {
-@@ -399,4 +417,171 @@ mod tests {
-             "nothing is lowered when every member is complete"
-         );
-     }
-+
-+    /// A region whose only column is the time index: the scan below publishes an ordinary region
-+    /// schema, not a series frame.
-+    fn region_metadata() -> RegionMetadataRef {
-+        let mut builder = RegionMetadataBuilder::new(RegionId::new(1024, 1));
-+        builder
-+            .push_column_metadata(ColumnMetadata {
-+                column_schema: ColumnSchema::new(
-+                    "ts",
-+                    ConcreteDataType::timestamp_millisecond_datatype(),
-+                    false,
-+                )
-+                .with_time_index(true),
-+                semantic_type: api::v1::SemanticType::Timestamp,
-+                column_id: 1,
-+            })
-+            .primary_key(vec![]);
-+        Arc::new(builder.build().expect("the fixture metadata is valid"))
-+    }
-+
-+    /// The scanner of [`bare_region_scan`], which never answers a chunk here.
-+    #[derive(Debug)]
-+    struct BareScanner {
-+        metadata: RegionMetadataRef,
-+        properties: ScannerProperties,
-+    }
-+
-+    impl DisplayAs for BareScanner {
-+        fn fmt_as(&self, _format: DisplayFormatType, f: &mut Formatter<'_>) -> fmt::Result {
-+            write!(f, "BareScanner")
-+        }
-+    }
-+
-+    impl RegionScanner for BareScanner {
-+        fn name(&self) -> &str {
-+            "BareScanner"
-+        }
-+
-+        fn properties(&self) -> &ScannerProperties {
-+            &self.properties
-+        }
-+
-+        fn schema(&self) -> DatatypesSchemaRef {
-+            Arc::clone(&self.metadata.schema)
-+        }
-+
-+        fn metadata(&self) -> RegionMetadataRef {
-+            Arc::clone(&self.metadata)
-+        }
-+
-+        fn prepare(&mut self, request: PrepareRequest) -> Result<(), BoxedError> {
-+            self.properties.prepare(request);
-+            Ok(())
-+        }
-+
-+        fn scan_partition(
-+            &self,
-+            _ctx: &QueryScanContext,
-+            _metrics: &ExecutionPlanMetricsSet,
-+            _partition: usize,
-+        ) -> Result<SendableRecordBatchStream, BoxedError> {
-+            Ok(Box::pin(EmptyRecordBatchStream::new(Arc::clone(
-+                &self.metadata.schema,
-+            ))))
-+        }
-+
-+        fn set_logical_region(&mut self, logical_region: bool) {
-+            self.properties.set_logical_region(logical_region);
-+        }
-+
-+        fn set_query_load_region_id(&mut self, region_id: RegionId) {
-+            self.properties.set_query_load_region_id(region_id);
-+        }
-+
-+        fn has_predicate_without_region(&self) -> bool {
-+            true
-+        }
-+
-+        fn add_dyn_filter_to_predicate(
-+            &mut self,
-+            filter_exprs: Vec<Arc<dyn datafusion::physical_expr::PhysicalExpr>>,
-+        ) -> Vec<bool> {
-+            vec![false; filter_exprs.len()]
-+        }
-+    }
-+
-+    /// A bare region scan: the input of a node that runs inside the region it reads.
-+    fn bare_region_scan() -> Arc<dyn ExecutionPlan> {
-+        let scanner = BareScanner {
-+            metadata: region_metadata(),
-+            properties: ScannerPropertie
-```
-
-**File**: `src/promql/src/native/segment.rs` (modified, +23/-5)
-```diff
-@@ -730,6 +730,19 @@ fn is_raw_series_source(plan: &LogicalPlan) -> bool {
-     }
- }
- 
-+/// Whether `plan` already answers raw series frames of its own.
-+///
-+/// A selector naming no metric is prepared as one [`RawSeriesSource`] per discovered metric, or as
-+/// the `Union` of them when it discovered several, and each source names the metric it reads. So
-+/// such a plan is a frame producer in its own right: a segment hands it to the node it builds
-+/// instead of binding it again. Binding it again nests a source in a source, and the physical
-+/// planner reads a source's child as the region scan that source binds - a union is no such child
-+/// either - so the nested input is refused after the statement has already been committed to this
-+/// route.
-+fn is_sourced_plan(plan: &LogicalPlan) -> bool {
-+    matches!(plan, LogicalPlan::Union(_)) || is_raw_series_source(plan)
-+}
-+
- fn find_input_node(node: &NativeNode, source_index: usize) -> Option<&BoundInput> {
-     node.inputs()
-         .into_iter()
-@@ -918,11 +931,16 @@ fn build_inner_segment(
-         let source_fields = tree_source_fields(&tree).ok()?;
-         let mut children = Vec::with_capacity(sources.len());
-         for (local_index, &source_index) in sources.iter().enumerate() {
--            let (Some((Some(metric), _, source_tags)), Some(fields), Some(scan)) = (
--                per_source.get(source_index),
--                source_fields.get(local_index),
--                scans.get(local_index),
--            ) else {
-+            let scan = scans.get(local_index)?;
-+            // A scan that is already a source - one metric of a discovery, or the union of several -
-+            // is the frame producer this segment reads, so it stays as it is; see [`is_sourced_plan`].
-+            if is_sourced_plan(scan) {
-+                children.push(scan.clone());
-+                continue;
-+            }
-+            let (Some((Some(metric), _, source_tags)), Some(fields)) =
-+                (per_source.get(source_index), source_fields.get(local_index))
-+            else {
-                 return None;
-             };
-             children.push(LogicalPlan::Extension(Extension {
-```
-
-**File**: `src/query/src/promql/planner/native.rs` (modified, +30/-20)
-```diff
-@@ -1070,17 +1070,20 @@ impl PromPlanner {
-         let Some((mut prepared, logical_ids_differ, statement_kind)) = preparation? else {
-             return Ok(None);
-         };
--        // `absent_over_time` reads its window through a fold that keeps the metric name, so the segment that
--        // runs it reports names across a boundary. A nameless selector that discovery expands into more
--        // than one metric binds no single name for that boundary, and the fused node refuses a tree
--        // declaring `__name__` without one. A fold that dropped the name would plan, but it would read two
--        // metrics sharing their ordinary labels as one series, so the route declines.
-+        // `absent_over_time` reads its window through a fold that keeps the metric name, which the fused
-+        // node hands over in a frame's labels. Only the bare-scan arm of that node needs the binding's own
-+        // name: it asks a region scan for the series of one metric, and that is exactly the shape with a
-+        // name to ask for. A nameless selector that discovery expands into several metric tables never
-+        // reaches that arm, because its prepared input is the `Union` of one `RawSeriesSource` per
-+        // discovered metric, and each source names its own metric, so the node is handed explicit-label
-+        // frames instead. So the case declined here is a nameless input that is *not* sourced, which is the
-+        // one shape where a tree keeping `__name__` would meet a scan that has no name to bind.
-         //
--        // A selector that matched no table is not that shape: its typed empty input holds no series.
-+        // A selector that matched no table is not that shape either: its typed empty input holds no series.
-         if reads_presence(prom_expr)
--            && prepared
--                .iter()
--                .any(|(scan, _, metric, ..)| !is_empty_discovered_input(scan) && metric.is_none())
-+            && prepared.iter().any(|(scan, _, metric, ..)| {
-+                !is_empty_discovered_input(scan) && metric.is_none() && !is_sourced_plan(scan)
-+            })
-         {
-             return Ok(None);
-         }
-@@ -1386,15 +1389,6 @@ impl PromPlanner {
-         let children = prepared
-             .into_iter()
-             .map(|(scan, schema, metric, _, tags, _, split_series)| {
--                // A discovered selector already carries its own sources: a single metric is one
--                // `RawSeriesSource`, several are a `Union` of them, and each names the metric it
--                // reads. Wrapping either again would nest a source in a source.
--                let already_sourced = matches!(&scan, LogicalPlan::Union(_))
--                    || matches!(
--                        &scan,
--                        LogicalPlan::Extension(extension)
--                            if extension.node.as_any().is::<RawSeriesSource>()
--                    );
-                 // The typed empty frame of a selector that matched no table is already the input: it reads
-                 // no region and has no metric to bind, so it stays itself on both routes.
-                 if is_empty_discovered_input(&scan) {
-@@ -1404,8 +1398,9 @@ impl PromPlanner {
-                 // reads every input through a raw source: the source names each region's half and
-                 // reconciles the fragments of a series several regions hold. A partition that splits one
-                 // series across regions has to be read through a raw source even where no split is
--                // planned, since a bare scan would hand a region only its own fragment.
--                if (!per_source_inputs && !split_series) || already_sourced {
-+                // planned, since a bare scan would hand a region only its own fragment. A selector that
-+                // already carries its own sources stays as it is; see [`is_sourced_plan`].
-+                if (!per_source_inputs && !split_series) || is_sourced_plan(&scan) {
-                     return Ok(scan);
-                 }
-                 let Some(metric) = metric else {
-@@ -1862,6 +1857,21 @@ fn reads_presence(expr: &PromExpr) -> bool {
-     presence.0
- }
- 
-+/// Whether a prepared selector already carries its own raw sources, and so hands the fused node
-+/// explicit-label frames rather than a bare region scan.
-+///
-+/// A discovered selector is that shape: a single metric is one [`RawSeriesSource`], several are a
-+/// `Union` of them, and each names the metric it reads. Wrapping either again would nest a source in
-+/// a source.
-+fn is_sourced_plan(plan: &LogicalPlan) -> bool {
-+    matches!(plan, LogicalPlan::Union(_))
-+        || matches!(
-+            plan,
-+            LogicalPlan::Extension(extension)
-+                if extension.node.as_any().is::<RawSeriesSource>()
-+        )
-+}
-+
- /// The moment `millis` milliseconds from the Unix epoch, on whichever side of it that lands.
- ///
- /// A pre-epoch statement reaches the planner as a negative millis
-```
-
-**File**: `src/query/src/promql/planner/test.rs` (modified, +66/-13)
-```diff
-@@ -2582,7 +2582,7 @@ async fn native_zero_match_takes_the_layout_of_its_set_operand() {
- async fn native_absent_over_time_plans_over_discovered_metrics() {
-     // Only one of the two metrics carries `no_such_label`, so the matcher that wants a value of it
-     // narrows the discovery to that one metric and the route plans. A selector that narrowed to
--    // both would decline: its presence read keeps the names, and one segment could not bind them.
-+    // both - checked below - plans as well, since each discovered metric answers for itself.
-     let specs = ["alpha_total", "beta_total"]
-         .into_iter()
-         .map(|name| ((DEFAULT_SCHEMA_NAME.to_string(), name.to_string()), 2, 1))
-@@ -2656,9 +2656,9 @@ async fn native_absent_over_time_plans_over_discovered_metrics() {
-         "a selector that matched no table still answers its matchers: {tree}"
-     );
- 
--    // The same selector over metrics that all carry the label narrows to several: the presence
--    // read keeps their names and one segment cannot bind them, so the route declines rather than
--    // planning a tree that cannot be built or one that would read two metrics as one series.
-+    // The same selector over metrics that all carry the label narrows to several, and it plans: each
-+    // discovered metric is read through its own raw source, so the presence read keeps every name
-+    // and the fused node is handed the union of those sources rather than a scan to bind.
-     let specs = ["alpha_total", "beta_total"]
-         .into_iter()
-         .map(|name| ((DEFAULT_SCHEMA_NAME.to_string(), name.to_string()), 2, 1))
-@@ -2668,19 +2668,72 @@ async fn native_absent_over_time_plans_over_discovered_metrics() {
-         vec!["tag_0".to_string(), "no_such_label".to_string()],
-     ];
-     let provider = build_test_table_provider_with_tsid_tag_names(&specs, &tags, None).await;
--    let error = PromPlanner::stmt_to_plan_with_annotations(
--        provider,
--        &build_eval_stmt(r#"absent_over_time({no_such_label="x", tag_0="api"}[5m])"#),
--        &build_query_engine_state(),
--        None,
-+    let plan = build_native_fused_plan_with_provider(
-+        r#"absent_over_time({no_such_label="x", tag_0="api"}[5m])"#,
-         true,
-+        provider,
-     )
--    .await
--    .expect_err("a nameless selector over several metrics must decline");
-+    .await;
-+    let display = plan.display_indent().to_string();
-+    assert!(display.contains("FusedSeries"), "{display}");
-+    assert!(
-+        !display.contains("prom_absent_over_time"),
-+        "the answer must not be the existing per-series UDF: {display}"
-+    );
-+    let fused = find_fused_series(&plan).expect("fused plan");
-+    // One input holds the whole discovery: the two metrics are the union's sources, not two inputs.
-+    assert_eq!(1, fused.inputs().len(), "{plan:?}");
-+    // Each discovered metric is read through its own source, and that source names the metric it
-+    // reads: this is why the binding below needs no name of its own.
-+    fn source_metrics(plan: &LogicalPlan, out: &mut Vec<String>) {
-+        if let LogicalPlan::Extension(extension) = plan
-+            && let Some(source) = extension.node.as_any().downcast_ref::<RawSeriesSource>()
-+        {
-+            out.push(source.metric_name().to_string());
-+        }
-+        for input in plan.inputs() {
-+            source_metrics(input, out);
-+        }
-+    }
-+    let mut sources = Vec::new();
-+    for input in fused.inputs() {
-+        source_metrics(input, &mut sources);
-+    }
-+    sources.sort();
-+    assert_eq!(vec!["alpha_total", "beta_total"], sources, "{plan:?}");
-+    // The tree reads presence through a fold that keeps the name, which is what tells two metrics
-+    // apart at runtime; a fold that dropped it would read them as one series.
-+    let trees = fused_trees(&plan).join("\n");
-+    assert!(
-+        trees.contains(r#"Vector: absent {no_such_label="x", tag_0="api"}"#),
-+        "the labels are the selector's matchers: {trees}"
-+    );
-+    assert!(
-+        trees.contains("Window: last_over_time [300000ms]"),
-+        "the presence read folds the window: {trees}"
-+    );
-     assert!(
--        error.to_string().contains("metric matcher"),
--        "the decline keeps the existing plan's answer: {error}"
-+        !trees.contains("present_over_time"),
-+        "the fold keeps the name rather than dropping it: {trees}"
-+    );
-+    // The layout still declares the per-row name column, and an `absent` answer names no row: the
-+    // column is the nullable one every row leaves empty.
-+    let names = plan.schema().fields();
-+    let last = names.last().expect("the plan publishes a name column");
-+    assert_eq!(METRIC_NAME, last.name().as_str(), "{names:?}");
-+    assert_eq!(&ArrowDataType::Utf8, last.data_type(), "{names:?}");
-+    assert!(last.is_nullable(), "{names:?}");
-+    assert_eq!(
-+        1,
-+        names
-+            .iter()
-+            .filter(|field| field.name() == METRIC_NAME)
-+            
-```
-
-**File**: `tests-integration/src/tests/promql_test.rs` (modified, +122/-23)
-```diff
-@@ -6635,10 +6635,11 @@ async fn promql_output(
- /// `absent_over_time` answers with the labels its selector's matchers fix at every point no series
- /// of the selector has a sample at, and with nothing at the points one does. Three metric tables
- /// make the shapes reachable: `absent_probe` carries `probe_label`, which no row's value matches, so
--/// a nameless selector narrows to it; `absent_a` and `absent_b` carry the same ordinary labels, so a
--/// nameless selector over them is one discovery expands into several metrics; and no table carries
--/// `no_such_label`, which is the reported query - the one whose selector matches no metric table and
--/// whose labels therefore have to come from the matchers alone.
-+/// a nameless selector narrows to it; `absent_a` and `absent_b` carry the same ordinary labels, so
-+/// a nameless selector covers both and is one discovery expanding into several metrics, each
-+/// answering through its own raw source; and no table carries `no_such_label`, which is the reported
-+/// query - the one whose selector matches no metric table and whose labels therefore have to come
-+/// from the matchers alone.
- ///
- /// The existing plan answers the call per series with a UDF, which needs a metric name to read a
- /// table from: such a selector writes none, and the labels still have to reach the answer at every
-@@ -6748,33 +6749,131 @@ async fn native_promql_absent_over_time_answers_like_prometheus() {
-         );
-     }
- 
--    // A nameless selector that discovery expands into more than one metric declines. The presence
--    // read keeps the metric name, and no single name is bound for the segment that hands it over; a
--    // fold that dropped the name would plan, and would read two metrics sharing their ordinary
--    // labels as one series. Neither tree is planned, so the query keeps the existing plan's answer
--    // for a selector that names no metric - an error - rather than answering wrongly.
-+    // A nameless selector that discovery expands into more than one metric answers. `absent_a`,
-+    // `absent_b` and `absent_probe` all carry `job`, and the first two carry the same ordinary
-+    // labels, so `{job="api"}` is one discovery expanding into several metrics whose series would
-+    // collapse into one if the presence read dropped the metric name. It does not, so the node
-+    // reads a frame per metric - its child is the union of their raw sources - rather than one scan
-+    // bound to one name.
-+    //
-+    // Both metrics holding samples in the window answer nothing: neither may be read as the other.
-     observer.clear();
--    let declined = servers::prometheus_handler::PrometheusHandler::do_query(
--        instance.as_ref(),
--        &PromQuery {
--            query: r#"absent_over_time({job="api"}[5m])"#.to_string(),
--            start: "120".to_string(),
--            end: "120".to_string(),
--            step: "1s".to_string(),
--            ..PromQuery::default()
--        },
--        native_query_context(true, 4),
-+    let (columns, rows) = native_labelled_rows(
-+        promql_output(
-+            &instance,
-+            r#"absent_over_time({job="api"}[5m])"#,
-+            "120",
-+            "120",
-+            "1s",
-+        )
-+        .await,
-     )
-     .await;
-     assert!(
--        declined.is_err(),
--        "a nameless selector over several metrics must not be answered natively yet"
-+        observed_physical_nodes(&observer)
-+            .iter()
-+            .any(|node| node.name() == "FusedSeriesExec"),
-+        "a nameless selector over several metrics must run a fused node: {columns:?}"
-+    );
-+    assert!(
-+        rows.is_empty(),
-+        "two metrics with equal labels holding samples in the window: {columns:?} {rows:?}"
-+    );
-+
-+    // The same selector where the window holds no sample of any of them answers once, with the
-+    // selector's equality labels alone: the name the presence read kept is not a label of the
-+    // answer, and neither is `probe_label`, which no matcher fixes.
-+    let (columns, rows) = native_labelled_rows(
-+        promql_output(
-+            &instance,
-+            r#"absent_over_time({job="api"}[5m])"#,
-+            "400",
-+            "400",
-+            "1s",
-+        )
-+        .await,
-+    )
-+    .await;
-+    assert_eq!(
-+        vec![(400000, labels(&[("job", "api")]), 1.0)],
-+        rows,
-+        "{columns:?}"
-+    );
-+
-+    // A range answers every step whose window holds nothing.
-+    let (columns, rows) = native_labelled_rows(
-+        promql_output(
-+            &instance,
-+            r#"absent_over_time({job="api"}[5m])"#,
-+            "400",
-+            "470",
-+            "70s",
-+        )
-+        .await,
-+    )
-+    .await;
-+    assert_eq!(
-+        vec![
-+            (400000, labels(&[("job", "api")]), 1.0),
-+            (470000, labels(&[("job", "api")]), 1.0),
-+        ],
-+        rows,
-+        "{columns:?}"
-     );
-+
-+    // A statement that compares a discovery over several metrics with o
+-    /// `candidate_lease_id` is the lease's [GrantedRegion::candidate_lease_id].
++    /// `candidate_lease_id` is the lease's [GrantedRegion::candidate_lease_id]. A Follower lease
++    /// that carries one may leave a region that a catchup made writable alone until its Leader or
++    /// StagingLeader lease, see [`is_confirmed_leader`](Self::is_confirmed_leader).
+     fn set_region_role_with_lease(
+         &self,
+         region_id: RegionId,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10564** (2026-11-23): perf(mito2): prune files by their primary key range before reading footers (@killme2008)
-- **PR #10561** (2026-11-23): perf(mito2): split seq scan ranges of files with disjoint primary keys (@killme2008)
-- **PR #10559** (2026-11-23): fix: catch up a writable region that still awaits its Leader lease (@fengjiachun)
-- **PR #10558** (closed): feat(frontend): add background-refreshed PromQL range cache (@discord9)
-- **PR #10556** (2026-11-23): fix(sql): keep column options in ALTER TABLE ADD COLUMN (@killme2008)
-- **PR #10552** (2026-11-23): fix(otlp): reject malformed cumulative histogram points (@shuiyisong)
+- **PR #10605** (2026-11-24): fix(datatypes): bounds-check Vector::get and get_ref [Backport release/v1.3] (@MichaelScofield)
+- **PR #10604** (2026-11-24): fix(meta): persist segmented procedure checkpoints atomically on RDS (@WenyXu)
+- **PR #10601** (2026-11-24): ci: make nightly merge opt-out and simplify Docbot labels (@shuiyisong)
+- **PR #10599** (2026-11-24): fix(servers)!: validate UTF-8 in unchecked Prometheus validation mode [Backport release/v1.3] (@MichaelScofield)
+- **PR #10596** (2026-11-24): fix(deps): upgrade url to 2.5.9 (@fengys1996)
+- **PR #10595** (2026-11-24): chore: fix cargo-shear warnings in common-telemetry and session (@fengys1996)
 
 ---
 
@@ -3258,54 +2521,65 @@ sharing ordinary labels st
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. catch up a writable region that still awaits its Leader lease
+## X. promql): answer a named selector over a missing table with the empty vector
 
 **RULE**:
-When implementing operations in `src/datanode/src/heartbeat/handler/upgrade_region.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/src/promql/planner/native.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `946e599d`: catch up a writable region that still awaits its Leader lease. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `883ae6ea`: promql): answer a named selector over a missing table with the empty vector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat/handler/upgrade_region.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/src/promql/planner/native.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let Some(confirmed) = ctx
-                .region_server
-                .is_confirmed_leader(upgrade_region.region_id)
-            // Ignores the catchup requests for writable regions, except those a catchup made
-            // writable with no Leader lease since: they may lack what the leader has written
-            // since, and the engine catches them up again.
-            if confirmed {
-    use store_api::region_request::RegionRequest;
-    #[tokio::test]
-    async fn test_writable_region_awaiting_leader_lease_catches_up() {
-        let mock_region_server = mock_region_server();
-        let region_id = RegionId::new(1024, 1);
-
-        let (mock_engine, mut requests) =
-            MockRegionEngine::with_custom_apply_fn(MITO_ENGINE_NAME, |region_engine| {
-                region_engine.mock_role = Some(Some(RegionRole::Leader));
-                region_engine.mock_confirmed_leader = Some(false);
-            });
-        mock_region_server.register_test_region(region_id, mock_engine);
-        let kv_backend = Arc::new(MemoryKvBackend::new());
-        let handler_context = HandlerContext::new_for_test(mock_region_server, kv_backend);
-        let reply = UpgradeRegionsHandl
+            let time_index = free_time_index(DEFAULT_TIME_INDEX_COLUMN, &value_names, &output_tags);
+                        // narrows the field set of a scan this route can read, and a selector that matched
+                        // no table has no scan to narrow: the answer is the empty vector either way, exactly
+                        // as the named branch below answers a missing table.
+                    // The selector names a metric whose table does not exist, so the query still has an
+                    // answer: the empty vector, planned from the same typed empty input a nameless selector
+                    // that matched no table is. Planning it here keeps `TableNameNotFound` out of the
+                    // existing planner, which has no table to bind.
+                    //
+                    // A `__field__` matcher does not decline here, though one over a scan this route can
+                    // read does: it narrows the field set of the table its selector reads, and this table has
+                    // no field set to narrow, so every field selection over it is empty. The existing planner
+                    // answers the same way, because a missing tab
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            let Some(writable) = ctx.region_server.is_region_leader(upgrade_region.region_id)
-            // Ignores the catchup requests for writable regions.
-            if writable {
+            // A label named `time` is the one collision the default time column can have: the
+            // value columns are named after the expression, so they never take that name. The
+            // time column is this route's own synthetic name - no label or value is renamed - so
+            // a statement whose output already holds a `time` column publishes its grid under the
+            // first free `native_time_N` instead of dropping or renaming the label.
+            let time_index = if value_names
+                .iter()
+                .chain(&output_tags)
+                .any(|name| name == DEFAULT_TIME_INDEX_COLUMN)
+            {
+                (0usize..)
+                    .map(|index| format!("native_time_{index}"))
+                    .find(|candidate| {
+                        !value_names
+                            .iter()
+                            .chain(&output_tags)
+                            .any(|name| name == candidate)
+                    })
+                    .expect("the time column candidate sequence is unbounded")
+            } else {
+                DEFAULT_TIME_INDEX_COLUMN.to_string()
+            };
+                        // is declined fo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `946e599d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `883ae6ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

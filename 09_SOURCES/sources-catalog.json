@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "da6276d7",
+    "sourceVersion": "6dce0b21",
     "license": "BSD-3-Clause",
-    "contentHash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
-    "lastHarvestedAt": "2026-11-23T23:39:56.838Z",
+    "contentHash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
+    "lastHarvestedAt": "2026-11-24T15:17:25.621Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "b26b87f9",
+    "sourceVersion": "81e60511",
     "license": "Apache-2.0",
-    "contentHash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
-    "lastHarvestedAt": "2026-11-23T18:50:49.771Z",
+    "contentHash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
+    "lastHarvestedAt": "2026-11-24T15:17:30.527Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -13233,10 +13233,10 @@
     "repository": "EL4CTEO/fast-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/EL4CTEO/fast-anything",
-    "sourceVersion": "445abd1d",
+    "sourceVersion": "1fdf12ef",
     "license": "MIT",
-    "contentHash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
-    "lastHarvestedAt": "2026-11-23T13:06:46.916Z",
+    "contentHash": "d26d749e17c63d43325332b90d5b2108d6ef765f75a0f57c1b7b033bb0b987c8",
+    "lastHarvestedAt": "2026-11-24T15:17:14.574Z",
     "learningId": "learn-github-el4cteo-fast-anything"
   },
   "daveebbelaar-bama": {

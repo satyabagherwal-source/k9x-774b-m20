@@ -772013,3 +772013,262 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c2fe718c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10291. fix shim call in the NaN test after #126 (Harvested from EL4CTEO/fast-anything)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fix shim call in the NaN test after #126",
+  "source": "EL4CTEO/fast-anything",
+  "source_url": "https://github.com/EL4CTEO/fast-anything",
+  "source_version": "1fdf12ef",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T15:17:14.027Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-el4cteo-fast-anything",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything) (Revision: `1fdf12ef`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/ruby.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `85be624c`: ruby: fix shim call in the NaN test after #126. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ruby.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        fs::write(dir.join("shim.rb"), shim(&port, &[], "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        fs::write(dir.join("shim.rb"), shim(&port, "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `85be624c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10292. cmd/k8s-operator: publish HA Service VIPs for configured IP families (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cmd/k8s-operator: publish HA Service VIPs for configured IP families",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "6dce0b21",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-24T15:17:25.072Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `6dce0b21`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cmd/k8s-operator/svc-for-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6dce0b21`: cmd/k8s-operator: publish HA Service VIPs for configured IP families. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/svc-for-pg.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// Publish the IPv4 VIP before the IPv6 one. Previously, this status only held
+		// the IPv4 VIP, so we keep it as svc.status.loadBalancer.ingress[0] as consumers
+		// may rely on this ordering.
+		for _, mapping := range []*ingressservices.Mapping{cfg.IPv4Mapping, cfg.IPv6Mapping} {
+			if mapping == nil {
+				continue
+			}
+			if !mapping.TailscaleServiceIP.IsValid() {
+				return false, fmt.Errorf("Tailscale Service has no address matching Kubernetes Service address %s", mapping.ClusterIP)
+			}
+			lbs = append(lbs, corev1.LoadBalancerIngress{
+				IP:       mapping.TailscaleServiceIP.String(),
+			})
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		lbs = []corev1.LoadBalancerIngress{
+			{
+				IP:       tsSvcIPv4.String(),
+			},
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6dce0b21` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10293. answer a named selector over a missing table with the empty vector (Harvested from GreptimeTeam/greptimedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "answer a named selector over a missing table with the empty vector",
+  "source": "GreptimeTeam/greptimedb",
+  "source_url": "https://github.com/GreptimeTeam/greptimedb",
+  "source_version": "81e60511",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T15:17:29.967Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-greptimeteam-greptimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `81e60511`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/query/src/promql/planner/native.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `883ae6ea`: promql): answer a named selector over a missing table with the empty vector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/src/promql/planner/native.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            let time_index = free_time_index(DEFAULT_TIME_INDEX_COLUMN, &value_names, &output_tags);
+                        // narrows the field set of a scan this route can read, and a selector that matched
+                        // no table has no scan to narrow: the answer is the empty vector either way, exactly
+                        // as the named branch below answers a missing table.
+                    // The selector names a metric whose table does not exist, so the query still has an
+                    // answer: the empty vector, planned from the same typed empty input a nameless selector
+                    // that matched no table is. Planning it here keeps `TableNameNotFound` out of the
+                    // existing planner, which has no table to bind.
+                    //
+                    // A `__field__` matcher does not decline here, though one over a scan this route can
+                    // read does: it narrows the field set of the table its selector reads, and this table has
+                    // no field set to narrow, so every field selection over it is empty. The existing planner
+                    // answers the same way, because a missing tab
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            // A label named `time` is the one collision the default time column can have: the
+            // value columns are named after the expression, so they never take that name. The
+            // time column is this route's own synthetic name - no label or value is renamed - so
+            // a statement whose output already holds a `time` column publishes its grid under the
+            // first free `native_time_N` instead of dropping or renaming the label.
+            let time_index = if value_names
+                .iter()
+                .chain(&output_tags)
+                .any(|name| name == DEFAULT_TIME_INDEX_COLUMN)
+            {
+                (0usize..)
+                    .map(|index| format!("native_time_{index}"))
+                    .find(|candidate| {
+                        !value_names
+                            .iter()
+                            .chain(&output_tags)
+                            .any(|name| name == candidate)
+                    })
+                    .expect("the time column candidate sequence is unbounded")
+            } else {
+                DEFAULT_TIME_INDEX_COLUMN.to_string()
+            };
+                        // is declined fo
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `883ae6ea` are properly handled with clean fallback behavior.

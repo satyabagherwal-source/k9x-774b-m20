@@ -4,22 +4,22 @@
 {
   "source_repository": "EL4CTEO/fast-anything",
   "source_url": "https://github.com/EL4CTEO/fast-anything",
-  "source_version": "445abd1d",
+  "source_version": "1fdf12ef",
   "license": "MIT",
-  "timestamp": "2026-11-23T13:06:47.218Z",
+  "timestamp": "2026-11-24T15:17:14.809Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-el4cteo-fast-anything",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything) (Revision: `445abd1d`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T13:06:47.218Z`  
+> **Provenance**: Harvested from [EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything) (Revision: `1fdf12ef`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T15:17:14.809Z`  
 > **Learning ID**: `learn-github-el4cteo-fast-anything`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `EL4CTEO/fast-anything` (Commit: `445abd1d`)
+- **Target Repository**: `EL4CTEO/fast-anything` (Commit: `1fdf12ef`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T13:06:45.604Z  
+> **Harvest Timestamp**: 2026-11-24T15:17:13.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Don't rewrite it in Rust. Rewrite the 5% that's slow: profile Python, Node or Ruby apps, port the hot functions with your coding agent, prove they behave the same.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2716 stars
+- **Stars / Engagement**: 3498 stars
 
 ---
 
@@ -57,9 +57,15 @@ import (
 	"expvar"
 	"os"
 	"runtime/pprof"
+	"strconv"
+	"sync"
+	"time"
 )
 
-var fastAnythingProfFile *os.File
+var (
+	fastAnythingProfFile *os.File
+	fastAnythingDoneOnce sync.Once
+)
 
 func init() {
 	if path := os.Getenv("FAST_ANYTHING_PPROF"); path != "" {
@@ -67,18 +73,27 @@ func init() {
 			fastAnythingProfFile = f
 		}
 	}
+	// scan --duration: a server or GUI runs until closed, so end it after that long, profile saved
+	if ms, err := strconv.Atoi(os.Getenv("FAST_ANYTHING_STOP_AFTER_MS")); err == nil && ms > 0 {
+		time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
+			fastAnythingDone()
+			os.Exit(0)
+		})
+	}
 }
 
 // Deferred at the top of main: stops the profile and saves recordings when main returns.
 func fastAnythingDone() {
-	if fastAnythingProfFile != nil {
-		pprof.StopCPUProfile()
-		fastAnythingProfFile.Close()
-		fastAnythingProfFile = nil
-	}
-	if save, ok := expvar.Get("fast_anything_save").(expvar.Func); ok {
-		save()
-	}
+	fastAnythingDoneOnce.Do(func() {
+		if fastAnythingProfFile != nil {
+			pprof.StopCPUProfile()
+			fastAnythingProfFile.Close()
+			fastAnythingProfFile = nil
+		}
+		if save, ok := expvar.Get("fast_anything_save").(expvar.Func); ok {
+			save()
+		}
+	})
 }
 
 ```
@@ -166,13 +181,14 @@ pub struct Verify {
 /// The forms a source may take in the file: as recorded, or with const and let swapped (a Node
 /// port switches its function's const to let while enabled).
 fn forms(source: &str) -> [String; 3] {
-    let source = source.replace("\r\n", "\n");
+    let source = source.strip_prefix('\u{feff}').unwrap_or(source).replace("\r\n", "\n");
     [source.replacen("const ", "let ", 1), source.replacen("let ", "const ", 1), source]
 }
 
 /// The file without fast-anything's own marked blocks: an enabled Java, Go, C#, C/C++, PHP or
 /// Kotlin port puts one inside the function's body, and that isn't a change to the original.
 fn without_blocks(text: &str) -> String {
+    let text = without_inline(text.strip_prefix('\u{feff}').unwrap_or(text));
     let mut out = String::with_capacity(text.len());
     let mut inside = false;
     for line in text.split_inclusive('\n') {
@@ -189,8 +205,27 @@ fn without_blocks(text: &str) -> String {
     out
 }
 
+/// The text without the blocks fast-anything puts inside a line (` /* // >>> fast-anything: id >>> */ ...
+/// /* // <<< fast-anything: id <<< */`, after a Kotlin expression body's `=`).
+fn without_inline(text: &str) -> String {
+    let (begin, end) = (" /* // >>> fast-anything: ", " <<< */");
+    let mut out = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(b) = rest.find(begin) {
+        let line_end = rest[b..].find('\n').map_or(rest.len(), |n| b + n);
+        let close = rest[b..line_end]
+            .find("/* // <<< fast-anything: ")
+            .and_then(|c| rest[b + c..line_end].find(end).map(|e| b + c + e + end.len()));
+        let Some(close) = close else { break };
+        out.push_str(&rest[..b]);
+        rest = &rest[close..];
+    }
+    out.push_str(rest);
+    out
+}
+
 /// The source appears in the file as whole lines.
-fn found(text: &str, source: &str) -> bool {
+pub(crate) fn found(text: &str, source: &str) -> bool {
     let text = format!("\n{}\n", without_blocks(text).replace("\r\n", "\n"));
     forms(source).iter().any(|s| text.contains(&format!("\n{}\n", s.trim_end_matches('\n'))))
 }
@@ -336,20 +371,7 @@ mod tests {
     }
 
     #[test]
-    fn blocks_in_the_body_are_not_changes() {
-        let original = "static int lev(String a) {\n    return a.length();\n}\n";
-        let kept = verbatim(original, &["static int lev(String a) {\n    return a.length();\n}"]);
-        let enabled = "static int lev(String a) {\n    // >>> fast-anything: Fuzzy.lev >>>\n    if (X.ON) return X.call(a);\n    // <<< fast-anything: Fuzzy.lev <<<\n    return a.length();\n}\n";
-        assert!(found(enabled, &kept[0]), "an enabled port isn't a change to the original");
-        assert_eq!(verbatim(enabled, &["static int lev(String a) {\n    return a.length();\n}"]), kept);
-        assert!(!found(&enabled.replace("a.length()", "a.length() + 1"), &kept[0]));
-    }
-
-    #[test]
-    fn sources_are_found_verbatim() {
-        let file = "def f(x):\r\n    return x\r\n\r\nexport let g = (n) => n;\n";
-        let kept = verbatim(file, &["def f(x):\n    return x", "export const g = (n) => n", "def h(): pass", "  "]);
-        assert_eq!(kept, ["def f
+    fn blocks_in_the_body_are_not_changes
 ```
 
 ### Core Architecture Module: `src/util.rs`
@@ -357,8 +379,10 @@ mod tests {
 //! Small helpers: paths, processes, number formatting.
 
 use anyhow::{Context, Result};
+use std::io::Read;
 use std::path::{Component, Path, PathBuf};
-use std::process::{Command, Output};
+use std::process::{Command, Output, Stdio};
+use std::time::{Duration, Instant};
 
 pub fn absolute(p: &Path) -> PathBuf {
     std::path::absolute(p).unwrap_or_else(|_| p.to_path_buf())
@@ -396,6 +420,84 @@ pub fn slug(id: &str) -> String {
 
 pub fn output(cmd: &mut Command, what: &str) -> Result<Output> {
     cmd.output().with_context(|| format!("couldn't start {what} ({})", cmd.get_program().to_string_lossy()))
+}
+
+/// Like [`output`], but stops the command once `limit` has passed: asks it to close first (WM_CLOSE on Windows,
+/// SIGTERM elsewhere), so it can shut down cleanly and write what it has, then ends it for good after `grace`.
+/// Also says whether it had to be stopped.
+pub fn output_for(cmd: &mut Command, what: &str, limit: Option<Duration>, grace: Duration) -> Result<(Output, bool)> {
+    output_signalling(cmd, what, limit, grace, "TERM")
+}
+
+/// output_for, asking the process to stop with this signal on Unix (INT is Ctrl+C).
+pub fn output_signalling(
+    cmd: &mut Command,
+    what: &str,
+    limit: Option<Duration>,
+    grace: Duration,
+    signal: &str,
+) -> Result<(Output, bool)> {
+    output_stopping(cmd, what, limit, grace, signal, || true)
+}
+
+/// output_signalling, for an app that saves its own results on time: where it can't be asked to close (a
+/// console app on Windows), it's left to run, at most `grace` longer, until `saved` says they're written.
+pub fn output_stopping(
+    cmd: &mut Command,
+    what: &str,
+    limit: Option<Duration>,
+    grace: Duration,
+    signal: &str,
+    saved: impl Fn() -> bool,
+) -> Result<(Output, bool)> {
+    let Some(limit) = limit else { return Ok((output(cmd, what)?, false)) };
+    let mut child = cmd
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .with_context(|| format!("couldn't start {what} ({})", cmd.get_program().to_string_lossy()))?;
+    fn drain<R: Read + Send + 'static>(r: Option<R>) -> std::thread::JoinHandle<Vec<u8>> {
+        std::thread::spawn(move || {
+            let mut buf = Vec::new();
+            if let Some(mut r) = r {
+                let _ = r.read_to_end(&mut buf);
+            }
+            buf
+        })
+    }
+    let (stdout, stderr) = (drain(child.stdout.take()), drain(child.stderr.take()));
+    let started = Instant::now();
+    let mut asked: Option<(Instant, bool)> = None;
+    let status = loop {
+        if let Some(status) = child.try_wait()? {
+            break status;
+        }
+        match asked {
+            None if started.elapsed() >= limit => asked = Some((Instant::now(), ask_to_close(child.id(), signal))),
+            Some((at, closing)) if at.elapsed() >= grace || (!closing && saved()) => {
+                let _ = child.kill();
+                break child.wait()?;
+            }
+            _ => {}
+        }
+        std::thread::sleep(Duration::from_millis(50));
+    };
+    let out = Output { status, stdout: stdout.join().unwrap_or_default(), stderr: stderr.join().unwrap_or_default() };
+    Ok((out, asked.is_some()))
+}
+
+/// Ask a process to close the way a user would. False if it can't be asked (a console app on Windows).
+fn ask_to_close(pid: u32, signal: &str) -> bool {
+    let flag = format!("-{signal}");
+    let (program, args) = if cfg!(windows) { ("taskkill", ["/PID"]) } else { ("kill", [flag.as_str()]) };
+    Command::new(program)
+        .args(args)
+        .arg(pid.to_string())
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .is_ok_and(|s| s.success())
 }
 
 pub fn combined(out: &Output) -> String {
@@ -913,11 +1015,11 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #74** (2026-11-23): **python: flush multiprocessing.Pool worker stats on Windows exit**
-  *Symptoms*: Fixes #73  On Windows, `with multiprocessing.Pool(...) as p:` calls `Pool.terminate()` on exit, which uses `TerminateProcess()`. Unlike POSIX (where `sitecustomize.py` intercepts `SIGTERM` and converts it to `sys.exit(0)`), workers on Windows are killed mid-write before `BaseProcess._bootstrap`'s `finally` block can finish writing and renaming their `.prof` / `.jsonl` files, leaving only `.tmp` files in `.fast/children/`.  **What changed** - `src/python/sitecustomize.py`: on Windows (`os.name == "nt"`), wrapped `multiprocessing.pool.Pool.terminate` when worker watching is active. POSIX behavior is untouched.   - When the pool's workers are OS processes (skipping `ThreadPool`), its state is `RUN` or `CLOSE`, and `_cache` is empty (submitted jobs have finished), the wrapper calls base `Pool.close(self)` (if still `RUN`, avoiding any subclass `close()` override), re-checks `_cache`, and joins `_worker_handler` and workers up to a shared 2.0-second wall-clock deadline so idle workers receive their `None` sentinels and run `state.finish()` cleanly before delegating to the original `terminate()`.   - When `_cache` is non-empty (pending `apply_async`, unconsumed `imap`, or early termination), it skips closing and delegates directly to the original `terminate()`, so queued tasks do not run or produce side effects after termination.   - Because waiting shares a single 2.0-second deadline across the pool and always falls through to the original `terminate()`, a wedged worker (e.g. a st
+- **Issue #126** (2026-11-24): **ruby: port methods that take *rest or keyword arguments**
+  *Symptoms*: Fixes 125.  - `describe` accepts a named `*rest` (one array parameter, the new `Param.splat`), post arguments and keyword arguments (`kwonly`). Blocks, `**options`, `...`, and unnamed `*` or destructured arguments stay blocked. - The recorder and the shim bind each call with a lambda that has the method's own parameter list, made with `class_eval` in the method's module so defaults like `SCALE` resolve, and run with `instance_exec`. They pass the full list `[word, weights, scale]`, defaults included. - `FastAnything.invoke` spreads such a list back into a call through `Method#parameters` (rest spread, keywords by name); recording and verify call the original through it.  Test: `splat_and_keyword_arguments_are_bound_like_the_method_binds_them` (profile, record, and the shim's binder). I also ran the Ruby end-to-end CI step on my fork with `find_duplicates(*names, max_distance: MAX_DISTANCE)` in the example: scan, port, verify, enable, run, bench, disable, byte-for-byte check.
 
-- **Issue #73** (2026-11-23): **Python: `with multiprocessing.Pool(...) as p:` drops worker profiles and recordings on Windows**
-  *Symptoms*: On Windows, profiling or recording a Python app that uses `multiprocessing.Pool` as a context manager drops all work done inside the pool workers.  Minimal example:  ```python # worker.py def work(n: int) -> int:     total = 0     for i in range(n):         total += (i * i) % 97     return total  # app.py from multiprocessing import Pool from worker import work  if __name__ == "__main__":     with Pool(2) as p:         res = p.map(work, [300000, 300000, 300000, 300000])     print(sum(res)) ```  Running `fast-anything scan -- python app.py` on Windows prints:  ``` ✓ python app.py ran in 196ms    No functions from your own code showed up. Is the app doing its work in a library? ```  `.fast/children/` only contains leftover `.tmp` files (`10272.tmp`, `38020.tmp`) and no `.prof` files. Switching the exact same script to `p.close(); p.join()` finds `worker.work` (4 calls) and records all 4 calls cleanly.  `sitecustomize.py` installs a `SIGTERM` handler on POSIX so `Pool.__exit__()` / `Pool.terminate()` lets workers run their `finally` block and flush their results, but on Windows `Pool.terminate()` calls `TerminateProcess()`, which kills workers before they finish writing and renaming their files.  Expected: `with multiprocessing.Pool(...) as p:` on Windows profiles and records worker calls the same way `ProcessPoolExecutor` and `p.close(); p.join()` do, without delaying or running queued tasks when a pool is terminated early. 
+- **Issue #124** (2026-11-24): **kotlin: port functions with an expression body**
+  *Symptoms*: Fixes 123.  The recorder and the bridge now go right after the `=`, between inline markers:  ```kotlin fun f(x: Int): Int = /* // >>> fast-anything: id >>> */ if (Bridge.ON) (Bridge.call(arrayOf<Any?>(x)) as Int) else /* // <<< fast-anything: id <<< */ x * 2 ```  Kotlin's `else` takes the whole expression that follows, so the end of the expression doesn't have to be found, and `disable` takes the inline block out byte for byte. The staleness check (`state.rs`) skips inline blocks too, so `bench` doesn't call an enabled port stale.  For the I/O and determinism checks and the end line, the expression runs to a line break outside brackets, unless the line ends with an operator or the next one goes on with `.`, `?.`, `?:`, `&&`, `||`, `as` or `else`. One without a declared return type stays blocked.  Test: `expression_bodies_are_portable` (extent, blockers, patch and unpatch round trip, source still found). I also ran the Kotlin end-to-end CI step on my fork with `findDuplicates` in the example rewritten as a multi-line expression body: scan, port, verify (27/27), enable, run, bench and disable, then `git diff --exit-code`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -934,294 +1036,182 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd6c9f10` (2026-11-23)
-**Commit Message**: show: simplify pad_id by delegating non-overflowing ids to pad
+### Incident Patch 1: `85be624c` (2026-11-24)
+**Commit Message**: ruby: fix shim call in the NaN test after #126
 
-**File**: `src/show.rs` (modified, +2/-8)
+**File**: `src/ruby.rs` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@ fn bar(share: f64, width: usize) -> String {
- fn pad(s: &str, n: usize) -> String {
-     let len = s.chars().count();
-     if len > n {
--        if n == 0 { String::new() } else { format!("{}…", s.chars().take(n - 1).collect::<String>()) }
-+        format!("{}…", s.chars().take(n - 1).collect::<String>())
-     } else {
-         format!("{s}{}", " ".repeat(n - len))
-     }
-@@ -30,13 +30,7 @@ fn pad(s: &str, n: usize) -> String {
- /// so the function name at the end stays readable.
- fn pad_id(s: &str, n: usize) -> String {
-     let len = s.chars().count();
--    if len <= n {
--        format!("{s}{}", " ".repeat(n - len))
--    } else if n == 0 {
--        String::new()
--    } else {
--        format!("…{}", s.chars().skip(len - (n - 1)).collect::<String>())
+@@ -470,7 +470,7 @@ mod tests {
+             line: 1,
+             sources: vec![],
+         };
+-        fs::write(dir.join("shim.rb"), shim(&port, "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
++        fs::write(dir.join("shim.rb"), shim(&port, &[], "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
+         let check = r#"
+             require_relative "recorder"
+             nan, inf = Float::NAN, Float::INFINITY
+```
+
+---
+
+### Incident Patch 2: `9391af75` (2026-11-24)
+**Commit Message**: Merge #118: php functions in braced namespaces
+
+**File**: `src/php.rs` (modified, +64/-7)
+```diff
+@@ -7,7 +7,7 @@ use crate::native::{self, Flavor, Patches};
+ use crate::python::DISABLE_ENV;
+ use crate::state::{Ctx, Port, Verify};
+ use crate::util::{self, combined, output, tail};
+-use anyhow::{Context, Result, bail, ensure};
++use anyhow::{Context, Result, ensure};
+ use serde::Deserialize;
+ use serde_json::Value;
+ use std::collections::BTreeMap;
+@@ -150,7 +150,9 @@ fn run_php(
+ ) -> Result<std::process::Output> {
+     let mut cmd = Command::new(php);
+     cmd.arg("-d")
+-        .arg(format!("auto_prepend_file={}", prepend.display()))
++        // quoted, as an ini value: a path can hold characters ini syntax reads as operators (~ in
++        // Windows short names, like C:\Users\RUNNER~1)
++        .arg(format!("auto_prepend_file=\"{}\"", prepend.display()))
+         .args(args)
+         .current_dir(&ctx.root)
+         .env(DISABLE_ENV, "1")
+@@ -324,17 +326,21 @@ pub fn enable(ctx: &Ctx, port: &Port) -> Result<()> {
+         "{} ends with ?>: remove the closing tag so code can follow it",
+         port.file
+     );
+-    if text.contains("namespace ")
+-        && text.lines().any(|l| l.trim_start().starts_with("namespace ") && l.trim_end().ends_with('{'))
+-    {
+-        bail!("{} uses braced namespaces, which fast-anything can't add code to yet", port.file);
 -    }
-+    if len > n { format!("…{}", s.chars().skip(len - (n - 1)).collect::<String>()) } else { pad(s, n) }
- }
++    // with braced namespaces, no code may follow them outside a namespace block: the bridge goes in
++    // a global one of its own, and the function names it from the root
++    let braced = text.lines().any(|l| l.trim_start().starts_with("namespace ") && l.trim_end().ends_with('{'));
+     let class = bridge_class(port);
+     let from = file.parent().context("file has no folder")?;
+     let (_, lib) = port.lang.artifact(&port.ext);
+     let lib_rel = util::forward_slashes(&util::relative(from, &ctx.lib_dir().join(lib)));
+     let lib_lit = format!("'{}'", lib_rel.replace('\\', "\\\\").replace('\'', "\\'"));
+     let bridge = BRIDGE.replace("/*CLASS*/", &class).replace("/*ID*/", &port.id).replace("/*LIB*/", &lib_lit);
++    // in the file's own line endings (a Windows checkout gives bridge.php CRLF), so disable finds
++    // what it added
++    let nl = if text.contains("\r\n") { "\r\n" } else { "\n" };
++    let bridge = bridge.replace("\r\n", "\n").replace('\n', nl);
++    let (bridge, class) =
++        if braced { (format!("namespace {{{nl}{bridge}{nl}}}"), format!("\\{class}")) } else { (bridge, class) };
+     let prologue =
+         format!("if ({class}::$on ?? {class}::load()) return {class}::call({}, func_get_args());", name_const(hs));
+     let patched =
+@@ -355,6 +361,57 @@ pub fn disable(ctx: &Ctx, port: &Port) -> Result<()> {
+ mod tests {
+     use super::*;
  
- pub fn next(cmd: &str) {
-```
-
----
-
-### Incident Patch 2: `68e9be07` (2026-11-23)
-**Commit Message**: Revert Arabic/RTL edge cases and SVG bidi attributes (#70)
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `skills/fast-anything/SKILL.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ The `fast-anything` CLI measures, records, builds, checks and swaps. You write t
- 2. **Port**: `fast-anything port <id>`. It re-runs the app, records up to 500 real calls, and creates
-    `.fast/ports/<id>/` with a stub `src/lib.rs` and a `TASK.md`. Read TASK.md fully.
- 3. **Write the Rust** in `src/lib.rs` (Ruby, Java, Go, PHP, C, C++, C#: `src/port.rs`; `src/lib.rs` there is generated glue):
--   - Same semantics: Unicode code points (`.chars()`; JavaScript compares UTF-16 units; Arabic harakat `U+064B..U+065F`, Tatweel `U+0640`, Eastern digits `٠-٩`, and BiDi marks `U+200C..U+200F` are distinct scalar values), integer ranges, float operation order, error cases.
-+   - Same semantics: Unicode code points (`.chars()`; JavaScript compares UTF-16 units), integer ranges, float operation order, error cases.
-    - Fast: borrow, no needless allocation, ASCII fast paths, `with_capacity`.
-    - Keep the function and module names. Run `cargo check` in the crate.
- 4. **Verify**: `fast-anything verify <id>` builds in release mode and replays every recorded call.
-```
-
-**File**: `src/cfamily/rec.hpp` (modified, +3/-4)
-```diff
-@@ -99,10 +99,9 @@ inline std::vector<std::string> edges(const std::string &v) {
-             c++;
-         }
-     }
--    // an accent, CJK, an emoji with a modifier, a combining mark, Arabic/RTL with harakat/Tatweel/digits (UTF-8 bytes)
--    const std::string a = "\xC3\xA9", cjk = "\xE6\x97\xA5\xE6\x9C\xAC", emoji = "\xF0\x9F\x91\x8D\xF0\x9F\x8F\xBD", comb = "e\xCC\x81",
--                      ar = "\xD9\x85\xD9\x8F\xD8\xAD\xD9\x8E\xD9\x85\xD9\x8E\xD9\x91\xD8\xAF\xD9\x80\xD9\xA1\xD9\xA2\xD8\x9F\xE2\x80\x8F";
--    return {v.substr(0, mid) + a + v.substr(mid), v + cjk, emoji + v, v + comb, v + ar, ""};
-+    // an accent, CJK, an emoji with a modifier, a combining mark (UTF-8 bytes)
-+    const std::string a = "\xC3\xA9", cjk = "\xE6\x97\xA5\xE6\x9C\xAC", emoji = "\xF0\x9F\x91\x8D\xF0\x9F\x8F\xBD", comb = "e\xCC\x81";
-+    return {v.substr(0, mid) + a + v.substr(mid), v + cjk, emoji + v, v + comb, ""};
- }
- template <class T, class Al> std::vector<std::vector<T, Al>> edges(const std::vector<T, Al> &v) {
-     std::vector<std::vector<T, Al>> out;
-```
-
-**File**: `src/csharp/Rec.cs` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ static class FastAnythingRec
-     static bool Mutates;
-     static Func<object?[], object?>? Fn;
-     static Type[] Types = Array.Empty<Type>();
--    static readonly string[] Texts = { "", "ÀÉÎõü ñ", "日本語のテキスト", "emoji 👍🏽🎉", "é́", "İ ß ǅ ΣΑΣ", "مُحَمَّدـ١٢؟\u200F" };
-+    static readonly string[] Texts = { "", "ÀÉÎõü ñ", "日本語のテキスト", "emoji 👍🏽🎉", "é́", "İ ß ǅ ΣΑΣ" };
-     static readonly int[] Slices = { 0, 1, 2, 3, 5, 8, 13, 21, 34, 55 };
- 
-     static FastAnythingRec()
-```
-
-**File**: `src/golang/rec.go` (modified, +3/-3)
-```diff
-@@ -229,8 +229,8 @@ func fastAnythingRecVariants(v any) []any {
- 	return out
- }
- 
--// Non-ASCII text that ports often get wrong: an accent, CJK, an emoji with a modifier, a combining mark, Arabic/RTL with harakat/Tatweel/Eastern digits.
--var fastAnythingRecNonASCII = []string{"é", "日本", "👍🏽", "é", "مُحَمَّدـ١٢؟\u200f"}
-+// Non-ASCII text that ports often get wrong: an accent, CJK, an emoji with a modifier, a combining mark.
-+var fastAnythingRecNonASCII = []string{"é", "日本", "👍🏽", "é"}
- 
- // Inputs where ports and originals tend to part ways, of the same type as the recorded value.
- func fastAnythingRecEdges(v any) []any {
-@@ -263,7 +263,7 @@ func fastAnythingRecEdges(v any) []any {
- 		s := []rune(rv.String())
- 		mid := len(s) / 2
- 		na := fastAnythingRecNonASCII
--		for _, x := range []string{string(s[:mid]) + na[0] + string(s[mid:]), string(s) + na[1], na[2] + string(s), string(s) + na[3], string(s) + na[4], ""} {
-+		for _, x := range []string{string(s[:mid]) + na[0] + string(s[mid:]), string(s) + na[1], na[2] + string(s), string(s) + na[3], ""} {
- 			put(func(n reflect.Value) { n.SetString(x) })
- 		}
- 	case reflect.Slice:
-```
-
-**File**: `src/native.rs` (modified, +1/-1)
-```diff
-@@ -188,7 +188,7 @@ Only edit files in this folder. Don't touch the {label} project.\n\n\
- ## Real calls\n\n\
- fast-anything recorded {recorded} real calls (out of {seen} while the app ran). Arguments arrive as JSON. A few:\n\n{fence}\n{samples}\n{fence}\n\n\
- ## Rules\n\n\
--- Same result for every input, edge cases included: empty input, zero, negatives, non-ASCII and Arabic/RTL text (harakat U+064B..U+065F, Tatweel U+0640, Eastern digits ٠-٩, BiDi marks), very long input. verify tests these too.\n\
-+- Same result for every input, edge cases included: empty input, zero, negatives, non-ASCII text, very long input. verify tests these too.\n\
- {rules}\
- - Return `Err(message)` where the original would fail.\n\
- - Make it fast: no needless allocation, borrow, `with_capacity`, fast paths for common cases. Threads are fine if the result is the same.\n\
-```
-
-**File**: `src/node.rs` (modified, +1/-1)
-```diff
-@@ -444,7 +444,7 @@ Only edit files in this folder. Don't touch the JavaScript project.\n\n\
- {helpers}## Real calls\n\n\
- fast-anything recorded {recorded} real calls (out of {seen} while the app ran). A few:\n\n{fence}\n{samples}\n{fence}\n\n\
- ## Rules\n\n\
--- Same result for every input, edge cases included: empty input, zero, negatives, NaN and infinity, non-ASCII and Arabic/RTL text (harakat U+064B..U+065F, Tatweel U+0640, Eastern digits ٠-٩, BiDi marks), very long input. verify tests these too.\n\
-+- Same result for every input, edge cases included: empty input, zero, negatives, NaN and infinity, non-ASCII text, very long input. verify tests these too.\n\
- - JavaScript strings are UTF-16: `.length`, indexing and `charCodeAt` count UTF-16 code units. \
- Use `s.encode_utf16()` for anything index- or length-based (bytes are fine after checking `is_ascii()`).\n\
- - JavaScript numbers are f64. Integer math is exact only up to 2^53; use `f64` unless the values are clearly small integers.\n\
-```
-
-**File**: `src/node/runner.mjs` (modified, +2/-2)
-```diff
-@@ -359,7 +359,7 @@ function variants(value, rand) {
-   );
- }
- 
--const NON_ASCII = ["\u{e9}", "\u{65e5}\u{672c}", "\u{1f44d}\u{1f3fd}", "e\u{301}", "\u{645}\u{64f}\u{62d}\u{64e}\u{645}\u{64e}\u{651}\u{62f}\u{640}\u{661}\u{662}\u{61f}\u{200f}"];
-+const NON_ASCII = ["\u{e9}", "\u{65e5}\u{672c}", "\u{1f44d}\u{1f3fd}", "e\u{301}"];
- const BIG = 4096; // the longest "huge" input, in items or characters
- const EDGE_SAMPLE = 20;
- const EDGE_LIMIT = 100;
-@@ -374,7 +374,7 @@ function edges(v) {
-   if (typeof v === "string") {
-     const cs = [...v];
-     const mid = cs.length >> 1;
--    return [cs.slice(0, mid).join("") + NON_ASCII[0] + cs.slice(mid).join(""), v + NON_ASCII[1], NON_ASCII[2] + v, v + NON_ASCII[3], v + NON_ASCII[4], ""];
-+    return [cs.slice(0, mid).join("") + NON_ASCII[0] + cs.slice(mid).join(""), v + NON_ASCII[1], NON_ASCII[2] + v, v + NON_ASCII[3], ""];
-   }
-   if (Array.isArray(v) && v.length) return [[], ...edges(v[0]).slice(0, 4).map((e) => [e, ...v.slice(1)])];
-   if (ArrayBuffer.isView(v) && !(v instanceof DataView) && v.length) {
-```
-
-**File**: `src/python.rs` (modified, +2/-2)
-```diff
-@@ -687,8 +687,8 @@ Only edit files in this folder. Don't touch the Python project.\n\n\
- {helpers}## Real calls\n\n\
- fast-anything recorded {recorded} real calls (out of {seen} while the app ran). A few:\n\n{fence}\n{samples}\n{fence}\n\n\
- ## Rules\n\n\
--- Same result for every input, edge cases included: empty input, zero, negatives, NaN and infinity, non-ASCII and Arabic/RTL text (harakat U+064B..U+065F, Tatweel U+0640, Eastern digits ٠-٩, BiDi marks U+200C..U+200F), very long input. verify tests these too.\n\
--- Python `str` indexes by Unicode code point: use `.chars()` (or bytes only after checking `is_ascii()`). Note that Arabic harakat are distinct code points in `.chars()`.\n\
-+- Same result for every input, edge cases included: empty input, zero, negatives, NaN and infinity, non-ASCII text, very long input. verify tests these too.\n\
-+- Python `str` indexes by Unicode code point: use `.chars()` (or bytes only after checking `is_ascii()`).\n\
- - Python ints don't overflow. `i64` is fine unless the recorded values are bigger.\n\
- - Float results are compared with a relative tolerance of 1e-9. Keep the same order of operations.\n\
- - Where Python raises, raise too (`PyValueError::new_err(...)`, `PyKeyError`, ...).\n\
-```
-
----
-
-### Incident Patch 3: `1f9831e7` (2026-11-23)
-**Commit Message**: build and enable require the verified Rust sources
-
-Co-authored-by: sisyphus-dev-ai <[REDACTED_EMAIL]>
-
-**File**: `src/pipeline.rs` (modified, +74/-6)
-```diff
-@@ -221,6 +221,14 @@ pub fn slower_hint() -> &'static str {
-     "calling into Rust costs more than this function's work, so it won't be switched on. Port its caller instead (fewer, bigger calls), or  enable --force"
- }
- 
-+/// Whether the crate is not exactly the one covered by the last verify. Old state without a hash
-+/// keeps its legacy behavior; re-porting clears verify and therefore always needs a new one.
-+fn crate_needs_verify(ctx: &Ctx, port: &Port) -> Result<bool> {
-+    let Some(verify) = &port.verify else { return Ok(true) };
-+    let Some(expected) = verify.source_hash.as_deref() else { return Ok(false) };
-+    Ok(backend::source_hash(&ctx.crate_dir(port))? != expected)
-+}
-+
- pub fn enable(root: &Path, id: Option<&str>, force: bool) -> Result<String> {
-     let mut ctx = Ctx::open(root)?;
-     let id = ctx.resolve_port(id)?;
-@@ -232,6 +240,9 @@ pub fn enable(root: &Path, id: Option<&str>, force: bool) -> Result<String> {
-     if !verified && !force {
-         bail!("{id} hasn't passed verify yet: run  fast-anything verify {id}  (or --force)");
-     }
-+    if !force && crate_needs_verify(&ctx, &port)? {
-+        bail!("{id}'s Rust changed since it passed verify: run  fast-anything verify {id}  (or --force)");
-+    }
-     if let Some(m) = port.verify.as_ref().filter(|v| v.slower() && !force).and_then(|v| v.micro) {
-         bail!("{id} is {} slower per call in Rust: {}", util::times(1.0 / m.speedup), slower_hint());
-     }
-@@ -269,14 +280,10 @@ pub fn build_all(root: &Path) -> Result<()> {
-     ensure!(!ctx.state.ports.is_empty(), "nothing ported yet");
-     let mut failed = 0;
-     for port in ctx.state.ports.values() {
--        // An enabled port loads whatever lands in .fast/lib: only rebuild what verify checked.
--        let verified = port.verify.as_ref().and_then(|v| v.source_hash.as_deref());
--        if port.enabled
--            && verified.is_some_and(|h| backend::source_hash(&ctx.crate_dir(port)).ok().as_deref() != Some(h))
--        {
-+        if port.enabled && crate_needs_verify(&ctx, port)? {
-             failed += 1;
-             ui::error(format!(
--                "{} is switched on and its Rust changed since it passed verify; run  fast-anything verify {}",
-+                "{} is switched on and its Rust hasn't passed verify in its current state; run  fast-anything verify {}",
-                 port.id, port.id
-             ));
-             continue;
-@@ -480,4 +487,65 @@ mod tests {
-         let wrong = Verify { failed: 1, ..v };
-         assert!(feedback(&wrong).contains("failed"));
-     }
-+
-+    fn project(name: &str) -> (PathBuf, Port) {
-+        let root = std::env::temp_dir().join(format!("fa-pipeline-{name}-{}", std::process::id()));
-+        let _ = fs::remove_dir_all(&root);
-+        let crate_dir = ".fast/ports/demo";
-+        fs::create_dir_all(root.join(crate_dir).join("src")).unwrap();
-+        fs::write(root.join(crate_dir).join("Cargo.toml"), "[package]\nname = \"demo\"\nversion = \"0.1.0\"\n")
-+            .unwrap();
-+        fs::write(root.join(crate_dir).join("src/lib.rs"), "pub fn f() {}\n").unwrap();
-+        fs::write(root.join("app.py"), "def f():\n    pass\n").unwrap();
++    #[test]
++    fn ports_functions_in_braced_namespaces() {
++        if !Command::new("php").arg("-v").output().is_ok_and(|o| o.status.success()) {
++            eprintln!("no php on PATH, skipping");
++            return;
++        }
++        let dir = std::env::temp_dir().join(format!("fa-php-braced-test-{}", std::process::id()));
++        fs::create_dir_all(&dir).unwrap();
++        let app = "<?php\nnamespace Text {\n    function width(string $s): int\n    {\n        return strlen($s);\n    }\n}\n\nnamespace {\n    echo \\Text\\width('h\u{e9}llo'), \"\\n\";\n}\n";
++        fs::write(dir.join("app.php"), app).unwrap();
++        let mut ctx = Ctx::open(&dir).unwrap();
++        let found = profile(&ctx, "php", &["app.php".into()]).unwrap();
++        assert!(found.functions.iter().any(|f| f.name == "width" && f.blockers.is_empty()), "{:?}", found.functions);
++        let hs = Hotspot {
++            id: "Text.width".into(),
++            file: "app.php".into(),
++            line: 3,
++            name: "width".into(),
++            ..Hotspot::default()
++        };
++        ctx.state.hotspots.push(hs);
 +        let port = Port {
-+            id: "demo".into(),
-+            file: "app.py".into(),
-+            module: "app".into(),
-+            func: "f".into(),
-+            ext: "fa_demo".into(),
-+            crate_dir: crate_dir.into(),
++            id: "Text.width".into(),
++            file: "app.php".into(),
++            module: "Text".into(),
++            func: "width".into(),
++            ext: "fa_text_width".into(),
++            crate_dir: ".fast/ports/Text.width".into(),
 +            recorded: 1,
 +            calls_seen: 1,
 +            verify: None,
 +            enabled: false,
-+            lang: Lang::Python,
++            lang: backend::Lang::Php,
 +            owner: None,
-+            line: 1,
++            line: 3,
 +            sources: vec![],
 +        };
-+        (root, port)
-+    }
-+
-+    #[test]
-+    fn enable_requires_the_crate_that_passed_verify() {
-+        let (root, mut port) = project("enable-hash");
-+        let hash = backend::source_hash(&root.join(&port.crate_dir)).unwrap();
-+        fs::write(root.join(&port.crate_dir).join("src/lib.rs"), "pub fn f() { panic!() }\n").unwrap();
-+        port.verify = Some(Verify { built: true, total: 1, passed: 1, source_hash: Some(hash), ..Verify::default() });
-+        let mut ctx = Ctx::open(&root).unwrap();
-+        ctx.state.ports.insert(port.id.clone(), port);
-+        ctx.save().unwrap();
-+
-+        let err = enable(&root, Some("demo"), false).unwrap_err();
-+        assert!(err.to_string().contains("Rust changed since it passed verify"), "{err}");
-+        assert!(!Ctx::open(&root).unwrap().state.ports["demo"].enabled);
-+        let _ = fs::remove_dir_all(root);
-+    }
-+
-+    #[test]
-+    fn live_build_guard_covers_missing_changed_and_legacy_verify() {
-+        let (root, mut port) = project("build-hash");
-+        let ctx = Ctx::open(&root).unwrap();
-+        assert!(crate_needs_verify(&ctx, &port).unwrap());
-+
-+        port.verify = Some(Verify::default());
-+        assert!(!crate_needs_verify(&ctx, &port).unwrap(), "legacy verify without a hash keeps working");
-+
-+        let hash = backend::source_hash(&root.join(&port.crate_
++        enable(&ctx, &port).unwrap();
++        // without the port's library, the bridge doesn't load and the PHP version runs
++        let lint = Command::new("php").args(["-l", "app.php"]).current_dir(&dir).output().unwrap();
++        let run = Command::new("php").arg("app.php").current_dir(&dir).output().unwrap();
++        let enabled = fs::read_to_string(dir.join("app.php")).unwrap();
++        disable(&ctx, &port).unwrap();
++        let after = fs::read_to_string(dir.join("app.php")).unwrap();
++        let _ = fs::remove_dir_all(&dir);
++        assert!(lint.status.success(), "{}{enabled}", String::from_utf8_lossy(&lint.stdout));
++        assert_eq!(String::from_utf8_lossy(&run.stdout)
+```
+
+**File**: `src/php/describe.php` (modified, +19/-3)
+```diff
+@@ -41,14 +41,30 @@ function describe_file(string $path): array {
+     $out = [];
+     $classes = [];   // stack of [name, depth]
+     $depth = 0;
++    $top = 0;        // the depth of top-level code: 1 inside a braced  namespace X { ... }
++    $nsOpen = -1;    // the token that opens that namespace block
+     $funcs = [];
+     $statics = [];
+     $found = [];
+     for ($i = 0; $i < $n; $i++) {
+         $t = $tokens[$i];
+-        if ($t === '{' || in_array(id($t), [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true)) { $depth++; continue; }
+-        if ($t === '}') { $depth--; if ($classes && end($classes)[1] === $depth) array_pop($classes); continue; }
++        if ($t === '{' || in_array(id($t), [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true)) {
++            $depth++;
++            if ($i === $nsOpen) $top = $depth;
++            continue;
++        }
++        if ($t === '}') {
++            $depth--;
++            if ($depth < $top) $top = 0;
++            if ($classes && end($classes)[1] === $depth) array_pop($classes);
++            continue;
++        }
+         $k = id($t);
++        if ($k === T_NAMESPACE) {
++            for ($m = $i + 1; $m < $n && $tokens[$m] !== ';' && $tokens[$m] !== '{'; $m++);
++            if ($m < $n && $tokens[$m] === '{') $nsOpen = $m;
++            continue;
++        }
+         if (in_array($k, [T_CLASS, T_TRAIT, T_INTERFACE, T_ENUM], true)) {
+             $p = $prev($i);
+             if ($p >= 0 && (id($tokens[$p]) === T_DOUBLE_COLON || id($tokens[$p]) === T_NEW)) continue;
+@@ -64,7 +80,7 @@ function describe_file(string $path): array {
+         $name = $tokens[$j][1];
+         $class = null;
+         if ($classes && $depth === end($classes)[1] + 1) $class = end($classes)[0];
+-        elseif ($depth !== 0) continue; // declared inside a function body
++        elseif ($depth !== $top) continue; // declared inside a function body
+         // modifiers and the first token of the declaration
+         $start = $i;
+         $static = false;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #74** (2026-11-23): python: flush multiprocessing.Pool worker stats on Windows exit (@Plastic-time)
-- **PR #72** (2026-11-23): show: keep trailing function names visible for long ids (@Plastic-time)
-- **PR #70** (2026-11-23): feat(verify,report): add Arabic/RTL edge-case synthesis and SVG unicode-bidi isolation (@mlubbad)
-- **PR #69** (closed): disable: reject incomplete fast-anything blocks (@Jack-mi)
-- **PR #68** (2026-11-23): go: restore the best attempt's Cargo inputs (@Jack-mi)
-- **PR #67** (2026-11-23): build and enable require the verified Rust sources (@Jack-mi)
+- **PR #126** (2026-11-24): ruby: port methods that take *rest or keyword arguments (@mohitmishra786)
+- **PR #124** (2026-11-24): kotlin: port functions with an expression body (@mohitmishra786)
+- **PR #122** (2026-11-24): C++: answer derived and edge cases in child processes (@mohitmishra786)
+- **PR #120** (2026-11-24): python: port @classmethods that don't use cls (@mohitmishra786)
+- **PR #118** (2026-11-24): php: port functions in braced namespaces (@mohitmishra786)
+- **PR #116** (2026-11-24): scan --duration for every language (@mohitmishra786)
 
 ---
 
@@ -1241,39 +1231,31 @@ Co-authored-by: sisyphus-dev-ai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. show: simplify pad_id by delegating non-overflowing ids to pad
+## X. ruby: fix shim call in the NaN test after #126
 
 **RULE**:
-When implementing operations in `src/show.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ruby.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd6c9f10`: show: simplify pad_id by delegating non-overflowing ids to pad. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85be624c`: ruby: fix shim call in the NaN test after #126. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/show.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ruby.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        format!("{}…", s.chars().take(n - 1).collect::<String>())
-    if len > n { format!("…{}", s.chars().skip(len - (n - 1)).collect::<String>()) } else { pad(s, n) }
+        fs::write(dir.join("shim.rb"), shim(&port, &[], "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if n == 0 { String::new() } else { format!("{}…", s.chars().take(n - 1).collect::<String>()) }
-    if len <= n {
-        format!("{s}{}", " ".repeat(n - len))
-    } else if n == 0 {
-        String::new()
-    } else {
-        format!("…{}", s.chars().skip(len - (n - 1)).collect::<String>())
-    }
+        fs::write(dir.join("shim.rb"), shim(&port, "../.fast/lib/libfa_app_rb_mean.so")).unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd6c9f10` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85be624c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

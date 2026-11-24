@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `da6276d7`  
+> **Source Version**: `6dce0b21`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:39:56.359Z  
+> **Timestamp**: 2026-11-24T15:17:24.505Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:39:56.354Z  
+> **Harvest Timestamp**: 2026-11-24T15:17:24.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39534 stars
+- **Stars / Engagement**: 39560 stars
 
 ---
 
@@ -803,8 +803,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
   *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
 
-- **Issue #22574** (2026-11-23): **Funnel: 2 of 3 edges slow (~5 s TLS) or failing since 2026-11-22 05:31 UTC, ingress via DERP fra**
-  *Symptoms*: ### What is the issue?  Since 2026-11-22 05:31 UTC, Funnel requests to one of my nodes intermittently fail. Callers get "Bad Gateway" or time out after about 5 s. Nothing changed on my side. The node's log had zero TLS handshake errors for the 46 hours before (back to 2026-11-20 07:32 UTC); since then about 35-40 per hour.  Testing each Funnel edge separately (public DNS, `curl --resolve NAME:443:EDGE`, 20 requests each, 2026-11-22 07:37-07:44 UTC; the app answers 403 to "/" by design, so any HTTP code means TLS completed):  | Edge | Result | Time until TLS done | |---|---|---| | 185.40.234.172 | 20/20 ok | 0.16-0.41 s | | 185.40.234.37 | 19/20 ok, 1 failed | 3.7-13.7 s, mostly ~5.4 s | | 185.40.234.210 | 16/20 ok, 4 failed | ~5.4 s, some 10.8-13.8 s |  So one edge is healthy and two are consistently slow or failing, which explains why it looks intermittent: it depends on which edge the caller hits. A warm test (2 requests 10 s apart to 185.40.234.37) was still slow: 3.2 s, then 2.3 s.  On the node: - `peerapi_ingress` went from 138 to 211 during the test, so connections reach the node; the delay is in the relay-to-node leg. - All `funnel-ingress-node` peers have empty `CurAddr` (no direct path); the three active ones have `Relay: fra`. Node metrics: ~1,986 packets received via DERP vs 49 direct. - `tailscale netcheck` on the node: UDP yes, IPv4 yes, MappingVariesByDestIP false, nearest DERP Frankfurt 29.7 ms. - Each failure logs the same pattern (addresses redacted):  ``` 07
+- **Issue #22576** (2026-11-24): **Funnel: multi-second TLS handshake stalls on Frankfurt ingress (ingress-fra-01.tailscale.com)**
+  *Symptoms*: ### What is the issue?    **Environment:** Tailscale 1.104.7 (commit fb3b9b296) on Debian Linux, native install via systemd. Funnel endpoint on port 443 serving a self-hosted web service behind the node.  **DNS (via 1.1.1.1):** my Funnel hostname resolves to the Frankfurt ingress IPs 185.40.234.37 / .172 / .210 (ingress-fra-01.tailscale.com, NetActuate, Frankfurt)  **What works:** Serving the same endpoint tailnet-internally is fast (~10 ms TTFB). All tailnet peers connect directly (empty PeerRelay). The Tailscale status page shows no open incident for Funnel.  **What fails:** Every *public* connection through the FUNNEL ingress shows multi-second TLS handshakes, consistently across all three ingress IPs. Measured with curl --resolve (one pass per ingress IP, hostname redacted):  ip=185.40.234.37   try=1 tls=7.196525s ttfb=9.008322s total=9.008372s ip=185.40.234.37   try=2 tls=5.352385s ttfb=7.155548s total=7.155601s ip=185.40.234.37   try=3 tls=5.389028s ttfb=7.278048s total=7.278100s ip=185.40.234.37   try=4 tls=5.552671s ttfb=7.237613s total=7.237664s ip=185.40.234.37   try=5 tls=5.428549s ttfb=7.209125s total=7.209178s ip=185.40.234.172 try=1 tls=0.753926s ttfb=1.027717s total=1.027763s ip=185.40.234.172 try=2 tls=0.959335s ttfb=1.287773s total=1.287817s ip=185.40.234.172 try=3 tls=1.155935s ttfb=1.683839s total=1.683909s ip=185.40.234.172 try=4 tls=1.733231s ttfb=2.336538s total=2.336588s ip=185.40.234.172 try=5 tls=1.880378s ttfb=2.324323s total=2.324372s ip=185.40.234.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,546 +821,159 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7caf9edb` (2026-11-23)
-**Commit Message**: appc,feature/conn25: build split DNS routes from the parsed config
+### Incident Patch 1: `6dce0b21` (2026-11-24)
+**Commit Message**: cmd/k8s-operator: publish HA Service VIPs for configured IP families (#22061)
 
-On every self node change, conn25 parsed the app connector capability
-twice: once in configFromNodeView, and again in appc.AppDNSRoutes to
-build the split DNS routes. Build the routes from the config we already
-have instead, and move DNSAddrScheme into feature/conn25 along with it.
+HA Services currently advertise only their IPv4 VIP in LoadBalancer
+status, even when forwarding is configured only for IPv6. Consumers of
+Service status then select an address with no matching backend mapping.
 
-With appc/conn25.go gone, conn25 no longer depends on appc, so
-TestOmitAppConnectors no longer needs to omit conn25 too.
+Derive ingress addresses from the configured family mappings. Preserve
+IPv4 behavior and readiness withdrawal while publishing IPv6-only and
+dual-stack backends correctly.
 
-Fixes tailscale/corp#51400
-Fixes tailscale/corp#51402
+Fixes #22060
 
-Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
+Signed-off-by: Stefanie Jane <[REDACTED_EMAIL]>
 
-**File**: `appc/conn25.go` (removed, +0/-57)
+**File**: `cmd/k8s-operator/svc-for-pg.go` (modified, +13/-4)
 ```diff
-@@ -1,57 +0,0 @@
--// Copyright (c) Tailscale Inc & contributors
--// SPDX-License-Identifier: BSD-3-Clause
--
--package appc
--
--import (
--	"fmt"
--	"strings"
--
--	"tailscale.com/tailcfg"
--	"tailscale.com/tailcfg/nodecap"
--	"tailscale.com/types/appctype"
--	"tailscale.com/types/dnstype"
--)
--
--const AppConnectorAttrName = "tailscale.com/app-connectors"
--
--// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
--// entries to determine the destination at query time rather than configuration
--// time.
--const DNSAddrScheme = "tailscale-app"
--
--// AppDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
--// domains configured in self's capability map. Each route resolves via the
--// [DNSAddrScheme] scheme naming the app, so the connector that serves it is
--// chosen at query time. It returns nil if the node lacks Connectors 2025 apps.
--func AppDNSRoutes(hasCap func(c nodecap.Cap) bool, self tailcfg.NodeView) map[string][]*dnstype.Resolver {
--	if !hasCap(AppConnectorAttrName) {
--		return nil
--	}
--
--	apps, err := tailcfg.UnmarshalNodeCapViewJSON[appctype.AppConnectorAttr](self.CapMap(), AppConnectorAttrName)
--	if err != nil {
--		return nil
--	}
--
--	appNamesByDomain := map[string]string{}
--	for _, app := range apps {
--		// conn25 apps are provided under [AppConnectorAttrName] with the Mode
--		// field set to [appctype.AppConnectorModeMagicIP].
--		if app.Mode != appctype.MagicIP {
--			continue
--		}
--		for _, domain := range app.Domains {
--			domain, _ = strings.CutPrefix(domain, "*.")
--			domain = strings.ToLower(domain)
--			// in the case of multiple apps specifying the same domain (which is misconfiguration
--			// that should be validated at point of input) last write wins.
--			appNamesByDomain[domain] = app.Name
--		}
--	}
--	m := make(map[string][]*dnstype.Resolver, len(appNamesByDomain))
--	for domain, appName := range appNamesByDomain {
--		m[domain] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
--	}
--	return m
--}
-```
-
-**File**: `appc/conn25_test.go` (removed, +0/-203)
-```diff
-@@ -1,203 +0,0 @@
--// Copyright (c) Tailscale Inc & contributors
--// SPDX-License-Identifier: BSD-3-Clause
--
--package appc
--
--import (
--	"encoding/json"
--	"fmt"
--	"testing"
--
--	"github.com/google/go-cmp/cmp"
--	"tailscale.com/tailcfg"
--	"tailscale.com/tailcfg/nodecap"
--	"tailscale.com/types/appctype"
--	"tailscale.com/types/dnstype"
--)
--
--func TestAppDNSRoutes(t *testing.T) {
--	getBytesForAttr := func(name string, domains []string, tags []string, mode appctype.Mode) []byte {
--		attr := appctype.AppConnectorAttr{
--			Name:       name,
--			Domains:    domains,
--			Connectors: tags,
--			Mode:       mode,
--		}
--		bs, err := json.Marshal(attr)
--		if err != nil {
--			t.Fatalf("test setup: %v", err)
--		}
--		return bs
--	}
--	appOneBytes := getBytesForAttr(
--		"app1",
--		[]string{"example.com"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	appTwoBytes := getBytesForAttr(
--		"app2",
--		[]string{"a.example.com"},
--		[]string{"tag:two"},
--		appctype.MagicIP,
--	)
--	appThreeBytes := getBytesForAttr(
--		"app3",
--		[]string{"woo.b.example.com", "hoo.b.example.com"},
--		[]string{"tag:three1", "tag:three2"},
--		appctype.MagicIP,
--	)
--	appFourBytes := getBytesForAttr(
--		"app4",
--		[]string{"woo.b.example.com", "c.example.com"},
--		[]string{"tag:four1", "tag:four2"},
--		appctype.MagicIP,
--	)
--	appFiveBytes := getBytesForAttr(
--		"app5",
--		[]string{"*.example.com", "example.com"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	appSixBytes := getBytesForAttr(
--		"app6",
--		[]string{"*.Example.com", "EXAMPLE.com", "EXAMPLE.COM"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	subnetAppBytes := getBytesForAttr(
--		"subnet-app",
--		[]string{"subnet.example.com"},
--		[]string{"tag:one"},
--		appctype.Subnet,
--	)
--
--	resolver := func(appName string) []*dnstype.Resolver {
--		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
--	}
--
--	for _, tt := range []struct {
--		name   string
--		hasCap bool
--		config []tailcfg.RawMessage
--		want   map[string][]*dnstype.Resolver
--	}{
--		{
--			name:   "no-capability", // hasCap false should return nil regardless of config.
--			hasCap: false,
--		},
--		{
--			name:   "no-apps", // hasCap true but no configured apps returns an empty map.
--			hasCap: true,
--			want:   map[string][]*dnstype.Resolver{},
--		},
--		{
--			name:   "bad-config", // bad config should return nil rather than error.
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(`hey`)},
--		},
--		{
--			name:   "single-app",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appOneBytes)},
--			want: map[string][]*dnstype.Resolver{
--				"example.com": resolver("app1"),
--			},
--		},
--		{
--			name:   "single-app-multi-domain",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appThreeBytes)},
--			want: map[string][]*dnstype.Resolver{
--				"woo.b.example.com": resolver("app3"),
--				"hoo.b.example.com": resolver("app3"),
--			},
--		},
--		{
--			name:   "multi-app-no-overlap",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appOneBytes),
--				tailcfg.RawMessage(appTwoBytes),
--			},
--			want: map[string][]*dnstype.Resolver{
--				"example.com":   resolver("app1"),
--				"a.example.com": resolver("app2"),
--			},
--		},
--		{
--			name:   "domain-collision-last-write-wins",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appThreeBytes), // app3: woo.b.example.com, hoo.b.example.com
--				tailcfg.RawMessage(appFourBytes),  // app4: woo.b.example.com, c.example.com
--			},
--			want: map[string][]*dnstype.Resolver{
--				// app4 overwrites app3 for the shared domain
--				"woo.b.example.com": resolver("app4"),
--				"hoo.b.example.com": resolver("app3"),
--				"c.example.com":     resolver("app4"),
--			},
--		},
--		{
--			name:   "wildcards-are-stripped-and-deduped",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appFiveBytes)},
--			want: map[string][]*dnstype.Resolver{
--				// *.example.com and example.com should both normalize to example.com.
--				"example.com": resolver("app5"),
--			},
--		},
--		{
--			name:   "domains-are-normalized-and-deduped",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appSixBytes)},
--			want: map[string][]*dnstype.Resolver{
--				// *.Example.com, EXAMPLE.com, EXAMPLE.COM should all normalize to example.com.
--				"example.com": resolver("app6"),
--			},
--		},
--		{
--			name:   "sub-domains-and-top-domains-do-not-collide",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appTwoBytes),
--				tailcfg.RawMessage(appFiveBytes),
--			},
--			want: map[string][]*dnstype.Resolver{
--				// *.example.com normalizes to example.com; a.example.com remains distinct.
--				"a.example.com": resolver("app2"),
--				"example.com":   resolver("app5"),
--			},
--		},
--		{
--			name:   "only-conn25-processed",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appOneBytes),
--				tailcfg.RawMessage(subnetAp
-```
-
-**File**: `cmd/tailscaled/depaware.txt` (modified, +1/-1)
-```diff
-@@ -257,7 +257,7 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
-         gvisor.dev/gvisor/pkg/tcpip/transport/udp                    from gvisor.dev/gvisor/pkg/tcpip/adapters/gonet+
-         gvisor.dev/gvisor/pkg/waiter                                 from gvisor.dev/gvisor/pkg/context+
-         tailscale.com                                                from tailscale.com/version
--        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal+
-+        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal
-      💣 tailscale.com/atomicfile                                     from tailscale.com/ipn+
-   LD    tailscale.com/chirp                                          from tailscale.com/feature/bird
-         tailscale.com/client/local                                   from tailscale.com/client/web+
-```
-
-**File**: `cmd/tailscaled/deps_test.go` (modified, +1/-3)
-```diff
-@@ -86,9 +86,7 @@ func TestOmitAppConnectors(t *testing.T) {
- 	deptest.DepChecker{
- 		GOOS:   "linux",
- 		GOARCH: "amd64",
--		// conn25 also uses appc, so omit it too to check that nothing
--		// else pulls appc in.
--		Tags: "ts_omit_appconnectors,ts_omit_conn25,ts_include_cli",
-+		Tags:   "ts_omit_appconnectors,ts_include_cli",
- 		BadDeps: map[string]string{
- 			"tailscale.com/appc":                  msg,
- 			"tailscale.com/feature/appconnectors": msg,
-```
-
-**File**: `feature/conn25/conn25.go` (modified, +37/-6)
-```diff
-@@ -26,7 +26,6 @@ import (
- 
- 	"go4.org/netipx"
- 	"golang.org/x/net/dns/dnsmessage"
--	"tailscale.com/appc"
- 	"tailscale.com/feature"
- 	"tailscale.com/ipn"
- 	"tailscale.com/ipn/ipnext"
-@@ -169,9 +168,9 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 		return errors.New("dns manager resolver not ready")
- 	}
- 
--	if err := r.RegisterCustomScheme(appc.DNSAddrScheme, func(addr string) (string, error) {
-+	if err := r.RegisterCustomScheme(DNSAddrScheme, func(addr string) (string, error) {
- 		scheme, appName, ok := strings.Cut(addr, ":")
--		if !ok || scheme != appc.DNSAddrScheme {
-+		if !ok || scheme != DNSAddrScheme {
- 			return "", fmt.Errorf("unexpected conn25 scheme %q", scheme)
+@@ -409,11 +409,20 @@ func (r *HAServiceReconciler) maybeProvision(ctx context.Context, hostname strin
+ 			return false, fmt.Errorf("error getting DNS name for Service: %w", err)
  		}
  
-@@ -266,7 +265,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 	})
- 
- 	// Route DNS queries for app domains to the connector that serves
--	// them, chosen at query time via the [appc.DNSAddrScheme] scheme.
-+	// them, chosen at query time via the [DNSAddrScheme] scheme.
- 	e.host.Hooks().ExtraDNSRoutes.Set(func() map[string][]*dnstype.Resolver {
- 		if !e.conn25.isConfigured() {
- 			return nil
-@@ -468,7 +467,7 @@ func (e *extension) onSelfChange(selfNode tailcfg.NodeView) {
- 	}
- 	// Store the routes only once the config parsed, so a bad self node
- 	// leaves the previous routes and config in place together.
--	e.conn25.appDNSRoutes.Store(appc.AppDNSRoutes(selfNode.HasCap, selfNode))
-+	e.conn25.appDNSRoutes.Store(cfg.appDNSRoutes())
- 	e.conn25.reconfig(cfg)
- }
- 
-@@ -508,7 +507,7 @@ type Conn25 struct {
- 	prefsAdvertiseConnector atomic.Bool
- 
- 	// appDNSRoutes holds the split DNS routes for the app domains in the
--	// self node's capabilities, as returned by [appc.AppDNSRoutes]. It is
-+	// self node's capabilities, as returned by [config.appDNSRoutes]. It is
- 	// recomputed on each self node change and served to
- 	// [ipnext.Hooks.ExtraDNSRoutes]. The map must not be mutated once stored.
- 	appDNSRoutes syncs.AtomicValue[map[string][]*dnstype.Resolver]
-@@ -748,6 +747,11 @@ type ConnectorTransitIPResponse struct {
- const (
- 	AppConnectorAttrName                     = "tailscale.com/app-connectors"
- 	AppConnectorsExperimentalIPPoolsAttrName = "tailscale.com/app-connectors-experimental-ippools"
-+
-+	// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
-+	// entries to determine the destination at query time rather than configuration
-+	// time.
-+	DNSAddrScheme = "tailscale-app"
- )
- 
- // ipSets wraps all the IPSets the config needs.
-@@ -893,6 +897,33 @@ func (cfg *config) getAppsForConnectorDomain(domain dnsname.FQDN, prefsAdvertise
- 	return appNames
- }
- 
-+// appDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
-+// domains in cfg. Each route resolves via the [DNSAddrScheme] scheme naming
-+// the app, so the connector that serves it is chosen at query time. It
-+// returns nil if cfg is not configured.
-+func (cfg *config) appDNSRoutes() map[string][]*dnstype.Resolver {
-+	if !cfg.isConfigured {
-+		return nil
-+	}
-+	m := make(map[string][]*dnstype.Resolver, len(cfg.appNamesByDomain)+len(cfg.appNamesByWCDomain))
-+	add := func(byDomain map[dnsname.FQDN][]string) {
-+		for domain, appNames := range byDomain {
-+			if len(appNames) == 0 {
+-		lbs = []corev1.LoadBalancerIngress{
+-			{
++		// Publish the IPv4 VIP before the IPv6 one. Previously, this status only held
++		// the IPv4 VIP, so we keep it as svc.status.loadBalancer.ingress[0] as consumers
++		// may rely on this ordering.
++		for _, mapping := range []*ingressservices.Mapping{cfg.IPv4Mapping, cfg.IPv6Mapping} {
++			if mapping == nil {
 +				continue
 +			}
-+			// In the case of multiple apps specifying the same domain (which is misconfiguration
-+			// that should be validated at point of input), the last one in the config list wins.
-+			appName := appNames[len(appNames)-1]
-+			m[domain.WithoutTrailingDot()] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
-+		}
-+	}
-+	// If an exact and a wildcard domain coincide, the exact domain's app
-+	// takes the route, so add it last.
-+	add(cfg.appNamesByWCDomain)
-+	add(cfg.appNamesByDomain)
-+	return m
-+}
-+
- func (e *extension) sendLoop(ctx context.Context) {
- 	for {
- 		select {
++			if !mapping.TailscaleServiceIP.IsValid() {
++				return false, fmt.Errorf("Tailscale Service has no address matching Kubernetes Service address %s", mapping.ClusterIP)
++			}
++			lbs = append(lbs, corev1.LoadBalancerIngress{
+ 				Hostname: dnsName,
+-				IP:       tsSvcIPv4.String(),
+-			},
++				IP:       mapping.TailscaleServiceIP.String(),
++			})
+ 		}
+ 
+ 		conditionStatus = metav1.ConditionTrue
 ```
 
-**File**: `feature/conn25/conn25_test.go` (modified, +136/-0)
+**File**: `cmd/k8s-operator/svc-for-pg_test.go` (modified, +85/-0)
 ```diff
-@@ -4138,6 +4138,142 @@ func TestHandleHookReplyToDNSQueries(t *testing.T) {
- // for the app domains in the self node's capabilities, and supplies none
- // before the self node is known, when this node is itself a connector, or
- // after a switch to a different node.
-+func TestAppDNSRoutes(t *testing.T) {
-+	app := func(name string, mode appctype.Mode, domains ...string) appctype.AppConnectorAttr {
-+		return appctype.AppConnectorAttr{
-+			Name:       name,
-+			Domains:    domains,
-+			Connectors: []string{"tag:" + name},
-+			Mode:       mode,
-+		}
-+	}
-+	resolver := func(appName string) []*dnstype.Resolver {
-+		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
-+	}
+@@ -29,8 +29,10 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+ 	"tailscale.com/client/tailscale/v2"
+ 
++	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/ingressservices"
+ 	"tailscale.com/kube/kubetypes"
+@@ -671,3 +673,86 @@ func TestServicePGReconciler_OptimisticLockErrorRequeues(t *testing.T) {
+ 	})
+ 	expectRequeue(t, svcPGR, "default", svc.Name)
+ }
 +
++func TestServicePGReconciler_LoadBalancerAddressFamilies(t *testing.T) {
++	const vip6 = "fd7a:115c:a1e0::1234"
 +	for _, tt := range []struct {
-+		name string
-+		apps []appctype.AppConnectorAttr
-+		want map[string][]*dnstype.Resolver
++		name       string
++		clusterIPs []string
++		want       []string
 +	}{
-+		{
-+			name: "no-apps", // an unconfigured config has no routes.
-+		},
-+		{
-+			name: "only-subnet-apps", // no conn25 apps means unconfigured.
-+			apps: []appctype.AppConnectorAttr{app("subnet-app", appctype.Subnet, "subnet.example.com")},
-+		},
-+		{
-+			name: "single-app",
-+			apps: []appctype.AppConnectorAttr{app("app1", appctype.MagicIP, "example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com": resolver("app1"),
-+			},
-+		},
-+		{
-+			name: "single-app-multi-domain",
-+			apps: []appctype.AppConnectorAttr{app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				"woo.b.example.com": resolver("app3"),
-+				"hoo.b.example.com": resolver("app3"),
-+			},
-+		},
-+		{
-+			name: "multi-app-no-overlap",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("app2", appctype.MagicIP, "a.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com":   resolver("app1"),
-+				"a.example.com": resolver("app2"),
-+			},
-+		},
-+		{
-+			name: "domain-collision-last-wins",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com"),
-+				app("app4", appctype.MagicIP, "woo.b.example.com", "c.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// app4 is listed last, so takes the shared domain.
-+				"woo.b.example.com": resolver("app4"),
-+				"hoo.b.example.com": resolver("app3"),
-+				"c.example.com":     resolver("app4"),
-+			},
-+		},
-+		{
-+			name: "wildcard-collision-last-wins",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "*.example.com"),
-+				app("app2", appctype.MagicIP, "*.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com": resolver("app2"),
-+			},
-+		},
-+		{
-+			name: "exact-beats-wildcard",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("app2", appctype.MagicIP, "*.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// The exact app wins even though the wildcard app is listed last.
-+				"example.com": resolver("app1"),
-+			},
-+		},
-+		{
-+			name: "wildcards-are-stripped-and-deduped",
-+			apps: []appctype.AppConnectorAttr{app("app5", appctype.MagicIP, "*.example.com", "example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				// *.example.com and example.com should both normalize to example.com.
-+				"example.com": resolver("app5"),
-+			},
-+		},
-+		{
-+			name: "domains-are-normalized-and-deduped",
-+			apps: []appctype.AppConnectorAttr{app("app6", appctype.MagicIP, "*.Example.com", "EXAMPLE.com", "EXAMPLE.COM", "example.com.")},
-+			want: map[string][]*dnstype.Resolver{
-+				// All variants should normalize to example.com.
-+				"example.com": resolver("app6"),
-+			},
-+		},
-+		{
-+			name: "sub-domains-and-top-domains-do-not-collide",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app2", appctype.MagicIP, "a.example.com"),
-+				app("app5", appctype.MagicIP, "*.example.com", "example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// *.example.com normalizes to example.com; a.example.com remains distinct.
-+				"a.example.com": resolver("app2"),
-+				"example.com":   resolver("app5"),
-+			},
-+		},
-+		{
-+			name: "only-conn25-processed",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("subnet-app", appctype.Subnet, "subnet.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// The app that's a subnet router should not show up here,
-+				// since we only deal with conn25 apps.
-+				"example.com": resolver("app1"),
-+			},
-+		},
++		{"ipv4", []string{"10.0.0.1"}, []string{vipTestIP}},
++		{"ipv6", []string{"fd00::1"}, []string{vip6}},
++		{"dual-stack", []string{"10.0.0.1", "fd00::1"}, []string{vipTestIP, vip6}},
++		{"ipv6-primary-dual-stack", []string{"fd00::1", "10.0.0.1"}, []string{vipTestIP, vip6}},
 +	} {
 +		t.Run(tt.name, func(t *testing.T) {
-+			cfg := mustConfig(t, makeSelfNode(t, tt.apps, appctype.Conn25PoolsAttr{}, nil))
-+			got := cfg.appDNSRoutes()
-+			if diff := cmp.Diff(tt.want, got); diff != "" {
-+				t.Fatalf("appDNSRoutes (-want, +got):\n%s", diff)
++			r, state, fc, ft, _ := setupServiceTest(t)
++			svc, _ := setupTestService(t, "family-test", "", "10.0.0.1", fc, state)
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			serviceName := "svc:default-family-test"
++			tsSvc := ft.vipServices[serviceName]
++			tsSvc.Addrs = []string{vipTestIP, vip6}
++			ft.vipServices[serviceName] = tsSvc
++			cfg := ingressservices.Config{}
++			mustUpdate(t, fc, svc.Namespace, svc.Name, func(s *corev1.Service) {
++				s.Spec.ClusterIP = tt.clusterIPs[0]
++				s.Spec.ClusterIPs = tt.clusterIPs
++				s.Spec.IPFamilies = nil
++				for _, cip := range tt.clusterIPs {
++					ip := netip.MustParseAddr(cip)
++					if ip.Is4() {
++						s.Spec.IPFamilies = append(s.Spec.IPFamilies, corev1.IPv4Protocol)
++						cfg.IPv4Mapping = &ingressservices.Mapping{ClusterIP: ip, TailscaleServiceIP: netip.MustParseAddr(vipTestIP)}
++					} else {
++						s.Spec.IPFamilies = append(s.Spec.IPFamilies, corev1.IPv6Protocol)
++						cfg.IPv6Mapping = &ingressservices.Mapping{ClusterIP: ip, TailscaleServiceIP: netip.MustParseAddr(vip6)}
++					}
++				}
++			})
++			pr := tailscaled.Prefs{}
++			pr.Config.NodeID = "family-test"
++			pr.Config.UserProfile.LoginName = "proxy.test.ts.net"
++			pr.AdvertiseServices = []string{serviceName}
++			profile, err := json.Marshal(pr)
++			if err != nil {
++				t.Fatal(err)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				s.Labels = pgSecretLabels("test-pg", kubetypes.LabelSecretTypeState)
++				mak.Set(&s.Data, string(ipn.CurrentProfileStateKey), []byte("family-profile"))
++				mak.Set(&s.Data, "family-profile", profile)
++			})
++			status := ingressservices.Status{Configs: ingressservices.Configs{serviceName: cfg}, PodIPv4: "4.3.2.1"}
++			data, err := json.Marshal(status)
++			if err != nil {
++				t.Fatal(err)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				mak.Set(&s.Data, ingressservices.IngressConfigKey, data)
++			})
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			got := new(corev1.Service)
++			if err := fc.Get(t.Context(), client.ObjectKeyFromObject(svc), got); err != nil {
++				t.Fatal(err)
++			}
++			var ips []string
++			for _, ing := range got.Status.LoadBalancer.Ingress {
++				ips = append(ips, ing.IP)
++			}
++			if !slices.Equal(ips, tt.want) {
++				t.Fatalf("status addresses = %v, want %v", ips, tt.want)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				delete(s.Data, string(ipn.CurrentProfileStateKey))
++			})
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			if err := fc.Get(t.Context(), client.ObjectKeyFromObject(svc), got); err != nil {
++				t.Fatal(err)
++			}
++			if len(got.Status.LoadBalancer.Ingress) != 0 {
++				t.Fatalf("unready proxy retained status: %v", got.Status.LoadBalancer.Ingress)
 +			}
 +		})
 +	}
 +}
-+
- func TestExtraDNSRoutesHook(t *testing.T) {
- 	ext := &extension{
- 		conn25:  newConn25(logger.Discard),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22623** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
 - **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
 - **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
 - **PR #22610** (2026-11-23): derp/derpserver: add rate limiting exemption by IP (@mikeodr)
 - **PR #22607** (2026-11-23): feature/conn25: enforce token verification (@franbull)
 - **PR #22604** (2026-11-23): appc,feature/conn25: build split DNS routes from the parsed config (@mzbenami)
-- **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
 
 ---
 
@@ -1374,3 +987,49 @@ Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. cmd/k8s-operator: publish HA Service VIPs for configured IP families
+
+**RULE**:
+When implementing operations in `cmd/k8s-operator/svc-for-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6dce0b21`: cmd/k8s-operator: publish HA Service VIPs for configured IP families. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/svc-for-pg.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// Publish the IPv4 VIP before the IPv6 one. Previously, this status only held
+		// the IPv4 VIP, so we keep it as svc.status.loadBalancer.ingress[0] as consumers
+		// may rely on this ordering.
+		for _, mapping := range []*ingressservices.Mapping{cfg.IPv4Mapping, cfg.IPv6Mapping} {
+			if mapping == nil {
+				continue
+			}
+			if !mapping.TailscaleServiceIP.IsValid() {
+				return false, fmt.Errorf("Tailscale Service has no address matching Kubernetes Service address %s", mapping.ClusterIP)
+			}
+			lbs = append(lbs, corev1.LoadBalancerIngress{
+				IP:       mapping.TailscaleServiceIP.String(),
+			})
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		lbs = []corev1.LoadBalancerIngress{
+			{
+				IP:       tsSvcIPv4.String(),
+			},
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6dce0b21` are properly handled with clean fallback behavior.

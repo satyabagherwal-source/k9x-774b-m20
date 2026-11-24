@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:09:07.457Z",
+  "last_updated": "2026-11-24T15:17:36.007Z",
   "total_records": 2541,
   "domains": {
     "A": {
@@ -8428,8 +8428,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "dd678d0f9ce994c9df0ab2e063f5053843c52c6dd99f6d2c8ccc598935d75de1",
-      "created_at": "2026-11-23T19:26:16.934Z"
+      "content_hash": "7ac2a892234dc6fa7f1faacca8b3050449ed4ce0acb7e8398bf096b2a40021b5",
+      "created_at": "2026-11-24T15:17:26.043Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13455,8 +13455,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "f5d519f55ebd87f9f7a09503c77630f668dde56af2d9a7d13ce1ee5624cab666",
-      "created_at": "2026-11-23T15:29:11.992Z"
+      "content_hash": "8bfa554f67426d027b94704de04469cffc6d4c73e2a5646194619d642c8de4ad",
+      "created_at": "2026-11-24T15:17:35.188Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -17528,8 +17528,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "ebd440399784499341c2e1f44f43937301a1badb51718ff376763ad6d670bbcf",
-      "created_at": "2026-11-23T18:50:50.288Z"
+      "content_hash": "e65526c0010b46897cc46db2115f785f47da0b0336a06e5943c8883bd2ed2a56",
+      "created_at": "2026-11-24T15:17:30.944Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17597,8 +17597,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "2bb9eb9c9bd802bfe93b0f52df15a66802f66539a46d370de08d3aea06f951d6",
-      "created_at": "2026-11-23T18:50:55.127Z"
+      "content_hash": "fe415648c5452943419fb8e49eec2a0b8283193eb872f03225cb2ba21769c0f6",
+      "created_at": "2026-11-24T15:17:36.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -40614,8 +40614,8 @@
       "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
       "repository": "EL4CTEO/fast-anything",
-      "content_hash": "22e76ee3d9ca3e6341c801ea0c96c3659e968e39235f85cac5be6f2635a7f2b1",
-      "created_at": "2026-11-23T13:06:47.439Z"
+      "content_hash": "1149475d4b2874a8026a035fe5ef88f0615c978de55634a8dd0629c010339e73",
+      "created_at": "2026-11-24T15:17:14.989Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
@@ -40632,8 +40632,8 @@
       "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-learnings-architecture-intelligence-el4cteo-fast-anything-.md",
       "repository": "el4cteo-fast-anything-learnings",
-      "content_hash": "344515a7e618478816f4a079574fc8e1c36a9597f16ac29136c42c1cd6524b87",
-      "created_at": "2026-11-23T13:07:02.960Z"
+      "content_hash": "211666e4898e093adc749a7ab652b9c1235cae5657cb11e1faa3f5dc0a946e8d",
+      "created_at": "2026-11-24T15:17:34.392Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T15:09:00.448Z",
+  "last_updated": "2026-11-24T15:17:30.544Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
-      "verified_at": "2026-11-23T23:39:56.845Z",
+      "content_hash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
+      "verified_at": "2026-11-24T15:17:25.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:39:56.845Z"
+      "last_updated": "2026-11-24T15:17:25.637Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
-      "verified_at": "2026-11-23T18:50:49.781Z",
+      "content_hash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
+      "verified_at": "2026-11-24T15:17:30.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:50:49.781Z"
+      "last_updated": "2026-11-24T15:17:30.543Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -19971,14 +19971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-el4cteo-fast-anything",
-      "content_hash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
-      "verified_at": "2026-11-23T13:06:46.927Z",
+      "content_hash": "d26d749e17c63d43325332b90d5b2108d6ef765f75a0f57c1b7b033bb0b987c8",
+      "verified_at": "2026-11-24T15:17:14.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:06:46.927Z"
+      "last_updated": "2026-11-24T15:17:14.591Z"
     },
     "daveebbelaar/bama": {
       "repository": "daveebbelaar/bama",

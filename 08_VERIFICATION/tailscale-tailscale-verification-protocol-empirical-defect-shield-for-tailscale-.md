@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "01f673c4",
+  "source_version": "6dce0b21",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-23T19:26:16.763Z",
+  "timestamp": "2026-11-24T15:17:25.853Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `01f673c4`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T19:26:16.763Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `6dce0b21`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-24T15:17:25.853Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `01f673c4`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `6dce0b21`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:26:15.475Z  
+> **Harvest Timestamp**: 2026-11-24T15:17:24.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39531 stars
+- **Stars / Engagement**: 39560 stars
 
 ---
 
@@ -814,8 +814,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
   *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
 
-- **Issue #22574** (2026-11-23): **Funnel: 2 of 3 edges slow (~5 s TLS) or failing since 2026-11-22 05:31 UTC, ingress via DERP fra**
-  *Symptoms*: ### What is the issue?  Since 2026-11-22 05:31 UTC, Funnel requests to one of my nodes intermittently fail. Callers get "Bad Gateway" or time out after about 5 s. Nothing changed on my side. The node's log had zero TLS handshake errors for the 46 hours before (back to 2026-11-20 07:32 UTC); since then about 35-40 per hour.  Testing each Funnel edge separately (public DNS, `curl --resolve NAME:443:EDGE`, 20 requests each, 2026-11-22 07:37-07:44 UTC; the app answers 403 to "/" by design, so any HTTP code means TLS completed):  | Edge | Result | Time until TLS done | |---|---|---| | 185.40.234.172 | 20/20 ok | 0.16-0.41 s | | 185.40.234.37 | 19/20 ok, 1 failed | 3.7-13.7 s, mostly ~5.4 s | | 185.40.234.210 | 16/20 ok, 4 failed | ~5.4 s, some 10.8-13.8 s |  So one edge is healthy and two are consistently slow or failing, which explains why it looks intermittent: it depends on which edge the caller hits. A warm test (2 requests 10 s apart to 185.40.234.37) was still slow: 3.2 s, then 2.3 s.  On the node: - `peerapi_ingress` went from 138 to 211 during the test, so connections reach the node; the delay is in the relay-to-node leg. - All `funnel-ingress-node` peers have empty `CurAddr` (no direct path); the three active ones have `Relay: fra`. Node metrics: ~1,986 packets received via DERP vs 49 direct. - `tailscale netcheck` on the node: UDP yes, IPv4 yes, MappingVariesByDestIP false, nearest DERP Frankfurt 29.7 ms. - Each failure logs the same pattern (addresses redacted):  ``` 07
+- **Issue #22576** (2026-11-24): **Funnel: multi-second TLS handshake stalls on Frankfurt ingress (ingress-fra-01.tailscale.com)**
+  *Symptoms*: ### What is the issue?    **Environment:** Tailscale 1.104.7 (commit fb3b9b296) on Debian Linux, native install via systemd. Funnel endpoint on port 443 serving a self-hosted web service behind the node.  **DNS (via 1.1.1.1):** my Funnel hostname resolves to the Frankfurt ingress IPs 185.40.234.37 / .172 / .210 (ingress-fra-01.tailscale.com, NetActuate, Frankfurt)  **What works:** Serving the same endpoint tailnet-internally is fast (~10 ms TTFB). All tailnet peers connect directly (empty PeerRelay). The Tailscale status page shows no open incident for Funnel.  **What fails:** Every *public* connection through the FUNNEL ingress shows multi-second TLS handshakes, consistently across all three ingress IPs. Measured with curl --resolve (one pass per ingress IP, hostname redacted):  ip=185.40.234.37   try=1 tls=7.196525s ttfb=9.008322s total=9.008372s ip=185.40.234.37   try=2 tls=5.352385s ttfb=7.155548s total=7.155601s ip=185.40.234.37   try=3 tls=5.389028s ttfb=7.278048s total=7.278100s ip=185.40.234.37   try=4 tls=5.552671s ttfb=7.237613s total=7.237664s ip=185.40.234.37   try=5 tls=5.428549s ttfb=7.209125s total=7.209178s ip=185.40.234.172 try=1 tls=0.753926s ttfb=1.027717s total=1.027763s ip=185.40.234.172 try=2 tls=0.959335s ttfb=1.287773s total=1.287817s ip=185.40.234.172 try=3 tls=1.155935s ttfb=1.683839s total=1.683909s ip=185.40.234.172 try=4 tls=1.733231s ttfb=2.336538s total=2.336588s ip=185.40.234.172 try=5 tls=1.880378s ttfb=2.324323s total=2.324372s ip=185.40.234.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -832,59 +832,159 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7294a69d` (2026-11-22)
-**Commit Message**: tsnet: fail the test instead of panicking when a ping times out in test helpers
+### Incident Patch 1: `6dce0b21` (2026-11-24)
+**Commit Message**: cmd/k8s-operator: publish HA Service VIPs for configured IP families (#22061)
 
-setupTwoClientTest and TestDialThroughExitNode used
-must.Get(lc.Ping(...)) to wait for the TSMP path to come up. When that
-ping timed out, must.Get panicked, killing the whole tsnet test binary.
-The flakes dashboard then blamed every test that was running or paused
-at the time (TestPacketFilterFromNetmap, TestListenService, TestListen*,
-TestDialUDP, ...), not just the one whose ping failed.
+HA Services currently advertise only their IPv4 VIP in LoadBalancer
+status, even when forwarding is configured only for IPv6. Consumers of
+Service status then select an address with no matching backend mapping.
 
-Use t.Fatalf instead so a failed ping fails only its own test.
+Derive ingress addresses from the configured family mappings. Preserve
+IPv4 behavior and readiness withdrawal while publishing IPv6-only and
+dual-stack backends correctly.
 
-The underlying ping failure was the wireguard-go duplicate handshake
-initiation race, fixed by the wireguard-go bump in #22537.
+Fixes #22060
 
-Updates #22551
+Signed-off-by: Stefanie Jane <[REDACTED_EMAIL]>
 
-Change-Id: I227852aaa576e500df036bb1700fe6c7589b0a25
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `tsnet/tsnet_test.go` (modified, +6/-2)
+**File**: `cmd/k8s-operator/svc-for-pg.go` (modified, +13/-4)
 ```diff
-@@ -615,7 +615,9 @@ func TestDialThroughExitNode(t *testing.T) {
- 	// Ping to make sure the connection is up.
- 	pingCtx, cancelPing := pingTimeout(ctx)
- 	defer cancelPing()
--	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
-+	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
-+		t.Fatalf("TSMP ping s2 -> s1: %v", err)
+@@ -409,11 +409,20 @@ func (r *HAServiceReconciler) maybeProvision(ctx context.Context, hostname strin
+ 			return false, fmt.Errorf("error getting DNS name for Service: %w", err)
+ 		}
+ 
+-		lbs = []corev1.LoadBalancerIngress{
+-			{
++		// Publish the IPv4 VIP before the IPv6 one. Previously, this status only held
++		// the IPv4 VIP, so we keep it as svc.status.loadBalancer.ingress[0] as consumers
++		// may rely on this ordering.
++		for _, mapping := range []*ingressservices.Mapping{cfg.IPv4Mapping, cfg.IPv6Mapping} {
++			if mapping == nil {
++				continue
++			}
++			if !mapping.TailscaleServiceIP.IsValid() {
++				return false, fmt.Errorf("Tailscale Service has no address matching Kubernetes Service address %s", mapping.ClusterIP)
++			}
++			lbs = append(lbs, corev1.LoadBalancerIngress{
+ 				Hostname: dnsName,
+-				IP:       tsSvcIPv4.String(),
+-			},
++				IP:       mapping.TailscaleServiceIP.String(),
++			})
+ 		}
+ 
+ 		conditionStatus = metav1.ConditionTrue
+```
+
+**File**: `cmd/k8s-operator/svc-for-pg_test.go` (modified, +85/-0)
+```diff
+@@ -29,8 +29,10 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+ 	"tailscale.com/client/tailscale/v2"
+ 
++	"tailscale.com/ipn"
+ 	tsoperator "tailscale.com/k8s-operator"
+ 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/k8s-operator/reconciler/tailscaled"
+ 	"tailscale.com/k8s-operator/tsclient"
+ 	"tailscale.com/kube/ingressservices"
+ 	"tailscale.com/kube/kubetypes"
+@@ -671,3 +673,86 @@ func TestServicePGReconciler_OptimisticLockErrorRequeues(t *testing.T) {
+ 	})
+ 	expectRequeue(t, svcPGR, "default", svc.Name)
+ }
++
++func TestServicePGReconciler_LoadBalancerAddressFamilies(t *testing.T) {
++	const vip6 = "fd7a:115c:a1e0::1234"
++	for _, tt := range []struct {
++		name       string
++		clusterIPs []string
++		want       []string
++	}{
++		{"ipv4", []string{"10.0.0.1"}, []string{vipTestIP}},
++		{"ipv6", []string{"fd00::1"}, []string{vip6}},
++		{"dual-stack", []string{"10.0.0.1", "fd00::1"}, []string{vipTestIP, vip6}},
++		{"ipv6-primary-dual-stack", []string{"fd00::1", "10.0.0.1"}, []string{vipTestIP, vip6}},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			r, state, fc, ft, _ := setupServiceTest(t)
++			svc, _ := setupTestService(t, "family-test", "", "10.0.0.1", fc, state)
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			serviceName := "svc:default-family-test"
++			tsSvc := ft.vipServices[serviceName]
++			tsSvc.Addrs = []string{vipTestIP, vip6}
++			ft.vipServices[serviceName] = tsSvc
++			cfg := ingressservices.Config{}
++			mustUpdate(t, fc, svc.Namespace, svc.Name, func(s *corev1.Service) {
++				s.Spec.ClusterIP = tt.clusterIPs[0]
++				s.Spec.ClusterIPs = tt.clusterIPs
++				s.Spec.IPFamilies = nil
++				for _, cip := range tt.clusterIPs {
++					ip := netip.MustParseAddr(cip)
++					if ip.Is4() {
++						s.Spec.IPFamilies = append(s.Spec.IPFamilies, corev1.IPv4Protocol)
++						cfg.IPv4Mapping = &ingressservices.Mapping{ClusterIP: ip, TailscaleServiceIP: netip.MustParseAddr(vipTestIP)}
++					} else {
++						s.Spec.IPFamilies = append(s.Spec.IPFamilies, corev1.IPv6Protocol)
++						cfg.IPv6Mapping = &ingressservices.Mapping{ClusterIP: ip, TailscaleServiceIP: netip.MustParseAddr(vip6)}
++					}
++				}
++			})
++			pr := tailscaled.Prefs{}
++			pr.Config.NodeID = "family-test"
++			pr.Config.UserProfile.LoginName = "proxy.test.ts.net"
++			pr.AdvertiseServices = []string{serviceName}
++			profile, err := json.Marshal(pr)
++			if err != nil {
++				t.Fatal(err)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				s.Labels = pgSecretLabels("test-pg", kubetypes.LabelSecretTypeState)
++				mak.Set(&s.Data, string(ipn.CurrentProfileStateKey), []byte("family-profile"))
++				mak.Set(&s.Data, "family-profile", profile)
++			})
++			status := ingressservices.Status{Configs: ingressservices.Configs{serviceName: cfg}, PodIPv4: "4.3.2.1"}
++			data, err := json.Marshal(status)
++			if err != nil {
++				t.Fatal(err)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				mak.Set(&s.Data, ingressservices.IngressConfigKey, data)
++			})
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			got := new(corev1.Service)
++			if err := fc.Get(t.Context(), client.ObjectKeyFromObject(svc), got); err != nil {
++				t.Fatal(err)
++			}
++			var ips []string
++			for _, ing := range got.Status.LoadBalancer.Ingress {
++				ips = append(ips, ing.IP)
++			}
++			if !slices.Equal(ips, tt.want) {
++				t.Fatalf("status addresses = %v, want %v", ips, tt.want)
++			}
++			mustUpdate(t, fc, state.Namespace, state.Name, func(s *corev1.Secret) {
++				delete(s.Data, string(ipn.CurrentProfileStateKey))
++			})
++			expectReconciled(t, r, svc.Namespace, svc.Name)
++			if err := fc.Get(t.Context(), client.ObjectKeyFromObject(svc), got); err != nil {
++				t.Fatal(err)
++			}
++			if len(got.Status.LoadBalancer.Ingress) != 0 {
++				t.Fatalf("unready proxy retained status: %v", got.Status.LoadBalancer.Ingress)
++			}
++		})
 +	}
- 
- 	must.Get(lc2.EditPrefs(ctx, &ipn.MaskedPrefs{
- 		Prefs: ipn.Prefs{
-@@ -2923,7 +2925,9 @@ func setupTwoClientTest(t *testing.T, useTUN bool) *listenTest {
- 
- 	pingCtx, cancelPing := pingTimeout(ctx)
- 	defer cancelPing()
--	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
-+	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
-+		t.Fatalf("TSMP ping s1 -> s2: %v", err)
-+	}
- 
- 	return &listenTest{
- 		control: control,
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
-- **PR #22591** (2026-11-23): wgengine/router: add envknob to disable src_valid_mark (@mikeodr)
-- **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
-- **PR #22583** (2026-11-23): client/systray: shut down cleanly on termination signals (@fQwQf)
-- **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
-- **PR #22580** (2026-11-23): net/dnsfallback: continue to remove the DNS fallback mechanism (@bradfitz)
+- **PR #22623** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
+- **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
+- **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
+- **PR #22610** (2026-11-23): derp/derpserver: add rate limiting exemption by IP (@mikeodr)
+- **PR #22607** (2026-11-23): feature/conn25: enforce token verification (@franbull)
+- **PR #22604** (2026-11-23): appc,feature/conn25: build split DNS routes from the parsed config (@mzbenami)
 
 ---
 
@@ -904,37 +1004,46 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tsnet: fail the test instead of panicking when a ping times out in test helpers
+## X. cmd/k8s-operator: publish HA Service VIPs for configured IP families
 
 **RULE**:
-When implementing operations in `tsnet/tsnet_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/svc-for-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7294a69d`: tsnet: fail the test instead of panicking when a ping times out in test helpers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dce0b21`: cmd/k8s-operator: publish HA Service VIPs for configured IP families. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsnet/tsnet_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/svc-for-pg.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
-		t.Fatalf("TSMP ping s2 -> s1: %v", err)
-	}
-	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
-		t.Fatalf("TSMP ping s1 -> s2: %v", err)
-	}
+		// Publish the IPv4 VIP before the IPv6 one. Previously, this status only held
+		// the IPv4 VIP, so we keep it as svc.status.loadBalancer.ingress[0] as consumers
+		// may rely on this ordering.
+		for _, mapping := range []*ingressservices.Mapping{cfg.IPv4Mapping, cfg.IPv6Mapping} {
+			if mapping == nil {
+				continue
+			}
+			if !mapping.TailscaleServiceIP.IsValid() {
+				return false, fmt.Errorf("Tailscale Service has no address matching Kubernetes Service address %s", mapping.ClusterIP)
+			}
+			lbs = append(lbs, corev1.LoadBalancerIngress{
+				IP:       mapping.TailscaleServiceIP.String(),
+			})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
-	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
+		lbs = []corev1.LoadBalancerIngress{
+			{
+				IP:       tsSvcIPv4.String(),
+			},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7294a69d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dce0b21` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

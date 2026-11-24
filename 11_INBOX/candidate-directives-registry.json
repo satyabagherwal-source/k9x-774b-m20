@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:09:07.235Z",
+  "last_updated": "2026-11-24T15:17:35.833Z",
   "directives": [
     {
       "id": "CD-001",
@@ -55415,6 +55415,70 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2F70AA-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-8X4O",
+      "directive_title": "fix shim call in the NaN test after #126",
+      "source_repo": "EL4CTEO/fast-anything",
+      "source_commit": "1fdf12ef",
+      "staged_file": "11_INBOX/candidate-directives/CD-8X4O-fix-shim-call-in-the-nan-test-after-126.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-9CPT",
+      "directive_title": "cmd/k8s-operator: publish HA Service VIPs for configured IP families",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9CPT-cmd-k8s-operator-publish-ha-service-vips-for-configured-ip-families.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-99FZ",
+      "directive_title": "answer a named selector over a missing table with the empty vector",
+      "source_repo": "GreptimeTeam/greptimedb",
+      "source_commit": "81e60511",
+      "staged_file": "11_INBOX/candidate-directives/CD-99FZ-answer-a-named-selector-over-a-missing-table-with-the-empty-vector.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9C3L",
+      "directive_title": "ruby: fix shim call in the NaN test after #126",
+      "source_repo": "el4cteo-fast-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9C3L-ruby-fix-shim-call-in-the-nan-test-after-126.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-58C272",
+      "directive_title": "cmd/k8s-operator: publish HA Service VIPs for configured IP families",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-58C272-cmd-k8s-operator-publish-ha-service-vips.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-9DCO",
+      "directive_title": "promql): answer a named selector over a missing table with the empty vector",
+      "source_repo": "greptimeteam-greptimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9DCO-promql-answer-a-named-selector-over-a-missing-table-with-the-empty-vector.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
     }
   ]
 }

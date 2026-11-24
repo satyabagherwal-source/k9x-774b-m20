@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:09:07.889Z",
+  "last_updated": "2026-11-24T15:17:36.326Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T15:09:06.715Z",
@@ -118,9 +118,9 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-23T23:40:26.571Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-24T15:17:34.734Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
       "processed_at": "2026-11-24T00:40:19.681Z",
@@ -838,7 +838,7 @@
       "staged_for_review": 1
     },
     "greptimeteam-greptimedb-learnings.md": {
-      "processed_at": "2026-11-23T18:50:54.102Z",
+      "processed_at": "2026-11-24T15:17:35.535Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3748,7 +3748,7 @@
       "staged_for_review": 0
     },
     "el4cteo-fast-anything-learnings.md": {
-      "processed_at": "2026-11-23T13:07:02.376Z",
+      "processed_at": "2026-11-24T15:17:33.960Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3813,
+  "total_dossiers_evaluated": 3816,
   "total_canonical_promoted": 510,
-  "total_staged_for_review": 2889
+  "total_staged_for_review": 2892
 }
