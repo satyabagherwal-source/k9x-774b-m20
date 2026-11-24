@@ -12758,3 +12758,8 @@
 | `CYCLE-20261124-3V0C` | `2026-11-24T17:33:16.860Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`43a59aab...`) |
 | `CYCLE-20261124-402J` | `2026-11-24T17:33:23.419Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10320` | Yes (`0152358c...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:34:05.077Z` | `inikulin-parse5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7BF1A4EC` [Domain H] | Yes (`d50c2ebc...`) |
+| `CYCLE-20261124-FQTZ` | `2026-11-24T17:42:31.319Z` | `baidu/ERNIE-5.5-Flash-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md` | Yes (`85bbffa6...`) |
+| `CYCLE-20261124-FWQO` | `2026-11-24T17:42:38.976Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10315` | Yes (`aa142c80...`) |
+| `CYCLE-20261124-G30B` | `2026-11-24T17:42:47.099Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10321` | Yes (`b0700cbc...`) |
+| `CYCLE-20261124-G6QX` | `2026-11-24T17:42:51.945Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10322` | Yes (`159d25bd...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:43:21.556Z` | `hf-baidu-ernie-5.5-flash-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9FC91E58` [Domain D] | Yes (`1fda9eb0...`) |

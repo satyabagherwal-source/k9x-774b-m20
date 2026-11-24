@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-GMHS",
-    "timestamp": "2026-11-22T23:15:47.296Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "cb2622da3e8c77b2e715a4c670252e91c08ce5308a6ab90b3ad8137dcbef1093",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-SF5V",
-    "timestamp": "2026-11-22T23:24:57.667Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "adf1ad4e0a5cdaa40084eb81a27152d63ab9da02eab74e611fc4f3ca7fb410d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-31X4",
-    "timestamp": "2026-11-22T23:33:13.720Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-3423",
-    "timestamp": "2026-11-22T23:33:16.491Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-35CQ",
     "timestamp": "2026-11-22T23:33:18.170Z",
     "repository": "maziyarpanahi/openmed",
@@ -7490,6 +7430,66 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FQTZ",
+    "timestamp": "2026-11-24T17:42:31.319Z",
+    "repository": "baidu/ERNIE-5.5-Flash-Preview",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview",
+    "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FWQO",
+    "timestamp": "2026-11-24T17:42:38.976Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-G30B",
+    "timestamp": "2026-11-24T17:42:47.099Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-G6QX",
+    "timestamp": "2026-11-24T17:42:51.945Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

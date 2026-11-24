@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T17:23:15.868Z",
+  "updated_at": "2026-11-24T17:43:23.603Z",
   "stats": {
-    "total_discovered": 8792,
-    "approved_pending_harvest": 8317,
+    "total_discovered": 8794,
+    "approved_pending_harvest": 8319,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8313,
+      "COMMUNITY_AND_EXPERT": 8315,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -190126,6 +190126,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
         "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-6F6ED263C61A": {
+      "id": "SRC-6F6ED263C61A",
+      "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
+      "title": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:43:21.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md",
+        "fileName": "hf-baidu-ernie-5.5-flash-preview-learnings.md"
+      }
+    },
+    "SRC-6B4E9D0ED0DB": {
+      "id": "SRC-6B4E9D0ED0DB",
+      "url": "https://vega.locut.us:8443/release-agent/healthz%60",
+      "title": "https://vega.locut.us:8443/release-agent/healthz%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:43:23.603Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

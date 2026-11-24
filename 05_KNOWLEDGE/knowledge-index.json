@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T17:34:08.992Z",
-  "total_verified_learnings": 9098,
+  "last_updated": "2026-11-24T17:43:24.186Z",
+  "total_verified_learnings": 9099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24804,
+  "total_items": 24811,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112653,10 +112653,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "841a49be",
-      "content_hash": "416ad9ae42cb08c5789fe539847e5b0609ff2a39b898a82851750424cdd4fe0b",
+      "source_version": "b6467a3e",
+      "content_hash": "5393548124a3148f11ede638020004f260cddb24535d406102e14aa96a1bcf83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T19:18:48.368Z"
+      "persisted_at": "2026-11-24T17:42:52.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112665,10 +112665,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "4a2be30a",
-      "content_hash": "402816f2d19aafc100275db8e172ab7a44dfe53c5e74f1d02d3d6eb000d948c8",
+      "source_version": "b6467a3e",
+      "content_hash": "955d5ba129054fabb8d54bbe3ebd76e97423a66cd0fa4867f3d872337077d578",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:14:48.366Z"
+      "persisted_at": "2026-11-24T17:42:52.480Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "d67e8468",
-      "content_hash": "f13636f4d3066904528d6bfbadc8d4c3b319ea455f649705ee8e4ccf6e834cf3",
+      "source_version": "e9613f90",
+      "content_hash": "82bd5b13379695c2eee82ce160938e8fea49ad960190b5684b31f583e6e91d76",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:38:51.127Z"
+      "persisted_at": "2026-11-24T17:42:47.492Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "d67e8468",
-      "content_hash": "28217d9c0ed9491b542e96e36237c6904b75fb9070da6841c6dff33301a0091b",
+      "source_version": "e9613f90",
+      "content_hash": "4b89e955e88ea2835cd846dc5c51243d4a807be488ade9c0f95461fc8b849bb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:38:51.311Z"
+      "persisted_at": "2026-11-24T17:42:47.657Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9f63f3e3b5f6b61cb256391d3c0508bc9280dff2640adad7bfafc07afe9620d",
+      "content_hash": "a1119e9f81580605bd2854417fcb2c7ba00359848fea5a37331aae76db14297e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:38:54.591Z"
+      "persisted_at": "2026-11-24T17:43:24.010Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "0711d8f3f16fe142691f61c9e9f72f6735046abf0e8ee40e806d8bee2d3c2ac9",
+      "content_hash": "46933d46fb4f4b60a75b7c248258928dc901b5fa59dad74b6d2c241c3cfc08a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:38:54.770Z"
+      "persisted_at": "2026-11-24T17:43:24.186Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220811,8 +220811,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "d67e8468",
-      "content_hash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
+      "source_version": "e9613f90",
+      "content_hash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220955,6 +220955,11 @@
           "number": 10269,
           "title": "raise the Fmt job timeout from 5 to 10 minutes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10321,
+          "title": "an older peer refusing us no longer shows \"update required\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220962,7 +220967,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:38:50.458Z",
+      "verified_at": "2026-11-24T17:42:46.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240467,8 +240472,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "4a2be30a",
-      "content_hash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
+      "source_version": "b6467a3e",
+      "content_hash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -240511,6 +240516,11 @@
           "number": 10125,
           "title": "Empirical Invariant Guard in MessageQueueSink.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10322,
+          "title": "Empirical Invariant Guard in IMergeTreeDataPart.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240518,7 +240528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:14:47.368Z",
+      "verified_at": "2026-11-24T17:42:51.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263144,8 +263154,8 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "10f516f0",
-      "content_hash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
+      "source_version": "c96900f2",
+      "content_hash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
@@ -263158,6 +263168,11 @@
           "number": 9603,
           "title": "build(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10315,
+          "title": "build(deps-dev): bump vitest from 5.1.0 to 5.1.1",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263165,7 +263180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:29:08.584Z",
+      "verified_at": "2026-11-24T17:42:38.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263181,10 +263196,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-technical-construction-intelligence-fb55-css-select-core-invaria.md",
       "title": "Technical Construction Intelligence: fb55/css-select Core Invariants",
       "repository": "fb55/css-select",
-      "source_version": "10f516f0",
-      "content_hash": "be6125439af03abd2c5fe672fb9ce1950bcd342813968e60b67c5144b6e0e085",
+      "source_version": "c96900f2",
+      "content_hash": "deb282b689167e1fbeb44ff562fe41b68627d508140ecd85f60b94fcba2b2041",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:29:09.159Z"
+      "persisted_at": "2026-11-24T17:42:39.379Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-css-select": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-css-select",
@@ -263193,10 +263208,10 @@
       "relative_path": "08_VERIFICATION/fb55-css-select-verification-protocol-empirical-defect-shield-for-fb55-css-selec.md",
       "title": "Verification Protocol: Empirical Defect Shield for fb55/css-select",
       "repository": "fb55/css-select",
-      "source_version": "10f516f0",
-      "content_hash": "17655387fc18546e2b926d72e61ae81140b1161f20d45f304d5df44197ba31fa",
+      "source_version": "c96900f2",
+      "content_hash": "eb2814dff53d93306113352aea9cc7a50f7860a930ca7564e8b188ce310f30e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:29:09.317Z"
+      "persisted_at": "2026-11-24T17:42:39.540Z"
     },
     "rule-8784": {
       "learning_id": "rule-8784",
@@ -263232,9 +263247,9 @@
       "title": "Technical Construction Intelligence: fb55-css-select-learnings Core Invariants",
       "repository": "fb55-css-select-learnings",
       "source_version": "HEAD",
-      "content_hash": "a79fb59d0c51f02a5abee1369f6293a2b19a22b07fe2d7b620076210bf438758",
+      "content_hash": "2e77ccb37499140d4f9aca75cace1c83d3b5387d144418f6f2cf8414fab40b88",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:29:23.802Z"
+      "persisted_at": "2026-11-24T17:43:23.195Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-css-select-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-css-select-learnings",
@@ -263244,9 +263259,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fb55-css-select-learnings",
       "repository": "fb55-css-select-learnings",
       "source_version": "HEAD",
-      "content_hash": "d72f0d33f8bd2842d65565389fd3baf62f863c57a89e7255083a99d94cecb2b7",
+      "content_hash": "f23287095281a5f1fc1ec8a526f5955a93e76f83279a305e28d4f46a2fad9d8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:29:23.949Z"
+      "persisted_at": "2026-11-24T17:43:23.374Z"
     },
     "learn-github-cheeriojs-dom-serializer": {
       "learning_id": "learn-github-cheeriojs-dom-serializer",
@@ -338523,27 +338538,27 @@
       "learning_id": "rule-10315",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10315,
-      "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
-      "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "2134b2f1",
+      "title": "build(deps-dev): bump vitest from 5.1.0 to 5.1.1",
+      "source_url": "https://github.com/fb55/css-select",
+      "source_version": "c96900f2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T17:22:59.460Z"
+      "verified_at": "2026-11-24T17:42:38.778Z"
     },
     "candidate_directive-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1": {
       "item_id": "candidate_directive-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QYLC-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1.md",
-      "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
-      "repository": "fb55-htmlparser2-learnings",
+      "relative_path": "11_INBOX/candidate-directives/CD-GUPX-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1.md",
+      "title": "build(deps-dev): bump vitest from 5.1.0 to 5.1.1",
+      "repository": "fb55-css-select-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcfcfb0715b48a6c3d8036b8dfa02bd3ab3f61671e494aadf380de2f767b0f16",
+      "content_hash": "4080f0bf5e46fb4bf14c87cd58ebb19000b098f5de09322d2ac7b10b60ca655a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:23:14.977Z"
+      "persisted_at": "2026-11-24T17:43:23.014Z"
     },
     "rule-10316": {
       "learning_id": "rule-10316",
@@ -338722,6 +338737,109 @@
       "content_hash": "36b45c6b7b8c2cf1bd14eba87eafd31fec04fb8e6249787fb2d0a86927d59fa6",
       "domain_letter": "J",
       "persisted_at": "2026-11-24T17:34:07.383Z"
+    },
+    "learn-huggingface-baidu-ernie-5-5-flash-preview": {
+      "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "baidu/ERNIE-5.5-Flash-Preview",
+      "repository": "baidu/ERNIE-5.5-Flash-Preview",
+      "slug": "hf-baidu-ernie-5.5-flash-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
+      "source_version": "hf-baidu-ernie-5.5-flash-preview",
+      "content_hash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T17:42:31.078Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-research-knowledge-intelligence-baidu-ernie-5-5.md",
+      "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Preview Core Invariants",
+      "repository": "baidu/ERNIE-5.5-Flash-Preview",
+      "source_version": "hf-baidu-ernie-5.5-flash-preview",
+      "content_hash": "acea43ca5192f7d84a41a547908b720e16c7b379e97ee875d921d00205de5c96",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T17:42:31.530Z"
+    },
+    "rule-10321": {
+      "learning_id": "rule-10321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10321,
+      "title": "an older peer refusing us no longer shows \"update required\"",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "e9613f90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:42:46.900Z"
+    },
+    "candidate_directive-an-older-peer-refusing-us-no-longer-shows-update-required": {
+      "item_id": "candidate_directive-an-older-peer-refusing-us-no-longer-shows-update-required",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GVCM-an-older-peer-refusing-us-no-longer-shows-update-required.md",
+      "title": "an older peer refusing us no longer shows \"update required\"",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61e4312d1e051dd16ddd212d0e4dcb3a39b494e5c7959830bab21b0881497d32",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:43:23.836Z"
+    },
+    "rule-10322": {
+      "learning_id": "rule-10322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10322,
+      "title": "Empirical Invariant Guard in IMergeTreeDataPart.cpp",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "b6467a3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:42:51.751Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-imergetreedatapart-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-imergetreedatapart-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6X1-empirical-invariant-guard-in-imergetreedatapart-cpp.md",
+      "title": "Empirical Invariant Guard in IMergeTreeDataPart.cpp",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "b6467a3e",
+      "content_hash": "4193062f5e2af84d404d183e32da025a901a2737e3ffd215f144b0ec1fd30292",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T17:42:52.166Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-learnings-research-knowledge-intelligence-hf-ba.md",
+      "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-preview-learnings Core Invariants",
+      "repository": "hf-baidu-ernie-5.5-flash-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T17:43:21.818Z"
     }
   },
   "ai-builder-brain": {

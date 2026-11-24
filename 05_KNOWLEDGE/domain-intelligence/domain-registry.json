@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T17:34:08.743Z",
-  "total_records": 2556,
+  "last_updated": "2026-11-24T17:43:24.010Z",
+  "total_records": 2559,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 964,
+      "total": 967,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1034,7 +1034,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-1-core-invariants",
         "DOM-D-17A2D54E",
-        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants",
+        "DOM-D-9FC91E58",
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-"
       ]
     },
     "E": {
@@ -8557,8 +8560,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "416ad9ae42cb08c5789fe539847e5b0609ff2a39b898a82851750424cdd4fe0b",
-      "created_at": "2026-11-22T19:18:48.368Z"
+      "content_hash": "5393548124a3148f11ede638020004f260cddb24535d406102e14aa96a1bcf83",
+      "created_at": "2026-11-24T17:42:52.324Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -9922,8 +9925,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "f13636f4d3066904528d6bfbadc8d4c3b319ea455f649705ee8e4ccf6e834cf3",
-      "created_at": "2026-11-24T13:38:51.127Z"
+      "content_hash": "82bd5b13379695c2eee82ce160938e8fea49ad960190b5684b31f583e6e91d76",
+      "created_at": "2026-11-24T17:42:47.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10000,8 +10003,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "a9f63f3e3b5f6b61cb256391d3c0508bc9280dff2640adad7bfafc07afe9620d",
-      "created_at": "2026-11-24T13:38:54.591Z"
+      "content_hash": "a1119e9f81580605bd2854417fcb2c7ba00359848fea5a37331aae76db14297e",
+      "created_at": "2026-11-24T17:43:24.010Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -24994,8 +24997,8 @@
       "title": "Technical Construction Intelligence: fb55/css-select Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-technical-construction-intelligence-fb55-css-select-core-invaria.md",
       "repository": "fb55/css-select",
-      "content_hash": "be6125439af03abd2c5fe672fb9ce1950bcd342813968e60b67c5144b6e0e085",
-      "created_at": "2026-11-20T17:29:09.159Z"
+      "content_hash": "deb282b689167e1fbeb44ff562fe41b68627d508140ecd85f60b94fcba2b2041",
+      "created_at": "2026-11-24T17:42:39.379Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants",
@@ -25003,8 +25006,8 @@
       "title": "Technical Construction Intelligence: fb55-css-select-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-learnings-technical-construction-intelligence-fb55-css-select-le.md",
       "repository": "fb55-css-select-learnings",
-      "content_hash": "a79fb59d0c51f02a5abee1369f6293a2b19a22b07fe2d7b620076210bf438758",
-      "created_at": "2026-11-20T17:29:23.802Z"
+      "content_hash": "2e77ccb37499140d4f9aca75cace1c83d3b5387d144418f6f2cf8414fab40b88",
+      "created_at": "2026-11-24T17:43:23.195Z"
     },
     "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",
@@ -42922,6 +42925,66 @@
       "repository": "kubeedge-kubeedge-learnings",
       "content_hash": "36b45c6b7b8c2cf1bd14eba87eafd31fec04fb8e6249787fb2d0a86927d59fa6",
       "created_at": "2026-11-24T17:34:07.383Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-research-knowledge-intelligence-baidu-ernie-5-5.md",
+      "repository": "baidu/ERNIE-5.5-Flash-Preview",
+      "content_hash": "acea43ca5192f7d84a41a547908b720e16c7b379e97ee875d921d00205de5c96",
+      "created_at": "2026-11-24T17:42:31.530Z"
+    },
+    "DOM-D-9FC91E58": {
+      "record_id": "DOM-D-9FC91E58",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): baidu/ERNIE-5.5-Flash-Preview",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview](https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview))  \n> **Source Version**: `hf-baidu-ern`  \n> **License**: Op",
+      "content_hash": "1fda9eb0427ea4a7b49ec1cc39b18227ab9eaed52ba94addc8e7d9c5b9fb2c2d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-baidu-ernie-5.5-flash-preview/hf-baidu-ernie-5.5-flash-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T17:42:55.280Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baidu-ernie-5.5-flash-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baidu-ernie-5.5-flash-preview"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T17:43:21.525Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-learnings-research-knowledge-intelligence-hf-ba.md",
+      "repository": "hf-baidu-ernie-5.5-flash-preview-learnings",
+      "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
+      "created_at": "2026-11-24T17:43:21.818Z"
     }
   }
 }

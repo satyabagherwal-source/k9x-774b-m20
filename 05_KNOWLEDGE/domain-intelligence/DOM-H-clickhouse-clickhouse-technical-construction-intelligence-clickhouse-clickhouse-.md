@@ -4,23 +4,23 @@
 {
   "source_repository": "ClickHouse/ClickHouse",
   "source_url": "https://github.com/ClickHouse/ClickHouse",
-  "source_version": "841a49be",
+  "source_version": "b6467a3e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T19:18:48.150Z",
+  "timestamp": "2026-11-24T17:42:52.165Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clickhouse-clickhouse",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `841a49be`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T19:18:48.150Z`  
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `b6467a3e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:42:52.165Z`  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
 - **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:18:46.612Z  
+> **Harvest Timestamp**: 2026-11-24T17:42:50.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51063 stars
+- **Stars / Engagement**: 51103 stars
 
 ---
 
@@ -1331,11 +1331,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #132739** (2026-11-19): **ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not validate unique/sorted paths invariant, allowing corrupted subcolumn sizes and LOGICAL_ERROR exceptions**
-  *Symptoms*: ### Company or project name  IBM  ### Describe what's wrong  Found during review of https://github.com/ClickHouse/ClickHouse/pull/128069  When serializing dynamic paths and shared data into an arena in ColumnObject::serializeDynamicPathsAndSharedDataIntoArena, paths are guaranteed to be serialized in strictly increasing, sorted, and unique order.  However, the matching deserializer ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not enforce this invariant. If a serialized payload contains duplicate path entries (e.g., num_paths = 2 with two entries for path a in the same row):  1. The reader processes the first entry for a, deserializing a value and appending it to dynamic subcolumn a (increasing its size from current_size to current_size + 1). 2. The reader processes the second entry for a, appending another value to dynamic subcolumn a (increasing its size to current_size + 2). 3. After the path loop finishes, shared_data offsets advance by only 1 row.  Because deserialization consumes all bytes, end-of-buffer checks pass and deserialization returns successfully, but leaves the resulting ColumnObject in an invalid state where individual subcolumns disagree on their row count.  Attempting to read or extract the corrupted subcolumn later throws a LOGICAL_ERROR exception.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  A record with num_paths = 2 and two entries for a appends twice to that dynamic subcolumn but only once to shar
+- **Issue #133698** (2026-11-24): **SHOW CREATE ROLES bypasses max_result_rows**
+  *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, `SHOW CREATE ROLES` returns two rows successfully when `max_result_rows = 1` and `result_overflow_mode = 'throw'`. An equivalent query against `system.roles` correctly fails with `TOO_MANY_ROWS_OR_BYTES`.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Run as a user allowed to create and inspect roles:  ```sql CREATE ROLE role_a; CREATE ROLE role_b;  SET max_result_rows = 1; SET result_overflow_mode = 'throw';  SHOW CREATE ROLES role_a, role_b; -- Succeeds and returns: -- CREATE ROLE role_a -- CREATE ROLE role_b  SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name; -- Fails with TOO_MANY_ROWS_OR_BYTES. ```  ### Expected behavior  `SHOW CREATE ROLES` should enforce `max_result_rows` and fail because it produces two rows while the limit is one. The `max_result_rows` documentation states: “Limits the number of rows in the result. Also checked for subqueries, and on remote servers when running parts of a distributed query. No limit is applied when the value is `0`.”  ### Error message and/or stacktrace  ```text Received exception from server (version 26.11.1): Code: 396. DB::Exception: Received from localhost:9000. DB::Exception: Limit for result exceeded, max rows: 1.00, current rows: 2.00. (TOO_MANY_ROWS_OR_BYTES) (query: SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name;) ``` 
 
-- **Issue #132436** (2026-11-19): **clickhouse-client prints secrets of a failed query to stderr in non-interactive mode, while the server hides them**
-  *Symptoms*: ### Company or project name  Running ClickHouse in production on Kubernetes (LLM trace store), with native BACKUP to S3 from a CronJob.  ### Describe what's wrong  In non-interactive mode (`--query`, stdin, `--queries-file`, `--ignore-error`), when a query fails, `clickhouse-client` appends the original query text to the error on stderr as `(query: ...)`. Secrets in the query are printed in clear. The server hides the same values in `system.query_log` and in its own logs.  Affected, when the statement fails: `CREATE USER` / `ALTER USER ... IDENTIFIED BY '...'`, `CREATE NAMED COLLECTION`, `BACKUP`/`RESTORE ... S3(url, key, secret)`, and the `s3()` and `mysql()` table functions. `clickhouse-local --ignore-error` does the same.  Non-interactive use is how backup jobs and migrations run, and their stderr usually goes to a log store. I found it when a failed nightly `BACKUP ... TO S3(...)` put the S3 secret key into our central logs while the server logs were clean.  `--echo` printing the query is requested by the user and is not part of this report.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  ClickHouse 26.10.4.207 and master 26.11.1.2601 (official Docker images), default config:  ```bash clickhouse-client --query "ALTER USER no_such_user IDENTIFIED WITH plaintext_password BY 'MySecretPassword123'" ```  ``` Received exception from server (version 26.11.1): Code: 192. DB::Exception: Received from localhost:9000. DB::Exception: There is no user `n
+- **Issue #133671** (2026-11-24): **Keeper/NuRaft: use-after-free `SIGSEGV` in `auto_fwd_resp_handler` on follower shutdown because `raft_instance` is destroyed before `asio_service->stop`**
+  *Symptoms*: ### Description  Shutting down a ClickHouse Keeper follower while an auto-forwarded write (`auto_forwarding = true`) is in flight triggers a use-after-free `SIGSEGV` in NuRaft's `raft_server::auto_fwd_resp_handler` / `raft_server::auto_fwd_release_rpc_cli`.  ### Root Cause  1. In NuRaft (`contrib/NuRaft/src/handle_user_cmd.cxx:320-327` and `:371-377`), `auto_fwd_resp_handler` is registered onto `rpc_cli->send` using `std::bind` with a **raw `this` pointer** (`raft_server *`), not `shared_from_this` / `weak_ptr`:    ```cpp    rpc_handler handler = std::bind( &raft_server::auto_fwd_resp_handler,                                     this,                                     presult,                                     cur_pkg,                                     rpc_cli,                                     std::placeholders::_1,                                     std::placeholders::_2 );    rpc_cli->send(req, handler, params->auto_forwarding_req_timeout_);    ``` 2. During `raft_server::shutdown` (`contrib/NuRaft/src/raft_server.cxx:595`), `cleanup_auto_fwd_pkgs` (`contrib/NuRaft/src/handle_user_cmd.cxx:417-437`) logs `srv 3, in-use 1, idle 0` and clears `pkg->rpc_client_in_use_` and `auto_fwd_pkgs_` **without stopping/cancelling in-flight `rpc_client` instances or waiting for their callbacks to drain**. 3. In ClickHouse Keeper, `KeeperServer::shutdownRaftServer` (`src/Coordination/KeeperServer.cpp:876-907`) calls `raft_instance->shutdown` and **`raft_instance.reset`** (destroyi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1352,392 +1352,440 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `657a223e` (2026-11-22)
-**Commit Message**: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow
+### Incident Patch 1: `8a27da1e` (2026-11-24)
+**Commit Message**: Merge pull request #133804 from ahaanlimaye/ahaanlimaye/merge-size-overflow
 
-The types of `added_files_count` and `existing_files_count` are taken from
-the schema of the manifest list, so a malformed manifest list can have
-arbitrary `long` values in them, and their sum in `getManifestList` could
-overflow, which is undefined behaviour. The sum is now calculated with
-`common::addOverflow`, and `ICEBERG_SPECIFICATION_VIOLATION` is thrown on
-overflow.
+Fix overflow in merge size estimates after lightweight deletes
 
-The test manifest list is the manifest list of
-`void_partition_dropped_column` with these fields of the type `long` and
-the values 9223372036854775807 and 1 in the first entry.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp` (modified, +11/-2)
+**File**: `src/Storages/MergeTree/IMergeTreeDataPart.cpp` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,7 @@
- #include <Poco/JSON/Object.h>
- #include <Poco/JSON/Stringifier.h>
- #include <Common/Exception.h>
-+#include <base/arithmeticOverflow.h>
- #include <Common/FailPoint.h>
- 
- 
-@@ -335,8 +336,16 @@ ManifestFileCacheKeys getManifestList(
-                 if (!manifest_list_deserializer.hasPath(count_field))
-                     continue;
-                 auto count = manifest_list_deserializer.getValueFromRowByName(i, count_field);
--                if (!count.isNull())
--                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
-+                if (count.isNull())
-+                    continue;
-+                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-+                /// so the values can be arbitrary `long`s and their sum can overflow.
-+                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-+                    throw Exception(
-+                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-+                        "Manifest list entry at index {} has too large value of the field '{}'",
-+                        i,
-+                        count_field);
-             }
- 
-             std::optional<UInt64> first_row_id;
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.reference` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+ICEBERG_SPECIFICATION_VIOLATION
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.sh` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: `icebergLocal` needs the USE_AVRO build option.
-+
-+# The file counts of a manifest in an Iceberg manifest list are `int` in the specification, but their type is taken
-+# from the schema of the manifest list, so a malformed manifest list can have arbitrary `long` values in them.
-+# The sum of `added_files_count` and `existing_files_count` must be checked for overflow instead of being undefined behaviour.
-+# The manifest list in `data_iceberg/void_partition_malformed_manifest_list` is the manifest list of
-+# `void_partition_dropped_column` with these fields of the type `long` and the values 9223372036854775807 and 1 in the first entry.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+SRC="$CUR_DIR/data_iceberg/void_partition_dropped_column"
-+BAD="$CUR_DIR/data_iceberg/void_partition_malformed_manifest_list"
-+MANIFEST_LIST="snap-2011348865913312671-1-6a6f19d7-4d29-4fe1-9f6f-4cbaf3a20785.avro"
-+
-+T="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_files_count_overflow"
-+rm -rf "$T"
-+cp -r "$SRC" "$T"
-+cp "$BAD/files_count_overflow.avro" "$T/metadata/$MANIFEST_LIST"
-+$CLICKHOUSE_LOCAL --query "SELECT id FROM icebergLocal('$T') ORDER BY id" 2>&1 | grep -o -m1 'ICEBERG_SPECIFICATION_VIOLATION'
-+rm -rf "$T"
-```
-
----
-
-### Incident Patch 2: `841a49be` (2026-11-22)
-**Commit Message**: Merge pull request #133482 from groeneai/build-hash-section-in-place
-
-Write the binary hash of official builds in place instead of rewriting `clickhouse` with `llvm-objcopy`
-
-**File**: `CMakeLists.txt` (modified, +1/-3)
-```diff
-@@ -271,9 +271,7 @@ if (LINKER_NAME MATCHES "lld" AND NOT LINKER_NAME MATCHES "ld64")
-     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--build-id=sha1")
- endif ()
- 
--# Add a section with the hash of the compiled machine code for integrity checks.
--# Only for official builds, because adding a section can be time consuming (rewrite of several GB).
--# And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
-+# Add a section with the hash of the compiled machine code for integrity checks. Only for official builds.
- if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
-     message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
-     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
-```
-
-**File**: `programs/CMakeLists.txt` (modified, +4/-6)
-```diff
-@@ -229,6 +229,8 @@ add_custom_target (clickhouse-bundle ALL DEPENDS ${CLICKHOUSE_BUNDLE})
- 
- if (USE_BINARY_HASH)
-     add_dependencies(clickhouse hash-binary)
-+    # The section for the hash is reserved at link time and filled in place by `hash-binary --write-section`.
-+    target_sources(clickhouse PRIVATE binary_hash_section.S)
- 
-     # When cross-compiling, use the native-built hash-binary; otherwise use the regular build output
-     if (CMAKE_CROSSCOMPILING)
-@@ -238,8 +240,8 @@ if (USE_BINARY_HASH)
-     endif()
- 
-     add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${HASH_BINARY_PATH} clickhouse > hash 2> /dev/null
--        COMMENT "Computing hash of clickhouse binary" VERBATIM)
-+        COMMAND ${HASH_BINARY_PATH} --write-section clickhouse > hash 2> /dev/null
-+        COMMENT "Writing hash of clickhouse binary to section '.clickhouse.hash'" VERBATIM)
- 
-     if (NOT CMAKE_CROSSCOMPILING)
-         add_custom_command(TARGET clickhouse POST_BUILD
-@@ -248,10 +250,6 @@ if (USE_BINARY_HASH)
-             COMMAND ${CMAKE_COMMAND} -E rm hash.verify
-             COMMENT "Verifying hash-binary output matches clickhouse hash-binary" VERBATIM)
-     endif()
--
--    add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash clickhouse
--        COMMENT "Adding section '.clickhouse.hash' to clickhouse binary" VERBATIM)
- endif()
- 
- if (CHECK_LARGE_OBJECT_SIZES)
-```
-
-**File**: `programs/binary_hash_section.S` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+/* The section for the hash of the executable segments (USE_BINARY_HASH), filled in place by `hash-binary --write-section`.
-+   It is not allocated, so it is not a part of the hashed segments. */
-+.section .clickhouse.hash,"",%progbits
-+.fill 32, 1, 0x30
-```
-
-**File**: `utils/hash-binary/hash-binary.cpp` (modified, +124/-7)
-```diff
-@@ -1,5 +1,6 @@
- /// Tool to compute the same hash as ClickHouse's getHashOfLoadedBinary() from a file.
- /// Useful for cross-compilation when you can't execute the target binary.
-+/// With --write-section, also writes the hash in place into the section '.clickhouse.hash' reserved at link time.
- ///
- /// NOTE: This file is intentionally standalone with no ClickHouse dependencies.
- /// We cannot reuse src/Common/SipHash.h because it depends on ClickHouse-specific
-@@ -13,10 +14,14 @@
- #include <fstream>
- #include <iomanip>
- #include <iostream>
-+#include <sstream>
- #include <stdexcept>
-+#include <string>
- #include <vector>
- 
- #include <elf.h>
-+#include <fcntl.h>
-+#include <unistd.h>
- 
- 
- namespace
-@@ -195,6 +200,80 @@ bool hashExecutableSegments(std::istream & in, SipHash & hash)
+@@ -1321,7 +1321,7 @@ UInt64 IMergeTreeDataPart::getExistingBytesOnDisk() const
+ {
+     if ((*storage.getSettings())[MergeTreeSetting::exclude_deleted_rows_for_part_size_in_merge] && supportLightweightDeleteMutate() && hasLightweightDelete()
+         && existing_rows_count.has_value() && existing_rows_count.value() < rows_count && rows_count > 0)
+-        return bytes_on_disk * existing_rows_count.value() / rows_count;
++        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
+     return bytes_on_disk;
  }
  
- 
-+/// Writes `value` into the existing non-allocated section `name` of the same size, without changing anything else in the file.
-+template <typename Ehdr, typename Shdr>
-+bool writeSectionInPlace(std::fstream & file, const std::string & name, const std::string & value)
-+{
-+    Ehdr ehdr;
-+    file.seekg(0);
-+    if (!file.read(reinterpret_cast<char *>(&ehdr), sizeof(ehdr)) || ehdr.e_shoff == 0 || ehdr.e_shentsize != sizeof(Shdr))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
+```
+
+**File**: `src/Storages/MergeTree/tests/gtest_existing_bytes_on_disk.cpp` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++#include <gtest/gtest.h>
 +
-+    auto read_section_header = [&](uint64_t index, Shdr & shdr)
++#include <Common/ThreadStatus.h>
++#include <Common/tests/gtest_global_context.h>
++#include <Common/tests/gtest_global_register.h>
++#include <DataTypes/DataTypesNumber.h>
++#include <IO/SharedThreadPools.h>
++#include <Parsers/ASTFunction.h>
++#include <Storages/MergeTree/IMergeTreeDataPart.h>
++#include <Storages/MergeTree/MergeTreeDataPartBuilder.h>
++#include <Storages/MergeTree/MergeTreeSettings.h>
++#include <Storages/MergeTree/MergeTreeVirtualColumns.h>
++#include <Storages/StorageMergeTree.h>
++
++#include <Poco/TemporaryFile.h>
++
++TEST(MergeTreeDataPart, ExistingBytesOnDiskAfterLightweightDelete)
++{
++    using namespace DB;
++
++    MainThreadStatus::getInstance();
++    tryRegisterFunctions();
++    tryRegisterAggregateFunctions();
++    getActivePartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getOutdatedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getUnexpectedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getPartsCleaningThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++
++    auto context = Context::createCopy(getContext().context);
++    StorageInMemoryMetadata metadata;
++    metadata.setColumns({{"id", std::make_shared<DataTypeUInt64>()}});
++    metadata.sorting_key = KeyDescription::getKeyFromAST(makeASTFunction("tuple"), metadata.columns, {}, context);
++    metadata.primary_key = metadata.sorting_key;
++    metadata.primary_key.definition_ast = nullptr;
++    metadata.partition_key = KeyDescription::getKeyFromAST(nullptr, metadata.columns, {}, context);
++
++    auto settings = std::make_unique<MergeTreeSettings>(context->getMergeTreeSettings());
++    settings->set("exclude_deleted_rows_for_part_size_in_merge", true);
++    Poco::TemporaryFile table_dir(".");
++    auto storage = std::make_shared<StorageMergeTree>(
++        StorageID("test_db", "existing_bytes_on_disk"), table_dir.path() + "/", metadata, LoadingStrictnessLevel::ATTACH,
++        context, "", MergeTreeData::MergingParams{}, std::move(settings));
++
++    const String part_name = "all_1_1_0";
++    auto part = MergeTreeDataPartBuilder(
++        *storage, part_name, storage->getStoragePolicy()->getVolume(0), storage->getRelativeDataPath(),
++        part_name, context->getReadSettings(), PartDirIntent::CreateFresh)
++        .withPartFormat({MergeTreeDataPartType::Wide, MergeTreeDataPartStorageType::Full})
++        .build();
++    auto columns = metadata.getColumns().getAllPhysical();
++    columns.emplace_back(RowExistsColumn::name, RowExistsColumn::type);
++    part->setColumns(columns, SerializationInfoByName(SerializationInfoSettings{}), 0);
++
++    auto existing_bytes = [&](UInt64 bytes, size_t total_rows, std::optional<size_t> existing_rows)
 +    {
-+        file.seekg(static_cast<std::streamoff>(ehdr.e_shoff + index * sizeof(Shdr)));
-+        return static_cast<bool>(file.read(reinterpret_cast<char *>(&shdr), sizeof(shdr)));
++        part->setBytesOnDisk(bytes);
++        part->rows_count = total_rows;
++        part->existing_rows_count = existing_rows;
++        return part->getExistingBytesOnDisk();
 +    };
 +
-+    /// With 0xff00 sections or more, the counts are stored in the first section header.
-+    Shdr first;
-+    if (!read_section_header(0, first))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
-+    const uint64_t section_count = ehdr.e_shnum ? ehdr.e_shnum : first.sh_size;
-+    const uint64_t names_index = ehdr.e_shstrndx == SHN_XINDEX ? first.sh_link : ehdr.e_shstrndx;
++    EXPECT_EQ(existing_bytes(100ULL << 30, 40'000'000'000, 39'999'999'999), 107'374'182'397ULL);
++    constexpr auto max = std::numeric_limits<UInt64>::max();
++    EXPECT_EQ(existing_bytes(max, max, max - 1), max - 1);
++    EXPECT_EQ(existing_bytes(11, 3, 2), 7u);
++    EXPECT_EQ(existing_bytes(11, 3, 0), 0u);
++    EXPECT_EQ(existing_bytes(11, 3, 3), 11u);
++    EXPECT_EQ(existing_bytes(11, 0, 0), 11u);
++    EXPECT_EQ(existing_bytes(11, 3, std::nullopt), 11u);
 +
-+    Shdr names_header;
-+    if (names_index >= section_count || !read_section_header(names_index, names_header))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+    std::string names(names_header.sh_size, '\0');
-+    file.seekg(static_cast<std::streamoff>(names_header.sh_offset));
-+    if (!file.read(names.data(), static_cast<std::streamsize>(names.size())))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+
-+    for (uint64_t i = 0; i < section_count; ++i)
-+    {
-+        Shdr shdr;
-+        if (!read_section_header(i, shdr))
-+        {
-+            std::cerr << "Failed to read section header\n";
-+            return false;
-+        }
-+        if (shdr.sh_name >= names.size() || std::strcmp(names.c_str() + shdr.sh_name, name.c_str()) != 0)
-+            continue;
-+
-+        /// The hash covers only the executable segments: a non-allocated section is not part of any segment.
-+        if (shdr.sh_type != SHT_PROGBITS || (shdr.sh_flags & SHF_ALLOC) || shdr.sh_size != value.size())
-+        {
-+            std::cerr << "Section " << name << " must be non-allocated PROGBITS of " << value.size() << " bytes\n";
-+            return false;
-+        }
-+
-+        file.seekp(static_cast<std::streamoff>(shdr.sh_offset));
-+        if (!file.write(value.data(), static_cast<std::streamsize>(value.size())) || !file.flush())
-+        {
-+            std::cerr << "Failed to write section " << name << "\n";
-+            return false;
-+        }
-+        return true;
-+    }
-+
-+    std::cerr << "Section " << name << " not found\n";
-+    return false;
++    storage->flushAndShutdown();
 +}
-+
-+
- bool hashElfFile(std::istream & in, SipHash & hash)
- {
-     unsigned char e_ident[EI_NIDENT];
-@@ -223,18 +302,28 @@ int main(int argc, char ** argv)
- {
-     try
-     {
--        if (argc != 2)
-+        const bool write_section = argc == 3 && std::string(argv[1]) == "--write-section";
-+        if (argc != 2 && !write_section)
-         {
--            std::cerr << "Usage: " << argv[0] << " <elf-file>\n"
-+            std::cerr << "Usage: " << argv[0] << " [--write-section] <elf-file>\n"
-                       << "\nComputes the same hash as 'clickhouse hash-binary' but from a file.\n"
--                      << "Useful for cross-compilation when you can't execute the target binary.\n";
-+                      << "Useful for cross-compilation when you can't execute the target binary.\n"
-+                      << "--write-section also writes the hash into the section '.clickhouse.hash' of the file, in place.\n";
-             return 1;
-         }
-+        const char * path = argv[argc - 1];
- 
--        std::ifstream file(argv[1], std::ios::binary);
-+        /// With stdout or stderr closed, the file could get that descriptor, and the output would be written into the file.
-+        if (fcntl(STDOUT_FILENO, F_GETFD) == -1 || fcntl(STDERR_FILENO, F_GETFD) == -1)
-+        {
-+            std::cerr << "stdout and stderr must be ope
 ```
 
 ---
 
-### Incident Patch 3: `1afd2c94` (2026-11-22)
-**Commit Message**: Merge pull request #133523 from siddharthapal8240/fix/external-limit-pushdown-int64
+### Incident Patch 2: `ce39b030` (2026-11-24)
+**Commit Message**: Pad an empty Protobuf wrapper into Nullable with the type default only
 
-Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQLite` tables
+An empty google wrapper read into `Nullable(T)` went through the `value`
+field serializer, so an empty `StringValue` into `Nullable(Date)`,
+`Nullable(Int32)`, `Nullable(UUID)`, ... failed to parse `''` instead of
+storing the type default as master does (review on #134040).
 
-**File**: `src/Storages/transformQueryForExternalDatabase.cpp` (modified, +6/-1)
+Keep master's borrowed default insertion and pass it the nested type, so
+only a scalar whose type default differs from the column zero changes:
+`Enum`, also inside `Nullable(Tuple(...))`. Calling
+`nested_type->insertDefaultInto` directly is not possible there: for
+`Nullable(Tuple(...))` it dereferences the tuple elements, which the element
+serializers also hold, and aborts on the `use_count() == 1` assertion.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Formats/ProtobufSerializer.cpp` (modified, +13/-6)
 ```diff
-@@ -31,6 +31,7 @@
- #include <Storages/transformQueryForExternalDatabaseAnalyzer.h>
- 
- #include <cmath>
-+#include <limits>
- #include <queue>
- 
- 
-@@ -1189,7 +1190,11 @@ String transformQueryForExternalDatabaseImpl(
+@@ -151,7 +151,8 @@ namespace
+     /// of a composite column would reach sub-columns that are also held by the serializers
+     /// of its nested fields through the non-const `WrappedPtr` dereference.
+     /// Exception-safe: on failure, the already appended sub-columns are rolled back.
+-    void insertDefaultBorrowed(IColumn & column)
++    /// With `type`, a scalar gets the default of its type (e.g. the first element of an `Enum`), not the column's.
++    void insertDefaultBorrowed(IColumn & column, const IDataType * type = nullptr)
+     {
+         if (auto * column_array = typeid_cast<ColumnArray *>(&column))
+         {
+@@ -169,11 +170,12 @@ namespace
+                 return;
+             }
+             const auto & elements = std::as_const(*column_tuple).getColumns();
++            const auto * tuple_type = typeid_cast<const DataTypeTuple *>(type);
+             size_t i = 0;
+             try
+             {
+                 for (; i < elements.size(); ++i)
+-                    insertDefaultBorrowed(borrowColumnRef(elements[i]));
++                    insertDefaultBorrowed(borrowColumnRef(elements[i]), tuple_type ? tuple_type->getElement(i).get() : nullptr);
+             }
+             catch (...)
+             {
+@@ -201,6 +203,10 @@ namespace
+                 throw;
+             }
          }
++        else if (type)
++        {
++            type->insertDefaultInto(column);
++        }
+         else
+         {
+             column.insertDefault();
+@@ -2258,8 +2264,8 @@ namespace
+     class ProtobufSerializerNullable : public ProtobufSerializer
+     {
+     public:
+-        explicit ProtobufSerializerNullable(std::unique_ptr<ProtobufSerializer> nested_serializer_)
+-            : nested_serializer(std::move(nested_serializer_))
++        ProtobufSerializerNullable(DataTypePtr nested_type_, std::unique_ptr<ProtobufSerializer> nested_serializer_)
++            : nested_type(std::move(nested_type_)), nested_serializer(std::move(nested_serializer_))
+         {
+         }
+ 
+@@ -2354,7 +2360,7 @@ namespace
+             if (row_num < column_nullable.size())
+                 return;
+             auto & nested_column = borrowColumnRef(column_nullable.getNestedColumnPtr());
+-            nested_serializer->insertDefaults(row_num);
++            insertDefaultBorrowed(nested_column, nested_type.get());
+             /// Same rollback contract as in `insertDefaults` above.
+             try
+             {
+@@ -2379,6 +2385,7 @@ namespace
+         }
+ 
+     private:
++        const DataTypePtr nested_type;
+         const std::unique_ptr<ProtobufSerializer> nested_serializer;
+         ColumnPtr column;
+     };
+@@ -4186,7 +4193,7 @@ namespace
+                         oneof_presence);
+                     if (!nested_serializer)
+                         return nullptr;
+-                    return std::make_unique<ProtobufSerializerNullable>(std::move(nested_serializer));
++                    return std::make_unique<ProtobufSerializerNullable>(nullable_data_type.getNestedType(), std::move(nested_serializer));
+                 }
+ 
+                 case TypeIndex::LowCardinality:
+```
+
+**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.reference` (modified, +5/-2)
+```diff
+@@ -7,10 +7,13 @@ Protobuf, a column missing from the message
+ ProtobufList, a column missing from the message
+ 7	a	('','x')	\N
+ Protobuf, a google wrapper without value
+-zero	1
++a	1
++neg	1
++('a')	1
+ 0	1
+ \N	1
+-	1
++1970-01-01	1
++00000000-0000-0000-0000-000000000000	1
+ FileLog, handle_error_mode = stream
+ 0	a	('','x')	\N	1
+ 1	b	('p','y')	b	0
+```
+
+**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.sql` (modified, +6/-6)
+```diff
+@@ -27,19 +27,19 @@ SELECT 'ProtobufList, a column missing from the message';
+ SET format_schema = 'syntax = "proto3"; message Envelope { message M { int32 x = 1; } repeated M row = 1; }';
+ SELECT * FROM format(ProtobufList, 'x Int32, e Enum8(\'a\' = 1, \'b\' = 2), t Tuple(s String, e Enum16(\'x\' = 5, \'y\' = 7)), ne Nullable(Enum8(\'a\' = 1, \'b\' = 2))', '\x04\x0a\x02\x08\x07');
+ 
+--- A wrapper message without `value` holds the default of `value` (0, or '' for a StringValue), read like the same
+--- wrapper into the type without Nullable. An absent wrapper is NULL.
++-- A wrapper message without `value` gives the default of the column type, also for a StringValue read into a
++-- non-string type. An absent wrapper is NULL.
+ SELECT 'Protobuf, a google wrapper without value';
+ SET input_format_protobuf_flatten_google_wrappers = 1;
+ SET format_schema = 'syntax = "proto3"; import "google/protobuf/wrappers.proto"; message W { google.protobuf.Int32Value w = 1; int32 k = 2; google.protobuf.StringValue s = 3; }';
+ SET format_schema_message_name = 'W';
+-SELECT * FROM format(ProtobufSingle, 'w Enum8(\'a\' = 1, \'b\' = 2), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
+-SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
++SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'neg\' = -1, \'zero\' = 0)), k Int32', '\x0a\x00\x10\x01');
++SELECT * FROM format(ProtobufSingle, 'w Nullable(Tuple(Enum8(\'a\' = 1, \'b\' = 2))), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Int32), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x10\x01');
+-SELECT * FROM format(ProtobufSingle, 's Nullable(Enum8(\'\' = 3, \'b\' = 2)), k Int32', '\x1a\x00\x10\x01');
+-SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01'); -- { serverError CANNOT_PARSE_DATE }
++SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01');
++SELECT * FROM format(ProtobufSingle, 's Nullable(UUID), k Int32', '\x1a\x00\x10\x01');
+ 
+ SELECT 'FileLog, handle_error_mode = stream';
+ DROP TABLE IF EXISTS file_log;
+```
+
+---
+
+### Incident Patch 3: `3fe8314f` (2026-11-24)
+**Commit Message**: feat: add `USE_VORTEX` and `VORTEX_VERSION` to `system.build_options`
+
+`build.rs` reads the version of `vortex` from `Cargo.lock`. `vortex_ffi_version()` returns it.
+
+Signed-off-by: Maksim Dergousov <[REDACTED_EMAIL]>
+
+**File**: `contrib/rust-contrib-workspace/Cargo.lock` (modified, +2/-0)
+```diff
+@@ -52,6 +52,8 @@ dependencies = [
+  "futures",
+  "kanal",
+  "parking",
++ "serde",
++ "toml",
+  "vortex",
+ ]
+ 
+```
+
+**File**: `contrib/vortex-cmake/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -28,3 +28,6 @@ vortex = { version = "0.84.0", default-features = false, features = ["files", "z
+ # between patch versions, and the version has to be one `contrib/rust_vendor` carries. Its default
+ # features are only needed by the command-line tool.
+ cbindgen = { version = "=0.29.2", default-features = false }
++# Read `Cargo.lock`. The same versions and features as in `cbindgen`, so they are vendored already.
++serde = { version = "1", default-features = false, features = ["derive", "std"] }
++toml = { version = "0.9", default-features = false, features = ["parse", "serde", "std"] }
+```
+
+**File**: `contrib/vortex-cmake/build.rs` (modified, +54/-1)
+```diff
+@@ -9,11 +9,27 @@
+ 
+ use std::env;
+ use std::fs;
+-use std::path::Path;
++use std::path::{Path, PathBuf};
++use std::process::Command;
++
++use serde::Deserialize;
+ 
+ const UPDATE_VAR: &str = "VORTEX_FFI_HEADER_UPDATE";
+ 
++#[derive(Deserialize)]
++struct Lock {
++    package: Vec<Package>,
++}
++
++#[derive(Deserialize)]
++struct Package {
++    name: String,
++    version: String,
++}
++
+ fn main() {
++    emit_vortex_version();
++
+     let crate_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should be set");
+     let crate_dir = Path::new(&crate_dir);
+     let header_path = crate_dir.join("include/vortex_ffi.h");
+@@ -56,3 +72,40 @@ fn main() {
+          Run `{UPDATE_VAR}=1 cargo check -p _ch_rust_vortex` and commit the result."
+     );
+ }
++
++fn emit_vortex_version() {
++    let lock_path = workspace_dir().join("Cargo.lock");
++    println!("cargo::rerun-if-changed={}", lock_path.display());
++
++    let lock = fs::read_to_string(&lock_path)
++        .unwrap_or_else(|error| panic!("cannot read {}: {error}", lock_path.display()));
++    let lock: Lock = toml::from_str(&lock)
++        .unwrap_or_else(|error| panic!("cannot parse {}: {error}", lock_path.display()));
++
++    let versions: Vec<&str> = lock
++        .package
++        .iter()
++        .filter(|package| package.name == "vortex")
++        .map(|package| package.version.as_str())
++        .collect();
++    let [version] = versions[..] else {
++        panic!("expected one version of `vortex` in {}, found {versions:?}", lock_path.display());
++    };
++    println!("cargo::rustc-env=VORTEX_CRATE_VERSION={version}");
++}
++
++fn workspace_dir() -> PathBuf {
++    let cargo = env::var_os("CARGO").expect("CARGO should be set");
++    let output = Command::new(cargo)
++        .args(["locate-project", "--workspace", "--message-format", "plain"])
++        .output()
++        .expect("cannot run `cargo locate-project`");
++    assert!(
++        output.status.success(),
++        "`cargo locate-project` failed: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++
++    let manifest = String::from_utf8(output.stdout).expect("the path should be UTF-8");
++    Path::new(manifest.trim()).parent().expect("the path should have a parent").to_owned()
++}
+```
+
+**File**: `contrib/vortex-cmake/include/vortex_ffi.h` (modified, +2/-0)
+```diff
+@@ -362,4 +362,6 @@ void vortex_ffi_writer_free(FFI_VortexWriter *writer);
+ /// Frees a string returned by this library, such as an error message.
+ void vortex_ffi_free_string(char *string);
+ 
++const char *vortex_ffi_version();
++
+ }  // extern "C"
+```
+
+**File**: `contrib/vortex-cmake/src/lib.rs` (modified, +5/-0)
+```diff
+@@ -1635,6 +1635,11 @@ pub unsafe extern "C" fn vortex_ffi_free_string(string: *mut c_char) {
      }
+ }
  
--    if (limit)
-+    /// A `LIMIT` in ClickHouse is any `UInt64` (for example MySQL's "all rows" idiom,
-+    /// `LIMIT 18446744073709551615`), while PostgreSQL and SQLite accept only a signed 64-bit value and
-+    /// fail on a larger one (`bigint out of range`, `datatype mismatch`). A limit that large does not
-+    /// cut off the rows of any table, so it is not sent to the external database at all.
-+    if (limit && *limit <= static_cast<UInt64>(std::numeric_limits<Int64>::max()))
-         select->setExpression(ASTSelectQuery::Expression::LIMIT_LENGTH, make_intrusive<ASTLiteral>(*limit));
- 
-     ASTPtr select_ptr = select;
++#[no_mangle]
++pub extern "C" fn vortex_ffi_version() -> *const c_char {
++    concat!(env!("VORTEX_CRATE_VERSION"), "\0").as_ptr().cast()
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
 ```
 
-**File**: `tests/integration/test_storage_postgresql/test.py` (modified, +9/-0)
+**File**: `src/Storages/System/CMakeLists.txt` (modified, +4/-0)
 ```diff
-@@ -969,6 +969,15 @@ def run(query, **settings):
-     assert result == "99"
-     assert len(queries) == 1 and "LIMIT" not in queries[0]
+@@ -93,3 +93,7 @@ if (TARGET ch_contrib::icu)
+     target_link_libraries(clickhouse_storages_system PRIVATE ch_contrib::icu)
+     target_compile_definitions(clickhouse_storages_system PRIVATE U_HIDE_DEPRECATED_API)
+ endif()
++
++if (TARGET ch_rust::vortex)
++    target_include_directories(clickhouse_storages_system PRIVATE $<TARGET_PROPERTY:ch_rust::vortex,INTERFACE_INCLUDE_DIRECTORIES>)
++endif()
+```
+
+**File**: `src/Storages/System/StorageSystemBuildOptions.cpp` (modified, +11/-0)
+```diff
+@@ -5,6 +5,12 @@
+ #include <DataTypes/DataTypeString.h>
+ #include <Core/Settings.h>
  
-+    # A `LIMIT` above the signed 64-bit range is valid in ClickHouse, while the `LIMIT` of PostgreSQL
-+    # is a `bigint`. Such a limit cuts off nothing, so it is not sent, instead of failing the query
-+    # with `bigint out of range`.
-+    result, queries = run(
-+        "SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 9223372036854775808)"
-+    )
-+    assert result == "100"
-+    assert len(queries) == 1 and "LIMIT" not in queries[0]
++#include "config.h"
 +
-     # A real `LIMIT 0` returns nothing and never asks PostgreSQL for a single row.
-     result, _ = run("SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 0)")
-     assert result == "0"
++#if USE_VORTEX
++#include <vortex_ffi.h>
++#endif
++
+ extern const char * auto_config_build[];
+ 
+ namespace DB
+@@ -26,6 +32,11 @@ void StorageSystemBuildOptions::fillData(MutableColumns & res_columns, ContextPt
+         res_columns[0]->insert(it[0]);
+         res_columns[1]->insert(it[1]);
+     }
++
++#if USE_VORTEX
++    res_columns[0]->insert("VORTEX_VERSION");
++    res_columns[1]->insert(vortex_ffi_version());
++#endif
+ }
+ 
+ }
 ```
 
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.reference` (added, +6/-0)
+**File**: `src/Storages/System/StorageSystemBuildOptions.cpp.in` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+3
-+3
-+2
-+2
-+3
-+2
-```
-
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.sh` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: needs the `sqlite` table function and the `sqlite3` tool
-+
-+# A `LIMIT` of a query is pushed down to an external database, where it is safe. A `LIMIT` in ClickHouse
-+# is any `UInt64`, while SQLite (and PostgreSQL) accept only a signed 64-bit value, so a `LIMIT` above
-+# that range - such as `LIMIT 18446744073709551615`, MySQL's idiom for "all rows" - made the query fail
-+# with `datatype mismatch`. Such a limit does not cut off anything and is not sent.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+DB_PATH="${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}_limit_above_int64.db"
-+rm -f "${DB_PATH}"
-+
-+sqlite3 "${DB_PATH}" 'CREATE TABLE t (id INTEGER); INSERT INTO t VALUES (1), (2), (3);'
-+chmod ugo+r "${DB_PATH}"
-+
-+SOURCE="sqlite('${DB_PATH}', 't')"
-+
-+${CLICKHOUSE_CLIENT} --query "
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775808);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 18446744073709551615);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807 OFFSET 1);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} WHERE id > 1 LIMIT 18446744073709551615);
-+
-+-- The largest limit that SQLite accepts, and an ordinary one.
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 2);
-+"
-+
-+rm -f "${DB_PATH}"
+@@ -72,6 +72,7 @@ const char * auto_config_build[]
+     "USE_ORC", "@USE_ORC@",
+     "USE_MSGPACK", "@USE_MSGPACK@",
+     "USE_DELTA_KERNEL_RS", "@USE_DELTA_KERNEL_RS@",
++    "USE_VORTEX", "@USE_VORTEX@",
+     "USE_XRAY", "@USE_XRAY@",
+     "USE_WASMTIME", "@USE_WASMTIME@",
+     "WITH_COVERAGE", "@WITH_COVERAGE@",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133562** (2026-11-22): Backport #131636 to 26.9: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133561** (2026-11-22): Backport #131636 to 26.8: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133555** (2026-11-22): Backport #131636 to 26.10: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll2)
-- **PR #133550** (2026-11-22): Backport #130143 to 26.10: Fix `LOGICAL_ERROR` on `INSERT` into a table whose projection has a subquery in its `SELECT` list or `GROUP BY` (@robot-ch-test-poll2)
-- **PR #133548** (2026-11-22): Backport #133464 to 26.11: Remove the background cleanup of unused directories in `store/` (@robot-ch-test-poll2)
-- **PR #133543** (2026-11-22): Backport #133506 to 26.11: Fix JSON schema inference applying the mark of a freed type to an unrelated value (@robot-ch-test-poll2)
+- **PR #134198** (2026-11-24): Cherry pick #116550 to 26.10: Apply `SORT + LIMIT` before `ARRAY JOIN` (@robot-clickhouse)
+- **PR #134168** (2026-11-24): Backport #133420 to 26.10: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
+- **PR #134167** (2026-11-24): Backport #133420 to 26.9: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
+- **PR #134163** (closed): Do not read the manifests again when `expireSnapshots` retries after a commit conflict (@scanhex12)
+- **PR #134151** (2026-11-24): Backport #129544 to 26.10: Skip the probe plan when a correlated subquery rules out parallel replicas (@robot-ch-test-poll2)
+- **PR #134149** (closed): Backport #133724 to 26.11: Bound the source before reading the encryption header (@robot-ch-test-poll2)
 
 ---
 
@@ -1757,42 +1805,31 @@ Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Address review: check the sum of file counts of an Iceberg manifest list entry f
+## X. Empirical Invariant Guard in IMergeTreeDataPart.cpp
 
 **RULE**:
-When implementing operations in `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/MergeTree/IMergeTreeDataPart.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `657a223e`: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a27da1e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MergeTree/IMergeTreeDataPart.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <base/arithmeticOverflow.h>
-                if (count.isNull())
-                    continue;
-                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-                /// so the values can be arbitrary `long`s and their sum can overflow.
-                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-                    throw Exception(
-                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-                        "Manifest list entry at index {} has too large value of the field '{}'",
-                        i,
-                        count_field);
+        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                if (!count.isNull())
-                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
+        return bytes_on_disk * existing_rows_count.value() / rows_count;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `657a223e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a27da1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

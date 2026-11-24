@@ -5376,3 +5376,7 @@ https://github.com/indexable-inc/blaze
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T17:13:24.742Z] ---
 # [HUGGINGFACE-AI-MODELS] Aleph-Alpha/Kolibri-1.1 (1112 score) - Verified Hugging Face Model: Aleph-Alpha/Kolibri-1.1 (84 likes, 272 downloads)
 https://huggingface.co/Aleph-Alpha/Kolibri-1.1
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T17:42:24.673Z] ---
+# [HUGGINGFACE-AI-MODELS] baidu/ERNIE-5.5-Flash-Preview (2205 score) - Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Preview (213 likes, 75 downlo
+https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview

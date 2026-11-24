@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "d67e8468",
+    "sourceVersion": "e9613f90",
     "license": "NOASSERTION",
-    "contentHash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
-    "lastHarvestedAt": "2026-11-24T13:38:50.692Z",
+    "contentHash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
+    "lastHarvestedAt": "2026-11-24T17:42:47.103Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "4a2be30a",
+    "sourceVersion": "b6467a3e",
     "license": "Apache-2.0",
-    "contentHash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
-    "lastHarvestedAt": "2026-11-23T21:14:47.627Z",
+    "contentHash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
+    "lastHarvestedAt": "2026-11-24T17:42:51.949Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "10f516f0",
+    "sourceVersion": "c96900f2",
     "license": "BSD-2-Clause",
-    "contentHash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
-    "lastHarvestedAt": "2026-11-20T17:29:08.794Z",
+    "contentHash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
+    "lastHarvestedAt": "2026-11-24T17:42:38.980Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {
@@ -13368,5 +13368,15 @@
     "contentHash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
     "lastHarvestedAt": "2026-11-24T17:13:31.242Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1"
+  },
+  "hf-baidu-ernie-5.5-flash-preview": {
+    "repository": "baidu/ERNIE-5.5-Flash-Preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
+    "sourceVersion": "hf-baidu-ernie-5.5-flash-preview",
+    "license": "Open-Source",
+    "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+    "lastHarvestedAt": "2026-11-24T17:42:31.323Z",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview"
   }
 }

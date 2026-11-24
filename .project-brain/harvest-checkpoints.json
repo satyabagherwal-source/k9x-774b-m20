@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T17:33:23.444Z",
+  "last_updated": "2026-11-24T17:42:51.962Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
-      "verified_at": "2026-11-24T13:38:50.709Z",
+      "content_hash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
+      "verified_at": "2026-11-24T17:42:47.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:38:50.709Z"
+      "last_updated": "2026-11-24T17:42:47.117Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
-      "verified_at": "2026-11-23T21:14:47.638Z",
+      "content_hash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
+      "verified_at": "2026-11-24T17:42:51.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:14:47.638Z"
+      "last_updated": "2026-11-24T17:42:51.961Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
-      "verified_at": "2026-11-20T17:29:08.802Z",
+      "content_hash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
+      "verified_at": "2026-11-24T17:42:38.993Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:29:08.802Z"
+      "last_updated": "2026-11-24T17:42:38.993Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",
@@ -20174,6 +20174,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T17:13:31.260Z"
+    },
+    "baidu/ERNIE-5.5-Flash-Preview": {
+      "repository": "baidu/ERNIE-5.5-Flash-Preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-preview",
+      "content_hash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+      "verified_at": "2026-11-24T17:42:31.331Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T17:42:31.331Z"
     }
   },
   "repos": {

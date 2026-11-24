@@ -4,22 +4,22 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "d67e8468",
+  "source_version": "e9613f90",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T13:38:50.943Z",
+  "timestamp": "2026-11-24T17:42:47.330Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d67e8468`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T13:38:50.943Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `e9613f90`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T17:42:47.330Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `freenet/freenet-core` (Commit: `d67e8468`)
+- **Target Repository**: `freenet/freenet-core` (Commit: `e9613f90`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:38:49.282Z  
+> **Harvest Timestamp**: 2026-11-24T17:42:46.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1749,13 +1749,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6370** (2026-11-24): **ci: raise the Fmt job timeout from 5 to 10 minutes**
-  *Symptoms*: ## Problem  The `Fmt` job runs `cargo fmt --check` (~16 s) plus the script self-tests, which have grown it to 230-300 s across recent runs against a 5-minute `timeout-minutes`. Runs that crossed 5 minutes were cancelled mid-self-test (305 s and 307 s in the last 19 runs; #6369 hit it today). Fmt is a required context, so a cancel blocks the PR or ejects the merge-queue entry.  ## Approach  Raise `fmt_check`'s timeout to 10 minutes (about 2x headroom; more self-tests are being added) and update the nearby comment. No single step regressed; the largest is the auto-update canary lifecycle self-test (~100 s). Moving the slow self-tests into a parallel job is a possible follow-up, but it would add a new required context.  ## Testing  YAML parses; the cache-warm parity linter passes; the job name and required context are unchanged.  Review: one skeptical lens (verified the duration data and that no linter or required-check rule constrains this timeout) plus codex, both clean. Reduced from a full multi-lens review because the change is a single timeout value and a comment.  [AI-assisted - Claude] 
+- **Issue #6374** (2026-11-24): **fix: an older peer refusing us no longer shows "update required"**
+  *Symptoms*: ## Problem A node on the latest release showed "Version mismatch — update required" with a `cargo install ... --version 0.2.117` downgrade command. When this node dials a peer running an older release that refuses it, `handle_ack_connection_error` returned `ProtocolVersionMismatch { expected: <remote version> }` even in the branch where we do NOT need to update. `record_gateway_failure` runs for every failed outbound dial, `classify_transport_error` turned the text into `FailureReason::VersionMismatch`, and that forced health to Trouble even with open connections. The entry stayed until the next new connection. About half of 0.2.164 nodes hit an old peer's refusal in telemetry.  ## Approach - New `TransportError::PeerVersionOutdated { peer_version }`, returned when the refusing peer is not newer than us. Its Display text carries no "Version incompatibility" and no install command. `ProtocolVersionMismatch` is now only produced when we must update. - `classify_transport_error` also requires the remote version to be strictly newer than ours before recording `VersionMismatch` (second guard; the banner can never offer an older version). - A recorded `VersionMismatch` forces Trouble only when the node has no open connections. - Fixed the misleading log line ("within our compatible range" for a peer below our floor). - Wire bytes unchanged: `TransportError` is not serialized anywhere on the wire; it is converted to a string (`ConnectionError::TransportError(String)`) for local clas
 
-- **Issue #6369** (2026-11-24): **fix(get): host and count GET replies only when accepted and matching the request**
-  *Symptoms*: ## Problem  `cache_contract_locally` (the one place every GET reply is cached and hosted) recorded access, ran eviction and formed a host for a reply even when the executor did not accept the reply's state, and did not check that the reply was for the contract that was requested. Its boolean result was also read as proof that the remote held the contract, including when the only reason it was true was a copy this node already held.  ## Approach  - A reply whose key does not match the request is dropped, on the inline, relay and streamed paths (the streamed path compares the stream header against the request's own instance id before the stream is claimed). Where the reply carries code, the full key (instance id and code hash) is compared. - Host formation, access recording and eviction run only when the executor accepted the state, or the reply's bytes equal a copy this node already holds. A reply for a contract the node already hosts keeps its read refresh, sized to the held copy, and identical bytes are hosted under the stored key. - The function now returns `CacheOutcome { accepted_remote, local_copy }`. Only `accepted_remote` counts as evidence that a remote holds the contract (`contract_exists`, `note_stored_state`, relay `state_present`); `local_copy` keeps gating downstream-subscriber registration, so honest flows register as before. - Every-hop hosting is unchanged for accepted replies.  ## Testing  - Accepted / rejected / mismatched reply tests, a streamed-path mismat
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues. 3 INFO notes.  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md **Files reviewed:** 1 (`crates/core/src/operations/get/op_ctx_task.rs`)  The PR description wasn't in the review inputs, so I couldn't check it for Problem/Solution/Testing/Fixes sections. Please confirm they are present.  #### Warnings None.  - **Regression tests:** The `fix:` commits come with regression tests in `reply_hosting_gate_tests`. They cover a rejected reply, a different contract, a code-hash mismatch, a held contract under rejection, a stream-header mismatch, identical-bytes hosting under the stored key, and the held-size recency refresh. `a_rejected_reply_for_a_held_contract_is_no_existence_proof` covers the client driver end to end. - **Source-scrape pins:** The new pins bound their regions with `extract_fn_body` and `code_only`, so they follow the rule on bounding the region. - **Existence-proof rule:** The change m
+- **Issue #6373** (2026-11-24): **fix(release): verify gateway update downloads; keep docker latest monotonic**
+  *Symptoms*: ## Problem  `gateway-auto-update.sh` runs as root on the gateways and installed whatever archive the GitHub release served. It never checked the archive against the signed `SHA256SUMS.txt` that every release has carried since #4587. The node's own updater does check it. A release-asset swap therefore reached the gateways unchecked. Two further gaps, found in the release-tooling audit behind #6361: - Re-publishing an older tag could move the Docker `latest` and minor tags backwards. - `scripts/release-agent` still carried vega files for a host retired in #5540.  ## Approach  **Gateway updater (`scripts/gateway-auto-update.sh`)** - Downloads go into a fresh private directory, over HTTPS only and with size and time bounds. The script verifies the ed25519 signature on `SHA256SUMS.txt`. The key is pinned in the script and tested against `update.rs` and the Docker key copy. It then requires exactly one manifest line for the archive and a matching sha256. All of this happens before anything is extracted. Any failure logs `Release verification FAILED`, leaves the running gateway untouched, and the script fails closed. - The binary must report exactly the target version, which stops an older signed release being replayed under a newer tag. - A version older than the installed one is refused unless `--allow-downgrade` is given. That flag is accepted on argv only, and is refused when the caller is the release-agent account. Versions are compared by SemVer precedence, so 0.2.150-rc1 sort
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1772,618 +1770,850 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49a103d6` (2026-11-24)
-**Commit Message**: ci: raise the Fmt job timeout from 5 to 10 minutes (#6370)
+### Incident Patch 1: `e9613f90` (2026-11-24)
+**Commit Message**: fix: an older peer refusing us no longer shows "update required" (#6374)
 
-**File**: `.github/workflows/ci.yml` (modified, +5/-2)
+**File**: `crates/core/src/node/network_status.rs` (modified, +97/-1)
 ```diff
-@@ -125,8 +125,11 @@ jobs:
-   fmt_check:
-     name: Fmt
-     runs-on: ubuntu-latest
--    timeout-minutes: 5
--    # Run in parallel with conventional_commits (both are fast GitHub-hosted checks)
-+    # 10, not 5: besides `cargo fmt --check` (~16 s) this job runs the script
-+    # self-tests, which have grown the job to roughly 4-5 min, so a slightly
-+    # slow runner crossed 5 min and the job was cancelled mid-self-test.
-+    timeout-minutes: 10
-+    # Runs in parallel with conventional_commits (both GitHub-hosted, no Rust build)
-     #
-     # DO NOT add `needs: fmt_check` to a test or build job (#5621). Rule Lint
-     # enforces this for every required-context job, with an allowlist for the
+@@ -2892,7 +2892,24 @@ pub fn classify_transport_error(error_msg: &str) -> FailureReason {
+             .map(|s| s.trim().to_string())
+             .unwrap_or_default();
+         if is_well_formed_version(&local) && is_well_formed_version(&gateway) {
+-            FailureReason::VersionMismatch { local, gateway }
++            // "Update required" is only true when the remote is NEWER. The
++            // transport layer already sends an older peer's refusal as a
++            // different error, so this is a second guard: the banner must
++            // never tell the user to install a version older than their own.
++            let remote_is_newer = match (
++                semver::Version::parse(&local),
++                semver::Version::parse(&gateway),
++            ) {
++                (Ok(l), Ok(g)) => g > l,
++                _ => false,
++            };
++            if remote_is_newer {
++                FailureReason::VersionMismatch { local, gateway }
++            } else {
++                FailureReason::Other(format!(
++                    "peer runs an incompatible version {gateway} (this node runs {local})"
++                ))
++            }
+         } else {
+             FailureReason::Other("version mismatch (version text not recognised)".to_string())
+         }
+@@ -3462,6 +3479,85 @@ mod tests {
+         assert!(snap.failures[0].reason_html.contains("0.1.1"));
+     }
+ 
++    fn status_addr(last: u8) -> SocketAddr {
++        SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 9, 8, last)), 31337)
++    }
++
++    fn connect_peer(addr: SocketAddr) {
++        record_peer_connected(addr, None, None);
++    }
++
++    /// Regression: an older peer refusing a node on the latest release was
++    /// recorded as a version mismatch, so the dashboard said "update
++    /// required" and offered a downgrade command.
++    #[test]
++    fn older_peer_refusal_is_not_a_version_mismatch() {
++        let error = crate::transport::TransportError::PeerVersionOutdated {
++            peer_version: "0.2.117".into(),
++        };
++        let message = crate::node::network_bridge::ConnectionError::from(error).to_string();
++        assert!(!matches!(
++            classify_transport_error(&message),
++            FailureReason::VersionMismatch { .. }
++        ));
++        // Second guard: even the legacy mismatch text is not a mismatch when
++        // the remote is older than us.
++        let legacy = "Version incompatibility with gateway\n  Your client version: 0.2.164\n  Gateway version: 0.2.117\n  \n";
++        match classify_transport_error(legacy) {
++            FailureReason::Other(m) => assert!(m.contains("0.2.117")),
++            FailureReason::VersionMismatch { .. }
++            | FailureReason::NatTraversalFailed
++            | FailureReason::Timeout => panic!("older peer must not be a VersionMismatch"),
++        }
++    }
++
++    #[test]
++    fn newer_peer_requiring_update_is_still_a_version_mismatch() {
++        let error = crate::transport::TransportError::ProtocolVersionMismatch {
++            expected: "0.2.170".into(),
++            actual: "0.2.164".into(),
++        };
++        let message = crate::node::network_bridge::ConnectionError::from(error).to_string();
++        match classify_transport_error(&message) {
++            FailureReason::VersionMismatch { local, gateway } => {
++                assert_eq!(local, "0.2.164");
++                assert_eq!(gateway, "0.2.170");
++            }
++            FailureReason::NatTraversalFailed
++            | FailureReason::Timeout
++            | FailureReason::Other(_) => panic!("expected VersionMismatch from {message:?}"),
++        }
++    }
++
++    #[test]
++    fn older_peer_refusal_does_not_make_connected_node_trouble() {
++        let _lock = lock_global_state_for_test();
++        init(31340, HashSet::new(), "0.2.164".to_string());
++        connect_peer(status_addr(1));
++        // The real Display text of both errors an older peer's refusal can
++        // arrive as: the dedicated variant, and the legacy mismatch text with
++        // the remote older than us (the classifier guard).
++        let refusals = [
++            crate::transport::TransportError::PeerVersionOutdated {
++                peer_version: "0.2.117".into(),
++            },
++            crate::transport::TransportError::ProtocolVersionMismatch {
++                expected: "0.2.117".into(),
++                actual: "0.2.164".into(),
++            },
++        ];
++        for refusal in refusals {
++            record_gateway_failure(
++                status_addr(2),
++                classify_transport_error(&refusal.to_string()),
++            );
++            let snap = get_snapshot().unwrap();
++            assert_ne!(snap.health, HealthLevel::Trouble);
++            assert!(!snap.failures[0].reason_html.contains("Version mismatch"));
++            assert!(!snap.failures[0].reason_html.contains("cargo install"));
++        }
++    }
++
+     #[test]
+     fn test_format_duration() {
+         assert_eq!(format_duration(0), "0s");
 ```
 
----
-
-### Incident Patch 2: `d67e8468` (2026-11-24)
-**Commit Message**: fix(get): host and count GET replies only when accepted and matching the request (#6369)
-
-**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +680/-88)
+**File**: `crates/core/src/server/home_page.rs` (modified, +68/-0)
 ```diff
-@@ -536,14 +536,15 @@ async fn drive_client_get_inner(
-                         state.size() + contract.as_ref().map(|c| c.data().len()).unwrap_or(0);
-                     let state_stored = cache_contract_locally(
-                         op_manager,
-+                        &instance_id,
-                         *key,
-                         state.clone(),
-                         contract.clone(),
-                         true, // client driver: this node initiated the GET
-                         crate::ring::HostingCause::ClientGet,
-                     )
-                     .await;
--                    driver.note_stored_state(key, state_stored);
-+                    driver.note_stored_state(key, state_stored.accepted_remote);
-                     *key
-                 }
-                 Terminal::Streaming {
-@@ -1605,6 +1606,7 @@ async fn drive_get_with_assembly_retry(
-             peer_addr,
-             stream_id,
-             key,
-+            &driver.instance_id,
-             includes_contract,
-             cause,
-         )
-@@ -1888,12 +1890,42 @@ fn stored_state_and_code_match(
-     )
- }
+@@ -242,6 +242,74 @@ fn homepage_html_for(snap: Option<network_status::NetworkStatusSnapshot>, hosted
+ mod tests {
+     use super::*;
  
-+/// What `cache_contract_locally` established. Two facts that must not be
-+/// merged into one boolean: whether this node accepted STATE FROM THE REPLY
-+/// (the only thing that says anything about a remote peer), and whether this
-+/// node has a copy it can serve (which may be an older local copy).
-+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-+struct CacheOutcome {
-+    /// The reply's state matched the stored copy or the executor accepted it.
-+    /// Only this may feed a routing existence proof.
-+    accepted_remote: bool,
-+    /// Current-or-older state is held locally after the call: the reply was
-+    /// accepted, or an already hosted copy answered the read. Gates what needs
-+    /// state on this node, such as registering a downstream subscriber.
-+    local_copy: bool,
-+}
-+
-+/// Count a GET reply that names a different contract than the one requested.
-+/// The peer sets the rate, so log the 1st, 2nd, 4th, 8th, ... occurrence only.
-+fn note_reply_not_for_request() {
-+    static SEEN: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-+    let seen = SEEN.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
-+    if seen.is_power_of_two() {
-+        tracing::warn!(
-+            seen,
-+            "get: reply does not match the requested contract; not hosting it \
-+             (logged at doubling counts)"
++    /// Drive the real failure path (transport error text -> classifier ->
++    /// recorded failure -> snapshot -> status card) and return the card.
++    fn status_card_after_refusal(
++        error: crate::transport::TransportError,
++        version: &str,
++        port: u16,
++    ) -> String {
++        use crate::node::network_status as ns;
++        let message = error.to_string();
++        ns::init(port, Default::default(), version.to_string());
++        ns::record_gateway_failure(
++            "10.9.8.7:31337".parse().unwrap(),
++            ns::classify_transport_error(&message),
 +        );
-+    }
-+}
-+
- /// Store the fetched contract state in the local executor and run
- /// the originator-side hosting side effects. Mirrors the legacy
- /// `process_message` Response{Found} branch at `get.rs:2218-2450`.
- ///
--/// Returns `true` when this node holds the contract's current state after the
--/// call (`state_matches || put_persisted`) — D-CACHE-RET (step 10 §1a). Relay
-+/// Returns a [`CacheOutcome`]. `local_copy` is `true` when this node holds the contract's current state after the
-+/// call (`state_matches || put_persisted`, or an already hosted copy answered
-+/// the read), and `false` for a reply that names another contract — D-CACHE-RET (step 10 §1a). Relay
- /// callers gate downstream-subscriber registration on this so a peer registers
- /// demand only after it actually holds state; registering after state makes the
- /// phantom (`contract_in_use && !contract_state_present`) unrepresentable.
-@@ -1903,12 +1935,14 @@ fn stored_state_and_code_match(
- ///    state, skip `PutQuery` entirely so contracts that enforce
- ///    identical-state rejection in `update_state()` aren't invoked
- ///    redundantly.
--/// 2. **Unconditional hosting refresh** — `record_get_access` and
--///    interest-manager eviction cleanup run for BOTH the
--///    state-matches short-circuit AND the PutQuery-failed error paths.
--///    Legacy behaviour at `get.rs:2420-2435` continues these side
--///    effects on error so re-GETs keep refreshing the hosting LRU/TTL
--///    even when the executor rejected the write.
-+/// 2. **Hosting refresh** — `record_get_access` and interest-manager
-+///    eviction cleanup run when the state is held after this call
-+///    (state-matches short-circuit or an accepted write), and also for a
-+///    contract this node ALREADY hosts when the executor rejected the
-+///    incoming state: the read is real demand, charged at the held copy's
-+///    size. A contract not already hosted is not hosted off a rejected reply.
-+///    A reply naming another contract, or code that does not match its
-+///    key, is dropped before anything else.
- /// 3. **`mark_local_client_access` gated on `is_client_requester`** —
- ///    the sticky flag that moves the contract into the
- ///    `contracts_needing_renewal()` set (see `ring/hosting.rs:889`) must
-@@ -1938,12 +1972,13 @@ fn stored_state_and_code_match(
- // hosting-* AFTER 0.2.94. See .claude/rules/hosting-invariants.md + epic #4642.
- async fn cache_contract_locally(
-     op_manager: &OpManager,
-+    requested
-```
-
----
-
-### Incident Patch 3: `9234cb0b` (2026-11-24)
-**Commit Message**: fix(transport): retry a native send whose stream did not open instead of dropping it (#6366)
-
-**File**: `.claude/rules/transport.md` (modified, +23/-12)
-```diff
-@@ -1600,7 +1600,8 @@ a test passes its own; tests read their own, never the global).
-   quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-   not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-   data_refused|stalled_closed|udp_send_failed|suspect_entered|suspect_left|
--  pacer_refused|ack_wait_released|stream_limit_full|native_worker_panicked>; quic_data_stop_<code> (stops a
-+  pacer_refused|ack_wait_released|stream_limit_full|not_opened_retried|
-+  not_opened_retry_sent|native_short_queue_full|native_worker_panicked>; quic_data_stop_<code> (stops a
-   peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-   outcome, refusals by frame kind as short_refused_budget and
-   stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
-@@ -2341,8 +2342,8 @@ Path: QuicPathLimits::NATIVE (DEFAULT with udp_fallback off) and data
-   Upgrade paths keep udp_fallback on and are unchanged.
- Shorts: DataRoute::native, no UDP sender. queue_native_short refuses a full
-   queue with TransportError::SendQueueFull (Transient: the connection
--  survives, the message is counted Dropped, no ShortOverflowUdp), and an
--  ended path with ConnectionClosed. The worker drops and counts a short it
-+  survives, the message is counted quic_data_event_native_short_queue_full,
-+  not Dropped, and no ShortOverflowUdp), and an ended path with ConnectionClosed. The worker drops and counts a short it
-   cannot put on the path (ended, or refusing data while it closes).
- Receive: recv reads the path's inbox through InboundDispatch, the same record
-   a UDP connection keeps (metadata dispatched once, stream ids not reused).
-@@ -2731,21 +2732,31 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-     peer's limit would stop the raise. Until the peer has raised, the reserve
-     does not hold: a send past the peer's limit, streamed, one-packet or
-     control, waits in open_uni until its open deadline (2 s streamed, 1 s a
--    one-packet Short) and ends NotOpened, which goes on UDP; it never ends
--    MaybeDelivered, since nothing was written. Each is counted
-+    one-packet Short) and ends NotOpened(NoCredit); on an upgraded path it goes
-+    on UDP, on a native path (no UDP session) it is sent again on the same path
-+    up to NOT_OPENED_RETRIES (2) times and dropped after that
-+    (QuicPath::retry_not_opened, only while the path still takes data; the
-+    short worker, send_large_short_with and send_stream_with retry, a pipe does
-+    not), so a short waits up to 3 s and a stream or large short up to 6 s. It
-+    never ends MaybeDelivered, since nothing was written. Each attempt is counted
-     quic_data_event_stream_limit_full when its open deadline ends the wait
-     (a send cancelled earlier, by a teardown or shutdown, is not counted;
--    pinned by sends_past_a_fresh_peers_stream_limit_end_not_opened). Control
-+    pinned by sends_past_a_fresh_peers_stream_limit_end_not_opened), so a send
-+    retried twice and dropped counts 3; each retry counts not_opened_retried
-+    and a retried send that goes through counts not_opened_retry_sent. A wait
-+    on this side's own resources (stream permit, control-frame turn, pipe first
-+    chunk) ends NotOpened(TimedOut) and is not retried. Control
-     frames are sent only during setup, but a client's ReadyAck goes out in
-     the step that enables its data, so it would race its own data for the
-     peer's slots: the driver reserves the frame's stream before the send
-     runs (QuicPath::control_first), and no data send opens a stream until
-     the control frame has one or its send ended (pinned by
-     a_reserved_control_frame_opens_ahead_of_data_at_a_full_limit).
--  → Once the UDP transport is removed there is no UDP to go to: a send that
--    finds the peer's limit full then waits for a slot, bounded by its send
--    deadline, and fails NotOpened at the deadline. Not built; the
--    stream_limit_full count is what sizes that wait.
-+  → A native path already has no UDP to go to, so it retries (above) instead.
-+    Once the UDP transport is removed, an upgraded path would too, or wait
-+    longer for a slot, bounded by its send deadline. Not built for upgraded
-+    paths; the stream_limit_full and not_opened_retry_sent counts are what size
-+    that wait.
-   → Each bounded send arms TimeSource::sleep_cancelable, which VirtualTime
-     removes (wakeup and waker) when the future is dropped; plain sleep
-     keeps its wakeup until the deadline (VirtualSleep has no drop
-@@ -2868,7 +2879,7 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   whole message was written and FIN queued, SendProgress set in
-   Outgoing::finish, then the deadline passed or the connection was lost
-   during the ack wait: the peer may have it, do not treat it as Failed),
--  Failed(NotOpened(TimedOut | ConnectionLost)) (no stream ever existed, so the
-+  Failed(NotOpened(TimedOut | NoCredit | ConnectionLost)) (no stream
-```
-
-**File**: `crates/core/src/transport/peer_connection/native_connection/tests.rs` (modified, +115/-1)
-```diff
-@@ -606,7 +606,14 @@ fn a_full_short_queue_refuses_the_send_and_keeps_the_connection() {
-                 matches!(observed, Err(TransportError::SendQueueFull(_))),
-                 "{observed:?}"
-             );
--            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 2);
-+            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 0);
-+            assert_eq!(
-+                rig.conn
-+                    .path()
-+                    .stats()
-+                    .send_event_count(QuicSendEvent::NativeShortQueueFull),
-+                2
-+            );
-             assert_eq!(
-                 rig.conn
-                     .path()
-@@ -938,3 +945,110 @@ fn a_native_connection_counts_in_the_shared_bandwidth_pool() {
-         },
-     );
- }
-+
-+/// The peer's stream limit is held full by shorts its application does not read:
-+/// its short channel holds one and each further reader keeps its slot. Runs
-+/// `test` on a native connection that has sent `primed` shorts into those limits.
-+fn starved<F, Fut>(network: &'static str, primed: usize, test: F)
-+where
-+    F: FnOnce(Rig) -> Fut + Send + 'static,
-+    Fut: Future<Output = ()> + Send + 'static,
-+{
-+    run(
-+        network,
-+        QuicPathLimits {
-+            start_streams: 4,
-+            short_capacity: 1,
-+            ..QuicPathLimits::DEFAULT
-+        },
-+        None,
-+        move |mut rig| async move {
-+            for i in 0..primed {
-+                rig.conn.send_bytes(vec![i as u8; 8]).await.unwrap();
-+            }
-+            rig.settle(Duration::from_millis(500)).await;
-+            test(rig).await;
-+        },
-+    );
-+}
-+
-+fn event(rig: &Rig, event: QuicSendEvent) -> u64 {
-+    rig.conn.path().stats().send_event_count(event)
-+}
-+
-+/// A native path has no UDP session, so a short whose stream did not open within
-+/// its deadline (the peer's stream limit is full) used to be dropped. It is sent
-+/// again on the same path, and arrives once the peer frees a slot. A short waits
-+/// 1 s for credit on each attempt.
-+#[test]
-+fn a_short_that_found_no_stream_credit_is_sent_again_not_dropped() {
-+    starved("native-conn-not-opened-retry", 5, |mut rig| async move {
-+        rig.conn.send_bytes(vec![99; 8]).await.unwrap();
-+        // The probe waits out its first 1 s deadline, then the peer reads.
-+        rig.settle(Duration::from_millis(1200)).await;
-+        let mut got = 0;
-+        for _ in 0..20 {
-+            while rig.peer.peer_inbound.shorts.try_recv().is_ok() {
-+                got += 1;
-+            }
-+            rig.settle(Duration::from_millis(250)).await;
-+        }
-+        assert_eq!(got, 6);
-+        assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 0);
-+        assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Sent), 6);
-+        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 1);
-+        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetrySent), 1);
-+    });
-+}
-+
-+/// A peer that never grants credit: the send is attempted once and retried
-+/// `NOT_OPENED_RETRIES` times, 1 s each, and then dropped, counted once.
-+#[test]
-+fn a_short_is_dropped_once_its_retries_run_out() {
-+    starved(
-+        "native-conn-not-opened-exhausted",
-+        5,
-+        |mut rig| async move {
-+            rig.conn.send_bytes(vec![99; 8]).await.unwrap();
-+            rig.settle(Duration::from_millis(2900)).await;
-+            assert_eq!(
-+                rig.sends(SendKind::Short, QuicSendResult::Dropped),
-+                0,
-+                "still retrying"
-+            );
-+            rig.settle(Duration::from_millis(300)).await;
-+            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 1);
-+            assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 2);
-+            assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetrySent), 0);
-+            assert_eq!(event(&rig, QuicSendEvent::StreamLimitFull), 3);
-+        },
-+    );
-+}
-+
-+/// A large short (past one packet) retries the same way; it waits 2 s per
-+/// attempt, so up to 6 s.
-+#[test]
-+fn a_large_short_is_retried_then_dropped() {
-+    starved("native-conn-large-short-retry", 5, |mut rig| async move {
-+        rig.conn.send_bytes(vec![7; 5000]).await.unwrap();
-+        rig.settle(Duration::from_millis(6500)).await;
-+        assert_eq!(rig.sends(SendKind::LargeShort, QuicSendResult::Dropped), 1);
-+        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 2);
-+        assert_eq!(event(&rig, QuicSendEvent::StreamLimitFull), 3);
-+    });
-+}
-+
-+/// A stream retries the same way; it waits 2 s per attempt, so up to 6 s.
-+#[test]
-+fn a_stream_is_retried_then_dropped() {
-+    starved("native-conn-stream-retry", 5, |mut rig| async move {
-+        rig.conn
-+            .send_stream_data(StreamId::next(), bytes_of(5000), None, None, None)
-+            .await
-+            .unwrap();
-+        rig.settle(Duration::from_millis(6500)).await;
-+        assert_eq!(rig.sends(SendKind::Stream, QuicSendResult::Dropped
-```
-
-**File**: `crates/core/src/transport/peer_connection/quic_send.rs` (modified, +33/-17)
-```diff
-@@ -311,11 +311,19 @@ pub(super) async fn send_large_short_with<T: TimeSource>(
- ) -> OutboundStreamResult {
-     let bytes = data.len() as u64;
-     let transfer = PathTransfer::start(stream_id, remote_addr, bytes, time_source);
--    let outcome = route
--        .path()
--        .send_short_bounded(route.clock(), SendDeadlines::short(bytes), &data)
--        .await;
--    route.note(|| format!("sent a large short on the path: {outcome:?}"));
-+    let mut attempt = 0;
-+    let outcome = loop {
-+        let outcome = route
-+            .path()
-+            .send_short_bounded(route.clock(), SendDeadlines::short(bytes), &data)
-+            .await;
-+        route.note(|| format!("sent a large short on the path: {outcome:?}"));
-+        if !route.path().retry_not_opened(&outcome, attempt) {
-+            break outcome;
-+        }
-+        attempt += 1;
-+    };
-+    route.path().note_retry_outcome(&outcome, attempt);
-     match route.path().settle(
-         SendKind::LargeShort,
-         &outcome,
-@@ -376,18 +384,26 @@ pub(super) async fn send_stream_with<T: TimeSource>(
- ) -> OutboundStreamResult {
-     let bytes = data.len() as u64;
-     let transfer = PathTransfer::start(stream_id, remote_addr, bytes, time_source);
--    let outcome = route
--        .path()
--        .send_stream_bounded(
--            route.clock(),
--            route.path().stream_deadlines(bytes),
--            stream_id,
--            metadata.as_deref(),
--            data.clone(),
--            progress.as_deref(),
--        )
--        .await;
--    route.note(|| format!("sent a stream on the path: {outcome:?}"));
-+    let mut attempt = 0;
-+    let outcome = loop {
-+        let outcome = route
-+            .path()
-+            .send_stream_bounded(
-+                route.clock(),
-+                route.path().stream_deadlines(bytes),
-+                stream_id,
-+                metadata.as_deref(),
-+                data.clone(),
-+                progress.as_deref(),
-+            )
-+            .await;
-+        route.note(|| format!("sent a stream on the path: {outcome:?}"));
-+        if !route.path().retry_not_opened(&outcome, attempt) {
-+            break outcome;
-+        }
-+        attempt += 1;
-+    };
-+    route.path().note_retry_outcome(&outcome, attempt);
-     match route
-         .path()
-         .settle(SendKind::Stream, &outcome, false, route.clock().now_nanos())
-```
-
-**File**: `crates/core/src/transport/quic/config.rs` (modified, +5/-2)
-```diff
-@@ -222,8 +222,11 @@ pub(crate) const UNANNOUNCED_CREDIT_SLACK: u32 = MAX_UNI_STREAMS / 8;
- ///   at [`DATA_START_UNI_STREAMS`] and raises only once all its streams are
- ///   busy, so capping the permits below its limit would stop the raise.
- ///   Until it raises, the reserve does not hold: a send past its limit waits
--///   in `open_uni` until its open deadline and ends `NotOpened` (on UDP),
--///   never `MaybeDelivered`, counted `quic_data_event_stream_limit_full`.
-+///   in `open_uni` until its open deadline and ends `NotOpened`, never
-+///   `MaybeDelivered`, counted `quic_data_event_stream_limit_full`. An upgraded
-+///   path then sends it on UDP. A native path has no UDP session, so it sends it
-+///   again on the same path (`route::NOT_OPENED_RETRIES` times) and drops it only
-+///   after that.
- pub(crate) const STREAMED_SEND_LIMIT: u32 =
-     MAX_UNI_STREAMS - RESERVED_UNI_STREAMS - UNANNOUNCED_CREDIT_SLACK;
- const _: () = assert!(RESERVED_UNI_STREAMS > 0 && STREAMED_SEND_LIMIT > 0);
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +2/-0)
-```diff
-@@ -2134,7 +2134,9 @@ impl QuicPath {
-                 // stream limit was full for all of it.
-                 let waiting = CreditWait(Some((&self.stats, &progress)));
-                 let wanted = (opener == Opener::Data).then(|| self.writers.wait_for_stream());
-+                progress.set_credit_wait(true);
-                 let opened = open.await;
-+                progress.set_credit_wait(false);
-                 drop(wanted);
-                 waiting.disarm();
-                 opened
-```
-
-**File**: `crates/core/src/transport/quic/path/bounded.rs` (modified, +22/-1)
-```diff
-@@ -228,8 +228,15 @@ pub(crate) enum SendFailure {
- #[cfg_attr(not(test), allow(dead_code))]
- pub(crate) enum NotOpened {
-     /// The deadline passed waiting for the source's first chunk, a
--    /// streamed-message permit or a stream credit.
-+    /// streamed-message permit or a control frame's turn: a wait on this side's
-+    /// own resources, which a second attempt would only repeat.
-     TimedOut,
-+    /// The deadline passed in `open_uni`, waiting for the peer's stream credit:
-+    /// its stream limit was full for the whole open deadline
-+    /// ([`QuicSendEvent::StreamLimitFull`]). Credit may be back by the next try.
-+    ///
-+    /// [`QuicSendEvent::StreamLimitFull`]: super::route::QuicSendEvent::StreamLimitFull
-+    NoCredit,
-     /// The connection was lost first.
-     ConnectionLost(quinn::ConnectionError),
-     /// The connection's bandwidth-limit pacer refused the header's wait, which
-@@ -274,6 +281,10 @@ struct ProgressState {
-     /// The path's pacer refused a write, so the send ends as at its current
-     /// deadline (`pacer` module).
-     refused: AtomicBool,
-+    /// The send is waiting in `open_uni` for the peer's stream credit
-+    /// ([`SendProgress::set_credit_wait`]), so a deadline that ends it is
-+    /// [`NotOpened::NoCredit`] and not a wait on this side's own resources.
-+    credit_wait: AtomicBool,
-     /// When the end of the stream was sent, on `now`; 0 before.
-     finished_at: AtomicU64,
-     /// [`SendProgress::ack_wait_ended`].
-@@ -316,6 +327,7 @@ impl SendProgress {
-             now: Box::new(|| 0),
-             deadlines: None,
-             refused: AtomicBool::new(false),
-+            credit_wait: AtomicBool::new(false),
-             finished_at: AtomicU64::new(0),
-             ack_wait_ended: AtomicBool::new(false),
-             ack_wait_due: AtomicU64::new(0),
-@@ -340,6 +352,7 @@ impl SendProgress {
-             now: Box::new(move || time.now_nanos()),
-             deadlines: Some((deadlines, started)),
-             refused: AtomicBool::new(false),
-+            credit_wait: AtomicBool::new(false),
-             finished_at: AtomicU64::new(0),
-             ack_wait_ended: AtomicBool::new(false),
-             ack_wait_due: AtomicU64::new(0),
-@@ -350,6 +363,11 @@ impl SendProgress {
-         }))
-     }
- 
-+    /// Mark the send as waiting (or no longer) for the peer's stream credit.
-+    pub(super) fn set_credit_wait(&self, waiting: bool) {
-+        self.0.credit_wait.store(waiting, Ordering::Release);
++        cards::build_status_card(&ns::get_snapshot())
 +    }
 +
-     /// The send is still opening and its open deadline has passed, so the
-     /// timer ends it now (or has ended it). `false` for a send with no
-     /// deadline.
-@@ -566,6 +584,9 @@ impl SendProgress {
- 
-     fn timed_out(&self) -> BoundedSend {
-         match self.stage() {
-+            STAGE_OPENING if self.0.credit_wait.load(Ordering::Acquire) => {
-+                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
-+            }
-             STAGE_OPENING => BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut)),
-             STAGE_OPENED => BoundedSend::Failed(SendFailure::TimedOut),
-             _ => BoundedSend::MaybeDelivered(MaybeDelivered::TimedOut),
-```
-
-**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +54/-1)
-```diff
-@@ -11,6 +11,7 @@
- //! | `Sent` | done | done |
- //! | `MaybeDelivered` | done | done |
- //! | `Failed(NotOpened)` | UDP | UDP, same id |
-+//! | `Failed(NotOpened(NoCredit))` on a native path | same path again, `NOT_OPENED_RETRIES` times, then dropped | same |
- //! | `Failed(NotOpened(Paced))` (the pacer refused it) | UDP, charged to the pacer | UDP, same id, charged to the pacer |
- //! | `Failed(TimedOut)` after open | UDP | give up |
- //! | `Failed(Paced)` after open | UDP, charged to the pacer | give up |
-@@ -137,13 +138,32 @@ quic_outcomes! {
-         /// `config::DATA_START_UNI_STREAMS` yet. Also counted under its
-         /// kind's result.
-         StreamLimitFull => "stream_limit_full",
-+        /// A send on a native path (no UDP session) opened no stream within its
-+        /// deadline, and was sent again on the same path instead of dropped
-+        /// (`QuicPath::retry_not_opened`). Nothing reached the receiver, so the
-+        /// second attempt cannot duplicate it.
-+        NotOpenedRetried => "not_opened_retried",
-+        /// A send that was retried after `NotOpenedRetried` then went through, so
-+        /// the retry saved a message the first attempt would have dropped.
-+        NotOpenedRetrySent => "not_opened_retry_sent",
-+        /// A native connection's short was refused because its queue was full
-+        /// (`DataRoute::queue_native_short`): the path is behind. Not a give-up
-+        /// after the open deadline, which counts `short_dropped`.
-+        NativeShortQueueFull => "native_short_queue_full",
-         /// A native connection's route worker panicked (counted, then the panic
-         /// is raised again). An upgrade's worker counts as
-         /// `quic_upgrade_task_panicked` instead.
-         NativeWorkerPanicked => "native_worker_panicked",
-     }
- }
- 
-+/// Extra attempts a native path makes at a send that waited out its open deadline
-+/// for the peer's stream credit. Each attempt waits the open deadline again for a stream credit, so
-+/// the wait between attempts is the deadline itself and needs no timer of its own.
-+/// Two keeps a send that cannot open from holding its slot for more than three
-+/// open deadlines.
-+pub(crate) const NOT_OPENED_RETRIES: u32 = 2;
-+
- /// What to do after `outcome` of a send of `kind`, and how to count it.
- pub(crate) fn next_step(kind: SendKind, outcome: &BoundedSend) -> (NextStep, QuicSendResult) {
-     use NextStep::{Done, GiveUp, SendOnUdp};
-@@ -197,7 +217,7 @@ fn timed_out(outcome: &BoundedSend) -> bool {
-     match outcome {
-         BoundedSend::MaybeDelivered(MaybeDelivered::TimedOut)
-         | BoundedSend::Failed(SendFailure::TimedOut) => true,
--        BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut))
-+        BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut | NotOpened::NoCredit))
-         | BoundedSend::Sent
-         | BoundedSend::MaybeDelivered(MaybeDelivered::ConnectionLost)
-         | BoundedSend::Failed(SendFailure::NotOpened(NotOpened::ConnectionLost(_)))
-@@ -435,6 +455,39 @@ impl QuicPath {
-         (self.stall.lock().in_a_row(), *self.quiet.lock())
-     }
- 
-+    /// Whether a send that ended `outcome` on its `attempt`th try (from 0) should
-+    /// be sent again on this path, and counts the retry if so. Only a native path
-+    /// (no UDP session to fall back to) that still takes data retries, and only a
-+    /// send that waited out its open deadline for the peer's stream credit
-+    /// ([`NotOpened::NoCredit`]): `NotOpened` proves no stream existed and nothing
-+    /// reached the receiver, so a second attempt cannot duplicate the message.
-+    /// A closed connection, a pacer refusal or a wait on this side's own resources
-+    /// would fail the same way again, and a peer that refused data is not asked
-+    /// again. An upgraded path never retries: its fallback is UDP. Each attempt
-+    /// counts `StreamLimitFull` once.
-+    pub(crate) fn retry_not_opened(&self, outcome: &BoundedSend, attempt: u32) -> bool {
-+        let retry = !self.udp_fallback
-+            && self.sends_data()
-+            && attempt < NOT_OPENED_RETRIES
-+            && matches!(
-+                outcome,
-+                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
-+            );
-+        if retry {
-+            self.stats
-+                .record_send_event(QuicSendEvent::NotOpenedRetried);
-+        }
-+        retry
++    /// Regression: an older peer refusing us must never produce the "update
++    /// required" banner or an install command for an older version.
++    #[test]
++    fn older_peer_refusal_never_shows_update_banner() {
++        let _lock = crate::node::network_status::lock_global_state_for_test();
++        let card = status_card_after_refusal(
++            crate::transport::TransportError::PeerVersionOutdated {
++                peer_version: "0.2.117".into(),
++            },
++            "0.2.164",
++            31350,
++        );
++        assert!(!card.contains("update required"), "{card}");
++        assert!(!card.contains("Version mismatch"), "{card}");
++        assert!(!card.contains("--version 0.2.117"), "{card}");
 +    }
 +
-+    /// Count a send that went through after `attempt` retries.
-+    pub(crate) fn note_retry_outcome(&self, outcome: &BoundedSend, attempt: u32) {
-+        if attempt > 0 && matches!(outcome, BoundedSend::Sent) {
-+            self.stats
-+                .record_send_event(QuicSendEvent::NotOpenedRetrySent);
-+        }
++    /// The real mismatch Display text with the remote OLDER than us must not
++    /// produce the banner either (second guard in the classifier).
++    #[test]
++    fn mismatch_text_with_older_remote_never_shows_update_banner() {
++        let _lock = crate::node::network_status::lock_global_state_for_test();
++        let card = status_card_after_refusal(
++            crate::transport::TransportError::ProtocolVersionMismatch {
++                expected: "0.2.117".into(),
++                actual: "0.2.164".into(),
++            },
++            "0.2.164",
++            31352,
++        );
++        assert!(!card.contains("update required"), "{card}");
++        assert!(!card.contains("--version 0.2.117"), "{card}");
 +    }
 +
-     /// Count `outcome` of a send of `kind` and say what to do with the message.
-     /// Every data send of the node ends here.
++    /// A newer peer requiring an update keeps the banner for a node that has
++    /// no connections, and the version it offers is newer than the running one.
++    #[test]
++    fn newer_peer_requiring_update_shows_banner_without_connections() {
++        let _lock = crate::node::network_status::lock_global_state_for_test();
++        let card = status_card_after_refusal(
++            crate::transport::TransportError::ProtocolVersionMismatch {
++                expected: "0.2.170".into(),
++                actual: "0.2.164".into(),
++            },
++            "0.2.164",
++            31351,
++        );
++        assert!(card.contains("update required"), "{card}");
++        assert!(card.contains("--version 0.2.170"), "{card}");
++    }
++
+     /// A hosted node does not serve `/permission/apps`, so its home page does
+     /// not link to it; a node that is not hosted keeps the link.
      ///
 ```
 
-**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +1/-1)
+**File**: `crates/core/src/transport.rs` (modified, +10/-0)
 ```diff
-@@ -6944,7 +6944,7 @@ fn bounded_sends_on_a_path_report_each_outcome() {
-         assert!(
-             matches!(
-                 blocked,
--                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut))
-+                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
-             ),
-             "{blocked:?}"
-         );
+@@ -406,6 +406,11 @@ pub enum TransportError {
+         "Version incompatibility with gateway\n  Your client version: {actual}\n  Gateway version: {expected}\n  \n  To fix this, update your Freenet client:\n    cargo install --force freenet --version {expected}\n  \n  Or if building from source:\n    git pull && cargo install --path crates/core"
+     )]
+     ProtocolVersionMismatch { expected: String, actual: String },
++    /// The remote peer runs an OLDER release that refused us. We do not need
++    /// to update, so this must never be shown as "update required". Local
++    /// classification only: never serialized onto the wire.
++    #[error("peer runs an outdated version {peer_version} and refused this connection")]
++    PeerVersionOutdated { peer_version: String },
+     #[error("outbound stream to {0} failed (stream-scoped, connection survives)")]
+     OutboundStreamFailed(SocketAddr),
+     /// An outbound stream was not started because its length is outside
+@@ -694,6 +699,7 @@ impl TransportError {
+             | TransportError::ConnectionClosed(_)
+             | TransportError::ConnectionEstablishmentFailure { .. }
+             | TransportError::ProtocolVersionMismatch { .. }
++            | TransportError::PeerVersionOutdated { .. }
+             | TransportError::Other(_)
+             | TransportError::Udp(UdpError(
+                 UdpErrorKind::IO(_)
+@@ -1227,6 +1233,7 @@ mod tests {
+                 TransportError::ProtocolVersionMismatch { .. } => {
+                     (ErrorScope::Connection, false, true)
+                 }
++                TransportError::PeerVersionOutdated { .. } => (ErrorScope::Connection, false, true),
+                 TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) => {
+                     (ErrorScope::Transient, true, false)
+                 }
+@@ -1280,6 +1287,9 @@ mod tests {
+                 expected: "1".into(),
+                 actual: "2".into(),
+             },
++            TransportError::PeerVersionOutdated {
++                peer_version: "1".into(),
++            },
+             TransportError::send_failed(addr, io::ErrorKind::NetworkUnreachable),
+             TransportError::OutboundStreamFailed(addr),
+             TransportError::SendQueueFull(addr),
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +28/-7)
+```diff
+@@ -3060,7 +3060,11 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+                         // Failed gateway connection
+                         Err((error, remote_addr)) => {
+                             tracing::info!(error = %error, peer_addr = %remote_addr, "Failed to establish gateway connection");
+-                            if matches!(error, TransportError::ProtocolVersionMismatch { .. }) {
++                            if matches!(
++                                error,
++                                TransportError::ProtocolVersionMismatch { .. }
++                                    | TransportError::PeerVersionOutdated { .. }
++                            ) {
+                                 outdated_peer.insert(remote_addr, self.time_source.now_nanos());
+                             }
+                             self.connections.fail_gateway_handshake(&remote_addr);
+@@ -3137,7 +3141,8 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+                                 &crate::transport::TRANSPORT_METRICS,
+                             );
+                             match &error {
+-                                TransportError::ProtocolVersionMismatch { .. } => {
++                                TransportError::ProtocolVersionMismatch { .. }
++                                | TransportError::PeerVersionOutdated { .. } => {
+                                     tracing::warn!(%error);
+                                     crate::transport::TRANSPORT_METRICS
+                                         .record_nat_traversal_failed_version();
+@@ -4348,7 +4353,8 @@ fn classify_nat_failure(
+         return NatFailureKind::VersionIncompatible;
+     }
+     match error {
+-        TransportError::ProtocolVersionMismatch { .. } => NatFailureKind::VersionIncompatible,
++        TransportError::ProtocolVersionMismatch { .. }
++        | TransportError::PeerVersionOutdated { .. } => NatFailureKind::VersionIncompatible,
+         TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) => NatFailureKind::SendError,
+         TransportError::ChannelClosed
+         | TransportError::ConnectionClosed(_)
+@@ -4640,11 +4646,12 @@ fn handle_ack_connection_error(err: Cow<'static, str>) -> TransportError {
+         ) {
+             tracing::info!(
+                 remote_version = remote_version_str,
+-                "Old peer rejected us (strict match) but is within our compatible range — not triggering self-update"
++                "Old peer rejected us (strict match) but is not newer than us — not triggering self-update"
+             );
+-            return TransportError::ProtocolVersionMismatch {
+-                expected: remote_version_str.to_string(),
+-                actual: PCK_VERSION.to_string(),
++            // The remote is the one that is out of date: record it as such so
++            // the dashboard never tells the user to install the remote's version.
++            return TransportError::PeerVersionOutdated {
++                peer_version: remote_version_str.to_string(),
+             };
+         }
+         // Remote is genuinely newer — signal version mismatch
+@@ -4939,6 +4946,7 @@ pub mod mock_transport {
+             TransportError::ChannelClosed
+             | TransportError::ConnectionClosed(_)
+             | TransportError::ConnectionEstablishmentFailure { .. }
++            | TransportError::PeerVersionOutdated { .. }
+             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
+             | TransportError::OutboundStreamFailed(_)
+             | TransportError::OutboundStreamInvalidLength(..)
+@@ -4978,6 +4986,18 @@ pub mod mock_transport {
+             &ok,
+             TransportError::ProtocolVersionMismatch { expected, .. } if expected == "1.2.3-rc.1+b5"
+         ));
++        // An OLDER peer refusing us is not a request for us to update: it must
++        // not be reported as a version mismatch (which drives the "update
++        // required" banner) and must not carry a downgrade install command.
++        let older = handle_ack_connection_error("expected version 0.2.117".to_string().into());
++        assert!(
++            matches!(
++                &older,
++                TransportError::PeerVersionOutdated { peer_version } if peer_version == "0.2.117"
++            ),
++            "older peer must not be a ProtocolVersionMismatch, got {older:?}"
++        );
++        assert!(!older.to_string().contains("cargo install"));
+         let long_other = "x".repeat(500);
+         let err = handle_ack_connection_error(long_other.into());
+         assert!(matches!(
+@@ -4993,6 +5013,7 @@ pub mod mock_transport {
+             TransportError::ChannelClosed
+             | TransportError::ConnectionClosed(_)
+             | TransportError::ProtocolVersionMismatch { .. }
++            | TransportError::PeerVersionOutdated { .. }
+             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
+             | TransportError::OutboundStreamFailed(_)
+             | Transpo
+```
+
+**File**: `crates/core/src/transport/connection_handler/version_cmp.rs` (modified, +42/-1)
+```diff
+@@ -151,6 +151,31 @@ const fn parse_semver(version: &str) -> (u8, u8, u16) {
+     (major, minor, patch)
+ }
+ 
++/// [`parse_semver`] for text a remote peer sent: `None` when a component does
++/// not fit the wire width (`u8.u8.u16`) instead of overflowing (a debug
++/// panic, or a silent wrap in release) or truncating ("256.0.0" reading as
++/// 0.0.0). Callers must treat `None` as "not newer than us".
++fn try_parse_semver(version: &str) -> Option<(u8, u8, u16)> {
++    let mut parts = [0u32; 3];
++    let mut state = 0usize;
++    for c in version.bytes() {
++        if c == b'.' {
++            state += 1;
++        } else if c.is_ascii_digit() {
++            if let Some(part) = parts.get_mut(state) {
++                *part = part.checked_mul(10)?.checked_add(u32::from(c - b'0'))?;
++            }
++        } else {
++            break; // Pre-release suffix.
++        }
++    }
++    Some((
++        u8::try_from(parts[0]).ok()?,
++        u8::try_from(parts[1]).ok()?,
++        u16::try_from(parts[2]).ok()?,
++    ))
++}
++
+ /// Parse 8 version bytes. Detects old (byte[7]==0) vs new (byte[0]==0xFF, byte[7]!=0).
+ pub(super) fn parse_version_bytes(bytes: &[u8; 8]) -> VersionInfo {
+     if bytes[0] == NEW_FORMAT_MARKER && bytes[7] != 0 {
+@@ -305,7 +330,10 @@ pub(super) fn old_peer_rejection_means_we_must_update(
+     local: &[u8; 8],
+ ) -> bool {
+     let local_info = parse_version_bytes(local);
+-    let (rmaj, rmin, rpatch) = parse_semver(remote_version_str);
++    // An unrepresentable remote version cannot be shown to be newer than us.
++    let Some((rmaj, rmin, rpatch)) = try_parse_semver(remote_version_str) else {
++        return false;
++    };
+ 
+     if let Some(local_min) = local_info.min_compatible {
+         // If remote < our min, we don't care about their rejection
+@@ -652,6 +680,19 @@ mod tests {
+     /// parse_semver with adversarial/malformed input.
+     #[test]
+     fn test_parse_semver_malformed() {
++        assert_eq!(try_parse_semver("0.2.164"), Some((0, 2, 164)));
++        assert_eq!(try_parse_semver("1.2.3-rc.1+b5"), Some((1, 2, 3)));
++        assert_eq!(try_parse_semver("0.2.65535"), Some((0, 2, 65535)));
++        for unrepresentable in ["0.2.70000", "256.0.0", "0.256.0", "99999999999.0.0"] {
++            assert_eq!(try_parse_semver(unrepresentable), None, "{unrepresentable}");
++        }
++        // Peer-supplied text that overflows must fail safe: not "newer".
++        let local = encode_new_format("0.1.153", "0.1.150");
++        assert!(!old_peer_rejection_means_we_must_update(
++            "0.2.70000",
++            &local
++        ));
++        assert!(!old_peer_rejection_means_we_must_update("256.0.0", &local));
+         // Empty string
+         assert_eq!(parse_semver(""), (0, 0, 0));
+         // Missing patch
+```
+
+---
+
+### Incident Patch 2: `7f386ac7` (2026-11-24)
+**Commit Message**: fix(release): verify gateway update downloads; keep docker latest monotonic (#6373)
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -447,7 +447,7 @@ jobs:
+       # clean when they landed but were not actually in this list, so nothing
+       # held them to it. `-x` because the two test scripts `source` the canary.
+       - name: Lint install/uninstall scripts (shellcheck)
+-        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh scripts/check_quic_data_ramp_t0.sh scripts/check_quic_data_ramp_t0_test.sh scripts/check_release_preflight.sh scripts/check_release_preflight_test.sh scripts/apply_version_bump.sh scripts/release_lib.sh scripts/resolve_release_ship.sh scripts/resolve_release_ship_test.sh scripts/wait_for_release_ci.sh scripts/wait_for_release_ci_test.sh scripts/release_sync.sh scripts/release_sync_test.sh scripts/verify_release_checkout.sh scripts/release_mergequeue_test.sh scripts/release_publish_steps_test.sh
++        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh scripts/check_quic_data_ramp_t0.sh scripts/check_quic_data_ramp_t0_test.sh scripts/check_release_preflight.sh scripts/check_release_preflight_test.sh scripts/apply_version_bump.sh scripts/release_lib.sh scripts/resolve_release_ship.sh scripts/resolve_release_ship_test.sh scripts/wait_for_release_ci.sh scripts/wait_for_release_ci_test.sh scripts/release_sync.sh scripts/release_sync_test.sh scripts/verify_release_checkout.sh scripts/release_mergequeue_test.sh scripts/release_publish_steps_test.sh scripts/gateway-auto-update.sh scripts/release-agent/gateway-auto-update_test.sh
+       # The PR-backlog sweep reports stalled PRs (see
+       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
+       # paths -- failed query, empty listing the REST probe contradicts,
+```
+
+**File**: `.github/workflows/docker-publish.yml` (modified, +90/-7)
+```diff
+@@ -323,19 +323,28 @@ jobs:
+         id: version
+         env:
+           RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
++          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+         run: |
+           set -euo pipefail
++          # Release tags are always v-prefixed semver. Refuse anything else
++          # rather than guess: a dispatched `0.2.150` would otherwise compare
++          # unequal to every listed tag and skip the floating tags silently.
++          if ! printf '%s' "$RELEASE_TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
++            echo "::error::Release tag '${RELEASE_TAG}' is not of the form vX.Y.Z[-pre]."
++            exit 1
++          fi
+           version="${RELEASE_TAG#v}"
+           minor="${version%.*}"
+           echo "tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+           echo "version=${version}" >> "$GITHUB_OUTPUT"
+           echo "minor=${minor}" >> "$GITHUB_OUTPUT"
+ 
+-          # `latest` and the minor tag must move only for a stable release.
+-          # `!github.event.release.prerelease` is TRUE on a workflow_dispatch,
+-          # where that field is empty, so a dispatched prerelease tag would
+-          # otherwise take over `latest`. Decide from the version string too.
+-          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
++          # The floating tags (`latest`, the minor tag) may move only for a
++          # stable release. `!github.event.release.prerelease` is TRUE on a
++          # workflow_dispatch, where that field is empty, so a dispatched
++          # prerelease tag would otherwise take over `latest`. Decide from the
++          # version string too.
++          if [ "${RELEASE_PRERELEASE:-}" = "true" ]; then
+             is_stable=false
+           elif printf '%s' "$version" | grep -q -- '-'; then
+             is_stable=false
+@@ -345,15 +354,16 @@ jobs:
+           echo "is_stable=${is_stable}" >> "$GITHUB_OUTPUT"
+           echo "stable release: ${is_stable}"
+ 
++      # Only the immutable per-release tags are pushed here. The floating tags
++      # (`latest`, `X.Y`) are moved by "Move the floating tags" below, AFTER the
++      # push, from a fresh look at the published releases.
+       - uses: docker/metadata-action@v6
+         id: metadata
+         with:
+           images: ghcr.io/${{ github.repository }}
+           tags: |
+             type=raw,value=${{ steps.version.outputs.tag }}
+             type=raw,value=${{ steps.version.outputs.version }}
+-            type=raw,value=${{ steps.version.outputs.minor }},enable=${{ steps.version.outputs.is_stable == 'true' }}
+-            type=raw,value=latest,enable=${{ steps.version.outputs.is_stable == 'true' }}
+           labels: |
+             org.opencontainers.image.version=${{ steps.version.outputs.version }}
+ 
+@@ -376,6 +386,79 @@ jobs:
+           build-args: |
+             FREENET_VERSION=${{ steps.version.outputs.tag }}
+ 
++      # `latest` must name the highest published non-prerelease release, and
++      # `X.Y` the highest within that minor (the same definition as
++      # cross-compile.yml's "Publish release" un-draft). Re-publishing an older
++      # tag must not move either backwards.
++      #
++      # Decided HERE, after the slow build and push, from a fresh release list,
++      # and applied by re-tagging the image just pushed: deciding before the
++      # build would let a slow re-publish of an old tag overwrite `latest`
++      # after a newer release's job had already set it. The window that
++      # remains is the few seconds between this listing and the retag.
++      #
++      # On a `release` event the tag counts as published even if the listing
++      # lags behind the publish. Only plain vX.Y.Z tags count, so a release
++      # someone forgot to flag as a prerelease (v0.3.0-beta) cannot pin
++      # `latest`. Fails closed: if the list cannot be read or is empty, neither
++      # floating tag moves, and the step FAILS so notify-publish-failure says
++      # `latest` is stale (the versioned tags are already pushed). A tag that
++      # is simply not the highest is a warning, not a failure.
++      - name: Move the floating tags
++        id: floating
++        env:
++          RELEASE_TAG: ${{ steps.version.outputs.tag }}
++          MINOR: ${{ steps.version.outputs.minor }}
++          IS_STABLE: ${{ steps.version.outputs.is_stable }}
++          EVENT_NAME: ${{ github.event_name }}
++          IMAGE: ghcr.io/${{ github.repository }}
++          # Read-only: lists releases.
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          set -euo pipefail
++          moved_latest=false
++          moved_minor=false
++          finish() {
++            echo "moved_latest=${moved_latest}" >> "$GITHUB_OUTPUT"
++            echo "moved_minor=${moved_minor}" >> "$GITHUB_OUTPUT"
++            echo "moved latest: ${moved_latest}; moved ${MINOR}: ${moved_minor}"
++          }
++          if [ "$IS_STABLE" != true ]; then
++            echo "${RELEASE_TAG} is a 
+```
+
+**File**: `AGENTS.md` (modified, +10/-5)
+```diff
+@@ -290,11 +290,16 @@ cascade to fire automatically.
+ (`FREENET_RELEASE_SIGNING_KEY` repo secret) and uploads `SHA256SUMS.txt.sig`.
+ The auto-updater (`crates/core/src/bin/commands/update.rs`) verifies that
+ signature against the public key baked into the binary (`FREENET_RELEASE_PUBKEY`)
+-before trusting the checksum manifest. Rotating the key means updating BOTH the
+-secret AND the baked-in `FREENET_RELEASE_PUBKEY` (a mismatch would make every
+-client refuse the release). To verify the secret matches the baked-in key
+-without cutting a release, run `cross-compile.yml` via `workflow_dispatch` and
+-check the `verify-signing-key` job. The full prerequisites table (including the
++before trusting the checksum manifest. Rotating the key means updating the
++secret AND every copy of the public key: the baked-in `FREENET_RELEASE_PUBKEY`,
++`docker/freenet-node/release-signing-key.der`, and `RELEASE_PUBKEY_HEX` in
++`scripts/gateway-auto-update.sh` (which refuses to install a gateway update
++whose manifest does not verify). A mismatch makes every client, image build or
++gateway update refuse the release; tests in `update.rs` and
++`scripts/release-agent/gateway-auto-update_test.sh` fail if the copies drift.
++To verify the secret matches the baked-in key without cutting a release, run
++`cross-compile.yml` via `workflow_dispatch` and check the `verify-signing-key`
++job. The full prerequisites table (including the
+ two-release `REQUIRE_RELEASE_SIGNATURE` transition) is in `docs/RELEASING.md`.
+ 
+ ### Reserved offline revocation key (`FREENET_REVOCATION_PUBKEY`)
+```
+
+**File**: `docs/RELEASING.md` (modified, +14/-6)
+```diff
+@@ -106,7 +106,7 @@ published.
+ | `MATRIX_ACCESS_TOKEN` | release-announce.yml | Matrix job warns + skips. |
+ | `RELEASE_AGENT_HMAC_NOVA` | gateway-update.yml, release-announce.yml | nova update + River announce fail (HTTP 401). |
+ | `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` | cross-compile.yml `build-x86_64-windows` (Authenticode signing) | **Does NOT degrade gracefully — this one fails the release.** See "Windows code signing" below. |
+-| `FREENET_RELEASE_SIGNING_KEY` | cross-compile.yml (`Sign SHA256SUMS.txt`) | **Fails the release** in `attach-to-release`, while it is still a draft. It used to publish an UNSIGNED release with only a warning; clients accept one (`REQUIRE_RELEASE_SIGNATURE = false`) but verify nothing, and docker-publish.yml then fails after publication because it requires a verified signature. PEM-encoded ed25519 private key whose public half is baked into the updater (`update.rs` `FREENET_RELEASE_PUBKEY`). |
++| `FREENET_RELEASE_SIGNING_KEY` | cross-compile.yml (`Sign SHA256SUMS.txt`) | **Fails the release** in `attach-to-release`, while it is still a draft. It used to publish an UNSIGNED release with only a warning; clients accept one (`REQUIRE_RELEASE_SIGNATURE = false`) but verify nothing, and docker-publish.yml then fails after publication because it requires a verified signature. PEM-encoded ed25519 private key. Its public half has three copies that must all change on rotation: `update.rs` `FREENET_RELEASE_PUBKEY` (the node's updater), `docker/freenet-node/release-signing-key.der` (image builds), and `RELEASE_PUBKEY_HEX` in `scripts/gateway-auto-update.sh` (gateway rollouts, which refuse an unsigned or mis-signed release outright). Tests fail if they drift. |
+ 
+ To validate `FREENET_RELEASE_SIGNING_KEY` without cutting a release, run the
+ `Build and Cross-Compile` workflow via `workflow_dispatch`: its
+@@ -1143,9 +1143,14 @@ Recovery:
+    --since "10 min ago"'`
+ 2. If the agent is fine but the service is down, restart it directly:
+    `ssh ian@<host> 'sudo systemctl restart freenet-gateway'` (then confirm
+-   `systemctl is-active freenet-gateway`). If the script itself failed, the
+-   manual fix is `ssh ian@<host> 'sudo /usr/local/bin/gateway-auto-update.sh
+-   --force'`.
++   `systemctl is-active freenet-gateway`). If the script itself failed, check
++   `sudo grep -E 'Release verification|Refusing to downgrade' /var/log/freenet-auto-update.log`
++   first: a "Release verification FAILED" line means the download did not
++   match the release's signed `SHA256SUMS.txt` (or the signature or manifest
++   was missing), and the gateway deliberately stayed on its old binary. Gateway
++   rollouts require a signed release; do not work around this, find out why
++   the release's signature or checksums are wrong. Otherwise the manual fix is
++   `ssh ian@<host> 'sudo /usr/local/bin/gateway-auto-update.sh --force'`.
+ 3. Re-run the gateway-update workflow against just the failed gateway:
+    `gh workflow run gateway-update.yml --field version=X.Y.Z --field
+    gateways=nova`.
+@@ -1228,8 +1233,11 @@ fix-forward release.
+ 
+ For a serious regression that needs immediate rollback, the operator path
+ is `ssh ian@<host> 'sudo gateway-auto-update.sh --force --target-version
+-vX.Y.Z'` against the previous good version — the script accepts a downgrade
+-when invoked directly, the agent doesn't.
++vX.Y.Z --allow-downgrade'` against the previous good version. The script
++refuses any downgrade without `--allow-downgrade` (even with `--force`, which
++only permits reinstalling the same version), and refuses that flag when sudo
++reports the caller as the release-agent account; the agent itself answers 403
++to a downgrade. The rolled-back release is still signature-checked.
+ 
+ ## Skip mechanisms
+ 
+```
+
+**File**: `docs/release-agent-deployment.md` (modified, +29/-44)
+```diff
+@@ -79,7 +79,7 @@ cargo run -p riverctl message send <ROOM_VK> "<message>"
+ 
+ This endpoint is **opt-in via config** (`river_announce_command` and
+ `river_announce_user` in `config.toml`). Gateways without a local
+-Freenet node + room signing key (e.g. vega) leave both fields blank;
++Freenet node + room signing key leave both fields blank;
+ `POST /announce/river` returns 503 there.
+ 
+ ## GitHub Actions secrets
+@@ -98,16 +98,26 @@ the Matrix secrets are absent — useful while bootstrapping.
+ 
+ ## Prerequisites per gateway
+ 
+-1. **`gateway-auto-update.sh` installed at `/usr/local/bin/`** (or wherever
+-   the existing release flow puts it), owned by root, perms ≤ 755.
+-   `install.sh` aborts otherwise.
+-2. **Caddy** (or another TLS terminator) already running and serving
++1. **`gateway-auto-update.sh` and `deploy-local-gateway.sh` installed at
++   `/usr/local/bin/`**, root:root 0755, in a directory only root can write
++   (the updater runs the deploy script from its own directory, as root).
++   `install.sh` installs both from the checkout it runs from and aborts if
++   `/usr/local/bin` is writable by anyone but root. **Nothing updates them
++   automatically**: after a change to either script merges, refresh both on
++   each gateway from an up-to-date `main` checkout, by re-running `install.sh`
++   (or `scripts/install-auto-update.sh`), or by hand:
++   `sudo install -m 0755 -o root -g root scripts/gateway-auto-update.sh
++   scripts/deploy-local-gateway.sh /usr/local/bin/`.
++2. **OpenSSL >= 3.0** (`openssl version`). `gateway-auto-update.sh` verifies
++   each release's signed `SHA256SUMS.txt` with `openssl pkeyutl -rawin`, and
++   refuses every update, before downloading, if OpenSSL is missing or older.
++3. **Caddy** (or another TLS terminator) already running and serving
+    `*.locut.us`. Caddyfile snippet in
+    [`scripts/release-agent/Caddyfile.snippet`](../scripts/release-agent/Caddyfile.snippet).
+-3. **DNS A record** for `update.<host>.locut.us` pointing at the
++4. **DNS A record** for `update.<host>.locut.us` pointing at the
+    gateway's public IP. Create this before `install.sh` runs so Caddy can
+    acquire the cert.
+-4. **Inbound TCP/443 reachable** from GitHub Actions runners. See [Firewall
++5. **Inbound TCP/443 reachable** from GitHub Actions runners. See [Firewall
+    notes per host](#firewall-notes-per-host) below.
+ 
+ ## Install procedure
+@@ -194,42 +204,17 @@ narrowing the SG creates more breakage than it prevents.
+ 
+ ### vega (AWS EC2) — RETIRED September 2026
+ 
+-> Retired. Kept because it documents the only deployment where ghostkey-api
+-> owned :80/:443 and forced the agent onto :8443 — useful precedent if another
+-> host ever needs that shape. No longer a rollout target: out of the release
+-> matrix, out of `release.sh`, and `RELEASE_AGENT_HMAC_VEGA` is unused.
+-
+-
+-Vega differs from nova: `ghostkey-api` (gkapi.freenet.org) already owns
+-:80 and :443 on this host, so the release-agent uses a **non-standard
+-port and a per-host vhost**.
+-
+-- AWS Security Group `sg-0f4b9b9b5bf2a8cbb`: open inbound **TCP/8443**
+-  from `0.0.0.0/0`. (No need to open :443; Caddy doesn't listen there
+-  on vega.) Rely on HMAC for authentication; the agent's defense-in-
+-  depth layers (clock-skew window, rate-limit, version-pin, GitHub-
+-  latest cross-check) make a public endpoint safe.
+-- Caddy config: install
+-  [`scripts/release-agent/Caddyfile.vega.snippet`](../scripts/release-agent/Caddyfile.vega.snippet)
+-  as `/etc/caddy/Caddyfile`. It uses `auto_https off` so Caddy doesn't
+-  try to bind :80/:443, and an explicit `tls` directive pointing at
+-  the dedicated `vega.locut.us` Let's Encrypt cert at
+-  `/etc/letsencrypt/live/vega.locut.us/{fullchain,privkey}.pem`.
+-- Cert permissions: the `caddy` system user must be in the `ssl-cert`
+-  group; the cert files in `/etc/letsencrypt/archive/vega.locut.us/`
+-  must be chgrp'd to `ssl-cert` with mode `0640` (privkey) / `0644`
+-  (the rest). Install
+-  [`scripts/release-agent/reload-caddy.sh`](../scripts/release-agent/reload-caddy.sh)
+-  as `/etc/letsencrypt/renewal-hooks/deploy/reload-caddy.sh` (mode
+-  0755) so certbot re-applies the group ownership and reloads Caddy
+-  after each renewal.
+-- Smoke test URL: `https://vega.locut.us:8443/release-agent/healthz`
+-  (not `update.vega.locut.us`). The workflow's vega matrix entry
+-  matches this.
+-
+-If you want a tighter SG, the alternative is a fronting Caddy on a
+-known-IP host that the SG allows in, with the agent's port only
+-reachable through it. Adds operational complexity; not recommended for
++Retired in #5540 and no longer a rollout target: out of the release matrix,
++out of `release.sh`, and `RELEASE_AGENT_HMAC_VEGA` is unused. Its
++deployment-specific files (a Caddyfile that served the agent on `:8443`
++because ghostkey-api owned `:80`/`:443`, and a certbot deploy hook that
++re-applied cert group ownership) were deleted with it. If another host ever
++needs that shape, recover them from git history (`git log --diff-
+```
+
+**File**: `scripts/deploy-local-gateway.sh` (modified, +1/-1)
+```diff
+@@ -538,7 +538,7 @@ verify_service() {
+             # confirm the service is running the new binary. Return success to
+             # preserve the existing manual-deploy behaviour on macOS, but make
+             # the lack of verification explicit. The automated release-agent
+-            # path is systemd-only (nova/vega), and gateway-auto-update.sh adds
++            # path is systemd-only (nova), and gateway-auto-update.sh adds
+             # an independent is-active gate on top of this (#4492), so the
+             # unverified launchd path is not on the automated update chain.
+             echo "  ℹ️  Manual verification required for launchd"
+```
+
+**File**: `scripts/gateway-auto-update.sh` (modified, +313/-32)
+```diff
+@@ -10,12 +10,15 @@
+ # - Safe update process using deploy-local-gateway.sh
+ # - Manual trigger support with --force flag
+ # - Dry-run mode for testing
++# - Refuses to install a download whose signed checksum does not verify
+ #
+ # Usage:
+ #   ./gateway-auto-update.sh              # Check and update if newer version
+ #   ./gateway-auto-update.sh --force      # Force update even if same version
+ #   ./gateway-auto-update.sh --check      # Just check, don't update
+ #   ./gateway-auto-update.sh --dry-run    # Show what would be done
++#   sudo ./gateway-auto-update.sh --force --target-version vX.Y.Z --allow-downgrade
++#                                         # Roll back to an older release (operator only)
+ 
+ set -euo pipefail
+ 
+@@ -24,16 +27,39 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ # Configuration
+ INSTALL_PATH="${INSTALL_PATH:-/usr/local/bin/freenet}"
+ GITHUB_REPO="${GITHUB_REPO:-freenet/freenet-core}"
+-DOWNLOAD_DIR="${DOWNLOAD_DIR:-/tmp/freenet-update}"
++# Empty means "a fresh private directory from mktemp", created in main(). A
++# fixed path under /tmp would let any local user pre-create it and swap the
++# archive between verification and extraction, which would make the
++# signature check below worthless. sudo strips the environment, so the
++# release-agent's invocation always gets the private directory. An override
++# is honoured only if it is an existing directory, not a symlink, owned by the
++# user running this script and mode 0700 (see prepare_download_dir).
++DOWNLOAD_DIR="${DOWNLOAD_DIR:-}"
+ LOG_FILE="${LOG_FILE:-/var/log/freenet-auto-update.log}"
++# Ed25519 public key that signs every release's SHA256SUMS.txt, as 64 hex
++# characters (the raw 32-byte key). The ONE copy in this script.
++#
++# It MUST equal FREENET_RELEASE_PUBKEY in crates/core/src/bin/commands/update.rs
++# (the key the node's own auto-updater trusts) and the key that
++# cross-compile.yml's "Sign SHA256SUMS.txt (ed25519)" step signs with (also
++# copied in docker/freenet-node/release-signing-key.der). Rotating the release
++# key means changing all of them; gateway-auto-update_test.sh fails if this
++# copy drifts from update.rs or the docker copy.
++#
++# Assigned unconditionally, never from the environment: a root script whose
++# trusted key could be supplied by an env var would accept any release an
++# attacker cared to sign. The test harness replaces it only after `source`-ing
++# this file into its own shell, which is not a path production can take.
++RELEASE_PUBKEY_HEX="eb2986604e34a3f985279a7e70852f3764d3347fe82074d92b1e4bc6336f8664"
++
+ # systemd unit (without .service) this run deploys to AND independently
+ # confirms is active afterwards. Used both as deploy-local-gateway.sh's
+ # --service and by verify_service_active so the two always target the same
+ # unit (#4492).
+ #
+ # Defaults to freenet-gateway (nova's unit, and the deploy-script default).
+ #
+-# A non-default instance (e.g. vega's freenet-gateway-hector) needs SERVICE_NAME
++# A non-default instance (e.g. a secondary freenet-gateway-foo) needs SERVICE_NAME
+ # set, but the release-agent does NOT yet forward its `managed_service` config:
+ # it spawns this script via `sudo --non-interactive <cmd> --force
+ # --target-version vX.Y.Z` (updater.rs), and sudo strips the environment, so an
+@@ -59,6 +85,15 @@ ALL_INSTANCES=false
+ # actually installed, even if a newer release is published between the
+ # agent's GitHub check and this script's own fetch.
+ TARGET_VERSION=""
++# Installing a release OLDER than the one installed is refused unless the
++# operator passes --allow-downgrade. Argv only, never the environment. The
++# release-agent's sudoers entry ends in a `*` wildcard that can match extra
++# arguments, so the flag is also refused when sudo reports the caller as the
++# agent's account (SUDO_USER is set by sudo itself from the invoking user and
++# cannot be supplied by the caller). The agent never downgrades: it answers
++# 403 to a version below the installed one.
++ALLOW_DOWNGRADE=false
++RELEASE_AGENT_USER="freenet-update"
+ 
+ # Colors (disabled if not a terminal)
+ if [[ -t 1 ]]; then
+@@ -115,13 +150,16 @@ Options:
+                           a newer release lands between sign and install.
+                           Must be strict semver; whitespace and shell metachars
+                           rejected (paired with sudoers wildcard for the agent).
++  --allow-downgrade       Permit installing a release older than the installed
++                          one (a rollback). Operator use only: refused when
++                          invoked through sudo by the release-agent account.
+   --verbose, -v           Show verbose output
+   --help, -h              Show this help message
+ 
+ Environment Variables:
+   INSTALL_PATH      Path to installed freenet binary (default: /usr/local/bin/freenet)
+   GITHUB_REPO       GitHub repository (default: freenet/freenet-core)
+-  DOWNLOAD_DIR      Temporary download directory (default: /tmp/freenet-update)
++  DOWNLOAD_DIR      Tempor
+```
+
+**File**: `scripts/install-auto-update.sh` (modified, +20/-7)
+```diff
+@@ -28,7 +28,7 @@ fi
+ # Check dependencies
+ echo "Checking dependencies..."
+ MISSING=()
+-for cmd in curl jq unzip; do
++for cmd in curl jq tar unzip openssl; do
+     if ! command -v "$cmd" &> /dev/null; then
+         MISSING+=("$cmd")
+     fi
+@@ -38,6 +38,16 @@ if [[ ${#MISSING[@]} -gt 0 ]]; then
+     echo -e "${YELLOW}Installing missing dependencies: ${MISSING[*]}${NC}"
+     apt-get update && apt-get install -y "${MISSING[@]}"
+ fi
++# gateway-auto-update.sh verifies each release's signed SHA256SUMS.txt with
++# `openssl pkeyutl -rawin` (OpenSSL >= 3.0) and refuses every update without it.
++if ! openssl version 2>/dev/null | grep -qE '^OpenSSL ([3-9]|[1-9][0-9])\.'; then
++    echo -e "${RED}Error: OpenSSL >= 3.0 is required (found: $(openssl version 2>/dev/null || echo none))${NC}"
++    exit 1
++fi
++if ! command -v sha256sum &> /dev/null; then
++    echo -e "${RED}Error: sha256sum (coreutils) is required${NC}"
++    exit 1
++fi
+ echo -e "${GREEN}Dependencies OK${NC}"
+ echo
+ 
+@@ -47,13 +57,16 @@ cp "$SCRIPT_DIR/gateway-auto-update.sh" /usr/local/bin/gateway-auto-update.sh
+ chmod 755 /usr/local/bin/gateway-auto-update.sh
+ echo -e "${GREEN}Installed: /usr/local/bin/gateway-auto-update.sh${NC}"
+ 
+-# Install the deploy script (if not already present)
+-if [[ ! -f /usr/local/bin/deploy-local-gateway.sh ]]; then
+-    echo "Installing deployment script..."
+-    cp "$SCRIPT_DIR/deploy-local-gateway.sh" /usr/local/bin/deploy-local-gateway.sh
+-    chmod 755 /usr/local/bin/deploy-local-gateway.sh
+-    echo -e "${GREEN}Installed: /usr/local/bin/deploy-local-gateway.sh${NC}"
++# Install or refresh the deploy script. Always refreshed: gateway-auto-update.sh
++# runs it as root, and a stale copy that swallowed its own failure reported a
++# dead gateway as updated (#4492). A changed previous copy is kept as .prev.
++DEPLOY_SCRIPT=/usr/local/bin/deploy-local-gateway.sh
++if [[ -f "$DEPLOY_SCRIPT" ]] && ! cmp -s "$SCRIPT_DIR/deploy-local-gateway.sh" "$DEPLOY_SCRIPT"; then
++    cp -p "$DEPLOY_SCRIPT" "$DEPLOY_SCRIPT.prev"
++    echo -e "${YELLOW}Replacing a different deploy-local-gateway.sh (previous copy: $DEPLOY_SCRIPT.prev)${NC}"
+ fi
++install -m 0755 -o root -g root "$SCRIPT_DIR/deploy-local-gateway.sh" "$DEPLOY_SCRIPT"
++echo -e "${GREEN}Installed: $DEPLOY_SCRIPT${NC}"
+ 
+ # Install systemd units
+ echo "Installing systemd units..."
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6374** (2026-11-24): fix: an older peer refusing us no longer shows "update required" (@sanity)
+- **PR #6373** (2026-11-24): fix(release): verify gateway update downloads; keep docker latest monotonic (@sanity)
+- **PR #6371** (2026-11-24): test: isolate three test families from process-global state under plain cargo test (@sanity)
 - **PR #6370** (2026-11-24): ci: raise the Fmt job timeout from 5 to 10 minutes (@sanity)
 - **PR #6369** (2026-11-24): fix(get): host and count GET replies only when accepted and matching the request (@sanity)
 - **PR #6366** (2026-11-24): fix(transport): retry a native send whose stream did not open instead of dropping it (@sanity)
-- **PR #6363** (2026-11-24): test: mixed-version network test against published releases (@sanity)
-- **PR #6362** (2026-11-24): ci(release): ship an exact soaked commit so main stays open during a cut (@sanity)
-- **PR #6361** (2026-11-24): ci(release): close fail-open and half-done paths found in a release-tooling audit (@sanity)
 
 ---
 
@@ -2403,36 +2633,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: raise the Fmt job timeout from 5 to 10 minutes
+## X. an older peer refusing us no longer shows "update required"
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/node/network_status.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49a103d6`: ci: raise the Fmt job timeout from 5 to 10 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9613f90`: an older peer refusing us no longer shows "update required". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_status.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # 10, not 5: besides `cargo fmt --check` (~16 s) this job runs the script
-    # self-tests, which have grown the job to roughly 4-5 min, so a slightly
-    # slow runner crossed 5 min and the job was cancelled mid-self-test.
-    timeout-minutes: 10
-    # Runs in parallel with conventional_commits (both GitHub-hosted, no Rust build)
+            // "Update required" is only true when the remote is NEWER. The
+            // transport layer already sends an older peer's refusal as a
+            // different error, so this is a second guard: the banner must
+            // never tell the user to install a version older than their own.
+            let remote_is_newer = match (
+                semver::Version::parse(&local),
+                semver::Version::parse(&gateway),
+            ) {
+                (Ok(l), Ok(g)) => g > l,
+                _ => false,
+            };
+            if remote_is_newer {
+                FailureReason::VersionMismatch { local, gateway }
+            } else {
+                FailureReason::Other(format!(
+                    "peer runs an incompatible version {gateway} (this node runs {local})"
+                ))
+            }
+    fn status_addr(last: u8) -> SocketAddr {
+        SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 9, 8, last)), 31337)
+    }
+
+    fn connect_peer(addr: SocketAddr) {
+        record_peer_connected(addr, None, None);
+    }
+
+    /// Regression: an older peer refusing a node on the latest release was
+    /// recorded as a version mismatch, so the dashboard said "update
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    timeout-minutes: 5
-    # Run in parallel with conventional_commits (both are fast GitHub-hosted checks)
+            FailureReason::VersionMismatch { local, gateway }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49a103d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9613f90` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

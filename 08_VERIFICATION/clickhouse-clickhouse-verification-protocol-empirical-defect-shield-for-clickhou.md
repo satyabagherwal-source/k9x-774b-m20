@@ -4,22 +4,22 @@
 {
   "source_repository": "ClickHouse/ClickHouse",
   "source_url": "https://github.com/ClickHouse/ClickHouse",
-  "source_version": "4a2be30a",
+  "source_version": "b6467a3e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T21:14:47.918Z",
+  "timestamp": "2026-11-24T17:42:52.165Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clickhouse-clickhouse",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `4a2be30a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T21:14:47.918Z`  
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `b6467a3e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:42:52.165Z`  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `4a2be30a`)
+- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `b6467a3e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:14:46.369Z  
+> **Harvest Timestamp**: 2026-11-24T17:42:50.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51081 stars
+- **Stars / Engagement**: 51103 stars
 
 ---
 
@@ -1328,11 +1328,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #133649** (2026-11-23): **Keeper/ZooKeeper: `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` read `data_watches[0]` out of bounds when `data_watches` is empty**
-  *Symptoms*: ### Description  Both `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` unconditionally return `data_watches[0]` without checking whether `data_watches` is empty. When a `SetWatches` or `SetWatches2` request has no data watches (for example, only `exist_watches`, `child_watches`, `persistent_watches`, or `persistent_recursive_watches`, or all lists empty), calling `getPath` causes an out-of-bounds read (undefined behavior / segfault).  ### Root Cause  In `src/Common/ZooKeeper/IKeeper.h:380`: ```cpp [[nodiscard]] String getPath() const override { return data_watches[0]; } ```  In `src/Common/ZooKeeper/IKeeper.h:412`: ```cpp [[nodiscard]] String getPath() const override { return data_watches[0]; } ```  Generic request callers invoke `getPath` without special-casing `SetWatches` / `SetWatches2`, including: - `src/Common/ZooKeeper/ZooKeeperCommon.cpp:1613` (`elem.path = getPath();`) - `src/Common/ZooKeeper/ZooKeeperImpl.cpp:1380` (`String req_path = req->getPath();`) and `:2538` (`request->getPath()`) - `src/Server/KeeperTCPHandler.cpp:867` (`current_request.getPath()`)  ### Observed on  - `master` (`ab6ec720e9e`).  ### Expected Behavior  `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` should return `{}` (or guard `!data_watches.empty() ? data_watches[0] : String{}`) instead of unconditionally indexing `data_watches[0]`.  Caused by: https://github.com/ClickHouse/ClickHouse/pull/88813   <!-- ch-version-info:start --> ### Version info - Resolved by: #133
+- **Issue #133698** (2026-11-24): **SHOW CREATE ROLES bypasses max_result_rows**
+  *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, `SHOW CREATE ROLES` returns two rows successfully when `max_result_rows = 1` and `result_overflow_mode = 'throw'`. An equivalent query against `system.roles` correctly fails with `TOO_MANY_ROWS_OR_BYTES`.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Run as a user allowed to create and inspect roles:  ```sql CREATE ROLE role_a; CREATE ROLE role_b;  SET max_result_rows = 1; SET result_overflow_mode = 'throw';  SHOW CREATE ROLES role_a, role_b; -- Succeeds and returns: -- CREATE ROLE role_a -- CREATE ROLE role_b  SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name; -- Fails with TOO_MANY_ROWS_OR_BYTES. ```  ### Expected behavior  `SHOW CREATE ROLES` should enforce `max_result_rows` and fail because it produces two rows while the limit is one. The `max_result_rows` documentation states: “Limits the number of rows in the result. Also checked for subqueries, and on remote servers when running parts of a distributed query. No limit is applied when the value is `0`.”  ### Error message and/or stacktrace  ```text Received exception from server (version 26.11.1): Code: 396. DB::Exception: Received from localhost:9000. DB::Exception: Limit for result exceeded, max rows: 1.00, current rows: 2.00. (TOO_MANY_ROWS_OR_BYTES) (query: SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name;) ``` 
 
-- **Issue #132739** (2026-11-19): **ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not validate unique/sorted paths invariant, allowing corrupted subcolumn sizes and LOGICAL_ERROR exceptions**
-  *Symptoms*: ### Company or project name  IBM  ### Describe what's wrong  Found during review of https://github.com/ClickHouse/ClickHouse/pull/128069  When serializing dynamic paths and shared data into an arena in ColumnObject::serializeDynamicPathsAndSharedDataIntoArena, paths are guaranteed to be serialized in strictly increasing, sorted, and unique order.  However, the matching deserializer ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not enforce this invariant. If a serialized payload contains duplicate path entries (e.g., num_paths = 2 with two entries for path a in the same row):  1. The reader processes the first entry for a, deserializing a value and appending it to dynamic subcolumn a (increasing its size from current_size to current_size + 1). 2. The reader processes the second entry for a, appending another value to dynamic subcolumn a (increasing its size to current_size + 2). 3. After the path loop finishes, shared_data offsets advance by only 1 row.  Because deserialization consumes all bytes, end-of-buffer checks pass and deserialization returns successfully, but leaves the resulting ColumnObject in an invalid state where individual subcolumns disagree on their row count.  Attempting to read or extract the corrupted subcolumn later throws a LOGICAL_ERROR exception.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  A record with num_paths = 2 and two entries for a appends twice to that dynamic subcolumn but only once to shar
+- **Issue #133671** (2026-11-24): **Keeper/NuRaft: use-after-free `SIGSEGV` in `auto_fwd_resp_handler` on follower shutdown because `raft_instance` is destroyed before `asio_service->stop`**
+  *Symptoms*: ### Description  Shutting down a ClickHouse Keeper follower while an auto-forwarded write (`auto_forwarding = true`) is in flight triggers a use-after-free `SIGSEGV` in NuRaft's `raft_server::auto_fwd_resp_handler` / `raft_server::auto_fwd_release_rpc_cli`.  ### Root Cause  1. In NuRaft (`contrib/NuRaft/src/handle_user_cmd.cxx:320-327` and `:371-377`), `auto_fwd_resp_handler` is registered onto `rpc_cli->send` using `std::bind` with a **raw `this` pointer** (`raft_server *`), not `shared_from_this` / `weak_ptr`:    ```cpp    rpc_handler handler = std::bind( &raft_server::auto_fwd_resp_handler,                                     this,                                     presult,                                     cur_pkg,                                     rpc_cli,                                     std::placeholders::_1,                                     std::placeholders::_2 );    rpc_cli->send(req, handler, params->auto_forwarding_req_timeout_);    ``` 2. During `raft_server::shutdown` (`contrib/NuRaft/src/raft_server.cxx:595`), `cleanup_auto_fwd_pkgs` (`contrib/NuRaft/src/handle_user_cmd.cxx:417-437`) logs `srv 3, in-use 1, idle 0` and clears `pkg->rpc_client_in_use_` and `auto_fwd_pkgs_` **without stopping/cancelling in-flight `rpc_client` instances or waiting for their callbacks to drain**. 3. In ClickHouse Keeper, `KeeperServer::shutdownRaftServer` (`src/Coordination/KeeperServer.cpp:876-907`) calls `raft_instance->shutdown` and **`raft_instance.reset`** (destroyi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1349,557 +1349,440 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `96b7fb8f` (2026-11-23)
-**Commit Message**: Merge pull request #131504 from groeneai/fix-rabbitmq-insert-missing-exchange
+### Incident Patch 1: `8a27da1e` (2026-11-24)
+**Commit Message**: Merge pull request #133804 from ahaanlimaye/ahaanlimaye/merge-size-overflow
 
-Fail an `INSERT` into a `RabbitMQ` table whose exchange does not exist, and stop it on `KILL QUERY`
+Fix overflow in merge size estimates after lightweight deletes
 
-**File**: `src/Storages/MessageQueueSink.cpp` (modified, +12/-11)
+**File**: `src/Storages/MergeTree/IMergeTreeDataPart.cpp` (modified, +1/-1)
 ```diff
-@@ -62,16 +62,7 @@ MessageQueueSink::MessageQueueSink(
- MessageQueueSink::~MessageQueueSink()
+@@ -1321,7 +1321,7 @@ UInt64 IMergeTreeDataPart::getExistingBytesOnDisk() const
  {
-     if (isCancelled())
--    {
--        if (format)
--            format->cancel();
--
--        if (buffer)
--            buffer->cancel();
--
--        if (producer)
--            producer->cancel();
--    }
-+        cancelProducing();
+     if ((*storage.getSettings())[MergeTreeSetting::exclude_deleted_rows_for_part_size_in_merge] && supportLightweightDeleteMutate() && hasLightweightDelete()
+         && existing_rows_count.has_value() && existing_rows_count.value() < rows_count && rows_count > 0)
+-        return bytes_on_disk * existing_rows_count.value() / rows_count;
++        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
+     return bytes_on_disk;
  }
  
- void MessageQueueSink::onStart()
-@@ -112,7 +103,17 @@ void MessageQueueSink::onFinish()
- 
- void MessageQueueSink::onException(std::exception_ptr /* exception */)
- {
--    onFinish();
-+    cancelProducing();
-+}
-+
-+void MessageQueueSink::cancelProducing() noexcept
-+{
-+    if (format)
-+        format->cancel();
-+    if (buffer)
-+        buffer->cancel();
-+    if (producer)
-+        producer->cancel();
- }
- 
- Columns MessageQueueSink::extractFormatColumns(const Columns & columns) const
 ```
 
-**File**: `src/Storages/MessageQueueSink.h` (modified, +2/-0)
+**File**: `src/Storages/MergeTree/tests/gtest_existing_bytes_on_disk.cpp` (added, +72/-0)
 ```diff
-@@ -83,6 +83,8 @@ class MessageQueueSink final : public SinkToStorage
- 
-     /// Given the full set of input columns, returns the columns used by the formatter.
-     Columns extractFormatColumns(const Columns & columns) const;
+@@ -0,0 +1,72 @@
++#include <gtest/gtest.h>
 +
-+    void cancelProducing() noexcept;
- };
- 
- }
++#include <Common/ThreadStatus.h>
++#include <Common/tests/gtest_global_context.h>
++#include <Common/tests/gtest_global_register.h>
++#include <DataTypes/DataTypesNumber.h>
++#include <IO/SharedThreadPools.h>
++#include <Parsers/ASTFunction.h>
++#include <Storages/MergeTree/IMergeTreeDataPart.h>
++#include <Storages/MergeTree/MergeTreeDataPartBuilder.h>
++#include <Storages/MergeTree/MergeTreeSettings.h>
++#include <Storages/MergeTree/MergeTreeVirtualColumns.h>
++#include <Storages/StorageMergeTree.h>
++
++#include <Poco/TemporaryFile.h>
++
++TEST(MergeTreeDataPart, ExistingBytesOnDiskAfterLightweightDelete)
++{
++    using namespace DB;
++
++    MainThreadStatus::getInstance();
++    tryRegisterFunctions();
++    tryRegisterAggregateFunctions();
++    getActivePartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getOutdatedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getUnexpectedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++    getPartsCleaningThreadPool().initializeWithDefaultSettingsIfNotInitialized();
++
++    auto context = Context::createCopy(getContext().context);
++    StorageInMemoryMetadata metadata;
++    metadata.setColumns({{"id", std::make_shared<DataTypeUInt64>()}});
++    metadata.sorting_key = KeyDescription::getKeyFromAST(makeASTFunction("tuple"), metadata.columns, {}, context);
++    metadata.primary_key = metadata.sorting_key;
++    metadata.primary_key.definition_ast = nullptr;
++    metadata.partition_key = KeyDescription::getKeyFromAST(nullptr, metadata.columns, {}, context);
++
++    auto settings = std::make_unique<MergeTreeSettings>(context->getMergeTreeSettings());
++    settings->set("exclude_deleted_rows_for_part_size_in_merge", true);
++    Poco::TemporaryFile table_dir(".");
++    auto storage = std::make_shared<StorageMergeTree>(
++        StorageID("test_db", "existing_bytes_on_disk"), table_dir.path() + "/", metadata, LoadingStrictnessLevel::ATTACH,
++        context, "", MergeTreeData::MergingParams{}, std::move(settings));
++
++    const String part_name = "all_1_1_0";
++    auto part = MergeTreeDataPartBuilder(
++        *storage, part_name, storage->getStoragePolicy()->getVolume(0), storage->getRelativeDataPath(),
++        part_name, context->getReadSettings(), PartDirIntent::CreateFresh)
++        .withPartFormat({MergeTreeDataPartType::Wide, MergeTreeDataPartStorageType::Full})
++        .build();
++    auto columns = metadata.getColumns().getAllPhysical();
++    columns.emplace_back(RowExistsColumn::name, RowExistsColumn::type);
++    part->setColumns(columns, SerializationInfoByName(SerializationInfoSettings{}), 0);
++
++    auto existing_bytes = [&](UInt64 bytes, size_t total_rows, std::optional<size_t> existing_rows)
++    {
++        part->setBytesOnDisk(bytes);
++        part->rows_count = total_rows;
++        part->existing_rows_count = existing_rows;
++        return part->getExistingBytesOnDisk();
++    };
++
++    EXPECT_EQ(existing_bytes(100ULL << 30, 40'000'000'000, 39'999'999'999), 107'374'182'397ULL);
++    constexpr auto max = std::numeric_limits<UInt64>::max();
++    EXPECT_EQ(existing_bytes(max, max, max - 1), max - 1);
++    EXPECT_EQ(existing_bytes(11, 3, 2), 7u);
++    EXPECT_EQ(existing_bytes(11, 3, 0), 0u);
++    EXPECT_EQ(existing_bytes(11, 3, 3), 11u);
++    EXPECT_EQ(existing_bytes(11, 0, 0), 11u);
++    EXPECT_EQ(existing_bytes(11, 3, std::nullopt), 11u);
++
++    storage->flushAndShutdown();
++}
 ```
 
-**File**: `src/Storages/RabbitMQ/RabbitMQProducer.cpp` (modified, +42/-2)
+---
+
+### Incident Patch 2: `ce39b030` (2026-11-24)
+**Commit Message**: Pad an empty Protobuf wrapper into Nullable with the type default only
+
+An empty google wrapper read into `Nullable(T)` went through the `value`
+field serializer, so an empty `StringValue` into `Nullable(Date)`,
+`Nullable(Int32)`, `Nullable(UUID)`, ... failed to parse `''` instead of
+storing the type default as master does (review on #134040).
+
+Keep master's borrowed default insertion and pass it the nested type, so
+only a scalar whose type default differs from the column zero changes:
+`Enum`, also inside `Nullable(Tuple(...))`. Calling
+`nested_type->insertDefaultInto` directly is not possible there: for
+`Nullable(Tuple(...))` it dereferences the tuple elements, which the element
+serializers also hold, and aborts on the `use_count() == 1` assertion.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Formats/ProtobufSerializer.cpp` (modified, +13/-6)
 ```diff
-@@ -2,6 +2,8 @@
- 
- #include <Common/Exception.h>
- #include <Common/logger_useful.h>
-+#include <Interpreters/Context.h>
-+#include <Interpreters/ProcessList.h>
- 
- 
- namespace DB
-@@ -11,6 +13,8 @@ static const auto FINISH_PRODUCER_NUM_TRIES = 50;
- 
- namespace ErrorCodes
- {
-+    extern const int ABORTED;
-+    extern const int CANNOT_CONNECT_RABBITMQ;
-     extern const int LOGICAL_ERROR;
- }
- 
-@@ -31,6 +35,12 @@ void RabbitMQProducer::initialize()
-     publisher = publisher_pool->acquire();
- }
- 
-+void RabbitMQProducer::start(const ContextPtr & context)
-+{
-+    query_status = context->getProcessListElementSafe();
-+    AsynchronousMessageProducer::start(context);
-+}
-+
- void RabbitMQProducer::stopProducingTask()
- {
-     payloads.finish();
-@@ -42,6 +52,12 @@ void RabbitMQProducer::finishImpl()
-         publisher_pool->release(std::move(publisher));
-     else
-         publisher->disconnect();
-+    if (stopped_by_shutdown)
-+        throw Exception(ErrorCodes::ABORTED, "Table is detached");
-+    if (query_status)
-+        query_status->throwIfKilled();
-+    if (!publish_error.empty())
-+        throw Exception(ErrorCodes::CANNOT_CONNECT_RABBITMQ, "{}", publish_error);
- }
- 
- void RabbitMQProducer::produce(const String & message, size_t, const Columns &, size_t)
-@@ -51,7 +67,11 @@ void RabbitMQProducer::produce(const String & message, size_t, const Columns &,
-     payload.id = ++payload_counter;
-     LOG_TEST(log, "Pushing message with id {}", payload.id);
-     if (!payloads.push(std::move(payload)))
-+    {
-+        /// The producing task has stopped and closed the queue: `finish` throws its error.
-+        finish();
-         throw Exception(ErrorCodes::LOGICAL_ERROR, "Could not push to payloads queue");
-+    }
- }
- 
- void RabbitMQProducer::cancel() noexcept
-@@ -70,8 +90,28 @@ void RabbitMQProducer::startProducingTaskLoop()
- {
-     LOG_TRACE(log, "Starting producer loop");
- 
--    while ((!payloads.isFinishedAndEmpty() || publisher->hasPendingDeliveries()) && !shutdown_called.load())
--        publisher->publishStep(payloads);
-+    while (!payloads.isFinishedAndEmpty() || publisher->hasPendingDeliveries())
-+    {
-+        if (shutdown_called.load())
+@@ -151,7 +151,8 @@ namespace
+     /// of a composite column would reach sub-columns that are also held by the serializers
+     /// of its nested fields through the non-const `WrappedPtr` dereference.
+     /// Exception-safe: on failure, the already appended sub-columns are rolled back.
+-    void insertDefaultBorrowed(IColumn & column)
++    /// With `type`, a scalar gets the default of its type (e.g. the first element of an `Enum`), not the column's.
++    void insertDefaultBorrowed(IColumn & column, const IDataType * type = nullptr)
+     {
+         if (auto * column_array = typeid_cast<ColumnArray *>(&column))
+         {
+@@ -169,11 +170,12 @@ namespace
+                 return;
+             }
+             const auto & elements = std::as_const(*column_tuple).getColumns();
++            const auto * tuple_type = typeid_cast<const DataTypeTuple *>(type);
+             size_t i = 0;
+             try
+             {
+                 for (; i < elements.size(); ++i)
+-                    insertDefaultBorrowed(borrowColumnRef(elements[i]));
++                    insertDefaultBorrowed(borrowColumnRef(elements[i]), tuple_type ? tuple_type->getElement(i).get() : nullptr);
+             }
+             catch (...)
+             {
+@@ -201,6 +203,10 @@ namespace
+                 throw;
+             }
+         }
++        else if (type)
 +        {
-+            stopped_by_shutdown = true;
-+            break;
++            type->insertDefaultInto(column);
 +        }
-+
-+        if (query_status && query_status->isKilled())
-+            break;
-+        publish_error = publisher->publishStep(payloads);
-+        if (!publish_error.empty())
-+            break;
-+    }
-+
-+    if (stopped_by_shutdown || !publish_error.empty() || (query_status && query_status->isKilled()))
-+    {
-+        /// Nothing pops `payloads` anymore, so `produce` must not wait for free space in it.
-+        /// The publisher is not reused: `can_reuse_publisher` stays false, so `finishImpl` disconnects it.
-+        payloads.finish();
-+        return;
-+    }
+         else
+         {
+             column.insertDefault();
+@@ -2258,8 +2264,8 @@ namespace
+     class ProtobufSerializerNullable : public ProtobufSerializer
+     {
+     public:
+-        explicit ProtobufSerializerNullable(std::unique_ptr<ProtobufSerializer> nested_serializer_)
+-            : nested_serializer(std::move(nested_serializer_))
++        ProtobufSerializerNullable(DataTypePtr nested_type_, std::unique_ptr<ProtobufSerializer> nested_serializer_)
++            : nested_type(std::move(nested_type_)), nested_serializer(std::move(nested_serializer_))
+         {
+         }
  
-     size_t try_num = 0;
-     while (++try_num <= FINISH_PRODUCER_NUM_TRIES)
+@@ -2354,7 +2360,7 @@ namespace
+             if (row_num < column_nullable.size())
+                 return;
+             auto & nested_column = borrowColumnRef(column_nullable.getNestedColumnPtr());
+-            nested_serializer->insertDefaults(row_num);
++            insertDefaultBorrowed(nested_column, nested_type.get());
+             /// Same rollback contract as in `insertDefaults` above.
+             try
+             {
+@@ -2379,6 +2385,7 @@ namespace
+         }
+ 
+     private:
++        const DataTypePtr nested_type;
+         const std::unique_ptr<ProtobufSerializer> nested_serializer;
+         ColumnPtr column;
+     };
+@@ -4186,7 +4193,7 @@ namespace
+                         oneof_presence);
+                     if (!nested_serializer)
+                         return nullptr;
+-                    return std::make_unique<ProtobufSerializerNullable>(std::move(nested_serializer));
++                    return std::make_unique<ProtobufSerializerNullable>(nullable_data_type.getNestedType(), std::move(nested_serializer));
+                 }
+ 
+                 case TypeIndex::LowCardinality:
 ```
 
-**File**: `src/Storages/RabbitMQ/RabbitMQProducer.h` (modified, +10/-0)
+**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.reference` (modified, +5/-2)
 ```diff
-@@ -9,6 +9,9 @@
+@@ -7,10 +7,13 @@ Protobuf, a column missing from the message
+ ProtobufList, a column missing from the message
+ 7	a	('','x')	\N
+ Protobuf, a google wrapper without value
+-zero	1
++a	1
++neg	1
++('a')	1
+ 0	1
+ \N	1
+-	1
++1970-01-01	1
++00000000-0000-0000-0000-000000000000	1
+ FileLog, handle_error_mode = stream
+ 0	a	('','x')	\N	1
+ 1	b	('p','y')	b	0
+```
+
+**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.sql` (modified, +6/-6)
+```diff
+@@ -27,19 +27,19 @@ SELECT 'ProtobufList, a column missing from the message';
+ SET format_schema = 'syntax = "proto3"; message Envelope { message M { int32 x = 1; } repeated M row = 1; }';
+ SELECT * FROM format(ProtobufList, 'x Int32, e Enum8(\'a\' = 1, \'b\' = 2), t Tuple(s String, e Enum16(\'x\' = 5, \'y\' = 7)), ne Nullable(Enum8(\'a\' = 1, \'b\' = 2))', '\x04\x0a\x02\x08\x07');
+ 
+--- A wrapper message without `value` holds the default of `value` (0, or '' for a StringValue), read like the same
+--- wrapper into the type without Nullable. An absent wrapper is NULL.
++-- A wrapper message without `value` gives the default of the column type, also for a StringValue read into a
++-- non-string type. An absent wrapper is NULL.
+ SELECT 'Protobuf, a google wrapper without value';
+ SET input_format_protobuf_flatten_google_wrappers = 1;
+ SET format_schema = 'syntax = "proto3"; import "google/protobuf/wrappers.proto"; message W { google.protobuf.Int32Value w = 1; int32 k = 2; google.protobuf.StringValue s = 3; }';
+ SET format_schema_message_name = 'W';
+-SELECT * FROM format(ProtobufSingle, 'w Enum8(\'a\' = 1, \'b\' = 2), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
+-SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
++SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'neg\' = -1, \'zero\' = 0)), k Int32', '\x0a\x00\x10\x01');
++SELECT * FROM format(ProtobufSingle, 'w Nullable(Tuple(Enum8(\'a\' = 1, \'b\' = 2))), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Int32), k Int32', '\x0a\x00\x10\x01');
+ SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x10\x01');
+-SELECT * FROM format(ProtobufSingle, 's Nullable(Enum8(\'\' = 3, \'b\' = 2)), k Int32', '\x1a\x00\x10\x01');
+-SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01'); -- { serverError CANNOT_PARSE_DATE }
++SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01');
++SELECT * FROM format(ProtobufSingle, 's Nullable(UUID), k Int32', '\x1a\x00\x10\x01');
+ 
+ SELECT 'FileLog, handle_error_mode = stream';
+ DROP TABLE IF EXISTS file_log;
+```
+
+---
+
+### Incident Patch 3: `3fe8314f` (2026-11-24)
+**Commit Message**: feat: add `USE_VORTEX` and `VORTEX_VERSION` to `system.build_options`
+
+`build.rs` reads the version of `vortex` from `Cargo.lock`. `vortex_ffi_version()` returns it.
+
+Signed-off-by: Maksim Dergousov <[REDACTED_EMAIL]>
+
+**File**: `contrib/rust-contrib-workspace/Cargo.lock` (modified, +2/-0)
+```diff
+@@ -52,6 +52,8 @@ dependencies = [
+  "futures",
+  "kanal",
+  "parking",
++ "serde",
++ "toml",
+  "vortex",
+ ]
+ 
+```
+
+**File**: `contrib/vortex-cmake/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -28,3 +28,6 @@ vortex = { version = "0.84.0", default-features = false, features = ["files", "z
+ # between patch versions, and the version has to be one `contrib/rust_vendor` carries. Its default
+ # features are only needed by the command-line tool.
+ cbindgen = { version = "=0.29.2", default-features = false }
++# Read `Cargo.lock`. The same versions and features as in `cbindgen`, so they are vendored already.
++serde = { version = "1", default-features = false, features = ["derive", "std"] }
++toml = { version = "0.9", default-features = false, features = ["parse", "serde", "std"] }
+```
+
+**File**: `contrib/vortex-cmake/build.rs` (modified, +54/-1)
+```diff
+@@ -9,11 +9,27 @@
+ 
+ use std::env;
+ use std::fs;
+-use std::path::Path;
++use std::path::{Path, PathBuf};
++use std::process::Command;
++
++use serde::Deserialize;
+ 
+ const UPDATE_VAR: &str = "VORTEX_FFI_HEADER_UPDATE";
+ 
++#[derive(Deserialize)]
++struct Lock {
++    package: Vec<Package>,
++}
++
++#[derive(Deserialize)]
++struct Package {
++    name: String,
++    version: String,
++}
++
+ fn main() {
++    emit_vortex_version();
++
+     let crate_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should be set");
+     let crate_dir = Path::new(&crate_dir);
+     let header_path = crate_dir.join("include/vortex_ffi.h");
+@@ -56,3 +72,40 @@ fn main() {
+          Run `{UPDATE_VAR}=1 cargo check -p _ch_rust_vortex` and commit the result."
+     );
+ }
++
++fn emit_vortex_version() {
++    let lock_path = workspace_dir().join("Cargo.lock");
++    println!("cargo::rerun-if-changed={}", lock_path.display());
++
++    let lock = fs::read_to_string(&lock_path)
++        .unwrap_or_else(|error| panic!("cannot read {}: {error}", lock_path.display()));
++    let lock: Lock = toml::from_str(&lock)
++        .unwrap_or_else(|error| panic!("cannot parse {}: {error}", lock_path.display()));
++
++    let versions: Vec<&str> = lock
++        .package
++        .iter()
++        .filter(|package| package.name == "vortex")
++        .map(|package| package.version.as_str())
++        .collect();
++    let [version] = versions[..] else {
++        panic!("expected one version of `vortex` in {}, found {versions:?}", lock_path.display());
++    };
++    println!("cargo::rustc-env=VORTEX_CRATE_VERSION={version}");
++}
++
++fn workspace_dir() -> PathBuf {
++    let cargo = env::var_os("CARGO").expect("CARGO should be set");
++    let output = Command::new(cargo)
++        .args(["locate-project", "--workspace", "--message-format", "plain"])
++        .output()
++        .expect("cannot run `cargo locate-project`");
++    assert!(
++        output.status.success(),
++        "`cargo locate-project` failed: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++
++    let manifest = String::from_utf8(output.stdout).expect("the path should be UTF-8");
++    Path::new(manifest.trim()).parent().expect("the path should have a parent").to_owned()
++}
+```
+
+**File**: `contrib/vortex-cmake/include/vortex_ffi.h` (modified, +2/-0)
+```diff
+@@ -362,4 +362,6 @@ void vortex_ffi_writer_free(FFI_VortexWriter *writer);
+ /// Frees a string returned by this library, such as an error message.
+ void vortex_ffi_free_string(char *string);
+ 
++const char *vortex_ffi_version();
++
+ }  // extern "C"
+```
+
+**File**: `contrib/vortex-cmake/src/lib.rs` (modified, +5/-0)
+```diff
+@@ -1635,6 +1635,11 @@ pub unsafe extern "C" fn vortex_ffi_free_string(string: *mut c_char) {
+     }
+ }
+ 
++#[no_mangle]
++pub extern "C" fn vortex_ffi_version() -> *const c_char {
++    concat!(env!("VORTEX_CRATE_VERSION"), "\0").as_ptr().cast()
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+```
+
+**File**: `src/Storages/System/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -93,3 +93,7 @@ if (TARGET ch_contrib::icu)
+     target_link_libraries(clickhouse_storages_system PRIVATE ch_contrib::icu)
+     target_compile_definitions(clickhouse_storages_system PRIVATE U_HIDE_DEPRECATED_API)
+ endif()
++
++if (TARGET ch_rust::vortex)
++    target_include_directories(clickhouse_storages_system PRIVATE $<TARGET_PROPERTY:ch_rust::vortex,INTERFACE_INCLUDE_DIRECTORIES>)
++endif()
+```
+
+**File**: `src/Storages/System/StorageSystemBuildOptions.cpp` (modified, +11/-0)
+```diff
+@@ -5,6 +5,12 @@
+ #include <DataTypes/DataTypeString.h>
+ #include <Core/Settings.h>
+ 
++#include "config.h"
++
++#if USE_VORTEX
++#include <vortex_ffi.h>
++#endif
++
+ extern const char * auto_config_build[];
+ 
  namespace DB
- {
- 
-+class QueryStatus;
-+using QueryStatusPtr = std::shared_ptr<QueryStatus>;
+@@ -26,6 +32,11 @@ void StorageSystemBuildOptions::fillData(MutableColumns & res_columns, ContextPt
+         res_columns[0]->insert(it[0]);
+         res_columns[1]->insert(it[1]);
+     }
 +
- class RabbitMQProducer : public AsynchronousMessageProducer
- {
- public:
-@@ -17,6 +20,7 @@ class RabbitMQProducer : public AsynchronousMessageProducer
-         std::atomic<bool> & shutdown_called_,
-         LoggerPtr log_);
- 
-+    void start(const ContextPtr & context) override;
-     void produce(const String & message, size_t rows_in_message, const Columns & columns, size_t last_row) override;
-     void cancel() noexcept override;
- 
-@@ -38,6 +42,12 @@ class RabbitMQProducer : public AsynchronousMessageProducer
- 
-     bool can_reuse_publisher = false;
- 
-+    /// Written by the producing task, read in `finishImpl` after `deactivate` waited for the task.
-+    String publish_error;
-+    bool stopped_by_shutdown = false;
-+
-+    QueryStatusPtr query_status;
-+
-     /* false: when shutdown is called; needed because table might be dropped before all acks are received
-      * true: in all other cases
-      */
-```
-
-**File**: `src/Storages/RabbitMQ/RabbitMQPublisher.cpp` (modified, +14/-2)
-```diff
-@@ -66,11 +66,13 @@ void RabbitMQPublisher::connect()
- void RabbitMQPublisher::setupChannel()
- {
-     channel = connection.createChannel();
-+    channel_error.clear();
-     LOG_TRACE(log, "Created a producer channel");
- 
-     channel->onError([&](const char * message)
-     {
-         LOG_ERROR(log, "Producer's channel {} error: {}", channel_id, message);
-+        channel_error = message;
- 
-         /// Channel is not usable anymore. (https://github.com/CopernicaMarketingSoftware/AMQP-CPP/issues/36#issuecomment-125112236)
-         channel->close();
-@@ -211,7 +213,7 @@ void RabbitMQPublisher::publish(Payloads & messages, bool republishing)
-     iterateEventLoop();
++#if USE_VORTEX
++    res_columns[0]->insert("VORTEX_VERSION");
++    res_columns[1]->insert(vortex_ffi_version());
++#endif
  }
  
--void RabbitMQPublisher::publishStep(Payloads & payloads)
-+String RabbitMQPublisher::publishStep(Payloads & payloads)
- {
-     /// If onReady callback is not received, channel->usable() will anyway return true,
-     /// but must publish only after onReady callback.
-@@ -230,9 +232,19 @@ void RabbitMQPublisher::publishStep(Payloads & payloads)
- 
-     if (!channel->usable())
-     {
--        if (connection.reconnect())
-+        /// The broker closes only the channel when it rejects a publish, e.g. NOT_FOUND for a missing exchange.
-+        /// A new channel is rejected the same way.
-+        if (!reconnect_failed && connection.isConnected())
-+            return fmt::format(
-+                "Cannot publish to RabbitMQ exchange '{}': {}",
-+                exchange_name,
-+                channel_error.empty() ? "the channel is closed" : channel_error);
-+
-+        reconnect_failed = !connection.reconnect();
-+        if (!reconnect_failed)
-             setupChannel();
-     }
-+    return {};
  }
- 
- bool RabbitMQPublisher::isReusable()
 ```
 
-**File**: `src/Storages/RabbitMQ/RabbitMQPublisher.h` (modified, +5/-1)
+**File**: `src/Storages/System/StorageSystemBuildOptions.cpp.in` (modified, +1/-0)
 ```diff
-@@ -43,7 +43,8 @@ class RabbitMQPublisher
- 
-     /// Publishes a portion of messages (republished ones first), runs the event loop
-     /// and restores the connection and the channel if they are lost.
--    void publishStep(Payloads & payloads);
-+    /// Returns the error if the broker rejected a publish by closing the channel, otherwise an empty string.
-+    String publishStep(Payloads & payloads);
- 
-     /// Whether some messages are not confirmed by the server yet or have to be republished.
-     bool hasPendingDeliveries() const { return !returned.empty() || !delivery_record.empty(); }
-@@ -82,6 +83,9 @@ class RabbitMQPublisher
- 
-     std::unique_ptr<AMQP::TcpChannel> channel;
-     bool channel_ready = false;
-+    String channel_error;
-+    /// `channel` belongs to a connection that `reconnect` replaced but did not finish connecting.
-+    bool reconnect_failed = false;
- 
-     /// Channel errors lead to channel closure, need to count number of recreated channels to update channel id
-     UInt64 channel_id_counter = 0;
-```
-
-**File**: `tests/integration/test_storage_rabbitmq/test.py` (modified, +223/-0)
-```diff
-@@ -4359,3 +4359,226 @@ def test_rabbitmq_read_consumers_in_parallel(rabbitmq_cluster, unique):
-     # Read in parallel, a message waits about one flush interval (1 s). Read one after another, about half of them
-     # waited longer than 5 s.
-     assert int(late) < messages_num // 20, f"{late} messages inserted more than 5 s after publishing (max {max_delay} s)"
-+
-+
-+def test_rabbitmq_insert_into_missing_exchange(rabbitmq_cluster, db, unique):
-+    # With rabbitmq_queue_consume = 1 the table declares nothing, so `never_declared` has no exchange.
-+    # `deleted` declares its exchange at CREATE; it is deleted below.
-+    instance.query(
-+        f"""
-+        CREATE TABLE {db}.never_declared (key UInt64)
-+            ENGINE = RabbitMQ
-+            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
-+                     rabbitmq_exchange_name = '{unique}_never_declared',
-+                     rabbitmq_format = 'JSONEachRow',
-+                     rabbitmq_queue_base = '{unique}_never_declared',
-+                     rabbitmq_queue_consume = 1;
-+        CREATE TABLE {db}.deleted (key UInt64)
-+            ENGINE = RabbitMQ
-+            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
-+                     rabbitmq_exchange_name = '{unique}_deleted',
-+                     rabbitmq_format = 'JSONEachRow';
-+        """
-+    )
-+    credentials = pika.PlainCredentials("root", "clickhouse")
-+    connection = pika.BlockingConnection(
-+        pika.ConnectionParameters(rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials)
-+    )
-+    connection.channel().exchange_delete(exchange=f"{unique}_deleted")
-+    connection.close()
-+
-+    # The last INSERT has more messages than fit in the producer's queue.
-+    for table, source in [
-+        ("never_declared", "VALUES (1)"),
-+        ("deleted", "VALUES (1)"),
-+        ("deleted", "SELECT number FROM numbers(100000)"),
-+    ]:
-+        error = instance.query_and_get_error(f"INSERT INTO {db}.{table} {source}", timeout=30)
-+        assert f"no exchange '{unique}_{table}'" in error, error
-+
-+    # The INSERT reports the error of its SELECT, not the failed publish of the rows produced before it.
-+    error = instance.query_and_get_error(
-+        f"INSERT INTO {db}.deleted SELECT throwIf(number = 1) FROM numbers(2) SETTINGS max_block_size = 1", timeout=30
-+    )
-+    assert "FUNCTION_THROW_IF_VALUE_IS_NON_ZERO" in error, error
-+
-+
-+@pytest.mark.parametrize("async_insert, rows", [(0, 1), (1, 1), (0, 100000)])
-+def test_rabbitmq_kill_insert(rabbitmq_cluster, db, unique, async_insert, rows):
-+    # The queue rejects every message, so the producer republishes until the query is killed.
-+    # 100000 messages do not fit in the producer's queue, so that INSERT is killed while it waits for room in it.
-+    exchange = f"{unique}_full_{async_insert}_{rows}"
-+    credentials = pika.PlainCredentials("root", "clickhouse")
-+    connection = pika.BlockingConnection(
-+        pika.ConnectionParameters(rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials)
-+    )
-+    # A queue left by an earlier run with other arguments would fail the declaration below.
-+    try:
-+        cleanup = connection.channel()
-+        cleanup.queue_delete(queue=exchange)
-+        cleanup.exchange_delete(exchange=exchange)
-+        cleanup.close()
-+    except pika.exceptions.ChannelClosedByBroker:
-+        pass
-+    channel = connection.channel()
-+    channel.exchange_declare(exchange=exchange, exchange_type="fanout")
-+    channel.queue_declare(queue=exchange, arguments={"x-max-length": 0, "x-overflow": "reject-publish"})
-+    channel.queue_bind(exchange=exchange, queue=exchange)
-+    instance.query(
-+        f"""
-+        CREATE TABLE {db}.rabbitmq (key UInt64)
-+            ENGINE = RabbitMQ
-+            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
-+                     rabbitmq_exchange_name = '{exchange}',
-+                     rabbitmq_format = 'JSONEachRow',
-+                     rabbitmq_queue_base = '{unique}_unused',
-+                     rabbitmq_queue_consume = 1;
-+        """
-+    )
-+
-+    query_id = f"{unique}_{uuid.uuid4().hex}"
-+    source = "VALUES (1)" if rows == 1 else f"SELECT number FROM numbers({rows})"
-+    # An asynchronous insert is published by its flush, a query of its own.
-+    if async_insert:
-+        producing_query = f"query_kind = 'AsyncInsertFlush' AND query LIKE '%{db}.rabbitmq%'"
-+    else:
-+        producing_query = f"query_id = '{query_id}'"
-+    errors = []
-+    insert = threading.Thread(
-+        target=lambda: errors.append(
-+            instance.query_and_get_error(
-+                f"INSERT INTO {db}.rabbitmq {source}",
-+                query_id=query_id,
-+                settings={"async_insert": async_insert},
-+                timeout=120,
-+            )
-+        ),
-+        daemon=True,
-+    )
-+    insert.start()
-+    deadline = time.monotonic() + DEFAULT_TIMEOUT_SEC
-+    # A KILL while the producer is still connecting ends t
-```
-
----
-
-### Incident Patch 2: `2d60a7d9` (2026-11-23)
-**Commit Message**: Merge pull request #133585 from siddharthapal8240/fix/one-sample-ttest-merge-population-mean
-
-Fix `studentTTestOneSample` testing against zero after its states are merged
-
-**File**: `src/AggregateFunctions/Moments.h` (modified, +8/-1)
-```diff
-@@ -710,10 +710,17 @@ struct OneSampleTTestMoments
- 
-     void merge(const OneSampleTTestMoments & rhs)
-     {
-+        /// The population mean is set by the first value a state sees, so a state without values does not
-+        /// have it yet. A merge usually starts from such a state (`-Merge`, `finalizeAggregation`,
-+        /// `WITH TOTALS`, the results of several shards or parts), which has to take the mean from the
-+        /// state it is merged with: otherwise the test is done against zero. It is the same for all the
-+        /// states of one aggregation, so a state that already has values keeps its own.
-+        if (n == 0 && rhs.n != 0)
-+            population_mean = rhs.population_mean;
-+
-         n += rhs.n;
-         x1 += rhs.x1;
-         x2 += rhs.x2;
--        // Note: population_mean should be the same for merged data
-     }
- 
-     void write(WriteBuffer & buf) const
-```
-
-**File**: `tests/integration/test_backward_compatibility/test_aggregate_function_state_tuple_return_type.py` (modified, +12/-2)
-```diff
-@@ -410,11 +410,20 @@ def run_checks(node, checks):
-     mixed_baseline = run_checks(pre_nullable_tuple_node_1, mixed_checks)
-     assert mixed_baseline["sumCount"] == "(48,16)"
- 
-+    # `studentTTestOneSample` keeps the population mean in its state. A server older than the fix of its
-+    # `merge` loses the mean when it merges the states of the shards and does the test against zero, so
-+    # this one result depends on the version of the coordinator: the 16 values have the mean 3, which a
-+    # current server tests against 2 and an older one against 0. The states are the same in both versions.
-+    def expected(name, node, latest_nodes):
-+        if name == "studentTTestOneSample" and node in latest_nodes:
-+            return "(2.4495,0.0271)"
-+        return mixed_baseline[name]
-+
-     # Verify all other nodes produce the same results (one round-trip per node).
-     for node in [pre_nullable_tuple_node_2, node3, node4]:
-         results = run_checks(node, mixed_checks)
-         for name in mixed_baseline:
--            assert results[name] == mixed_baseline[name], f"{name} on {node.name}"
-+            assert results[name] == expected(name, node, (node3, node4)), f"{name} on {node.name}"
- 
-     # Extra baseline with 4x pre-26.1 nodes — must match mixed baseline.
-     pre_nullable_only_baseline = run_checks(
-@@ -443,10 +452,11 @@ def run_checks(node, checks):
-     # Upgrade one pre-26.1 node to latest and re-check compatibility from all coordinators.
-     pre_nullable_tuple_node_1.restart_with_latest_version(fix_metadata=True)
- 
-+    latest_nodes = (pre_nullable_tuple_node_1, node3, node4)
-     for node in [pre_nullable_tuple_node_1, pre_nullable_tuple_node_2, node3, node4]:
-         results = run_checks(node, mixed_checks)
-         for name in mixed_baseline:
--            assert results[name] == mixed_baseline[name], f"{name} on {node.name}"
-+            assert results[name] == expected(name, node, latest_nodes), f"{name} on {node.name}"
- 
-         results = run_checks(node, mixed_empty_checks)
-         for name in mixed_empty_baseline:
-```
-
-**File**: `tests/queries/0_stateless/03928_aggregate_function_tuple_return_type_compatibility.reference` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@ FROM
- (
-     SELECT finalizeAggregation(CAST(unhex('010000000000000840000000000000224000000000008041400000000000000040'), 'AggregateFunction(studentTTestOneSample, Nullable(Float64), Nullable(Float64))')) AS res
- );
--(2.5981,0.1217)
-+(0.866,0.4778)
- -- argAndMin non-empty state.
- SELECT finalizeAggregation(CAST(unhex('0101030000000100000000'), 'AggregateFunction(argAndMin, Nullable(Int32), Nullable(Int32))'));
- (3,0)
-```
-
-**File**: `tests/queries/0_stateless/05843_student_ttest_one_sample_merge_population_mean.reference` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+direct	1.095445	0.353387
-+merge	1.095445	0.353387
-+finalizeAggregation	1.095445	0.353387
-+confidence interval	1.095445	0.353387	0.0948	5.9052
-+totals	0	1.095445
-+
-+totals	0	1.095445
-+rollup	0	1.095445
-+rollup	1	1.095445
-+cube	0	1.095445
-+cube	1	1.095445
-+two parts	1.095445
-+merged part	1	1.095445
-+two shards	1.67332
-+eight values	1.67332
-+empty state	1.095445
-```
-
-**File**: `tests/queries/0_stateless/05843_student_ttest_one_sample_merge_population_mean.sql` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+-- `studentTTestOneSample(x, mean)` keeps the population mean in its state. The mean was lost when the
-+-- state was merged into a state without values, which is how every merge starts, so the test was then
-+-- done against zero: `-Merge`, `finalizeAggregation`, `WITH TOTALS`, `WITH ROLLUP`, `WITH CUBE`, the
-+-- parts of an `AggregatingMergeTree` table and the shards of a distributed query all returned the
-+-- t-statistic 3.286335 instead of 1.095445 for the values below.
-+
-+SELECT 'direct', round(r.1, 6), round(r.2, 6) FROM (SELECT studentTTestOneSample(x, 2.) AS r FROM values('x Float64', 1, 2, 4, 5));
-+
-+SELECT 'merge', round(r.1, 6), round(r.2, 6)
-+FROM (SELECT studentTTestOneSampleMerge(s) AS r FROM (SELECT studentTTestOneSampleState(x, 2.) AS s FROM values('x Float64', 1, 2, 4, 5)));
-+
-+SELECT 'finalizeAggregation', round(r.1, 6), round(r.2, 6)
-+FROM (SELECT finalizeAggregation(studentTTestOneSampleState(x, 2.)) AS r FROM values('x Float64', 1, 2, 4, 5));
-+
-+SELECT 'confidence interval', round(r.1, 6), round(r.2, 6), round(r.3, 4), round(r.4, 4)
-+FROM (SELECT finalizeAggregation(studentTTestOneSampleState(0.95)(x, 2.)) AS r FROM values('x Float64', 1, 2, 4, 5));
-+
-+SELECT 'totals', k, round(studentTTestOneSample(x, 2.).1, 6)
-+FROM values('k UInt8, x Float64', (0, 1), (0, 2), (0, 4), (0, 5)) GROUP BY k WITH TOTALS ORDER BY k;
-+
-+SELECT 'rollup', k, round(studentTTestOneSample(x, 2.).1, 6)
-+FROM values('k UInt8, x Float64', (1, 1), (1, 2), (1, 4), (1, 5)) GROUP BY k WITH ROLLUP ORDER BY k;
-+
-+SELECT 'cube', k, round(studentTTestOneSample(x, 2.).1, 6)
-+FROM values('k UInt8, x Float64', (1, 1), (1, 2), (1, 4), (1, 5)) GROUP BY k WITH CUBE ORDER BY k;
-+
-+-- The states of two parts, merged by the query and then by the table.
-+DROP TABLE IF EXISTS t_ttest_one_sample_states;
-+CREATE TABLE t_ttest_one_sample_states (k UInt8, s AggregateFunction(studentTTestOneSample, Float64, Float64)) ENGINE = AggregatingMergeTree ORDER BY k;
-+INSERT INTO t_ttest_one_sample_states SELECT 0, studentTTestOneSampleState(x, 2.) FROM values('x Float64', 1, 2);
-+INSERT INTO t_ttest_one_sample_states SELECT 0, studentTTestOneSampleState(x, 2.) FROM values('x Float64', 4, 5);
-+SELECT 'two parts', round(studentTTestOneSampleMerge(s).1, 6) FROM t_ttest_one_sample_states;
-+OPTIMIZE TABLE t_ttest_one_sample_states FINAL;
-+SELECT 'merged part', count(), round(finalizeAggregation(any(s)).1, 6) FROM t_ttest_one_sample_states;
-+DROP TABLE t_ttest_one_sample_states;
-+
-+-- Every shard returns the four values, so this is the test over eight values.
-+SELECT 'two shards', round(studentTTestOneSample(x, 2.).1, 6)
-+FROM remote('127.0.0.{1,2}', view(SELECT * FROM values('x Float64', 1, 2, 4, 5)));
-+SELECT 'eight values', round(studentTTestOneSample(x, 2.).1, 6) FROM values('x Float64', 1, 2, 4, 5, 1, 2, 4, 5);
-+
-+-- A state without values does not take the mean away from a state that has it.
-+SELECT 'empty state', round(r.1, 6)
-+FROM
-+(
-+    SELECT studentTTestOneSampleMerge(s) AS r
-+    FROM
-+    (
-+        SELECT studentTTestOneSampleState(x, 2.) AS s FROM values('x Float64', 1, 2, 4, 5)
-+        UNION ALL
-+        SELECT studentTTestOneSampleState(x, 7.) AS s FROM values('x Float64', 1) WHERE 0
-+    )
-+);
-```
-
----
-
-### Incident Patch 3: `2fc68f7c` (2026-11-23)
-**Commit Message**: Merge pull request #133716 from groeneai/fix-flaky-05816-parallel-replicas
-
-Do not run `05816_query_condition_cache_part_name_reused_after_attach` with parallel replicas
-
-**File**: `tests/queries/0_stateless/05816_query_condition_cache_part_name_reused_after_attach.sql` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
---- Tags: no-replicated-database, no-shared-merge-tree
-+-- Tags: no-replicated-database, no-shared-merge-tree, no-parallel-replicas
- -- no-replicated-database, no-shared-merge-tree: their block numbers do not restart, so no part name is reused.
-+-- no-parallel-replicas: a replica cancelled by the initiator can still hold the part when TRUNCATE runs, so it is kept.
- 
- -- Attaching a MergeTree table again numbers its parts from those on disk, so after TRUNCATE the next INSERT
- -- writes part `all_1_1_0` again. The query condition cache must not return the removed part's verdicts.
+@@ -72,6 +72,7 @@ const char * auto_config_build[]
+     "USE_ORC", "@USE_ORC@",
+     "USE_MSGPACK", "@USE_MSGPACK@",
+     "USE_DELTA_KERNEL_RS", "@USE_DELTA_KERNEL_RS@",
++    "USE_VORTEX", "@USE_VORTEX@",
+     "USE_XRAY", "@USE_XRAY@",
+     "USE_WASMTIME", "@USE_WASMTIME@",
+     "WITH_COVERAGE", "@WITH_COVERAGE@",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133854** (2026-11-23): Backport #133748 to 26.11: Accept `ATTACH MASKING POLICY` only from the loader of the access entities (@robot-ch-test-poll2)
-- **PR #133852** (2026-11-23): Backport #133748 to 26.10: Accept `ATTACH MASKING POLICY` only from the loader of the access entities (@robot-ch-test-poll2)
-- **PR #133837** (closed): Load `PostgreSQL`, `MySQL`, `Redis` and `MongoDB` tables created before `remote_url_allow_hosts` was tightened (@siddharthapal8240)
-- **PR #133824** (2026-11-23): Fix `arm_asan_ubsan` master build: `hash-binary` aborted on SipHash wraparound (@alexey-milovidov)
-- **PR #133797** (2026-11-23): Backport #132964 to 26.11: Fix high memory usage of text index materialization on packed or compact parts (@robot-clickhouse-ci-2)
-- **PR #133783** (2026-11-23): Set 26.8 Regular channel start date to TBD on the Cloud release status page (@fm4v)
+- **PR #134198** (2026-11-24): Cherry pick #116550 to 26.10: Apply `SORT + LIMIT` before `ARRAY JOIN` (@robot-clickhouse)
+- **PR #134168** (2026-11-24): Backport #133420 to 26.10: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
+- **PR #134167** (2026-11-24): Backport #133420 to 26.9: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
+- **PR #134163** (closed): Do not read the manifests again when `expireSnapshots` retries after a commit conflict (@scanhex12)
+- **PR #134151** (2026-11-24): Backport #129544 to 26.10: Skip the probe plan when a correlated subquery rules out parallel replicas (@robot-ch-test-poll2)
+- **PR #134149** (closed): Backport #133724 to 26.11: Bound the source before reading the encryption header (@robot-ch-test-poll2)
 
 ---
 
@@ -1919,52 +1802,31 @@ Do not run `05816_query_condition_cache_part_name_reused_after_attach` with para
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in MessageQueueSink.cpp
+## X. Empirical Invariant Guard in IMergeTreeDataPart.cpp
 
 **RULE**:
-When implementing operations in `src/Storages/MessageQueueSink.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/MergeTree/IMergeTreeDataPart.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `96b7fb8f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a27da1e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MessageQueueSink.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MergeTree/IMergeTreeDataPart.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        cancelProducing();
-    cancelProducing();
-}
-
-void MessageQueueSink::cancelProducing() noexcept
-{
-    if (format)
-        format->cancel();
-    if (buffer)
-        buffer->cancel();
-    if (producer)
-        producer->cancel();
+        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    {
-        if (format)
-            format->cancel();
-
-        if (buffer)
-            buffer->cancel();
-
-        if (producer)
-            producer->cancel();
-    }
-    onFinish();
+        return bytes_on_disk * existing_rows_count.value() / rows_count;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `96b7fb8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a27da1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:33:23.430Z",
-  "total_cycles_completed": 12123,
-  "total_learnings_persisted": 12123,
-  "total_rules_promoted": 11184,
+  "last_updated": "2026-11-24T17:42:51.954Z",
+  "total_cycles_completed": 12127,
+  "total_learnings_persisted": 12127,
+  "total_rules_promoted": 11187,
   "history": [
-    {
-      "timestamp": "2026-11-24T00:57:20.330Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:57:23.353Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:57:28.205Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:07:20.375Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T01:07:20.679Z",
       "repository": "okteto/okteto",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T17:33:23.430Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:42:31.328Z",
+      "repository": "baidu/ERNIE-5.5-Flash-Preview",
+      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:42:38.985Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:42:47.108Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:42:51.954Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

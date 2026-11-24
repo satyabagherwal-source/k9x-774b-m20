@@ -12791,3 +12791,8 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `04985e7d` | Multi-dimensional audit evidence | 2026-11-24T17:33:16.865Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `295f0daf` | Multi-dimensional audit evidence | 2026-11-24T17:33:23.424Z |
 | `learn-dom-h-7bf1a4ec` | `project://inikulin-parse5` | `2412bb99` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md` | 2026-11-24T17:34:05.077Z |
+| `learn-huggingface-baidu-ernie-5-5-flash-preview` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-24T17:42:31.323Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `c96900f2` | Multi-dimensional audit evidence | 2026-11-24T17:42:38.980Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `e9613f90` | Multi-dimensional audit evidence | 2026-11-24T17:42:47.103Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b6467a3e` | Multi-dimensional audit evidence | 2026-11-24T17:42:51.949Z |
+| `learn-dom-d-9fc91e58` | `project://hf-baidu-ernie-5.5-flash-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md` | 2026-11-24T17:43:21.556Z |

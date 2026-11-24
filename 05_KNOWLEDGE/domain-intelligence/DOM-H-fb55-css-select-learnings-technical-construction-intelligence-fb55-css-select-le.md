@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:29:23.529Z",
+  "timestamp": "2026-11-24T17:43:22.897Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fb55-css-select-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fb55-css-select-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:29:23.529Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:43:22.897Z`  
 > **Learning ID**: `LEARN-EVO-fb55-css-select-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from fb55-css-select-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source**: github ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
-> **Source Version**: `10f516f0`  
+> **Source Version**: `c96900f2`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:29:08.069Z  
+> **Timestamp**: 2026-11-24T17:42:38.255Z  
 > **Learning ID**: `learn-github-fb55-css-select`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:29:08.063Z  
+> **Harvest Timestamp**: 2026-11-24T17:42:38.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1508,571 +1508,201 @@ export const aliases: Record<string, string> = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10f516f0` (2026-11-20)
-**Commit Message**: build(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0 (#1951)
+### Incident Patch 1: `c96900f2` (2026-11-23)
+**Commit Message**: build(deps-dev): bump vitest from 5.1.0 to 5.1.1 (#1953)
 
-Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.2 to 8.73.0.
-- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
-- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
-- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.73.0/packages/typescript-eslint)
+Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.1.0 to 5.1.1.
+- [Release notes](https://github.com/vitest-dev/vitest/releases)
+- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
+- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.1/packages/vitest)
 
 ---
 updated-dependencies:
-- dependency-name: typescript-eslint
-  dependency-version: 8.73.0
+- dependency-name: vitest
+  dependency-version: 5.1.1
   dependency-type: direct:development
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +78/-105)
+**File**: `package-lock.json` (modified, +206/-104)
 ```diff
-@@ -25,7 +25,7 @@
-                 "globals": "^17.14.0",
+@@ -26,7 +26,7 @@
                  "htmlparser2": "^12.0.0",
                  "typescript": "^6.0.3",
--                "typescript-eslint": "^8.72.2",
-+                "typescript-eslint": "^8.73.0",
-                 "vitest": "^5.1.0"
+                 "typescript-eslint": "^8.73.0",
+-                "vitest": "^5.1.0"
++                "vitest": "^5.1.1"
              },
              "engines": {
-@@ -393,23 +393,6 @@
-                 "node": "^20.19.0 || ^22.13.0 || >=24"
+                 "node": ">=20.19.0"
+@@ -288,6 +288,43 @@
+                 "keyv": "^5.6.0"
              }
          },
--        "node_modules/@eslint/config-array/node_modules/minimatch": {
--            "version": "11.0.8",
--            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
--            "integrity": "sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==",
--            "dev": true,
--            "license": "BlueOak-1.0.0",
--            "dependencies": {
--                "@isaacs/nonrecursive-glob-match": "^1.1.0",
--                "brace-expansion": "^5.0.12"
--            },
--            "engines": {
--                "node": "20 || >=22"
--            },
--            "funding": {
--                "url": "https://github.com/sponsors/isaacs"
--            }
--        },
-         "node_modules/@eslint/config-helpers": {
-             "version": "0.7.0",
-             "resolved": "https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.7.0.tgz",
-@@ -997,17 +980,17 @@
-             }
-         },
-         "node_modules/@typescript-eslint/eslint-plugin": {
--            "version": "8.72.2",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
--            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
-+            "version": "8.73.0",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.73.0.tgz",
-+            "integrity": "sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-                 "@eslint-community/regexpp": "^4.12.2",
--                "@typescript-eslint/scope-manager": "8.72.2",
--                "@typescript-eslint/type-utils": "8.72.2",
--                "@typescript-eslint/utils": "8.72.2",
--                "@typescript-eslint/visitor-keys": "8.72.2",
-+                "@typescript-eslint/scope-manager": "8.73.0",
-+                "@typescript-eslint/type-utils": "8.73.0",
-+                "@typescript-eslint/utils": "8.73.0",
-+                "@typescript-eslint/visitor-keys": "8.73.0",
-                 "ignore": "^7.0.5",
-                 "natural-compare": "^1.4.0",
-                 "ts-api-utils": "^2.5.0"
-@@ -1020,32 +1003,32 @@
-                 "url": "https://opencollective.com/typescript-eslint"
-             },
-             "peerDependencies": {
--                "@typescript-eslint/parser": "^8.72.2",
-+                "@typescript-eslint/parser": "^8.73.0",
-                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
-                 "typescript": ">=4.8.4 <6.1.0"
-             }
-         },
-         "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore": {
--            "version": "7.0.14",
--            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
--            "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
-+            "version": "7.0.16",
-+            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.16.tgz",
-+            "integrity": "sha512-52N+Y4HRMOJmbLmr+DqO4iSRyyB7N52gm7PWCT6h0p978+oKbqHCB7gIJIwZvBUsjlSdWbrBFqUSmIFNZMpn0A==",
-             "dev": true,
-             "license": "MIT",
-             "engines": {
-                 "node": ">= 4"
-             }
-         },
-         "node_modules/@typescript-eslint/parser": {
--            "version": "8.72.2",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
--            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
-+            "version": "8.73.0",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.73.0.tgz",
-+            "integrity": "sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
--                "@typescript-eslint/scope-manager": "8.72.2",
--                "@typescript-eslint/types": "8.72.2",
--                "@typescript-eslint/typescript-estree": "8.72.2",
--                "@typescript-eslint/visitor-keys": "8.72.2",
-+                "@typescript-eslint/scope-manager": "8.73.0",
-+                "@typescript-eslint/types": "8.73.0",
-+                "@typescript-eslint/typescript-estree": "8.73.0",
-+                "@typescript-eslint/visitor-keys": "8.73.
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-         "globals": "^17.14.0",
-         "htmlparser2": "^12.0.0",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.72.2",
-+        "typescript-eslint": "^8.73.0",
-         "vitest": "^5.1.0"
-     },
-     "scripts": {
-```
-
----
-
-### Incident Patch 2: `eae943bb` (2026-11-20)
-**Commit Message**: build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.8 (#1950)
-
-* build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.8
-
-Bumps [@biomejs/biome](https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome) from 2.5.15 to 2.6.8.
-- [Release notes](https://github.com/biomejs/biome/releases)
-- [Changelog](https://github.com/biomejs/biome/blob/main/CHANGELOG_v1.md)
-- [Commits](https://github.com/biomejs/biome/commits/@biomejs/biome@2.6.8/packages/@biomejs/biome)
-
----
-updated-dependencies:
-- dependency-name: "@biomejs/biome"
-  dependency-version: 2.6.8
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* style: format the README with Biome 2.6.8
-
-* style: write endless loops as `while (true)` for Biome 2.6.8
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Felix Boehm <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +104/-104)
-```diff
-@@ -188,115 +188,115 @@ _As defined by CSS 4 and / or jQuery._
-   (`~`): Selects elements that are siblings of the specified element.
- - [Attribute](https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors)
-   (`[attr=foo]`), with supported comparisons:
--    - `[attr]` (existential): Selects elements with the specified attribute,
--      whatever its value.
--    - `=`: Selects elements with the specified attribute and value.
--    - `~=`: Selects elements with the specified attribute and value, separated
--      by spaces.
--    - `|=`: Selects elements with the specified attribute and value, separated
--      by hyphens.
--    - `*=`: Selects elements with the specified attribute and value, anywhere in
--      the attribute value.
--    - `^=`: Selects elements with the specified attribute and value, beginning
--      at the beginning of the attribute value.
--    - `$=`: Selects elements with the specified attribute and value, ending at
--      the end of the attribute value.
--    - `!=`: Selects elements with the specified attribute and value, not equal
--      to the specified value.
--    - `i` and `s` can be added after the comparison to make the comparison
--      case-insensitive or case-sensitive (eg. `[attr=foo i]`). If neither is
--      supplied, css-select will follow the HTML spec's
--      [case-sensitivity rules](https://html.spec.whatwg.org/multipage/semantics-other.html#case-sensitivity-of-selectors).
-+  - `[attr]` (existential): Selects elements with the specified attribute,
-+    whatever its value.
-+  - `=`: Selects elements with the specified attribute and value.
-+  - `~=`: Selects elements with the specified attribute and value, separated
-+    by spaces.
-+  - `|=`: Selects elements with the specified attribute and value, separated
-+    by hyphens.
-+  - `*=`: Selects elements with the specified attribute and value, anywhere in
-+    the attribute value.
-+  - `^=`: Selects elements with the specified attribute and value, beginning
-+    at the beginning of the attribute value.
-+  - `$=`: Selects elements with the specified attribute and value, ending at
-+    the end of the attribute value.
-+  - `!=`: Selects elements with the specified attribute and value, not equal
-+    to the specified value.
-+  - `i` and `s` can be added after the comparison to make the comparison
-+    case-insensitive or case-sensitive (eg. `[attr=foo i]`). If neither is
-+    supplied, css-select will follow the HTML spec's
-+    [case-sensitivity rules](https://html.spec.whatwg.org/multipage/semantics-other.html#case-sensitivity-of-selectors).
- - [Selector lists](https://developer.mozilla.org/en-US/docs/Web/CSS/Selector_list)
-   (`,`): Selects elements that match any of the specified selectors.
- - [Universal](https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors)
-   (`*`): Selects all elements.
- - Pseudos:
--    - [`:not`](https://developer.mozilla.org/en-US/docs/Web/CSS/:not): Selects
--      elements that do not match the specified selector.
--    - [`:contains`](https://api.jquery.com/contains-selector): Selects elements
--      that contain the specified text.
--    - `:icontains`: Selects elements that contain the specified text,
--      case-insensitively.
--    - [`:has`](https://developer.mozilla.org/en-US/docs/Web/CSS/:has): Selects
--      elements that have descendants that match the specified selector.
--    - [`:root`](https://developer.mozilla.org/en-US/docs/Web/CSS/:root): Selects
--      the root element.
--    - [`:empty`](https://developer.mozilla.org/en-US/docs/Web/CSS/:empty):
--      Selects elements that have no children.
--    - [`:first-child`](https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child):
--      Selects elements that are the first element child of their parent.
--    - [`:last-child`](https://developer.mozilla.org/en-US/docs/Web/CSS/:last-child):
--      Selects elements that are the last element child of their parent.
--    - [`:first-of-type`](https://developer.mozilla.org/en-US/docs/Web/CSS/:first-of-type):
--      Selects elements that are the first element of their type.
--    - [`:last-of-type`](https://developer.mozilla.org/en-US/docs/Web/CSS/:last-of-type):
--      Selects elements that are the last element of their type.
--    - [`:only-of-type`](https://developer.mozilla.org/en-US/docs/Web/CSS/:only-of-type):
--      Selects elements that are the only element of their type.
--    - [`:only-child`](https://developer.mozilla.org/en-US/docs/Web/CSS/:only-child):
--      Selects elements that are the only element child of their parent.
--    - [`:nth-child`](https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child):
--      Selects elements that are the nth element child of their parent.
--    - [`:nth-last-child`](https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-last-child):
--      Selects elements that are the nth element child of their parent, counting
--      from the last child.
--    - [`:nth-of-type`](https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-of-type):
--      S
-```
-
-**File**: `eslint.config.mjs` (modified, +5/-0)
-```diff
-@@ -32,6 +32,11 @@ export default defineConfig([
-         },
-         rules: {
-             ...commonTypeScriptRules,
-+            // Biome's useWhile writes endless loops as `while (true)`.
-+            "@typescript-eslint/no-unnecessary-condition": [
-+                2,
-+                { allowConstantLoopConditions: "only-allowed-literals" },
-+            ],
-             "unicorn/no-array-callback-reference": 0,
-             "unicorn/prefer-string-raw": 0,
-         },
-```
-
-**File**: `package-lock.json` (modified, +72/-36)
-```diff
-@@ -16,7 +16,7 @@
-                 "nth-check": "^3.0.1"
-             },
-             "devDependencies": {
--                "@biomejs/biome": "^2.5.15",
-+                "@biomejs/biome": "^2.6.8",
-                 "@eslint/compat": "^2.1.1",
-                 "@feedic/eslint-config": "^0.5.0",
-                 "@types/node": "^26.6.6",
-@@ -54,9 +54,9 @@
-             }
-         },
-         "node_modules/@biomejs/biome": {
--            "version": "2.5.15",
--            "resolved": "https://registry.npmjs.org/@biomejs/biome/-/biome-2.5.15.tgz",
--            "integrity": "sha512-WZTW4slm/pdkh92K6t/3aEN++44JD1PQ7squ7RCMLI1flHGl43DVOIGXvCjHiZgBMO1V4uYxoFNtqrIA4qGuIQ==",
-+            "version": "2.6.8",
-+            "resolved": "https://registry.npmjs.org/@biomejs/biome/-/biome-2.6.8.tgz",
-+            "integrity": "sha512-kqZUFvX6/aYQOmzfRN5ANcfNS9wLH4aHLWWP/dQKyhRZVoA6rdWszA7DGugFcxPbMiznUyVYyukVl+ExZN4PQA==",
-             "dev": true,
-             "license": "MIT OR Apache-2.0",
-             "bin": {
-@@ -70,20 +70,56 @@
-                 "url": "https://opencollective.com/biome"
-             },
-             "optionalDependencies": {
--                "@biomejs/cli-darwin-arm64": "2.5.15",
--                "@biomejs/cli-darwin-x64": "2.5.15",
--                "@biomejs/cli-linux-arm64": "2.5.15",
--                "@biomejs/cli-linux-arm64-musl": "2.5.15",
--                "@biomejs/cli-linux-x64": "2.5.15",
--                "@biomejs/cli-linux-x64-musl": "2.5.15",
--                "@biomejs/cli-win32-arm64": "2.5.15",
--                "@biomejs/cli-win32-x64": "2.5.15"
-+                "@biomejs/cli-android-arm64": "2.6.8",
-+                "@biomejs/cli-android-x64": "2.6.8",
-+                "@biomejs/cli-darwin-arm64": "2.6.8",
-+                "@biomejs/cli-darwin-x64": "2.6.8",
-+                "@biomejs/cli-linux-arm64": "2.6.8",
-+                "@biomejs/cli-linux-arm64-musl": "2.6.8",
-+                "@biomejs/cli-linux-x64": "2.6.8",
-+                "@biomejs/cli-linux-x64-musl": "2.6.8",
-+                "@biomejs/cli-win32-arm64": "2.6.8",
-+                "@biomejs/cli-win32-x64": "2.6.8"
-+            }
-+        },
-+        "node_modules/@biomejs/cli-android-arm64": {
-+            "version": "2.6.8",
-+            "resolved": "https://registry.npmjs.org/@biomejs/cli-android-arm64/-/cli-android-arm64-2.6.8.tgz",
-+            "integrity": "sha512-X4JKPLK85kfUTwuuaORFplnBfGjKkp62PsFhhcL7F/Tpltc7pyUofjlkkMnlZZLWsifFl7LNB8ngVrwJg1uo1Q==",
-+            "cpu": [
-+                "arm64"
-+            ],
++        "node_modules/@emnapi/core": {
++            "version": "2.0.0-beta.2",
++            "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
++            "integrity": "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==",
 +            "dev": true,
-+            "license": "MIT OR Apache-2.0",
++            "license": "MIT",
 +            "optional": true,
-+            "os": [
-+                "android"
-+            ],
-+            "engines": {
-+                "node": ">=14.21.3"
-+            }
-+        },
-+        "node_modules/@biomejs/cli-android-x64": {
-+            "version": "2.6.8",
-+            "resolved": "https://registry.npmjs.org/@biomejs/cli-android-x64/-/cli-android-x64-2.6.8.tgz",
-+            "integrity": "sha512-C3Hk485vl+deEj53K08+SYYelPIPkdSZL3qHuD31Xi+qydVa4q2ze+aCYo1k3iJGWtvWtjHaGkDh7S2sX6wk8w==",
-+            "cpu": [
-+                "x64"
-+            ],
-+            "dev": true,
-+            "license": "MIT OR Apache-2.0",
-+            "optional": true,
-+            "os": [
-+                "android"
-+            ],
-+            "engines": {
-+                "node": ">=14.21.3"
-             }
-         },
-         "node_modules/@biomejs/cli-darwin-arm64": {
--            "version": "2.5.15",
--            "resolved": "https://registry.npmjs.org/@biomejs/cli-darwin-arm64/-/cli-darwin-arm64-2.5.15.tgz",
--            "integrity": "sha512-BZVzFhJ/mUvTLMYbc9x6el0o2Uv5zP7bACYyhFb6fSc1giroXm7PL0a5KqMJ9F+/BnkYRjagD/ROSDVOZ6eapg==",
-+            "version": "2.6.8",
-+            "resolved": "https://registry.npmjs.org/@biomejs/cli-darwin-arm64/-/cli-darwin-arm64-2.6.8.tgz",
-+            "integrity": "sha512-DHyj+JnRHcn4YdvpiqgTFZMYKSPELMCfFpNNlEuu1L8DKTGXhzW7raIwdsbo2Ie9nCljQLAQkVWQk/mwM0ueiA==",
-             "cpu": [
-                 "arm64"
-             ],
-@@ -98,9 +134,9 @@
-             }
-         },
-         "node_modules/@biomejs/cli-darwin-x64": {
--            "version": "2.5.15",
--            "resolved": "https://registry.npmjs.org/@biomejs/cli-darwin-x64/-/cli-darwin-x64-2.5.15.tgz",
--            "integrity": "sha512-V5Kw63V+fVGNFhFrizDxMbGXAzZCh8kYzJpy3GI6gTapWDg7bZK9oYC9CbVgQSEdTnupz0U5Efz8Ev+5vdBBXw==",
-+            "version": "2.6.8",
-+            "resolved": "https://registry.npmjs.org/@biomejs/cli-darwin-x64/-/cli-darwin-x64-2.6.8.tgz",
-+            "integrity": "sha512-QWWUPjlA0RnkkgYnFLUHZu+RrDc0FdK0A+wEPA+dENQJwsuSHMH89lspnAw2QUWWc9VHyfluGx1Xmp6Y2GZi8Q==",
-             "cpu": [
-                 "x64"
-             ],
-@@ -115,9 +151,9 @@
-             }
-         },
-         "node_modules/@biomejs/cli-linux-arm64": {
--            "version": "2.5.15",
--            "resolved": "https://registry.npmjs.org/@biomejs/cli-linux-arm64/-/cli-li
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@
-         "nth-check": "^3.0.1"
-     },
-     "devDependencies": {
--        "@biomejs/biome": "^2.5.15",
-+        "@biomejs/biome": "^2.6.8",
-         "@eslint/compat": "^2.1.1",
-         "@feedic/eslint-config": "^0.5.0",
-         "@types/node": "^26.6.6",
-```
-
-**File**: `src/helpers/querying.ts` (modified, +2/-2)
-```diff
-@@ -20,7 +20,7 @@ export function findAll<Node, ElementNode extends Node>(
-     /** Stack of the indices within the arrays. */
-     const indexStack = [0];
- 
--    for (;;) {
-+    while (true) {
-         // First, check if the current array has any more elements to look at.
-         if (indexStack[0] >= nodeStack[0].length) {
-             // If we have no more arrays to look at, we are done.
-@@ -78,7 +78,7 @@ export function findOne<Node, ElementNode extends Node>(
-     /** Stack of the indices within the arrays. */
-     const indexStack = [0];
- 
--    for (;;) {
-+    while (true) {
-         // First, check if the current array has any more elements to look at.
-         if (indexStack[0] >= nodeStack[0].length) {
-             // If we have no more arrays to look at, we are done.
-```
-
----
-
-### Incident Patch 3: `a29f4977` (2026-11-17)
-**Commit Message**: build(deps-dev): bump eslint from 10.14.0 to 10.15.0 (#1948)
-
-Bumps [eslint](https://github.com/eslint/eslint) from 10.14.0 to 10.15.0.
-- [Release notes](https://github.com/eslint/eslint/releases)
-- [Commits](https://github.com/eslint/eslint/compare/v10.14.0...v10.15.0)
-
----
-updated-dependencies:
-- dependency-name: eslint
-  dependency-version: 10.15.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +51/-10)
-```diff
-@@ -20,7 +20,7 @@
-                 "@eslint/compat": "^2.1.1",
-                 "@feedic/eslint-config": "^0.5.0",
-                 "@types/node": "^26.6.6",
--                "eslint": "^10.14.0",
-+                "eslint": "^10.15.0",
-                 "eslint-config-biome": "^2.1.3",
-                 "globals": "^17.14.0",
-                 "htmlparser2": "^12.0.0",
-@@ -343,20 +343,37 @@
-             }
-         },
-         "node_modules/@eslint/config-array": {
--            "version": "0.23.5",
--            "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.5.tgz",
--            "integrity": "sha512-Y3kKLvC1dvTOT+oGlqNQ1XLqK6D1HU2YXPc52NmAlJZbMMWDzGYXMiPRJ8TYD39muD/OTjlZmNJ4ib7dvSrMBA==",
-+            "version": "0.23.6",
-+            "resolved": "https://registry.npmjs.org/@eslint/config-array/-/config-array-0.23.6.tgz",
-+            "integrity": "sha512-WrTH7nioI9QPY4NZGnsywmecswJdgeq4BCM76qok9VgjTO29ZgUzUvcuJLVPYVQM4uDbaPBU0M33R9DIxI8X3w==",
-             "dev": true,
-             "license": "Apache-2.0",
-             "dependencies": {
-                 "@eslint/object-schema": "^3.0.5",
-                 "debug": "^4.3.1",
--                "minimatch": "^10.2.4"
-+                "minimatch": "^11.0.5"
-             },
-             "engines": {
-                 "node": "^20.19.0 || ^22.13.0 || >=24"
-             }
-         },
-+        "node_modules/@eslint/config-array/node_modules/minimatch": {
-+            "version": "11.0.8",
-+            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
-+            "integrity": "sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==",
-+            "dev": true,
-+            "license": "BlueOak-1.0.0",
++            "peer": true,
 +            "dependencies": {
-+                "@isaacs/nonrecursive-glob-match": "^1.1.0",
-+                "brace-expansion": "^5.0.12"
++                "@emnapi/wasi-threads": "2.2.0",
++                "tslib": "^2.4.0"
++            }
++        },
++        "node_modules/@emnapi/runtime": {
++            "version": "2.0.0-beta.2",
++            "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
++            "integrity": "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==",
++            "dev": true,
++            "license": "MIT",
++            "optional": true,
++            "peer": true,
++            "dependencies": {
++                "tslib": "^2.4.0"
++            }
++        },
++        "node_modules/@emnapi/wasi-threads": {
++            "version": "2.2.0",
++            "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz",
++            "integrity": "sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==",
++            "dev": true,
++            "license": "MIT",
++            "optional": true,
++            "peer": true,
++            "dependencies": {
++                "tslib": "^2.4.0"
++            }
++        },
+         "node_modules/@es-joy/jsdoccomment": {
+             "version": "0.91.0",
+             "resolved": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.91.0.tgz",
+@@ -559,9 +596,9 @@
+             "license": "BlueOak-1.0.0"
+         },
+         "node_modules/@jridgewell/resolve-uri": {
+-            "version": "3.1.2",
+-            "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+-            "integrity": "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==",
++            "version": "3.1.3",
++            "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.3.tgz",
++            "integrity": "sha512-lhTtjtoEArWBjismtfS761S9Hlyn+nIZqOZVYoZ1Xn82PMNMVnk+jj/NhC4fAXGTs7ydONcJiR5vyQBTMDu27g==",
+             "dev": true,
+             "license": "MIT",
+             "engines": {
+@@ -610,6 +647,29 @@
+             "dev": true,
+             "license": "MIT"
+         },
++        "node_modules/@napi-rs/wasm-runtime": {
++            "version": "1.2.6",
++            "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz",
++            "integrity": "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==",
++            "dev": true,
++            "license": "MIT",
++            "optional": true,
++            "peer": true,
++            "dependencies": {
++                "@tybys/wasm-util": "^0.10.3"
 +            },
 +            "engines": {
-+                "node": "20 || >=22"
++                "node": "^20.19.0 || ^22.13.0 || >=23.5.0"
 +            },
 +            "funding": {
-+                "url": "https://github.com/sponsors/isaacs"
++                "type": "github",
++                "url": "https://github.com/sponsors/Brooooooklyn"
++            },
++            "peerDependencies": {
++                "@emnapi/core": "^1.7.1 || 2.0.0-beta.2",
++                "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2"
 +            }
 +        },
-         "node_modules/@eslint/config-helpers": {
-             "version": "0.7.0",
-             "resolved": "https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.7.0.tgz",
-@@ -515,6 +532,13 @@
-                 "url": "https://github.com/sponsors/nzakas"
+         "node_modules/@oxc-project/types": {
+             "version": "0.156.0",
+             "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
+@@ -622,9 +682,9 @@
              }
          },
-+        "node_modules/@isaacs/nonrecursive-glob-match": {
-+            "version": "1.1.0",
-+            "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz",
-+            "integrity": "sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==",
-+            "dev": true,
-+            "license": "BlueOak-1.0.0"
-+        },
-         "node_modules/@jridgewell/resolve-uri": {
-             "version": "3.1.2",
-             "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
-@@ -1683,9 +1707,9 @@
+         "node_modules/@rolldown/binding-android-arm-eabi": {
+-            "version": "1.2.16",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
+-            "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
++            "version": "1.2.19",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
++            "integrity": "sha512-e+Ebe0WT+9tbXmNKPIiC8YrWAHYwug3m6i4p3rZGGulfZri1jtI4HslT+OZnFf/OIHowWF71DTlHwXBP2SiA7A==",
+             "cpu": [
+                 "arm"
+             ],
+@@ -640,9 +700,9 @@
              }
          },
-         "node_modules/eslint": {
--            "version": "10.14.0",
--            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
--            "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-+            "version": "10.15.0",
-+            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.15.0.tgz",
-+            "integrity": "sha512-+5Wg4p+ze3sG1WErYgUO/3H1IQIfFBymVUA0Fo/XTeBOLS6UQIUekpSJ8sdRkn7O7wjh84b55w/roqavH2aScg==",
-             "dev": true,
-             "license": "MIT",
-             "workspaces": [
-@@ -1694,7 +1718,7 @@
-             "dependencies": {
-                 "@eslint-community/eslint-utils": "^4.8.0",
-                 "@eslint-community/regexpp": "^4.12.2",
--                "@eslint/config-array": "^0.23.5",
-+                "@eslint/config-array": "^0.23.6",
-                 "@eslint/config-helpers": "^0.7.0",
-                 "@eslint/core": "^1.2.1",
-                 "@eslint/plugin-kit": "^0.7.3",
-@@ -1719,7 +1743,7 @@
-                 "imurmurhash": "^0.1.4",
-                 "is-glob": "^4.0.0",
-                 "json-stable-stringify-without-jsonify": "^1.0.1",
--                "minimatch": "^10.2.6",
-+                "minimatch": "^11.0.5",
-                 "natural-compare": "^1.4.0",
-                 "optionator": "^0.9.3"
-             },
-@@ -2005,6 +2029,23 @@
-                 "url": "https://opencollective.com/eslint"
-             }
-         },
-+        "node_modules/eslint/node_modules/minimatch": {
-+            "version": "11.0.8",
-+            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
-+            "integrity": "sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==",
-+            "dev": true,
-+            "license": "BlueOak-1.0.0",
-+            "dependencies": {
-+                "@isaacs/nonrecursive-glob-mat
+         "node_modules/@rolldown/binding-android-arm64": {
+-            "version": "1.2.16",
+-            "resolved": "
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -43,7 +43,7 @@
-         "@eslint/compat": "^2.1.1",
-         "@feedic/eslint-config": "^0.5.0",
-         "@types/node": "^26.6.6",
--        "eslint": "^10.14.0",
-+        "eslint": "^10.15.0",
-         "eslint-config-biome": "^2.1.3",
-         "globals": "^17.14.0",
+@@ -49,7 +49,7 @@
          "htmlparser2": "^12.0.0",
+         "typescript": "^6.0.3",
+         "typescript-eslint": "^8.73.0",
+-        "vitest": "^5.1.0"
++        "vitest": "^5.1.1"
+     },
+     "scripts": {
+         "build": "tsc",
+```
+
+---
+
+### Incident Patch 2: `a1529a20` (2026-11-23)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (#1952)
+
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.3 to 4.39.4.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.3...v4.39.4)
+
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+```diff
+@@ -23,9 +23,9 @@ jobs:
+               uses: actions/checkout@v7
+ 
+             - name: Initialize CodeQL
+-              uses: github/codeql-action/init@v4.39.3
++              uses: github/codeql-action/init@v4.39.4
+               with:
+                   languages: "javascript"
+ 
+             - name: Perform CodeQL Analysis
+-              uses: github/codeql-action/analyze@v4.39.3
++              uses: github/codeql-action/analyze@v4.39.4
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1953** (2026-11-23): build(deps-dev): bump vitest from 5.1.0 to 5.1.1 (@dependabot[bot])
+- **PR #1952** (2026-11-23): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
 - **PR #1951** (2026-11-20): build(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0 (@dependabot[bot])
 - **PR #1950** (2026-11-20): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.8 (@dependabot[bot])
 - **PR #1948** (2026-11-17): build(deps-dev): bump eslint from 10.14.0 to 10.15.0 (@dependabot[bot])
 - **PR #1946** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.7 (@dependabot[bot])
-- **PR #1943** (2026-11-13): build(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
-- **PR #1942** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.6 (@dependabot[bot])
 
 ---
 
@@ -2092,13 +1722,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0
+## X. build(deps-dev): bump vitest from 5.1.0 to 5.1.1
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10f516f0`: build(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c96900f2`: build(deps-dev): bump vitest from 5.1.0 to 5.1.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -2106,56 +1736,53 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                "typescript-eslint": "^8.73.0",
-            "version": "8.73.0",
-            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.73.0.tgz",
-            "integrity": "sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==",
-                "@typescript-eslint/scope-manager": "8.73.0",
-                "@typescript-eslint/type-utils": "8.73.0",
-                "@typescript-eslint/utils": "8.73.0",
-                "@typescript-eslint/visitor-keys": "8.73.0",
-                "@typescript-eslint/parser": "^8.73.0",
-            "version": "7.0.16",
-            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.16.tgz",
-            "integrity": "sha512-52N+Y4HRMOJmbLmr+DqO4iSRyyB7N52gm7PWCT6h0p978+oKbqHCB7gIJIwZvBUsjlSdWbrBFqUSmIFNZMpn0A==",
-            "version": "8.73.0",
-            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.73.0.tgz",
-            "integrity": "sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==",
-                "@typescript-eslint/scope-manager": "8.73.0",
-                "@typescript-esl
+                "vitest": "^5.1.1"
+        "node_modules/@emnapi/core": {
+            "version": "2.0.0-beta.2",
+            "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
+            "integrity": "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==",
+            "dev": true,
+            "license": "MIT",
+            "optional": true,
+            "peer": true,
+            "dependencies": {
+                "@emnapi/wasi-threads": "2.2.0",
+                "tslib": "^2.4.0"
+            }
+        },
+        "node_modules/@emnapi/runtime": {
+            "version": "2.0.0-beta.2",
+            "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
+            "integrity": "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==",
+            "dev": true,
+            "license": "MIT",
+            "optional": true,
+            "peer": true,
+            "dependencies": {
+                "tslib": "^2.4.0"
+            }
+        },
+        "node_modules/@emnapi/wasi-threads": {
+            "version": "2.2.0",
+            "resolved": "https://registry.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-                "typescript-eslint": "^8.72.2",
-        "node_modules/@eslint/config-array/node_modules/minimatch": {
-            "version": "11.0.8",
-            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
-            "integrity": "sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==",
-            "dev": true,
-            "license": "BlueOak-1.0.0",
-            "dependencies": {
-                "@isaacs/nonrecursive-glob-match": "^1.1.0",
-                "brace-expansion": "^5.0.12"
-            },
-            "engines": {
-                "node": "20 || >=22"
-            },
-            "funding": {
-                "url": "https://github.com/sponsors/isaacs"
-            }
-        },
-            "version": "8.72.2",
-            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
-            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
-                "@typescript-eslint/scope-manager": "8.72.2",
-                "@typescript-eslint/type-utils": "8.72.2",
-                "@typescript-eslint/utils":
+                "vitest": "^5.1.0"
+            "version": "3.1.2",
+            "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+            "integrity": "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==",
+            "version": "1.2.16",
+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
+            "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
+            "version": "1.2.16",
+            "resolved": "
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10f516f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c96900f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
