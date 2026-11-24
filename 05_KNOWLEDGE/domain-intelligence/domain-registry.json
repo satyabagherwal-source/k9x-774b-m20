@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:33:32.443Z",
+  "last_updated": "2026-11-24T23:42:00.337Z",
   "total_records": 2598,
   "domains": {
     "A": {
@@ -8341,8 +8341,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "6d55695582236b334a93ab61b94fdb615f9b854ade6da79d7516b48ead0225e6",
-      "created_at": "2026-11-24T18:52:04.334Z"
+      "content_hash": "df528a8f55603e732d564ced207f8f30352d206a75e246fe0e374d76fb190ac8",
+      "created_at": "2026-11-24T23:41:53.705Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8359,8 +8359,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "998cbbb586d6618441462be7bed0d7afb555c701b93ce54540f6968c0d8b1ab5",
-      "created_at": "2026-11-24T18:52:09.254Z"
+      "content_hash": "d18f672f40e6bdfd5c03d2c10b6a1b35328a11d11cf5a3c877bb3e1bfcdd01d9",
+      "created_at": "2026-11-24T23:41:58.650Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -8368,8 +8368,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "6b533416763da878b4290395c4c0b5d6e21323315e6ea95ab3894dfa7a18afa4",
-      "created_at": "2026-11-24T23:33:30.044Z"
+      "content_hash": "abb33d45520ba91415cab28d63f5c739b055c9ab390a889af3a70163878795ec",
+      "created_at": "2026-11-24T23:42:00.337Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11587,8 +11587,8 @@
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs/databend",
-      "content_hash": "b442be8ee8141fd990842f89f412f4c671255227ddc4032ee814e34b7b74f6d7",
-      "created_at": "2026-11-24T03:14:28.610Z"
+      "content_hash": "34fe5751c43dc5a51da04726bb21639155eac9ad41c3fb817101649a3b962e0d",
+      "created_at": "2026-11-24T23:41:54.869Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
@@ -21378,8 +21378,8 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-learnings-technical-construction-intelligence-databendlabs.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "b7d30f56cf3ced1929f1bf2308486605860dfe6a5fa0fbf04f6aaafb8367bc5d",
-      "created_at": "2026-11-24T03:14:33.081Z"
+      "content_hash": "d148eba3a1499ff6dff05aeca2a58971e2ebd9d8c941c33d26084badc61f9f54",
+      "created_at": "2026-11-24T23:41:59.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",

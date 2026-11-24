@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T23:33:26.050Z",
+  "last_updated": "2026-11-24T23:41:54.491Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
-      "verified_at": "2026-11-24T18:52:03.894Z",
+      "content_hash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
+      "verified_at": "2026-11-24T23:41:53.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:52:03.894Z"
+      "last_updated": "2026-11-24T23:41:53.299Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
-      "verified_at": "2026-11-24T03:14:28.208Z",
+      "content_hash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
+      "verified_at": "2026-11-24T23:41:54.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:14:28.208Z"
+      "last_updated": "2026-11-24T23:41:54.490Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

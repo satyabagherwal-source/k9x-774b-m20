@@ -12879,3 +12879,5 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `3d57ea50` | Multi-dimensional audit evidence | 2026-11-24T23:33:20.262Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `173cfd3a` | Multi-dimensional audit evidence | 2026-11-24T23:33:22.390Z |
 | `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `ce7030fd` | Multi-dimensional audit evidence | 2026-11-24T23:33:26.037Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ad7c0f73` | Multi-dimensional audit evidence | 2026-11-24T23:41:53.286Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `28ed7681` | Multi-dimensional audit evidence | 2026-11-24T23:41:54.476Z |

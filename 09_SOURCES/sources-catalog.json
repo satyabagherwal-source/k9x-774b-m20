@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "c69b970d",
+    "sourceVersion": "ad7c0f73",
     "license": "Apache-2.0",
-    "contentHash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
-    "lastHarvestedAt": "2026-11-24T18:52:03.875Z",
+    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
+    "lastHarvestedAt": "2026-11-24T23:41:53.286Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "b5eb22e2",
+    "sourceVersion": "28ed7681",
     "license": "Apache-2.0",
-    "contentHash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
-    "lastHarvestedAt": "2026-11-24T03:14:28.192Z",
+    "contentHash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
+    "lastHarvestedAt": "2026-11-24T23:41:54.476Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

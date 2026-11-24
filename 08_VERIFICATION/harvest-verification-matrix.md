@@ -12846,3 +12846,5 @@
 | `CYCLE-20261124-YWAR` | `2026-11-24T23:33:20.259Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10384` | Yes (`1a7be02d...`) |
 | `CYCLE-20261124-YXXV` | `2026-11-24T23:33:22.387Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10385` | Yes (`f57ea715...`) |
 | `CYCLE-20261124-Z0R6` | `2026-11-24T23:33:26.034Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10386` | Yes (`a7a9b316...`) |
+| `CYCLE-20261124-9W5D` | `2026-11-24T23:41:53.281Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10387` | Yes (`8feceb94...`) |
+| `CYCLE-20261124-9X2G` | `2026-11-24T23:41:54.472Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10388` | Yes (`ccce81f3...`) |

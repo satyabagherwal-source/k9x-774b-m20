@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T23:04:34.701Z",
-    "lastVerified": "2026-11-24T23:04:34.701Z",
+    "lastChecked": "2026-11-24T23:41:50.461Z",
+    "lastVerified": "2026-11-24T23:41:50.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T23:33:29.352Z",
-    "lastVerified": "2026-11-24T23:33:29.352Z",
+    "lastChecked": "2026-11-24T23:41:57.707Z",
+    "lastVerified": "2026-11-24T23:41:57.707Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1927,14 +1927,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T18:52:02.650Z",
-    "lastVerified": "2026-11-24T18:52:02.650Z",
+    "lastChecked": "2026-11-24T23:41:52.001Z",
+    "lastVerified": "2026-11-24T23:41:52.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
+    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2306,14 +2306,14 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T03:14:27.058Z",
-    "lastVerified": "2026-11-24T03:14:27.058Z",
+    "lastChecked": "2026-11-24T23:41:53.359Z",
+    "lastVerified": "2026-11-24T23:41:53.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
+    "contentHash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4616,9 +4616,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-24T04:20:21.036Z",
+    "lastChecked": "2026-11-24T23:41:43.009Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-24T04:20:21.036Z"
+    "lastVerified": "2026-11-24T23:41:43.009Z"
   },
   "typedb-typedb": {
     "name": "typedb/typedb",
@@ -7348,9 +7348,9 @@
   "vercel-swr": {
     "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "lastChecked": "2026-11-22T09:25:50.799Z",
+    "lastChecked": "2026-11-24T23:41:40.533Z",
     "revisionIdentifier": "8148ef01",
-    "lastVerified": "2026-11-22T09:25:50.799Z"
+    "lastVerified": "2026-11-24T23:41:40.533Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "fabio-rovai/open-ontologies",
@@ -7911,9 +7911,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-23T20:38:41.704Z",
+    "lastChecked": "2026-11-24T23:41:35.613Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-23T20:38:41.704Z"
+    "lastVerified": "2026-11-24T23:41:35.613Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11709,9 +11709,9 @@
   "evanw-esbuild": {
     "name": "esbuild",
     "officialUrl": "https://github.com/evanw/esbuild",
-    "lastChecked": "2026-11-20T23:56:10.620Z",
+    "lastChecked": "2026-11-24T23:41:38.018Z",
     "revisionIdentifier": "f6058f83",
-    "lastVerified": "2026-11-20T23:56:10.620Z"
+    "lastVerified": "2026-11-24T23:41:38.018Z"
   },
   "rafsoh-dimeapp": {
     "name": "rafsoh/dimeApp",

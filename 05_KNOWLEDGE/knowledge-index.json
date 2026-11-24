@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T23:33:32.595Z",
+  "last_updated": "2026-11-24T23:42:00.639Z",
   "total_verified_learnings": 9105,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25013,
+  "total_items": 25019,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "c69b970d",
-      "content_hash": "6d55695582236b334a93ab61b94fdb615f9b854ade6da79d7516b48ead0225e6",
+      "source_version": "ad7c0f73",
+      "content_hash": "df528a8f55603e732d564ced207f8f30352d206a75e246fe0e374d76fb190ac8",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T18:52:04.334Z"
+      "persisted_at": "2026-11-24T23:41:53.705Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "c69b970d",
-      "content_hash": "5eab3ba749644c4f59937c603d311072e7f22f51b11cfb207c7ba64e14e1b45e",
+      "source_version": "ad7c0f73",
+      "content_hash": "4d51826b003d60adbd963d041ec6d48c74c2bdd2dd83022ec346fa29781eb682",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:52:04.524Z"
+      "persisted_at": "2026-11-24T23:41:53.888Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "998cbbb586d6618441462be7bed0d7afb555c701b93ce54540f6968c0d8b1ab5",
+      "content_hash": "d18f672f40e6bdfd5c03d2c10b6a1b35328a11d11cf5a3c877bb3e1bfcdd01d9",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T18:52:09.254Z"
+      "persisted_at": "2026-11-24T23:41:58.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5efae1c662095d7616af7c6d6d8417179d0b8f9f819e7b8b0265641bc598abb",
+      "content_hash": "60c5d88d0056ee19e35593ed689134d3f37c28420081e2bd806416a4c8cb020a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:52:09.436Z"
+      "persisted_at": "2026-11-24T23:41:58.819Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b533416763da878b4290395c4c0b5d6e21323315e6ea95ab3894dfa7a18afa4",
+      "content_hash": "abb33d45520ba91415cab28d63f5c739b055c9ab390a889af3a70163878795ec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:33:30.044Z"
+      "persisted_at": "2026-11-24T23:42:00.337Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "19540e6570f94f07bab3c8e2b499d332a9847a03b46fb77f8cfdc58dfe1e9c3e",
+      "content_hash": "3e54e5afdce29723c4c0a44d45ea7be6151c3a3b401016ca71bf50ba4852c60b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:33:30.234Z"
+      "persisted_at": "2026-11-24T23:42:00.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e62a9157421cc6991b9a004b5f1aee36690582ed5ff05cbfde6a58e13848e9b2",
+      "content_hash": "b7a3f274e3df450ba235851b17740990939a6ed4e86c72fe53e24924269fdd1e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:33:30.369Z"
+      "persisted_at": "2026-11-24T23:42:00.639Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -214342,8 +214342,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "c69b970d",
-      "content_hash": "63736863cb68753976169fa09ea71fdca8454601477acf8baae5f66809a8f5ef",
+      "source_version": "ad7c0f73",
+      "content_hash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214471,6 +214471,11 @@
           "number": 10336,
           "title": "Fix nil status panic in first-regeneration test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10387,
+          "title": "fix policy importer cidr leak",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214478,7 +214483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:52:03.630Z",
+      "verified_at": "2026-11-24T23:41:53.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217845,8 +217850,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "b5eb22e2",
-      "content_hash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
+      "source_version": "28ed7681",
+      "content_hash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -217894,6 +217899,11 @@
           "number": 10184,
           "title": "keep waiting when a table lock watch is refused",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10388,
+          "title": "decode oversized Fuse blocks in max_block_size batches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217901,7 +217911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:14:27.973Z",
+      "verified_at": "2026-11-24T23:41:54.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217943,10 +217953,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "b5eb22e2",
-      "content_hash": "b442be8ee8141fd990842f89f412f4c671255227ddc4032ee814e34b7b74f6d7",
+      "source_version": "28ed7681",
+      "content_hash": "34fe5751c43dc5a51da04726bb21639155eac9ad41c3fb817101649a3b962e0d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:14:28.610Z"
+      "persisted_at": "2026-11-24T23:41:54.869Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -217955,10 +217965,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "b5eb22e2",
-      "content_hash": "e6777b5c25a27f8fb18ebd983f954b171841f301c0691cec847448d1f5c28942",
+      "source_version": "28ed7681",
+      "content_hash": "18e9a1052f33dbecb652f3ba2ed8fc464a42f9ea2f11d46cfb75982619695cd2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:14:28.785Z"
+      "persisted_at": "2026-11-24T23:41:55.049Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -248490,9 +248500,9 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7d30f56cf3ced1929f1bf2308486605860dfe6a5fa0fbf04f6aaafb8367bc5d",
+      "content_hash": "d148eba3a1499ff6dff05aeca2a58971e2ebd9d8c941c33d26084badc61f9f54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:14:33.081Z"
+      "persisted_at": "2026-11-24T23:41:59.450Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning",
@@ -248502,9 +248512,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "f625b77fd221744f750d515b2d4be6607cb9bf1bc0cf55d006464c5e34e99440",
+      "content_hash": "de501653f367e8b9f803af940b99fe32865842bff8b3a2c8d5e4a5c44efb6b5c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:14:33.254Z"
+      "persisted_at": "2026-11-24T23:41:59.608Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -341782,13 +341792,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Z3P7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-A1GV-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "94ea5b81c35f655e3782b0f90f110fc298278c04e084b6b83048457c11a8f59f",
+      "content_hash": "94295c0157ee082ca5eddfe51f8900b405b1a898d6df51f7a2464860df977f23",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:33:29.857Z"
+      "persisted_at": "2026-11-24T23:42:00.178Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -341801,6 +341811,82 @@
       "content_hash": "55d1b684cf81bafc0c8280a62876ceb6299886adbfadb9ebb43a22c5dbec54c1",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T23:33:31.640Z"
+    },
+    "rule-10387": {
+      "learning_id": "rule-10387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10387,
+      "title": "fix policy importer cidr leak",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "ad7c0f73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:41:53.079Z"
+    },
+    "candidate_directive-fix-policy-importer-cidr-leak": {
+      "item_id": "candidate_directive-fix-policy-importer-cidr-leak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9WC4-fix-policy-importer-cidr-leak.md",
+      "title": "fix policy importer cidr leak",
+      "repository": "cilium/cilium",
+      "source_version": "ad7c0f73",
+      "content_hash": "679405b33bba30dcc7e2c94d7e01179a88b15745109ad06a6b7ecf735bb802e5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T23:41:53.525Z"
+    },
+    "rule-10388": {
+      "learning_id": "rule-10388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10388,
+      "title": "decode oversized Fuse blocks in max_block_size batches",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "28ed7681",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:41:54.271Z"
+    },
+    "candidate_directive-decode-oversized-fuse-blocks-in-max_block_size-batches": {
+      "item_id": "candidate_directive-decode-oversized-fuse-blocks-in-max_block_size-batches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9X90-decode-oversized-fuse-blocks-in-max_block_size-batches.md",
+      "title": "decode oversized Fuse blocks in max_block_size batches",
+      "repository": "databendlabs/databend",
+      "source_version": "28ed7681",
+      "content_hash": "f432c30107f83c44643c4a84e9f1dbb9a87c5e997ce9b846259cbcedb167d5af",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:41:54.711Z"
+    },
+    "candidate_directive-policy-fix-policy-importer-cidr-leak": {
+      "item_id": "candidate_directive-policy-fix-policy-importer-cidr-leak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A05S-policy-fix-policy-importer-cidr-leak.md",
+      "title": "policy: fix policy importer cidr leak",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1167adca54b579f49ca70e7236e163a21a4f2b80f8ad299368124f92562e39d3",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T23:41:58.481Z"
+    },
+    "candidate_directive-query-decode-oversized-fuse-blocks-in-max_block_size-batches": {
+      "item_id": "candidate_directive-query-decode-oversized-fuse-blocks-in-max_block_size-batches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A0S9-query-decode-oversized-fuse-blocks-in-max_block_size-batches.md",
+      "title": "query): decode oversized Fuse blocks in max_block_size batches",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56d068c51585badf9f404c43e86b00c6d11a296f43a9920712e0d33c71466bbe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:41:59.292Z"
     }
   },
   "ai-builder-brain": {

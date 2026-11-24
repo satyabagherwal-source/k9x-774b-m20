@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T03:14:32.767Z",
+  "timestamp": "2026-11-24T23:41:59.177Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T03:14:32.767Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:41:59.177Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `b5eb22e2`  
+> **Source Version**: `28ed7681`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:14:27.063Z  
+> **Timestamp**: 2026-11-24T23:41:53.365Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:14:27.058Z  
+> **Harvest Timestamp**: 2026-11-24T23:41:53.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9505 stars
+- **Stars / Engagement**: 9507 stars
 
 ---
 
@@ -1221,11 +1221,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21181** (2026-11-24): **fix: semaphore: wait before retrying a failed acquisition**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  When an attempt to acquire a query-queue semaphore failed, `MetaStore::new_acquired_by_time` retried it at once. Since meta servers v260629.9.0 only the leader serves watches. While no meta node the client knows serves the watch, such as during a leader election, every attempt fails as soon as it starts, after writing a permit entry and deleting it. Each queued query did that in a tight loop until its queue timeout. A failed attempt is now retried after 100 ms, doubling with each failure in a row, up to 2 s.  A retried attempt still moves the query to the back of the queue. Keeping the first attempt's timestamp would keep its place, but it is not safe with the current queue: `SemaphoreQueue` admits a waiting entry that sorts before the last acquired one regardless of capacity, so after a leader change many waiters could be admitted at once. Keeping the place needs the acquirer to watch again without leaving the queue, and is left for a follow-up.  Tests: `test_new_acquired_by_time_waits_before_retrying_a_failed_attempt`, in `src/meta/store/tests/it/semaphore.rs`, calls the method against a local meta service whose semaphore queue holds an entry that does not decode, so that every attempt fails as soon as it starts. It checks that the fourth attempt's permit entry appears at least 700 ms after the call starts.  ##### fix: semaphore: wait before retrying a failed acquis
+- **Issue #21205** (2026-11-24): **ci: hold heavy Dev CI for new Dependabot PRs**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Dependabot PR #21192 ran the full Dev workflow before a maintainer could add `hold-ci`. Applying the label in PR Assistant alone would leave the same race on future PRs.  - PR Assistant adds `hold-ci` to Dependabot PRs. Dev independently defaults to holding the Linux and Bendpy jobs before the label appears. Lightweight checks still run, and `ready` blocks merging while the hold is active. - Removing `hold-ci` lets maintainers rerun Dev without a new commit. Later Dependabot pushes do not reapply the label after that opt-in. - Validated with the PR CI lifecycle and PR Assistant tests (35 tests total), `actionlint` for both workflows, and `git diff --check`.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that would cause existing functionality not to work as expected) - [ ] Documentation Update - [ ] Refactoring - [ ] Performance Improvement - [ ] Other (please describe):  ## AI assistance  - AI usage: An AI coding agent drafted the workflow changes, regression tests, and PR summary and ran local validation. - Responsible human: @bohutang - [x] The responsible human has read every line of this diff and can explain each change  <!-- Reviewable:st
 
-- **Issue #21179** (2026-11-23): **fix(meta): reject deduplication markers without durable updates**
-  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix(meta): reject deduplication markers without durable updates # Summary  Write persistent DML deduplication markers only with a durable metadata update. Temporary-table-only writes must not leave markers in Meta.  # Details  SessionCatalog skips Meta when a request has no persistent updates, and the table API rejects labeled requests without such updates. A stream offset update still qualifies even if no table rows changed.  TxnBuffer separates local from persistent labels before combining statements, so local retry detection still works without attaching a temporary write's label to another statement's durable updates.   ##### fix(query): make DML deduplication labels session-only # Summary  Keep deduplication labels tied to the client that supplies them rather than allowing a tenant-wide retry token to affect unrelated writes.  # Details  Limit deduplicate_label to session scope. Query rejects new global values and ignores previously stored global values when loading settings. Use statement settings or the HTTP request header for one write and its retries; existing session inputs remain available.  Document the intended operation and input contract separately from its implementation. This change does not alter marker keys or DML commits.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x
+- **Issue #21202** (2026-11-24): **fix(query): allow DISTINCT aggregate ORDER BY on its own argument**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Since #20108, any DISTINCT aggregate that also carries an ORDER BY fails at bind time with `SyntaxException 1005: DISTINCT aggregate ORDER BY is not supported`. This broke previously working Snowflake/PostgreSQL style queries such as:  ```sql listagg(DISTINCT d.short_app_name, ',') WITHIN GROUP (ORDER BY d.short_app_name) ```  Before #20108 this was bound as `listagg_distinct` wrapped in the sort adaptor and executed fine. The rejection was added as a stop-gap while the aggregate framework was being reworked, but #20139 already wired the real support: `UnaryDistinctCombinator` sorts first and then deduplicates when the ORDER BY key is the aggregated argument itself, and rejects independent sort keys. The planner-level blanket rejection was simply never lifted.  Changes:  - `type_check/aggregate.rs`, `type_check/core_expr.rs`: remove the two unconditional `DISTINCT ... ORDER BY` rejections. - `type_check/aggregate.rs` (`resolve_aggregate_function`): apply the PostgreSQL rule instead. After legacy configuration arguments (delimiter / bucket count) are moved into params, every ORDER BY expression of a DISTINCT aggregate must be one of its arguments; otherwise report `SemanticError: in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list`. `ScalarExpr` equality ignores spans, so `ORDER BY x` matches the argument `x`. Independent sort keys are now 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1242,668 +1242,930 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08cac7de` (2026-11-23)
-**Commit Message**: fix: locks: keep waiting when a table lock watch is refused (#21177)
+### Incident Patch 1: `1faa7cc1` (2026-11-24)
+**Commit Message**: fix(query): decode oversized Fuse blocks in max_block_size batches (#21180)
 
-* feat: config: warn about the deprecated ownership cache flag
+* fix(query): compact pinned sliced buffers after filter splitting
 
-# Summary
+* perf(column): speed up BinaryViewColumnGeneric::gc with span memcpy and buffer reuse
 
-A query node whose config sets the deprecated
-`cache.meta_service_ownership_cache` now logs a warning at startup that
-names its replacement, `ownership` in `cache.meta_service_caches`. The
-flag still enables the ownership cache, and stays for backward
-compatibility.
+* fix(query): decode oversized Fuse blocks in max_block_size batches
 
-# Details
+Replace the post-filter compaction with batched decoding at the scan.
 
-`CacheConfig::deprecated_ownership_cache_warning` returns the warning
-for such a config, and `GlobalServices::init_with` logs it right after
-`GlobalLogger::init`. The config is loaded before any logger is set up,
-so a warning logged while it loads, where the one for the old `catalog`
-key is logged, reaches no log.
+A Fuse block decoded at once shares the decompressed Parquet pages of
+all its rows: string views point into the pages. When a filter passes a
+whole max_block_size slice of such a block, the slice keeps the pages of
+every row of the block alive in operators that retain it, such as a hash
+join build. Compacting after the filter freed that memory but added a
+copy to every split filter, including ones whose output is consumed
+immediately.
 
-The flag is not rejected at startup, as `meta_username` and other
-deprecated keys are, because configs written since it was released may
-set it.
+ReadState::deserialize_batches now decodes a block that the scan outputs
+with all its rows in batches of max_block_size rows, so each output block
+holds only its own pages. Batches carry their row offsets for internal
+columns. Blocks still decode whole when the scan filters rows (prewhere,
+runtime filters, index matches), reads virtual columns, updates stream
+columns, keeps block ind
 
-* fix: locks: keep waiting when a table lock watch is refused
-
-# Summary
-
-A statement that waits for a table lock no longer fails when the meta
-service refuses the watch on the lock revision before its own. The
-waiter lists the revisions again 1 s later, and keeps waiting until it
-holds the lock or `acquire_lock
-
-**File**: `src/query/config/src/config.rs` (modified, +12/-2)
+**File**: `src/query/storages/fuse/src/io/mod.rs` (modified, +1/-0)
 ```diff
-@@ -3172,8 +3172,9 @@ impl Default for LocalConfig {
- #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Args)]
- #[serde(default)]
- pub struct CacheConfig {
--    /// Deprecated: name `ownership` in `meta_service_caches` instead. When true, it enables
--    /// [`MetaServiceCache::Ownership`] as that name does.
-+    /// Deprecated, kept for backward compatibility: name `ownership` in `meta_service_caches`
-+    /// instead. When true, it enables [`MetaServiceCache::Ownership`] as that name does, and the
-+    /// node logs a warning at startup.
-     #[clap(long = "cache-enable-meta-service-ownership", default_value = "false")]
-     #[serde(default = "bool_false")]
-     pub meta_service_ownership_cache: bool,
-@@ -3689,6 +3690,15 @@ impl CacheConfig {
-         self.meta_service_caches.contains(&cache)
-             || (cache == MetaServiceCache::Ownership && self.meta_service_ownership_cache)
+@@ -47,6 +47,7 @@ pub use read::FuseLowLevelFullRowReader;
+ pub use read::IndexMetaKey;
+ pub use read::IndexMetaReader;
+ pub use read::InvertedIndexReader;
++pub(crate) use read::ParquetBatches;
+ pub use read::RowSelection;
+ pub use read::SegmentInfoReader;
+ pub use read::SegmentStatsReader;
+```
+
+**File**: `src/query/storages/fuse/src/io/read/block/mod.rs` (modified, +1/-0)
+```diff
+@@ -29,6 +29,7 @@ pub use low_level_block_reader::FuseLowLevelColumnBatchReader;
+ pub use low_level_block_reader::FuseLowLevelColumnReader;
+ pub use low_level_block_reader::FuseLowLevelDataReader;
+ pub use low_level_block_reader::FuseLowLevelFullRowReader;
++pub(crate) use parquet::ParquetBatches;
+ pub use parquet::RowSelection;
+ pub use parquet::column_chunks_to_record_batch;
+ mod low_level_block_reader;
+```
+
+**File**: `src/query/storages/fuse/src/io/read/block/parquet/mod.rs` (modified, +88/-34)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ use std::collections::HashMap;
+ use std::collections::HashSet;
++use std::sync::Arc;
+ 
+ use arrow_array::Array;
+ use arrow_array::ArrayRef;
+@@ -35,6 +36,7 @@ use databend_storages_common_cache::TableDataCacheKey;
+ use databend_storages_common_table_meta::meta::BlockDataFile;
+ use databend_storages_common_table_meta::meta::ColumnMeta;
+ use databend_storages_common_table_meta::meta::Compression;
++use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
+ mod adapter;
+ mod deserialize;
+ mod dict_chunk;
+@@ -167,54 +169,69 @@ impl BlockReader {
+             num_rows,
+             selection,
+             &name_paths,
++            true,
+         )
      }
-+
-+    /// The warning to log at startup when this config sets the deprecated
-+    /// `meta_service_ownership_cache`.
-+    pub fn deprecated_ownership_cache_warning(&self) -> Option<&'static str> {
-+        self.meta_service_ownership_cache.then_some(
-+            "`cache.meta_service_ownership_cache` is deprecated but still enables the ownership \
-+             cache; add `ownership` to `cache.meta_service_caches` instead",
-+        )
-+    }
- }
  
- /// A watched copy of meta-service data, enabled by its snake_case name, such as
-```
-
-**File**: `src/query/config/tests/it/meta_service_caches.rs` (modified, +24/-0)
-```diff
-@@ -94,3 +94,27 @@ fn test_meta_service_caches_ownership() {
-         .cache;
-     assert!(!cache.is_meta_service_cache_enabled(MetaServiceCache::Ownership));
- }
-+
-+/// Only the deprecated `meta_service_ownership_cache = true` gets a startup warning: `ownership`
-+/// in the list enables the same cache without one.
-+#[test]
-+fn test_deprecated_ownership_cache_warning() {
-+    let deprecated: Config =
-+        toml::from_str("[cache]\nmeta_service_ownership_cache = true\n").unwrap();
-+    assert!(
-+        deprecated
-+            .cache
-+            .deprecated_ownership_cache_warning()
-+            .is_some()
-+    );
-+
-+    let listed: Config =
-+        toml::from_str("[cache]\nmeta_service_caches = [\"ownership\"]\n").unwrap();
-+    assert_eq!(listed.cache.deprecated_ownership_cache_warning(), None);
-+
-+    let cache = Args::try_parse_from(["databend-query"])
-+        .unwrap()
-+        .config
-+        .cache;
-+    assert_eq!(cache.deprecated_ownership_cache_warning(), None);
-+}
-```
-
-**File**: `src/query/service/src/global_services.rs` (modified, +5/-0)
-```diff
-@@ -134,6 +134,11 @@ impl GlobalServices {
-         );
-         log_labels.insert("node_id".to_string(), config.query.node_id.clone());
-         GlobalLogger::init(&app_name_shuffle, &config.log, log_labels);
-+        // The config is loaded before logging is set up: a warning about it logged while loading
-+        // reaches no log, so log it now.
-+        if let Some(warning) = config.cache.deprecated_ownership_cache_warning() {
-+            log::warn!("{warning}");
-+        }
- 
-         // 3. runtime init.
-         GlobalIORuntime::init(config.storage.num_cpus as usize)?;
-```
-
-**File**: `src/query/service/src/locks/lock_holder.rs` (modified, +204/-6)
-```diff
-@@ -25,10 +25,16 @@ use databend_common_meta_app::schema::CreateLockRevReq;
- use databend_common_meta_app::schema::DeleteLockRevReq;
- use databend_common_meta_app::schema::ExtendLockRevReq;
- use databend_common_meta_app::schema::ListLockRevReq;
-+use databend_common_meta_app::schema::LockMeta;
-+use databend_common_meta_app::schema::TableLockIdentV2;
-+use databend_common_meta_store::MetaStore;
-+use databend_common_meta_store::WatchStream;
- use databend_common_metrics::lock::record_acquired_lock_nums;
- use databend_common_metrics::lock::record_created_lock_nums;
- use databend_common_users::UserApiProvider;
- use databend_meta_client::kvapi::StructKey;
-+use databend_meta_client::types::MetaError;
-+use databend_meta_client::types::SeqV;
- use databend_meta_client::types::protobuf::WatchRequest;
- use databend_meta_client::types::protobuf::watch_request::FilterType;
- use futures_util::StreamExt;
-@@ -39,6 +45,43 @@ use crate::locks::lease_keeper::LeaseOps;
- use crate::meta_service_error;
- use crate::sessions::SessionManager;
- 
-+/// How long a waiter whose watch failed waits before it lists the revisions again.
-+const WATCH_RETRY_DELAY: Duration = Duration::from_secs(1);
-+
-+/// The meta-service reads a waiter makes on the revision before its own. A trait, so that a test
-+/// can refuse the watch.
-+#[async_trait]
-+trait PrevRevisionApi: Send + Sync {
-+    /// Watch for the deletion of `key`.
-+    async fn watch_deletion(
-+        &self,
-+        key: &TableLockIdentV2,
-+    ) -> std::result::Result<WatchStream, MetaError>;
-+
-+    async fn get_lock(
-+        &self,
-+        key: &TableLockIdentV2,
-+    ) -> std::result::Result<Option<SeqV<LockMeta>>, MetaError>;
-+}
-+
-+#[async_trait]
-+impl PrevRevisionApi for MetaStore {
-+    async fn watch_deletion(
-+        &self,
-+        key: &TableLockIdentV2,
-+    ) -> std::result::Result<WatchStream, MetaError> {
-+        let req = WatchRequest::new(key.to_string_key(), None).with_filter(FilterType::Delete);
-+        self.watch(req).await
+-    /// Cache entries and encodings describe the whole block, not a batch.
+-    pub(crate) fn parquet_filter_batches<'a>(
+-        &'a self,
+-        part: &'a FuseBlockPartInfo,
+-        column_chunks: &'a HashMap<ColumnId, DataItem<'a>>,
+-        batch_rows: usize,
+-    ) -> databend_common_exception::Result<
+-        Option<impl Iterator<Item = databend_common_exception::Result<DataBlock>> + 'a>,
+-    > {
+-        if (self.policy.memory.writes() && FuseCaches::instance().column_arrays.is_enabled())
+-            || !self.column_encodings.is_empty()
+-            || column_chunks.is_empty()
+-            || column_chunks
++    /// Whether [`Self::parquet_batches`] can decode `column_chunks` in batches rather than
++    /// whole: cache entries and encodings describe the whole block, not a batch.
++    ///
++    /// Callers check it once per block, as the column array cache may be enabled by another
++    /// session at any time.
++    pub(crate) fn can_parquet_batches(&self, column_chunks: &HashMap<ColumnId, DataItem>) -> bool {
++        !(self.policy.memory.writes() && FuseCaches::instance().column_arrays.is_enabled())
++            && self.column_encodings.is_empty()
++            && !column_chunks.is_empty()
++            && !column_chunks
+                 .values()
+                 .any(|item| matches!(item, DataItem::ColumnArray(_)))
+-        {
+-            return Ok(None);
+-        }
 +    }
 +
-+    async fn get_lock(
-+        &self,
-+        key: &TableLockIdentV2,
-+    ) -> std::result::Result<Option<SeqV<LockMeta>>, MetaError> {
-+        self.get_pb(key).await
-+    }
-+}
-+
- struct TableLockLeaseOps {
-     catalog: Arc<dyn Catalog>,
-     extend_req: ExtendLockRevReq,
-@@ -88,6 +131,26 @@ impl LockHolder {
-         req: CreateLockRevReq,
-         should_retry: bool,
-         acquire_timeout: Duration,
-+    ) -> Result<u64> {
-+        let meta_api = UserApiProvider::instance().get_meta_store_client();
-+        self.acquire(
-+            catalog,
-+            req,
-+            should_retry,
-+            acquire_timeout,
-+            meta_api.as_ref(),
-+        )
-+        .await
-+    }
-+
-+    /// [`Self::try_acquire_lock`], with `prev_api` for the reads on the revision before this one.
-+    async fn acquire(
++    /// Decodes the column chunks of a block in batches of at most `batch_rows` rows.
++    ///
++    /// The returned decoder owns the column chunks, so batches can be pulled after the read
++    /// result is gone: each pull decompresses only the pages of that batch. The batches
++    /// never fill the column array cache, whose entries hold whole columns.
++    ///
++    /// The caller must have checked [`Self::can_parquet_batches`] on `column_chunks`.
++    pub(crate) fn parquet_batches(
 +        self: &Arc<Self>,
-+        catalog: Arc<dyn Catalog>,
-+        req: CreateLockRevReq,
-+        should_retry: bool,
-+        acquire_timeout: Duration,
-+        prev_api: &dyn PrevRevisionApi,
-     ) -> Result<u64> {
-         let start = Instant::now();
- 
-@@ -99,7 +162,6 @@ impl LockHolder {
- 
-         let revision = self.start(catalog.clone(), req).await?;
- 
--        let meta_api = UserApiProvider::instance().get_meta_store_client();
-         let list_table_lock_req = ListLockRevReq::new(lock_key.clone());
- 
-         loop {
-@@ -148,12 +210,28 @@ impl LockHolder {
-             let watch_delete_ident = lock_key.gen_v2_key(prev_revision);
- 
-             // Get the previous revision, watch the delete event.
--            let req = WatchRequest::new(watch_delete_ident.to_string_key(), None)
--                .with_filter(FilterType::Delete);
--            let mut watch_stream = meta_api.watch(req).await.map_err(meta_service_error)?;
-+            let mut watch_stream = match prev_api.watch_deletion(&watch_delete_ident).await {
-+                Ok(watch_stream) => watch_stream,
-+                Err(error) => {
-+                    // A meta node refuses a watch while it cannot serve one, such as during a
-+                    // leader election, and the client gives up once no node it knows serves it.
-+                    // Listing the revisions again finds the lock if it was released meanwhile.
-+                    let remaining = acquire_timeout.saturating_sub(start.elapsed());
-+                    let delay = WATCH_RETRY_DELAY.min(remaining);
-+                    log::warn!(
-+                        "Failed to watch the previous table lock revision (rev: {}, prev: {}): {}; listing the revisions again in {:?}",
-+                        revision,
-+                        prev_revision,
-+                        error,
-+                        delay
-+                    );
-+                    tokio::time::sleep(delay).await;
-+                    continue;
-+                }
-+            };
- 
--            let Some(lock_meta) = meta_api
--                .get_pb(&watch_delete_ident)
-+            let Some(lock_meta) = prev_api
-+    
-```
-
----
-
-### Incident Patch 2: `999fd5f4` (2026-11-23)
-**Commit Message**: fix(query): tighten stage location checks (#21172)
-
-* fix(query): tighten stage location checks
-
-* fix(query): check storage security before opening stored locations
-
-**File**: `scripts/ci/deploy/config/databend-query-node-2.toml` (modified, +1/-0)
-```diff
-@@ -75,6 +75,7 @@ auto_sync_interval = 60
- [storage]
- # fs | s3 | azblob | obs | oss
- type = "fs"
-+allow_insecure = true
- 
- # Set a local folder to store your data.
- # Comment out this block if you're NOT using local file system as storage.
-```
-
-**File**: `scripts/ci/deploy/config/databend-query-node-3.toml` (modified, +1/-0)
-```diff
-@@ -76,6 +76,7 @@ auto_sync_interval = 60
- [storage]
- # fs | s3 | azblob | obs | oss
- type = "fs"
-+allow_insecure = true
- 
- # Set a local folder to store your data.
- # Comment out this block if you're NOT using local file system as storage.
-```
-
-**File**: `src/common/storage/src/config.rs` (modified, +41/-0)
-```diff
-@@ -19,8 +19,10 @@ use std::str::FromStr;
- use std::sync::Arc;
- 
- use databend_common_base::base::GlobalInstance;
-+use databend_common_base::runtime::ThreadTracker;
- use databend_common_exception::ErrorCode;
- use databend_common_meta_app::storage::StorageParams;
-+use log::LevelFilter;
- use serde::Deserialize;
- use serde::Serialize;
- use tokio::sync::RwLock;
-@@ -132,6 +134,45 @@ pub enum EndpointUrlPolicy {
-     Allowlist,
- }
- 
-+/// Process-wide `storage.allow_insecure`, for code paths that cannot reach the
-+/// query config, such as opening an operator for a stored stage.
-+#[derive(Clone, Copy, Debug)]
-+struct StorageAllowInsecure(bool);
-+
-+pub struct StorageSecurityRegistry;
-+
-+impl StorageSecurityRegistry {
-+    pub fn init(allow_insecure: bool) {
-+        GlobalInstance::set(StorageAllowInsecure(allow_insecure));
-+    }
-+
-+    /// Whether insecure storage is allowed on this node. Defaults to `true`
-+    /// when the registry is not initialized, e.g. in unit tests.
-+    pub fn allow_insecure() -> bool {
-+        GlobalInstance::try_get::<StorageAllowInsecure>().is_none_or(|v| v.0)
-+    }
-+}
-+
-+/// Whether the current thread runs the node's own history log queries, whose
-+/// storage comes from server config instead of user input.
-+pub fn is_history_log_context() -> bool {
-+    ThreadTracker::capture_log_settings().is_some_and(|settings| settings.level == LevelFilter::Off)
-+}
-+
-+/// Rejects insecure storage (e.g. `fs://`, plain `http://`) unless allowed.
-+pub fn ensure_secure_storage_params(
-+    params: &StorageParams,
-+    allow_insecure: bool,
-+) -> databend_common_exception::Result<()> {
-+    if params.is_secure() || allow_insecure || is_history_log_context() {
-+        return Ok(());
-+    }
-+    Err(ErrorCode::StorageInsecure(format!(
-+        "insecure storage {} is not allowed, set storage.allow_insecure to enable it",
-+        params.storage_type()
-+    )))
-+}
-+
- /// Runtime egress policy for external storage endpoint URLs.
- ///
- /// This config is process-local and is applied by query nodes before creating
-```
-
-**File**: `src/common/storage/src/lib.rs` (modified, +4/-0)
-```diff
-@@ -53,6 +53,9 @@ pub use config::EndpointUrlPolicyConfig;
- pub use config::ShareTableConfig;
- pub use config::StagePathTraversalPolicy;
- pub use config::StorageConfig;
-+pub use config::StorageSecurityRegistry;
-+pub use config::ensure_secure_storage_params;
-+pub use config::is_history_log_context;
- pub use endpoint_policy::EndpointUrlPolicyRegistry;
- pub use endpoint_policy::check_storage_endpoint_url;
- pub use endpoint_policy::check_storage_params_endpoints;
-@@ -120,6 +123,7 @@ pub use stage::StageFileInfoStream;
- pub use stage::StageFileStatus;
- pub use stage::StageFilesInfo;
- pub use stage::ensure_no_stage_path_traversal;
-+pub use stage::ensure_valid_stage_prefix_name;
- pub use stage::init_stage_operator;
- pub use stage::internal_stage_storage_params;
- pub use stage::is_stage_path_traversal;
-```
-
-**File**: `src/common/storage/src/stage.rs` (modified, +47/-7)
-```diff
-@@ -37,6 +37,8 @@ use regex::Regex;
- 
- use crate::DataOperator;
- use crate::EndpointPolicyScope;
-+use crate::StorageSecurityRegistry;
-+use crate::ensure_secure_storage_params;
- use crate::init_operator;
- use crate::init_operator_with_policy_scope;
- 
-@@ -104,27 +106,44 @@ pub fn init_stage_operator(stage_info: &StageInfo) -> Result<Operator> {
-             }
-             v => v,
-         };
-+        // Stored stages may predate the check at CREATE/ALTER STAGE.
-+        ensure_secure_storage_params(&storage, StorageSecurityRegistry::allow_insecure())?;
- 
-         Ok(init_operator_with_policy_scope(
-             &storage,
-             EndpointPolicyScope::External,
-         )?)
-     } else {
--        Ok(init_operator(&stage_root_params(stage_info))?)
-+        Ok(init_operator(&stage_root_params(stage_info)?)?)
-     }
- }
- 
- /// Storage params backing an internal or user stage, rooted at the stage
- /// prefix. Returns `None` for external stages.
--pub fn internal_stage_storage_params(stage_info: &StageInfo) -> Option<StorageParams> {
--    (stage_info.stage_type != StageType::External).then(|| stage_root_params(stage_info))
-+pub fn internal_stage_storage_params(stage_info: &StageInfo) -> Result<Option<StorageParams>> {
-+    (stage_info.stage_type != StageType::External)
-+        .then(|| stage_root_params(stage_info))
-+        .transpose()
- }
- 
--fn stage_root_params(stage_info: &StageInfo) -> StorageParams {
-+fn stage_root_params(stage_info: &StageInfo) -> Result<StorageParams> {
-+    ensure_valid_stage_prefix_name(&stage_info.stage_name)?;
-     let stage_prefix = stage_info.stage_prefix();
--    DataOperator::instance()
-+    Ok(DataOperator::instance()
-         .params()
--        .map_root(|path| format!("{path}/{stage_prefix}"))
-+        .map_root(|path| format!("{path}/{stage_prefix}")))
-+}
-+
-+/// Rejects stage names that would place an internal or user stage outside
-+/// its own directory under the storage root.
-+pub fn ensure_valid_stage_prefix_name(name: &str) -> Result<()> {
-+    if StageInfo::is_valid_prefix_name(name) {
-+        Ok(())
-+    } else {
-+        Err(ErrorCode::BadArguments(format!(
-+            "invalid stage name {name:?}: must not be empty, '.' or '..', and must not contain '/'"
-+        )))
-+    }
- }
- 
- pub fn is_stage_path_traversal(path: &str) -> bool {
-@@ -404,6 +423,7 @@ mod tests {
-     use databend_common_meta_app::storage::StorageFsConfig;
-     use databend_common_meta_app::storage::StorageParams;
- 
-+    use super::init_stage_operator;
-     use super::internal_stage_storage_params;
-     use super::is_stage_path_traversal;
- 
-@@ -412,7 +432,27 @@ mod tests {
-         // Must not touch the global DataOperator for external stages.
-         let stage =
-             StageInfo::new_external_stage(StorageParams::Fs(StorageFsConfig::default()), false);
--        assert!(internal_stage_storage_params(&stage).is_none());
-+        assert!(internal_stage_storage_params(&stage).unwrap().is_none());
-+    }
-+
-+    #[test]
-+    fn test_is_valid_stage_prefix_name() {
-+        for name in ["", ".", "..", "/", "a/", "/a", "a/b", "../..", "a/../b"] {
-+            assert!(!StageInfo::is_valid_prefix_name(name), "{name:?}");
-+        }
-+        for name in ["a", "user@example.com", "a.b", "..a", "a..", "a\\b", "~"] {
-+            assert!(StageInfo::is_valid_prefix_name(name), "{name:?}");
-+        }
-+    }
-+
-+    #[test]
-+    fn user_stage_with_invalid_name_is_rejected() {
-+        // Rejected before touching the global DataOperator.
-+        for name in ["", ".", "..", "../..", "alice/", "/"] {
-+            let stage = StageInfo::new_user_stage(name);
-+            assert!(internal_stage_storage_params(&stage).is_err(), "{name:?}");
-+            assert!(init_stage_operator(&stage).is_err(), "{name:?}");
-+        }
++        part: &FuseBlockPartInfo,
++        column_chunks: &HashMap<ColumnId, DataItem>,
++        selection: Option<&RowSelection>,
++        batch_rows: usize,
++    ) -> databend_common_exception::Result<ParquetBatches> {
++        debug_assert!(self.column_encodings.is_empty());
+         let data_files = part.data_files();
+         let files = DataFileLookup::new(&data_files);
++        // Cap the reader batch size by the selected/total row count so sparse pushdowns
++        // do not over-allocate output column buffers retained downstream.
++        let reader_batch_rows = selection
++            .map_or(part.nums_rows, |s| s.selected_rows)
++            .min(batch_rows);
+         let reader = column_chunks_record_reader(
+             &self.original_schema,
+             part.nums_rows,
+             column_chunks,
+             files.default_compression(),
+             |column_id| files.compression_of(column_id),
+-            None,
++            selection.map(|s| s.selection.clone()),
+             self.parquet_hint_fields.as_ref(),
+-            batch_rows,
++            reader_batch_rows,
+         )?;
+-        let name_paths = column_name_paths(&self.projection, &self.original_schema);
+-        Ok(Some(reader.map(move |batch| {
+-            let batch = batch?;
+-            // Without encodings no chunk is read as a dictionary chunk.
+-            self.record_batch_to_block(
+-                &batch,
+-                batch.num_rows(),
+-                &DataFileLookup::new(&data_files),
+-                column_chunks,
+-                &HashSet::new(),
+-                batch.num_rows(),
+-                None,
+-                &name_paths,
+-            )
+-        })))
++        let column_chunks = column_chunks
++            .iter()
++            .map(|(column_id, item)| match item {
++                DataItem::RawData(buffer) => (*column_id, DataItem::RawData(buffer.clone())),
++                DataItem::ColumnArray(_) => unreachable!("checked by can_parquet_batches"),
++            })
++            .collect();
++        Ok(ParquetBatches {
++            block_reader: self.clone(),
++            column_chunks,
++            name_paths: column_name_paths(&self.projection, &self.original_schema),
++            reader,
++        })
      }
  
-     #[test]
+     /// `dictionary_chunks` are decoded from `column_chunks` instead of `record_batch`; they hold
+@@ -230,11 +247,13 @@ impl BlockReade
 ```
 
-**File**: `src/meta/app/src/principal/user_stage.rs` (modified, +6/-0)
+**File**: `src/query/storages/fuse/src/io/read/mod.rs` (modified, +1/-0)
 ```diff
-@@ -502,6 +502,12 @@ impl StageInfo {
-         self
-     }
- 
-+    /// Whether `name` can be used as one directory component of a stage prefix,
-+    /// e.g. a user name that backs the user stage `@~`.
-+    pub fn is_valid_prefix_name(name: &str) -> bool {
-+        !(name.is_empty() || name == "." || name == ".." || name.contains('/'))
-+    }
-+
-     /// Get the prefix of stage.
-     ///
-     /// Use this function to get the prefix of this stage in the data operator.
+@@ -35,6 +35,7 @@ pub use block::FuseLowLevelColumnBatchReader;
+ pub use block::FuseLowLevelColumnReader;
+ pub use block::FuseLowLevelDataReader;
+ pub use block::FuseLowLevelFullRowReader;
++pub(crate) use block::ParquetBatches;
+ pub use block::RowSelection;
+ pub use block::column_chunks_to_record_batch;
+ pub use bloom::BloomBlockFilterReader;
 ```
 
-**File**: `src/query/config/src/global.rs` (modified, +2/-0)
+**File**: `src/query/storages/fuse/src/operations/read/parquet_data_source_deserializer.rs` (modified, +150/-26)
 ```diff
-@@ -20,6 +20,7 @@ use databend_common_base::base::GlobalInstance;
- use databend_common_exception::Result;
- use databend_common_grpc::is_in_process_grpc_address;
- use databend_common_storage::EndpointUrlPolicyRegistry;
-+use databend_common_storage::StorageSecurityRegistry;
- 
- use crate::InnerConfig;
- 
-@@ -38,6 +39,7 @@ impl GlobalConfig {
-             .cloned()
-             .collect();
-         EndpointUrlPolicyRegistry::init(endpoint_url_policy)?;
-+        StorageSecurityRegistry::init(config.storage.allow_insecure);
-         Ok(())
-     }
- 
-```
-
-**File**: `src/query/ee/src/data_sharing/storage.rs` (modified, +3/-0)
-```diff
-@@ -59,6 +59,9 @@ pub async fn resolve_share_storage_params(
-     let connection_storage = databend_common_sql::binder::parse_storage_params_from_uri(
-         &mut location,
-         "when resolving data share connection",
-+        databend_common_config::GlobalConfig::instance()
-+            .storage
-+            .allow_insecure,
-     )
-     .await?;
- 
-```
-
----
-
-### Incident Patch 3: `b5eb22e2` (2026-11-24)
-**Commit Message**: fix: semaphore: wait before retrying a failed acquisition (#21181)
-
-* fix: semaphore: wait before retrying a failed acquisition
-
-# Summary
-
-`MetaStore::new_acquired_by_time` now waits before it retries a failed
-attempt to acquire a semaphore: 100 ms after the first failure,
-doubling with each failure in a row, up to 2 s. It retried at once, so
-a queued query whose attempts kept failing wrote a permit entry and
-deleted it in a tight loop.
-
-# Details
-
-Since meta servers v260629.9.0, only the leader serves watches. While
-no node the client knows serves the watch, such as during a leader
-election or when the client's endpoints do not list the leader, every
-attempt fails as soon as it starts: the semaphore's watcher ends, and
-the attempt deletes the permit entry it wrote. The query queues retried
-at once, until the queue timeout.
-
-An attempt that times out after `queries_queue_retry_timeout` is still
-retried at once: it lasted the whole timeout.
-
-A retried attempt still takes a new timestamp, so the query moves to
-the back of the queue. Keeping the first timestamp would be unsafe:
-`SemaphoreQueue` admits a waiting entry that sorts before the last
-acquired one regardless of capacity. Aft
-
-**File**: `src/meta/store/src/lib.rs` (modified, +8/-2)
-```diff
-@@ -147,6 +147,10 @@ impl MetaStore {
- 
-         let name = format!("Semaphore-{prefix}-{id}");
- 
-+        // A failed attempt is retried after this delay, doubled after each failure in a row: an
-+        // attempt can fail as soon as it starts, such as while no meta node serves its watch.
-+        let mut retry_delay = Duration::from_millis(100);
-+
-         let mut ith = 0;
-         loop {
-             ith += 1;
-@@ -179,9 +183,11 @@ impl MetaStore {
-                 Ok(permit) => return Ok(permit),
-                 Err(err) => {
-                     warn!(
--                        "{} attempt {} to acquire semaphore failed: {:?}; retry at once",
--                        name, ith, err
-+                        "{} attempt {} to acquire semaphore failed: {:?}; retry in {:?}",
-+                        name, ith, err, retry_delay
-                     );
-+                    tokio::time::sleep(retry_delay).await;
-+                    retry_delay = (retry_delay * 2).min(Duration::from_secs(2));
-                     continue;
-                 }
-             }
-```
-
-**File**: `src/meta/store/tests/it/main.rs` (modified, +1/-0)
-```diff
-@@ -13,3 +13,4 @@
+@@ -13,7 +13,9 @@
  // limitations under the License.
  
- mod kv_api;
-+mod semaphore;
-```
-
-**File**: `src/meta/store/tests/it/semaphore.rs` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
+ use std::any::Any;
++use std::collections::VecDeque;
+ use std::sync::Arc;
 +use std::time::Duration;
-+use std::time::Instant;
+ use std::time::Instant;
+ 
+ use databend_common_base::base::Progress;
+@@ -40,7 +42,10 @@ use databend_common_pipeline::core::Processor;
+ use databend_common_pipeline::core::ProcessorPtr;
+ 
+ use super::parquet_data_source::ParquetDataSource;
++use super::read_state::BlockBatches;
++use super::read_state::BlockScanStats;
+ use super::read_state::ReadState;
++use super::read_state::ReadStateBatch;
+ use super::read_state::ReadStateOutput;
+ use super::util::add_data_block_meta;
+ use super::util::selected_row_offsets;
+@@ -58,7 +63,7 @@ pub struct DeserializeDataTransform {
+ 
+     input: Arc<InputPort>,
+     output: Arc<OutputPort>,
+-    output_data: Option<DataBlock>,
++    output_data: VecDeque<DataBlock>,
+     src_schema: DataSchema,
+     output_schema: DataSchema,
+     parts: Vec<PartInfoPtr>,
+@@ -71,6 +76,21 @@ pub struct DeserializeDataTransform {
+ 
+     prewhere_info: Option<PrewhereInfo>,
+     read_state: Option<ReadState>,
++    /// The block whose batches are being output, see [`ReadState::start_batches`].
++    pending: Option<PendingBlock>,
++}
 +
-+use databend_common_meta_store::MetaStore;
-+use databend_meta::runtime_api::TokioRuntime;
-+use databend_meta_client::kvapi::KVApi;
-+use databend_meta_client::types::UpsertKV;
-+use databend_meta_client::types::protobuf::WatchRequest;
-+use futures::StreamExt;
-+use tokio::time::timeout;
-+
-+/// While every attempt to acquire a semaphore fails as soon as it starts, `new_acquired_by_time`
-+/// waits 100 ms, 200 ms, 400 ms and so on before the next attempt.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_new_acquired_by_time_waits_before_retrying_a_failed_attempt() -> anyhow::Result<()> {
-+    let store = MetaStore::new_local_testing::<TokioRuntime>().await;
-+
-+    // An entry that does not decode ends the semaphore's watch as soon as the watch reads it, so
-+    // every attempt fails, as when no meta node serves the watch.
-+    store
-+        .upsert_kv(UpsertKV::update("sem/queue/0", b"not a permit entry"))
-+        .await?;
-+
-+    let watch = WatchRequest::new("sem/queue/".to_string(), Some("sem/queue0".to_string()));
-+    let mut watch = store.watch(watch).await?;
-+
-+    let start = Instant::now();
-+    let acquire = store.new_acquired_by_time("sem", 1, "id", Duration::from_secs(10), None);
-+
-+    // Each attempt inserts its own permit entry, and deletes it when it fails.
-+    let four_attempts = async {
-+        let mut attempts = 0;
-+        while attempts < 4 {
-+            let resp = watch.next().await.expect("watch stream ended")?;
-+            if let Some((_key, None, Some(_inserted))) = resp.unpack() {
-+                attempts += 1;
-+            }
-+        }
-+        anyhow::Ok(())
-+    };
-+
-+    tokio::select! {
-+        res = acquire => panic!("every attempt should fail: {res:?}"),
-+        res = timeout(Duration::from_secs(10), four_attempts) => res??,
++/// A block decoded in batches: the next batch is decoded only once downstream took the
++/// output of the previous one.
++struct PendingBlock {
++    part: PartInfoPtr,
++    batches: BlockBatches,
++    /// The scan of the block reported so far. The scan is reported as the batches are
++    /// decoded: the processor may be dropped without finishing the block, e.g. when a
++    /// nested executor stops pulling.
++    reported: BlockScanStats,
++    /// Time spent decoding the batches so far.
++    elapsed: Duration,
+ }
+ 
+ unsafe impl Send for DeserializeDataTransform {}
+@@ -108,7 +128,7 @@ impl DeserializeDataTransform {
+             block_reader,
+             input,
+             output,
+-            output_data: None,
++            output_data: VecDeque::new(),
+             src_schema,
+             output_schema,
+             parts: vec![],
+@@ -118,10 +138,101 @@ impl DeserializeDataTransform {
+             block_meta_options: plan.block_meta_options.clone(),
+             prewhere_info,
+             read_state: None,
++            pending: None,
+         })))
+     }
+ }
+ 
++impl DeserializeDataTransform {
++    /// Whether the rows of `part` may be output as several blocks: virtual columns are
++    /// decoded for the whole block, `_origin_block_row_num` numbers the rows of each
++    /// output block from zero, MERGE INTO target builds track whole blocks, and
++    /// `add_data_block_meta` remaps whole-block inverted/vector index scores per output block.
++    fn can_split_block(&self, part: &FuseBlockPartInfo) -> bool {
++        self.virtual_reader.is_none()
++            && !self.block_meta_options.update_stream_columns
++            && !self.block_meta_options.reserve_block_index
++            && !(self.block_meta_options.query_internal_columns
++                && part.block_meta_index().is_some_and(|meta| {
++                    meta.inverted_index_matches.is_some() || meta.vector_index_matches.is_some()
++                }))
 +    }
 +
-+    let elapsed = start.elapsed();
-+    assert!(
-+        elapsed >= Duration::from_millis(700),
-+        "elapsed: {elapsed:?}"
-+    );
-+    Ok(())
++    /// Decodes the next batch of the pending block with output rows, queues its output
++    /// blocks and reports the scan of the batches decoded.
++    fn process_pending(&mut self) -> Result<()> {
++        let Some(pending) = self.pending.as_mut() else {
++            return Ok(());
++        };
++        let start = Instant::now();
++        let part_info = pending.part.clone();
++        let part = FuseBlockPartInfo::from_part(&part_info)?;
++        let read_state = self.read_state.as_mut().unwrap();
++        let mut done = false;
++        let mut batches = vec![];
++        while batches.is_empty() {
++            match pending.batches.next_batches(read_state, part)? {
++                Some(next) => batches = next,
++                None => {
++                    done = true;
++                    break;
++                }
++            }
++        }
++        pending.elapsed += start.elapsed();
++        let scan_stats = pending.batches.scan_stats();
++        let increase = BlockScanStats {
++            rows: scan_stats.rows - pending.reported.rows,
++            bytes: scan_stats.bytes - pending.reported.bytes,
++        };
++        pending.reported = scan_stats;
++        self.record_scan_progress(increase);
++        for ReadStateBatch { block, offsets } in batches {
++            let data_block = block.resort(&self.src_schema, &self.output_schema)?;
++            self.output_data.push_back(add_data_block_meta(
++                data_block,
++                part,
++                offsets,
++                self.base_block_ids.clone(),
++                &self.block_meta_options,
++            )?);
++        }
++        if done {
++            self.finish_pending();
++        }
++        Ok(())
++    }
++
++    /// Drops the pending block, if any, and records the time spent decoding it.
++    fn finish_pending(&mut sel
+```
+
+**File**: `src/query/storages/fuse/src/operations/read/read_state.rs` (modified, +1471/-110)
+```diff
+@@ -15,6 +15,7 @@
+ use std::collections::BTreeSet;
+ use std::collections::HashMap;
+ use std::collections::HashSet;
++use std::collections::VecDeque;
+ use std::sync::Arc;
+ use std::time::Instant;
+ 
+@@ -25,6 +26,7 @@ use databend_common_catalog::plan::Projection;
+ use databend_common_catalog::runtime_filter_info::RuntimeBloomFilter;
+ use databend_common_catalog::runtime_filter_info::RuntimeFilterStats;
+ use databend_common_catalog::table_context::TableContext;
++use databend_common_column::bitmap::utils::SlicesIterator;
+ use databend_common_exception::Result;
+ use databend_common_expression::ColumnId;
+ use databend_common_expression::DataBlock;
+@@ -45,15 +47,23 @@ use databend_common_expression::types::BooleanType;
+ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::MutableBitmap;
+ use databend_common_functions::BUILTIN_FUNCTIONS;
++use roaring::RoaringTreemap;
+ 
+ use super::condition_cache;
+ use super::condition_cache::CachedCondition;
+ use crate::fuse_part::FuseBlockPartInfo;
+ use crate::io::BlockReader;
+ use crate::io::DataItem;
++use crate::io::ParquetBatches;
+ use crate::io::RowSelection;
+ use crate::pruning::ExprBloomFilter;
+ 
++/// Fewest rows per block of [`ReadState::start_batches`]. A Parquet data page holds
++/// about 1 MiB, so smaller batches would share their pages anyway, while each batch costs
++/// a reader call and one more block downstream. With a smaller `max_block_size` (tests go
++/// down to 1), batches keep this size and downstream operators split them as before.
++const MIN_BATCH_ROWS: usize = 8192;
++
+ #[derive(Clone)]
+ pub struct BloomRuntimeFilterRef {
+     pub probe_expr: Expr<FieldIndex>,
+@@ -274,6 +284,14 @@ pub struct ReadStateOutput {
+     pub scan_stats: BlockScanStats,
+ }
+ 
++/// One output batch of [`BlockBatches`].
++pub(crate) struct ReadStateBatch {
++    pub(crate) block: DataBlock,
++    /// Original block row indices of the rows in `block`, populated when the caller
++    /// requested row offsets for internal columns.
++    pub(crate) offsets: Option<RoaringTreemap>,
 +}
++
+ pub struct ReadState {
+     /// See [`EarlyStage`]; `pre_reader` and `filters` are then the later prewhere stage.
+     early: Option<EarlyStage>,
+@@ -290,9 +308,13 @@ pub struct ReadState {
+     pub remain_column_ids: HashSet<ColumnId>,
+     pub func_ctx: FunctionContext,
+     pub output_schema: DataSchema,
+-    merged_schema: DataSchema,
+     pub prewhere_selectivity_threshold: u64,
+     pub use_single_prewhere_reader: bool,
++    /// Static stage and column-mapping plan computed once from the readers and `output_schema`.
++    plan: ReadPlan,
++    /// Rows per block of [`Self::start_batches`]: the `max_block_size` setting, at
++    /// least [`MIN_BATCH_ROWS`].
++    batch_rows: usize,
+     /// The key of the prewhere filter in the condition cache, if it is cached.
+     condition_key: Option<u128>,
+     /// The key of the leading conjunct of the prewhere filter in the condition cache, if it has
+@@ -450,9 +472,6 @@ impl ReadState {
+         let prewhere_filter = prewhere_filter
+             .map(|filter| filter.project_column_ref(|name| prewhere_schema.index_of(name)))
+             .transpose()?;
+-        let mut merged_fields = prewhere_schema.fields().clone();
+-        merged_fields.extend(remain_reader.data_fields());
+-        let merged_schema = DataSchema::new(merged_fields);
+         let prewhere_selector = prewhere_filter
+             .as_ref()
+             .and_then(|filter| prewhere_selector(filter, &func_ctx, max_block_size));
+@@ -494,6 +513,14 @@ impl ReadState {
+             })
+             .transpose()?;
+ 
++        let remain_schema = DataSchema::new(remain_reader.data_fields());
++        let plan = ReadPlan::new(
++            &prewhere_schema,
++            &remain_schema,
++            &output_schema,
++            use_single_prewhere_reader,
++        )?;
++
+         Ok(Self {
+             early,
+             pre_reader: prewhere_reader,
+@@ -506,9 +533,10 @@ impl ReadState {
+             remain_column_ids,
+             func_ctx,
+             output_schema,
+-            merged_schema,
+             prewhere_selectivity_threshold,
+             use_single_prewhere_reader,
++            plan,
++            batch_rows: max_block_size.max(MIN_BATCH_ROWS),
+             condition_key,
+             leading_key,
+             leading,
+@@ -572,45 +600,7 @@ impl ReadState {
+         block: &DataBlock,
+         num_rows: usize,
+     ) -> Result<Option<MutableBitmap>> {
+-        let bloom_start = Instant::now();
+-
+-        let mut bitmaps = vec![];
+-        let evaluator = Evaluator::new(block, &self.func_ctx, &BUILTIN_FUNCTIONS);
+-        for runtime_filter in &self.runtime_filters {
+-            // The shared state is per target entry, not per RF id. Disabling
+-            // only skips this Bloom optimization; other filters still apply.
+-            if runtime_filter.stats.bloom_disabled() {
+-                continue;
+-            }
+-            let filter_start = Instant::now();
+-  
+```
+
+**File**: `tests/sqllogictests/suites/base/09_fuse_engine/09_0065_scan_block_batches.test` (added, +349/-0)
+```diff
+@@ -0,0 +1,349 @@
++# The scan decodes a block larger than max_block_size in batches of max_block_size
++# rows, at least 8192. Output columns (both prewhere and remain) and internal row
++# offsets must match decoding the block whole across all prewhere modes, runtime
++# filters, and default-valued columns.
++
++statement ok
++create or replace database db_scan_block_batches;
++
++statement ok
++use db_scan_block_batches;
++
++statement ok
++create or replace table t (id int, s string) row_per_block = 30000;
++
++statement ok
++insert into t select number, concat('value_', to_string(number), '_padding_padding') from numbers(30000);
++
++query I
++select count(*) from fuse_block('db_scan_block_batches', 't');
++----
++1
++
++# Reference output decoded whole in a single batch.
++statement ok
++set max_block_size = 65536;
++
++statement ok
++create or replace table r_whole as select id, _row_id as rid, s from t;
++
++# Decode in batches of 8192, 8192, 8192, 5424 rows.
++statement ok
++set max_block_size = 1000;
++
++statement ok
++create or replace table r_batches as select id, _row_id as rid, s from t;
++
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join r_batches b on w.id = b.id and w.rid = b.rid and w.s = b.s;
++----
++30000 30000
++
++# Prewhere predicate exercises a 100%-kept batch (0..8192), a 100%-dropped batch
++# (8192..16384), a partially kept batch (16384..22000), and a trailing dropped batch.
++# Verify both prewhere (`id`), remain (`s`), and internal (`_row_id`) columns across
++# pushdown (80), non-pushdown (10), and single-reader (0) modes.
++statement ok
++set enable_parquet_prewhere = 1;
++
++statement ok
++set prewhere_selectivity_threshold = 80;
++
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select id, _row_id as rid, s from t where id < 8192 or (id >= 16384 and id < 22000)) b
++  on w.id = b.id and w.rid = b.rid and w.s = b.s;
++----
++13808 13808
++
++# Every prewhere batch keeps half of its rows, so each remain batch of 8192 selected
++# rows spans two kept prewhere blocks and is sliced at their boundary.
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select id, _row_id as rid, s from t where id % 2 = 0) b
++  on w.id = b.id and w.rid = b.rid and w.s = b.s;
++----
++15000 15000
++
++# A LIMIT stops pulling batches in the middle of the block, which drops the batches
++# not decoded yet.
++query I
++select count(*) from (select id, s from t limit 10);
++----
++10
++
++query I
++select count(*) from (select _row_id, s from t where id % 2 = 0 limit 100);
++----
++100
++
++# Filter-only prewhere column (`id` not projected) under pushdown.
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select _row_id as rid, s from t where id < 8192 or (id >= 16384 and id < 22000)) b
++  on w.rid = b.rid and w.s = b.s;
++----
++13808 13808
++
++statement ok
++set prewhere_selectivity_threshold = 10;
++
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select id, _row_id as rid, s from t where id < 8192 or (id >= 16384 and id < 22000)) b
++  on w.id = b.id and w.rid = b.rid and w.s = b.s;
++----
++13808 13808
++
++# Filter-only prewhere column (`id` not projected) without pushdown.
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select _row_id as rid, s from t where id < 8192 or (id >= 16384 and id < 22000)) b
++  on w.rid = b.rid and w.s = b.s;
++----
++13808 13808
++
++statement ok
++set prewhere_selectivity_threshold = 0;
++
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (select id, _row_id as rid, s from t where id < 8192 or (id >= 16384 and id < 22000)) b
++  on w.id = b.id and w.rid = b.rid and w.s = b.s;
++----
++13808 13808
++
++statement ok
++set prewhere_selectivity_threshold = 50;
++
++# All rows filtered out in an oversized block (unprunable modulo predicate + remain
++# column so neither min/max pruning nor count-only fast path can bypass batching),
++# followed by a second block with a surviving row to verify transition to the next part.
++statement ok
++create or replace table t_empty_and_next (id int, s string) row_per_block = 10000;
++
++statement ok
++insert into t_empty_and_next select number * 2 + 1, concat('odd_', to_string(number)) from numbers(10000);
++
++statement ok
++insert into t_empty_and_next values (2, 'even_2');
++
++query IT
++select count(*), min(s) from t_empty_and_next where id % 2 = 0;
++----
++1 even_2
++
++query IT
++select count(*), min(s) from t_empty_and_next where id % 2 = 0 and id > 10;
++----
++0 NULL
++
++# Count-only scan with prewhere (uses bitmap-only fast path).
++query I
++select count(*) from t where id < 8192 or (id >= 16384 and id < 22000);
++----
++13808
++
++# Runtime filter join on the oversized block (keys span kept and dropped batches).
++statement ok
++create or replace table small_keys as select number * 50 as id from numbers(500);
++
++query II
++select count(*), count(distinct w.rid)
++from r_whole w
++join (
++  select t.id, t._row_id as rid, t.s
++  from t
++  join small_keys k on t.id = k.id
++  where t.id 
+```
+
+---
+
+### Incident Patch 2: `28ed7681` (2026-11-24)
+**Commit Message**: fix(query): allow DISTINCT aggregate ORDER BY on its own argument (#21202)
+
+* fix(query): allow DISTINCT aggregate ORDER BY on its own argument
+
+PR #20108 rejected every DISTINCT aggregate that carries an ORDER BY, which
+broke previously working Snowflake/PostgreSQL style calls such as
+`listagg(DISTINCT x, ',') WITHIN GROUP (ORDER BY x)`. The function layer
+already supports this case through UnaryDistinctCombinator, so the planner
+now follows the PostgreSQL rule instead: every ORDER BY expression of a
+DISTINCT aggregate must appear in its argument list, and only independent
+sort keys are rejected.
+
+* fix(query): share argument symbol with equal sort key in window aggregates
+
+WindowRewriter assigned a fresh derived column to every non-column sort
+key, so array_agg(DISTINCT x + 1 ORDER BY x + 1) OVER () reached the
+aggregate with the key classified as Derived and failed at execution.
+Reuse the matching argument's symbol so the key is seen as Argument.
+
+**File**: `src/query/sql/src/planner/binder/window.rs` (modified, +18/-5)
+```diff
+@@ -324,6 +324,8 @@ impl<'a> WindowRewriter<'a> {
+             WindowFuncType::Aggregate(agg) => {
+                 // resolve aggregate function args in window function.
+                 let mut replaced_args: Vec<ScalarExpr> = Vec::with_capacity(agg.args.len());
++                let mut rewritten_args: Vec<(ScalarExpr, BoundColumnRef)> =
++                    Vec::with_capacity(agg.args.len());
+                 for (i, arg) in agg.args.iter().enumerate() {
+                     let mut arg = arg.clone();
+                     self.rewrite_aggregate_expr(&mut arg)?;
+@@ -333,6 +335,7 @@ impl<'a> WindowRewriter<'a> {
+                         index: replaced_arg.column.index,
+                         scalar,
+                     });
++                    rewritten_args.push((arg, replaced_arg.clone()));
+                     replaced_args.push(replaced_arg.into());
+                 }
+                 // resolve aggregate function sort describe in window function.
+@@ -342,11 +345,21 @@ impl<'a> WindowRewriter<'a> {
+                     let mut expr = desc.expr.clone();
+                     self.rewrite_aggregate_expr(&mut expr)?;
+ 
+-                    let name = format!("{window_func_name}_sort_desc_{i}");
+-                    let (replaced_expr, scalar) = self.replace_expr(&name, &expr)?;
+-
+-                    let index = replaced_expr.column.index;
+-                    window_args.push(ScalarItem { index, scalar });
++                    // A sort key equal to an argument must share its symbol so
++                    // the aggregate sees it as `Argument`, which DISTINCT needs.
++                    let replaced_expr = if let Some((_, replaced_arg)) =
++                        rewritten_args.iter().find(|(arg, _)| *arg == expr)
++                    {
++                        replaced_arg.clone()
++                    } else {
++                        let name = format!("{window_func_name}_sort_desc_{i}");
++                        let (replaced_expr, scalar) = self.replace_expr(&name, &expr)?;
++                        window_args.push(ScalarItem {
++                            index: replaced_expr.column.index,
++                            scalar,
++                        });
++                        replaced_expr
++                    };
+                     replaced_sort_descs.push(AggregateFunctionScalarSortDesc {
+                         expr: replaced_expr.into(),
+                         nulls_first: desc.nulls_first,
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check/aggregate.rs` (modified, +14/-7)
+```diff
+@@ -80,13 +80,6 @@ impl<'a> CoreExprArena<'a> {
+         let display_name = format!("{original_expr:#}");
+         let mut func_name = func_name.to_string();
+ 
+-        if *distinct && !order_by.is_empty() {
+-            return Err(
+-                ErrorCode::SyntaxException("DISTINCT aggregate ORDER BY is not supported")
+-                    .set_span(span),
+-            );
+-        }
+-
+         let remove_count_args = filter.is_none()
+             && func_name.eq_ignore_ascii_case("count")
+             && !*distinct
+@@ -435,6 +428,20 @@ where A: TypeCheckAdapter
+             params
+         };
+ 
++        // DISTINCT keeps only the unique argument values, so independent sort
++        // keys cannot be recovered. Follow PostgreSQL: every ORDER BY
++        // expression of a DISTINCT aggregate must appear in its argument list.
++        if distinct
++            && sort_descs
++                .iter()
++                .any(|desc| !arguments.contains(&desc.expr))
++        {
++            return Err(ErrorCode::SemanticError(
++                "in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list",
++            )
++            .set_span(span));
++        }
++
+         let agg_func = AGGR_REGISTRY
+             .resolve(RawAggregateCall {
+                 name: func_name,
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check/core_expr.rs` (modified, +0/-10)
+```diff
+@@ -384,16 +384,6 @@ impl<'a> CoreExprArena<'a> {
+             .set_span(span));
+         }
+ 
+-        if func.distinct
+-            && !func.order_by.is_empty()
+-            && self.aggregate_function_registry.contains(&func_name)
+-        {
+-            return Err(
+-                ErrorCode::SyntaxException("DISTINCT aggregate ORDER BY is not supported")
+-                    .set_span(span),
+-            );
+-        }
+-
+         self.ensure_within_group_function_call(span, &func_name, !func.order_by.is_empty())?;
+         self.ensure_window_function_call(
+             span,
+```
+
+**File**: `src/query/sql/tests/it/semantic/type_check/aggregate.rs` (modified, +21/-3)
+```diff
+@@ -186,14 +186,32 @@ async fn test_type_check_aggregate_resolution() -> Result<()> {
+             sql: "sum0(number) FILTER (WHERE flag)",
+         },
+         SqlTestCase {
+-            name: "distinct_aggregate_order_by_reports_unsupported",
+-            description: "Parser accepts DISTINCT aggregate ORDER BY, but execution semantics are not wired yet.",
++            name: "distinct_aggregate_order_by_requires_argument",
++            description: "DISTINCT aggregate ORDER BY must reference an argument because independent sort keys cannot be recovered after deduplication.",
+             setup_sqls: &[],
+             sql: "string_agg(DISTINCT text ORDER BY number)",
+         },
++        SqlTestCase {
++            name: "distinct_aggregate_order_by_argument",
++            description: "DISTINCT aggregate ORDER BY on its own argument is accepted, following PostgreSQL.",
++            setup_sqls: &[],
++            sql: "string_agg(DISTINCT text ORDER BY text DESC)",
++        },
++        SqlTestCase {
++            name: "listagg_distinct_within_group_argument",
++            description: "DISTINCT WITHIN GROUP ORDER BY on the aggregated argument is accepted after the delimiter becomes a param.",
++            setup_sqls: &[],
++            sql: "listagg(DISTINCT text, ',') WITHIN GROUP (ORDER BY text)",
++        },
++        SqlTestCase {
++            name: "distinct_aggregate_order_by_mixed_keys_requires_argument",
++            description: "Every DISTINCT aggregate ORDER BY key must be an argument, not only the first one.",
++            setup_sqls: &[],
++            sql: "listagg(DISTINCT text, ',') WITHIN GROUP (ORDER BY text, number)",
++        },
+         SqlTestCase {
+             name: "count_distinct_aggregate_order_by_reports_unsupported",
+-            description: "DISTINCT aggregate ORDER BY should be rejected before ordered aggregate function validation.",
++            description: "ORDER BY is only allowed for WITHIN GROUP aggregates, with or without DISTINCT.",
+             setup_sqls: &[],
+             sql: "count(DISTINCT number ORDER BY delta)",
+         },
+```
+
+**File**: `src/query/sql/tests/it/semantic/type_check/aggregate.txt` (modified, +28/-7)
+```diff
+@@ -208,19 +208,40 @@ status: error
+ code: 1065
+ message: FILTER clause is not supported for aggregate function `sum0`
+ 
+-=== distinct_aggregate_order_by_reports_unsupported ===
+-description: Parser accepts DISTINCT aggregate ORDER BY, but execution semantics are not wired yet.
++=== distinct_aggregate_order_by_requires_argument ===
++description: DISTINCT aggregate ORDER BY must reference an argument because independent sort keys cannot be recovered after deduplication.
+ sql: string_agg(DISTINCT text ORDER BY number)
+ status: error
+-code: 1005
+-message: DISTINCT aggregate ORDER BY is not supported
++code: 1065
++message: in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list
++
++=== distinct_aggregate_order_by_argument ===
++description: DISTINCT aggregate ORDER BY on its own argument is accepted, following PostgreSQL.
++sql: string_agg(DISTINCT text ORDER BY text DESC)
++status: ok
++scalar: string_agg(DISTINCT text) WITHIN GROUP ( ORDER BY text DESC )
++type: String NULL
++
++=== listagg_distinct_within_group_argument ===
++description: DISTINCT WITHIN GROUP ORDER BY on the aggregated argument is accepted after the delimiter becomes a param.
++sql: listagg(DISTINCT text, ',') WITHIN GROUP (ORDER BY text)
++status: ok
++scalar: listagg(DISTINCT text, ',') WITHIN GROUP ( ORDER BY text )
++type: String NULL
++
++=== distinct_aggregate_order_by_mixed_keys_requires_argument ===
++description: Every DISTINCT aggregate ORDER BY key must be an argument, not only the first one.
++sql: listagg(DISTINCT text, ',') WITHIN GROUP (ORDER BY text, number)
++status: error
++code: 1065
++message: in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list
+ 
+ === count_distinct_aggregate_order_by_reports_unsupported ===
+-description: DISTINCT aggregate ORDER BY should be rejected before ordered aggregate function validation.
++description: ORDER BY is only allowed for WITHIN GROUP aggregates, with or without DISTINCT.
+ sql: count(DISTINCT number ORDER BY delta)
+ status: error
+-code: 1005
+-message: DISTINCT aggregate ORDER BY is not supported
++code: 1065
++message: only aggregate functions allowed in within group syntax
+ 
+ === aggregate_parameter_must_be_constant ===
+ description: Parameterized aggregate arguments should be constant before aggregate resolution.
+```
+
+**File**: `tests/sqllogictests/suites/duckdb/sql/aggregate/aggregates/test_aggregate_types_scalar.test` (modified, +6/-2)
+```diff
+@@ -77,11 +77,15 @@ CREATE TABLE test_val(val INT)
+ statement ok
+ INSERT INTO test_val VALUES(1), (2), (3), (3), (2)
+ 
+-statement error 1005
++query T
+ SELECT STRING_AGG(DISTINCT val ORDER BY val DESC) from test_val
++----
++321
+ 
+-statement error 1005
++query IT
+ SELECT COUNT(NULL), STRING_AGG(DISTINCT val ORDER BY val ASC) from test_val
++----
++0 123
+ 
+ 
+ statement ok
+```
+
+**File**: `tests/sqllogictests/suites/query/functions/02_0000_function_aggregate_mix.test` (modified, +38/-2)
+```diff
+@@ -533,10 +533,46 @@ select sum(distinct x) filter (where b) from t3
+ statement error (?s)1065.*DISTINCT aggregate FILTER is not supported
+ select count(distinct x) filter (where b) from t3
+ 
+-statement error (?s)1005.*DISTINCT aggregate ORDER BY is not supported
++statement error (?s)1065.*in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list
+ select string_agg(distinct s order by x) from t3
+ 
+-statement error (?s)1005.*DISTINCT aggregate ORDER BY is not supported
++statement error (?s)1065.*in an aggregate with DISTINCT, ORDER BY expressions must appear in argument list
++select listagg(distinct s, '|') within group (order by s, x) from t3
++
++# DISTINCT aggregate ORDER BY may reference the aggregated argument (PostgreSQL semantics).
++query T
++select string_agg(distinct s, '|' order by s desc) from t3;
++----
++xyz|def|abc
++
++query T
++select listagg(distinct s, '|') within group (order by s) from t3;
++----
++abc|def|xyz
++
++query T
++select array_agg(distinct y order by y desc) from t3;
++----
++[2,1]
++
++query T
++select array_agg(distinct y) within group (order by y) from t3;
++----
++[1,2]
++
++# Window aggregates must map a sort key equal to a non-column argument onto the
++# same symbol; otherwise DISTINCT sees it as an independent key.
++query T
++select array_agg(distinct y + 1 order by y + 1 desc) over () from t3 limit 1;
++----
++[3,2]
++
++query T
++select string_agg(distinct s, '|' order by s) over (partition by b) from t3 where b order by 1 limit 1;
++----
++abc|xyz
++
++statement error (?s)1065.*only aggregate functions allowed in within group syntax
+ select count(distinct x order by y) from t3
+ 
+ statement error (?s)1065.*only aggregate functions allowed in within group syntax
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21181** (2026-11-24): fix: semaphore: wait before retrying a failed acquisition (@drmingdrmer)
-- **PR #21179** (2026-11-23): fix(meta): reject deduplication markers without durable updates (@drmingdrmer)
-- **PR #21177** (2026-11-23): fix: locks: keep waiting when a table lock watch is refused (@drmingdrmer)
-- **PR #21175** (2026-11-23): fix(meta): scope DML deduplication labels to tenants (@drmingdrmer)
-- **PR #21173** (2026-11-23): fix(storage): validate external location options (@bohutang)
-- **PR #21172** (2026-11-23): fix(query): tighten stage location checks (@sundy-li)
+- **PR #21205** (2026-11-24): ci: hold heavy Dev CI for new Dependabot PRs (@bohutang)
+- **PR #21202** (2026-11-24): fix(query): allow DISTINCT aggregate ORDER BY on its own argument (@zhang2014)
+- **PR #21194** (closed): chore(deps): bump aws-sdk-glue from 1.93.0 to 1.135.0 (@dependabot[bot])
+- **PR #21193** (closed): chore(deps): bump rsa from 0.9.8 to 0.9.10 (@dependabot[bot])
+- **PR #21192** (closed): chore(deps): bump lru from 0.12.5 to 0.18.5 (@dependabot[bot])
+- **PR #21191** (closed): chore(deps): bump jsonwebtoken from 9.3.1 to 10.3.0 (@dependabot[bot])
 
 ---
 
@@ -1923,43 +2185,31 @@ acquired one regardless of capacity. Aft
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. locks: keep waiting when a table lock watch is refused
+## X. query): decode oversized Fuse blocks in max_block_size batches
 
 **RULE**:
-When implementing operations in `src/query/config/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/storages/fuse/src/io/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08cac7de`: locks: keep waiting when a table lock watch is refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1faa7cc1`: query): decode oversized Fuse blocks in max_block_size batches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/config/src/config.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/storages/fuse/src/io/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Deprecated, kept for backward compatibility: name `ownership` in `meta_service_caches`
-    /// instead. When true, it enables [`MetaServiceCache::Ownership`] as that name does, and the
-    /// node logs a warning at startup.
-
-    /// The warning to log at startup when this config sets the deprecated
-    /// `meta_service_ownership_cache`.
-    pub fn deprecated_ownership_cache_warning(&self) -> Option<&'static str> {
-        self.meta_service_ownership_cache.then_some(
-            "`cache.meta_service_ownership_cache` is deprecated but still enables the ownership \
-             cache; add `ownership` to `cache.meta_service_caches` instead",
-        )
-    }
+pub(crate) use read::ParquetBatches;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// Deprecated: name `ownership` in `meta_service_caches` instead. When true, it enables
-    /// [`MetaServiceCache::Ownership`] as that name does.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08cac7de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1faa7cc1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

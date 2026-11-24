@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-E8DL",
-    "timestamp": "2026-11-23T09:29:47.241Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "630ff7a61817fa39f351dde20fdced35e57f4fe947f7ef7c3a911e7d9f5ca6c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-27FW",
-    "timestamp": "2026-11-23T09:48:25.772Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "8630622348d55a9cf70247ec4c2a9b97960f94e8dfd714589cd83519a5a40c27",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-27QX",
     "timestamp": "2026-11-23T09:48:26.169Z",
     "repository": "Qwen/Qwen3-4B-Instruct-2507",
@@ -7490,6 +7460,36 @@
     "repository": "apollographql/apollo-kotlin",
     "learningId": "learn-github-apollographql-apollo-kotlin",
     "contentHash": "a7a9b316e94705cc74dd154863d15d62872750a5282a47ff3cf115b5e5e67d78",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-9W5D",
+    "timestamp": "2026-11-24T23:41:53.281Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-9X2G",
+    "timestamp": "2026-11-24T23:41:54.472Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

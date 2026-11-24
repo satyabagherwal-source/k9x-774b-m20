@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:33:32.304Z",
+  "last_updated": "2026-11-24T23:42:00.178Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57835,11 +57835,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-Z3P7",
+      "id": "CD-A1GV",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Z3P7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-A1GV-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -57861,6 +57861,59 @@
       "source_repo": "apollographql-apollo-kotlin",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EA8A02-allow-empty-enums.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-9WC4",
+      "directive_title": "fix policy importer cidr leak",
+      "source_repo": "cilium/cilium",
+      "source_commit": "ad7c0f73",
+      "staged_file": "11_INBOX/candidate-directives/CD-9WC4-fix-policy-importer-cidr-leak.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-9X90",
+      "directive_title": "decode oversized Fuse blocks in max_block_size batches",
+      "source_repo": "databendlabs/databend",
+      "source_commit": "28ed7681",
+      "staged_file": "11_INBOX/candidate-directives/CD-9X90-decode-oversized-fuse-blocks-in-max_block_size-batches.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-A05S",
+      "directive_title": "policy: fix policy importer cidr leak",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A05S-policy-fix-policy-importer-cidr-leak.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-A0S9",
+      "directive_title": "query): decode oversized Fuse blocks in max_block_size batches",
+      "source_repo": "databendlabs-databend-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A0S9-query-decode-oversized-fuse-blocks-in-max_block_size-batches.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-BDB725",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BDB725-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-24"
     }
   ]
